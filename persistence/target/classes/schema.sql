@@ -1,0 +1,36 @@
+-- CREATE TABLE IF NOT EXISTS clients (
+--     id SERIAL PRIMARY KEY,
+--     obra_social_id INTEGER REFERENCES obraSocial(id),
+--     name varchar(100),
+--     email varchar(100),
+--     password varchar(100)
+-- );
+--
+-- CREATE TABLE IF NOT EXISTS doctors (
+--     id SERIAL PRIMARY KEY,
+--     name varchar(100),
+--     email varchar(100),
+--     password varchar(100)
+-- );
+--
+-- CREATE TABLE IF NOT EXISTS obraSocial (
+--     id SERIAL PRIMARY KEY,
+--     name varchar(100),
+-- );
+--
+-- CREATE TABLE IF NOT EXISTS obraSocialDoctors (
+--     obra_social_id INTEGER REFERENCES obraSocial(id),
+--     doctor_id INTEGER REFERENCES doctors(id),
+--     PRIMARY KEY (obra_social_id, doctor_id)
+-- );
+--
+-- CREATE TABLE IF NOT EXISTS appointments (
+--     id SERIAL PRIMARY KEY,
+--     client_id INTEGER REFERENCES clients(id),
+--     doctor_id INTEGER REFERENCES doctors(id),
+--     obra_social_id INTEGER REFERENCES obraSocial(id),
+--     date_start TIMESTAMP,
+--     date_end TIMESTAMP,
+--     status VARCHAR(50)
+-- );
+
