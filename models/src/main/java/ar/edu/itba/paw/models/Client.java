@@ -2,15 +2,16 @@ package ar.edu.itba.paw.models;
 
 public class Client {
 
-    private final String id;
-    private String coverageId;
+    private final long id;
+    private long coverageId;
     private String coverage;
     private String name;
     private String email;
     private String password;
     private String phone;
+    private Appointment appointments;
 
-    public Client(String id, String coverageId, String coverage, String name, String email, String password, String phone) {
+    public Client(long id, long coverageId, String coverage, String name, String email, String password, String phone, Appointment appointments) {
         this.id = id;
         this.coverageId = coverageId;
         this.coverage = coverage;
@@ -18,13 +19,22 @@ public class Client {
         this.email = email;
         this.password = password;
         this.phone = phone;
+        this.appointments = appointments;
     }
 
-    public void setCoverageId(String coverageId) {
+    public Appointment getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(Appointment appointments) {
+        this.appointments = appointments;
+    }
+
+    public void setCoverageId(long coverageId) {
         this.coverageId = coverageId;
     }
 
-    public String getCoverageId() {
+    public long getCoverageId() {
         return coverageId;
     }
 
@@ -36,7 +46,7 @@ public class Client {
         this.coverage = coverage;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
