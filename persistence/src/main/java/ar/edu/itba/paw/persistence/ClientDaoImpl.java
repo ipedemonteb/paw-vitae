@@ -10,7 +10,9 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ClientDaoImpl implements ClientDao {
@@ -30,7 +32,7 @@ public class ClientDaoImpl implements ClientDao {
                     rs.getString("email"),
                     rs.getString("password"),
                     rs.getString("phone")
-            ););
+            );
         }
     };
 
@@ -43,16 +45,32 @@ public class ClientDaoImpl implements ClientDao {
 
     @Override
     public Optional<Client> findById(long id) {
-        return Optional.empty();
+        return jdbcTemplate.query("SELECT * FROM clients WHERE id = ?", ROW_MAPPER, id).stream().findFirst();
     }
 
     @Override
     public Optional<Client> findByEmail(String email) {
-        return Optional.empty();
+        return jdbcTemplate.query("SELECT * FROM clients WHERE email = ?", ROW_MAPPER, email).stream().findFirst();
     }
 
     @Override
-    public Client create(long id, String email, String password, long coverageId, String coverage, String name, String phone, List<Appointment> appointments) {
-        return null;
+    public Client create(String email, String password, long coverageId, String coverage, String name, String phone) {
+        final Map<String, Object> args = new HashMap<>();
+        args.put("email", email);
+        args.put("password", password);
+        args.put("coverage_id", coverageId);
+        args.put("coverage", coverage);
+        args.put("name", name);
+        args.put("phone", phone);
+        final Number clientId = jdbcInsert.executeAndReturnKey(args);
+        return new Client(
+                clientId.longValue(),
+                coverageId,
+                coverage,
+                name,
+                email,
+                password,
+                phone
+        );
     }
 }

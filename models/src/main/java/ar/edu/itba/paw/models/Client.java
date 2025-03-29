@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import javax.annotation.processing.Generated;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Client {
@@ -15,7 +16,7 @@ public class Client {
     private String password;
     private String phone;
 
-    private List<Appointment> appointments;
+    private List<Appointment> appointments = new ArrayList<>();
 
     public Client(long id, long coverageId, String coverage, String name, String email, String password, String phone) {
         this.id = id;

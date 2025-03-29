@@ -4,14 +4,14 @@ import java.util.Date;
 
 public class Appointment {
 
-    private final String clientId;
-    private final String doctorId;
+    private final long clientId;
+    private final long doctorId;
     private Date startDate;
     private Date endDate;
     private String status;
     private String reason;
 
-    public Appointment(String clientId, String doctorId, Date startDate, Date endDate, String status, String reason) {
+    public Appointment(long clientId, long doctorId, Date startDate, Date endDate, String status, String reason) {
         this.clientId = clientId;
         this.doctorId = doctorId;
         this.startDate = startDate;
@@ -20,11 +20,11 @@ public class Appointment {
         this.reason = reason;
     }
 
-    public String getClientId() {
+    public long getClientId() {
         return clientId;
     }
 
-    public String getDoctorId() {
+    public long getDoctorId() {
         return doctorId;
     }
 
