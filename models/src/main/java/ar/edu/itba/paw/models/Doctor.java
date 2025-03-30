@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.util.List;
 import java.util.Set;
 
 public class Doctor {
@@ -8,19 +9,18 @@ public class Doctor {
     private String email;
     private String password;
     private String phone;
-    private Set<String> specialty;
+    private List<String> specialty;
     private Set<String> coverage;
-
-    public Doctor(long id, String name, String email, String password, String phone) {
+    private List<Appointment> appointments;
+    private List<String> addresses;
+    public Doctor(long id, String name, String email, String password, String phone,List<String> specialty) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
+        this.specialty = specialty;
     }
-
-    private Set<Appointment> appointments;
-    private Set<String> addresses;
 
     public long getId() {
         return id;
@@ -58,11 +58,11 @@ public class Doctor {
         this.phone = phone;
     }
 
-    public Set<String> getSpecialty() {
+    public List<String> getSpecialty() {
         return specialty;
     }
 
-    public void setSpecialty(Set<String> specialty) {
+    public void setSpecialty(List<String> specialty) {
         this.specialty = specialty;
     }
 
@@ -74,19 +74,19 @@ public class Doctor {
         this.coverage = coverage;
     }
 
-    public Set<Appointment> getAppointments() {
+    public List<Appointment> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(Set<Appointment> appointments) {
+    public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
 
-    public Set<String> getAddresses() {
+    public List<String> getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(Set<String> addresses) {
+    public void setAddresses(List<String> addresses) {
         this.addresses = addresses;
     }
     public void addAddress(String address) {
