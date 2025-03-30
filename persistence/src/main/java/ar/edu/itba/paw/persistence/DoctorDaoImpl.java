@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import javax.sql.DataSource;
+
+import java.sql.Array;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,8 @@ public class DoctorDaoImpl implements DoctorDao {
             rs.getString("email"),
             rs.getString("password"),
             rs.getString("phone"),
-            List.of(rs.getString("specialty").split(","))
+            List.of(rs.getString("specialty").split(",")),
+            rs.getArray("coverages")
     );
 
     public DoctorDaoImpl(final DataSource ds) {
@@ -34,15 +37,16 @@ public class DoctorDaoImpl implements DoctorDao {
 
 
     @Override
-    public Doctor create(String name, String email, String password, String phone, List<String> specialty) {
+    public Doctor create(String name, String email, String password, String phone, List<String> specialty, Array coverages) {
          final Map<String, Object> args = new HashMap<>();
             args.put("name", name);
             args.put("email", email);
             args.put("password", password);
             args.put("phone", phone);
             args.put("specialty", String.join(",", specialty));
+            args.put("coverages", coverages);
             final Number doctorId = jdbcInsert.executeAndReturnKey(args);
-            return new Doctor(doctorId.longValue(), name, email, password, phone, specialty);
+            return new Doctor(doctorId.longValue(), name, email, password, phone, specialty,coverages);
     }
 
     @Override

@@ -7,6 +7,7 @@ import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Doctor;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +22,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor create(String name, String email, String password, String phone, List<String> specialty) {
-        return doctorDao.create(name, email, password, phone, specialty);
+    public Doctor create(String name, String email, String password, String phone, List<String> specialty, Array coverages) {
+        return doctorDao.create(name, email, password, phone, specialty,coverages);
     }
 
     @Override
