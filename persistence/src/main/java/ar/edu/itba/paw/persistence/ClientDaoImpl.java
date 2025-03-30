@@ -30,7 +30,7 @@ public class ClientDaoImpl implements ClientDao {
                     rs.getString("email"),
                     rs.getString("password"),
                     rs.getString("phone")
-            ););
+            );
         }
     };
 
