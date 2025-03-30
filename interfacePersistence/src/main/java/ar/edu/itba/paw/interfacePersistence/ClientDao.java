@@ -12,6 +12,6 @@ public interface ClientDao {
 
     Optional<Client> findByEmail(String email);
 
-    Client create(long id, String email, String password, long coverageId, String coverage,String name, String phone, List<Appointment> appointments);
+    Client create(String email, String password, long coverageId, String coverage,String name, String phone);
 
 }
