@@ -1,11 +1,14 @@
 package ar.edu.itba.paw.webapp.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -24,7 +27,12 @@ import java.nio.charset.StandardCharsets;
 @EnableWebMvc
 @ComponentScan({"ar.edu.itba.paw.webapp.controller","ar.edu.itba.paw.services","ar.edu.itba.paw.persistence"})
 @Configuration
+@PropertySource("classpath:application.properties")
 public class WebConfig extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    private Environment env;
+
     @Bean
     public ViewResolver viewResolver() {
         final InternalResourceViewResolver viewResolver = new
@@ -44,9 +52,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
-        ds.setUrl("jdbc:postgresql://10.16.1.110/paw-2025a-11");
-        ds.setUsername("paw-2025a-11");
-        ds.setPassword("hxf74mDPl");
+        ds.setUrl(env.getProperty("datasource.url"));
+        ds.setUsername(env.getProperty("datasource.username"));
+        ds.setPassword(env.getProperty("datasource.password"));
         return ds;
     }
 
