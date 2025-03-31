@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface AppointmentService {
 
-    Appointment create(long clientId, long doctorId, Date startDate, Date endDate, String status, String reason);
+    Appointment create(long clientId, long doctorId, Date startDate, String status, String reason);
 
     Optional<List<Appointment>> getByClientId(long clientId);
 

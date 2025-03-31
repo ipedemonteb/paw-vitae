@@ -24,7 +24,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
                     rs.getLong("clientId"),
                     rs.getLong("doctorId"),
                     rs.getDate("startDate"),
-                    rs.getDate("endDate"),
                     rs.getString("status"),
                     rs.getString("reason")
             );
@@ -40,12 +39,11 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
 
     @Override
-    public Appointment create(long clientId, long doctorId, Date startDate, Date endDate, String status, String reason) {
+    public Appointment create(long clientId, long doctorId, Date startDate, String status, String reason) {
         final Map<String, Object> args = new HashMap<>();
         args.put("clientId", clientId);
         args.put("doctorId", doctorId);
         args.put("startDate", startDate);
-        args.put("endDate", endDate);
         args.put("status", status);
         args.put("reason", reason);
         jdbcInsert.execute(args);
@@ -53,7 +51,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 clientId,
                 doctorId,
                 startDate,
-                endDate,
                 status,
                 reason
         );

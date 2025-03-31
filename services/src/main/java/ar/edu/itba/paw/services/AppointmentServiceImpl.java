@@ -17,8 +17,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment create(long clientId, long doctorId, Date startDate, Date endDate, String status, String reason) {
-        return appointmentDao.create(clientId, doctorId, startDate, endDate, status, reason);
+    public Appointment create(long clientId, long doctorId, Date startDate, String status, String reason) {
+        return appointmentDao.create(clientId, doctorId, startDate, status, reason);
     }
 
     @Override

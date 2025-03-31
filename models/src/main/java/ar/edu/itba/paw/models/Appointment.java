@@ -6,16 +6,14 @@ public class Appointment {
 
     private final long clientId;
     private final long doctorId;
-    private Date startDate;
-    private Date endDate;
-    private String status;
+    private Date date;
+    private String status; //will be enum
     private String reason;
 
-    public Appointment(long clientId, long doctorId, Date startDate, Date endDate, String status, String reason) {
+    public Appointment(long clientId, long doctorId, Date date, String status, String reason) {
         this.clientId = clientId;
         this.doctorId = doctorId;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.date = date;
         this.status = status;
         this.reason = reason;
     }
@@ -28,20 +26,12 @@ public class Appointment {
         return doctorId;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getDate() {
+        return date;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getStatus() {
