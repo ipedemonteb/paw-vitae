@@ -1,16 +1,17 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Appointment {
 
     private final long clientId;
     private final long doctorId;
-    private Date date;
+    private LocalDateTime date;
     private String status; //will be enum
     private String reason;
 
-    public Appointment(long clientId, long doctorId, Date date, String status, String reason) {
+    public Appointment(long clientId, long doctorId, LocalDateTime date, String status, String reason) {
         this.clientId = clientId;
         this.doctorId = doctorId;
         this.date = date;
@@ -26,11 +27,11 @@ public class Appointment {
         return doctorId;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

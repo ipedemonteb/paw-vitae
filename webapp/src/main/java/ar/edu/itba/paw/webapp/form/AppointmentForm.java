@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class AppointmentForm {
 
-    @NotNull()
+    @NotNull
     @Size(min = 2, max = 50)
     private String name;
 
@@ -28,10 +28,6 @@ public class AppointmentForm {
     // Coverage selected by the user; the front end will supply the options.
     @NotNull(message = "Coverage selection is required")
     private Long coverageId;
-
-    // Appointment specific fields
-    @NotNull(message = "Doctor selection is required")
-    private Long doctorId;
 
     @NotNull(message = "Appointment date/time is required")
     @Future(message = "The appointment must be scheduled for a future date/time")
@@ -79,14 +75,6 @@ public class AppointmentForm {
 
     public void setCoverageId(Long coverageId) {
         this.coverageId = coverageId;
-    }
-
-    public Long getDoctorId() {
-        return doctorId;
-    }
-
-    public void setDoctorId(Long doctorId) {
-        this.doctorId = doctorId;
     }
 
     public LocalDateTime getAppointmentDateTime() {
