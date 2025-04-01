@@ -3,15 +3,18 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 
 import java.util.*;
 import java.util.stream.Stream;
 
+@Repository
 public class DoctorDaoImpl implements DoctorDao {
 
     private JdbcTemplate jdbcTemplate;
@@ -31,6 +34,7 @@ public class DoctorDaoImpl implements DoctorDao {
             new ArrayList<>()
     );
 
+    @Autowired
     public DoctorDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)

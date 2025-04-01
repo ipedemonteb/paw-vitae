@@ -6,14 +6,18 @@ import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.ClientService;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
+@Service
 public class ClientServiceImpl implements ClientService {
 
     private final ClientDao clientDao;
 
+    @Autowired
     public ClientServiceImpl(ClientDao clientDao) {
         this.clientDao = clientDao;
     }

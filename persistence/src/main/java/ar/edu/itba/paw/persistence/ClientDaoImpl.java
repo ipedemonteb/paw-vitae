@@ -4,15 +4,18 @@ import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfacePersistence.ClientDao;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+@Repository
 public class ClientDaoImpl implements ClientDao {
 
     private AppointmentDao appointmentDao;
@@ -38,6 +41,7 @@ public class ClientDaoImpl implements ClientDao {
         }
     };
 
+    @Autowired
     public ClientDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertClient = new SimpleJdbcInsert(jdbcTemplate)
