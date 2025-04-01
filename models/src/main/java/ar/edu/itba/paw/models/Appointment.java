@@ -5,18 +5,24 @@ import java.util.Date;
 
 public class Appointment {
 
+    private final long id;
     private final long clientId;
     private final long doctorId;
     private LocalDateTime date;
     private String status; //will be enum
     private String reason;
 
-    public Appointment(long clientId, long doctorId, LocalDateTime date, String status, String reason) {
+    public Appointment(long clientId, long doctorId, LocalDateTime date, String status, String reason, long id) {
         this.clientId = clientId;
         this.doctorId = doctorId;
         this.date = date;
         this.status = status;
         this.reason = reason;
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public long getClientId() {
