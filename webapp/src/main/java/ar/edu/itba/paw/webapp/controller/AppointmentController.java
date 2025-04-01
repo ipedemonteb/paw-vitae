@@ -56,7 +56,7 @@ public class AppointmentController {
                         0,
                         0
                 ),
-                "pendiente",
+                null,
                appointmentForm.getReason()
         );
 
