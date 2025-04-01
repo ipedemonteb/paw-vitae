@@ -2,7 +2,6 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfacePersistence.ClientDao;
-import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,7 +19,9 @@ public class ClientDaoImpl implements ClientDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert jdbcInsertClient;
+
+    private final SimpleJdbcInsert jdbcInsertUser;
 
     private final static RowMapper<Client> ROW_MAPPER = new RowMapper<Client>() {
         @Override
@@ -39,9 +40,12 @@ public class ClientDaoImpl implements ClientDao {
 
     public ClientDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+        jdbcInsertClient = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("clients")
-                .usingColumns("client_id");
+                .usingColumns("client_id", "coverage_id");
+        jdbcInsertUser = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("users")
+                .usingGeneratedKeyColumns("id");
     }
 
     @Override
@@ -52,22 +56,20 @@ public class ClientDaoImpl implements ClientDao {
     }
 
     @Override
-    public Optional<Client> getByEmail(String email) {
-        Optional<Client> client = jdbcTemplate.query("SELECT * FROM users u JOIN clients c ON c.client_id = u.id JOIN coverage cov ON cov.id = c.coverage_id WHERE u.email = ?", ROW_MAPPER, email).stream().findFirst();
-        client.ifPresent(value -> value.setAppointments(appointmentDao.getByClientId(value.getId()).orElse(new ArrayList<>())));
-        return client;
-    }
-
-    @Override
     public Client create(String name, String lastName, String email, String password, String phone, Coverage coverage) {
-        final Map<String, Object> args = new HashMap<>();
-        args.put("email", email);
-        args.put("password", password);
-        args.put("coverage", coverage);
-        args.put("name", name);
-        args.put("phone", phone);
-        args.put("last_name", lastName);
-        final Number clientId = jdbcInsert.executeAndReturnKey(args);
+        final Map<String, Object> argsUser = new HashMap<>();
+        argsUser.put("email", email);
+        argsUser.put("password", password);
+        argsUser.put("name", name);
+        argsUser.put("phone", phone);
+        argsUser.put("last_name", lastName);
+        final Number clientId = jdbcInsertUser.executeAndReturnKey(argsUser);
+
+        final Map<String, Object> argsClient = new HashMap<>();
+        argsClient.put("client_id", clientId);
+        argsClient.put("coverage_id", coverage.getId());
+        jdbcInsertClient.execute(argsClient);
+
         return new Client (
                 name,
                 clientId.longValue(),

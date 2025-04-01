@@ -13,26 +13,21 @@ import java.util.List;
 import java.util.Optional;
 
 public class DoctorServiceImpl implements DoctorService {
-    private final DoctorDao doctorDao;
-    private final AppointmentService appointmentService;
 
-    public DoctorServiceImpl(final DoctorDao doctorDao, final AppointmentService appointmentService) {
+    private final DoctorDao doctorDao;
+
+    public DoctorServiceImpl(final DoctorDao doctorDao) {
         this.doctorDao = doctorDao;
-        this.appointmentService = appointmentService;
     }
 
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, List<String> specialty, List<Coverage> coverages) {
-        return null;
+        return this.doctorDao.create(name, lastName, email, password, phone, specialty, coverages);
     }
 
     @Override
     public Optional<Doctor> getById(long id) {
-        return Optional.empty();
+        return this.doctorDao.getById(id);
     }
 
-    @Override
-    public Optional<Doctor> getByEmail(String email) {
-        return Optional.empty();
-    }
 }

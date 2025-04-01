@@ -12,6 +12,4 @@ public interface DoctorService {
     Doctor create(String name, String lastName ,String email, String password, String phone, List<String> specialty,List<Coverage> coverages);
 
     Optional<Doctor> getById(final long id);
-
-    Optional<Doctor> getByEmail(String email);
 }

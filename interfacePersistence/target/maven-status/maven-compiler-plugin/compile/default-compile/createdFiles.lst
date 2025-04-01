@@ -1,4 +1,3 @@
 ar/edu/itba/paw/interfacePersistence/DoctorDao.class
-ar/edu/itba/paw/interfacePersistence/ClientDao.class
-ar/edu/itba/paw/interfacePersistence/UserDao.class
 ar/edu/itba/paw/interfacePersistence/AppointmentDao.class
+ar/edu/itba/paw/interfacePersistence/ClientDao.class

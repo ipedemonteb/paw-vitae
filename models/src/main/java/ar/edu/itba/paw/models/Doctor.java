@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Set;
 
 public class Doctor extends User {
+
     private List<String> specialty;
     private List<Coverage> coverageList = new ArrayList<>();
 
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, List<String> specialty) {
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, List<String> specialty, List<Coverage> coverageList) {
         super(name, id, lastName, email, password, phone);
         this.specialty = specialty;
+        this.coverageList = coverageList;
     }
 
     public List<String> getSpecialty() {

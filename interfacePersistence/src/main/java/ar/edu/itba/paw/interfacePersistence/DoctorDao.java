@@ -12,6 +12,4 @@ public interface DoctorDao {
 
     Optional<Doctor> getById(final long id);
 
-    Optional<Doctor> getByEmail(String email);
-
 }

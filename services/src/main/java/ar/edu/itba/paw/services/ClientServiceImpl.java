@@ -13,21 +13,14 @@ import java.util.Optional;
 public class ClientServiceImpl implements ClientService {
 
     private final ClientDao clientDao;
-    private final AppointmentService appointmentService;
 
-    public ClientServiceImpl(final ClientDao clientDao, final AppointmentService appointmentService) {
+    public ClientServiceImpl(ClientDao clientDao) {
         this.clientDao = clientDao;
-        this.appointmentService = appointmentService;
     }
 
     @Override
     public Optional<Client> getById(long id) {
         return clientDao.getById(id);
-    }
-
-    @Override
-    public Optional<Client> getByEmail(String email) {
-        return this.clientDao.getByEmail(email);
     }
 
     @Override

@@ -9,16 +9,17 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import javax.sql.DataSource;
 
-import java.sql.Array;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class DoctorDaoImpl implements DoctorDao {
 
     private JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert jdbcInsertUser;
+    private final SimpleJdbcInsert jdbcInsertDoctor;
+    private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
+
+
     private final RowMapper<Doctor> ROW_MAPPER = (rs, rowNum) -> new Doctor(
             rs.getString("name"),
             rs.getLong("id"),
@@ -26,28 +27,49 @@ public class DoctorDaoImpl implements DoctorDao {
             rs.getString("email"),
             rs.getString("password"),
             rs.getString("phone"),
-            List.of(rs.getString("specialty").split(","))
+            List.of(rs.getString("specialty").split(",")),
+            new ArrayList<>()
     );
 
     public DoctorDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+        jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
-                .usingColumns("doctor_id");
+                .usingColumns("doctor_id", "specialties");
+        jdbcInsertUser = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("users")
+                .usingGeneratedKeyColumns("id");
+        jdbcInsertDoctorCoverage = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("doctor_obra_social")
+                .usingColumns("doctor_id", "coverage_id");
     }
 
 
     @Override
     public Doctor create(String name, String lastName,String email, String password, String phone, List<String> specialty, List<Coverage> coverages) {
-        final Map<String, Object> args = new HashMap<>();
-        args.put("name", name);
-        args.put("last_name", lastName);
-        args.put("email", email);
-        args.put("password", password);
-        args.put("phone", phone);
-        args.put("specialty", String.join(",", specialty));
-        args.put("coverages", String.join(",", coverages.stream().map(Coverage::getName).toList()));
-        final Number docId = jdbcInsert.executeAndReturnKey(args);
+        final Map<String, Object> argsUser = new HashMap<>();
+        argsUser.put("name", name);
+        argsUser.put("last_name", lastName);
+        argsUser.put("email", email);
+        argsUser.put("password", password);
+        argsUser.put("phone", phone);
+        argsUser.put("specialty", String.join(",", specialty));
+//        argsUser.put("coverages", String.join(",", coverages.stream().map(Coverage::getName).toList()));
+        final Number docId = jdbcInsertUser.executeAndReturnKey(argsUser);
+
+        final Map<String, Object> argsDoctor = new HashMap<>();
+        argsDoctor.put("doctor_id", docId);
+        argsDoctor.put("specialties", String.join(",", specialty));
+        jdbcInsertDoctor.execute(argsDoctor);
+
+
+        final Map<String, Object> argsDoctorCoverage = new HashMap<>();
+        for (Coverage coverage : coverages) {
+            argsDoctorCoverage.put("doctor_id", docId);
+            argsDoctorCoverage.put("coverage_id", coverage.getId());
+            jdbcInsertDoctorCoverage.execute(argsDoctorCoverage);
+        }
+
         Doctor doc = new Doctor(
                 name,
                 docId.longValue(),
@@ -55,7 +77,8 @@ public class DoctorDaoImpl implements DoctorDao {
                 email,
                 password,
                 phone,
-                specialty
+                specialty,
+                coverages
         );
         doc.setCoverageList(coverages);
         return doc;
@@ -63,27 +86,9 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public Optional<Doctor> getById(long id) {
-        return jdbcTemplate.query("SELECT d.*, STRING_AGG(c.name, ',') AS coverages " +
-                        "FROM doctors d " +
-                        "JOIN users u ON d.doctor_id = u.id " +
-                        "LEFT JOIN Doctor_Obra_Social dos ON d.doctor_id = dos.doctor_id " +
-                        "LEFT JOIN coverages c ON dos.coverage_id = c.id " +
-                        "WHERE d.doctor_id = ? " +
-                        "GROUP BY d.doctor_id, u.id",
-                ROW_MAPPER, id).stream().findFirst();
-    }
-
-
-    @Override
-    public Optional<Doctor> getByEmail(String email) {
-        return jdbcTemplate.query("SELECT d.*, STRING_AGG(c.name, ',') AS coverages " +
-                        "FROM doctors d " +
-                        "JOIN users u ON d.doctor_id = u.id " +
-                        "LEFT JOIN Doctor_Obra_Social dos ON d.doctor_id = dos.doctor_id " +
-                        "LEFT JOIN coverages c ON dos.coverage_id = c.id " +
-                        "WHERE u.email = ? " +
-                        "GROUP BY d.doctor_id, u.id",
-                ROW_MAPPER, email).stream().findFirst();
+        Optional<Doctor> doc = jdbcTemplate.query("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE user.id = ?", ROW_MAPPER, id).stream().findFirst();
+        doc.ifPresent(value -> value.setCoverageList(jdbcTemplate.query("SELECT * FROM doctor_obra_social JOIN coverages ON doctor_obra_social.coverage_id = coverages.id WHERE doctor_obra_social.doctor_id = ?", (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("name")), id)));
+        return doc;
     }
 
 }
