@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DoctorService {
-    Doctor create(String name, String lastName ,String email, String password, String phone, List<String> specialty,List<Coverage> coverages);
+    Doctor create(String name, String lastName ,String email, String password, String phone, String specialty,List<Coverage> coverages);
 
     Optional<Doctor> getById(final long id);
 }

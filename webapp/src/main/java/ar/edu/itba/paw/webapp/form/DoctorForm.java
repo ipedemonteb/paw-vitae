@@ -1,11 +1,14 @@
 package ar.edu.itba.paw.webapp.form;
 
+
+
 import ar.edu.itba.paw.models.Coverage;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DoctorForm {
@@ -36,7 +39,7 @@ public class DoctorForm {
     private String phone;
 
     @NotEmpty
-    private String specialty;
+    private String[] specialty;
 
     private Coverage coverages;
 
@@ -93,12 +96,19 @@ public class DoctorForm {
         this.phone = phone;
     }
 
-    public List<String> getSpecialty() {
-        return List.of(specialty);
+    public String[] getSpecialty() {
+        return specialty;
     }
 
-    public void setSpecialty(List<String> specialty) {
-        this.specialty = specialty.getFirst();
+    public void setSpecialty(String[] specialty) {
+        this.specialty = specialty;
+    }
+
+    public String getSpecialtyAsString() {
+        if (specialty == null || specialty.length == 0) {
+            return "";
+        }
+        return String.join(", ", specialty);
     }
 
     public List<Coverage> getCoverages() {
@@ -117,3 +127,4 @@ public class DoctorForm {
         this.coverageList.remove(coverage);
     }
 }
+

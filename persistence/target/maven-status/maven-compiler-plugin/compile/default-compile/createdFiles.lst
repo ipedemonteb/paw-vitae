@@ -1,6 +1,6 @@
-ar/edu/itba/paw/persistence/AppointmentDaoImpl$1.class
-ar/edu/itba/paw/persistence/AppointmentDaoImpl.class
-ar/edu/itba/paw/persistence/DoctorDaoImpl.class
-ar/edu/itba/paw/persistence/ClientDaoImpl$1.class
-ar/edu/itba/paw/persistence/ClientDaoImpl.class
-ar/edu/itba/paw/persistence/CoverageDaoImpl.class
+ar\edu\itba\paw\persistence\AppointmentDaoImpl$1.class
+ar\edu\itba\paw\persistence\AppointmentDaoImpl.class
+ar\edu\itba\paw\persistence\ClientDaoImpl$1.class
+ar\edu\itba\paw\persistence\ClientDaoImpl.class
+ar\edu\itba\paw\persistence\CoverageDaoImpl.class
+ar\edu\itba\paw\persistence\DoctorDaoImpl.class

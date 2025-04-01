@@ -30,7 +30,7 @@ public class DoctorDaoImpl implements DoctorDao {
             rs.getString("email"),
             rs.getString("password"),
             rs.getString("phone"),
-            List.of(rs.getString("specialty").split(",")),
+            rs.getString("specialty"),
             new ArrayList<>()
     );
 
@@ -50,14 +50,14 @@ public class DoctorDaoImpl implements DoctorDao {
 
 
     @Override
-    public Doctor create(String name, String lastName,String email, String password, String phone, List<String> specialty, List<Coverage> coverages) {
+    public Doctor create(String name, String lastName,String email, String password, String phone, String specialty, List<Coverage> coverages) {
         final Map<String, Object> argsUser = new HashMap<>();
         argsUser.put("name", name);
         argsUser.put("last_name", lastName);
         argsUser.put("email", email);
         argsUser.put("password", password);
         argsUser.put("phone", phone);
-        argsUser.put("specialty", String.join(",", specialty));
+        argsUser.put("specialty", specialty);
 //        argsUser.put("coverages", String.join(",", coverages.stream().map(Coverage::getName).toList()));
         final Number docId = jdbcInsertUser.executeAndReturnKey(argsUser);
 

@@ -25,7 +25,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, List<String> specialty, List<Coverage> coverages) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, String specialty, List<Coverage> coverages) {
         return this.doctorDao.create(name, lastName, email, password, phone, specialty, coverages);
     }
 

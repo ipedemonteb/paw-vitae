@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 
+
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.models.Coverage;
@@ -49,7 +50,7 @@ public class AuthController {
             return doctorForm(doctorForm);
         }
 
-       String coverageName = doctorForm.getCoverages().getFirst().getName();
+        String coverageName = doctorForm.getCoverages().getFirst().getName();
 
         if(cs.findByName(coverageName).isEmpty()) {
             return doctorForm(doctorForm);
@@ -57,16 +58,19 @@ public class AuthController {
 
         Coverage coverage = cs.findByName(coverageName).get();
 
-        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialty(), List.of(coverage));
+        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialtyAsString(), List.of(coverage));
         return new ModelAndView("redirect:/" + doctor.getId());
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView doctorForm(@ModelAttribute("registerForm") final DoctorForm doctorForm) {
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
+        List<String> specialtyList = List.of("General Medicine", "Cardiology", "Dermatology","Endocrinology", "Gastroenterology", "Hematology", "Infectious Disease", "Nephrology", "Neurology", "Oncology", "Pulmonology", "Rheumatology", "Urology");
         ModelAndView mav = new ModelAndView("/auth/register");
         mav.addObject("coverageList", coverageList);
+        mav.addObject("specialtyList", specialtyList);
         return mav;
     }
 
 }
+
