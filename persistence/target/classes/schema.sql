@@ -1,8 +1,9 @@
--- Create ENUM type for tipo_usuario
+DROP TYPE IF EXISTS tipo_usuario CASCADE;
 CREATE TYPE tipo_usuario AS ENUM ('cliente', 'doctor');
 
--- Create ENUM type for estado in Turnos
+DROP TYPE IF EXISTS turno_estado CASCADE;
 CREATE TYPE turno_estado AS ENUM ('pendiente', 'confirmado', 'cancelado');
+
 
 -- Table: Usuarios
 CREATE TABLE IF NOT EXISTS Usuarios (
