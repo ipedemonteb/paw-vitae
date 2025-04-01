@@ -55,15 +55,6 @@
             </div>
 
             <div class="form-group">
-                <label for="doctorId"><spring:message code="appointment.form.doctor" /></label>
-                <form:select path="doctorId" id="doctorId" class="form-control">
-                    <option value=""><spring:message code="appointment.placeholder.doctor" /></option>
-                    <!-- This will be populated from the database -->
-                </form:select>
-                <form:errors path="doctorId" cssClass="error-message" />
-            </div>
-
-            <div class="form-group">
                 <label for="appointmentDateTime"><spring:message code="appointment.form.dateTime" /></label>
                 <form:input path="appointmentDateTime" id="appointmentDateTime" type="datetime-local" class="form-control" />
                 <form:errors path="appointmentDateTime" cssClass="error-message" />

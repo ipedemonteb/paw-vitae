@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.models.Appointment;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment create(long clientId, long doctorId, Date startDate, String status, String reason) {
+    public Appointment create(long clientId, long doctorId, LocalDateTime startDate, String status, String reason) {
         return appointmentDao.create(clientId, doctorId, startDate, status, reason);
     }
 

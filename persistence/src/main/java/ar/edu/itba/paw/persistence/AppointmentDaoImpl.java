@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.models.Appointment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Repository
@@ -26,7 +28,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             return new Appointment(
                     rs.getLong("clientId"),
                     rs.getLong("doctorId"),
-                    rs.getDate("startDate"),
+                    rs.getTimestamp("startDate").toLocalDateTime(),
                     rs.getString("status"),
                     rs.getString("reason")
             );
@@ -43,7 +45,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
 
     @Override
-    public Appointment create(long clientId, long doctorId, Date startDate, String status, String reason) {
+    public Appointment create(long clientId, long doctorId, LocalDateTime startDate, String status, String reason) {
         final Map<String, Object> args = new HashMap<>();
         args.put("clientId", clientId);
         args.put("doctorId", doctorId);

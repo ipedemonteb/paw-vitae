@@ -19,8 +19,7 @@ CREATE TABLE IF NOT EXISTS Usuarios (
 -- Table: Obras_Sociales
 CREATE TABLE IF NOT EXISTS Obras_Sociales (
                                 id_obra_social SERIAL PRIMARY KEY,
-                                nombre_obra_social VARCHAR(100) NOT NULL,
-                                detalles TEXT
+                                nombre_obra_social VARCHAR(100) NOT NULL
 );
 
 -- Table: Clientes
