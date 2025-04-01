@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @Controller
 public class AppointmentController {
@@ -38,29 +39,36 @@ public class AppointmentController {
     @RequestMapping(value = "/appointment", method = RequestMethod.POST)
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
-            final BindingResult errors,
-            RedirectAttributes redirectAttributes
+            final BindingResult errors
+           ,RedirectAttributes redirectAttributes
     ){
         if(errors.hasErrors()) {
             return appointment(appointmentForm);
         }
 
         Appointment appointment = appointmentService.create(
-                0,
                 1,
-                appointmentForm.getAppointmentDateTime(),
+                2,
+                LocalDateTime.of(appointmentForm.getAppointmentDate().getYear(),
+                        appointmentForm.getAppointmentDate().getMonthValue(),
+                        appointmentForm.getAppointmentDate().getDayOfMonth(),
+                        appointmentForm.getAppointmentHour(),
+                        0,
+                        0
+                ),
                 "pendiente",
                appointmentForm.getReason()
         );
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
-        return new ModelAndView("redirect:/appointment/appointment/confirmation");
+        return new ModelAndView("redirect:/confirmation");
+
     }
 
-    @RequestMapping(value = "/appointment/confirmation", method = RequestMethod.GET)
-    public ModelAndView appointmentConfirmation(@ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
-        return new ModelAndView("appointment/appointment/confirmation");
+    @RequestMapping(value = "/confirmation")                        //TODO find out why it cannot handle concatenated paths e.g. /appointment/confirmation
+    public ModelAndView appointmentConfirmation() {
+        return new ModelAndView("appointment/confirmation");
     }
 
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)

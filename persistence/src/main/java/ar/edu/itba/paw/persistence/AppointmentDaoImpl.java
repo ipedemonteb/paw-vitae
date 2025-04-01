@@ -50,7 +50,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         final Map<String, Object> args = new HashMap<>();
         args.put("client_id", clientId);
         args.put("doctor_id", doctorId);
-        args.put("start_date", startDate);
+        args.put("start_date", java.sql.Timestamp.valueOf(startDate));
         args.put("status", status);
         args.put("reason", reason);
         final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
