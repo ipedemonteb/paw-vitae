@@ -30,7 +30,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
                     rs.getLong("doctor_id"),
                     rs.getTimestamp("start_date").toLocalDateTime(),
                     rs.getString("status"),
-                    rs.getString("reason")
+                    rs.getString("reason"),
+                    rs.getLong("id")
             );
         }
     };
@@ -52,13 +53,14 @@ public class AppointmentDaoImpl implements AppointmentDao {
         args.put("start_date", startDate);
         args.put("status", status);
         args.put("reason", reason);
-        jdbcInsert.execute(args);
+        final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
         return new Appointment(
                 clientId,
                 doctorId,
                 startDate,
                 status,
-                reason
+                reason,
+                appointmentId.longValue()
         );
     }
 
