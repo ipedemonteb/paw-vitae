@@ -26,9 +26,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
         @Override
         public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Appointment(
-                    rs.getLong("clientId"),
-                    rs.getLong("doctorId"),
-                    rs.getTimestamp("startDate").toLocalDateTime(),
+                    rs.getLong("client_id"),
+                    rs.getLong("doctor_id"),
+                    rs.getTimestamp("start_date").toLocalDateTime(),
                     rs.getString("status"),
                     rs.getString("reason")
             );
@@ -40,16 +40,16 @@ public class AppointmentDaoImpl implements AppointmentDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
-                .usingGeneratedKeyColumns("clientId", "doctorId", "startDate", "endDate");
+                .usingGeneratedKeyColumns("id");
     }
 
 
     @Override
     public Appointment create(long clientId, long doctorId, LocalDateTime startDate, String status, String reason) {
         final Map<String, Object> args = new HashMap<>();
-        args.put("clientId", clientId);
-        args.put("doctorId", doctorId);
-        args.put("startDate", startDate);
+        args.put("client_id", clientId);
+        args.put("doctor_id", doctorId);
+        args.put("start_date", startDate);
         args.put("status", status);
         args.put("reason", reason);
         jdbcInsert.execute(args);
@@ -65,14 +65,14 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public Optional<List<Appointment>> getByClientId(long clientId) {
         List<Appointment> appointments = jdbcTemplate.query(
-                "SELECT * FROM appointments WHERE clientId = ?", ROW_MAPPER, clientId);
+                "SELECT * FROM Appointments WHERE client_id = ?", ROW_MAPPER, clientId);
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
 
     @Override
     public Optional<List<Appointment>> getByDoctorId(long doctorId) {
         List<Appointment> appointments = jdbcTemplate.query(
-                "SELECT * FROM appointments WHERE doctorId = ?", ROW_MAPPER, doctorId);
+                "SELECT * FROM Appointments WHERE doctor_id = ?", ROW_MAPPER, doctorId);
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
 }

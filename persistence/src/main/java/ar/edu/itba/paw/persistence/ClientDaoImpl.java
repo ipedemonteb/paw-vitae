@@ -54,7 +54,7 @@ public class ClientDaoImpl implements ClientDao {
 
     @Override
     public Optional<Client> getById(long id) {
-        Optional<Client> client = jdbcTemplate.query("SELECT * FROM users u JOIN clients c ON c.client_id = u.id JOIN coverage cov ON cov.id = c.coverage_id WHERE u.id = ?", ROW_MAPPER, id).stream().findFirst();
+        Optional<Client> client = jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id = ?", ROW_MAPPER, id).stream().findFirst();
         client.ifPresent(value -> value.setAppointments(appointmentDao.getByClientId(value.getId()).orElse(new ArrayList<>())));
         return client;
     }
