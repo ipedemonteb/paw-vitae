@@ -1,8 +1,8 @@
--- Create ENUM type for tipo_usuario
-CREATE TYPE tipo_usuario AS ENUM ('cliente', 'doctor');
-
--- Create ENUM type for estado in Turnos
-CREATE TYPE turno_estado AS ENUM ('pendiente', 'confirmado', 'cancelado');
+-- -- Create ENUM type for tipo_usuario
+-- CREATE TYPE IF NOT EXISTS tipo_usuario AS ENUM ('cliente', 'doctor');
+--
+-- -- Create ENUM type for estado in Turnos
+-- CREATE TYPE IF NOT EXISTS turno_estado AS ENUM ('pendiente', 'confirmado', 'cancelado');
 
 -- Table: Usuarios
 CREATE TABLE IF NOT EXISTS Usuarios (
