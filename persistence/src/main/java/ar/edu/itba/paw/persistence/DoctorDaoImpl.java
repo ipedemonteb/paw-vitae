@@ -63,11 +63,27 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public Optional<Doctor> getById(long id) {
-        return jdbcTemplate.query("SELECT * FROM users u JOIN doctors d ON d.doctor_id = u.id WHERE u.id = ?", ROW_MAPPER, id).stream().findFirst();
+        return jdbcTemplate.query("SELECT d.*, STRING_AGG(c.name, ',') AS coverages " +
+                        "FROM doctors d " +
+                        "JOIN users u ON d.doctor_id = u.id " +
+                        "LEFT JOIN Doctor_Obra_Social dos ON d.doctor_id = dos.doctor_id " +
+                        "LEFT JOIN coverages c ON dos.coverage_id = c.id " +
+                        "WHERE d.doctor_id = ? " +
+                        "GROUP BY d.doctor_id, u.id",
+                ROW_MAPPER, id).stream().findFirst();
     }
+
 
     @Override
     public Optional<Doctor> getByEmail(String email) {
-        return Optional.empty();
+        return jdbcTemplate.query("SELECT d.*, STRING_AGG(c.name, ',') AS coverages " +
+                        "FROM doctors d " +
+                        "JOIN users u ON d.doctor_id = u.id " +
+                        "LEFT JOIN Doctor_Obra_Social dos ON d.doctor_id = dos.doctor_id " +
+                        "LEFT JOIN coverages c ON dos.coverage_id = c.id " +
+                        "WHERE u.email = ? " +
+                        "GROUP BY d.doctor_id, u.id",
+                ROW_MAPPER, email).stream().findFirst();
     }
+
 }

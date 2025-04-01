@@ -1,0 +1,698 @@
+/* Variables de colores */
+:root {
+    --color-blue: #4a6fa5;
+    --color-pink: #e091a9;
+    --color-bone: #f8f5f1;
+    --color-bone-dark: #e6dfd5;
+    --color-text: #333333;
+    --color-text-light: #6b7280;
+    --color-white: #ffffff;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Reset y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--color-text);
+    background-color: var(--color-bone);
+    line-height: 1.6;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-blue);
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-pink);
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Botones */
+button {
+    cursor: pointer;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--color-blue);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background-color: #3a5a8a;
+}
+
+.btn-secondary {
+    background-color: var(--color-pink);
+    color: var(--color-white);
+}
+
+.btn-secondary:hover {
+    background-color: #c97a92;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--color-blue);
+    border: 1px solid var(--color-blue);
+}
+
+.btn-outline:hover {
+    background-color: var(--color-blue);
+    color: var(--color-white);
+}
+
+.btn-app {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--color-blue);
+    color: var(--color-white);
+    padding: 10px 15px;
+}
+
+.btn-app div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.btn-app small {
+    font-size: 0.7rem;
+    opacity: 0.9;
+}
+
+/* Header */
+header {
+    background-color: var(--color-white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--color-blue);
+}
+
+.logo-circle {
+    width: 30px;
+    height: 30px;
+    background-color: var(--color-blue);
+    color: var(--color-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+nav a {
+    color: var(--color-blue);
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: var(--color-pink);
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--color-blue);
+    transition: all 0.3s ease;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(to right, var(--color-bone), #f0e9e0);
+    padding: 80px 0;
+}
+
+.hero .container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.hero-content {
+    flex: 1;
+}
+
+.hero-image {
+    flex: 1;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.hero h1 {
+    color: var(--color-blue);
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    color: var(--color-text-light);
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+/* How it Works Section */
+.how-it-works {
+    padding: 80px 0;
+    background-color: var(--color-white);
+}
+
+.section-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 50px;
+}
+
+.badge {
+    display: inline-block;
+    background-color: var(--color-pink);
+    color: var(--color-white);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.section-header h2 {
+    color: var(--color-blue);
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.section-header p {
+    color: var(--color-text-light);
+}
+
+.steps {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.step-card {
+    flex: 1;
+    background-color: var(--color-bone);
+    border: 1px solid var(--color-bone-dark);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    text-align: center;
+}
+
+.step-icon {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(224, 145, 169, 0.1);
+    color: var(--color-pink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 20px;
+}
+
+.step-card h3 {
+    color: var(--color-blue);
+    margin-bottom: 10px;
+}
+
+.step-card p {
+    color: var(--color-text-light);
+}
+
+/* Specialties Section */
+.specialties {
+    padding: 80px 0;
+    background-color: var(--color-bone);
+}
+
+.specialties .container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.specialties-content {
+    flex: 1;
+}
+
+.specialties-image {
+    flex: 1;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.specialties h2 {
+    color: var(--color-blue);
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.specialties p {
+    color: var(--color-text-light);
+    margin-bottom: 30px;
+}
+
+.specialty-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.specialty-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-bone-dark);
+    border-radius: var(--border-radius);
+    padding: 15px;
+}
+
+.specialty-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-pink);
+    border-radius: 50%;
+}
+
+.specialty-item span {
+    color: var(--color-blue);
+}
+
+.link {
+    color: var(--color-pink);
+    font-weight: 500;
+    display: inline-block;
+}
+
+/* Benefits Section */
+.benefits {
+    padding: 80px 0;
+    background-color: var(--color-white);
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.benefit-card {
+    background-color: var(--color-bone);
+    border: 1px solid var(--color-bone-dark);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    text-align: center;
+}
+
+.benefit-icon {
+    width: 60px;
+    height: 60px;
+    color: var(--color-pink);
+    font-size: 2rem;
+    margin: 0 auto 15px;
+}
+
+.benefit-card h3 {
+    color: var(--color-blue);
+    margin-bottom: 10px;
+}
+
+.benefit-card p {
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+}
+
+/* Testimonials Section */
+.testimonials {
+    padding: 80px 0;
+    background-color: var(--color-bone);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.testimonial-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-bone-dark);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    box-shadow: var(--box-shadow);
+}
+
+.stars {
+    color: var(--color-pink);
+    margin-bottom: 15px;
+}
+
+.testimonial-card p {
+    color: var(--color-text-light);
+    margin-bottom: 20px;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.author-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(224, 145, 169, 0.1);
+    color: var(--color-pink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.author-info h4 {
+    color: var(--color-blue);
+    font-size: 0.9rem;
+}
+
+.author-info span {
+    color: var(--color-text-light);
+    font-size: 0.8rem;
+}
+
+/* App Download Section */
+.app-download {
+    padding: 80px 0;
+    background-color: var(--color-white);
+}
+
+.app-download .container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.app-content {
+    flex: 1;
+}
+
+.app-image {
+    flex: 1;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.app-download h2 {
+    color: var(--color-blue);
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.app-download p {
+    color: var(--color-text-light);
+    margin-bottom: 30px;
+}
+
+.app-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+/* CTA Section */
+.cta {
+    padding: 80px 0;
+    background-color: var(--color-blue);
+    color: var(--color-white);
+    text-align: center;
+}
+
+.cta h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.cta p {
+    max-width: 600px;
+    margin: 0 auto 30px;
+    opacity: 0.9;
+}
+
+.cta-form {
+    display: flex;
+    max-width: 500px;
+    margin: 0 auto;
+    gap: 10px;
+}
+
+.cta-form input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    color: var(--color-white);
+}
+
+.cta-form input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Footer */
+footer {
+    background-color: var(--color-bone);
+    border-top: 1px solid var(--color-bone-dark);
+    padding: 30px 0;
+}
+
+footer .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: var(--color-blue);
+}
+
+.copyright {
+    color: var(--color-text-light);
+    font-size: 0.8rem;
+}
+
+.footer-nav {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-nav a {
+    color: var(--color-blue);
+    font-size: 0.8rem;
+}
+
+.footer-nav a:hover {
+    color: var(--color-pink);
+}
+
+/* Iconos simulados para el prototipo */
+.icon-search:before { content: "🔍"; }
+.icon-calendar:before { content: "📅"; }
+.icon-bell:before { content: "🔔"; }
+.icon-clock:before { content: "⏰"; }
+.icon-star:before { content: "★"; }
+.icon-apple:before { content: ""; }
+.icon-android:before { content: ""; }
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .steps {
+        flex-direction: column;
+    }
+
+    .benefits-grid,
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero .container,
+    .specialties .container,
+    .app-download .container {
+        flex-direction: column;
+    }
+
+    .hero-image,
+    .specialties-image,
+    .app-image {
+        margin-top: 40px;
+    }
+
+    .benefits-grid,
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+
+    nav {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background-color: var(--color-white);
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transform: translateY(-150%);
+        transition: transform 0.3s ease;
+    }
+
+    nav.active {
+        transform: translateY(0);
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    .auth-buttons {
+        display: none;
+    }
+
+    footer .container {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .footer-logo {
+        justify-content: center;
+    }
+
+    .footer-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .cta-form {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .hero-buttons,
+    .app-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .specialty-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-primary,
+    .btn-outline,
+    .btn-app {
+        width: 100%;
+    }
+}

@@ -64,15 +64,15 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
         final DataSourceInitializer dsi = new DataSourceInitializer();
         dsi.setDataSource(ds);
-//        dsi.setDatabasePopulator(databasePopulator());
+        dsi.setDatabasePopulator(databasePopulator());
         return dsi;
     }
 
-//    private DatabasePopulator databasePopulator() {
-//        final ResourceDatabasePopulator dbp = new ResourceDatabasePopulator();
-//        dbp.addScript(schemaSql);
-//        return dbp;
-//    }
+    private DatabasePopulator databasePopulator() {
+        final ResourceDatabasePopulator dbp = new ResourceDatabasePopulator();
+        dbp.addScript(schemaSql);
+        return dbp;
+    }
 
     @Bean
     public MessageSource messageSource() {

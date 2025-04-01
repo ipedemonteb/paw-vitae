@@ -1,3 +1,5 @@
-/Users/josebenegaslynch/Documents/ITBA/CARRERA/3Y2C/PAW/paw-2025a-11/models/src/main/java/ar/edu/itba/paw/models/Appointment.java
-/Users/josebenegaslynch/Documents/ITBA/CARRERA/3Y2C/PAW/paw-2025a-11/models/src/main/java/ar/edu/itba/paw/models/Client.java
-/Users/josebenegaslynch/Documents/ITBA/CARRERA/3Y2C/PAW/paw-2025a-11/models/src/main/java/ar/edu/itba/paw/models/Doctor.java
+/mnt/e/tpPaw/paw-2025a-11/models/src/main/java/ar/edu/itba/paw/models/Appointment.java
+/mnt/e/tpPaw/paw-2025a-11/models/src/main/java/ar/edu/itba/paw/models/Client.java
+/mnt/e/tpPaw/paw-2025a-11/models/src/main/java/ar/edu/itba/paw/models/Coverage.java
+/mnt/e/tpPaw/paw-2025a-11/models/src/main/java/ar/edu/itba/paw/models/Doctor.java
+/mnt/e/tpPaw/paw-2025a-11/models/src/main/java/ar/edu/itba/paw/models/User.java
