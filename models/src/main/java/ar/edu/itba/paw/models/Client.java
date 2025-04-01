@@ -1,90 +1,20 @@
 package ar.edu.itba.paw.models;
 
-import javax.annotation.processing.Generated;
-import java.util.ArrayList;
-import java.util.List;
+public class Client extends User{
 
-public class Client {
+    private Coverage coverage_id;
 
-
-    private final long id;
-
-    private long coverageId;
-    private String coverage;
-    private String name;
-    private String email;
-    private String password;
-    private String phone;
-
-    private List<Appointment> appointments = new ArrayList<>();
-
-    public Client(long id, long coverageId, String coverage, String name, String email, String password, String phone) {
-        this.id = id;
-        this.coverageId = coverageId;
-        this.coverage = coverage;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
+    public Client(String name, long id, String lastName, String email, String password, String phone, Coverage coverage_id) {
+        super(name, id, lastName, email, password, phone);
+        this.coverage_id = coverage_id;
     }
 
-    public List<Appointment> getAppointments() {
-        return appointments;
+    public Coverage getCoverage_id() {
+        return coverage_id;
     }
 
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
+    public void setCoverage_id(Coverage coverage_id) {
+        this.coverage_id = coverage_id;
     }
 
-    public void setCoverageId(long coverageId) {
-        this.coverageId = coverageId;
-    }
-
-    public long getCoverageId() {
-        return coverageId;
-    }
-
-    public String getCoverage() {
-        return coverage;
-    }
-
-    public void setCoverage(String coverage) {
-        this.coverage = coverage;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 }

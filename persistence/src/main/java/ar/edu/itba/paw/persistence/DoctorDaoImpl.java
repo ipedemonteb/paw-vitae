@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
+import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,43 +20,54 @@ public class DoctorDaoImpl implements DoctorDao {
     private JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
     private final RowMapper<Doctor> ROW_MAPPER = (rs, rowNum) -> new Doctor(
-            rs.getLong("id"),
             rs.getString("name"),
+            rs.getLong("id"),
+            rs.getString("last_name"),
             rs.getString("email"),
             rs.getString("password"),
             rs.getString("phone"),
-            List.of(rs.getString("specialty").split(",")),
-            rs.getArray("coverages")
+            List.of(rs.getString("specialty").split(","))
     );
 
     public DoctorDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
-                .usingGeneratedKeyColumns("id");
+                .usingColumns("doctor_id");
     }
 
 
     @Override
-    public Doctor create(String name, String email, String password, String phone, List<String> specialty, Array coverages) {
-         final Map<String, Object> args = new HashMap<>();
-            args.put("name", name);
-            args.put("email", email);
-            args.put("password", password);
-            args.put("phone", phone);
-            args.put("specialty", String.join(",", specialty));
-            args.put("coverages", coverages);
-            final Number doctorId = jdbcInsert.executeAndReturnKey(args);
-            return new Doctor(doctorId.longValue(), name, email, password, phone, specialty,coverages);
+    public Doctor create(String name, String lastName,String email, String password, String phone, List<String> specialty, List<Coverage> coverages) {
+        final Map<String, Object> args = new HashMap<>();
+        args.put("name", name);
+        args.put("last_name", lastName);
+        args.put("email", email);
+        args.put("password", password);
+        args.put("phone", phone);
+        args.put("specialty", String.join(",", specialty));
+        args.put("coverages", String.join(",", coverages.stream().map(Coverage::getName).toList()));
+        final Number docId = jdbcInsert.executeAndReturnKey(args);
+        Doctor doc = new Doctor(
+                name,
+                docId.longValue(),
+                lastName,
+                email,
+                password,
+                phone,
+                specialty
+        );
+        doc.setCoverageList(coverages);
+        return doc;
     }
 
     @Override
-    public Optional<Doctor> findById(long id) {
-        return jdbcTemplate.query("SELECT * FROM doctors WHERE id = ?", ROW_MAPPER, id).stream().findFirst();
+    public Optional<Doctor> getById(long id) {
+        return jdbcTemplate.query("SELECT * FROM users u JOIN doctors d ON d.doctor_id = u.id WHERE u.id = ?", ROW_MAPPER, id).stream().findFirst();
     }
 
     @Override
-    public Optional<Doctor> findByEmail(String email) {
-        return jdbcTemplate.query("SELECT * FROM doctors WHERE email = ?", ROW_MAPPER, email).stream().findFirst();
+    public Optional<Doctor> getByEmail(String email) {
+        return Optional.empty();
     }
 }

@@ -1,15 +1,16 @@
 package ar.edu.itba.paw.interfaceServices;
 
 import ar.edu.itba.paw.models.Client;
+import ar.edu.itba.paw.models.Coverage;
 
 import java.util.Optional;
 
 public interface ClientService {
 
-    Client create(String email, String password, long coverageId, String coverage,String name, String phone);
+    Optional<Client> getById(long id);
 
-    Optional<Client> findById(long id);
+    Optional<Client> getByEmail(String email);
 
-    Optional<Client> findByEmail(String email);
+    Client create(String name, String lastName, String email, String password, String phone, Coverage coverage);
 
 }

@@ -7,60 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class Doctor {
-    private final long id;
-    private String name;
-    private String email;
-    private String password;
-    private String phone;
+public class Doctor extends User {
     private List<String> specialty;
-    private Array coverageIds;
-    private List<Appointment> appointments;
-    private List<String> addresses;
-    public Doctor(long id, String name, String email, String password, String phone,List<String> specialty,Array coverage) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
+    private List<Coverage> coverageList = new ArrayList<>();
+
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, List<String> specialty) {
+        super(name, id, lastName, email, password, phone);
         this.specialty = specialty;
-        this.coverageIds = coverage;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public List<String> getSpecialty() {
@@ -71,24 +24,12 @@ public class Doctor {
         this.specialty = specialty;
     }
 
-    public Array getCoverage() {
-        return coverageIds;
+    public List<Coverage> getCoverageList() {
+        return coverageList;
     }
 
-    public void setCoverage(Array coverage) {
-        this.coverageIds = coverage;
-    }
-
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
-    }
-
-    public List<String> getAddresses() {
-        return addresses;
+    public void setCoverageList(List<Coverage> coverageList) {
+        this.coverageList = coverageList;
     }
 
 }

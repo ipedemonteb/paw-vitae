@@ -4,7 +4,7 @@ import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 
-import ar.edu.itba.paw.models.Client;
+import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 
 import java.sql.Array;
@@ -22,21 +22,17 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor create(String name, String email, String password, String phone, List<String> specialty, Array coverages) {
-        return doctorDao.create(name, email, password, phone, specialty,coverages);
+    public Doctor create(String name, String lastName, String email, String password, String phone, List<String> specialty, List<Coverage> coverages) {
+        return null;
     }
 
     @Override
-    public Optional<Doctor> findById(long id) {
-        Optional<Doctor> doctor = doctorDao.findById(id);
-        doctor.ifPresent(value -> value.setAppointments(appointmentService.getByDoctorId(id).orElse(new ArrayList<>())));
-        return doctor;
+    public Optional<Doctor> getById(long id) {
+        return Optional.empty();
     }
 
     @Override
-    public Optional<Doctor> findByEmail(String email) {
-        Optional<Doctor> doctor = this.doctorDao.findByEmail(email);
-        doctor.ifPresent(value -> value.setAppointments(appointmentService.getByDoctorId(value.getId()).orElse(new ArrayList<>())));
-        return doctor;
+    public Optional<Doctor> getByEmail(String email) {
+        return Optional.empty();
     }
 }
