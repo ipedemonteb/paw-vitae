@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.webapp.form;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class AppointmentForm {
@@ -29,9 +29,20 @@ public class AppointmentForm {
     @NotNull(message = "Coverage selection is required")
     private Long coverageId;
 
-    @NotNull(message = "Appointment date/time is required")
-    @Future(message = "The appointment must be scheduled for a future date/time")
-    private LocalDateTime appointmentDateTime;
+//    @NotNull(message = "Appointment date/time is required")
+//    @Future(message = "The appointment must be scheduled for a future date/time")
+//    @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm")
+//    private LocalDateTime appointmentDateTime;
+
+    @NotNull(message = "Appointment date is required")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate appointmentDate;
+
+    // Use a separate field for the hour (0-23)
+    @NotNull(message = "Appointment hour is required")
+    @Min(value = 0, message = "Hour must be between 0 and 23")
+    @Max(value = 23, message = "Hour must be between 0 and 23")
+    private Integer appointmentHour;
 
     @Size(max = 255)
     private String reason;
@@ -77,12 +88,28 @@ public class AppointmentForm {
         this.coverageId = coverageId;
     }
 
-    public LocalDateTime getAppointmentDateTime() {
-        return appointmentDateTime;
+//    public LocalDateTime getAppointmentDateTime() {
+//        return appointmentDateTime;
+//    }
+//
+//    public void setAppointmentDateTime(LocalDateTime appointmentDateTime) {
+//        this.appointmentDateTime = appointmentDateTime;
+//    }
+
+    public LocalDate getAppointmentDate() {
+        return appointmentDate;
     }
 
-    public void setAppointmentDateTime(LocalDateTime appointmentDateTime) {
-        this.appointmentDateTime = appointmentDateTime;
+    public void setAppointmentDate(LocalDate appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public Integer getAppointmentHour() {
+        return appointmentHour;
+    }
+
+    public void setAppointmentHour(Integer appointmentHour) {
+        this.appointmentHour = appointmentHour;
     }
 
     public String getReason() {
