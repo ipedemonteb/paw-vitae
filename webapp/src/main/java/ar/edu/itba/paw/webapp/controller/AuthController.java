@@ -66,7 +66,7 @@ public class AuthController {
     public ModelAndView doctorForm(@ModelAttribute("registerForm") final DoctorForm doctorForm) {
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
         List<String> specialtyList = List.of("General Medicine", "Cardiology", "Dermatology","Endocrinology", "Gastroenterology", "Hematology", "Infectious Disease", "Nephrology", "Neurology", "Oncology", "Pulmonology", "Rheumatology", "Urology");
-        ModelAndView mav = new ModelAndView("/auth/register");
+        ModelAndView mav = new ModelAndView("auth/register");
         mav.addObject("coverageList", coverageList);
         mav.addObject("specialtyList", specialtyList);
         return mav;
