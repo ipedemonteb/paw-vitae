@@ -8,21 +8,21 @@ import java.time.LocalDateTime;
 
 public class AppointmentForm {
 
-    @NotNull(message = "First name is required")
-    @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
+    @NotNull()
+    @Size(min = 2, max = 50)
     private String name;
 
     @NotNull(message = "Last name is required")
-    @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters")
+    @Size(min = 2, max = 50)
     private String lastName;
 
     @NotNull(message = "Email is required")
     @Email(message = "Please provide a valid email address")
-    @Size(min = 6, max = 100, message = "Email must be between 6 and 100 characters")
+    @Size(min = 6, max = 100)
     private String email;
 
     @NotNull(message = "Phone is required")
-    @Size(min = 7, max = 20, message = "Phone number must be between 7 and 20 characters")
+    @Size(min = 7, max = 20)
     private String phone;
 
     // Coverage selected by the user; the front end will supply the options.
@@ -37,7 +37,7 @@ public class AppointmentForm {
     @Future(message = "The appointment must be scheduled for a future date/time")
     private LocalDateTime appointmentDateTime;
 
-    @Size(max = 255, message = "Reason must be at most 255 characters")
+    @Size(max = 255)
     private String reason;
 
 
