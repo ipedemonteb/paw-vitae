@@ -1,0 +1,16 @@
+package ar.edu.itba.paw.interfacePersistence;
+
+import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.Client;
+import ar.edu.itba.paw.models.Coverage;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface ClientDao {
+
+    Optional<Client> getById(long id);
+
+    Client create(String name, String lastName, String email, String password, String phone, Coverage coverage);
+
+}
