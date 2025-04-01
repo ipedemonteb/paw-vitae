@@ -9,20 +9,20 @@ import java.util.Set;
 
 public class Doctor extends User {
 
-    private List<String> specialty;
+    private String specialty;
     private List<Coverage> coverageList = new ArrayList<>();
 
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, List<String> specialty, List<Coverage> coverageList) {
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, String specialty, List<Coverage> coverageList) {
         super(name, id, lastName, email, password, phone);
         this.specialty = specialty;
         this.coverageList = coverageList;
     }
 
-    public List<String> getSpecialty() {
+    public String getSpecialty() {
         return specialty;
     }
 
-    public void setSpecialty(List<String> specialty) {
+    public void setSpecialty(String specialty) {
         this.specialty = specialty;
     }
 

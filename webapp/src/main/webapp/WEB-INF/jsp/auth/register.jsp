@@ -45,11 +45,45 @@
                 </div>
             </div>
 
-<%--            <div class="form-group">--%>
-<%--                <label for="specialty">Specialty</label>--%>
-<%--                <form:input path="specialty" id="specialty" class="form-control" />--%>
-<%--                <form:errors path="specialty" cssClass="error-message" />--%>
-<%--            </div>--%>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <form:password path="password" id="password" class="form-control" />
+                    <form:errors path="password" cssClass="error-message" />
+                </div>
+                <div class="form-group">
+                    <label for="repeatPassword">Confirm Password</label>
+                    <form:password path="repeatPassword" id="repeatPassword" class="form-control" />
+                    <form:errors path="repeatPassword" cssClass="error-message" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="specialty">Specialties</label>
+                <div class="specialty-select-container">
+                    <!-- Checkbox para controlar el estado del dropdown -->
+                    <input type="checkbox" id="dropdown-toggle" class="dropdown-toggle">
+                    <label for="dropdown-toggle" class="specialty-select-trigger">Select specialties</label>
+
+                    <!-- Lista de opciones personalizada -->
+                    <div class="specialty-select">
+                        <c:forEach items="${specialtyList}" var="specialty2">
+                            <div class="specialty-option">
+                                <input type="checkbox" id="specialty-${specialty2}" name="specialty" value="${specialty2}" class="specialty-checkbox">
+                                <label for="specialty-${specialty2}" class="specialty-label">${specialty2}</label>
+                            </div>
+                        </c:forEach>
+                    </div>
+
+                    <!-- Select oculto para mantener la compatibilidad con el backend -->
+                    <form:select path="specialty" id="specialty" class="hidden-select" multiple="true">
+                        <c:forEach items="${specialtyList}" var="specialty2">
+                            <option value="${specialty2}">${specialty2}</option>
+                        </c:forEach>
+                    </form:select>
+                </div>
+                <form:errors path="specialty" cssClass="error-message" />
+            </div>
 
 <%--            <div class="form-group">--%>
 <%--                <label for="coverages">Coverage</label>--%>
@@ -70,3 +104,4 @@
 </div>
 </body>
 </html>
+
