@@ -85,16 +85,16 @@
                 <form:errors path="specialty" cssClass="error-message" />
             </div>
 
-<%--            <div class="form-group">--%>
-<%--                <label for="coverages">Coverage</label>--%>
-<%--                <form:select path="coverages" id="coverages" class="form-control">--%>
-<%--                    <option value="">Select your coverage</option>--%>
-<%--                    <c:forEach items="${coverageList}" var="coverage">--%>
-<%--                        <option value="${coverage.id}">${coverage.name}</option>--%>
-<%--                    </c:forEach>--%>
-<%--                </form:select>--%>
-<%--                <form:errors path="coverages" cssClass="error-message" />--%>
-<%--            </div>--%>
+            <div class="form-group">
+                <label for="coverages">Coverage</label>
+                <form:select path="coverages" id="coverages" class="form-control">
+                    <option value="">Select your coverage</option>
+                    <c:forEach items="${coverageList}" var="coverage">
+                        <option value="${coverage.id}">${coverage.name}</option>
+                    </c:forEach>
+                </form:select>
+                <form:errors path="coverages" cssClass="error-message" />
+            </div>
 
             <div class="form-group">
                 <button type="submit" class="btn-primary">Register</button>
