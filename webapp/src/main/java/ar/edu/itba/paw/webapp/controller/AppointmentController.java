@@ -71,7 +71,7 @@ public class AppointmentController {
     @RequestMapping(value = "/confirmation")                        //TODO find out why it cannot handle concatenated paths e.g. /appointment/confirmation
     public ModelAndView appointmentConfirmation(Model model) {
         Appointment appointment = (Appointment) model.asMap().get("appointment");
-       Optional<Doctor> doctor = doctorService.getById(2);
+       Optional<Doctor> doctor = doctorService.findById(2);
         ModelAndView mav = new ModelAndView("appointment/confirmation");
         mav.addObject("appointment", appointment);
         if (doctor.isPresent()) {
