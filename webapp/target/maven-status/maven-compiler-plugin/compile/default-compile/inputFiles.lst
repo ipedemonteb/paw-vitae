@@ -1,7 +1,8 @@
-/mnt/e/tpPaw/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/config/WebConfig.java
-/mnt/e/tpPaw/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/controller/AuthController.java
-/mnt/e/tpPaw/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/controller/DoctorController.java
-/mnt/e/tpPaw/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/controller/LandingPageController.java
-/mnt/e/tpPaw/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/exception/UserNotFoundException.java
-/mnt/e/tpPaw/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/form/AppointmentForm.java
-/mnt/e/tpPaw/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/form/DoctorForm.java
+/Users/agusgalan/Documents/ITBA/PAW/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/config/WebConfig.java
+/Users/agusgalan/Documents/ITBA/PAW/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/controller/AppointmentController.java
+/Users/agusgalan/Documents/ITBA/PAW/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/controller/AuthController.java
+/Users/agusgalan/Documents/ITBA/PAW/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/controller/DoctorController.java
+/Users/agusgalan/Documents/ITBA/PAW/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/controller/LandingPageController.java
+/Users/agusgalan/Documents/ITBA/PAW/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/exception/UserNotFoundException.java
+/Users/agusgalan/Documents/ITBA/PAW/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/form/AppointmentForm.java
+/Users/agusgalan/Documents/ITBA/PAW/paw-2025a-11/webapp/src/main/java/ar/edu/itba/paw/webapp/form/DoctorForm.java
