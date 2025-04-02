@@ -9,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DoctorForm {
@@ -41,7 +42,8 @@ public class DoctorForm {
     @NotEmpty
     private String[] specialty;
 
-    private String coverages;
+    @NotEmpty
+    private List<String> coverages;
 
 //    @NotEmpty
 //    private List<Coverage> coverageList;
@@ -112,11 +114,11 @@ public class DoctorForm {
     }
 
     public List<String> getCoverages() {
-        return List.of(coverages);
+        return coverages;
     }
 
-    public void setCoverages(String coverage) {
-        this.coverages = coverage;
+    public void setCoverages(String[] coverageArray) {
+        this.coverages = Arrays.asList(coverageArray);
     }
 
 //    public void addCoverage(Coverage coverage) {
