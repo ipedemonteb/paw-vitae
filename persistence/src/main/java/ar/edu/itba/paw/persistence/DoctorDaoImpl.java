@@ -30,7 +30,7 @@ public class DoctorDaoImpl implements DoctorDao {
             rs.getString("email"),
             rs.getString("password"),
             rs.getString("phone"),
-            List.of(rs.getString("specialties").split(",")),
+            rs.getString("specialties"),
             new ArrayList<>()
     );
 
@@ -44,13 +44,13 @@ public class DoctorDaoImpl implements DoctorDao {
                 .withTableName("users")
                 .usingGeneratedKeyColumns("id");
         jdbcInsertDoctorCoverage = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("doctor_obra_social")
+                .withTableName("doctor_coverages")
                 .usingColumns("doctor_id", "coverage_id");
     }
 
 
     @Override
-    public Doctor create(String name, String lastName,String email, String password, String phone, List<String> specialties, List<Coverage> coverages) {
+    public Doctor create(String name, String lastName,String email, String password, String phone, String specialty, List<Coverage> coverages) {
         final Map<String, Object> argsUser = new HashMap<>();
         argsUser.put("name", name);
         argsUser.put("last_name", lastName);
@@ -63,7 +63,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
         final Map<String, Object> argsDoctor = new HashMap<>();
         argsDoctor.put("doctor_id", docId);
-        argsDoctor.put("specialties", String.join(",", specialties));
+        argsDoctor.put("specialties", String.join(",", specialty));
         jdbcInsertDoctor.execute(argsDoctor);
 
 
@@ -81,7 +81,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 email,
                 password,
                 phone,
-                specialties,
+                specialty,
                 coverages
         );
         doc.setCoverageList(coverages);
@@ -89,9 +89,9 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public Optional<Doctor> getById(long id) {
-        Optional<Doctor> doc = jdbcTemplate.query("SELECT * FROM Users JOIN Doctors ON Users.id = Doctors.doctor_id WHERE Users.id = ?", ROW_MAPPER, id).stream().findFirst();
-        doc.ifPresent(value -> value.setCoverageList(jdbcTemplate.query("SELECT * FROM Doctor_Coverages JOIN Coverages ON Doctor_Coverages.coverage_id = Coverages.id WHERE Doctor_Coverages.doctor_id = ?", (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name")), id)));
+    public Optional<Doctor> findById(long id) {
+        Optional<Doctor> doc = jdbcTemplate.query("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE users.id = ?", new Object[] {id}, ROW_MAPPER).stream().findFirst();
+        doc.ifPresent(value -> value.setCoverageList(jdbcTemplate.query("SELECT * FROM doctor_coverages JOIN coverages ON doctor_coverages.coverage_id = coverages.id WHERE doctor_coverages.doctor_id = ?", (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name")), id)));
         return doc;
     }
 
