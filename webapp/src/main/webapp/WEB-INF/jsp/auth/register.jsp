@@ -87,12 +87,28 @@
 
             <div class="form-group">
                 <label for="coverages">Coverage</label>
-                <form:select path="coverages" id="coverages" class="form-control">
-                    <option value="">Select your coverage</option>
-                    <c:forEach items="${coverageList}" var="coverage">
-                        <option value="${coverage.id}">${coverage.name}</option>
-                    </c:forEach>
-                </form:select>
+                <div class="specialty-select-container">
+                    <!-- Checkbox para controlar el estado del dropdown -->
+                    <input type="checkbox" id="coverage-dropdown-toggle" class="dropdown-toggle">
+                    <label for="coverage-dropdown-toggle" class="specialty-select-trigger">Select your coverage</label>
+
+                    <!-- Lista de opciones personalizada -->
+                    <div class="specialty-select">
+                        <c:forEach items="${coverageList}" var="coverage">
+                            <div class="specialty-option">
+                                <input type="checkbox" id="coverage-${coverage.id}" name="coverages" value="${coverage.id}" class="specialty-checkbox">
+                                <label for="coverage-${coverage.id}" class="specialty-label">${coverage.name}</label>
+                            </div>
+                        </c:forEach>
+                    </div>
+
+                    <!-- Select oculto para mantener la compatibilidad con el backend -->
+                    <form:select path="coverages" id="coverages" class="hidden-select" multiple="true">
+                        <c:forEach items="${coverageList}" var="coverage">
+                            <option value="${coverage.id}">${coverage.name}</option>
+                        </c:forEach>
+                    </form:select>
+                </div>
                 <form:errors path="coverages" cssClass="error-message" />
             </div>
 
