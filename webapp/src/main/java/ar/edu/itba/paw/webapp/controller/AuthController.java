@@ -45,19 +45,23 @@ public class AuthController {
     public ModelAndView register(@Valid @ModelAttribute("registerForm") final DoctorForm doctorForm, final BindingResult errors) {
 
         if(errors.hasErrors()) {
+            System.out.println("Errors: " + errors.getAllErrors());
             return doctorForm(doctorForm);
         }
 
-        String coverageName = doctorForm.getCoverages().getFirst().getName();
+        //String coverageName = doctorForm.getCoverages().getFirst().getName();
 
-        if(cs.findByName(coverageName).isEmpty()) {
-            return doctorForm(doctorForm);
-        }
+//        if(cs.findByName(coverageName).isEmpty()) {
+//            return doctorForm(doctorForm);
+//        }
+//        Coverage coverage = cs.findByName(coverageName).get();
 
-        Coverage coverage = cs.findByName(coverageName).get();
+        Coverage coverage = cs.create("OSDE");
+
+        System.out.println("Coverage: " + coverage.getName());
 
         final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialtyAsString(), List.of(coverage));
-        return new ModelAndView("redirect:/" + doctor.getId());
+        return new ModelAndView("redirect:/" + 1);
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
