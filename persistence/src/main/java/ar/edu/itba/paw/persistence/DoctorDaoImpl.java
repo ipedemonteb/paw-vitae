@@ -30,7 +30,7 @@ public class DoctorDaoImpl implements DoctorDao {
             rs.getString("email"),
             rs.getString("password"),
             rs.getString("phone"),
-            List.of(rs.getString("specialty").split(",")),
+            List.of(rs.getString("specialties").split(",")),
             new ArrayList<>()
     );
 
@@ -57,7 +57,7 @@ public class DoctorDaoImpl implements DoctorDao {
         argsUser.put("email", email);
         argsUser.put("password", password);
         argsUser.put("phone", phone);
-        argsUser.put("specialty", String.join(",", specialties));
+//        argsUser.put("specialties", String.join(",", specialties));
 //        argsUser.put("coverages", String.join(",", coverages.stream().map(Coverage::getName).toList()));
         final Number docId = jdbcInsertUser.executeAndReturnKey(argsUser);
 
@@ -91,7 +91,7 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public Optional<Doctor> getById(long id) {
         Optional<Doctor> doc = jdbcTemplate.query("SELECT * FROM Users JOIN Doctors ON Users.id = Doctors.doctor_id WHERE Users.id = ?", ROW_MAPPER, id).stream().findFirst();
-        doc.ifPresent(value -> value.setCoverageList(jdbcTemplate.query("SELECT * FROM Doctor_Coverage JOIN Coverages ON Doctor_Coverage.coverage_id = Coverages.id WHERE Doctor_Coverage.doctor_id = ?", (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name")), id)));
+        doc.ifPresent(value -> value.setCoverageList(jdbcTemplate.query("SELECT * FROM Doctor_Coverages JOIN Coverages ON Doctor_Coverages.coverage_id = Coverages.id WHERE Doctor_Coverages.doctor_id = ?", (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name")), id)));
         return doc;
     }
 

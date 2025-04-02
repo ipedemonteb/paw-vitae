@@ -9,6 +9,7 @@ import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Controller
 public class AppointmentController {
@@ -56,7 +58,7 @@ public class AppointmentController {
                         0,
                         0
                 ),
-                null,
+                "pendiente",
                appointmentForm.getReason()
         );
 
@@ -67,8 +69,17 @@ public class AppointmentController {
     }
 
     @RequestMapping(value = "/confirmation")                        //TODO find out why it cannot handle concatenated paths e.g. /appointment/confirmation
-    public ModelAndView appointmentConfirmation() {
-        return new ModelAndView("appointment/confirmation");
+    public ModelAndView appointmentConfirmation(Model model) {
+        Appointment appointment = (Appointment) model.asMap().get("appointment");
+       Optional<Doctor> doctor = doctorService.getById(2);
+        ModelAndView mav = new ModelAndView("appointment/confirmation");
+        mav.addObject("appointment", appointment);
+        if (doctor.isPresent()) {
+            mav.addObject("doctor", doctor.get());
+        } else {
+            mav.addObject("doctor", null);
+        }
+        return mav;
     }
 
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
