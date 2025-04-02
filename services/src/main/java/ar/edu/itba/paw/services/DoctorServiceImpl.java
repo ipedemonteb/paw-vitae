@@ -27,7 +27,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Optional<Doctor> getById(long id) {
+    public Optional<Doctor> findById(long id) {
         return this.doctorDao.findById(id);
     }
 

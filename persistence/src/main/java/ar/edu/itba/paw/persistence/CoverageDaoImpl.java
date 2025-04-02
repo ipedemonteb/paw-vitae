@@ -21,24 +21,24 @@ public class CoverageDaoImpl implements CoverageDao {
 
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
-    private final static RowMapper<Coverage> COVERAGE_MAPPER = (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("name"));
+    private final static RowMapper<Coverage> COVERAGE_MAPPER = (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name"));
 
     @Autowired
     public CoverageDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("Obras_Sociales").usingGeneratedKeyColumns("id_obra_social");
+                .withTableName("coverages").usingGeneratedKeyColumns("id");
     }
 
     @Override
     public Optional<Coverage> findById(long id) {
-        return jdbcTemplate.query("SELECT * FROM Obras_Sociales WHERE id = ?", new Object[]{id}, COVERAGE_MAPPER).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM coverages WHERE id = ?", new Object[]{id}, COVERAGE_MAPPER).stream().findFirst();
     }
 
     @Override
     public Coverage create(String name) {
         final Map<String, Object> values = new HashMap<>();
-        values.put("nombre_obra_social", name);
+        values.put("coverage_name", name);
         final Number key = jdbcInsert.executeAndReturnKey(values);
         return new Coverage(key.longValue(), name);
 
@@ -46,11 +46,11 @@ public class CoverageDaoImpl implements CoverageDao {
 
     @Override
     public Optional<Coverage> findByName(String name) {
-        return jdbcTemplate.query("SELECT * FROM Obras_Sociales WHERE name = ?", new Object[]{name}, COVERAGE_MAPPER).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM coverages WHERE name = ?", new Object[]{name}, COVERAGE_MAPPER).stream().findFirst();
     }
 
     @Override
     public Optional<List<Coverage>> getAll() {
-        return Optional.of(jdbcTemplate.query("SELECT * FROM Obras_Sociales", COVERAGE_MAPPER));
+        return Optional.of(jdbcTemplate.query("SELECT * FROM coverages", COVERAGE_MAPPER));
     }
 }
