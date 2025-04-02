@@ -25,13 +25,11 @@ public class AuthController {
 
     private final DoctorService ds;
     private final CoverageService cs;
-    private final CoverageService coverageService;
 
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, CoverageService coverageService) {
+    public AuthController(DoctorService ds, CoverageService cs) {
         this.ds = ds;
         this.cs = cs;
-        this.coverageService = coverageService;
     }
 
     //    @RequestMapping("/login")
