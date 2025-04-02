@@ -48,19 +48,12 @@
             <div class="form-group">
                 <label for="coverageId"><spring:message code="appointment.form.coverage" /></label>
                 <form:select path="coverageId" id="coverageId" class="form-control">
-                    <option value="0"><spring:message code="appointment.placeholder.coverage" /></option>
-                    <option value="1"><spring:message code="appointment.placeholder.coverage" />!!!</option>
+                    <option value=""><spring:message code="appointment.placeholder.coverage" /></option>
+                    <option value="1"><spring:message code="appointment.placeholder.coverage.osde" /></option>
                 </form:select>
                 <form:errors path="coverageId" cssClass="error-message" />
             </div>
 
-<%--            <div class="form-group">--%>
-<%--                <label for="appointmentDateTime">--%>
-<%--                    <spring:message code="appointment.form.dateTime" />--%>
-<%--                </label>--%>
-<%--                <form:input path="appointmentDateTime" id="appointmentDateTime" type="datetime-local" step="3600" class="form-control" />--%>
-<%--                <form:errors path="appointmentDateTime" cssClass="error-message" />--%>
-<%--            </div>--%>
             <div class="form-group">
                 <label for="appointmentDate">Date</label>
                 <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" />

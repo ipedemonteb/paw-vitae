@@ -1,8 +1,4 @@
-DROP TYPE IF EXISTS user_type CASCADE;
-CREATE TYPE user_type AS ENUM ('cliente', 'doctor');
 
-DROP TYPE IF EXISTS appointment_state CASCADE;
-CREATE TYPE appointment_state AS ENUM ('pendiente', 'confirmado', 'cancelado');
 
 CREATE TABLE IF NOT EXISTS Users (
                           id SERIAL PRIMARY KEY,
@@ -10,8 +6,8 @@ CREATE TABLE IF NOT EXISTS Users (
                           last_name VARCHAR(50) NOT NULL,
                           email VARCHAR(100) NOT NULL UNIQUE,
                           password VARCHAR(255) NOT NULL,
-                          phone VARCHAR(20),
-                          user_type user_type NOT NULL
+                          phone VARCHAR(20)
+--                         TODO: ADD MISSING COLUMNS, E.G. DNI
 );
 
 CREATE TABLE IF NOT EXISTS Coverages (
@@ -45,7 +41,7 @@ CREATE TABLE IF NOT EXISTS Appointments (
                         doctor_id INT NOT NULL,
                         client_id INT NOT NULL,
                         start_date TIMESTAMP NOT NULL,
-                        status appointment_state NOT NULL DEFAULT 'pendiente',
+                        status VARCHAR(20) NOT NULL DEFAULT 'pendiente' CHECK (status IN ('pendiente','confirmado','cancelado')),
                         reason TEXT,
                         FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
                         FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE

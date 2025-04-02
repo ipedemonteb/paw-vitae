@@ -10,6 +10,9 @@
 <body>
 
 <h1>HOLA, FUNCIONA</h1>
+<h2>DATE: <c:out value="${appointment.date}"></c:out></h2>
+<h2>REASON: <c:out value="${appointment.reason}"></c:out></h2>
+<h2>Doctor name: <c:out value="${doctor.name} ${doctor.lastName}"></c:out></h2>
 
 </body>
 </html>
