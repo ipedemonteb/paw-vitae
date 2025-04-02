@@ -49,7 +49,9 @@
                 <label for="coverageId"><spring:message code="appointment.form.coverage" /></label>
                 <form:select path="coverageId" id="coverageId" class="form-control">
                     <option value=""><spring:message code="appointment.placeholder.coverage" /></option>
-                    <option value="1"><spring:message code="appointment.placeholder.coverage.osde" /></option>
+                    <c:forEach var="coverage" items="${coverages}">
+                        <option value="${coverage.id}">${coverage.name}</option>
+                    </c:forEach>
                 </form:select>
                 <form:errors path="coverageId" cssClass="error-message" />
             </div>
