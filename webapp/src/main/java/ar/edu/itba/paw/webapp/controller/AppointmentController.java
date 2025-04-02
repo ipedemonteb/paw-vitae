@@ -2,9 +2,11 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.ClientService;
+import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
+import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -30,11 +35,14 @@ public class AppointmentController {
 
     private DoctorService doctorService;
 
+    private CoverageService coverageService;
+
     @Autowired
-    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService) {
+    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService, CoverageService coverageService) {
         this.appointmentService = appointmentService;
         this.clientService = clientService;
         this.doctorService = doctorService;
+        this.coverageService = coverageService;
     }
 
 
@@ -74,16 +82,15 @@ public class AppointmentController {
        Optional<Doctor> doctor = doctorService.findById(2);
         ModelAndView mav = new ModelAndView("appointment/confirmation");
         mav.addObject("appointment", appointment);
-        if (doctor.isPresent()) {
-            mav.addObject("doctor", doctor.get());
-        } else {
-            mav.addObject("doctor", null);
-        }
+        mav.addObject("doctor", doctor.orElse(null));
         return mav;
     }
 
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
     public ModelAndView appointment(@ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
-        return new ModelAndView("appointment/appointment");
+        ModelAndView mav = new ModelAndView("appointment/appointment");
+        Optional<List<Coverage>> coverage = coverageService.getAll();
+        mav.addObject("coverages", coverage.orElse(Collections.emptyList()));
+        return mav;
     }
 }
