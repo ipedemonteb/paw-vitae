@@ -1,7 +1,7 @@
 ar/edu/itba/paw/webapp/form/DoctorForm.class
 ar/edu/itba/paw/webapp/exception/UserNotFoundException.class
 ar/edu/itba/paw/webapp/controller/DoctorController.class
-ar/edu/itba/paw/webapp/form/AppointmentForm.class
 ar/edu/itba/paw/webapp/config/WebConfig.class
+ar/edu/itba/paw/webapp/form/AppointmentForm.class
 ar/edu/itba/paw/webapp/controller/AuthController.class
 ar/edu/itba/paw/webapp/controller/LandingPageController.class

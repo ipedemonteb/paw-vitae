@@ -48,24 +48,15 @@ public class AuthController {
             System.out.println("Errors: " + errors.getAllErrors());
             return doctorForm(doctorForm);
         }
-
-        String coverageName = doctorForm.getCoverages().getFirst();
-
-        if(cs.findByName(coverageName).isEmpty()) {
-            return doctorForm(doctorForm);
-        }
-        Coverage coverage = cs.findByName(coverageName).get();
-
-        System.out.println("Coverage: " + coverage.getName());
-
-        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialtyAsString(), List.of(coverage));
+        List<Coverage> coverages = new ArrayList<>();
+        doctorForm.getCoverages().forEach(coverage -> coverages.add(cs.findById(Long.parseLong(coverage)).orElse(null)));
+        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialtyAsString(),coverages);
         return new ModelAndView("redirect:/" + doctor.getId());
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView doctorForm(@ModelAttribute("registerForm") final DoctorForm doctorForm) {
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
-        System.out.println("CoverageList: " + coverageList);
         List<String> specialtyList = List.of("General Medicine", "Cardiology", "Dermatology","Endocrinology", "Gastroenterology", "Hematology", "Infectious Disease", "Nephrology", "Neurology", "Oncology", "Pulmonology", "Rheumatology", "Urology");
         ModelAndView mav = new ModelAndView("auth/register");
         mav.addObject("coverageList", coverageList);
