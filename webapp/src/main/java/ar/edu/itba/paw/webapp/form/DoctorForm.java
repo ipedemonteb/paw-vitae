@@ -41,10 +41,10 @@ public class DoctorForm {
     @NotEmpty
     private String[] specialty;
 
-    private Coverage coverages;
+    private String coverages;
 
 //    @NotEmpty
-    private List<Coverage> coverageList;
+//    private List<Coverage> coverageList;
 
     // Getters and Setters
 
@@ -111,20 +111,20 @@ public class DoctorForm {
         return String.join(", ", specialty);
     }
 
-    public List<Coverage> getCoverages() {
+    public List<String> getCoverages() {
         return List.of(coverages);
     }
 
-    public void setCoverages() {
-        this.coverages = coverageList.getFirst();
+    public void setCoverages(String coverage) {
+        this.coverages = coverage;
     }
 
-    public void addCoverage(Coverage coverage) {
-        this.coverageList.add(coverage);
-    }
-
-    public void removeCoverage(Coverage coverage) {
-        this.coverageList.remove(coverage);
-    }
+//    public void addCoverage(Coverage coverage) {
+//        this.coverageList.add(coverage);
+//    }
+//
+//    public void removeCoverage(Coverage coverage) {
+//        this.coverageList.remove(coverage);
+//    }
 }
 
