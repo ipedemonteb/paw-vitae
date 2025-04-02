@@ -89,9 +89,9 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public Optional<Doctor> getById(long id) {
-        Optional<Doctor> doc = jdbcTemplate.query("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE user.id = ?", ROW_MAPPER, id).stream().findFirst();
-        doc.ifPresent(value -> value.setCoverageList(jdbcTemplate.query("SELECT * FROM doctor_obra_social JOIN coverages ON doctor_obra_social.coverage_id = coverages.id WHERE doctor_obra_social.doctor_id = ?", (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("name")), id)));
+    public Optional<Doctor> findById(long id) {
+        Optional<Doctor> doc = jdbcTemplate.query("SELECT * FROM Usuarios JOIN Doctores ON Usuarios.id_usuario = Doctores.id_doctor WHERE Usuarios.id_usuario = ?", ROW_MAPPER, id).stream().findFirst();
+        doc.ifPresent(value -> value.setCoverageList(jdbcTemplate.query("SELECT * FROM doctor_obra_social JOIN Obras_Sociales ON doctor_obra_social.id_obra_social = Obra_Social.id_obra_social WHERE doctor_obra_social.id_doctor = ?", (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("name")), id)));
         return doc;
     }
 

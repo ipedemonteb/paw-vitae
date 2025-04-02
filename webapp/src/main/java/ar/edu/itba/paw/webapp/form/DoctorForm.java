@@ -43,7 +43,7 @@ public class DoctorForm {
 
     private Coverage coverages;
 
-    @NotEmpty
+//    @NotEmpty
     private List<Coverage> coverageList;
 
     // Getters and Setters
