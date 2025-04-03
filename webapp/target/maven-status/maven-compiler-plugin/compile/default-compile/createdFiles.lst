@@ -1,3 +1,4 @@
+ar/edu/itba/paw/webapp/controller/SearchController.class
 ar/edu/itba/paw/webapp/form/DoctorForm.class
 ar/edu/itba/paw/webapp/exception/UserNotFoundException.class
 ar/edu/itba/paw/webapp/controller/DoctorController.class
