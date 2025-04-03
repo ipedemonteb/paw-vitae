@@ -9,24 +9,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title><spring:message code="register.title" /></title>
     <link rel="stylesheet" href="<c:url value="/css/register.css" />">
 </head>
 <body>
 <div class="container">
     <div class="appointment-card">
-        <h1 class="title">Register</h1>
-        <p class="subtitle">Fill out the form below</p>
+        <h1 class="title"><spring:message code="register.title" /></h1>
+        <p class="subtitle"><spring:message code="register.subtitle" /></p>
 
         <form:form modelAttribute="registerForm" method="post" action="${pageContext.request.contextPath}/register" enctype="multipart/form-data">
             <div class="form-row">
                 <div class="form-group">
-                    <label for="name">First Name</label>
+                    <label for="name"><spring:message code="register.firstName" /></label>
                     <form:input path="name" id="name" class="form-control" />
                     <form:errors path="name" cssClass="error-message" />
                 </div>
                 <div class="form-group">
-                    <label for="lastName">Last Name</label>
+                    <label for="lastName"><spring:message code="register.lastName" /></label>
                     <form:input path="lastName" id="lastName" class="form-control" />
                     <form:errors path="lastName" cssClass="error-message" />
                 </div>
@@ -34,12 +34,12 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="email"><spring:message code="register.email" /></label>
                     <form:input path="email" id="email" type="email" class="form-control" />
                     <form:errors path="email" cssClass="error-message" />
                 </div>
                 <div class="form-group">
-                    <label for="phone">Phone</label>
+                    <label for="phone"><spring:message code="register.phone" /></label>
                     <form:input path="phone" id="phone" class="form-control" />
                     <form:errors path="phone" cssClass="error-message" />
                 </div>
@@ -47,22 +47,22 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password"><spring:message code="register.password" /></label>
                     <form:password path="password" id="password" class="form-control" />
                     <form:errors path="password" cssClass="error-message" />
                 </div>
                 <div class="form-group">
-                    <label for="repeatPassword">Confirm Password</label>
+                    <label for="repeatPassword"><spring:message code="register.confirmPassword" /></label>
                     <form:password path="repeatPassword" id="repeatPassword" class="form-control" />
                     <form:errors path="repeatPassword" cssClass="error-message" />
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="specialty">Specialties</label>
+                <label for="specialty"><spring:message code="register.specialties" /></label>
                 <div class="specialty-select-container">
                     <input type="checkbox" id="dropdown-toggle" class="dropdown-toggle">
-                    <label for="dropdown-toggle" class="specialty-select-trigger">Select specialties</label>
+                    <label for="dropdown-toggle" class="specialty-select-trigger"><spring:message code="register.selectSpecialties" /></label>
 
                     <div class="specialty-select">
                         <c:forEach items="${specialtyList}" var="specialty2">
@@ -73,7 +73,7 @@
                         </c:forEach>
                     </div>
 
-                    <!-- Select oculto para mantener la compatibilidad con el backend -->
+
                     <form:select path="specialty" id="specialty" class="hidden-select" multiple="true">
                         <c:forEach items="${specialtyList}" var="specialty2">
                             <option value="${specialty2}">${specialty2}</option>
@@ -84,12 +84,11 @@
             </div>
 
             <div class="form-group">
-                <label for="coverages">Coverage</label>
+                <label for="coverages"><spring:message code="register.coverage" /></label>
                 <div class="specialty-select-container">
                     <input type="checkbox" id="coverage-dropdown-toggle" class="dropdown-toggle">
-                    <label for="coverage-dropdown-toggle" class="specialty-select-trigger">Select your coverage</label>
+                    <label for="coverage-dropdown-toggle" class="specialty-select-trigger"><spring:message code="register.selectCoverage" /></label>
 
-                    <!-- Lista de opciones personalizada -->
                     <div class="specialty-select">
                         <c:forEach items="${coverageList}" var="coverage">
                             <div class="specialty-option">
@@ -99,7 +98,6 @@
                         </c:forEach>
                     </div>
 
-                    <!-- Select oculto para mantener la compatibilidad con el backend -->
                     <form:select path="coverages" id="coverages" class="hidden-select" multiple="true">
                         <c:forEach items="${coverageList}" var="coverage">
                             <option value="${coverage.id}">${coverage.name}</option>
@@ -108,18 +106,17 @@
                 </div>
                 <form:errors path="coverages" cssClass="error-message" />
                 <div class="form-group">
-                    <label for="image">Subir imagen:</label>
+                    <label for="image"><spring:message code="register.uploadImage" />:</label>
                     <form:input type="file" path="image" id="image" accept="image/*" />
                     <form:errors path="image" cssClass="error-message" />
                 </div>
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn-primary">Register</button>
+                <button type="submit" class="btn-primary"><spring:message code="register.button" /></button>
             </div>
         </form:form>
     </div>
 </div>
 </body>
 </html>
-
