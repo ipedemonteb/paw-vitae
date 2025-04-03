@@ -57,14 +57,13 @@
             </div>
 
             <div class="form-group">
-                <label for="appointmentDate">Date</label>
+                <label for="appointmentDate"><spring:message code="appointment.form.date"/></label>
                 <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" />
             </div>
 
             <div class="form-group">
-                <label for="appointmentHour">Hour</label>
+                <label for="appointmentHour"><spring:message code="appointment.form.time"/></label>
                 <select id="appointmentHour" name="appointmentHour" class="form-control">
-                    <!-- Options for hours (0 to 23) -->
                     <c:forEach var="hour" begin="0" end="23">
                         <option value="${hour}">${hour}:00</option>
                     </c:forEach>

@@ -9,10 +9,11 @@
 </head>
 <body>
 
-<h1>HOLA, FUNCIONA</h1>
-<h2>DATE: <c:out value="${appointment.date}"></c:out></h2>
-<h2>REASON: <c:out value="${appointment.reason}"></c:out></h2>
-<h2>Doctor name: <c:out value="${doctor.name} ${doctor.lastName}"></c:out></h2>
+<h1><spring:message code="appointment.confirmation.title"/></h1>
+<h2><spring:message code="appointment.confirmation.reason" arguments="${appointment.reason}"/></h2>
+<h2><spring:message code="appointment.confirmation.doctorName" arguments="${doctor.name}, ${doctor.lastName}"/></h2>
+<h2><spring:message code="appointment.confirmation.date" arguments="${appointment.date.toLocalDate()}"/></h2>
+<h2><spring:message code="appointment.confirmation.time" arguments="${appointment.date.toLocalTime()}"/></h2>
 
 </body>
 </html>

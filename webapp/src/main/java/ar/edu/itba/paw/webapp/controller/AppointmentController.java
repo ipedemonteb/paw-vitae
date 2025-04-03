@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -78,8 +79,10 @@ public class AppointmentController {
 
     @RequestMapping(value = "/confirmation")                        //TODO find out why it cannot handle concatenated paths e.g. /appointment/confirmation
     public ModelAndView appointmentConfirmation(Model model) {
+
         Appointment appointment = (Appointment) model.asMap().get("appointment");
-       Optional<Doctor> doctor = doctorService.findById(2);
+        Optional<Doctor> doctor = doctorService.findById(2);
+
         ModelAndView mav = new ModelAndView("appointment/confirmation");
         mav.addObject("appointment", appointment);
         mav.addObject("doctor", doctor.orElse(null));
