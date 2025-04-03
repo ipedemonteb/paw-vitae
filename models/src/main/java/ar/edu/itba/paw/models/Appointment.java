@@ -9,7 +9,7 @@ public class Appointment {
     private final long clientId;
     private final long doctorId;
     private LocalDateTime date;
-    private String status; //will be enum
+    private String status;
     private String reason;
 
     public Appointment(long clientId, long doctorId, LocalDateTime date, String status, String reason, long id) {
