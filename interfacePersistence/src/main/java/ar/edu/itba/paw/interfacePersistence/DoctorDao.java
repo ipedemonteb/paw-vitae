@@ -12,4 +12,6 @@ public interface DoctorDao {
 
     Optional<Doctor> findById(final long id);
 
+    List<Doctor> getBySpecialty(String specialty);
+
 }

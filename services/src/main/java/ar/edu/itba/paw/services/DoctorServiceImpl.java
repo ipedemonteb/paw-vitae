@@ -31,4 +31,7 @@ public class DoctorServiceImpl implements DoctorService {
         return this.doctorDao.findById(id);
     }
 
+    @Override
+    public List<Doctor> getBySpecialty(String specialty) { return this.doctorDao.getBySpecialty(specialty); }
+
 }
