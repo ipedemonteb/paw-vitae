@@ -18,7 +18,6 @@ public class ImageDaoImpl implements ImageDao {
     private JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertImage;
     private final RowMapper<Images> ROW_MAPPER = (rs, rowNum) -> new Images(
-            rs.getLong("image_id"),
             rs.getLong("doctor_id"),
             rs.getBytes("image")
     );
@@ -27,7 +26,7 @@ public class ImageDaoImpl implements ImageDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertImage = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("images")
-                .usingGeneratedKeyColumns("image_id");
+                .usingColumns("doctor_id", "image");
     }
 
     @Override
@@ -35,8 +34,8 @@ public class ImageDaoImpl implements ImageDao {
         final Map<String,Object> args = new HashMap<>();
         args.put("doctor_id",doctor_id);
         args.put("image",image);
-        final Number image_id = jdbcInsertImage.executeAndReturnKey(args);
-        return new Images(image_id.longValue(),doctor_id,image);
+        jdbcInsertImage.execute(args);
+        return new Images(doctor_id,image);
     }
 
     @Override
