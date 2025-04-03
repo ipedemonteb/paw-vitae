@@ -2,33 +2,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
 <head>
+    <link rel="stylesheet" href="<c:url value='/css/doctor.css' />">
     <title>Doctor Profile</title>
-    <style>
-        .doctor-profile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        .doctor-image {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        .doctor-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .doctor-info {
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
 <div class="doctor-profile">
