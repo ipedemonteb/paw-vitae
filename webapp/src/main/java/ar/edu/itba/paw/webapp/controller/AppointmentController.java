@@ -73,11 +73,11 @@ public class AppointmentController {
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
-        return new ModelAndView("redirect:/confirmation");
+        return new ModelAndView("redirect:/appointment/confirmation");
 
     }
 
-    @RequestMapping(value = "/confirmation")                        //TODO find out why it cannot handle concatenated paths e.g. /appointment/confirmation
+    @RequestMapping(value = "/appointment/confirmation")                        //TODO find out why it cannot handle concatenated paths e.g. /appointment/confirmation
     public ModelAndView appointmentConfirmation(Model model) {
 
         Appointment appointment = (Appointment) model.asMap().get("appointment");
