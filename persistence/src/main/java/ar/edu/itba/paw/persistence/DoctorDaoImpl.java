@@ -95,4 +95,9 @@ public class DoctorDaoImpl implements DoctorDao {
         return doc;
     }
 
+    @Override
+    public List<Doctor> getBySpecialty(String specialty) {
+        return jdbcTemplate.query("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE specialties ILIKE ?", ROW_MAPPER, "%" +  specialty + "%");
+    }
+
 }
