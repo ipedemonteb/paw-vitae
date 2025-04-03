@@ -44,7 +44,7 @@
 
             <!-- Auth buttons -->
             <div class="auth-buttons">
-                <a href="<c:url value='/login' />" class="btn btn-login"><spring:message code = "header.button.login"/></a>
+                <a href="<c:url value='/portal' />" class="btn btn-login"><spring:message code = "header.button.login"/></a>
                 <a href="<c:url value='/register' />" class="btn btn-register"><spring:message code = "header.button.register"/></a>
             </div>
         </div>
