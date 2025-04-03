@@ -19,10 +19,7 @@
   <dependencies>
 
     <!-- Optionally: parameterized tests support -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>models</artifactId>

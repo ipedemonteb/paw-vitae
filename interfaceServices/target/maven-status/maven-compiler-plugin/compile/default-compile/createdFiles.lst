@@ -1,4 +1,5 @@
 ar/edu/itba/paw/interfaceServices/AppointmentService.class
 ar/edu/itba/paw/interfaceServices/DoctorService.class
+ar/edu/itba/paw/interfaceServices/ImageService.class
 ar/edu/itba/paw/interfaceServices/CoverageService.class
 ar/edu/itba/paw/interfaceServices/ClientService.class

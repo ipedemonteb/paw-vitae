@@ -51,3 +51,10 @@ CREATE TABLE IF NOT EXISTS Appointments (
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
     FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE
     );
+
+CREATE TABLE IF NOT EXISTS Images (
+                        image_id SERIAL PRIMARY KEY,
+                        doctor_id INT UNIQUE,
+                        image BYTEA NOT NULL,
+                        FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
+);
