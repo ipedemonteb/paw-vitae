@@ -18,7 +18,7 @@
         <h1 class="title">Register</h1>
         <p class="subtitle">Fill out the form below</p>
 
-        <form:form modelAttribute="registerForm" method="post" action="${pageContext.request.contextPath}/register">
+        <form:form modelAttribute="registerForm" method="post" action="${pageContext.request.contextPath}/register" enctype="multipart/form-data">
             <div class="form-row">
                 <div class="form-group">
                     <label for="name">First Name</label>
@@ -61,11 +61,9 @@
             <div class="form-group">
                 <label for="specialty">Specialties</label>
                 <div class="specialty-select-container">
-                    <!-- Checkbox para controlar el estado del dropdown -->
                     <input type="checkbox" id="dropdown-toggle" class="dropdown-toggle">
                     <label for="dropdown-toggle" class="specialty-select-trigger">Select specialties</label>
 
-                    <!-- Lista de opciones personalizada -->
                     <div class="specialty-select">
                         <c:forEach items="${specialtyList}" var="specialty2">
                             <div class="specialty-option">
@@ -88,7 +86,6 @@
             <div class="form-group">
                 <label for="coverages">Coverage</label>
                 <div class="specialty-select-container">
-                    <!-- Checkbox para controlar el estado del dropdown -->
                     <input type="checkbox" id="coverage-dropdown-toggle" class="dropdown-toggle">
                     <label for="coverage-dropdown-toggle" class="specialty-select-trigger">Select your coverage</label>
 
@@ -110,6 +107,11 @@
                     </form:select>
                 </div>
                 <form:errors path="coverages" cssClass="error-message" />
+                <div class="form-group">
+                    <label for="image">Subir imagen:</label>
+                    <form:input type="file" path="image" id="image" accept="image/*" />
+                    <form:errors path="image" cssClass="error-message" />
+                </div>
             </div>
 
             <div class="form-group">
