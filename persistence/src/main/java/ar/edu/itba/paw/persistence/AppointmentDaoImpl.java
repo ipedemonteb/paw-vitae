@@ -2,8 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.AppointmentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -41,24 +41,24 @@ public class AppointmentDaoImpl implements AppointmentDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
+                .usingColumns("client_id", "doctor_id", "start_date", "reason")
                 .usingGeneratedKeyColumns("id");
     }
 
 
     @Override
-    public Appointment create(long clientId, long doctorId, LocalDateTime startDate, String status, String reason) {
+    public Appointment create(long clientId, long doctorId, LocalDateTime startDate, String reason) {
         final Map<String, Object> args = new HashMap<>();
         args.put("client_id", clientId);
         args.put("doctor_id", doctorId);
         args.put("start_date", java.sql.Timestamp.valueOf(startDate));
-        args.put("status", status);
         args.put("reason", reason);
         final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
         return new Appointment(
                 clientId,
                 doctorId,
                 startDate,
-                status,
+                AppointmentStatus.PENDIENTE.getValue(),
                 reason,
                 appointmentId.longValue()
         );

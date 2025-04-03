@@ -53,7 +53,7 @@ public class AppointmentController {
         }
 
         Appointment appointment = appointmentService.create(
-                2, // For now, client ID is still hardcoded - this could be the logged-in user
+                1, // For now, client ID is still hardcoded - this could be the logged-in user
                 appointmentForm.getDoctorId(),
                 LocalDateTime.of(appointmentForm.getAppointmentDate().getYear(),
                         appointmentForm.getAppointmentDate().getMonthValue(),
@@ -62,7 +62,6 @@ public class AppointmentController {
                         0,
                         0
                 ),
-                "pendiente",
                 appointmentForm.getReason()
         );
 
