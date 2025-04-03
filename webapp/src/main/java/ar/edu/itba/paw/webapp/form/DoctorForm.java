@@ -3,11 +3,10 @@ package ar.edu.itba.paw.webapp.form;
 
 
 import ar.edu.itba.paw.models.Coverage;
+import ar.edu.itba.paw.models.Images;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +43,8 @@ public class DoctorForm {
 
     @NotEmpty
     private List<String> coverages;
+    @NotNull
+    private MultipartFile image;
 
 //    @NotEmpty
 //    private List<Coverage> coverageList;
@@ -117,16 +118,16 @@ public class DoctorForm {
         return coverages;
     }
 
-    public void setCoverages(String[] coverageArray) {
-        this.coverages = Arrays.asList(coverageArray);
+    public void setCoverages(List<String> coverageArray) {
+        this.coverages = coverageArray;
     }
 
-//    public void addCoverage(Coverage coverage) {
-//        this.coverageList.add(coverage);
-//    }
-//
-//    public void removeCoverage(Coverage coverage) {
-//        this.coverageList.remove(coverage);
-//    }
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
+    }
 }
 
