@@ -53,7 +53,7 @@ public class AppointmentController {
         }
 
         Appointment appointment = appointmentService.create(
-                1, // For now, client ID is still hardcoded - this could be the logged-in user
+                2, // For now, client ID is still hardcoded - this could be the logged-in user
                 appointmentForm.getDoctorId(),
                 LocalDateTime.of(appointmentForm.getAppointmentDate().getYear(),
                         appointmentForm.getAppointmentDate().getMonthValue(),
@@ -68,10 +68,10 @@ public class AppointmentController {
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
-        return new ModelAndView("redirect:/confirmation");
+        return new ModelAndView("redirect:/appointment/confirmation");
     }
 
-    @RequestMapping(value = "/confirmation")
+    @RequestMapping(value = "/appointment/confirmation")
     public ModelAndView appointmentConfirmation(Model model) {
         Appointment appointment = (Appointment) model.asMap().get("appointment");
         Optional<Doctor> doctor = doctorService.findById(appointment.getDoctorId());
