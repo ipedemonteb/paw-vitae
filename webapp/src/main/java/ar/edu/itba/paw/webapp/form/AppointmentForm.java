@@ -47,6 +47,15 @@ public class AppointmentForm {
     @Size(max = 255)
     private String reason;
 
+    private Integer doctorId;
+
+    public Integer getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Integer doctorId) {
+        this.doctorId = doctorId;
+    }
 
     public String getName() {
         return name;

@@ -16,13 +16,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,11 +30,8 @@ import java.util.Optional;
 public class AppointmentController {
 
     private AppointmentService appointmentService;
-
     private ClientService clientService;
-
     private DoctorService doctorService;
-
     private CoverageService coverageService;
 
     @Autowired
@@ -46,20 +42,19 @@ public class AppointmentController {
         this.coverageService = coverageService;
     }
 
-
     @RequestMapping(value = "/appointment", method = RequestMethod.POST)
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
-            final BindingResult errors
-           ,RedirectAttributes redirectAttributes
+            final BindingResult errors,
+            RedirectAttributes redirectAttributes
     ){
         if(errors.hasErrors()) {
-            return appointment(appointmentForm);
+            return appointment(appointmentForm, appointmentForm.getDoctorId());
         }
 
         Appointment appointment = appointmentService.create(
-                1,
-                2,
+                1, // For now, client ID is still hardcoded - this could be the logged-in user
+                appointmentForm.getDoctorId(),
                 LocalDateTime.of(appointmentForm.getAppointmentDate().getYear(),
                         appointmentForm.getAppointmentDate().getMonthValue(),
                         appointmentForm.getAppointmentDate().getDayOfMonth(),
@@ -68,20 +63,18 @@ public class AppointmentController {
                         0
                 ),
                 "pendiente",
-               appointmentForm.getReason()
+                appointmentForm.getReason()
         );
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
         return new ModelAndView("redirect:/confirmation");
-
     }
 
-    @RequestMapping(value = "/confirmation")                        //TODO find out why it cannot handle concatenated paths e.g. /appointment/confirmation
+    @RequestMapping(value = "/confirmation")
     public ModelAndView appointmentConfirmation(Model model) {
-
         Appointment appointment = (Appointment) model.asMap().get("appointment");
-        Optional<Doctor> doctor = doctorService.findById(2);
+        Optional<Doctor> doctor = doctorService.findById(appointment.getDoctorId());
 
         ModelAndView mav = new ModelAndView("appointment/confirmation");
         mav.addObject("appointment", appointment);
@@ -90,10 +83,23 @@ public class AppointmentController {
     }
 
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
-    public ModelAndView appointment(@ModelAttribute("appointmentForm") final AppointmentForm appointmentForm) {
+    public ModelAndView appointment(
+            @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
+            @RequestParam(required = false) Integer doctorId
+    ) {
         ModelAndView mav = new ModelAndView("appointment/appointment");
         Optional<List<Coverage>> coverage = coverageService.getAll();
         mav.addObject("coverages", coverage.orElse(Collections.emptyList()));
+
+        // If we have a doctorId, let's fetch the doctor and add it to the model
+        if (doctorId != null) {
+            Optional<Doctor> doctor = doctorService.findById(doctorId);
+            doctor.ifPresent(d -> mav.addObject("doctor", d));
+
+            // Set the doctor ID in the form
+            appointmentForm.setDoctorId(doctorId);
+        }
+
         return mav;
     }
 }

@@ -3,7 +3,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,7 +17,27 @@
         <h1 class="title"><spring:message code="appointment.title" /></h1>
         <p class="subtitle"><spring:message code="appointment.subtitle" /></p>
 
+        <!-- Display doctor information if available -->
+        <c:if test="${not empty doctor}">
+            <div class="doctor-info">
+                <h3><spring:message code="appointment.selectedDoctor" /></h3>
+                <p><strong>${doctor.name} ${doctor.lastName}</strong></p>
+                <c:if test="${not empty doctor.specialty}">
+                    <p class="doctor-specialty">${doctor.specialty}</p>
+                </c:if>
+                <c:if test="${not empty doctor.email}">
+                    <p><spring:message code="appointment.doctor.email" />: ${doctor.email}</p>
+                </c:if>
+                <c:if test="${not empty doctor.phone}">
+                    <p><spring:message code="appointment.doctor.phone" />: ${doctor.phone}</p>
+                </c:if>
+            </div>
+        </c:if>
+
         <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment">
+            <!-- Hidden field for doctor ID -->
+            <form:hidden path="doctorId" />
+
             <div class="form-row">
                 <div class="form-group">
                     <label for="name"><spring:message code="appointment.form.firstName" /></label>
@@ -69,8 +88,6 @@
                     </c:forEach>
                 </select>
             </div>
-
-
 
             <div class="form-group">
                 <label for="reason"><spring:message code="appointment.form.reason" /></label>
