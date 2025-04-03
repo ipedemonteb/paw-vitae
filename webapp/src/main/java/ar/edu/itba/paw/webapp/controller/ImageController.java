@@ -32,7 +32,6 @@ public class ImageController {
             response.setContentType(MediaType.IMAGE_JPEG_VALUE);
             response.getOutputStream().write(imageBytes);
         } else {
-            // You could serve a default image here if you want
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
 
