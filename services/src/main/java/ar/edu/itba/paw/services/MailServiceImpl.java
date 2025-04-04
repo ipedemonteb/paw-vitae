@@ -31,7 +31,7 @@ public class MailServiceImpl implements MailService {
     public void sendEmail(String to, String subject, Map<String, Object> templateModel) throws MessagingException {
         Context context = new Context();
         context.setVariables(templateModel);
-        String htmlContent = templateEngine.process("email/email", context);
+        String htmlContent = templateEngine.process("email", context);
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
