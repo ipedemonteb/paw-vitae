@@ -9,16 +9,12 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -34,7 +30,7 @@ import java.util.Optional;
 @Controller
 public class AppointmentController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
+
 
     private AppointmentService appointmentService;
     private ClientService clientService;
@@ -50,7 +46,13 @@ public class AppointmentController {
         this.coverageService = coverageService;
         this.mailService = mailService;
     }
-
+    // Add the following method to handle MessagingException
+    @ExceptionHandler(MessagingException.class)
+    public ModelAndView handleMessagingException(MessagingException e) {
+        ModelAndView mav = new ModelAndView("error");
+        mav.addObject("message", "There was an error sending the confirmation email. Please try again later.");
+        return mav;
+    }
     @RequestMapping(value = "/appointment", method = RequestMethod.POST)
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
@@ -81,7 +83,7 @@ public class AppointmentController {
         try {
             mailService.sendEmail("nbellavitisalzate@itba.edu.ar", "Appointment Confirmation", templateModel);
         } catch (MessagingException e) {
-            LOGGER.error("Failed to send appointment confirmation email", e);
+            throw new RuntimeException(e);
         }
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
