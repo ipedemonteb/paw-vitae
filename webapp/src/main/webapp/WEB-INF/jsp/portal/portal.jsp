@@ -5,7 +5,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
 <layout:page title="portal.title">
-<comp:header title="portal.heading" />
+<comp:headerPortal title="portal.heading" />
 
 <div class="card">
     <div class="card-header">
