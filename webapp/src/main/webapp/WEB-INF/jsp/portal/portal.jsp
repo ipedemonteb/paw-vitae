@@ -1,29 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><spring:message code="portal.title" /></title>
-    <link rel="stylesheet" href="<c:url value='/css/portal.css' />">
-</head>
-<body>
-<div class="container">
-    <header class="header">
-        <h1><spring:message code="portal.heading" /></h1>
-    </header>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
-    <div class="search-section">
-        <h2><spring:message code="portal.selectSpecialty" /></h2>
+<layout:page title="portal.title">
+<comp:header title="portal.heading" />
 
-        <div class="specialty-grid">
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title text-center"><spring:message code="portal.selectSpecialty" /></h2>
+    </div>
+
+    <div class="card-body">
+        <div class="grid grid-cols-1 grid-cols-2 grid-cols-3">
             <c:forEach items="${specialties}" var="specialty">
                 <a href="<c:url value='/search?specialty=${specialty}' />" class="specialty-card">
-<%--                    <div class="specialty-icon">--%>
-<%--                        <img src="<c:url value='/resources/images/specialty-icon.png' />" alt="${specialty}">--%>
-<%--                    </div>--%>
                     <div class="specialty-name">
                         <spring:message code="specialty.${specialty}" />
                     </div>
@@ -32,5 +24,4 @@
         </div>
     </div>
 </div>
-</body>
-</html>
+</layout:page>
