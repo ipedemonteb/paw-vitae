@@ -1,0 +1,92 @@
+.card {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.card-header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.card-title {
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-sm);
+}
+
+.card-subtitle {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.card-body {
+  margin-bottom: var(--spacing-lg);
+}
+
+.card-footer {
+  margin-top: var(--spacing-xl);
+  text-align: center;
+}
+
+/* Specialty card for portal page */
+.specialty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  transition: all 0.3s ease;
+  height: 150px;
+}
+
+.specialty-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-secondary);
+}
+
+.specialty-icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.specialty-name {
+  text-align: center;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Doctor info card */
+.doctor-info {
+  background-color: var(--color-table-row-even);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-lg) 0;
+  border-left: 4px solid var(--color-doctor-info-border);
+}
+
+.doctor-info h3 {
+  margin-top: 0;
+  color: var(--color-doctor-info-border);
+  font-size: var(--font-size-md);
+}
+
+.doctor-info p {
+  margin: var(--spacing-xs) 0;
+}
+
+.doctor-specialty {
+  font-style: italic;
+  color: var(--color-text-tertiary);
+}

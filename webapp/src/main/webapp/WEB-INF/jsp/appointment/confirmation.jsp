@@ -3,19 +3,17 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><spring:message code="appointment.confirmation.title"/></title>
-    <link rel="stylesheet" href="<c:url value="/css/confirmation.css" />">
-</head>
-<body>
-<div class="container">
-    <div class="confirmation-card">
-        <h1 class="title"><spring:message code="appointment.confirmation.title"/></h1>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
+
+<layout:page title="appointment.confirmation.title">
+<div class="card">
+    <div class="card-header">
+        <h1 class="card-title"><spring:message code="appointment.confirmation.title"/></h1>
+    </div>
+
+    <div class="card-body">
         <div class="confirmation-details">
             <div class="confirmation-item">
                 <div class="confirmation-label"><spring:message code="appointment.form.reason"/></div>
@@ -39,27 +37,14 @@
         </div>
 
         <c:if test="${not empty doctor}">
-            <div class="doctor-info">
-                <h3><spring:message code="appointment.selectedDoctor" /></h3>
-                <p><strong>${doctor.name} ${doctor.lastName}</strong></p>
-                <c:if test="${not empty doctor.specialty}">
-                    <p class="doctor-specialty">${doctor.specialty}</p>
-                </c:if>
-                <c:if test="${not empty doctor.email}">
-                    <p><spring:message code="appointment.doctor.email" />: ${doctor.email}</p>
-                </c:if>
-                <c:if test="${not empty doctor.phone}">
-                    <p><spring:message code="appointment.doctor.phone" />: ${doctor.phone}</p>
-                </c:if>
-            </div>
+            <comp:doctor-info doctor="${doctor}" />
         </c:if>
+    </div>
 
-        <div class="actions">
-            <a href="<c:url value="/portal"/>" class="btn-primary">
-                <spring:message code="appointment.confirmation.backToHome"/>
-            </a>
-        </div>
+    <div class="card-footer">
+        <a href="<c:url value="/portal"/>" class="btn btn-primary">
+            <spring:message code="appointment.confirmation.backToHome"/>
+        </a>
     </div>
 </div>
-</body>
-</html>
+</layout:page>
