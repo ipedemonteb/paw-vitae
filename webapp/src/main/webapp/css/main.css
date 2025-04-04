@@ -9,6 +9,10 @@
 @import 'components/tables.css';
 @import 'components/confirmation.css';
 @import 'components/header.css';
+@import 'components/hero.css';
+@import 'components/features.css';
+@import 'components/footer.css';
+@import 'components/headerPortal.css';
 
 /* Utility classes */
 .text-center {
