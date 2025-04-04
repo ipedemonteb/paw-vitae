@@ -4,11 +4,13 @@ import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.ClientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
+import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,26 +22,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
 public class AppointmentController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
+
     private AppointmentService appointmentService;
     private ClientService clientService;
     private DoctorService doctorService;
     private CoverageService coverageService;
+    private MailService mailService;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService, CoverageService coverageService) {
+    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService, CoverageService coverageService, MailService mailService) {
         this.appointmentService = appointmentService;
         this.clientService = clientService;
         this.doctorService = doctorService;
         this.coverageService = coverageService;
+        this.mailService = mailService;
     }
 
     @RequestMapping(value = "/appointment", method = RequestMethod.POST)
@@ -64,6 +73,16 @@ public class AppointmentController {
                 ),
                 appointmentForm.getReason()
         );
+
+        // Send confirmation email
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("name", "John Doe"); // Replace with actual client name
+        templateModel.put("appointment", appointment);
+        try {
+            mailService.sendEmail("nbellavitisalzate@itba.edu.ar", "Appointment Confirmation", templateModel);
+        } catch (MessagingException e) {
+            LOGGER.error("Failed to send appointment confirmation email", e);
+        }
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
