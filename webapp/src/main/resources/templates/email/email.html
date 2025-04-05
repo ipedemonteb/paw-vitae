@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{email.title}"/>
+</head>
+<body>
+<p th:text="#{email.greeting(${doctorName})}"/>
+<p th:text="#{email.notification(${patientName})}"/>
+
+<p th:text="#{email.details}"/>
+<ul>
+    <li th:text="#{email.date(${appointmentDate})}"/>
+    <li th:text="#{email.time(${appointmentTime})}"/>
+    <li th:text="#{email.reason(${reason})}"/>
+</ul>
+
+<p th:text="#{email.thanks}"/>
+<p th:text="#{email.signature}"/>
+</body>
+</html>

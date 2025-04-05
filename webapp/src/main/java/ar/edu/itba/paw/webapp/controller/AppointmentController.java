@@ -4,51 +4,67 @@ import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.ClientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
+import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
+
+import org.hibernate.validator.internal.util.logging.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
 public class AppointmentController {
 
+
+
     private AppointmentService appointmentService;
     private ClientService clientService;
     private DoctorService doctorService;
     private CoverageService coverageService;
+    private MailService mailService;
+    private MessageSource messageSource;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService, CoverageService coverageService) {
+    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService, CoverageService coverageService, MailService mailService, MessageSource messageSource) {
         this.appointmentService = appointmentService;
         this.clientService = clientService;
         this.doctorService = doctorService;
         this.coverageService = coverageService;
+        this.mailService = mailService;
+        this.messageSource = messageSource;
     }
-
+    // Add the following method to handle MessagingException
+    @ExceptionHandler(MessagingException.class)
+    public ModelAndView handleMessagingException(MessagingException e) {
+        ModelAndView mav = new ModelAndView("error");
+        mav.addObject("message", "There was an error sending the confirmation email. Please try again later.");
+        return mav;
+    }
     @RequestMapping(value = "/appointment", method = RequestMethod.POST)
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
             final BindingResult errors,
             RedirectAttributes redirectAttributes
-    ){
-        if(errors.hasErrors()) {
+    ) {
+        if (errors.hasErrors()) {
             return appointment(appointmentForm, appointmentForm.getDoctorId());
         }
 
@@ -64,6 +80,22 @@ public class AppointmentController {
                 ),
                 appointmentForm.getReason()
         );
+
+
+        Optional<Doctor> doctor = doctorService.findById(appointmentForm.getDoctorId());
+        if (doctor.isPresent()) {
+            Map<String, Object> doctorTemplateModel = new HashMap<>();
+            doctorTemplateModel.put("doctorName", doctor.get().getName());
+            doctorTemplateModel.put("patientName", appointmentForm.getName() + " " + appointmentForm.getLastName());
+            doctorTemplateModel.put("appointmentDate", appointmentForm.getAppointmentDate().toString());
+            doctorTemplateModel.put("appointmentTime", appointmentForm.getAppointmentHour().toString());
+            doctorTemplateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : messageSource.getMessage("email.emptyReason", null, LocaleContextHolder.getLocale()));
+            try {
+                mailService.sendEmail(doctor.get().getEmail(), messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), doctorTemplateModel);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
