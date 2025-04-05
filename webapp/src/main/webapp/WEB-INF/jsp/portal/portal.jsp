@@ -4,8 +4,9 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
+
 <layout:page title="portal.title">
-<comp:headerPortal title="portal.heading" />
+<comp:headerPortal title="portal.heading"/>
 
 <div class="card">
     <div class="card-header">

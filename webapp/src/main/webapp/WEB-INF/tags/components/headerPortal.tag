@@ -4,5 +4,5 @@
 <%@ attribute name="title" required="true" type="java.lang.String" %>
 
 <header class="header">
-    <h1>${title}</h1>
+    <h1><spring:message code="${title}"/></h1>
 </header>
