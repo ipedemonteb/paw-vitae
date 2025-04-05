@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Email Template</title>
+    <title>Confirmación de Cita</title>
 </head>
 <body>
-<p th:text="'Hello, ' + ${name} + '!'"></p>
-<p th:text="'This is a sample email using Thymeleaf.'"></p>
+<p th:text="'Hola Dr. ' + ${doctorName} + ','"></p>
+<p th:text="'Tiene una nueva cita programada con ' + ${patientName} + '.'"></p>
+<p>Detalles de la cita:</p>
+<ul>
+    <li th:text="'Fecha: ' + ${appointmentDate}"></li>
+    <li th:text="'Hora: ' + ${appointmentTime}"></li>
+    <li th:text="'Motivo: ' + ${reason}"></li>
+</ul>
+<p>Gracias,</p>
+<p>Vitae</p>
 </body>
 </html>
