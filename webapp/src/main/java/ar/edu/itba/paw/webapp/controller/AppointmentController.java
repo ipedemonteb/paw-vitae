@@ -10,7 +10,10 @@ import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 
+import org.hibernate.validator.internal.util.logging.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,14 +40,16 @@ public class AppointmentController {
     private DoctorService doctorService;
     private CoverageService coverageService;
     private MailService mailService;
+    private MessageSource messageSource;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService, CoverageService coverageService, MailService mailService) {
+    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService, CoverageService coverageService, MailService mailService, MessageSource messageSource) {
         this.appointmentService = appointmentService;
         this.clientService = clientService;
         this.doctorService = doctorService;
         this.coverageService = coverageService;
         this.mailService = mailService;
+        this.messageSource = messageSource;
     }
     // Add the following method to handle MessagingException
     @ExceptionHandler(MessagingException.class)
@@ -64,7 +69,7 @@ public class AppointmentController {
         }
 
         Appointment appointment = appointmentService.create(
-                2, // For now, client ID is still hardcoded - this could be the logged-in user
+                1, // For now, client ID is still hardcoded - this could be the logged-in user
                 appointmentForm.getDoctorId(),
                 LocalDateTime.of(appointmentForm.getAppointmentDate().getYear(),
                         appointmentForm.getAppointmentDate().getMonthValue(),
@@ -84,12 +89,9 @@ public class AppointmentController {
             doctorTemplateModel.put("patientName", appointmentForm.getName() + " " + appointmentForm.getLastName());
             doctorTemplateModel.put("appointmentDate", appointmentForm.getAppointmentDate().toString());
             doctorTemplateModel.put("appointmentTime", appointmentForm.getAppointmentHour().toString());
-            if(appointmentForm.getReason() != null)
-                doctorTemplateModel.put("reason", appointmentForm.getReason());
-            else
-                doctorTemplateModel.put("reason", "Motivo no especificado");
+            doctorTemplateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : messageSource.getMessage("email.emptyReason", null, LocaleContextHolder.getLocale()));
             try {
-                mailService.sendEmail(doctor.get().getEmail(), "Nueva Cita Programada", doctorTemplateModel);
+                mailService.sendEmail(doctor.get().getEmail(), messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), doctorTemplateModel);
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
