@@ -58,13 +58,13 @@ public class AppointmentController {
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
             final BindingResult errors,
             RedirectAttributes redirectAttributes
-    ){
-        if(errors.hasErrors()) {
+    ) {
+        if (errors.hasErrors()) {
             return appointment(appointmentForm, appointmentForm.getDoctorId());
         }
 
         Appointment appointment = appointmentService.create(
-                1, // For now, client ID is still hardcoded - this could be the logged-in user
+                2, // For now, client ID is still hardcoded - this could be the logged-in user
                 appointmentForm.getDoctorId(),
                 LocalDateTime.of(appointmentForm.getAppointmentDate().getYear(),
                         appointmentForm.getAppointmentDate().getMonthValue(),
@@ -76,14 +76,23 @@ public class AppointmentController {
                 appointmentForm.getReason()
         );
 
-        // Send confirmation email
-        Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("name", "John Doe"); // Replace with actual client name
-        templateModel.put("appointment", appointment);
-        try {
-            mailService.sendEmail("nbellavitisalzate@itba.edu.ar", "Appointment Confirmation", templateModel);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
+
+        Optional<Doctor> doctor = doctorService.findById(appointmentForm.getDoctorId());
+        if (doctor.isPresent()) {
+            Map<String, Object> doctorTemplateModel = new HashMap<>();
+            doctorTemplateModel.put("doctorName", doctor.get().getName());
+            doctorTemplateModel.put("patientName", appointmentForm.getName() + " " + appointmentForm.getLastName());
+            doctorTemplateModel.put("appointmentDate", appointmentForm.getAppointmentDate().toString());
+            doctorTemplateModel.put("appointmentTime", appointmentForm.getAppointmentHour().toString());
+            if(appointmentForm.getReason() != null)
+                doctorTemplateModel.put("reason", appointmentForm.getReason());
+            else
+                doctorTemplateModel.put("reason", "Motivo no especificado");
+            try {
+                mailService.sendEmail(doctor.get().getEmail(), "Nueva Cita Programada", doctorTemplateModel);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
