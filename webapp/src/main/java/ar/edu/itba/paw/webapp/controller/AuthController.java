@@ -52,7 +52,6 @@ public class AuthController {
     public ModelAndView register(@Valid @ModelAttribute("registerForm") final DoctorForm doctorForm, final BindingResult errors)  {
 
         if(errors.hasErrors()) {
-            System.out.println("Errors: " + errors.getAllErrors());
             return doctorForm(doctorForm);
         }
         List<Coverage> coverages = new ArrayList<>();
