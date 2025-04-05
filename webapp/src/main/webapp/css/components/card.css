@@ -116,8 +116,10 @@
 }
 
 .doctor-image img {
-  width: 220px;
-  height: 220px;
+  width: auto;
+  height: auto;
+  max-height: 220px;
+  max-width: 220px;
   object-fit: fill;
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-sm);
