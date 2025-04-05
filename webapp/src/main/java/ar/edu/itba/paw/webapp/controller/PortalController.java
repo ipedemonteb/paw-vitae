@@ -19,7 +19,6 @@ public class PortalController {
     @RequestMapping(value = "/portal", method = RequestMethod.GET)
     public ModelAndView showPortal() {
         List<String> specialties = ss.getSpecialties();
-        System.out.println(specialties);
         return new ModelAndView("portal/portal").addObject("specialties", specialties);
     }
 }

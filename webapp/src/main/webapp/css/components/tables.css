@@ -4,6 +4,21 @@
   margin: var(--spacing-lg) 0;
 }
 
+.image-thumbnail {
+  width: 60px;
+  height: 60px;
+  max-height: 60px;
+  max-width: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+}
+
+.image-cell {
+  width: 100px;
+  text-align: center;
+}
+
 .table th {
   background-color: var(--color-secondary);
   color: var(--color-text-light);
