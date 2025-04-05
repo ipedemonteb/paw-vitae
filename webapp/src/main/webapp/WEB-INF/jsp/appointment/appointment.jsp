@@ -3,35 +3,20 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><spring:message code="appointment.page.title" /></title>
-    <link rel="stylesheet" href="<c:url value="/css/appointment.css" />">
-</head>
-<body>
-<div class="container">
-    <div class="appointment-card">
-        <h1 class="title"><spring:message code="appointment.title" /></h1>
-        <p class="subtitle"><spring:message code="appointment.subtitle" /></p>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
+<layout:page title="appointment.page.title">
+<div class="card">
+    <div class="card-header">
+        <h1 class="card-title"><spring:message code="appointment.title" /></h1>
+        <p class="card-subtitle"><spring:message code="appointment.subtitle" /></p>
+    </div>
+
+    <div class="card-body">
         <!-- Display doctor information if available -->
         <c:if test="${not empty doctor}">
-            <div class="doctor-info">
-                <h3><spring:message code="appointment.selectedDoctor" /></h3>
-                <p><strong>${doctor.name} ${doctor.lastName}</strong></p>
-                <c:if test="${not empty doctor.specialty}">
-                    <p class="doctor-specialty">${doctor.specialty}</p>
-                </c:if>
-                <c:if test="${not empty doctor.email}">
-                    <p><spring:message code="appointment.doctor.email" />: ${doctor.email}</p>
-                </c:if>
-                <c:if test="${not empty doctor.phone}">
-                    <p><spring:message code="appointment.doctor.phone" />: ${doctor.phone}</p>
-                </c:if>
-            </div>
+            <comp:doctor-info doctor="${doctor}" />
         </c:if>
 
         <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment">
@@ -39,29 +24,13 @@
             <form:hidden path="doctorId" />
 
             <div class="form-row">
-                <div class="form-group">
-                    <label for="name"><spring:message code="appointment.form.firstName" /></label>
-                    <form:input path="name" id="name" class="form-control" />
-                    <form:errors path="name" cssClass="error-message" />
-                </div>
-                <div class="form-group">
-                    <label for="lastName"><spring:message code="appointment.form.lastName" /></label>
-                    <form:input path="lastName" id="lastName" class="form-control" />
-                    <form:errors path="lastName" cssClass="error-message" />
-                </div>
+                <comp:form-group path="name" label="appointment.form.firstName" />
+                <comp:form-group path="lastName" label="appointment.form.lastName" />
             </div>
 
             <div class="form-row">
-                <div class="form-group">
-                    <label for="email"><spring:message code="appointment.form.email" /></label>
-                    <form:input path="email" id="email" type="email" class="form-control" />
-                    <form:errors path="email" cssClass="error-message" />
-                </div>
-                <div class="form-group">
-                    <label for="phone"><spring:message code="appointment.form.phone" /></label>
-                    <form:input path="phone" id="phone" class="form-control" />
-                    <form:errors path="phone" cssClass="error-message" />
-                </div>
+                <comp:form-group path="email" label="appointment.form.email" type="email" />
+                <comp:form-group path="phone" label="appointment.form.phone" />
             </div>
 
             <div class="form-group">
@@ -89,17 +58,14 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="reason"><spring:message code="appointment.form.reason" /></label>
-                <form:textarea path="reason" id="reason" class="form-control" rows="3" />
-                <form:errors path="reason" cssClass="error-message" />
-            </div>
+            <comp:form-group path="reason" label="appointment.form.reason" type="textarea" />
 
             <div class="form-group">
-                <button type="submit" class="btn-primary"><spring:message code="appointment.form.submit" /></button>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <spring:message code="appointment.form.submit" />
+                </button>
             </div>
         </form:form>
     </div>
 </div>
-</body>
-</html>
+</layout:page>
