@@ -3,6 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ attribute name="title" required="true" type="java.lang.String" %>
 <%@ attribute name="cssFiles" required="false" type="java.lang.String" %>
+<%@ attribute name="container" required="false" type="java.lang.Boolean" %>
 
 <!DOCTYPE html>
 <html>
@@ -18,8 +19,17 @@
     </c:if>
 </head>
 <body>
-    <div class="container">
-        <jsp:doBody />
-    </div>
+    <c:choose>
+        <c:when test="${container == null || container}">
+            <div class="container">
+        </c:when>
+        </c:choose>
+            <jsp:doBody />
+        <c:choose>
+            <c:when test="${container == null || container}">
+                </div>
+            </c:when>
+    </c:choose>
+
 </body>
 </html>

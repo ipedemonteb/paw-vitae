@@ -6,7 +6,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
 
-<layout:page title="landing.page.title">
+<layout:page title="landing.page.title" container="false">
 <comp:site-header />
 
 <main class="main-content">
