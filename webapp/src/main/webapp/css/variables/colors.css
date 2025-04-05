@@ -1,0 +1,36 @@
+:root {
+  /* Primary colors */
+  --color-primary: #4a6bff;
+  --color-primary-dark: #3a5bef;
+  --color-primary-light: rgba(74, 107, 255, 0.1);
+
+  /* Secondary colors */
+  --color-secondary: #0033a0;
+  --color-secondary-dark: #0056b3;
+
+  /* Neutral colors */
+  --color-background: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-border: #e1e4e8;
+
+  /* Text colors */
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #7f8c8d;
+  --color-text-light: #ffffff;
+
+  /* Semantic colors */
+  --color-error: #dc3545;
+  --color-success: #28a745;
+  --color-warning: #ffc107;
+  --color-info: #17a2b8;
+
+  /* Component specific colors */
+  --color-card-shadow: rgba(0, 0, 0, 0.1);
+  --color-table-row-even: #f8f9fa;
+  --color-table-row-hover: #f1f1f1;
+  --color-doctor-info-border: #3498db;
+  --color-header-shadow: rgba(0, 0, 0, 0.1);
+  --color-feature-shadow: rgba(0, 0, 0, 0.05);
+  --color-feature-shadow-hover: rgba(0, 0, 0, 0.1);
+}
