@@ -1,13 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaceServices.AppointmentService;
-import ar.edu.itba.paw.interfaceServices.ClientService;
-import ar.edu.itba.paw.interfaceServices.CoverageService;
-import ar.edu.itba.paw.interfaceServices.DoctorService;
-import ar.edu.itba.paw.interfaceServices.MailService;
+import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 
 import org.hibernate.validator.internal.util.logging.Messages;
@@ -22,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
+import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -41,15 +39,17 @@ public class AppointmentController {
     private CoverageService coverageService;
     private MailService mailService;
     private MessageSource messageSource;
+    private SpecialtyService specialtyService;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService, CoverageService coverageService, MailService mailService, MessageSource messageSource) {
+    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService, CoverageService coverageService, MailService mailService, MessageSource messageSource, SpecialtyService specialtyService) {
         this.appointmentService = appointmentService;
         this.clientService = clientService;
         this.doctorService = doctorService;
         this.coverageService = coverageService;
         this.mailService = mailService;
         this.messageSource = messageSource;
+        this.specialtyService = specialtyService;
     }
     // Add the following method to handle MessagingException
     @ExceptionHandler(MessagingException.class)
@@ -65,8 +65,10 @@ public class AppointmentController {
             RedirectAttributes redirectAttributes
     ) {
         if (errors.hasErrors()) {
-            return appointment(appointmentForm, appointmentForm.getDoctorId());
+            return appointment(appointmentForm, appointmentForm.getDoctorId(), appointmentForm.getSpecialtyId());
         }
+
+        Optional<Specialty> specialty = specialtyService.findById(appointmentForm.getSpecialtyId());
 
         Appointment appointment = appointmentService.create(
                 1, // For now, client ID is still hardcoded - this could be the logged-in user
@@ -78,7 +80,8 @@ public class AppointmentController {
                         0,
                         0
                 ),
-                appointmentForm.getReason()
+                appointmentForm.getReason(),
+                specialty.orElse(null) // This should be the specialty of the doctor
         );
 
 
@@ -116,20 +119,23 @@ public class AppointmentController {
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
     public ModelAndView appointment(
             @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
-            @RequestParam(required = false) Integer doctorId
+            @RequestParam(required = true) Integer doctorId,
+            @RequestParam(required = true) Integer specialtyId
     ) {
         ModelAndView mav = new ModelAndView("appointment/appointment");
         Optional<List<Coverage>> coverage = coverageService.getAll();
         mav.addObject("coverages", coverage.orElse(Collections.emptyList()));
 
         // If we have a doctorId, let's fetch the doctor and add it to the model
-        if (doctorId != null) {
-            Optional<Doctor> doctor = doctorService.findById(doctorId);
-            doctor.ifPresent(d -> mav.addObject("doctor", d));
 
-            // Set the doctor ID in the form
-            appointmentForm.setDoctorId(doctorId);
-        }
+        Optional<Doctor> doctor = doctorService.findById(doctorId);
+        doctor.ifPresent(d -> mav.addObject("doctor", d));
+        Optional<Specialty> specialty = specialtyService.findById(specialtyId);
+        specialty.ifPresent(s -> mav.addObject("specialty", s));
+
+        // Set the doctor ID in the form
+        appointmentForm.setDoctorId(doctorId);
+        appointmentForm.setSpecialtyId(specialtyId);
 
         return mav;
     }

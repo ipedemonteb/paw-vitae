@@ -3,22 +3,22 @@ package ar.edu.itba.paw.models;
 public class Specialty {
 
     private final long id;
-    private String name;
+    private String key;
 
-    public Specialty(long id, String name) {
+    public Specialty(long id, String key) {
         this.id = id;
-        this.name = name;
+        this.key = key;
     }
 
     public long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getKey() {
+        return key;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setKey(String key) {
+        this.key = key;
     }
 }

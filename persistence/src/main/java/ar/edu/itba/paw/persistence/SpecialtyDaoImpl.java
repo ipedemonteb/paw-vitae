@@ -20,7 +20,7 @@ public class SpecialtyDaoImpl implements SpecialtyDao {
 
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
-    private final static RowMapper<Specialty> SPECIALTY_MAPPER = (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("coverage_name"));
+    private final static RowMapper<Specialty> SPECIALTY_MAPPER = (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key"));
 
     @Autowired
     public SpecialtyDaoImpl(final DataSource ds) {
@@ -36,7 +36,7 @@ public class SpecialtyDaoImpl implements SpecialtyDao {
 
     @Override
     public Optional<Specialty> findByName(String name) {
-        return jdbcTemplate.query("SELECT * FROM specialties WHERE name = ?", new Object[]{name}, SPECIALTY_MAPPER).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM specialties WHERE key = ?", new Object[]{name}, SPECIALTY_MAPPER).stream().findFirst();
     }
 
     @Override

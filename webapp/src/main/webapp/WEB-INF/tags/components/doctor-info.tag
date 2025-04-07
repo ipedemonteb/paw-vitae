@@ -8,12 +8,10 @@
     <div class="doctor-info-content">
         <h3><spring:message code="appointment.selectedDoctor" /></h3>
         <p><strong>${doctor.name} ${doctor.lastName}</strong></p>
-        <c:if test="${not empty doctor.specialty}">
+        <c:if test="${not empty doctor.specialtyList}">
             <p class="doctor-specialty">
-                <c:set var="specialties" value="${fn:split(doctor.specialty, ',')}" />
-                <c:forEach var="specialty" items="${specialties}" varStatus="status">
-                    <c:set var="trimmedSpecialty" value="${fn:trim(specialty)}" />
-                    <spring:message code="specialty.${trimmedSpecialty}" text="${trimmedSpecialty}" />
+                <c:forEach var="specialty" items="${doctor.specialtyList}" varStatus="status">
+                    <spring:message code="${specialty.key}" text="${specialty.key}" />
                     <c:if test="${!status.last}">, </c:if>
                 </c:forEach>
             </p>

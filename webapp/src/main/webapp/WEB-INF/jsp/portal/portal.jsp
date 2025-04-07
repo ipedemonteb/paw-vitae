@@ -16,9 +16,9 @@
     <div class="card-body">
         <div class="grid grid-cols-1 grid-cols-2 grid-cols-3">
             <c:forEach items="${specialties}" var="specialty">
-                <a href="<c:url value='/search?specialty=${specialty}' />" class="specialty-card">
+                <a href="<c:url value='/search?specialty=${specialty.id}' />" class="specialty-card">
                     <div class="specialty-name">
-                        <spring:message code="specialty.${specialty}" />
+                        <spring:message code="${specialty.key}"/>
                     </div>
                 </a>
             </c:forEach>

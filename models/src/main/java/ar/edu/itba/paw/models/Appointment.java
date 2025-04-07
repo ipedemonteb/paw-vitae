@@ -11,14 +11,24 @@ public class Appointment {
     private LocalDateTime date;
     private String status;
     private String reason;
+    private Specialty specialty;
 
-    public Appointment(long clientId, long doctorId, LocalDateTime date, String status, String reason, long id) {
+    public Appointment(long clientId, long doctorId, LocalDateTime date, String status, String reason, long id, Specialty specialty) {
         this.clientId = clientId;
         this.doctorId = doctorId;
         this.date = date;
         this.status = status;
         this.reason = reason;
         this.id = id;
+        this.specialty = specialty;
+    }
+
+    public Specialty getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(Specialty specialty) {
+        this.specialty = specialty;
     }
 
     public long getId() {
