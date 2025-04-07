@@ -8,6 +8,7 @@ import ar.edu.itba.paw.interfaceServices.ImageService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,31 +40,27 @@ public class AuthController {
         this.ss = ss;
     }
 
-    //    @RequestMapping("/login")
-//    public ModelAndView login() {
-//        return new ModelAndView("auth/login");
-//    }
-//    @RequestMapping("/register")
-//    public ModelAndView register() {
-//        return new ModelAndView("auth/register");
-//    }
-
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(@Valid @ModelAttribute("registerForm") final DoctorForm doctorForm, final BindingResult errors)  {
 
         if(errors.hasErrors()) {
             return doctorForm(doctorForm);
         }
+
         List<Coverage> coverages = new ArrayList<>();
         doctorForm.getCoverages().forEach(coverage -> coverages.add(cs.findById(Long.parseLong(coverage)).orElse(null)));
-        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialtyAsString(),coverages);
+
+        List<Specialty> specialties = new ArrayList<>();
+        doctorForm.getSpecialties().forEach(specialty -> specialties.add(ss.findById(Long.parseLong(specialty)).orElse(null)));
+
+        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), specialties,coverages);
         if (!doctorForm.getImage().isEmpty()) {
             try {
                 is.create(doctor.getId(), doctorForm.getImage().getBytes());
             } catch (IOException e) {
                 errors.reject("image.upload.error", "Failed to upload image");
                 return doctorForm(doctorForm);
-            };
+            }
         }
         return new ModelAndView("redirect:/" + doctor.getId());
     }
@@ -71,9 +68,10 @@ public class AuthController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView doctorForm(@ModelAttribute("registerForm") final DoctorForm doctorForm) {
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
+        List<Specialty> specialtyList = ss.getAll().orElse(new ArrayList<>());
         ModelAndView mav = new ModelAndView("auth/register");
         mav.addObject("coverageList", coverageList);
-        mav.addObject("specialtyList", ss.getSpecialties());
+        mav.addObject("specialtyList", specialtyList);
         return mav;
     }
 
