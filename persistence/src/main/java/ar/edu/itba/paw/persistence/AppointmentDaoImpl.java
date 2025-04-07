@@ -28,7 +28,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             return new Appointment(
                     rs.getLong("client_id"),
                     rs.getLong("doctor_id"),
-                    rs.getTimestamp("start_date").toLocalDateTime(),
+                    rs.getTimestamp("date").toLocalDateTime(),
                     rs.getString("status"),
                     rs.getString("reason"),
                     rs.getLong("id")
@@ -41,7 +41,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
-                .usingColumns("client_id", "doctor_id", "start_date", "reason")
+                .usingColumns("client_id", "doctor_id", "date", "reason")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -51,7 +51,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         final Map<String, Object> args = new HashMap<>();
         args.put("client_id", clientId);
         args.put("doctor_id", doctorId);
-        args.put("start_date", java.sql.Timestamp.valueOf(startDate));
+        args.put("date", java.sql.Timestamp.valueOf(startDate));
         args.put("reason", reason);
         final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
         return new Appointment(
