@@ -57,12 +57,14 @@ public class AuthController {
         List<Coverage> coverages = new ArrayList<>();
         doctorForm.getCoverages().forEach(coverage -> coverages.add(cs.findById(Long.parseLong(coverage)).orElse(null)));
         final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialtyAsString(),coverages);
-        try {
-            is.create(doctor.getId(), doctorForm.getImage().getBytes());
-        } catch (IOException e) {
-            errors.reject("image.upload.error", "Failed to upload image");
-            return doctorForm(doctorForm);
-        };
+        if (!doctorForm.getImage().isEmpty()) {
+            try {
+                is.create(doctor.getId(), doctorForm.getImage().getBytes());
+            } catch (IOException e) {
+                errors.reject("image.upload.error", "Failed to upload image");
+                return doctorForm(doctorForm);
+            };
+        }
         return new ModelAndView("redirect:/" + doctor.getId());
     }
 
