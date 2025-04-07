@@ -42,14 +42,18 @@
                         <c:forEach items="${specialtyList}" var="specialty2">
                             <div class="specialty-option">
                                 <input type="checkbox" id="specialty-${specialty2}" name="specialty" value="${specialty2}" class="specialty-checkbox">
-                                <label for="specialty-${specialty2}" class="specialty-label">${specialty2}</label>
+                                <label for="specialty-${specialty2}" class="specialty-label">
+                                    <spring:message code="specialty.${specialty2}" text="${specialty2}" />
+                                </label>
                             </div>
                         </c:forEach>
                     </div>
 
                     <form:select path="specialty" id="specialty" class="hidden-select" multiple="true">
                         <c:forEach items="${specialtyList}" var="specialty2">
-                            <option value="${specialty2}">${specialty2}</option>
+                            <option value="${specialty2}">
+                                <spring:message code="specialty.${specialty2}" text="${specialty2}" />
+                            </option>
                         </c:forEach>
                     </form:select>
                 </div>

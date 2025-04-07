@@ -12,21 +12,21 @@ public class AppointmentForm {
     @Size(min = 2, max = 50)
     private String name;
 
-    @NotNull(message = "Last name is required")
+    @NotNull()
     @Size(min = 2, max = 50)
     private String lastName;
 
-    @NotNull(message = "Email is required")
-    @Email(message = "Please provide a valid email address")
+    @NotNull()
+    @Email()
     @Size(min = 6, max = 100)
     private String email;
 
-    @NotNull(message = "Phone is required")
+    @NotNull()
     @Size(min = 7, max = 20)
     private String phone;
 
     // Coverage selected by the user; the front end will supply the options.
-    @NotNull(message = "Coverage selection is required")
+    @NotNull()
     private Long coverageId;
 
 //    @NotNull(message = "Appointment date/time is required")
@@ -34,12 +34,12 @@ public class AppointmentForm {
 //    @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm")
 //    private LocalDateTime appointmentDateTime;
 
-    @NotNull(message = "Appointment date is required")
+    @NotNull()
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate appointmentDate;
 
     // Use a separate field for the hour (0-23)
-    @NotNull(message = "Appointment hour is required")
+    @NotNull()
     @Min(value = 0, message = "Hour must be between 0 and 23")
     @Max(value = 23, message = "Hour must be between 0 and 23")
     private Integer appointmentHour;
