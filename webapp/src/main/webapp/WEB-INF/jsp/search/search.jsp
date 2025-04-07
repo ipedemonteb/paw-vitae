@@ -7,7 +7,7 @@
   <div class="card">
     <div class="card-header">
       <h1 class="card-title"><spring:message code="search.title" /></h1>
-      <p class="card-subtitle"><spring:message code="search.doctors.specialty" arguments="${specialty}" /></p>
+      <p class="card-subtitle"><spring:message code="search.doctors.specialty" arguments="<spring:messasge code='${specialty.key}'/>" /></p>
     </div>
 
     <div class="card-body">
@@ -38,8 +38,8 @@
                   <td>${doctor.email}</td>
                   <td>${doctor.phone}</td>
                   <td>
-                    <a href="<c:url value='/appointment?doctorId=${doctor.id}' />" class="btn-appointment">
-                      <spring:message code="search.button.schedule" />
+                    <a href="<c:url value='/appointment?doctorId=${doctor.id}&specialtyId=${specialty.id}' />" class="btn-appointment">
+                    <spring:message code="search.button.schedule" />
                     </a>
                   </td>
                 </tr>

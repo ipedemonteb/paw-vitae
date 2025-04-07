@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
+import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -31,7 +32,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
                     rs.getTimestamp("date").toLocalDateTime(),
                     rs.getString("status"),
                     rs.getString("reason"),
-                    rs.getLong("id")
+                    rs.getLong("id"),
+                    new Specialty(rs.getLong("specialty_id"), rs.getString("key"))
             );
         }
     };
@@ -47,12 +49,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
 
     @Override
-    public Appointment create(long clientId, long doctorId, LocalDateTime startDate, String reason) {
+    public Appointment create(long clientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty) {
         final Map<String, Object> args = new HashMap<>();
         args.put("client_id", clientId);
         args.put("doctor_id", doctorId);
         args.put("date", java.sql.Timestamp.valueOf(startDate));
         args.put("reason", reason);
+        args.put("specialty_id", specialty.getId());
         final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
         return new Appointment(
                 clientId,
@@ -60,21 +63,22 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 startDate,
                 AppointmentStatus.PENDIENTE.getValue(),
                 reason,
-                appointmentId.longValue()
+                appointmentId.longValue(),
+                specialty
         );
     }
 
     @Override
     public Optional<List<Appointment>> getByClientId(long clientId) {
         List<Appointment> appointments = jdbcTemplate.query(
-                "SELECT * FROM Appointments WHERE client_id = ?", ROW_MAPPER, clientId);
+                "SELECT * FROM Appointments JOIN Specialties on Appointment.specialty_id = Specialties.id WHERE client_id = ?", ROW_MAPPER, clientId);
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
 
     @Override
     public Optional<List<Appointment>> getByDoctorId(long doctorId) {
         List<Appointment> appointments = jdbcTemplate.query(
-                "SELECT * FROM Appointments WHERE doctor_id = ?", ROW_MAPPER, doctorId);
+                "SELECT * FROM Appointments JOIN Specialties on Appointment.specialty_id = Specialties.id WHERE doctor_id = ?", ROW_MAPPER, doctorId);
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
 }
