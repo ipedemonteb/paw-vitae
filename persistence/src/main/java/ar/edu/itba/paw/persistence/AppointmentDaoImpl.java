@@ -43,7 +43,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
-                .usingColumns("client_id", "doctor_id", "date", "reason")
+                .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id")
                 .usingGeneratedKeyColumns("id");
     }
 
