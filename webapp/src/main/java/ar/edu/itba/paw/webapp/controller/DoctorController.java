@@ -25,4 +25,5 @@ public class DoctorController {
         mav.addObject("doctor", ds.findById(id).orElseThrow(UserNotFoundException::new));
         return mav;
     }
+
 }
