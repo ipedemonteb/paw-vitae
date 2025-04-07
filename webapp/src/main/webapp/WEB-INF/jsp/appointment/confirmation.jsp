@@ -26,6 +26,11 @@
             </div>
 
             <div class="confirmation-item">
+                <div class="confirmation-label"><spring:message code="appointment.form.specialty"/></div>
+                <div class="confirmation-value"><spring:message code='${specialty.key}' /></div>
+            </div>
+
+            <div class="confirmation-item">
                 <div class="confirmation-label"><spring:message code="appointment.form.date"/></div>
                 <div class="confirmation-value">${appointment.date.toLocalDate()}</div>
             </div>

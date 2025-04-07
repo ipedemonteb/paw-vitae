@@ -35,6 +35,13 @@
             </div>
 
             <div class="form-group">
+                <label for="specialty"><spring:message code="appointment.form.specialty" /></label>
+                <input type="text" id="specialty" name="specialty" class="form-control bg-light"
+                       value="<spring:message code='${specialty.key}' />" readonly />
+            </div>
+
+
+            <div class="form-group">
                 <label for="coverageId"><spring:message code="appointment.form.coverage" /></label>
                 <form:select path="coverageId" id="coverageId" class="form-control">
                     <option value=""><spring:message code="appointment.placeholder.coverage" /></option>
