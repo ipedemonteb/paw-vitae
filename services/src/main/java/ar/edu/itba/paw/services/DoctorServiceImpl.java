@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaceServices.DoctorService;
 
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, String specialty, List<Coverage> coverages) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, List<Specialty> specialty, List<Coverage> coverages) {
         return this.doctorDao.create(name, lastName, email, password, phone, specialty, coverages);
     }
 

@@ -106,6 +106,10 @@ public class DoctorForm {
         return specialty;
     }
 
+    public List<String> getSpecialties() {
+        return coverages;
+    }
+
     public void setSpecialty(String[] specialty) {
         this.specialty = specialty;
     }
