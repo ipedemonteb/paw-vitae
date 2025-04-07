@@ -12,7 +12,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
         return List.of(
                 "General", "Cardiologia", "Dermatologia",
                 "Endocrinologia", "Gastroenterología", "Hematologia",
-                "Enfermedades Infecciosas ", "Nefrologia", "Neurologia",
+                "Enfermedades Infecciosas", "Nefrologia", "Neurologia",
                 "Oncologia", "Pulmonologia", "Reumatologia",
                 "Urologia", "Pediatria", "Ginecologia", "Traumatologia"
         );
