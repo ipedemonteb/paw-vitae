@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS Appointments (
                                             id SERIAL PRIMARY KEY,
                                             doctor_id INT NOT NULL,
                                             client_id INT NOT NULL,
-                                            start_date TIMESTAMP NOT NULL,
+                                            date TIMESTAMP NOT NULL,
                                             status VARCHAR(20) NOT NULL DEFAULT 'pendiente' CHECK (status IN ('pendiente','confirmado','cancelado')),
     reason TEXT,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
