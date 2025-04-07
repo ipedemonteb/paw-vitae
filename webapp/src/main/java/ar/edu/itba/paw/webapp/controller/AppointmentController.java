@@ -113,6 +113,7 @@ public class AppointmentController {
         ModelAndView mav = new ModelAndView("appointment/confirmation");
         mav.addObject("appointment", appointment);
         mav.addObject("doctor", doctor.orElse(null));
+        mav.addObject("specialty", appointment.getSpecialty());
         return mav;
     }
 

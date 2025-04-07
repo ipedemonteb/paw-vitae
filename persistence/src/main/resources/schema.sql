@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS Images (
 );
 
 
-
+--
 -- -- 1. Insert Users
 -- -- Insert the single client user
 -- INSERT INTO Users (name, last_name, email, password, phone)
@@ -123,8 +123,8 @@ CREATE TABLE IF NOT EXISTS Images (
 --                                             ('specialty.pediatria'),
 --                                             ('specialty.ginecologia'),
 --                                             ('specialty.traumatologia');
---
---
+
+
 -- -- 7. Associate Doctors with Specialties (Doctor_Specialties)
 -- -- Alice (id=2) has Cardiology and General Medicine
 -- INSERT INTO Doctor_Specialties (doctor_id, specialty_id) VALUES (2, 1), (2, 2);

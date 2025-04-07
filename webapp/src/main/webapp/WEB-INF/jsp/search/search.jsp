@@ -3,11 +3,15 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags/layouts" %>
 
+<c:set var="specialtyName">
+  <spring:message code="${specialty.key}" />
+</c:set>
+
 <t:page title="search.page.title">
   <div class="card">
     <div class="card-header">
       <h1 class="card-title"><spring:message code="search.title" /></h1>
-      <p class="card-subtitle"><spring:message code="search.doctors.specialty" arguments="<spring:messasge code='${specialty.key}'/>" /></p>
+      <p class="card-subtitle"><spring:message code="search.doctors.specialty" arguments="${specialtyName}" /></p>
     </div>
 
     <div class="card-body">
