@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaceServices.AppointmentService;
-import ar.edu.itba.paw.interfaceServices.ClientService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Doctor;
@@ -30,7 +28,7 @@ public class SearchController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ModelAndView searchBySpecialty(@RequestParam("specialty") long specialty) {
-        Optional<Specialty> specialtyObj = specialtyService.findById(specialty);
+        Optional<Specialty> specialtyObj = specialtyService.getById(specialty);
         List<Doctor> doctors = doctorService.getBySpecialty(specialtyObj.map(Specialty::getKey).orElse(null));
         return new ModelAndView("search/search").addObject("doctors", doctors).addObject("specialty", specialtyObj.orElse(null));
     }

@@ -11,7 +11,7 @@ public interface DoctorDao {
 
     Doctor create(String name, String lastName , String email, String password, String phone, List<Specialty> specialty, List<Coverage> coverages);
 
-    Optional<Doctor> findById(final long id);
+    Optional<Doctor> getById(final long id);
 
     List<Doctor> getBySpecialty(String specialty);
 

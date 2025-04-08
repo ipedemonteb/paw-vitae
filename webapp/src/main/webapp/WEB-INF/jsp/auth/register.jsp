@@ -49,7 +49,7 @@
                         </c:forEach>
                     </div>
 
-                    <form:select path="specialty" id="specialty" class="hidden-select" multiple="true">
+                    <form:select path="specialties" id="specialty" class="hidden-select" multiple="true">
                         <c:forEach items="${specialtyList}" var="specialty2">
                             <option value="${specialty2}">
                                 <spring:message code="specialty.${specialty2}" text="${specialty2}" />
@@ -57,7 +57,7 @@
                         </c:forEach>
                     </form:select>
                 </div>
-                <form:errors path="specialty" cssClass="error-message" />
+                <form:errors path="specialties" cssClass="error-message" />
             </div>
 
             <div class="form-group">

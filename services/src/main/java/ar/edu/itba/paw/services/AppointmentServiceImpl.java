@@ -2,10 +2,12 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
+import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Specialty;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -14,14 +16,18 @@ import java.util.Optional;
 public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentDao appointmentDao;
+    private final SpecialtyService specialtyService;
 
-    public AppointmentServiceImpl(AppointmentDao appointmentDao) {
+    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService) {
         this.appointmentDao = appointmentDao;
+        this.specialtyService = specialtyService;
     }
 
     @Override
-    public Appointment create(long clientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty) {
-        return appointmentDao.create(clientId, doctorId, startDate, reason, specialty);
+    public Appointment create(long clientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
+        LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
+        Optional<Specialty> specialty = specialtyService.getById(specialtyId);
+        return appointmentDao.create(clientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
     }
 
     @Override

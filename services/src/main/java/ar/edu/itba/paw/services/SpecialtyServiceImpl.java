@@ -1,11 +1,8 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfacePersistence.CoverageDao;
 import ar.edu.itba.paw.interfacePersistence.SpecialtyDao;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
-import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Specialty;
-import org.springframework.aop.aspectj.AspectJAopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,13 +30,13 @@ private final SpecialtyDao specialtyDao;
     }
 
     @Override
-    public Optional<Specialty> findById(long id) {
-        return specialtyDao.findById(id);
+    public Optional<Specialty> getById(long id) {
+        return specialtyDao.getById(id);
     }
 
     @Override
-    public Optional<Specialty> findByName(String name) {
-        return specialtyDao.findByName(name);
+    public Optional<Specialty> getByName(String name) {
+        return specialtyDao.getByName(name);
     }
 
     @Override

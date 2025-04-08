@@ -51,6 +51,9 @@ public class AppointmentForm {
     private Integer doctorId;
 
     @NotNull
+    private Integer clientId;
+
+    @NotNull
     private Integer specialtyId;
 
     public Integer getSpecialtyId() {
@@ -59,6 +62,14 @@ public class AppointmentForm {
 
     public void setSpecialtyId(Integer specialtyId) {
         this.specialtyId = specialtyId;
+    }
+
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
     }
 
     public Integer getDoctorId() {

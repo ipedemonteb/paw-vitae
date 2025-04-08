@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DoctorService {
-    Doctor create(String name, String lastName , String email, String password, String phone, List<Specialty> specialty, List<Coverage> coverages);
+    Doctor create(String name, String lastName , String email, String password, String phone, List<String> specialties, List<String> coverages);
 
-    Optional<Doctor> findById(final long id);
+    Optional<Doctor> getById(final long id);
 
     List<Doctor> getBySpecialty(String specialty);
 }
