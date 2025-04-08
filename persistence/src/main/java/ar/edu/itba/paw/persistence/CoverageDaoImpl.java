@@ -32,7 +32,7 @@ public class CoverageDaoImpl implements CoverageDao {
 
     @Override
     public Optional<Coverage> findById(long id) {
-        return jdbcTemplate.query("SELECT * FROM coverages WHERE id = ?", new Object[]{id}, COVERAGE_MAPPER).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM coverages WHERE id = ?", COVERAGE_MAPPER,id).stream().findFirst();
     }
 
     @Override
@@ -46,7 +46,7 @@ public class CoverageDaoImpl implements CoverageDao {
 
     @Override
     public Optional<Coverage> findByName(String name) {
-        return jdbcTemplate.query("SELECT * FROM coverages WHERE name = ?", new Object[]{name}, COVERAGE_MAPPER).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM coverages WHERE name = ?", COVERAGE_MAPPER,name).stream().findFirst();
     }
 
     @Override
