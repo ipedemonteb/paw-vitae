@@ -4,7 +4,7 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags/layouts" %>
 
 <c:set var="specialtyName">
-  <spring:message code="${specialty.key}" />
+  <spring:message code=<c:out value="${specialty.key}"/> />
 </c:set>
 
 <t:page title="search.page.title">

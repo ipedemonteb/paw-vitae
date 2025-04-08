@@ -7,27 +7,27 @@
 
 
 <layout:page title="landing.page.title" container="false">
-<comp:site-header />
+    <comp:site-header />
 
-<main class="main-content">
-    <comp:hero-section
-    title="landing.welcome"
-    description="landing.welcome.description"
-    buttonText="startnow"
-    buttonUrl="/register" />
+    <main class="main-content">
+        <comp:hero-section
+                title="landing.welcome"
+                description="landing.welcome.description"
+                buttonText="startnow"
+                buttonUrl="/register" />
 
-    <comp:features-section title="features.title">
-    <comp:feature-item
-    title="features.header"
-    description="features.description" />
-    <comp:feature-item
-    title="features.header2"
-    description="features.description2" />
-    <comp:feature-item
-    title="features.header3"
-    description="features.description3" />
-    </comp:features-section>
-</main>
+        <comp:features-section title="features.title">
+            <comp:feature-item
+                    title="features.header"
+                    description="features.description" />
+            <comp:feature-item
+                    title="features.header2"
+                    description="features.description2" />
+            <comp:feature-item
+                    title="features.header3"
+                    description="features.description3" />
+        </comp:features-section>
+    </main>
 
-<comp:site-footer />
+    <comp:site-footer />
 </layout:page>

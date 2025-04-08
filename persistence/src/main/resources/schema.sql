@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS Users (
                                     id SERIAL PRIMARY KEY,
                                     name VARCHAR(50) NOT NULL,
@@ -67,83 +68,83 @@ CREATE TABLE IF NOT EXISTS Images (
 );
 
 
---
--- -- 1. Insert Users
--- -- Insert the single client user
--- INSERT INTO Users (name, last_name, email, password, phone)
--- VALUES ('John', 'Doe', 'john.doe@example.com', 'password123', '1234567890');
--- -- (Assume this gives id = 1)
---
--- -- Insert doctor users
--- INSERT INTO Users (name, last_name, email, password, phone)
--- VALUES
---     ('Alice', 'Smith', 'alice.smith@example.com', 'securepass', '0987654321'),  -- id = 2
---     ('Bob', 'Johnson', 'bob.johnson@example.com', 'strongpass', '5551234567'),    -- id = 3
---     ('Carol', 'Davis', 'carol.davis@example.com', 'passw0rd', '5559876543');      -- id = 4
---
--- -- 2. Insert Coverages
--- INSERT INTO Coverages (coverage_name) VALUES
---                                           ('OSDE'),    -- id = 1
---                                           ('Galeno'),  -- id = 2
---                                           ('Medifé');  -- id = 3
---
--- -- 3. Insert the Client record (only one client)
--- INSERT INTO Clients (client_id, coverage_id)
--- VALUES (1, 1);  -- John Doe uses OSDE (coverage id 1)
---
--- -- 4. Insert Doctors
--- INSERT INTO Doctors (doctor_id) VALUES
---                                     (2),  -- Alice Smith
---                                     (3),  -- Bob Johnson
---                                     (4);  -- Carol Davis
---
--- -- 5. Associate Doctors with Coverages (Doctor_Coverages)
--- -- Alice (id=2) accepts OSDE and Galeno
--- INSERT INTO Doctor_Coverages (doctor_id, coverage_id) VALUES (2, 1), (2, 2);
--- -- Bob (id=3) accepts Galeno and Medifé
--- INSERT INTO Doctor_Coverages (doctor_id, coverage_id) VALUES (3, 2), (3, 3);
--- -- Carol (id=4) accepts OSDE and Medifé
--- INSERT INTO Doctor_Coverages (doctor_id, coverage_id) VALUES (4, 1), (4, 3);
---
--- -- 6. Insert Specialties
--- INSERT INTO Specialties (key) VALUES
---                                             ('specialty.general'),
---                                             ('specialty.cardiologia'),
---                                             ('specialty.dermatologia'),
---                                             ('specialty.endocrinologia'),
---                                             ('specialty.gastroenterologia'),
---                                             ('specialty.hematologia'),
---                                             ('specialty.enfermedades.infecciosas'),
---                                             ('specialty.nefrologia'),
---                                             ('specialty.neurologia'),
---                                             ('specialty.oncologia'),
---                                             ('specialty.pulmonologia'),
---                                             ('specialty.reumatologia'),
---                                             ('specialty.urologia'),
---                                             ('specialty.pediatria'),
---                                             ('specialty.ginecologia'),
---                                             ('specialty.traumatologia');
+
+-- 1. Insert Users
+-- Insert the single client user
+INSERT INTO Users (name, last_name, email, password, phone)
+VALUES ('John', 'Doe', 'john.doe@example.com', 'password123', '1234567890');
+-- (Assume this gives id = 1)
+
+-- Insert doctor users
+INSERT INTO Users (name, last_name, email, password, phone)
+VALUES
+    ('Alice', 'Smith', 'alice.smith@example.com', 'securepass', '0987654321'),  -- id = 2
+    ('Bob', 'Johnson', 'bob.johnson@example.com', 'strongpass', '5551234567'),    -- id = 3
+    ('Carol', 'Davis', 'carol.davis@example.com', 'passw0rd', '5559876543');      -- id = 4
+
+-- 2. Insert Coverages
+INSERT INTO Coverages (coverage_name) VALUES
+                                          ('OSDE'),    -- id = 1
+                                          ('Galeno'),  -- id = 2
+                                          ('Medifé');  -- id = 3
+
+-- 3. Insert the Client record (only one client)
+INSERT INTO Clients (client_id, coverage_id)
+VALUES (1, 1);  -- John Doe uses OSDE (coverage id 1)
+
+-- 4. Insert Doctors
+INSERT INTO Doctors (doctor_id) VALUES
+                                    (2),  -- Alice Smith
+                                    (3),  -- Bob Johnson
+                                    (4);  -- Carol Davis
+
+-- 5. Associate Doctors with Coverages (Doctor_Coverages)
+-- Alice (id=2) accepts OSDE and Galeno
+INSERT INTO Doctor_Coverages (doctor_id, coverage_id) VALUES (2, 1), (2, 2);
+-- Bob (id=3) accepts Galeno and Medifé
+INSERT INTO Doctor_Coverages (doctor_id, coverage_id) VALUES (3, 2), (3, 3);
+-- Carol (id=4) accepts OSDE and Medifé
+INSERT INTO Doctor_Coverages (doctor_id, coverage_id) VALUES (4, 1), (4, 3);
+
+-- 6. Insert Specialties
+INSERT INTO Specialties (key) VALUES
+                                            ('specialty.general'),
+                                            ('specialty.cardiologia'),
+                                            ('specialty.dermatologia'),
+                                            ('specialty.endocrinologia'),
+                                            ('specialty.gastroenterologia'),
+                                            ('specialty.hematologia'),
+                                            ('specialty.enfermedades.infecciosas'),
+                                            ('specialty.nefrologia'),
+                                            ('specialty.neurologia'),
+                                            ('specialty.oncologia'),
+                                            ('specialty.pulmonologia'),
+                                            ('specialty.reumatologia'),
+                                            ('specialty.urologia'),
+                                            ('specialty.pediatria'),
+                                            ('specialty.ginecologia'),
+                                            ('specialty.traumatologia');
 
 
--- -- 7. Associate Doctors with Specialties (Doctor_Specialties)
--- -- Alice (id=2) has Cardiology and General Medicine
--- INSERT INTO Doctor_Specialties (doctor_id, specialty_id) VALUES (2, 1), (2, 2);
--- -- Bob (id=3) has Dermatology
--- INSERT INTO Doctor_Specialties (doctor_id, specialty_id) VALUES (3, 3);
--- -- Carol (id=4) has General Medicine
--- INSERT INTO Doctor_Specialties (doctor_id, specialty_id) VALUES (4, 2);
---
--- -- 8. Insert Appointments for the one client (id=1) with different doctors/specialties
--- -- Appointment with Alice (id=2), specialty Cardiology (id=1)
--- INSERT INTO Appointments (doctor_id, client_id, specialty_id, date, reason)
--- VALUES (2, 1, 1, '2025-05-01 09:00:00', 'Routine cardiology check-up');
---
--- -- Appointment with Bob (id=3), specialty Dermatology (id=3)
--- INSERT INTO Appointments (doctor_id, client_id, specialty_id, date, reason)
--- VALUES (3, 1, 3, '2025-05-02 10:30:00', 'Skin rash evaluation');
---
--- -- Appointment with Carol (id=4), specialty General Medicine (id=2)
--- INSERT INTO Appointments (doctor_id, client_id, specialty_id, date, reason)
--- VALUES (4, 1, 2, '2025-05-03 14:00:00', 'General consultation');
---
---
+-- 7. Associate Doctors with Specialties (Doctor_Specialties)
+-- Alice (id=2) has Cardiology and General Medicine
+INSERT INTO Doctor_Specialties (doctor_id, specialty_id) VALUES (2, 1), (2, 2);
+-- Bob (id=3) has Dermatology
+INSERT INTO Doctor_Specialties (doctor_id, specialty_id) VALUES (3, 3);
+-- Carol (id=4) has General Medicine
+INSERT INTO Doctor_Specialties (doctor_id, specialty_id) VALUES (4, 2);
+
+-- 8. Insert Appointments for the one client (id=1) with different doctors/specialties
+-- Appointment with Alice (id=2), specialty Cardiology (id=1)
+INSERT INTO Appointments (doctor_id, client_id, specialty_id, date, reason)
+VALUES (2, 1, 1, '2025-05-01 09:00:00', 'Routine cardiology check-up');
+
+-- Appointment with Bob (id=3), specialty Dermatology (id=3)
+INSERT INTO Appointments (doctor_id, client_id, specialty_id, date, reason)
+VALUES (3, 1, 3, '2025-05-02 10:30:00', 'Skin rash evaluation');
+
+-- Appointment with Carol (id=4), specialty General Medicine (id=2)
+INSERT INTO Appointments (doctor_id, client_id, specialty_id, date, reason)
+VALUES (4, 1, 2, '2025-05-03 14:00:00', 'General consultation');
+
+
