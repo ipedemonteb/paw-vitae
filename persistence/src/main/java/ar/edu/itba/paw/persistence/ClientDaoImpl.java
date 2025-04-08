@@ -18,7 +18,7 @@ import java.util.*;
 @Repository
 public class ClientDaoImpl implements ClientDao {
 
-    private AppointmentDao appointmentDao;
+    private final AppointmentDao appointmentDao;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -42,7 +42,7 @@ public class ClientDaoImpl implements ClientDao {
     };
 
     @Autowired
-    public ClientDaoImpl(final DataSource ds) {
+    public ClientDaoImpl(final DataSource ds,AppointmentDao appointmentDao) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertClient = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("clients")
@@ -50,6 +50,7 @@ public class ClientDaoImpl implements ClientDao {
         jdbcInsertUser = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
                 .usingGeneratedKeyColumns("id");
+        this.appointmentDao = appointmentDao;
     }
 
     @Override

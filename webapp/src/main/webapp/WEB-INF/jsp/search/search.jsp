@@ -4,14 +4,14 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags/layouts" %>
 
 <c:set var="specialtyName">
-  <spring:message code=<c:out value="${specialty.key}"/> />
+  <spring:message code="${specialty.key}"/>
 </c:set>
 
 <t:page title="search.page.title">
   <div class="card">
     <div class="card-header">
       <h1 class="card-title"><spring:message code="search.title" /></h1>
-      <p class="card-subtitle"><spring:message code="search.doctors.specialty" arguments="${specialtyName}" /></p>
+      <p class="card-subtitle"><spring:message code="search.doctors.specialty" arguments="${specialtyName}"/></p>
     </div>
 
     <div class="card-body">
@@ -37,12 +37,12 @@
                   <td class="image-cell">
                     <img src="<c:url value="/doctor/${doctor.id}/image"/>" alt="${doctor.name} ${doctor.lastName}" class="image-thumbnail">
                   </td>
-                  <td>${doctor.name}</td>
-                  <td>${doctor.lastName}</td>
-                  <td>${doctor.email}</td>
-                  <td>${doctor.phone}</td>
+                  <td><c:out value="${doctor.name}"/></td>
+                  <td><c:out value="${doctor.lastName}"/></td>
+                  <td><c:out value="${doctor.email}"/></td>
+                  <td><c:out value="${doctor.phone}"/></td>
                   <td>
-                    <a href="<c:url value='/appointment?doctorId=${doctor.id}&specialtyId=${specialty.id}' />" class="btn-appointment">
+                    <a href="<c:url value='/appointment?doctorId=${doctor.id}&specialtyId=${specialty.id}'/>" class="btn-appointment">
                     <spring:message code="search.button.schedule" />
                     </a>
                   </td>
@@ -55,7 +55,7 @@
     </div>
 
     <div class="card-footer">
-      <a href="<c:url value='/portal' />" class="btn btn-outline">
+      <a href="<c:url value='/portal'/>" class="btn btn-outline">
         <spring:message code="search.link.back.home" />
       </a>
     </div>

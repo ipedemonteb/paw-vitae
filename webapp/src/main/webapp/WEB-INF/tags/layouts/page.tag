@@ -1,6 +1,7 @@
 <%@ tag language="java" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ attribute name="title" required="true" type="java.lang.String" %>
 <%@ attribute name="cssFiles" required="false" type="java.lang.String" %>
 <%@ attribute name="container" required="false" type="java.lang.Boolean" %>
@@ -10,7 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><spring:message code="${title}" /></title>
+    <title><spring:message code="${fn:escapeXml(title)}" /></title>
     <link rel="stylesheet" href="<c:url value='/css/main.css' />">
     <c:if test="${not empty cssFiles}">
         <c:forEach var="cssFile" items="${cssFiles}">
