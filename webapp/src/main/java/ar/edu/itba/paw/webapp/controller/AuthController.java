@@ -9,7 +9,6 @@ import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Specialty;
-import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,7 +16,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -47,21 +45,15 @@ public class AuthController {
             return doctorForm(doctorForm);
         }
 
-        List<Coverage> coverages = new ArrayList<>();
-        doctorForm.getCoverages().forEach(coverage -> coverages.add(cs.findById(Long.parseLong(coverage)).orElse(null)));
+        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialties(), doctorForm.getCoverages());
 
-        List<Specialty> specialties = new ArrayList<>();
-        doctorForm.getSpecialties().forEach(specialty -> specialties.add(ss.findById(Long.parseLong(specialty)).orElse(null)));
-
-        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), specialties,coverages);
-        if (!doctorForm.getImage().isEmpty()) {
-            try {
-                is.create(doctor.getId(), doctorForm.getImage().getBytes());
-            } catch (IOException e) {
-                errors.reject("image.upload.error", "Failed to upload image");
-                return doctorForm(doctorForm);
-            }
+        try {
+            is.create(doctor.getId(), doctorForm.getImage());
+        } catch (IOException e) {
+            errors.reject("image.upload.error", "Failed to upload image");
+            return doctorForm(doctorForm);
         }
+
         return new ModelAndView("redirect:/" + doctor.getId());
     }
 

@@ -23,6 +23,7 @@
             <!-- Hidden field for doctor ID -->
             <form:hidden path="doctorId" />
             <form:hidden path="specialtyId" />
+            <form:hidden path="clientId" />
 
             <div class="form-row">
                 <comp:form-group path="name" label="appointment.form.firstName" />

@@ -1,13 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.*;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 
-import org.hibernate.validator.internal.util.logging.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -19,13 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -58,6 +50,8 @@ public class AppointmentController {
         mav.addObject("message", "There was an error sending the confirmation email. Please try again later.");
         return mav;
     }
+
+
     @RequestMapping(value = "/appointment", method = RequestMethod.POST)
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
@@ -68,36 +62,12 @@ public class AppointmentController {
             return appointment(appointmentForm, appointmentForm.getDoctorId(), appointmentForm.getSpecialtyId());
         }
 
-        Optional<Specialty> specialty = specialtyService.findById(appointmentForm.getSpecialtyId());
+        Appointment appointment = appointmentService.create(appointmentForm.getClientId(), appointmentForm.getDoctorId(), appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
 
-        Appointment appointment = appointmentService.create(
-                1, // For now, client ID is still hardcoded - this could be the logged-in user
-                appointmentForm.getDoctorId(),
-                LocalDateTime.of(appointmentForm.getAppointmentDate().getYear(),
-                        appointmentForm.getAppointmentDate().getMonthValue(),
-                        appointmentForm.getAppointmentDate().getDayOfMonth(),
-                        appointmentForm.getAppointmentHour(),
-                        0,
-                        0
-                ),
-                appointmentForm.getReason(),
-                specialty.orElse(null) // This should be the specialty of the doctor
-        );
-
-
-        Optional<Doctor> doctor = doctorService.findById(appointmentForm.getDoctorId());
-        if (doctor.isPresent()) {
-            Map<String, Object> doctorTemplateModel = new HashMap<>();
-            doctorTemplateModel.put("doctorName", doctor.get().getName());
-            doctorTemplateModel.put("patientName", appointmentForm.getName() + " " + appointmentForm.getLastName());
-            doctorTemplateModel.put("appointmentDate", appointmentForm.getAppointmentDate().toString());
-            doctorTemplateModel.put("appointmentTime", appointmentForm.getAppointmentHour().toString());
-            doctorTemplateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : messageSource.getMessage("email.emptyReason", null, LocaleContextHolder.getLocale()));
-            try {
-                mailService.sendEmail(doctor.get().getEmail(), messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), doctorTemplateModel);
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            mailService.sendEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment, appointmentForm.getDoctorId(), appointmentForm.getClientId());
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
         }
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
@@ -108,7 +78,7 @@ public class AppointmentController {
     @RequestMapping(value = "/appointment/confirmation")
     public ModelAndView appointmentConfirmation(Model model) {
         Appointment appointment = (Appointment) model.asMap().get("appointment");
-        Optional<Doctor> doctor = doctorService.findById(appointment.getDoctorId());
+        Optional<Doctor> doctor = doctorService.getById(appointment.getDoctorId());
 
         ModelAndView mav = new ModelAndView("appointment/confirmation");
         mav.addObject("appointment", appointment);
@@ -127,15 +97,14 @@ public class AppointmentController {
         Optional<List<Coverage>> coverage = coverageService.getAll();
         mav.addObject("coverages", coverage.orElse(Collections.emptyList()));
 
-        // If we have a doctorId, let's fetch the doctor and add it to the model
-
-        Optional<Doctor> doctor = doctorService.findById(doctorId);
+        Optional<Doctor> doctor = doctorService.getById(doctorId);
         doctor.ifPresent(d -> mav.addObject("doctor", d));
-        Optional<Specialty> specialty = specialtyService.findById(specialtyId);
+        Optional<Specialty> specialty = specialtyService.getById(specialtyId);
         specialty.ifPresent(s -> mav.addObject("specialty", s));
 
-        // Set the doctor ID in the form
+
         appointmentForm.setDoctorId(doctorId);
+        appointmentForm.setClientId(1);
         appointmentForm.setSpecialtyId(specialtyId);
 
         return mav;

@@ -2,14 +2,10 @@ package ar.edu.itba.paw.webapp.form;
 
 
 
-import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Images;
 import ar.edu.itba.paw.webapp.validation.FileSize;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DoctorForm {
@@ -40,7 +36,7 @@ public class DoctorForm {
     private String phone;
 
     @NotEmpty
-    private String[] specialty;
+    private List<String> specialties;
 
     @NotEmpty
     private List<String> coverages;
@@ -102,31 +98,21 @@ public class DoctorForm {
         this.phone = phone;
     }
 
-    public String[] getSpecialty() {
-        return specialty;
-    }
-
     public List<String> getSpecialties() {
-        return coverages;
+        return specialties;
     }
 
-    public void setSpecialty(String[] specialty) {
-        this.specialty = specialty;
+    public void setSpecialties(List<String> specialties) {
+        this.specialties = specialties;
     }
 
-    public String getSpecialtyAsString() {
-        if (specialty == null || specialty.length == 0) {
-            return "";
-        }
-        return String.join(", ", specialty);
-    }
 
     public List<String> getCoverages() {
         return coverages;
     }
 
-    public void setCoverages(List<String> coverageArray) {
-        this.coverages = coverageArray;
+    public void setCoverages(List<String> coverages) {
+        this.coverages = coverages;
     }
 
     public MultipartFile getImage() {

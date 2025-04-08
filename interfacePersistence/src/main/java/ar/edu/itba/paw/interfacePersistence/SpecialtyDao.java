@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface SpecialtyDao {
 
-    Optional<Specialty> findById(long id);
+    Optional<Specialty> getById(long id);
 
-    Optional<Specialty> findByName(String name);
+    Optional<Specialty> getByName(String name);
 
     Optional<List<Specialty>> getAll();
 

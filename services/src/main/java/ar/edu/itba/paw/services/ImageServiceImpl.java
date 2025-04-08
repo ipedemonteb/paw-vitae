@@ -17,8 +17,11 @@ public class ImageServiceImpl implements ImageService{
     }
 
     @Override
-    public Images create(long doctor_id, byte[] image) throws IOException {
-       return imageDao.create(doctor_id, image);
+    public Images create(long doctor_id, MultipartFile image) throws IOException {
+        if (image.isEmpty()) {
+            return null;
+        }
+        return imageDao.create(doctor_id, image.getBytes());
     }
 
     @Override

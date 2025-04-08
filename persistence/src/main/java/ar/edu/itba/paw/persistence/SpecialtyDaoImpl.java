@@ -30,12 +30,12 @@ public class SpecialtyDaoImpl implements SpecialtyDao {
     }
 
     @Override
-    public Optional<Specialty> findById(long id) {
+    public Optional<Specialty> getById(long id) {
         return jdbcTemplate.query("SELECT * FROM specialties WHERE id = ?", new Object[]{id}, SPECIALTY_MAPPER).stream().findFirst();
     }
 
     @Override
-    public Optional<Specialty> findByName(String name) {
+    public Optional<Specialty> getByName(String name) {
         return jdbcTemplate.query("SELECT * FROM specialties WHERE key = ?", new Object[]{name}, SPECIALTY_MAPPER).stream().findFirst();
     }
 
