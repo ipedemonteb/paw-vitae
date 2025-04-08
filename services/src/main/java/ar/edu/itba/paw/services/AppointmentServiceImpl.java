@@ -5,20 +5,19 @@ import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Specialty;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentDao appointmentDao;
     private final SpecialtyService specialtyService;
-@Autowired
+
     public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;
@@ -39,5 +38,19 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Optional<List<Appointment>> getByDoctorId(long doctorId) {
         return appointmentDao.getByDoctorId(doctorId);
+    }
+
+    @Override
+    public Set<Integer> getBookedHoursByDoctorAndDate(long doctorId, LocalDate date) {
+        Optional<List<Appointment>> appointments = getByDoctorId(doctorId);
+
+        if (!appointments.isPresent()) {
+            return Collections.emptySet();
+        }
+
+        return appointments.get().stream()
+                .filter(appointment -> appointment.getDate().toLocalDate().equals(date))
+                .map(appointment -> appointment.getDate().getHour())
+                .collect(Collectors.toSet());
     }
 }
