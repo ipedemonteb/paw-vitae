@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Specialty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentDao appointmentDao;
     private final SpecialtyService specialtyService;
-
+@Autowired
     public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;

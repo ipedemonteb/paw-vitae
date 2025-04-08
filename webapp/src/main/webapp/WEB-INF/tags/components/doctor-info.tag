@@ -7,20 +7,20 @@
 <div class="doctor-info">
     <div class="doctor-info-content">
         <h3><spring:message code="appointment.selectedDoctor" /></h3>
-        <p><strong>${doctor.name} ${doctor.lastName}</strong></p>
+        <p><strong><c:out value="${doctor.name}" /> <c:out value="${doctor.lastName}" /></strong></p>
         <c:if test="${not empty doctor.specialtyList}">
             <p class="doctor-specialty">
                 <c:forEach var="specialty" items="${doctor.specialtyList}" varStatus="status">
-                    <spring:message code="${specialty.key}" text="${specialty.key}" />
+                    <spring:message code="${specialty.key}" text="${fn:escapeXml(specialty.key)}" />
                     <c:if test="${!status.last}">, </c:if>
                 </c:forEach>
             </p>
         </c:if>
         <c:if test="${not empty doctor.email}">
-            <p><spring:message code="appointment.doctor.email" />: ${doctor.email}</p>
+            <p><spring:message code="appointment.doctor.email" />: <c:out value="${doctor.email}" /></p>
         </c:if>
         <c:if test="${not empty doctor.phone}">
-            <p><spring:message code="appointment.doctor.phone" />: ${doctor.phone}</p>
+            <p><spring:message code="appointment.doctor.phone" />: <c:out value="${doctor.phone}" /></p>
         </c:if>
     </div>
     <div class="doctor-image">
