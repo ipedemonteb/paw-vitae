@@ -32,7 +32,7 @@
 
             <div class="confirmation-item">
                 <div class="confirmation-label"><spring:message code="appointment.form.date"/></div>
-                <div class="confirmation-value"><c:out value="{appointment.date.toLocalDate()}"/></div>
+                <div class="confirmation-value"><c:out value="${appointment.date.toLocalDate()}"/></div>
             </div>
 
             <div class="confirmation-item">
