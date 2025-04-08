@@ -7,6 +7,7 @@ import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,14 +17,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 @Controller
 public class AppointmentController {
-
-
 
     private AppointmentService appointmentService;
     private ClientService clientService;
@@ -43,6 +41,7 @@ public class AppointmentController {
         this.messageSource = messageSource;
         this.specialtyService = specialtyService;
     }
+
     // Add the following method to handle MessagingException
     @ExceptionHandler(MessagingException.class)
     public ModelAndView handleMessagingException(MessagingException e) {
@@ -50,7 +49,6 @@ public class AppointmentController {
         mav.addObject("message", "There was an error sending the confirmation email. Please try again later.");
         return mav;
     }
-
 
     @RequestMapping(value = "/appointment", method = RequestMethod.POST)
     public ModelAndView appointment(
@@ -102,6 +100,11 @@ public class AppointmentController {
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
         specialty.ifPresent(s -> mav.addObject("specialty", s));
 
+        // Get today's date for initial available hours
+        LocalDate today = LocalDate.now();
+        Set<Integer> bookedHours = appointmentService.getBookedHoursByDoctorAndDate(doctorId, today);
+        mav.addObject("bookedHours", bookedHours);
+        mav.addObject("today", today);
 
         appointmentForm.setDoctorId(doctorId);
         appointmentForm.setClientId(1);
@@ -109,4 +112,29 @@ public class AppointmentController {
 
         return mav;
     }
+
+    @RequestMapping(value = "/appointment/available-hours", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String getAvailableHours(
+            @RequestParam Integer doctorId,
+            @RequestParam String date) {
+        // Parse the date
+        LocalDate localDate = LocalDate.parse(date);  // date must be in "yyyy-MM-dd" format.
+
+        // Here, for example, retrieve the booked hours for that doctor and date.
+        Set<Integer> bookedHours = appointmentService.getBookedHoursByDoctorAndDate(doctorId, localDate);
+
+        StringBuilder json = new StringBuilder();
+        json.append("{\"bookedHours\":");
+        json.append("[");
+        bookedHours.forEach(h -> json.append("\"").append(h).append("\","));
+        if (!bookedHours.isEmpty()) {
+            json.deleteCharAt(json.length() - 1); // Remove the last comma
+        }
+        json.append("]}");
+
+
+        return json.toString();
+    }
+
 }

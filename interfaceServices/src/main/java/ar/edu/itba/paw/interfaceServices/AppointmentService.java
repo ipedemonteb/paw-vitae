@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Appointment;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface AppointmentService {
 
@@ -13,4 +14,6 @@ public interface AppointmentService {
     Optional<List<Appointment>> getByClientId(long clientId);
 
     Optional<List<Appointment>> getByDoctorId(long doctorId);
+
+    Set<Integer> getBookedHoursByDoctorAndDate(long doctorId, LocalDate date);
 }
