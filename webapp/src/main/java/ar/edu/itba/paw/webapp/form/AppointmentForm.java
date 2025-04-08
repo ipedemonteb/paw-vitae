@@ -29,19 +29,13 @@ public class AppointmentForm {
     @NotNull()
     private Long coverageId;
 
-//    @NotNull(message = "Appointment date/time is required")
-//    @Future(message = "The appointment must be scheduled for a future date/time")
-//    @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm")
-//    private LocalDateTime appointmentDateTime;
-
     @NotNull()
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate appointmentDate;
 
-    // Use a separate field for the hour (0-23)
     @NotNull()
-    @Min(value = 0, message = "Hour must be between 0 and 23")
-    @Max(value = 23, message = "Hour must be between 0 and 23")
+    @Min(value = 8, message = "Hour must be between 8 and 18")
+    @Max(value = 18, message = "Hour must be between 8 and 18")
     private Integer appointmentHour;
 
     @Size(max = 255)

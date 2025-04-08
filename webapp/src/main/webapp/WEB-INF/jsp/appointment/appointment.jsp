@@ -63,7 +63,6 @@
         </div>
 
         <div class="card-body">
-            <!-- Display doctor information if available -->
             <c:if test="${not empty doctor}">
                 <comp:doctor-info doctor="${doctor}" />
             </c:if>
@@ -101,22 +100,18 @@
                     <form:errors path="coverageId" cssClass="error-message" />
                 </div>
 
-                <!-- Improved Date and Time Picker -->
                 <div class="form-group">
                     <label for="appointmentDatePicker"><spring:message code="appointment.form.datetime"/></label>
                     <input type="text" id="appointmentDatePicker" class="form-control" placeholder="<spring:message code="appointment.placeholder.selectDate"/>" readonly>
 
-                    <!-- Hidden fields to store actual values -->
                     <input type="hidden" id="appointmentDate" name="appointmentDate">
                     <input type="hidden" id="appointmentHour" name="appointmentHour">
 
-                    <!-- Time slots container -->
                     <div id="timeSlotsContainer" class="time-slots-container" style="display: none;">
                         <h6><spring:message code="appointment.form.selectTime"/></h6>
                         <div id="timeSlots" class="time-slots-grid"></div>
                     </div>
 
-                    <!-- Appointment summary -->
                     <div id="appointmentSummary" class="appointment-summary hidden">
                         <p class="mb-1"><strong><spring:message code="appointment.summary.title"/></strong></p>
                         <p id="appointmentSummaryText" class="mb-0"></p>
@@ -134,7 +129,7 @@
         </div>
     </div>
 
-    <!-- Add Flatpickr JS -->
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
@@ -148,7 +143,6 @@
             const appointmentSummaryText = document.getElementById('appointmentSummaryText');
             const doctorId = document.getElementById('doctorId').value;
 
-            // Get day names and month names for localization
             const dayNames = [
                 '<spring:message code="calendar.day.sunday"/>',
                 '<spring:message code="calendar.day.monday"/>',
@@ -174,14 +168,13 @@
                 '<spring:message code="calendar.month.december"/>'
             ];
 
-            // Initialize Flatpickr date picker
             const flatpickrInstance = flatpickr(datePickerInput, {
                 minDate: "today",
-                maxDate: new Date().fp_incr(30), // Allow booking up to 30 days in advance
+                maxDate: new Date().fp_incr(30),
                 dateFormat: "Y-m-d",
-                disableMobile: true, // Use the same UI on mobile devices
+                disableMobile: true,
                 locale: {
-                    firstDayOfWeek: 1, // Monday as first day of week
+                    firstDayOfWeek: 1,
                     weekdays: {
                         shorthand: dayNames.map(day => day.substring(0, 3)),
                         longhand: dayNames
@@ -193,29 +186,21 @@
                 },
                 onChange: function(selectedDates, dateStr) {
                     if (selectedDates.length > 0) {
-                        // Store the selected date in the hidden input
                         dateInput.value = dateStr;
-
-                        // Clear previously selected time
                         hourInput.value = '';
-
-                        // Fetch available hours for the selected date
                         fetchAvailableHours(dateStr);
                     } else {
-                        // Hide time slots if no date is selected
                         timeSlotsContainer.style.display = 'none';
                         appointmentSummary.classList.add('hidden');
                     }
                 }
             });
 
-            // Function to fetch available hours from the server
             function fetchAvailableHours(selectedDate) {
-                // Show loading indicator
+
                 timeSlotsGrid.innerHTML = '<div class="text-center w-100"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>';
                 timeSlotsContainer.style.display = 'block';
 
-                // Fetch available hours from the server
                 fetch(`${pageContext.request.contextPath}/appointment/available-hours?doctorId=${doctor.id}&date=` + selectedDate)
                     .then(response => {
                         if (!response.ok) {
@@ -232,15 +217,10 @@
                     });
             }
 
-            // Function to render time slots
             function renderTimeSlots(bookedHours, selectedDate) {
-                // Clear previous time slots
+
                 timeSlotsGrid.innerHTML = '';
-
-                // Generate all possible hours (8 AM to 6 PM)
                 const allHours = Array.from({ length: 11 }, (_, i) => i + 8);
-
-                // Filter out booked hours
                 const availableHours = allHours.filter(hour => !bookedHours.includes(hour.toString()));
 
                 if (availableHours.length === 0) {
@@ -249,7 +229,6 @@
                     return;
                 }
 
-                // Create buttons for each available hour
                 availableHours.forEach(hour => {
                     const timeButton = document.createElement('button');
                     timeButton.type = 'button';
@@ -257,24 +236,15 @@
                     timeButton.textContent = hour + `:00`;
                     timeButton.dataset.hour = hour;
 
-                    // Add click event to select time
                     timeButton.addEventListener('click', function() {
-                        // Remove active class from all buttons
                         document.querySelectorAll('.time-slot-btn').forEach(btn => {
                             btn.classList.remove('active');
                         });
-
-                        // Add active class to this button
                         this.classList.add('active');
-
-                        // Store the selected hour
                         hourInput.value = hour;
-
-                        // Update appointment summary
                         updateAppointmentSummary(selectedDate, hour);
                     });
 
-                    // If this hour was previously selected, mark it as active
                     if (hourInput.value && parseInt(hourInput.value) === hour) {
                         timeButton.classList.add('active');
                     }
@@ -283,40 +253,26 @@
                 });
             }
 
-            // Function to update appointment summary
             function updateAppointmentSummary(dateStr, hour) {
                 if (!dateStr || !hour) {
                     appointmentSummary.classList.add('hidden');
                     return;
                 }
 
-                // Parse the date
                 const date = new Date(dateStr);
                 const dayName = dayNames[date.getDay()];
                 const monthName = monthNames[date.getMonth()];
                 const dayOfMonth = date.getDate();
                 const year = date.getFullYear();
 
-                // Format the date and time for display
                 const formattedDateTime = dayName + `, ` + monthName + ` ` + dayOfMonth + `, ` + year + <spring:message code="appointment.at"/> + hour + `:00`;
-
-                // Update the summary text
                 appointmentSummaryText.innerHTML = formattedDateTime;
-
-                // Show the summary
                 appointmentSummary.classList.remove('hidden');
             }
 
-            // If date and hour are already set (e.g., when returning to the form after validation error),
-            // initialize the UI accordingly
             if (dateInput.value) {
-                // Set the date picker value
                 flatpickrInstance.setDate(dateInput.value);
-
-                // Fetch available hours
                 fetchAvailableHours(dateInput.value);
-
-                // Update summary if hour is also set
                 if (hourInput.value) {
                     updateAppointmentSummary(dateInput.value, hourInput.value);
                 }
