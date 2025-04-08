@@ -45,10 +45,6 @@ public class DoctorForm {
     @FileSize(max = 2 * 1024 * 1024) // 2MB
     private MultipartFile image;
 
-//    @NotEmpty
-//    private List<Coverage> coverageList;
-
-    // Getters and Setters
 
     public String getName() {
         return name;
