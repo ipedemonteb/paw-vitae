@@ -7,6 +7,55 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
 <layout:page title="appointment.page.title">
+    <!-- Add Flatpickr CSS in the head section -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- Custom CSS for time slots -->
+    <style>
+        .time-slots-container {
+            margin-top: 15px;
+        }
+
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .time-slot-btn {
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .time-slot-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .time-slot-btn.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .appointment-summary {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+
+        .appointment-summary.hidden {
+            display: none;
+        }
+    </style>
+
     <div class="card">
         <div class="card-header">
             <h1 class="card-title"><spring:message code="appointment.title" /></h1>
@@ -52,20 +101,26 @@
                     <form:errors path="coverageId" cssClass="error-message" />
                 </div>
 
+                <!-- Improved Date and Time Picker -->
                 <div class="form-group">
-                    <label for="appointmentDate"><spring:message code="appointment.form.date"/></label>
-                    <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" min="${today}" />
-                </div>
+                    <label for="appointmentDatePicker"><spring:message code="appointment.form.datetime"/></label>
+                    <input type="text" id="appointmentDatePicker" class="form-control" placeholder="<spring:message code="appointment.placeholder.selectDate"/>" readonly>
 
-                <div class="form-group">
-                    <label for="appointmentHour"><spring:message code="appointment.form.time"/></label>
-                    <select id="appointmentHour" name="appointmentHour" class="form-control" disabled>
-                        <c:forEach var="hour" begin="8" end="18">
-                            <c:if test="${!bookedHours.contains(hour)}">
-                                <option value="${hour}">${hour}:00</option>
-                            </c:if>
-                        </c:forEach>
-                    </select>
+                    <!-- Hidden fields to store actual values -->
+                    <input type="hidden" id="appointmentDate" name="appointmentDate">
+                    <input type="hidden" id="appointmentHour" name="appointmentHour">
+
+                    <!-- Time slots container -->
+                    <div id="timeSlotsContainer" class="time-slots-container" style="display: none;">
+                        <h6><spring:message code="appointment.form.selectTime"/></h6>
+                        <div id="timeSlots" class="time-slots-grid"></div>
+                    </div>
+
+                    <!-- Appointment summary -->
+                    <div id="appointmentSummary" class="appointment-summary hidden">
+                        <p class="mb-1"><strong><spring:message code="appointment.summary.title"/></strong></p>
+                        <p id="appointmentSummaryText" class="mb-0"></p>
+                    </div>
                 </div>
 
                 <comp:form-group path="reason" label="appointment.form.reason" type="textarea" />
@@ -79,66 +134,193 @@
         </div>
     </div>
 
-    <script>
+    <!-- Add Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const datePickerInput = document.getElementById('appointmentDatePicker');
             const dateInput = document.getElementById('appointmentDate');
-            const hourSelect = document.getElementById('appointmentHour');
+            const hourInput = document.getElementById('appointmentHour');
+            const timeSlotsContainer = document.getElementById('timeSlotsContainer');
+            const timeSlotsGrid = document.getElementById('timeSlots');
+            const appointmentSummary = document.getElementById('appointmentSummary');
+            const appointmentSummaryText = document.getElementById('appointmentSummaryText');
             const doctorId = document.getElementById('doctorId').value;
 
-            // Set minimum date to today
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            dateInput.min = yyyy + `-`+ mm + `-` + dd;
+            // Get day names and month names for localization
+            const dayNames = [
+                '<spring:message code="calendar.day.sunday"/>',
+                '<spring:message code="calendar.day.monday"/>',
+                '<spring:message code="calendar.day.tuesday"/>',
+                '<spring:message code="calendar.day.wednesday"/>',
+                '<spring:message code="calendar.day.thursday"/>',
+                '<spring:message code="calendar.day.friday"/>',
+                '<spring:message code="calendar.day.saturday"/>'
+            ];
 
-            dateInput.addEventListener('change', function() {
-                const selectedDate = this.value;
+            const monthNames = [
+                '<spring:message code="calendar.month.january"/>',
+                '<spring:message code="calendar.month.february"/>',
+                '<spring:message code="calendar.month.march"/>',
+                '<spring:message code="calendar.month.april"/>',
+                '<spring:message code="calendar.month.may"/>',
+                '<spring:message code="calendar.month.june"/>',
+                '<spring:message code="calendar.month.july"/>',
+                '<spring:message code="calendar.month.august"/>',
+                '<spring:message code="calendar.month.september"/>',
+                '<spring:message code="calendar.month.october"/>',
+                '<spring:message code="calendar.month.november"/>',
+                '<spring:message code="calendar.month.december"/>'
+            ];
 
-                hourSelect.disabled = !selectedDate;
+            // Initialize Flatpickr date picker
+            const flatpickrInstance = flatpickr(datePickerInput, {
+                minDate: "today",
+                maxDate: new Date().fp_incr(30), // Allow booking up to 30 days in advance
+                dateFormat: "Y-m-d",
+                disableMobile: true, // Use the same UI on mobile devices
+                locale: {
+                    firstDayOfWeek: 1, // Monday as first day of week
+                    weekdays: {
+                        shorthand: dayNames.map(day => day.substring(0, 3)),
+                        longhand: dayNames
+                    },
+                    months: {
+                        shorthand: monthNames.map(month => month.substring(0, 3)),
+                        longhand: monthNames
+                    }
+                },
+                onChange: function(selectedDates, dateStr) {
+                    if (selectedDates.length > 0) {
+                        // Store the selected date in the hidden input
+                        dateInput.value = dateStr;
 
-                console.log("I HAVE CHANGED");
-                if (!selectedDate) {
-                    console.log("WHY GOD WHY");
-                    return;
+                        // Clear previously selected time
+                        hourInput.value = '';
+
+                        // Fetch available hours for the selected date
+                        fetchAvailableHours(dateStr);
+                    } else {
+                        // Hide time slots if no date is selected
+                        timeSlotsContainer.style.display = 'none';
+                        appointmentSummary.classList.add('hidden');
+                    }
                 }
+            });
 
+            // Function to fetch available hours from the server
+            function fetchAvailableHours(selectedDate) {
+                // Show loading indicator
+                timeSlotsGrid.innerHTML = '<div class="text-center w-100"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>';
+                timeSlotsContainer.style.display = 'block';
+
+                // Fetch available hours from the server
                 fetch(`${pageContext.request.contextPath}/appointment/available-hours?doctorId=${doctor.id}&date=` + selectedDate)
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error(`HTTP error! status: ` + response.status);
+                            throw new Error('HTTP error! status: ' + response.status);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log("Full response:", data);  // Log the entire JSON response
-                        // Clear current options
-                        hourSelect.innerHTML = '';
-
-                        // Add available hours (8 AM to 6 PM, excluding booked hours)
-                        for (let hour = 8; hour <= 18; hour++) {
-                            if (!data.bookedHours.includes(hour.toString())) {
-                                const option = document.createElement('option');
-                                option.value = hour;
-                                option.textContent = hour + ':00';
-                                hourSelect.appendChild(option);
-                            }
-                        }
-
-                        // Show message if no hours available
-                        if (hourSelect.options.length === 0) {
-                            const option = document.createElement('option');
-                            option.value = '';
-                            option.textContent = 'No available hours';
-                            option.disabled = true;
-                            option.selected = true;
-                            hourSelect.appendChild(option);
-                        }
+                        renderTimeSlots(data.bookedHours, selectedDate);
                     })
-                    .catch(error => console.error('Error fetching available hours:', error));
+                    .catch(error => {
+                        console.error('Error fetching available hours:', error);
+                        timeSlotsGrid.innerHTML = '<div class="alert alert-danger"><spring:message code="appointment.error.fetchHours"/></div>';
+                    });
+            }
 
-            });
+            // Function to render time slots
+            function renderTimeSlots(bookedHours, selectedDate) {
+                // Clear previous time slots
+                timeSlotsGrid.innerHTML = '';
+
+                // Generate all possible hours (8 AM to 6 PM)
+                const allHours = Array.from({ length: 11 }, (_, i) => i + 8);
+
+                // Filter out booked hours
+                const availableHours = allHours.filter(hour => !bookedHours.includes(hour.toString()));
+
+                if (availableHours.length === 0) {
+                    // No available hours
+                    timeSlotsGrid.innerHTML = '<div class="alert alert-info w-100 text-center"><spring:message code="appointment.noAvailableHours"/></div>';
+                    return;
+                }
+
+                // Create buttons for each available hour
+                availableHours.forEach(hour => {
+                    const timeButton = document.createElement('button');
+                    timeButton.type = 'button';
+                    timeButton.className = 'time-slot-btn';
+                    timeButton.textContent = hour + `:00`;
+                    timeButton.dataset.hour = hour;
+
+                    // Add click event to select time
+                    timeButton.addEventListener('click', function() {
+                        // Remove active class from all buttons
+                        document.querySelectorAll('.time-slot-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+
+                        // Add active class to this button
+                        this.classList.add('active');
+
+                        // Store the selected hour
+                        hourInput.value = hour;
+
+                        // Update appointment summary
+                        updateAppointmentSummary(selectedDate, hour);
+                    });
+
+                    // If this hour was previously selected, mark it as active
+                    if (hourInput.value && parseInt(hourInput.value) === hour) {
+                        timeButton.classList.add('active');
+                    }
+
+                    timeSlotsGrid.appendChild(timeButton);
+                });
+            }
+
+            // Function to update appointment summary
+            function updateAppointmentSummary(dateStr, hour) {
+                if (!dateStr || !hour) {
+                    appointmentSummary.classList.add('hidden');
+                    return;
+                }
+
+                // Parse the date
+                const date = new Date(dateStr);
+                const dayName = dayNames[date.getDay()];
+                const monthName = monthNames[date.getMonth()];
+                const dayOfMonth = date.getDate();
+                const year = date.getFullYear();
+
+                // Format the date and time for display
+                const formattedDateTime = dayName + `, ` + monthName + ` ` + dayOfMonth + `, ` + year + <spring:message code="appointment.at"/> + hour + `:00`;
+
+                // Update the summary text
+                appointmentSummaryText.innerHTML = formattedDateTime;
+
+                // Show the summary
+                appointmentSummary.classList.remove('hidden');
+            }
+
+            // If date and hour are already set (e.g., when returning to the form after validation error),
+            // initialize the UI accordingly
+            if (dateInput.value) {
+                // Set the date picker value
+                flatpickrInstance.setDate(dateInput.value);
+
+                // Fetch available hours
+                fetchAvailableHours(dateInput.value);
+
+                // Update summary if hour is also set
+                if (hourInput.value) {
+                    updateAppointmentSummary(dateInput.value, hourInput.value);
+                }
+            }
         });
     </script>
 </layout:page>
