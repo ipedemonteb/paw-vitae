@@ -17,12 +17,12 @@
         <div class="confirmation-details">
             <div class="confirmation-item">
                 <div class="confirmation-label"><spring:message code="appointment.form.reason"/></div>
-                <div class="confirmation-value">${appointment.reason}</div>
+                <div class="confirmation-value"><c:out value="${appointment.reason}"/></div>
             </div>
 
             <div class="confirmation-item">
                 <div class="confirmation-label"><spring:message code="appointment.selectedDoctor"/></div>
-                <div class="confirmation-value">${doctor.name} ${doctor.lastName}</div>
+                <div class="confirmation-value"><c:out value="${doctor.name} ${doctor.lastName}"/></div>
             </div>
 
             <div class="confirmation-item">
@@ -32,12 +32,12 @@
 
             <div class="confirmation-item">
                 <div class="confirmation-label"><spring:message code="appointment.form.date"/></div>
-                <div class="confirmation-value">${appointment.date.toLocalDate()}</div>
+                <div class="confirmation-value"><c:out value="{appointment.date.toLocalDate()}"/></div>
             </div>
 
             <div class="confirmation-item">
                 <div class="confirmation-label"><spring:message code="appointment.form.time"/></div>
-                <div class="confirmation-value">${appointment.date.toLocalTime()}</div>
+                <div class="confirmation-value"><c:out value="${appointment.date.toLocalTime()}"/></div>
             </div>
         </div>
 

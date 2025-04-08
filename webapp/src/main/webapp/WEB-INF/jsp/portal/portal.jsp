@@ -6,23 +6,23 @@
 
 
 <layout:page title="portal.title">
-<comp:headerPortal title="portal.heading"/>
+    <comp:headerPortal title="portal.heading"/>
 
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title text-center"><spring:message code="portal.selectSpecialty" /></h2>
-    </div>
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title text-center"><spring:message code="portal.selectSpecialty" /></h2>
+        </div>
 
-    <div class="card-body">
-        <div class="grid grid-cols-1 grid-cols-2 grid-cols-3">
-            <c:forEach items="${specialties}" var="specialty">
-                <a href="<c:url value='/search?specialty=${specialty.id}' />" class="specialty-card">
-                    <div class="specialty-name">
-                        <spring:message code="${specialty.key}"/>
-                    </div>
-                </a>
-            </c:forEach>
+        <div class="card-body">
+            <div class="grid grid-cols-1 grid-cols-2 grid-cols-3">
+                <c:forEach items="${specialties}" var="specialty">
+                    <a href="<c:url value='/search?specialty=<c:out value="${specialty.id}" />' />" class="specialty-card">
+                        <div class="specialty-name">
+                            <spring:message code=<c:out value="${specialty.key}"/>"/>
+                        </div>
+                    </a>
+                </c:forEach>
+            </div>
         </div>
     </div>
-</div>
 </layout:page>

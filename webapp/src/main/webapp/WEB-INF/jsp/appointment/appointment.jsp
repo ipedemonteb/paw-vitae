@@ -14,13 +14,12 @@
     </div>
 
     <div class="card-body">
-        <!-- Display doctor information if available -->
         <c:if test="${not empty doctor}">
             <comp:doctor-info doctor="${doctor}" />
         </c:if>
 
         <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment">
-            <!-- Hidden field for doctor ID -->
+
             <form:hidden path="doctorId" />
             <form:hidden path="specialtyId" />
             <form:hidden path="clientId" />
