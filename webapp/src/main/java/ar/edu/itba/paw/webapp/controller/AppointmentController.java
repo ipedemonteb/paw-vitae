@@ -137,4 +137,44 @@ public class AppointmentController {
         return json.toString();
     }
 
+    @RequestMapping(value = "/appointment/fully-booked-dates", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String getFullyBookedDates(
+            @RequestParam Integer doctorId,
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+
+        LocalDate localStartDate = LocalDate.parse(startDate);
+        LocalDate localEndDate = LocalDate.parse(endDate);
+
+        // Define all possible time slots (e.g., 8 AM to 6 PM)
+        Set<Integer> allSlots = new HashSet<>();
+        for (int i = 8; i <= 18; i++) {
+            allSlots.add(i);
+        }
+
+        // Iterate through the date range
+        List<String> fullyBookedDates = new ArrayList<>();
+        for (LocalDate date = localStartDate; !date.isAfter(localEndDate); date = date.plusDays(1)) {
+            Set<Integer> bookedHours = appointmentService.getBookedHoursByDoctorAndDate(doctorId, date);
+
+            // Check if all slots are booked
+            if (bookedHours.containsAll(allSlots)) {
+                fullyBookedDates.add(date.toString());
+            }
+        }
+
+        // Convert the list of fully booked dates to JSON
+        StringBuilder json = new StringBuilder();
+        json.append("{\"fullyBookedDates\":");
+        json.append("[");
+        fullyBookedDates.forEach(d -> json.append("\"").append(d).append("\","));
+        if (!fullyBookedDates.isEmpty()) {
+            json.deleteCharAt(json.length() - 1); // Remove the last comma
+        }
+        json.append("]}");
+
+        return json.toString();
+    }
+
 }
