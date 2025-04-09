@@ -16,4 +16,8 @@ public interface AppointmentService {
     Optional<List<Appointment>> getByDoctorId(long doctorId);
 
     Set<Integer> getBookedHoursByDoctorAndDate(long doctorId, LocalDate date);
+
+    Optional<List<Appointment>> getAllFutureAppointments(long doctorId);
+
+    Optional<String> getFutureAppointmentsPerDate(long doctorId);
 }

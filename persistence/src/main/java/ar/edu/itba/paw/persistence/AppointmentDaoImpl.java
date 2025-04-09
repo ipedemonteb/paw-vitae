@@ -81,4 +81,11 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ?", ROW_MAPPER, doctorId);
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
+
+    @Override
+    public Optional<List<Appointment>> getAllFutureAppointments(long doctorId) {
+        List<Appointment> appointments = jdbcTemplate.query(
+                "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ? AND date > NOW()", ROW_MAPPER, doctorId);
+        return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
+    }
 }

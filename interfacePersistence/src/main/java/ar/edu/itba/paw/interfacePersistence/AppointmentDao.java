@@ -15,4 +15,6 @@ public interface AppointmentDao {
 
     Optional<List<Appointment>> getByDoctorId(long doctorId);
 
+    Optional<List<Appointment>> getAllFutureAppointments(long doctorId);
+
 }
