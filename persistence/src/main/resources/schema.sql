@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS Users (
                                     email VARCHAR(100) NOT NULL UNIQUE,
                                     password VARCHAR(255) NOT NULL,
                                     phone VARCHAR(20)
---                         TODO: ADD MISSING COLUMNS, E.G. DNI
     );
 
 CREATE TABLE IF NOT EXISTS Coverages (
@@ -78,7 +77,7 @@ CREATE TABLE IF NOT EXISTS Images (
 );
 
 
---
+
 -- -- 1. Insert Users
 -- -- Insert the single client user
 -- INSERT INTO Users (name, last_name, email, password, phone)
@@ -89,7 +88,7 @@ CREATE TABLE IF NOT EXISTS Images (
 -- INSERT INTO Users (name, last_name, email, password, phone)
 -- VALUES
 --     ('Alice', 'Smith', 'alice.smith@example.com', 'securepass', '0987654321'),  -- id = 2
---     ('Bob', 'Johnson', 'bob.johnson@example.com', 'strongpass', '5551234567'),    -- id = 3
+--     ('Bob', 'Johnson', 'jobenegaslynch@itba.edu.ar', 'strongpass', '5551234567'),    -- id = 3
 --     ('Carol', 'Davis', 'carol.davis@example.com', 'passw0rd', '5559876543');      -- id = 4
 --
 -- -- 2. Insert Coverages
@@ -156,5 +155,5 @@ CREATE TABLE IF NOT EXISTS Images (
 -- -- Appointment with Carol (id=4), specialty General Medicine (id=2)
 -- INSERT INTO Appointments (doctor_id, client_id, specialty_id, date, reason)
 -- VALUES (4, 1, 2, '2025-05-03 14:00:00', 'General consultation');
-
-
+--
+--
