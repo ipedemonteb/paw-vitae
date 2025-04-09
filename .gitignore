@@ -53,4 +53,7 @@ Thumbs.db
 # Scripts
 *.sh
 
+# IDE specific files
+*.iml
+
 
