@@ -345,7 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function getBookedTimeSlots(date) {
         const formattedDate = formatDateForSubmission(date);
 
-        return fetch(`/appointment/available-hours?doctorId=${appointmentForm.doctorId.value}&date=${formattedDate}`)
+        return fetch(`${contextPath}/appointment/available-hours?doctorId=${appointmentForm.doctorId.value}&date=${formattedDate}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch available time slots");

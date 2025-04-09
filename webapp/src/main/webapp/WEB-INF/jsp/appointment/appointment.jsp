@@ -138,6 +138,7 @@
             appointmentAt: '<spring:message code="appointment.at" />',
             noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />'
         };
+        contextPath = "${pageContext.request.contextPath}";
     </script>
 
     <!-- Include the external JavaScript file -->
