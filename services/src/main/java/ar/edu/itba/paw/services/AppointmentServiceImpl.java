@@ -53,4 +53,9 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .map(appointment -> appointment.getDate().getHour())
                 .collect(Collectors.toSet());
     }
+
+    @Override
+    public Optional<List<Appointment>> getAllFutureAppointments(long doctorId) {
+        return appointmentDao.getAllFutureAppointments(doctorId);
+    }
 }
