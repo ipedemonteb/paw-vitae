@@ -19,16 +19,16 @@
       </button>
 
       <nav class="main-nav">
-        <ul class="nav-list" id="nav-list">
-          <li><a href="<c:url value='/' />" class="nav-link"><spring:message code="nav.home" /></a></li>
-          <li><a href="<c:url value='/portal' />" class="nav-link"><spring:message code="nav.doctors" /></a></li>
-          <li><a href="#" class="nav-link"><spring:message code="nav.about" /></a></li>
-          <li><a href="#" class="nav-link"><spring:message code="nav.contact" /></a></li>
-        </ul>
+<%--        <ul class="nav-list" id="nav-list">--%>
+<%--          <li><a href="<c:url value='/' />" class="nav-link"><spring:message code="nav.home" /></a></li>--%>
+<%--          <li><a href="<c:url value='/portal' />" class="nav-link"><spring:message code="nav.doctors" /></a></li>--%>
+<%--          <li><a href="#" class="nav-link"><spring:message code="nav.about" /></a></li>--%>
+<%--          <li><a href="#" class="nav-link"><spring:message code="nav.contact" /></a></li>--%>
+<%--        </ul>--%>
       </nav>
 
       <div class="auth-buttons">
-        <a href="<c:url value='/portal' />" class="btn btn-login"><spring:message code="nav.login" /></a>
+<%--        <a href="<c:url value='/portal' />" class="btn btn-login"><spring:message code="nav.login" /></a>--%>
         <a href="<c:url value='/register' />" class="btn btn-register"><spring:message code="nav.register" /></a>
       </div>
     </div>
