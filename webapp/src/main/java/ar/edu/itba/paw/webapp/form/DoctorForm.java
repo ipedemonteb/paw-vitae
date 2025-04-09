@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.form;
 
 
 
+import ar.edu.itba.paw.webapp.validation.EmailExistance;
 import ar.edu.itba.paw.webapp.validation.FileSize;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,7 @@ public class DoctorForm {
 
     @NotEmpty
     @Email
+    @EmailExistance
     @Size(max = 100)
     private String email;
 

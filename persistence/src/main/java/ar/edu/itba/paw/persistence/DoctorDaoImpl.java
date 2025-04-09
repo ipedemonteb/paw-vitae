@@ -107,6 +107,11 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
+    public Optional<Doctor> getByEmail(String email) {
+        return jdbcTemplate.query("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE users.email= ?",ROW_MAPPER,email).stream().findFirst();
+    }
+
+    @Override
     public List<Doctor> getBySpecialty(String specialty) {
         List<Doctor> doctors = jdbcTemplate.query("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id JOIN doctor_specialties ON doctors.doctor_id = doctor_specialties.doctor_id JOIN specialties ON doctor_specialties.specialty_id = specialties.id WHERE specialties.key = ?", new Object[]{specialty}, ROW_MAPPER);
         for (Doctor doctor : doctors) {
