@@ -191,6 +191,20 @@
     border-color: var(--color-primary);
 }
 
+.time-slot-btn.selected {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    border-color: var(--color-primary);
+}
+
+/* Time slot disabled state */
+.time-slot-btn.disabled {
+    background-color: var(--color-text-disabled);
+    opacity: 0.5;
+    color: var(--color-text-light);
+    cursor: default;
+}
+
 /* Appointment summary */
 .appointment-summary {
     margin-top: var(--spacing-md);

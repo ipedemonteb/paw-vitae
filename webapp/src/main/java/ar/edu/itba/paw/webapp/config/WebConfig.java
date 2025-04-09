@@ -58,19 +58,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         super.addResourceHandlers(registry);
         registry.addResourceHandler("/css/**").addResourceLocations("/css/")
-                .setCachePeriod(3600)
-                .resourceChain(true)
-                .addResolver(
-                        new VersionResourceResolver()
-                                .addContentVersionStrategy("/**")
-                );
+                .setCachePeriod(0)
+                .resourceChain(false);
         registry.addResourceHandler("/js/**").addResourceLocations("/js/")
-                .setCachePeriod(3600)
-                .resourceChain(true)
-                .addResolver(
-                        new VersionResourceResolver()
-                                .addContentVersionStrategy("/**")
-                );
+                .setCachePeriod(0)
+                .resourceChain(false);
+
 
     }
     @Bean
