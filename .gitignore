@@ -56,4 +56,7 @@ Thumbs.db
 # IDE specific files
 *.iml
 
+.smarttomcat/
+
+
 
