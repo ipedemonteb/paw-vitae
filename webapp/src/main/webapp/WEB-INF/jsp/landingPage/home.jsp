@@ -14,7 +14,7 @@
                 title="landing.welcome"
                 description="landing.welcome.description"
                 buttonText="startnow"
-                buttonUrl="/register" />
+                buttonUrl="/portal" />
 
         <comp:features-section title="features.title">
             <comp:feature-item
