@@ -15,4 +15,6 @@ public interface DoctorDao {
 
     List<Doctor> getBySpecialty(String specialty);
 
+    Optional<Doctor> getByEmail(String email);
+
 }

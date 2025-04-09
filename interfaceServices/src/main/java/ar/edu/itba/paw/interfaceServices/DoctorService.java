@@ -13,4 +13,6 @@ public interface DoctorService {
     Optional<Doctor> getById(final long id);
 
     List<Doctor> getBySpecialty(String specialty);
+
+    Optional<Doctor> getByEmail(String email);
 }

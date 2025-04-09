@@ -48,4 +48,9 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public List<Doctor> getBySpecialty(String specialty) { return this.doctorDao.getBySpecialty(specialty); }
 
+    @Override
+    public Optional<Doctor> getByEmail(String email) {
+        return this.doctorDao.getByEmail(email);
+    }
+
 }
