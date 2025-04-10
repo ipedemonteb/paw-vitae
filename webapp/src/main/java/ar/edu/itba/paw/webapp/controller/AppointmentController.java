@@ -114,7 +114,7 @@ public class AppointmentController {
         return mav;
     }
 
-    @RequestMapping(value = "/appointment/fully-booked-dates", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/appointment/booked-times-by-date", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getFullyBookedDates(
             @RequestParam Integer doctorId) {

@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const startDate = formatDateForSubmission(today);
         const endDate = formatDateForSubmission(new Date(today.setMonth(today.getMonth() + 1)));
 
-        const url = `${contextPage}/appointment/fully-booked-dates?doctorId=${appointmentForm.doctorId.value}`;
+        const url = `${contextPage}/appointment/booked-times-by-date?doctorId=${appointmentForm.doctorId.value}`;
 
         return fetch(url)
             .then((response) => {
@@ -356,7 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const timeSlotButton = document.createElement("button");
             timeSlotButton.type = "button";
             timeSlotButton.className = "time-slot-btn";
-            timeSlotButton.textContent = slot;
+            timeSlotButton.textContent = slot + ":00";
 
             if ((isToday(date) && slotHour <= currentHour) || unavailableSlots.includes(slotHour)) {
                 timeSlotButton.disabled = true;
