@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const startDate = formatDateForSubmission(today);
         const endDate = formatDateForSubmission(new Date(today.setMonth(today.getMonth() + 1)));
 
-        const url = `${contextPage}/appointment/booked-times-by-date?doctorId=${appointmentForm.doctorId.value}`;
+        const url = `${contextPath}/appointment/booked-times-by-date?doctorId=${appointmentForm.doctorId.value}`;
 
         return fetch(url)
             .then((response) => {
