@@ -68,7 +68,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             }
 
             StringBuilder result = new StringBuilder();
-            result.append("{\"bookedDates\": [");
+            result.append("[");
             for (Map.Entry<LocalDate, List<Integer>> entry : appointmentsByDate.entrySet()) {
                 LocalDate date = entry.getKey();
                 List<Integer> appointments = entry.getValue();
@@ -77,7 +77,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             if (!appointmentsByDate.isEmpty()) {
                 result.deleteCharAt(result.length() - 1); // Remove the trailing comma
             }
-            result.append("]}");
+            result.append("]");
             return Optional.of(result.toString());
         } else {
             return Optional.empty();

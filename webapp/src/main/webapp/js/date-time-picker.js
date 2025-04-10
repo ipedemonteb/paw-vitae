@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return response.json();
             })
             .then((data) => {
-                return data.bookedDates || [];
+                return data || [];
             })
             .catch((error) => {
                 console.error("Error fetching fully booked dates:", error);

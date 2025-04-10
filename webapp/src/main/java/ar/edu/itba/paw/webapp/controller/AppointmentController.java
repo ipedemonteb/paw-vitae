@@ -117,17 +117,8 @@ public class AppointmentController {
     @RequestMapping(value = "/appointment/fully-booked-dates", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getFullyBookedDates(
-            @RequestParam Integer doctorId,
-            @RequestParam String startDate,
-            @RequestParam String endDate) {
-
-        LocalDate localStartDate = LocalDate.parse(startDate);
-        LocalDate localEndDate = LocalDate.parse(endDate);
-
-        Optional<String> appointments = appointmentService.getFutureAppointmentsPerDate(doctorId);
-
-        return appointments.orElse("{\"bookedDates\": []}");
-
+            @RequestParam Integer doctorId) {
+        return appointmentService.getFutureAppointmentsPerDate(doctorId).orElse("[]");
     }
 
 }
