@@ -51,15 +51,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedDate = null
     let selectedTimeSlot = null
 
-    let fullyBookedDates = [];
+    let FutureAppointments = [];
 
-    // // Fetch fully booked dates for the next month on page load
-    // fetchFullyBookedDates().then((dates) => { //TODO implement this correctly for future sprint
-    //     fullyBookedDates = dates;
-    //     initDatePicker(); // Initialize the date picker after fetching the dates
-    // });
+    // Fetch fully booked dates for the next month on page load
+    fetchFullyBookedDates().then((dates) => { //TODO implement this correctly for future sprint
+        FutureAppointments = dates;
+        initDatePicker(); // Initialize the date picker after fetching the dates
+    });
 
-    initDatePicker();
+    // initDatePicker();
 
     /**
      * Initialize the date picker component
@@ -115,38 +115,35 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     }
 
-    // /**
-    //  * Fetch fully booked dates from today to one month in advance
-    //  * @returns {Promise<Array>} A promise that resolves to an array of fully booked dates
-    //  */
-    // function fetchFullyBookedDates() {
-    //     const newDate = new Date().toLocaleString("en-US", {
-    //         timeZone: "America/Argentina/Buenos_Aires",
-    //     })
-    //     const today = new Date(newDate);
-    //     const startDate = formatDateForSubmission(today);
-    //     const endDate = formatDateForSubmission(new Date(today.setMonth(today.getMonth() + 1)));
-    //
-    //     const url = `/appointment/fully-booked-dates?doctorId=${appointmentForm.doctorId.value}&startDate=${startDate}&endDate=${endDate}`;
-    //
-    //     console.log("enter")
-    //
-    //     return fetch(url)
-    //         .then((response) => {
-    //             if (!response.ok) {
-    //                 throw new Error("Failed to fetch fully booked dates");
-    //             }
-    //             return response.json();
-    //         })
-    //         .then((data) => {
-    //             console.log("YAY: " + data.fullyBookedDates);
-    //             return data.fullyBookedDates || [];
-    //         })
-    //         .catch((error) => {
-    //             console.error("Error fetching fully booked dates:", error);
-    //             return [];
-    //         });
-    // }
+    /**
+     * Fetch fully booked dates from today to one month in advance
+     * @returns {Promise<Array>} A promise that resolves to an array of fully booked dates
+     */
+    function fetchFullyBookedDates() {
+        const newDate = new Date().toLocaleString("en-US", {
+            timeZone: "America/Argentina/Buenos_Aires",
+        })
+        const today = new Date(newDate);
+        const startDate = formatDateForSubmission(today);
+        const endDate = formatDateForSubmission(new Date(today.setMonth(today.getMonth() + 1)));
+
+        const url = `/appointment/fully-booked-dates?doctorId=${appointmentForm.doctorId.value}&startDate=${startDate}&endDate=${endDate}`;
+
+        return fetch(url)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch fully booked dates");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                return data.bookedDates || [];
+            })
+            .catch((error) => {
+                console.error("Error fetching fully booked dates:", error);
+                return [];
+            });
+    }
 
     /**
      * Render the calendar days for the current month
@@ -188,12 +185,10 @@ document.addEventListener("DOMContentLoaded", () => {
             dayElement.className = "date-picker-day";
             dayElement.textContent = day;
 
+            const isFullyBooked = FutureAppointments.some(entry => entry.hours.length === 11 && entry.date === formattedDate);
+
             // Disable past dates
-            if (date < minDate.setHours(0, 0, 0, 0)) {
-                dayElement.classList.add("disabled");
-            }
-            // Disable fully booked dates
-            else if (fullyBookedDates.includes(formattedDate)) {
+            if (date < minDate.setHours(0, 0, 0, 0) || isFullyBooked) {
                 dayElement.classList.add("disabled");
             }
             // Enable available dates
@@ -338,26 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Fetch available time slots for a given date
-     * @param {Date} date - The date to fetch time slots for
-     * @returns {Promise<Array>} A promise that resolves to an array of available time slots
-     */
-    function getBookedTimeSlots(date) {
-        const formattedDate = formatDateForSubmission(date);
-
-        return fetch(`/appointment/available-hours?doctorId=${appointmentForm.doctorId.value}&date=${formattedDate}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch available time slots");
-                }
-                return response.json();
-            })
-            .then((data) => {
-               return data.bookedHours || [];
-            });
-    }
-
-    /**
      * Render available time slots for the selected date
      * @param {Date} date - The selected date
      */
@@ -371,38 +346,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const allSlots = Array.from({ length: 11 }, (_, i) => `${8 + i}`);
 
-        getBookedTimeSlots(date)
-            .then((unavailableSlots) => {
-                allSlots.forEach((slot) => {
-                    const slotHour = parseInt(slot, 10);
-                    const timeSlotButton = document.createElement("button");
-                    timeSlotButton.type = "button";
-                    timeSlotButton.className = "time-slot-btn";
-                    timeSlotButton.textContent = slot;
+        // Find the fully booked hours for the selected date
+        const formattedDate = formatDateForSubmission(date);
+        const fullyBookedEntry = FutureAppointments.find(entry => entry.date === formattedDate);
+        const unavailableSlots = fullyBookedEntry ? fullyBookedEntry.hours : [];
 
-                    if ((isToday(date) && slotHour <= currentHour) || unavailableSlots.includes(slot)) {
-                        timeSlotButton.disabled = true;
-                        timeSlotButton.classList.add("disabled");
-                    } else {
-                        timeSlotButton.addEventListener("click", () => {
-                            selectTimeSlot(slot);
-                            document.querySelectorAll(".time-slot-btn").forEach((btn) => {
-                                btn.classList.remove("selected");
-                            });
-                            timeSlotButton.classList.add("selected");
-                        });
-                    }
+        allSlots.forEach((slot) => {
+            const slotHour = parseInt(slot, 10);
+            const timeSlotButton = document.createElement("button");
+            timeSlotButton.type = "button";
+            timeSlotButton.className = "time-slot-btn";
+            timeSlotButton.textContent = slot;
 
-                    timeSlots.appendChild(timeSlotButton);
+            if ((isToday(date) && slotHour <= currentHour) || unavailableSlots.includes(slotHour)) {
+                timeSlotButton.disabled = true;
+                timeSlotButton.classList.add("disabled");
+            } else {
+                timeSlotButton.addEventListener("click", () => {
+                    selectTimeSlot(slot);
+                    document.querySelectorAll(".time-slot-btn").forEach((btn) => {
+                        btn.classList.remove("selected");
+                    });
+                    timeSlotButton.classList.add("selected");
                 });
-            })
-            .catch((error) => {
-                console.error("Error fetching time slots:", error);
-                const message = document.createElement("div");
-                message.className = "error-message";
-                message.textContent = "Failed to load time slots. Please try again later.";
-                timeSlots.appendChild(message);
-            });
+            }
+
+            timeSlots.appendChild(timeSlotButton);
+        });
     }
 
     /**

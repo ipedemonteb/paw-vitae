@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
+import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.*;
@@ -113,30 +114,6 @@ public class AppointmentController {
         return mav;
     }
 
-    @RequestMapping(value = "/appointment/available-hours", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public String getAvailableHours(
-            @RequestParam Integer doctorId,
-            @RequestParam String date) {
-        // Parse the date
-        LocalDate localDate = LocalDate.parse(date);  // date must be in "yyyy-MM-dd" format.
-
-        // Here, for example, retrieve the booked hours for that doctor and date.
-        Set<Integer> bookedHours = appointmentService.getBookedHoursByDoctorAndDate(doctorId, localDate);
-
-        StringBuilder json = new StringBuilder();
-        json.append("{\"bookedHours\":");
-        json.append("[");
-        bookedHours.forEach(h -> json.append("\"").append(h).append("\","));
-        if (!bookedHours.isEmpty()) {
-            json.deleteCharAt(json.length() - 1); // Remove the last comma
-        }
-        json.append("]}");
-
-
-        return json.toString();
-    }
-
     @RequestMapping(value = "/appointment/fully-booked-dates", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getFullyBookedDates(
@@ -147,34 +124,10 @@ public class AppointmentController {
         LocalDate localStartDate = LocalDate.parse(startDate);
         LocalDate localEndDate = LocalDate.parse(endDate);
 
-        // Define all possible time slots (e.g., 8 AM to 6 PM)
-        Set<Integer> allSlots = new HashSet<>();
-        for (int i = 8; i <= 18; i++) {
-            allSlots.add(i);
-        }
+        Optional<String> appointments = appointmentService.getFutureAppointmentsPerDate(doctorId);
 
-        // Iterate through the date range
-        List<String> fullyBookedDates = new ArrayList<>();
-        for (LocalDate date = localStartDate; !date.isAfter(localEndDate); date = date.plusDays(1)) {
-            Set<Integer> bookedHours = appointmentService.getBookedHoursByDoctorAndDate(doctorId, date);
+        return appointments.orElse("{\"bookedDates\": []}");
 
-            // Check if all slots are booked
-            if (bookedHours.containsAll(allSlots)) {
-                fullyBookedDates.add(date.toString());
-            }
-        }
-
-        // Convert the list of fully booked dates to JSON
-        StringBuilder json = new StringBuilder();
-        json.append("{\"fullyBookedDates\":");
-        json.append("[");
-        fullyBookedDates.forEach(d -> json.append("\"").append(d).append("\","));
-        if (!fullyBookedDates.isEmpty()) {
-            json.deleteCharAt(json.length() - 1); // Remove the last comma
-        }
-        json.append("]}");
-
-        return json.toString();
     }
 
 }
