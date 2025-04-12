@@ -43,7 +43,6 @@ public class DoctorForm {
     @NotEmpty
     private List<String> coverages;
 
-    @NotNull
     @FileSize(max = 2 * 1024 * 1024) // 2MB
     private MultipartFile image;
 

@@ -22,6 +22,11 @@
     <javax.validation-api.version>2.0.1.Final</javax.validation-api.version>
     <org.hibernate.validator.version>6.2.4.Final</org.hibernate.validator.version>
     <jakarta.version>1.6.4</jakarta.version>
+    <org.slf4j.version>1.7.5</org.slf4j.version>
+    <logback.version>1.1.2</logback.version>
+    <logback-ext-spring.version>0.1.1</logback-ext-spring.version>
+    <spring-security.version>5.3.13.RELEASE</spring-security.version>
+    <maven-war-plugin.version>2.6</maven-war-plugin.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -91,6 +96,75 @@
         <artifactId>postgresql</artifactId>
         <version>${org.postgresql.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>${spring-security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>${spring-security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-config</artifactId>
+        <version>${spring-security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
+        <version>5.3.33</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${org.slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${org.slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.logback-extensions</groupId>
+        <artifactId>logback-ext-spring</artifactId>
+        <version>${logback-ext-spring.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+        <version>${org.springframework.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
+
+<!--  <build>-->
+<!--    <plugins>-->
+<!--      <plugin>-->
+<!--        <groupId>org.apache.maven.plugins</groupId>-->
+<!--        <artifactId>maven-war-plugin</artifactId>-->
+<!--        <version>${maven-war-plugin.version}</version>-->
+<!--        <configuration>-->
+<!--          <packagingExcludes>**/logback-test.xml</packagingExcludes>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
+<!--    </plugins>-->
+<!--  </build>-->
+
+
 </project>
+
+

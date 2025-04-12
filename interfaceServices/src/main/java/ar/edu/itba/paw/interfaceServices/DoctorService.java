@@ -15,4 +15,5 @@ public interface DoctorService {
     List<Doctor> getBySpecialty(String specialty);
 
     Optional<Doctor> getByEmail(String email);
+
 }

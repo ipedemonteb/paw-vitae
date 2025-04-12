@@ -9,6 +9,7 @@ import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,11 +24,14 @@ public class DoctorServiceImpl implements DoctorService {
     private final SpecialtyService ss;
     private final CoverageService cs;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs) {
+    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder) {
         this.doctorDao = doctorDao;
         this.ss = ss;
         this.cs = cs;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -37,7 +41,7 @@ public class DoctorServiceImpl implements DoctorService {
         List<Specialty> specialtyList = new ArrayList<>();
         coverages.forEach(coverage -> coverageList.add(cs.findById(Long.parseLong(coverage)).orElse(null)));
         specialties.forEach(specialty -> specialtyList.add(ss.getById(Long.parseLong(specialty)).orElse(null)));
-        return this.doctorDao.create(name, lastName, email, password, phone, specialtyList, coverageList);
+        return this.doctorDao.create(name, lastName, email, passwordEncoder.encode(password), phone, specialtyList, coverageList);
     }
 
     @Override

@@ -85,4 +85,11 @@ public class ClientDaoImpl implements ClientDao {
                 coverage
         );
     }
+
+    @Override
+    public Optional<Client> getByEmail(String email) {
+        Optional<Client> client = jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.email = ?", ROW_MAPPER, email).stream().findFirst();
+        client.ifPresent(value -> value.setAppointments(appointmentDao.getByClientId(value.getId()).orElse(new ArrayList<>())));
+        return client;
+    }
 }

@@ -13,4 +13,6 @@ public interface ClientDao {
 
     Client create(String name, String lastName, String email, String password, String phone, Coverage coverage);
 
+    Optional<Client> getByEmail(String email);
+
 }

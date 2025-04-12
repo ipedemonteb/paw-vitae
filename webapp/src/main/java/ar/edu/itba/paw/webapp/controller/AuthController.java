@@ -67,5 +67,10 @@ public class AuthController {
         return mav;
     }
 
+    @RequestMapping("/login")
+    public ModelAndView login() {
+        return new ModelAndView("auth/login");
+    }
+
 }
 
