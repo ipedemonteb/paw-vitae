@@ -55,7 +55,7 @@
     </div>
 
     <div class="card-footer">
-      <a href="<c:url value='/portal'/>" class="btn btn-outline">
+      <a href="<c:url value='/'/>" class="btn btn-outline">
         <spring:message code="search.link.back.home" />
       </a>
     </div>

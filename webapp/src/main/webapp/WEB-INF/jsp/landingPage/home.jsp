@@ -6,6 +6,14 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
 <link rel="stylesheet" href="<c:url value='/css/landing.css' />" />
+<style>
+    /* Estilo para el botón deshabilitado */
+    .search-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+</style>
 
 <layout:page title="landing.page.title" container="false">
     <!-- Hero Section with Search -->
@@ -17,7 +25,7 @@
 
                 <!-- Search Bar -->
                 <div class="search-container">
-                    <form action="<c:url value='/search' />" method="get" class="search-form">
+                    <form action="<c:url value='/search' />" method="get" class="search-form" id="searchForm">
                         <div class="search-bar">
                             <div class="search-input-wrapper">
                                 <span class="search-icon"></span>
@@ -25,32 +33,32 @@
                             </div>
 
                             <div class="specialty-dropdown-wrapper">
-                                <select name="specialty" class="specialty-dropdown">
+                                <select name="specialty" class="specialty-dropdown" id="specialtyDropdown">
                                     <option value=""><spring:message code="landing.search.allSpecialties" /></option>
-                                    <c:forEach items="${specialties}" var="specialty">>
+                                    <c:forEach items="${specialties}" var="specialty">
                                         <option value="${specialty.id}"><spring:message code="${specialty.key}" /></option>
                                     </c:forEach>
                                 </select>
                             </div>
 
-                            <button type="submit" class="search-button">
+                            <button type="submit" class="search-button" id="searchButton" disabled>
                                 <span class="search-button-text"><spring:message code="landing.search.button" /></span>
                             </button>
                         </div>
                     </form>
                 </div>
 
-<%--                <div class="popular-searches">--%>
-<%--                    <span class="popular-label"><spring:message code="landing.popular" />:</span>--%>
-<%--                    <c:forEach items="${popularSpecialties}" var="specialty" varStatus="status">--%>
-<%--                        <a href="<c:url value='/search?specialty=${specialty.id}' />" class="popular-tag">--%>
-<%--                            <spring:message code="${specialty.key}" />--%>
-<%--                        </a>--%>
-<%--                        <c:if test="${!status.last}">--%>
-<%--                            <span class="separator">•</span>--%>
-<%--                        </c:if>--%>
-<%--                    </c:forEach>--%>
-<%--                </div>--%>
+                    <%--                <div class="popular-searches">--%>
+                    <%--                    <span class="popular-label"><spring:message code="landing.popular" />:</span>--%>
+                    <%--                    <c:forEach items="${popularSpecialties}" var="specialty" varStatus="status">--%>
+                    <%--                        <a href="<c:url value='/search?specialty=${specialty.id}' />" class="popular-tag">--%>
+                    <%--                            <spring:message code="${specialty.key}" />--%>
+                    <%--                        </a>--%>
+                    <%--                        <c:if test="${!status.last}">--%>
+                    <%--                            <span class="separator">•</span>--%>
+                    <%--                        </c:if>--%>
+                    <%--                    </c:forEach>--%>
+                    <%--                </div>--%>
             </div>
         </div>
     </section>
@@ -166,4 +174,35 @@
     </section>
 
     <comp:site-footer />
+
+    <!-- Script para habilitar/deshabilitar el botón de búsqueda -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const specialtyDropdown = document.getElementById('specialtyDropdown');
+            const searchButton = document.getElementById('searchButton');
+
+            // Función para verificar si se ha seleccionado una especialidad
+            function checkSpecialty() {
+                // Si el valor seleccionado está vacío, deshabilitar el botón
+                if (specialtyDropdown.value === '') {
+                    searchButton.disabled = true;
+                } else {
+                    searchButton.disabled = false;
+                }
+            }
+
+            // Verificar al cargar la página
+            checkSpecialty();
+
+            // Verificar cada vez que cambie la selección
+            specialtyDropdown.addEventListener('change', checkSpecialty);
+
+            // Prevenir el envío del formulario si el botón está deshabilitado
+            document.getElementById('searchForm').addEventListener('submit', function(event) {
+                if (searchButton.disabled) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
 </layout:page>

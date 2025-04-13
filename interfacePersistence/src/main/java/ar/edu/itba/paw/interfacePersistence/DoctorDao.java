@@ -17,4 +17,6 @@ public interface DoctorDao {
 
     Optional<Doctor> getByEmail(String email);
 
+    List<Doctor> getAll();
+
 }
