@@ -6,7 +6,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 
-<link rel="stylesheet" href="<c:url value='/css/doctor-dashboard.css' />" />
+<link rel="stylesheet" href="<c:url value='/css/components/doctor-dashboard.css' />" />
 
 <layout:page title="dashboard.doctor.title">
     <div class="dashboard-container">
@@ -57,14 +57,10 @@
                 <span class="tab-icon profile-icon"></span>
                 <spring:message code="dashboard.tab.profile" />
             </button>
-            <button class="nav-tab" data-tab="reviews">
-                <span class="tab-icon reviews-icon"></span>
-                <spring:message code="dashboard.tab.reviews" />
-            </button>
-            <button class="nav-tab" data-tab="settings">
-                <span class="tab-icon settings-icon"></span>
-                <spring:message code="dashboard.tab.settings" />
-            </button>
+<%--            <button class="nav-tab" data-tab="settings">--%>
+<%--                <span class="tab-icon settings-icon"></span>--%>
+<%--                <spring:message code="dashboard.tab.settings" />--%>
+<%--            </button>--%>
         </div>
 
         <div class="dashboard-content">
@@ -305,114 +301,27 @@
                 </div>
             </div>
 
-            <!-- Reviews Tab -->
-            <div class="tab-content" id="reviews-tab">
-                <div class="tab-header">
-                    <h2><spring:message code="dashboard.reviews.title" /></h2>
-                </div>
 
-
-            </div>
-
-            <!-- Settings Tab -->
-            <div class="tab-content" id="settings-tab">
-                <div class="tab-header">
-                    <h2><spring:message code="dashboard.settings.title" /></h2>
-                </div>
-
-                <div class="settings-content">
-                    <div class="settings-section">
-                        <h3 class="section-title"><spring:message code="dashboard.settings.availability" /></h3>
-                        <div class="availability-settings">
-                            <div class="availability-header">
-                                <div class="day-column"><spring:message code="dashboard.settings.day" /></div>
-                                <div class="hours-column"><spring:message code="dashboard.settings.hours" /></div>
-                                <div class="actions-column"></div>
-                            </div>
-                            <c:forEach items="${availabilitySchedule}" var="day">
-                                <div class="availability-row">
-                                    <div class="day-column">
-                                        <spring:message code="day.${day.dayOfWeek.toLowerCase()}" />
-                                    </div>
-                                    <div class="hours-column">
-                                        <c:choose>
-                                            <c:when test="${day.available}">
-                                                <fmt:formatDate value="${day.startTime}" pattern="HH:mm" /> - <fmt:formatDate value="${day.endTime}" pattern="HH:mm" />
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="not-available"><spring:message code="dashboard.settings.notAvailable" /></span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </div>
-                                    <div class="actions-column">
-                                        <button class="btn btn-icon edit-availability" data-day="${day.dayOfWeek}">
-                                            <span class="edit-icon"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </c:forEach>
-                        </div>
-                        <div class="settings-actions">
-                            <button class="btn btn-primary save-availability">
-                                <spring:message code="dashboard.settings.saveAvailability" />
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="settings-section">
-                        <h3 class="section-title"><spring:message code="dashboard.settings.notifications" /></h3>
-                        <div class="notification-settings">
-                            <div class="notification-option">
-                                <div class="option-label">
-                                    <spring:message code="dashboard.settings.emailNotifications" />
-                                </div>
-                                <div class="toggle-switch">
-                                    <input type="checkbox" id="email-notifications" class="toggle-input" ${doctor.settings.emailNotifications ? 'checked' : ''} />
-                                    <label for="email-notifications" class="toggle-label"></label>
-                                </div>
-                            </div>
-                            <div class="notification-option">
-                                <div class="option-label">
-                                    <spring:message code="dashboard.settings.smsNotifications" />
-                                </div>
-                                <div class="toggle-switch">
-                                    <input type="checkbox" id="sms-notifications" class="toggle-input" ${doctor.settings.smsNotifications ? 'checked' : ''} />
-                                    <label for="sms-notifications" class="toggle-label"></label>
-                                </div>
-                            </div>
-                            <div class="notification-option">
-                                <div class="option-label">
-                                    <spring:message code="dashboard.settings.appointmentReminders" />
-                                </div>
-                                <div class="toggle-switch">
-                                    <input type="checkbox" id="appointment-reminders" class="toggle-input" ${doctor.settings.appointmentReminders ? 'checked' : ''} />
-                                    <label for="appointment-reminders" class="toggle-label"></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="settings-actions">
-                            <button class="btn btn-primary save-notifications">
-                                <spring:message code="dashboard.settings.saveNotifications" />
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="settings-section">
-                        <h3 class="section-title"><spring:message code="dashboard.settings.account" /></h3>
-                        <div class="account-settings">
-<%--                            <a href="<c:url value='/doctor/password/change' />" class="btn btn-secondary">--%>
-                            <a class="btn btn-secondary">
-                                <spring:message code="dashboard.settings.changePassword" />
-                            </a>
-                            <button class="btn btn-danger" id="deactivate-account">
-                                <spring:message code="dashboard.settings.deactivateAccount" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<%--            <!-- Settings Tab -->--%>
+<%--            <div class="tab-content" id="settings-tab">--%>
+<%--                <div class="tab-header">--%>
+<%--                    <h2><spring:message code="dashboard.settings.title" /></h2>--%>
+<%--                </div>--%>
+<%--                    <div class="settings-section">--%>
+<%--                        <h3 class="section-title"><spring:message code="dashboard.settings.account" /></h3>--%>
+<%--                        <div class="account-settings">--%>
+<%--&lt;%&ndash;                            <a href="<c:url value='/doctor/password/change' />" class="btn btn-secondary">&ndash;%&gt;--%>
+<%--                            <a class="btn btn-secondary">--%>
+<%--                                <spring:message code="dashboard.settings.changePassword" />--%>
+<%--                            </a>--%>
+<%--                            <button class="btn btn-danger" id="deactivate-account">--%>
+<%--                                <spring:message code="dashboard.settings.deactivateAccount" />--%>
+<%--                            </button>--%>
+<%--                        </div>--%>
+<%--                    </div>--%>
+<%--                </div>--%>
+<%--            </div>--%>
         </div>
-    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
