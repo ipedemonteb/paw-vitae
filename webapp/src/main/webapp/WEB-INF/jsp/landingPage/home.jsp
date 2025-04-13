@@ -7,8 +7,6 @@
 
 
 <layout:page title="landing.page.title" container="false">
-    <comp:site-header />
-
     <main class="main-content">
         <comp:hero-section
                 title="landing.welcome"

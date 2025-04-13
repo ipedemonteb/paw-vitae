@@ -127,6 +127,10 @@
       <version>${logback-ext-spring.version}</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <finalName>webapp</finalName>
@@ -174,5 +178,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
+
   </build>
 </project>
