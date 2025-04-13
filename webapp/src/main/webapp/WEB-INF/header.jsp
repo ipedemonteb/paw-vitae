@@ -195,7 +195,7 @@
                             <!-- Role-specific menu items -->
                             <sec:authorize access="hasRole('ROLE_DOCTOR')">
                                 <div class="dropdown-divider"></div>
-                                <a href="<c:url value='/' />" class="dropdown-item">
+                                <a href="<c:url value='/doctor/dashboard' />" class="dropdown-item">
                                     <span class="icon doctor-icon"></span>
                                     <spring:message code="header.dropdown.doctorDashboard" />
                                 </a>
