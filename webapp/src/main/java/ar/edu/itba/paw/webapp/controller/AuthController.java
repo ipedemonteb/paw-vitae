@@ -7,6 +7,8 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,6 +20,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Controller
 public class AuthController {
@@ -27,15 +30,17 @@ public class AuthController {
     private final ImageService is;
     private final SpecialtyService ss;
     private final ClientService cls;
+    private final UserService us;
 
 
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, ClientService clientService) {
+    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, ClientService clientService, UserService us) {
         this.ds = ds;
         this.cs = cs;
         this.is=is;
         this.ss = ss;
         this.cls = clientService;
+        this.us = us;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)

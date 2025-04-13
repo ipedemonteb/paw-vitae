@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
+import ar.edu.itba.paw.webapp.handler.CustomAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -50,8 +51,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                     .usernameParameter("j_email")
                     .passwordParameter("j_password")
-                    .defaultSuccessUrl("/portal", false)
                     .loginPage("/login")
+                    .successHandler(customAuthenticationSuccessHandler())
                     .and()
                 .rememberMe()
                     .rememberMeParameter("j_rememberme")
@@ -73,5 +74,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
                 .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/error/403");
+    }
+
+    @Bean
+    public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        return new CustomAuthenticationSuccessHandler();
     }
 }

@@ -13,28 +13,19 @@
         <div class="dashboard-header">
             <div class="doctor-info">
                 <div class="doctor-avatar">
-                    <c:choose>
-                        <c:when test="${not empty doctor.imageId}">
-                            <img src="<c:url value='/images/${doctor.imageId}' />" alt="<c:out value='${doctor.name}' /> <c:out value='${doctor.lastName}' />" />
-                        </c:when>
-                        <c:otherwise>
-                            <div class="avatar-placeholder">
-                                <span>${doctor.name.charAt(0)}${doctor.lastName.charAt(0)}</span>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
+                    <img src="<c:url value="/doctor/${doctor.id}/image"/>" alt="<c:out value="${doctor.name} ${doctor.lastName}"/>">
                 </div>
                 <div class="doctor-details">
                     <h1 class="doctor-name"><c:out value="${doctor.name}" /> <c:out value="${doctor.lastName}" /></h1>
                     <div class="doctor-specialties">
-                        <c:forEach items="${doctor.specialties}" var="specialty" varStatus="status">
+                        <c:forEach items="${doctor.specialtyList}" var="specialty" varStatus="status">
                             <span class="specialty-tag">
                                 <c:choose>
                                     <c:when test="${not empty specialty.key}">
                                         <spring:message code="${specialty.key}" />
                                     </c:when>
                                     <c:otherwise>
-                                        <c:out value="${specialty.name}" />
+                                        <c:out value="${specialty.key}" />
                                     </c:otherwise>
                                 </c:choose>
                             </span>
@@ -167,76 +158,76 @@
                     </div>
                 </div>
 
-                <c:choose>
-                    <c:when test="${not empty appointmentHistory}">
-                        <div class="appointments-list history-list">
-                            <c:forEach items="${appointmentHistory}" var="appointment">
-                                <div class="appointment-card">
-                                    <div class="appointment-time">
-                                        <div class="appointment-date">
-                                            <fmt:formatDate value="${appointment.date}" pattern="EEE" />
-                                            <span class="date-number"><fmt:formatDate value="${appointment.date}" pattern="d" /></span>
-                                            <fmt:formatDate value="${appointment.date}" pattern="MMM" />
-                                        </div>
-                                        <div class="appointment-hour">
-                                            <fmt:formatDate value="${appointment.date}" pattern="HH:mm" />
-                                        </div>
-                                    </div>
-                                    <div class="appointment-details">
-                                        <div class="patient-info">
-                                            <div class="patient-avatar">
-                                                <c:choose>
-                                                    <c:when test="${not empty appointment.patient.imageId}">
-                                                        <img src="<c:url value='/images/${appointment.patient.imageId}' />" alt="${appointment.patient.name}" />
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <div class="avatar-placeholder small">
-                                                            <span>${appointment.patient.name.charAt(0)}</span>
-                                                        </div>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </div>
-                                            <div class="patient-name">
-                                                <c:out value="${appointment.patient.name}" /> <c:out value="${appointment.patient.lastName}" />
-                                            </div>
-                                        </div>
-                                        <div class="appointment-status">
-                                            <c:choose>
-                                                <c:when test="${appointment.status eq 'COMPLETED'}">
-                                                    <span class="status-badge completed">
-                                                        <spring:message code="appointment.status.completed" />
-                                                    </span>
-                                                </c:when>
-                                                <c:when test="${appointment.status eq 'CANCELLED'}">
-                                                    <span class="status-badge cancelled">
-                                                        <spring:message code="appointment.status.cancelled" />
-                                                    </span>
-                                                </c:when>
-                                                <c:when test="${appointment.status eq 'NO_SHOW'}">
-                                                    <span class="status-badge no-show">
-                                                        <spring:message code="appointment.status.noShow" />
-                                                    </span>
-                                                </c:when>
-                                            </c:choose>
-                                        </div>
-                                        <div class="appointment-actions">
-                                            <a href="<c:url value='/appointments/${appointment.id}/medical-record' />" class="btn btn-secondary">
-                                                <spring:message code="appointment.action.viewRecord" />
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
-                        </div>
-                    </c:when>
-                    <c:otherwise>
-                        <div class="empty-state">
-                            <div class="empty-icon history-empty"></div>
-                            <h3><spring:message code="dashboard.history.empty.title" /></h3>
-                            <p><spring:message code="dashboard.history.empty.message" /></p>
-                        </div>
-                    </c:otherwise>
-                </c:choose>
+<%--                <c:choose>--%>
+<%--                    <c:when test="${not empty appointmentHistory}">--%>
+<%--                        <div class="appointments-list history-list">--%>
+<%--                            <c:forEach items="${appointmentHistory}" var="appointment">--%>
+<%--                                <div class="appointment-card">--%>
+<%--                                    <div class="appointment-time">--%>
+<%--                                        <div class="appointment-date">--%>
+<%--                                            <fmt:formatDate value="${appointment.date}" pattern="EEE" />--%>
+<%--                                            <span class="date-number"><fmt:formatDate value="${appointment.date}" pattern="d" /></span>--%>
+<%--                                            <fmt:formatDate value="${appointment.date}" pattern="MMM" />--%>
+<%--                                        </div>--%>
+<%--                                        <div class="appointment-hour">--%>
+<%--                                            <fmt:formatDate value="${appointment.date}" pattern="HH:mm" />--%>
+<%--                                        </div>--%>
+<%--                                    </div>--%>
+<%--                                    <div class="appointment-details">--%>
+<%--                                        <div class="patient-info">--%>
+<%--                                            <div class="patient-avatar">--%>
+<%--                                                <c:choose>--%>
+<%--                                                    <c:when test="${not empty appointment.patient.imageId}">--%>
+<%--                                                        <img src="<c:url value='/images/${appointment.patient.imageId}' />" alt="${appointment.patient.name}" />--%>
+<%--                                                    </c:when>--%>
+<%--                                                    <c:otherwise>--%>
+<%--                                                        <div class="avatar-placeholder small">--%>
+<%--                                                            <span>${appointment.patient.name.charAt(0)}</span>--%>
+<%--                                                        </div>--%>
+<%--                                                    </c:otherwise>--%>
+<%--                                                </c:choose>--%>
+<%--                                            </div>--%>
+<%--                                            <div class="patient-name">--%>
+<%--                                                <c:out value="${appointment.patient.name}" /> <c:out value="${appointment.patient.lastName}" />--%>
+<%--                                            </div>--%>
+<%--                                        </div>--%>
+<%--                                        <div class="appointment-status">--%>
+<%--                                            <c:choose>--%>
+<%--                                                <c:when test="${appointment.status eq 'COMPLETED'}">--%>
+<%--                                                    <span class="status-badge completed">--%>
+<%--                                                        <spring:message code="appointment.status.completed" />--%>
+<%--                                                    </span>--%>
+<%--                                                </c:when>--%>
+<%--                                                <c:when test="${appointment.status eq 'CANCELLED'}">--%>
+<%--                                                    <span class="status-badge cancelled">--%>
+<%--                                                        <spring:message code="appointment.status.cancelled" />--%>
+<%--                                                    </span>--%>
+<%--                                                </c:when>--%>
+<%--                                                <c:when test="${appointment.status eq 'NO_SHOW'}">--%>
+<%--                                                    <span class="status-badge no-show">--%>
+<%--                                                        <spring:message code="appointment.status.noShow" />--%>
+<%--                                                    </span>--%>
+<%--                                                </c:when>--%>
+<%--                                            </c:choose>--%>
+<%--                                        </div>--%>
+<%--                                        <div class="appointment-actions">--%>
+<%--                                            <a href="<c:url value='/appointments/${appointment.id}/medical-record' />" class="btn btn-secondary">--%>
+<%--                                                <spring:message code="appointment.action.viewRecord" />--%>
+<%--                                            </a>--%>
+<%--                                        </div>--%>
+<%--                                    </div>--%>
+<%--                                </div>--%>
+<%--                            </c:forEach>--%>
+<%--                        </div>--%>
+<%--                    </c:when>--%>
+<%--                    <c:otherwise>--%>
+<%--                        <div class="empty-state">--%>
+<%--                            <div class="empty-icon history-empty"></div>--%>
+<%--                            <h3><spring:message code="dashboard.history.empty.title" /></h3>--%>
+<%--                            <p><spring:message code="dashboard.history.empty.message" /></p>--%>
+<%--                        </div>--%>
+<%--                    </c:otherwise>--%>
+<%--                </c:choose>--%>
             </div>
 
             <!-- Profile Tab -->
@@ -263,24 +254,24 @@
                                 <div class="info-label"><spring:message code="dashboard.profile.phone" /></div>
                                 <div class="info-value"><c:out value="${doctor.phone}" /></div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label"><spring:message code="dashboard.profile.memberSince" /></div>
-                                <div class="info-value"><fmt:formatDate value="${doctor.createdAt}" pattern="MMMM yyyy" /></div>
-                            </div>
+<%--                            <div class="info-item">--%>
+<%--                                <div class="info-label"><spring:message code="dashboard.profile.memberSince" /></div>--%>
+<%--                                <div class="info-value"><fmt:formatDate value="${doctor.createdAt}" pattern="MMMM yyyy" /></div>--%>
+<%--                            </div>--%>
                         </div>
                     </div>
 
                     <div class="profile-section">
                         <h3 class="section-title"><spring:message code="dashboard.profile.specialties" /></h3>
                         <div class="specialties-list">
-                            <c:forEach items="${doctor.specialties}" var="specialty">
+                            <c:forEach items="${doctor.specialtyList}" var="specialty">
                                 <div class="specialty-item">
                                     <c:choose>
                                         <c:when test="${not empty specialty.key}">
                                             <spring:message code="${specialty.key}" />
                                         </c:when>
                                         <c:otherwise>
-                                            <c:out value="${specialty.name}" />
+                                            <c:out value="${specialty.key}" />
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
@@ -291,7 +282,7 @@
                     <div class="profile-section">
                         <h3 class="section-title"><spring:message code="dashboard.profile.coverages" /></h3>
                         <div class="coverages-list">
-                            <c:forEach items="${doctor.coverages}" var="coverage">
+                            <c:forEach items="${doctor.coverageList}" var="coverage">
                                 <div class="coverage-item">
                                     <c:out value="${coverage.name}" />
                                 </div>
