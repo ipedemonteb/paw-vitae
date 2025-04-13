@@ -100,5 +100,10 @@ public class AuthController {
         return new ModelAndView("auth/login");
     }
 
+    @RequestMapping("/logout")
+    public ModelAndView logout() {
+        return new ModelAndView("redirect:/");
+    }
+
 }
 
