@@ -2,11 +2,15 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
+import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Specialty;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -17,17 +21,30 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentDao appointmentDao;
     private final SpecialtyService specialtyService;
+    private final MailService mailService;
+    private final MessageSource messageSource;
 
-    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService) {
+    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService, MessageSource messageSource) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;
+        this.mailService = mailService;
+        this.messageSource = messageSource;
     }
 
     @Override
     public Appointment create(long clientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
-        return appointmentDao.create(clientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
+
+        Appointment appointment = appointmentDao.create(clientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
+
+        try {
+            mailService.sendEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment, appointment.getDoctorId(), appointment.getClientId());
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return appointment;
     }
 
     @Override

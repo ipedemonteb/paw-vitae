@@ -65,12 +65,6 @@ public class AppointmentController {
 
         Appointment appointment = appointmentService.create(appointmentForm.getClientId(), appointmentForm.getDoctorId(), appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
 
-        try {
-            mailService.sendEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment, appointmentForm.getDoctorId(), appointmentForm.getClientId());
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
         return new ModelAndView("redirect:/appointment/confirmation");
