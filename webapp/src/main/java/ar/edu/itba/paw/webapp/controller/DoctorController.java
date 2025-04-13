@@ -26,4 +26,13 @@ public class DoctorController {
         return mav;
     }
 
+    @RequestMapping(value = "/doctor-dashboard")
+    public ModelAndView getDoctorDashboard() {
+        final ModelAndView mav = new ModelAndView("dashboard/doctorDashboard");
+
+//        mav.addObject("doctor", ds.getById(id).orElseThrow(UserNotFoundException::new));
+
+        return mav;
+    }
+
 }
