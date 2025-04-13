@@ -42,16 +42,16 @@ public class AuthUserDetailsService implements UserDetailsService {
 //        }
 
         if(user.getClass() == Doctor.class) {
-            return new AuthUserDetails(email, user.getPassword(), List.of(new SimpleGrantedAuthority("DOCTOR")));
+            return new AuthUserDetails(email, user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_DOCTOR")));
         }
 
-        return new AuthUserDetails(email, user.getPassword(), List.of(new SimpleGrantedAuthority("PATIENT")));
+        return new AuthUserDetails(email, user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_PATIENT")));
 
 
 
 //        final Collection<? extends GrantedAuthority> authorities = Arrays.asList(
-//                new SimpleGrantedAuthority("DOCTOR"),
-//                new SimpleGrantedAuthority("PATIENT")
+//                new SimpleGrantedAuthority("ROLE_DOCTOR"),
+//                new SimpleGrantedAuthority("ROLE_PATIENT")
 //        );
 //        return new AuthUserDetails(email, user.getPassword(), authorities);
     }
