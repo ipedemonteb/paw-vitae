@@ -5,6 +5,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
+import ar.edu.itba.paw.webapp.form.PatientForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -25,7 +26,7 @@ public class AuthController {
     private final CoverageService cs;
     private final ImageService is;
     private final SpecialtyService ss;
-    private final ClientService clientService;
+    private final ClientService cls;
 
 
     @Autowired
@@ -34,7 +35,7 @@ public class AuthController {
         this.cs = cs;
         this.is=is;
         this.ss = ss;
-        this.clientService = clientService;
+        this.cls = clientService;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -64,6 +65,34 @@ public class AuthController {
         mav.addObject("coverageList", coverageList);
         mav.addObject("specialtyList", specialtyList);
         return mav;
+    }
+
+
+    @RequestMapping(value = "/register-patient", method = RequestMethod.GET)
+    public ModelAndView patientForm(@ModelAttribute("patientForm") final PatientForm pacientForm) {
+        List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
+        ModelAndView mav = new ModelAndView("auth/register-patient");
+        mav.addObject("coverageList", coverageList);
+        return mav;
+    }
+
+    @RequestMapping(value = "/register-patient", method = RequestMethod.POST)
+    public ModelAndView registerPatient(@Valid @ModelAttribute("patientForm") final PatientForm patientForm, final BindingResult errors)  {
+
+        if(errors.hasErrors()) {
+            return patientForm(patientForm);
+        }
+
+        final Client client = cls.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(), patientForm.getPhone(), patientForm.getCoverage());
+
+        try {
+            is.create(client.getId(), patientForm.getImage());
+        } catch (IOException e) {
+            errors.reject("image.upload.error", "Failed to upload image");
+            return patientForm(patientForm);
+        }
+
+        return new ModelAndView("redirect:/" + client.getId());
     }
 
     @RequestMapping("/login")
