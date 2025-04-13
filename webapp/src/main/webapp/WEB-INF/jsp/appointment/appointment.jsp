@@ -25,15 +25,11 @@
                 <form:hidden path="specialtyId" />
                 <form:hidden path="clientId" />
 
-                <div class="form-row">
-                    <comp:form-group path="name" label="appointment.form.firstName" />
-                    <comp:form-group path="lastName" label="appointment.form.lastName" />
-                </div>
-
-                <div class="form-row">
-                    <comp:form-group path="email" label="appointment.form.email" type="email" />
-                    <comp:form-group path="phone" label="appointment.form.phone" />
-                </div>
+                <!-- Hidden personal information fields -->
+                <form:hidden path="name" />
+                <form:hidden path="lastName" />
+                <form:hidden path="email" />
+                <form:hidden path="phone" />
 
                 <div class="form-group">
                     <label for="specialty"><spring:message code="appointment.form.specialty" /></label>

@@ -42,36 +42,38 @@ public class AppointmentForm {
     private String reason;
 
     @NotNull
-    private Integer doctorId;
+    private Long doctorId;
 
     @NotNull
-    private Integer clientId;
+    private Long clientId;
 
     @NotNull
-    private Integer specialtyId;
+    private Long specialtyId;
 
-    public Integer getSpecialtyId() {
-        return specialtyId;
-    }
 
-    public void setSpecialtyId(Integer specialtyId) {
-        this.specialtyId = specialtyId;
-    }
 
-    public Integer getClientId() {
+    public Long getClientId() {
         return clientId;
     }
 
-    public void setClientId(Integer clientId) {
+    public void setClientId(Long clientId) {
         this.clientId = clientId;
     }
 
-    public Integer getDoctorId() {
+    public Long getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(Integer doctorId) {
+    public void setDoctorId(Long doctorId) {
         this.doctorId = doctorId;
+    }
+
+    public Long getSpecialtyId() {
+        return specialtyId;
+    }
+
+    public void setSpecialtyId(Long specialtyId) {
+        this.specialtyId = specialtyId;
     }
 
     public String getName() {

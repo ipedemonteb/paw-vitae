@@ -1,4 +1,4 @@
-/* Date Time Picker Component
+/* Date Time Picker Component - Enhanced
 -------------------------------------------------- */
 
 /* Additional variables needed for date-time-picker */
@@ -27,12 +27,13 @@
     font-family: var(--font-family-base);
     font-size: var(--font-size-base);
     color: var(--color-text-primary);
+    transition: all 0.3s ease;
 }
 
 .date-picker-input:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2);
 }
 
 /* Calendar popup */
@@ -49,6 +50,19 @@
     box-shadow: var(--shadow-md);
     margin-top: var(--spacing-xs);
     font-family: var(--font-family-base);
+    animation: calendarFadeIn 0.3s ease;
+    transform-origin: top left;
+}
+
+@keyframes calendarFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .date-picker-calendar.show {
@@ -62,6 +76,9 @@
     align-items: center;
     padding: var(--spacing-sm);
     border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-primary-light);
+    border-top-left-radius: var(--border-radius-md);
+    border-top-right-radius: var(--border-radius-md);
 }
 
 .date-picker-month-year {
@@ -83,10 +100,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s ease;
 }
 
 .date-picker-nav:hover {
     background-color: var(--color-background-hover);
+    transform: scale(1.1);
 }
 
 /* Weekday headers */
@@ -96,6 +115,7 @@
     text-align: center;
     padding: var(--spacing-xs) 0;
     border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-background);
 }
 
 .date-picker-weekday {
@@ -122,11 +142,12 @@
     border-radius: var(--border-radius-sm);
     font-size: var(--font-size-sm);
     margin: 2px;
-    transition: background-color 0.2s, color 0.2s;
+    transition: all 0.2s ease;
 }
 
 .date-picker-day:hover:not(.disabled):not(.outside-month) {
     background-color: var(--color-background-hover);
+    transform: scale(1.1);
 }
 
 .date-picker-day.today {
@@ -138,20 +159,24 @@
 .date-picker-day.selected {
     background-color: var(--color-primary);
     color: var(--color-text-light);
+    transform: scale(1.05);
 }
 
 .date-picker-day.disabled {
     color: var(--color-text-disabled);
     cursor: default;
+    text-decoration: line-through;
 }
 
 .date-picker-day.outside-month {
     color: var(--color-text-tertiary);
+    opacity: 0.5;
 }
 
 /* Time slots section */
 .time-slots-container {
     margin-top: var(--spacing-md);
+    animation: fadeIn 0.3s ease;
 }
 
 .time-slots-container h6 {
@@ -159,11 +184,13 @@
     font-weight: var(--font-weight-semibold);
     margin-bottom: var(--spacing-sm);
     color: var(--color-text-primary);
+    border-left: 3px solid var(--color-primary);
+    padding-left: var(--spacing-sm);
 }
 
 .time-slots-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--spacing-sm);
     margin-top: var(--spacing-sm);
 }
@@ -177,24 +204,29 @@
     text-align: center;
     font-family: var(--font-family-base);
     font-size: var(--font-size-sm);
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .time-slot-btn:hover {
     background-color: var(--color-background-hover);
     border-color: var(--color-primary-light);
+    transform: translateY(-2px);
 }
 
 .time-slot-btn.active {
     background-color: var(--color-primary);
     color: var(--color-text-light);
     border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(var(--color-primary-rgb), 0.3);
 }
 
 .time-slot-btn.selected {
     background-color: var(--color-primary);
     color: var(--color-text-light);
     border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(var(--color-primary-rgb), 0.3);
 }
 
 /* Time slot disabled state */
@@ -203,6 +235,8 @@
     opacity: 0.5;
     color: var(--color-text-light);
     cursor: default;
+    transform: none;
+    box-shadow: none;
 }
 
 /* Appointment summary */
@@ -212,6 +246,8 @@
     background-color: var(--color-background);
     border-radius: var(--border-radius-md);
     border-left: 4px solid var(--color-primary);
+    animation: fadeIn 0.3s ease;
+    box-shadow: var(--shadow-sm);
 }
 
 .appointment-summary p {
@@ -244,8 +280,12 @@
 }
 
 @keyframes spinner {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Alert messages */
@@ -254,6 +294,7 @@
     border-radius: var(--border-radius-md);
     margin: var(--spacing-sm) 0;
     font-size: var(--font-size-sm);
+    animation: fadeIn 0.3s ease;
 }
 
 .date-time-picker-alert.info {
@@ -274,5 +315,11 @@
 
     .date-picker-calendar {
         width: 100%;
+    }
+}
+
+@media (max-width: 400px) {
+    .time-slots-grid {
+        grid-template-columns: repeat(1, 1fr);
     }
 }
