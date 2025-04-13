@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.*;
 import java.util.List;
 
-public class DoctorForm {
+public class PatientForm {
 
     @NotEmpty
     @Size(min = 1, max = 100)
@@ -38,10 +38,7 @@ public class DoctorForm {
     private String phone;
 
     @NotEmpty
-    private List<String> specialties;
-
-    @NotEmpty
-    private List<String> coverages;
+    private String coverage;
 
     @FileSize(max = 2 * 1024 * 1024) // 2MB
     private MultipartFile image;
@@ -95,20 +92,12 @@ public class DoctorForm {
         this.phone = phone;
     }
 
-    public List<String> getSpecialties() {
-        return specialties;
+    public String getCoverage() {
+        return coverage;
     }
 
-    public void setSpecialties(List<String> specialties) {
-        this.specialties = specialties;
-    }
-
-    public List<String> getCoverages() {
-        return coverages;
-    }
-
-    public void setCoverages(List<String> coverages) {
-        this.coverages = coverages;
+    public void setCoverage(String coverage) {
+        this.coverage = coverage;
     }
 
     public MultipartFile getImage() {

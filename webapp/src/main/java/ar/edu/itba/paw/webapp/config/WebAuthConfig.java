@@ -38,11 +38,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
-                .invalidSessionUrl("/login")
+                .invalidSessionUrl("/")
                     .and()
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
-                    .antMatchers("/login", "/register", "/{id:\\d+}").anonymous()
+                    .antMatchers("/").permitAll()
+                    .antMatchers("/register", "/{id:\\d+}", "/login", "/register-patient").anonymous()
                     .antMatchers("/portal", "/search").access("isAnonymous() or hasRole('PATIENT')")
                     .antMatchers("/appointment/**").hasRole("PATIENT")
                     .antMatchers("/**").authenticated()
