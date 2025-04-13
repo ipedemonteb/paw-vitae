@@ -158,11 +158,11 @@
                     <p class="feature-text"><spring:message code="landing.features.secure.text" /></p>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon support-icon"></div>
-                    <h3 class="feature-title"><spring:message code="landing.features.support.title" /></h3>
-                    <p class="feature-text"><spring:message code="landing.features.support.text" /></p>
-                </div>
+<%--                <div class="feature-card">--%>
+<%--                    <div class="feature-icon support-icon"></div>--%>
+<%--                    <h3 class="feature-title"><spring:message code="landing.features.support.title" /></h3>--%>
+<%--                    <p class="feature-text"><spring:message code="landing.features.support.text" /></p>--%>
+<%--                </div>--%>
 
                 <div class="feature-card">
                     <div class="feature-icon easy-icon"></div>
