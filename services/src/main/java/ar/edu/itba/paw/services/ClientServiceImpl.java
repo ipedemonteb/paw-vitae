@@ -1,16 +1,15 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfacePersistence.ClientDao;
-import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.ClientService;
+import ar.edu.itba.paw.interfaceServices.CoverageService;
+import ar.edu.itba.paw.interfaceServices.ImageService;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -20,10 +19,13 @@ public class ClientServiceImpl implements ClientService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final CoverageService cs;
+
     @Autowired
-    public ClientServiceImpl(ClientDao clientDao, PasswordEncoder passwordEncoder) {
+    public ClientServiceImpl(ClientDao clientDao, PasswordEncoder passwordEncoder, CoverageService cs) {
         this.clientDao = clientDao;
         this.passwordEncoder = passwordEncoder;
+        this.cs = cs;
     }
 
     @Override
@@ -31,9 +33,9 @@ public class ClientServiceImpl implements ClientService {
         return clientDao.getById(id);
     }
 
-    @Override
-    public Client create(String name, String lastName, String email, String password, String phone, Coverage coverage) {
-        return this.clientDao.create(name, lastName, email, passwordEncoder.encode(password), phone, coverage);
+    public Client create(String name, String lastName, String email, String password, String phone, String coverage) {
+        Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);
+        return this.clientDao.create(name, lastName, email, passwordEncoder.encode(password), phone, cov);
     }
 
     @Override

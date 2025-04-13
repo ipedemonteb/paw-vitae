@@ -9,7 +9,7 @@ public interface ClientService {
 
     Optional<Client> getById(long id);
 
-    Client create(String name, String lastName, String email, String password, String phone, Coverage coverage);
+    Client create(String name, String lastName, String email, String password, String phone, String coverage);
 
     Optional<Client> getByEmail(String email);
 
