@@ -33,4 +33,15 @@
   --color-header-shadow: rgba(0, 0, 0, 0.1);
   --color-feature-shadow: rgba(0, 0, 0, 0.05);
   --color-feature-shadow-hover: rgba(0, 0, 0, 0.1);
+
+  /* Login page specific colors */
+  --color-shape-background: rgba(255, 255, 255, 0.1);
+  --color-button-loader-border: rgba(255, 255, 255, 0.3);
+  --color-button-shadow: rgba(74, 107, 255, 0.2);
+  --color-social-button-shadow: rgba(0, 0, 0, 0.05);
+  --color-social-button-hover: rgba(255, 255, 255, 0.1);
+  --color-social-button-bg-dark: rgba(255, 255, 255, 0.05);
+  --color-google-brand: #DB4437;
+  --color-notification-error-bg: rgba(220, 53, 69, 0.1);
+  --color-notification-success-bg: rgba(40, 167, 69, 0.1);
 }
