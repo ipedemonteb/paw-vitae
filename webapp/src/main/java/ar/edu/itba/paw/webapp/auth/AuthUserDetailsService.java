@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.auth;
 
 
 import ar.edu.itba.paw.interfaceServices.UserService;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Component
@@ -37,10 +39,18 @@ public class AuthUserDetailsService implements UserDetailsService {
 //            return loadUserByUsername(email);
 //        }
 
-        final Collection<? extends GrantedAuthority> authorities = Arrays.asList(
-                new SimpleGrantedAuthority("DOCTOR"),
-                new SimpleGrantedAuthority("PATIENT")
-        );
-        return new AuthUserDetails(email, user.getPassword(), authorities);
+        if(user.getClass() == Doctor.class) {
+            return new AuthUserDetails(email, user.getPassword(), List.of(new SimpleGrantedAuthority("DOCTOR")));
+        }
+
+        return new AuthUserDetails(email, user.getPassword(), List.of(new SimpleGrantedAuthority("PATIENT")));
+
+
+
+//        final Collection<? extends GrantedAuthority> authorities = Arrays.asList(
+//                new SimpleGrantedAuthority("DOCTOR"),
+//                new SimpleGrantedAuthority("PATIENT")
+//        );
+//        return new AuthUserDetails(email, user.getPassword(), authorities);
     }
 }
