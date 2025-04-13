@@ -57,4 +57,9 @@ public class DoctorServiceImpl implements DoctorService {
         return this.doctorDao.getByEmail(email);
     }
 
+    @Override
+    public List<Doctor> getAll() {
+        return this.doctorDao.getAll();
+    }
+
 }

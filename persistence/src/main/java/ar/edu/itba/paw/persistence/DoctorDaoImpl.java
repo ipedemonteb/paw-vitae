@@ -112,6 +112,16 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
+    public List<Doctor> getAll() {
+        List<Doctor> doctors = jdbcTemplate.query("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id", ROW_MAPPER);
+        for (Doctor doctor : doctors) {
+            doctor.setCoverageList(jdbcTemplate.query("SELECT * FROM doctor_coverages JOIN coverages ON doctor_coverages.coverage_id = coverages.id WHERE doctor_coverages.doctor_id = ?", (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name")), doctor.getId()));
+            doctor.setSpecialtyList(jdbcTemplate.query("SELECT * FROM doctor_specialties JOIN specialties ON doctor_specialties.specialty_id = specialties.id WHERE doctor_specialties.doctor_id = ?", (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key")), doctor.getId()));
+        }
+        return doctors;
+    }
+
+    @Override
     public List<Doctor> getBySpecialty(String specialty) {
         List<Doctor> doctors = jdbcTemplate.query("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id JOIN doctor_specialties ON doctors.doctor_id = doctor_specialties.doctor_id JOIN specialties ON doctor_specialties.specialty_id = specialties.id WHERE specialties.key = ?", new Object[]{specialty}, ROW_MAPPER);
         for (Doctor doctor : doctors) {

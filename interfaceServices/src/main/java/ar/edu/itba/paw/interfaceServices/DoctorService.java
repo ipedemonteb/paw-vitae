@@ -16,4 +16,6 @@ public interface DoctorService {
 
     Optional<Doctor> getByEmail(String email);
 
+    List<Doctor> getAll();
+
 }
