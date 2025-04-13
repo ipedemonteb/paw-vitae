@@ -52,8 +52,8 @@
                     <a href="<c:url value='/login' />" class="btn btn-primary">
                         <spring:message code="header.button.access" />
                     </a>
-                    <a href="<c:url value='/' />" class="btn btn-primary">
-                        <spring:message code="header.button.access" />
+                    <a href="<c:url value='/register-patient' />" class="btn btn-primary">
+                        <spring:message code="header.button.access.2" />
                     </a>
                 </sec:authorize>
 
