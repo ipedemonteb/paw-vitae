@@ -2,13 +2,8 @@ package ar.edu.itba.paw.webapp.controller;
 
 
 
-import ar.edu.itba.paw.interfaceServices.CoverageService;
-import ar.edu.itba.paw.interfaceServices.DoctorService;
-import ar.edu.itba.paw.interfaceServices.ImageService;
-import ar.edu.itba.paw.interfaceServices.SpecialtyService;
-import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.interfaceServices.*;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,12 +25,16 @@ public class AuthController {
     private final CoverageService cs;
     private final ImageService is;
     private final SpecialtyService ss;
+    private final ClientService clientService;
+
+
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss) {
+    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, ClientService clientService) {
         this.ds = ds;
         this.cs = cs;
         this.is=is;
         this.ss = ss;
+        this.clientService = clientService;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)

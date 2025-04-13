@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -89,8 +91,8 @@ public class AppointmentController {
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
     public ModelAndView appointment(
             @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
-            @RequestParam(required = true) Integer doctorId,
-            @RequestParam(required = true) Integer specialtyId
+            @RequestParam(required = true) Long doctorId,
+            @RequestParam(required = true) Long specialtyId
     ) {
         ModelAndView mav = new ModelAndView("appointment/appointment");
         Optional<List<Coverage>> coverage = coverageService.getAll();
@@ -107,9 +109,18 @@ public class AppointmentController {
         mav.addObject("bookedHours", bookedHours);
         mav.addObject("today", today);
 
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final Client client = clientService.getByEmail((String) auth.getName()).orElseThrow(RuntimeException::new);
+
         appointmentForm.setDoctorId(doctorId);
-        appointmentForm.setClientId(1);
+//        appointmentForm.setClientId(1);
+        appointmentForm.setClientId(client.getId());
         appointmentForm.setSpecialtyId(specialtyId);
+        appointmentForm.setName(client.getName());
+        appointmentForm.setLastName(client.getLastName());
+        appointmentForm.setEmail(client.getEmail());
+        appointmentForm.setPhone(client.getPhone());
+
 
         return mav;
     }
