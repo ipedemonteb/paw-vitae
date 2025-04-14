@@ -96,12 +96,12 @@ public class ClientDaoImpl implements ClientDao {
     @Override
     public void updateClient(long id, String name, String lastName, String phone, Coverage coverage) {
         // Update the basic client information
-        jdbcTemplate.update("UPDATE clients SET name = ?, last_name = ?, phone = ? WHERE id = ?",
+        jdbcTemplate.update("UPDATE users SET name = ?, last_name = ?, phone = ? WHERE id = ?",
                 name, lastName, phone, id);
 
         // Update the coverage if provided
         if (coverage != null) {
-            jdbcTemplate.update("UPDATE clients SET coverage_id = ? WHERE id = ?", coverage.getId(), id);
+            jdbcTemplate.update("UPDATE clients SET coverage_id = ? WHERE client_id = ?", coverage.getId(), id);
         }
     }
 }
