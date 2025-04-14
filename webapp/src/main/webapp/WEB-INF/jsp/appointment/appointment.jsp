@@ -6,6 +6,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
+<link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
 <layout:page title="appointment.page.title">
     <div class="card">
         <div class="card-header">
@@ -32,10 +33,15 @@
                 <form:hidden path="phone" />
                 <form:hidden path="coverageId"/>
 
-                <div class="form-group">
-                    <label for="specialty"><spring:message code="appointment.form.specialty" /></label>
-                    <input type="text" id="specialty" name="specialty" class="form-control bg-light"
-                           value="<spring:message code='${specialty.key}' />" readonly />
+
+                <div class="specialty-card-appointment">
+                    <div class="specialty-icon-appointment">
+                        &#9877;
+                    </div>
+                    <div class="specialty-content">
+                        <span class="specialty-label-appointment"><spring:message code="appointment.form.specialty" />:</span>
+                        <span class="specialty-value-appointment"><spring:message code="${specialty.key}" /></span>
+                    </div>
                 </div>
 
                 <!-- Custom Date and Time Picker -->
