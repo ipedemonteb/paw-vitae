@@ -1,0 +1,98 @@
+/* Estilos para el selector múltiple */
+.multi-select-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.current-coverage {
+    margin: 0 auto 0.75rem auto;
+    padding: 0.5rem;
+    background-color: #f3f4f6;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+    text-align: center;
+    max-width: 80%;
+}
+
+.current-coverage span {
+    font-weight: 600;
+    color: #2a5caa;
+    background-color: #e1effe;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    display: inline-block;
+    margin-left: 0.25rem;
+}
+
+.custom-multi-select {
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background-color: #fff;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.search-box {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 0.875rem;
+    outline: none;
+}
+
+.custom-multi-select-option {
+    padding: 0.625rem 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.custom-multi-select-option:hover {
+    background-color: #f3f4f6;
+}
+
+.custom-multi-select-option.selected {
+    background-color: #e5e7eb;
+}
+
+.option-checkbox {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    margin-right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.custom-multi-select-option.selected .option-checkbox::after {
+    content: "✓";
+    color: #2a5caa;
+    font-size: 12px;
+}
+
+.option-text {
+    flex: 1;
+    font-size: 0.875rem;
+}
+
+/* Estilos para el botón de guardar */
+.form-actions .btn-primary {
+    background-color: #2a5caa;
+    color: white;
+}
+
+.form-actions .btn-primary:hover {
+    background-color: #1e4b8f;
+}

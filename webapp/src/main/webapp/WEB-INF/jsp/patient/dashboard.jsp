@@ -6,8 +6,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 
-
-
 <layout:page title="dashboard.doctor.title">
     <div class="dashboard-container">
         <!-- Doctor Profile Header -->
@@ -146,20 +144,29 @@
                 <div class="tab-header">
                     <h2><spring:message code="dashboard.profile.title" /></h2>
                     <div class="tab-actions">
-                        <a class="btn btn-primary">
+                        <button id="edit-profile-btn" class="btn btn-primary">
                             <i class="icon icon-edit"></i>
                             <spring:message code="dashboard.profile.edit" />
-                        </a>
+                        </button>
                     </div>
                 </div>
 
                 <div class="profile-content">
-                    <div class="profile-section">
+                    <!-- Visible Profile Information -->
+                    <div id="profile-view" class="profile-section">
                         <h3 class="section-title"><spring:message code="dashboard.profile.personalInfo" /></h3>
                         <div class="info-grid">
                             <div class="info-item">
                                 <div class="info-label"><spring:message code="dashboard.profile.email" /></div>
                                 <div class="info-value"><c:out value="${patient.email}" /></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><spring:message code="register.firstName" /></div>
+                                <div class="info-value"><c:out value="${patient.name}" /></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><spring:message code="register.lastName" /></div>
+                                <div class="info-value"><c:out value="${patient.lastName}" /></div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label"><spring:message code="dashboard.profile.phone" /></div>
@@ -168,13 +175,71 @@
                         </div>
                     </div>
 
-                    <div class="profile-section">
+                    <div id="coverage-section" class="profile-section">
                         <h3 class="section-title"><spring:message code="dashboard.profile.coverages" /></h3>
                         <div class="coverages-list">
-                                <div class="coverage-item">
-                                    <c:out value="${patient.coverage.name}" />
-                                </div>
+                            <div class="coverage-item">
+                                <c:out value="${patient.coverage.name}" />
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Edit Profile Form (Hidden by default) -->
+                    <div id="edit-profile-form" class="profile-section" style="display: none;">
+                        <h3 class="section-title text-center"><spring:message code="dashboard.profile.edit" /></h3>
+
+                        <form:form id="updatePatientForm" modelAttribute="updatePatientForm" method="post" action="${pageContext.request.contextPath}/patient/dashboard/update" cssClass="edit-profile-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <form:label path="name"><spring:message code="register.firstName" /></form:label>
+                                    <form:input path="name" cssClass="form-control" value="${patient.name}" />
+                                    <form:errors path="name" cssClass="error-message" />
+                                </div>
+
+                                <div class="form-group">
+                                    <form:label path="lastName"><spring:message code="register.lastName" /></form:label>
+                                    <form:input path="lastName" cssClass="form-control" value="${patient.lastName}" />
+                                    <form:errors path="lastName" cssClass="error-message" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <form:label path="phone"><spring:message code="register.phone" /></form:label>
+                                <form:input path="phone" cssClass="form-control" value="${patient.phone}" />
+                                <form:errors path="phone" cssClass="error-message" />
+                            </div>
+
+                            <div class="form-group">
+                                <form:label path="coverage"><spring:message code="register.coverage" /></form:label>
+                                <div class="current-coverage">
+                                    <spring:message code="register.selectCoverage" />: <span id="current-coverage-name">${patient.coverage.name}</span>
+                                </div>
+                                <div class="multi-select-container" id="coverage-container">
+                                    <div class="custom-multi-select" id="coverage-options">
+                                        <input type="text" id="coverage-search" class="search-box" placeholder="<spring:message code="register.search" />" />
+                                        <c:forEach items="${coverageList}" var="coverage">
+                                            <div class="custom-multi-select-option" data-value="${coverage.id}" data-name="${coverage.name}" onclick="toggleCoverage(this)">
+                                                <div class="option-checkbox"></div>
+                                                <div class="option-text">
+                                                    <c:out value="${coverage.name}"/>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                    <form:input path="coverage" id="coverage-input" cssClass="form-control" style="display: none;" />
+                                </div>
+                                <form:errors path="coverage" cssClass="error-message" />
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" id="cancel-edit-btn" class="btn btn-secondary">
+                                    <spring:message code="logout.confirmation.cancel" />
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    Guardar
+                                </button>
+                            </div>
+                        </form:form>
                     </div>
                 </div>
             </div>
@@ -182,10 +247,82 @@
     </div>
 
     <link rel="stylesheet" href="<c:url value='/css/components/doctor-dashboard.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/components/inline-form.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/components/multi-select.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        .text-center {
+            text-align: center;
+        }
+
+        .profile-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .profile-section {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        #edit-profile-form {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            background-color: #f9fafb;
+        }
+
+        .info-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .coverages-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .coverage-item {
+            background-color: #e1effe;
+            color: #2a5caa;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+    </style>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
             const tabs = document.querySelectorAll('.nav-tab');
             const tabContents = document.querySelectorAll('.tab-content');
 
@@ -212,6 +349,171 @@
                     }
                 });
             });
+
+            // Edit Profile Functionality
+            const editProfileBtn = document.getElementById('edit-profile-btn');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            const profileView = document.getElementById('profile-view');
+            const coverageSection = document.getElementById('coverage-section');
+            const editProfileForm = document.getElementById('edit-profile-form');
+
+            if (editProfileBtn) {
+                editProfileBtn.addEventListener('click', function() {
+                    profileView.style.display = 'none';
+                    coverageSection.style.display = 'none';
+                    editProfileForm.style.display = 'block';
+                });
+            }
+
+            if (cancelEditBtn) {
+                cancelEditBtn.addEventListener('click', function() {
+                    profileView.style.display = 'block';
+                    coverageSection.style.display = 'block';
+                    editProfileForm.style.display = 'none';
+                });
+            }
+
+            // Initialize coverage dropdown
+            initCoverageDropdown();
+
+            // Initialize search functionality for coverage
+            initCoverageSearch();
+
+            // Pre-select the current coverage
+            preSelectCurrentCoverage();
         });
+
+        function initCoverageDropdown() {
+            const coverageOptions = document.querySelectorAll('#coverage-options .custom-multi-select-option');
+            const coverageInput = document.getElementById('coverage-input');
+
+            // Set initial value from the input
+            updateSelectedCoverage();
+        }
+
+        function toggleCoverage(optionElement) {
+            // Deselect all options first
+            const allOptions = document.querySelectorAll('#coverage-options .custom-multi-select-option');
+            allOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+
+            // Select the clicked option
+            optionElement.classList.add('selected');
+
+            // Get the coverage ID and name
+            const coverageId = optionElement.getAttribute('data-value');
+            const coverageName = optionElement.getAttribute('data-name');
+
+            // Update the hidden input with the ID
+            const coverageInput = document.getElementById('coverage-input');
+            coverageInput.value = coverageId;
+
+            // Update the current coverage display with the name
+            const currentCoverageDisplay = document.getElementById('current-coverage-name');
+            if (currentCoverageDisplay) {
+                currentCoverageDisplay.textContent = coverageName;
+            }
+        }
+
+        function updateSelectedCoverage() {
+            const coverageInput = document.getElementById('coverage-input');
+            const currentCoverageId = coverageInput.value;
+
+            // Find the option with this coverage ID
+            if (currentCoverageId) {
+                const options = document.querySelectorAll('#coverage-options .custom-multi-select-option');
+
+                options.forEach(option => {
+                    const id = option.getAttribute('data-value');
+                    if (id === currentCoverageId) {
+                        option.classList.add('selected');
+
+                        // Update the current coverage display with the name
+                        const coverageName = option.getAttribute('data-name');
+                        const currentCoverageDisplay = document.getElementById('current-coverage-name');
+                        if (currentCoverageDisplay) {
+                            currentCoverageDisplay.textContent = coverageName;
+                        }
+                    } else {
+                        option.classList.remove('selected');
+                    }
+                });
+            } else {
+                // If no ID is set, try to match by name (for backward compatibility)
+                const currentCoverageName = document.getElementById('current-coverage-name').textContent;
+                if (currentCoverageName) {
+                    const options = document.querySelectorAll('#coverage-options .custom-multi-select-option');
+
+                    options.forEach(option => {
+                        const name = option.getAttribute('data-name');
+                        if (name === currentCoverageName) {
+                            option.classList.add('selected');
+
+                            // Update the input with the ID
+                            const id = option.getAttribute('data-value');
+                            coverageInput.value = id;
+                        }
+                    });
+                }
+            }
+        }
+
+        function initCoverageSearch() {
+            const searchBox = document.getElementById('coverage-search');
+            const options = document.querySelectorAll('#coverage-options .custom-multi-select-option');
+
+            searchBox.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+
+                options.forEach(option => {
+                    const text = option.querySelector('.option-text').textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        option.style.display = 'flex';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        function preSelectCurrentCoverage() {
+            const coverageInput = document.getElementById('coverage-input');
+            const currentCoverageId = coverageInput.value;
+
+            if (currentCoverageId) {
+                const options = document.querySelectorAll('#coverage-options .custom-multi-select-option');
+
+                options.forEach(option => {
+                    const id = option.getAttribute('data-value');
+                    if (id === currentCoverageId) {
+                        option.classList.add('selected');
+
+                        // Update the current coverage display
+                        const coverageName = option.getAttribute('data-name');
+                        const currentCoverageDisplay = document.getElementById('current-coverage-name');
+                        if (currentCoverageDisplay) {
+                            currentCoverageDisplay.textContent = coverageName;
+                        }
+                    }
+                });
+            } else {
+                // Fallback: Match by name if ID is not set
+                const currentCoverageName = document.getElementById('current-coverage-name').textContent;
+                if (currentCoverageName) {
+                    const options = document.querySelectorAll('#coverage-options .custom-multi-select-option');
+
+                    options.forEach(option => {
+                        const name = option.getAttribute('data-name');
+                        if (name === currentCoverageName) {
+                            option.classList.add('selected');
+
+                            // Update the input with the ID
+                            const id = option.getAttribute('data-value');
+                            coverageInput.value = id;
+                        }
+                    });
+                }
+            }}
     </script>
 </layout:page>
