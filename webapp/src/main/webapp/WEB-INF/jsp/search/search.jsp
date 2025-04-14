@@ -8,6 +8,7 @@
 </c:set>
 
 <link rel="stylesheet" href="<c:url value='/css/search.css' />" />
+<link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
 
 <t:page title="search.page.title">
   <div class="card">
@@ -50,20 +51,6 @@
                     <h3 class="doctor-name-search" title="<c:out value='${doctor.name} ${doctor.lastName}'/>">
                       <c:out value='${doctor.name} ${doctor.lastName}'/>
                     </h3>
-<%--                    <div class="doctor-specialties-search">--%>
-<%--                      <c:forEach var="doctorSpecialty" items="${doctor.specialtyList}" varStatus="specStatus">--%>
-<%--                        <c:if test="${specStatus.index < 2}">--%>
-<%--                          <span class="doctor-specialty-tag-search" title="<spring:message code='${doctorSpecialty.key}'/>">--%>
-<%--                            <spring:message code="${doctorSpecialty.key}" />--%>
-<%--                          </span>--%>
-<%--                        </c:if>--%>
-<%--                      </c:forEach>--%>
-<%--                      <c:if test="${doctor.specialtyList.size() > 2}">--%>
-<%--                        <span class="doctor-specialty-tag-search more-tag" title="<spring:message code='search.more.specialties' arguments='${doctor.specialtyList.size() - 2}'/>">--%>
-<%--                          +<c:out value='${doctor.specialtyList.size() - 2}'/>--%>
-<%--                        </span>--%>
-<%--                      </c:if>--%>
-<%--                    </div>--%>
                   </div>
                 </div>
 
@@ -81,22 +68,33 @@
                 </div>
 
                 <div class="doctor-card-footer">
-                  <div class="availability-calendar">
-                    <div class="calendar-header">
-                      <div class="calendar-title"><spring:message code="search.next.available" /></div>
+                  <!-- Date Picker for Available Hours -->
+                  <div class="availability-section" id="availability-section-${doctor.id}">
+                    <div class="availability-header">
+                      <h4><spring:message code="search.available.hours" /></h4>
                     </div>
-                    <div class="calendar-days">
-                      <c:forEach var="i" begin="0" end="6">
-                        <div class="calendar-day">
-                          <div class="day-name"><spring:message code="calendar.day.short.${i == 0 ? 'sun' : i == 1 ? 'mon' : i == 2 ? 'tue' : i == 3 ? 'wed' : i == 4 ? 'thu' : i == 5 ? 'fri' : 'sat'}" /></div>
-                          <div class="day-availability ${i == 0 || i == 6 ? 'unavailable' : 'available'}">
-                              ${i == 0 || i == 6 ? '—' : '✓'}
-                          </div>
-                          <c:if test="${i != 0 && i != 6}">
-                            <div class="time-slot">9:00</div>
-                          </c:if>
+
+                    <!-- Date Picker -->
+                    <div class="date-picker-container-search compact">
+                      <input type="text" id="datePickerInput-${doctor.id}" class="form-control date-picker-input"
+                             placeholder="<spring:message code="appointment.placeholder.selectDate"/>" readonly>
+
+                      <!-- Custom Calendar -->
+                      <div id="datePickerCalendar-${doctor.id}" class="date-picker-calendar">
+                        <div class="date-picker-header">
+                          <button type="button" id="prevMonthBtn-${doctor.id}" class="date-picker-nav">&lsaquo;</button>
+                          <div id="currentMonthYear-${doctor.id}" class="date-picker-month-year"></div>
+                          <button type="button" id="nextMonthBtn-${doctor.id}" class="date-picker-nav">&rsaquo;</button>
                         </div>
-                      </c:forEach>
+                        <div class="date-picker-weekdays" id="calendarWeekdays-${doctor.id}"></div>
+                        <div class="date-picker-days" id="calendarDays-${doctor.id}"></div>
+                      </div>
+                    </div>
+
+                    <!-- Time Slots Container -->
+                    <div id="timeSlotsContainer-${doctor.id}" class="time-slots-container" style="display: none;">
+                      <label><spring:message code="appointment.form.availableTimes"/></label>
+                      <div id="timeSlots-${doctor.id}" class="time-slots-grid"></div>
                     </div>
                   </div>
 
@@ -139,9 +137,52 @@
     </div>
   </div>
 
+  <!-- Add message translations for JavaScript -->
   <script>
+    // Create a messages object to be used by the JavaScript
+    window.appointmentMessages = {
+      months: [
+        '<spring:message code="calendar.month.january" />',
+        '<spring:message code="calendar.month.february" />',
+        '<spring:message code="calendar.month.march" />',
+        '<spring:message code="calendar.month.april" />',
+        '<spring:message code="calendar.month.may" />',
+        '<spring:message code="calendar.month.june" />',
+        '<spring:message code="calendar.month.july" />',
+        '<spring:message code="calendar.month.august" />',
+        '<spring:message code="calendar.month.september" />',
+        '<spring:message code="calendar.month.october" />',
+        '<spring:message code="calendar.month.november" />',
+        '<spring:message code="calendar.month.december" />'
+      ],
+      weekdays: [
+        '<spring:message code="calendar.day.sunday" />',
+        '<spring:message code="calendar.day.monday" />',
+        '<spring:message code="calendar.day.tuesday" />',
+        '<spring:message code="calendar.day.wednesday" />',
+        '<spring:message code="calendar.day.thursday" />',
+        '<spring:message code="calendar.day.friday" />',
+        '<spring:message code="calendar.day.saturday" />'
+      ],
+      weekdaysShort: [
+        '<spring:message code="calendar.day.short.sun" />',
+        '<spring:message code="calendar.day.short.mon" />',
+        '<spring:message code="calendar.day.short.tue" />',
+        '<spring:message code="calendar.day.short.wed" />',
+        '<spring:message code="calendar.day.short.thu" />',
+        '<spring:message code="calendar.day.short.fri" />',
+        '<spring:message code="calendar.day.short.sat" />'
+      ],
+      appointmentAt: '<spring:message code="appointment.at" />',
+      noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />'
+    };
+    contextPath = "${pageContext.request.contextPath}";
+
     function changeSpecialty(specialtyId) {
       window.location.href = "${pageContext.request.contextPath}/search?specialty=" + specialtyId;
     }
   </script>
+
+  <!-- Include the modified date-time-picker for search page -->
+  <script src="<c:url value='/js/search-date-time-picker.js'/>"></script>
 </t:page>
