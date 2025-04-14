@@ -40,8 +40,7 @@ public class PatientForm {
     @NotEmpty
     private String coverage;
 
-    @FileSize(max = 2 * 1024 * 1024) // 2MB
-    private MultipartFile image;
+
 
 
     public String getName() {
@@ -100,12 +99,6 @@ public class PatientForm {
         this.coverage = coverage;
     }
 
-    public MultipartFile getImage() {
-        return image;
-    }
 
-    public void setImage(MultipartFile image) {
-        this.image = image;
-    }
 }
 
