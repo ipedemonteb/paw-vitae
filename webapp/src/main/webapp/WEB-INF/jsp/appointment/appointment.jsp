@@ -30,22 +30,12 @@
                 <form:hidden path="lastName" />
                 <form:hidden path="email" />
                 <form:hidden path="phone" />
+                <form:hidden path="coverageId"/>
 
                 <div class="form-group">
                     <label for="specialty"><spring:message code="appointment.form.specialty" /></label>
                     <input type="text" id="specialty" name="specialty" class="form-control bg-light"
                            value="<spring:message code='${specialty.key}' />" readonly />
-                </div>
-
-                <div class="form-group">
-                    <label for="coverageId"><spring:message code="appointment.form.coverage" /></label>
-                    <form:select path="coverageId" id="coverageId" class="form-control">
-                        <option value=""><spring:message code="appointment.placeholder.coverage" /></option>
-                        <c:forEach var="coverage" items="${coverages}">
-                            <option value="${coverage.id}">${coverage.name}</option>
-                        </c:forEach>
-                    </form:select>
-                    <form:errors path="coverageId" cssClass="error-message" />
                 </div>
 
                 <!-- Custom Date and Time Picker -->
@@ -73,7 +63,7 @@
 
                     <!-- Time slots container -->
                     <div id="timeSlotsContainer" class="time-slots-container" style="display: none;">
-                        <h6><spring:message code="appointment.form.selectTime"/></h6>
+                        <label><spring:message code="appointment.form.selectTime"/></label>
                         <div id="timeSlots" class="time-slots-grid"></div>
                     </div>
 
