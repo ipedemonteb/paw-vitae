@@ -156,21 +156,23 @@
                                             </span>
                                         </div>
                                         <div class="appointment-actions">
-                                            <c:set value="<spring:message code='${appointment.key.status}'/>" var="status" />
-                                            <c:if test="${status.toLowerCase() != 'cancelled'}">
-                                                <a href="<c:url value='/appointments/${appointment.key.id}/modify' />" class="btn btn-secondary">
-                                                    <i class="fas fa-edit"></i>
-                                                    <span><spring:message code="appointment.action.modify" /></span>
-                                                </a>
+                                            <c:set var="status" value="${appointment.key.status}" />
+
+                                            <c:if test="${status eq 'pendiente'}">
+                                                <button class="btn btn-confirm confirm-appointment" data-id="${appointment.key.id}">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span><spring:message code="appointment.action.confirm" /></span>
+                                                </button>
                                                 <button class="btn btn-danger cancel-appointment" data-id="${appointment.key.id}">
                                                     <i class="fas fa-times-circle"></i>
                                                     <span><spring:message code="appointment.action.cancel" /></span>
                                                 </button>
                                             </c:if>
-                                            <c:if test="${status.toLowerCase() == 'pending'}">
-                                                <button class="btn btn-primary confirm-appointment" data-id="${appointment.key.id}">
-                                                    <i class="fas fa-check-circle"></i>
-                                                    <span><spring:message code="appointment.action.confirm" /></span>
+
+                                            <c:if test="${status eq 'confirmado'}">
+                                                <button class="btn btn-danger cancel-appointment" data-id="${appointment.key.id}">
+                                                    <i class="fas fa-times-circle"></i>
+                                                    <span><spring:message code="appointment.action.cancel" /></span>
                                                 </button>
                                             </c:if>
                                         </div>
