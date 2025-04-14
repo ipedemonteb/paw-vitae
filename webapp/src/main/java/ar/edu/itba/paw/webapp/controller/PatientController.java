@@ -25,9 +25,20 @@ public class PatientController {
         final ModelAndView mav = new ModelAndView("patient/dashboard");
         Client patient = loggedUser();
         mav.addObject("patient", patient);
-
         return mav;
     }
+
+//    @RequestMapping(value = "/client/update", method = RequestMethod.POST)
+//    public ModelAndView updateClient(@Valid @ModelAttribute("clientForm") final ClientForm clientForm, final BindingResult errors) {
+//        if (errors.hasErrors()) {
+//            return new ModelAndView("client/edit");
+//        }
+//
+//        Client client = loggedUser();
+//        cs.updateClient(client.getId(), clientForm.getName(), clientForm.getLastName(), clientForm.getEmail(), clientForm.getPhone());
+//
+//        return new ModelAndView("redirect:/client/dashboard");
+//    }
 
     @ModelAttribute
     public Client loggedUser() {
