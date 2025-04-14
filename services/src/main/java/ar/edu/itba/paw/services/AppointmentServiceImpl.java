@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Specialty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final SpecialtyService specialtyService;
     private final MailService mailService;
     private final MessageSource messageSource;
-
+    @Autowired
     public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService, MessageSource messageSource) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;
