@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.interfaceServices;
 
+import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ClientService {
@@ -14,5 +16,7 @@ public interface ClientService {
     Optional<Client> getByEmail(String email);
 
     void updateClient(long id, String name, String lastName, String phone, String coverage);
+
+    List<Client> getByAppointments(List<Appointment> appointments);
 
 }

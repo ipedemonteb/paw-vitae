@@ -2,9 +2,11 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
+import ar.edu.itba.paw.interfaceServices.ClientService;
 import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -24,12 +26,15 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final SpecialtyService specialtyService;
     private final MailService mailService;
     private final MessageSource messageSource;
+    private final ClientService clientService;
+
     @Autowired
-    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService, MessageSource messageSource) {
+    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService, MessageSource messageSource, ClientService clientService) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;
         this.mailService = mailService;
         this.messageSource = messageSource;
+        this.clientService = clientService;
     }
 
     @Override
@@ -50,7 +55,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Optional<List<Appointment>> getByClientId(long clientId) {
-        return appointmentDao.getByClientId(clientId);
+        return  appointmentDao.getByClientId(clientId);
     }
 
     @Override
@@ -100,5 +105,20 @@ public class AppointmentServiceImpl implements AppointmentService {
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Map<Appointment, Client> getForDoctor(long doctorId) {
+        Optional<List<Appointment>> appointments = appointmentDao.getByDoctorId(doctorId);
+        List<Client> clients = clientService.getByAppointments(appointments.orElse(Collections.emptyList()));
+        Map<Appointment, Client> appointmentClientMap = new HashMap<>();
+
+        if (appointments.isPresent()) {
+            for (Appointment appointment : appointments.get()) {
+                appointmentClientMap.put(appointment, clients.stream().filter(c -> c.getId() == appointment.getClientId()).findFirst().orElseThrow(() -> new IllegalArgumentException("Client not found")));
+            }
+        }
+
+        return appointmentClientMap;
     }
 }

@@ -104,4 +104,9 @@ public class ClientDaoImpl implements ClientDao {
             jdbcTemplate.update("UPDATE clients SET coverage_id = ? WHERE id = ?", coverage.getId(), id);
         }
     }
+
+    @Override
+    public List<Client> getByIds(Set<Long> ids) {
+        return jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) + ")", ROW_MAPPER, ids.toArray());
+    }
 }

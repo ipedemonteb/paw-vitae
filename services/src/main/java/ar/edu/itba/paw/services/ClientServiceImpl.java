@@ -4,13 +4,17 @@ import ar.edu.itba.paw.interfacePersistence.ClientDao;
 import ar.edu.itba.paw.interfaceServices.ClientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.ImageService;
+import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ClientServiceImpl implements ClientService {
@@ -47,5 +51,12 @@ public class ClientServiceImpl implements ClientService {
     public void updateClient(long id, String name, String lastName, String phone, String coverage) {
         Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);
         clientDao.updateClient(id, name, lastName, phone, cov);
+    }
+
+    @Override
+    public List<Client> getByAppointments(List<Appointment> appointments) {
+        Set<Long> ids = appointments.stream().map(Appointment::getClientId).collect(Collectors.toSet());
+        System.out.println("IDs: " + ids);
+        return clientDao.getByIds(ids);
     }
 }
