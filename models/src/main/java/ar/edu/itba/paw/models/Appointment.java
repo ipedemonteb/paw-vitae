@@ -12,7 +12,8 @@ public class Appointment {
     private String status;
     private String reason;
     private Specialty specialty;
-
+    private Doctor doctor;
+    private Client client;
     public Appointment(long clientId, long doctorId, LocalDateTime date, String status, String reason, long id, Specialty specialty) {
         this.clientId = clientId;
         this.doctorId = doctorId;
@@ -65,5 +66,19 @@ public class Appointment {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+    public Client getClient() {
+        return client;
+    }
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

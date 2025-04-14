@@ -3,8 +3,10 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -23,6 +25,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     private SimpleJdbcInsert jdbcInsert;
 
+    private DoctorDaoImpl doctorDaoImpl;
+
+
     private final static RowMapper<Appointment> ROW_MAPPER = new RowMapper<Appointment>() {
         @Override
         public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -39,12 +44,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
     };
 
     @Autowired
-    public AppointmentDaoImpl(final DataSource ds) {
+    public AppointmentDaoImpl(final DataSource ds, final DoctorDaoImpl doctorDaoImpl) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
                 .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id")
                 .usingGeneratedKeyColumns("id");
+        this.doctorDaoImpl = doctorDaoImpl;
     }
 
 
@@ -72,6 +78,10 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public Optional<List<Appointment>> getByClientId(long clientId) {
         List<Appointment> appointments = jdbcTemplate.query(
                 "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE client_id = ?", ROW_MAPPER, clientId);
+        for (Appointment appointment : appointments) {
+        appointment.setDoctor(doctorDaoImpl.getById(appointment.getDoctorId()).orElse(null));
+
+        }
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
 
@@ -79,6 +89,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public Optional<List<Appointment>> getByDoctorId(long doctorId) {
         List<Appointment> appointments = jdbcTemplate.query(
                 "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ?", ROW_MAPPER, doctorId);
+        for (Appointment appointment : appointments) {
+            appointment.setDoctor(doctorDaoImpl.getById(appointment.getDoctorId()).orElse(null));
+        }
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
 

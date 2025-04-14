@@ -13,6 +13,6 @@ public interface ClientService {
 
     Optional<Client> getByEmail(String email);
 
-    void updateClient(long id, String name, String lastName, String email, String phone, Coverage coverage);
+    void updateClient(long id, String name, String lastName, String phone, String coverage);
 
 }

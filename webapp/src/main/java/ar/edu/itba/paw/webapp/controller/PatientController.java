@@ -7,14 +7,19 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.PatientForm;
+import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,27 +44,20 @@ public class PatientController {
         final ModelAndView mav = new ModelAndView("patient/dashboard");
         Client patient = loggedUser();
         mav.addObject("patient", patient);
-        Map<Long, Doctor> doctorMap = ds.getAll().stream()
-                .collect(Collectors.toMap(Doctor::getId, doctor -> doctor));
-        mav.addObject("doctors", doctorMap);
-
-        //todo: make a seach function that searches only appointment doctors
-
-
         return mav;
     }
 
-//    @RequestMapping(value = "/client/update", method = RequestMethod.POST)
-//    public ModelAndView updateClient(@Valid @ModelAttribute("clientForm") final ClientForm clientForm, final BindingResult errors) {
-//        if (errors.hasErrors()) {
-//            return new ModelAndView("client/edit");
-//        }
-//
-//        Client client = loggedUser();
-//        cs.updateClient(client.getId(), clientForm.getName(), clientForm.getLastName(), clientForm.getEmail(), clientForm.getPhone());
-//
-//        return new ModelAndView("redirect:/client/dashboard");
-//    }
+    @RequestMapping(value = "/client?update", method = RequestMethod.POST)
+    public ModelAndView updateClient(@Valid @ModelAttribute("clientForm") final UpdatePatientForm updatePatientForm, final BindingResult errors) {
+        if (errors.hasErrors()) {
+            return new ModelAndView("client/edit");
+        }
+
+        Client client = loggedUser();
+        cs.updateClient(client.getId(), updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(),updatePatientForm.getCoverage());
+
+        return new ModelAndView("redirect:/client/dashboard");
+    }
 
     @ModelAttribute
     public Client loggedUser() {

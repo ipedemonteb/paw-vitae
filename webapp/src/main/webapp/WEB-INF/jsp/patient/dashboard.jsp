@@ -92,41 +92,13 @@
                                             </div>
                                             <div class="doctor-details">
                                                 <h1 class="doctor-name">
-                                                    <c:out value="${doctors.get(appointment.doctorId).name}" /> <c:out value="${doctors.get(appointment.doctorId).lastName}" />
+                                                    <c:out value="${appointment.doctor.name}" /> <c:out value="${appointment.doctor.lastName}" />
                                                 </h1>
                                                 <p class="doctor-specialty">
                                                     <spring:message code="${appointment.specialty.key}" />
                                                 </p>
                                             </div>
                                         </div>
-<%--                                        <div class="appointment-type">--%>
-<%--                                            <c:choose>--%>
-<%--                                                <c:when test="${appointment.specialty}">--%>
-<%--                                                    <span class="appointment-badge virtual">--%>
-<%--                                                        <i class="icon icon-video"></i>--%>
-<%--                                                        <spring:message code="appointment.type.virtual" />--%>
-<%--                                                    </span>--%>
-<%--                                                </c:when>--%>
-<%--                                                <c:otherwise>--%>
-<%--                                                    <span class="appointment-badge in-person">--%>
-<%--                                                        <i class="icon icon-building"></i>--%>
-<%--                                                        <spring:message code="appointment.type.inPerson" />--%>
-<%--                                                    </span>--%>
-<%--                                                </c:otherwise>--%>
-<%--                                            </c:choose>--%>
-<%--                                        </div>--%>
-<%--                                        <div class="appointment-actions">--%>
-<%--                                            <c:if test="${appointment}">--%>
-<%--                                                <a href="<c:url value='/appointments/${appointment.id}/join' />" class="btn btn-primary">--%>
-<%--                                                    <i class="icon icon-video"></i>--%>
-<%--                                                    <spring:message code="appointment.action.join" />--%>
-<%--                                                </a>--%>
-<%--                                            </c:if>--%>
-<%--                                            <a href="<c:url value='/appointments/${appointment.id}' />" class="btn btn-secondary">--%>
-<%--                                                <i class="icon icon-info"></i>--%>
-<%--                                                <spring:message code="appointment.action.details" />--%>
-<%--                                            </a>--%>
-<%--                                        </div>--%>
                                     </div>
                                 </div>
                             </c:forEach>
