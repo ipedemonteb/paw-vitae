@@ -43,7 +43,6 @@ public class DoctorController {
         final ModelAndView mav = new ModelAndView("doctor/dashboard");
         Doctor doctor = loggedUser();
         mav.addObject("doctor", doctor);
-
         return mav;
     }
 

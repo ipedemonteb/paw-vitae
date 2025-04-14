@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.ClientService;
+import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
@@ -12,19 +13,34 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Controller
 public class PatientController {
+
     private final ClientService cs;
+    private final DoctorService ds;
 
     @Autowired
-    public PatientController(ClientService cs) {
+    public PatientController(ClientService cs, DoctorService ds) {
         this.cs = cs;
+        this.ds = ds;
     }
     @RequestMapping(value = "/patient/dashboard")
     public ModelAndView getDoctorDashboard() {
         final ModelAndView mav = new ModelAndView("patient/dashboard");
         Client patient = loggedUser();
         mav.addObject("patient", patient);
+        Map<Long, Doctor> doctorMap = ds.getAll().stream()
+                .collect(Collectors.toMap(Doctor::getId, doctor -> doctor));
+        mav.addObject("doctors", doctorMap);
+
+        //todo: make a seach function that searches only appointment doctors
+
+
         return mav;
     }
 
