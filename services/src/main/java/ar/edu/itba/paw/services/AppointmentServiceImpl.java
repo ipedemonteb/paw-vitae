@@ -1,12 +1,10 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
-import ar.edu.itba.paw.interfaceServices.AppointmentService;
-import ar.edu.itba.paw.interfaceServices.ClientService;
-import ar.edu.itba.paw.interfaceServices.MailService;
-import ar.edu.itba.paw.interfaceServices.SpecialtyService;
+import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -27,13 +25,14 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final MailService mailService;
     private final MessageSource messageSource;
     private final ClientService clientService;
-
+    private final DoctorService doctorService;
     @Autowired
-    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService, MessageSource messageSource, ClientService clientService) {
+    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService, MessageSource messageSource, ClientService clientService,DoctorService doctorService) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;
         this.mailService = mailService;
         this.messageSource = messageSource;
+        this.doctorService = doctorService;
         this.clientService = clientService;
     }
 
@@ -120,5 +119,18 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         return appointmentClientMap;
+    }
+
+    @Override
+    public Map<Appointment, Doctor> getForClient(long clientId) {
+        Optional<List<Appointment>> appointments = appointmentDao.getByClientId(clientId);
+        List<Doctor> doctors = doctorService.getByAppointments(appointments.orElse(Collections.emptyList()));
+        Map<Appointment,Doctor> appointmentDoctorMap = new HashMap<>();
+        if (appointments.isPresent()) {
+            for (Appointment appointment : appointments.get()) {
+                appointmentDoctorMap.put(appointment, doctors.stream().filter(d -> d.getId() == appointment.getDoctorId()).findFirst().orElseThrow(() -> new IllegalArgumentException("Doctor not found")));
+            }
+        }
+        return appointmentDoctorMap;
     }
 }
