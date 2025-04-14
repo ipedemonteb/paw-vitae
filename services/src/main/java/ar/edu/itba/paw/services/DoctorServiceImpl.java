@@ -62,4 +62,9 @@ public class DoctorServiceImpl implements DoctorService {
         return this.doctorDao.getAll();
     }
 
+    @Override
+    public void updateDoctor(long id, String name, String lastName, String email, String phone, List<Specialty> specialties, List<Coverage> coverages) {
+        doctorDao.updateDoctor(id, name, lastName, email, phone, specialties, coverages);
+    }
+
 }

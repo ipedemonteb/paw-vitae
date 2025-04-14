@@ -19,4 +19,5 @@ public interface DoctorDao {
 
     List<Doctor> getAll();
 
+    void updateDoctor(long id, String name, String lastName, String email, String phone, List<Specialty> specialties, List<Coverage> coverages);
 }

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 @Repository
 public class DoctorDaoImpl implements DoctorDao {
@@ -133,6 +132,32 @@ public class DoctorDaoImpl implements DoctorDao {
             doctor.setSpecialtyList(jdbcTemplate.query("SELECT * FROM doctor_specialties JOIN specialties ON doctor_specialties.specialty_id = specialties.id WHERE doctor_specialties.doctor_id = ?", (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key")), doctor.getId()));
         }
         return doctors;
+    }
+
+    @Override
+    public void updateDoctor(long id, String name, String lastName, String email, String phone, List<Specialty> specialties, List<Coverage> coverages) {
+        Doctor currentDoctor = getById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
+
+        String updatedName = (name != null) ? name : currentDoctor.getName();
+        String updatedLastName = (lastName != null) ? lastName : currentDoctor.getLastName();
+        String updatedEmail = (email != null) ? email : currentDoctor.getEmail();
+        String updatedPhone = (phone != null) ? phone : currentDoctor.getPhone();
+        List<Specialty> updatedSpecialties = (specialties != null) ? specialties : currentDoctor.getSpecialtyList();
+        List<Coverage> updatedCoverages = (coverages != null) ? coverages : currentDoctor.getCoverageList();
+
+
+        jdbcTemplate.update("UPDATE users SET name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?",
+                updatedName, updatedLastName, updatedEmail, updatedPhone, id);
+
+        jdbcTemplate.update("DELETE FROM doctor_specialties WHERE doctor_id = ?", id);
+        for (Specialty specialty : updatedSpecialties) {
+            jdbcTemplate.update("INSERT INTO doctor_specialties (doctor_id, specialty_id) VALUES (?, ?)", id, specialty.getId());
+        }
+
+        jdbcTemplate.update("DELETE FROM doctor_coverages WHERE doctor_id = ?", id);
+        for (Coverage coverage : updatedCoverages) {
+            jdbcTemplate.update("INSERT INTO doctor_coverages (doctor_id, coverage_id) VALUES (?, ?)", id, coverage.getId());
+        }
     }
 
 }
