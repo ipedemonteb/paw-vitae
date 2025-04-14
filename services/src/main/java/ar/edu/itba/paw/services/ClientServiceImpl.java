@@ -56,7 +56,6 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<Client> getByAppointments(List<Appointment> appointments) {
         Set<Long> ids = appointments.stream().map(Appointment::getClientId).collect(Collectors.toSet());
-        System.out.println("IDs: " + ids);
         return clientDao.getByIds(ids);
     }
 }

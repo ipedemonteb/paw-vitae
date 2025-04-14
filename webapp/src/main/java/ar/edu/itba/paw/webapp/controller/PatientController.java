@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,6 +49,7 @@ public class PatientController {
     public ModelAndView getDoctorDashboard() {
         final ModelAndView mav = new ModelAndView("patient/dashboard");
         Client patient = loggedUser();
+        Map<Appointment, Doctor> appointments = as.getForClient(patient.getId());
         List<Coverage> coverageList = covs.getAll().orElse(new ArrayList<>());
         // Crear un nuevo objeto de formulario para actualización
         UpdatePatientForm updatePatientForm = new UpdatePatientForm();
@@ -57,6 +60,8 @@ public class PatientController {
 
         mav.addObject("patient", patient);
         mav.addObject("updatePatientForm", updatePatientForm);
+        mav.addObject("upcomingAppointments", appointments.entrySet().stream().filter(appointment -> appointment.getKey().getDate().isAfter(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))).toList());
+        mav.addObject("pastAppointments", appointments.entrySet().stream().filter(appointment -> appointment.getKey().getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))).toList());
         mav.addObject("coverageList", coverageList);
         return mav;
     }
@@ -70,7 +75,6 @@ public class PatientController {
             mav.addObject("patient", patient);
             return mav;
         }
-        System.out.println("ahaeljuhgaega0"+  updatePatientForm.getCoverage());
         Client client = loggedUser();
         cs.updateClient(client.getId(),
                 updatePatientForm.getName(),

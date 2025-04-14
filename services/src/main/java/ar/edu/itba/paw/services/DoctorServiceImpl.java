@@ -5,9 +5,7 @@ import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
-import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
@@ -60,6 +60,12 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public List<Doctor> getAll() {
         return this.doctorDao.getAll();
+    }
+
+    @Override
+    public List<Doctor> getByAppointments(List<Appointment> appointments) {
+        Set<Long> ids = appointments.stream().map(Appointment::getDoctorId).collect(Collectors.toSet());
+        return doctorDao.getByIds(ids);
     }
 
     @Override
