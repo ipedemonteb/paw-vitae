@@ -117,7 +117,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         mailSender.setPort(587);
 
         mailSender.setUsername("vitaepaw@gmail.com");
-        mailSender.setPassword("rqnw hscv kfjy ebty");
+        mailSender.setPassword("cknn xrna teqg hzdi");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
@@ -136,7 +136,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     private ITemplateResolver emailTemplateResolver() {
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("templates/email/");
+        templateResolver.setPrefix("/templates/email/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
