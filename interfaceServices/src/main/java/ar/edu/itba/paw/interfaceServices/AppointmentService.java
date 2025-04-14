@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaceServices;
 
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
+import ar.edu.itba.paw.models.Doctor;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,4 +25,5 @@ public interface AppointmentService {
     Optional<String> getFutureAppointmentsPerDate(long doctorId);
 
     Map<Appointment, Client> getForDoctor(long doctorId);
+    Map<Appointment, Doctor> getForClient(long clientId);
 }
