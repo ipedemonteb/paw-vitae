@@ -107,7 +107,7 @@
                     <c:when test="${not empty upcomingAppointments}">
                         <div class="appointments-list">
                             <c:forEach items="${upcomingAppointments}" var="appointment">
-                                <div class="appointment-card" data-status="<spring:message code='${appointment.key.status}'/>">
+                                <div class="appointment-card" data-status="<spring:message code='${appointment.key.status}'/>" data-date="${appointment.key.date}">
                                     <div class="appointment-time">
                                         <div class="appointment-date">
                                             <span class="day">
@@ -220,7 +220,7 @@
                     <c:when test="${not empty pastAppointments}">
                         <div class="appointments-list">
                             <c:forEach items="${pastAppointments}" var="appointment">
-                                <div class="appointment-card past" data-status="<spring:message code='${appointment.key.status}'/>">
+                                <div class="appointment-card past" data-status="<spring:message code='${appointment.key.status}'/>" data-date="${appointment.key.date}">
                                     <div class="appointment-time">
                                         <div class="appointment-date">
                                             <span class="day">
@@ -446,7 +446,49 @@
             const dateFilter = document.getElementById('date-range');
             if (dateFilter) {
                 dateFilter.addEventListener('change', function() {
-                    // Filter appointments based on selected date range
+                    const selectedDateRange = this.value;
+                    const appointmentCards = document.querySelectorAll('#upcoming-tab .appointment-card');
+                    const today = new Date();
+                    const startOfWeek = new Date();
+                    startOfWeek.setDate(today.getDate() - today.getDay());
+                    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+                    const startOfAll = new Date(0);
+                    const endOfAll = new Date(9999, 11, 31);
+                    let startDate, endDate;
+                    switch (selectedDateRange) {
+                        case 'today':
+                            startDate = startOfToday;
+                            endDate = endOfToday;
+                            break;
+                        case 'week':
+                            startDate = startOfWeek;
+                            endDate = new Date(startOfWeek);
+                            endDate.setDate(endDate.getDate() + 7);
+                            break;
+                        case 'month':
+                            startDate = startOfMonth;
+                            endDate = endOfMonth;
+                            break;
+                        case 'all':
+                            startDate = startOfAll;
+                            endDate = endOfAll;
+                            break;
+                        default:
+                            startDate = startOfAll;
+                            endDate = endOfAll;
+                    }
+                    appointmentCards.forEach(card => {
+                        const cardDate = new Date(card.getAttribute('data-date'));
+                        if (cardDate >= startDate && cardDate <= endDate) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                    // Log the selected date range for debugging
                     console.log('Date filter changed to:', this.value);
                     // This would typically involve an AJAX call or form submission
                 });
