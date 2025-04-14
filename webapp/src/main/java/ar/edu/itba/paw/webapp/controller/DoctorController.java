@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.webapp.controller.AuthController.*;
 
 import javax.print.Doc;
+import javax.validation.Valid;
 
 @Controller
 public class DoctorController {
@@ -44,6 +46,18 @@ public class DoctorController {
 
         return mav;
     }
+
+//    @RequestMapping(value = "/doctor/update", method = RequestMethod.POST)
+//    public ModelAndView updateDoctor(@Valid @ModelAttribute("doctorForm") final DoctorForm doctorForm, final BindingResult errors) {
+//        if (errors.hasErrors()) {
+//            return new ModelAndView("doctor/edit");
+//        }
+//
+//        Doctor doctor = loggedUser();
+//        ds.updateDoctor(doctor.getId(), doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPhone(), doctorForm.getSpecialties(), doctorForm.getCoverages());
+//
+//        return new ModelAndView("redirect:/doctor/dashboard");
+//    }
 
     @ModelAttribute
     public Doctor loggedUser() {
