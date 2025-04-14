@@ -97,7 +97,7 @@ public class AuthController {
             return patientForm(patientForm);
         }
 
-        return new ModelAndView("redirect:/" + client.getId());
+        return new ModelAndView("patient/dashboard");
     }
 
     @RequestMapping("/login")
