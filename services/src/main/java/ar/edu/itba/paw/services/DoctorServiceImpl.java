@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
+import ar.edu.itba.paw.interfaceServices.AvailabilitySlotsService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +26,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final SpecialtyService ss;
     private final CoverageService cs;
 
+
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -36,12 +39,12 @@ public class DoctorServiceImpl implements DoctorService {
 
 
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, List<String> specialties, List<String> coverages) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
         List<Coverage> coverageList = new ArrayList<>();
         List<Specialty> specialtyList = new ArrayList<>();
         coverages.forEach(coverage -> coverageList.add(cs.findById(Long.parseLong(coverage)).orElse(null)));
         specialties.forEach(specialty -> specialtyList.add(ss.getById(Long.parseLong(specialty)).orElse(null)));
-        return this.doctorDao.create(name, lastName, email, passwordEncoder.encode(password), phone, specialtyList, coverageList);
+        return this.doctorDao.create(name, lastName, email, passwordEncoder.encode(password), phone, specialtyList, coverageList, availabilitySlots);
     }
 
     @Override
@@ -69,8 +72,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public void updateDoctor(long id, String name, String lastName, String email, String phone, List<Specialty> specialties, List<Coverage> coverages) {
-        doctorDao.updateDoctor(id, name, lastName, email, phone, specialties, coverages);
+    public void updateDoctor(long id, String name, String lastName, String email, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilitySlots) {
+        doctorDao.updateDoctor(id, name, lastName, email, phone, specialties, coverages, availabilitySlots);
     }
 
 }

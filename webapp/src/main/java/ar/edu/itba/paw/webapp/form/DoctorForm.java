@@ -2,11 +2,13 @@ package ar.edu.itba.paw.webapp.form;
 
 
 
+import ar.edu.itba.paw.models.AvailabilitySlot;
 import ar.edu.itba.paw.webapp.validation.EmailExistance;
 import ar.edu.itba.paw.webapp.validation.FileSize;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
+import java.time.LocalTime;
 import java.util.List;
 
 public class DoctorForm {
@@ -45,6 +47,9 @@ public class DoctorForm {
 
     @FileSize(max = 2 * 1024 * 1024) // 2MB
     private MultipartFile image;
+
+    @NotEmpty
+    private List<AvailabilitySlot> availabilitySlots;
 
 
     public String getName() {
@@ -117,6 +122,13 @@ public class DoctorForm {
 
     public void setImage(MultipartFile image) {
         this.image = image;
+    }
+
+    public List<AvailabilitySlot> getAvailabilitySlots() {
+        return availabilitySlots;
+    }
+    public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) {
+        this.availabilitySlots = availabilitySlots;
     }
 }
 

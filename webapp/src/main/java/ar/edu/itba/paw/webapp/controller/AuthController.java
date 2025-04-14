@@ -12,13 +12,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.beans.PropertyEditorSupport;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -48,10 +52,15 @@ public class AuthController {
     public ModelAndView register(@Valid @ModelAttribute("registerForm") final DoctorForm doctorForm, final BindingResult errors)  {
 
         if(errors.hasErrors()) {
+            System.out.println("Errors in form: " + errors.getAllErrors());
             return doctorForm(doctorForm);
         }
 
-        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialties(), doctorForm.getCoverages());
+        if (doctorForm.getAvailabilitySlots() != null) {
+            System.out.println("Received availability slots: " + doctorForm.getAvailabilitySlots());
+        }
+
+        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialties(), doctorForm.getCoverages(), doctorForm.getAvailabilitySlots());
 
         try {
             is.create(doctor.getId(), doctorForm.getImage());
@@ -111,5 +120,22 @@ public class AuthController {
         return new ModelAndView("redirect:/");
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                if (text == null || text.isEmpty()) {
+                    setValue(null);
+                } else {
+                    // Parse the time string (format: HH:mm)
+                    setValue(LocalTime.parse(text));
+                }
+            }
+        });
+    }
+
 }
+
+
 
