@@ -42,4 +42,9 @@ public class ClientServiceImpl implements ClientService {
     public Optional<Client> getByEmail(String email) {
         return clientDao.getByEmail(email);
     }
+
+    @Override
+    public void updateClient(long id, String name, String lastName, String email, String phone, Coverage coverage) {
+        clientDao.updateClient(id, name, lastName, email, phone, coverage);
+    }
 }

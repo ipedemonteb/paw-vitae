@@ -92,4 +92,16 @@ public class ClientDaoImpl implements ClientDao {
         client.ifPresent(value -> value.setAppointments(appointmentDao.getByClientId(value.getId()).orElse(new ArrayList<>())));
         return client;
     }
+
+    @Override
+    public void updateClient(long id, String name, String lastName, String email, String phone, Coverage coverage) {
+        // Update the basic client information
+        jdbcTemplate.update("UPDATE clients SET name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?",
+                name, lastName, email, phone, id);
+
+        // Update the coverage if provided
+        if (coverage != null) {
+            jdbcTemplate.update("UPDATE clients SET coverage_id = ? WHERE id = ?", coverage.getId(), id);
+        }
+    }
 }
