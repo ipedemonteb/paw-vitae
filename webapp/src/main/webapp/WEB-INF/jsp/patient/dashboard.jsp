@@ -212,13 +212,19 @@
                             <div class="form-group">
                                 <form:label path="coverage"><spring:message code="register.coverage" /></form:label>
                                 <div class="current-coverage">
-                                    <spring:message code="register.selectCoverage" />: <span id="current-coverage-name">${patient.coverage.name}</span>
+                                    <spring:message code="register.selectCoverage" />:
+                                    <span id="current-coverage-name">
+            <c:out value="${not empty patient.coverage ? patient.coverage.name : 'None'}" />
+        </span>
                                 </div>
                                 <div class="multi-select-container" id="coverage-container">
                                     <div class="custom-multi-select" id="coverage-options">
                                         <input type="text" id="coverage-search" class="search-box" placeholder="<spring:message code="register.search" />" />
                                         <c:forEach items="${coverageList}" var="coverage">
-                                            <div class="custom-multi-select-option" data-value="${coverage.id}" data-name="${coverage.name}" onclick="toggleCoverage(this)">
+                                            <div class="custom-multi-select-option"
+                                                 data-value="${coverage.id}"
+                                                 data-name="${coverage.name}"
+                                                 onclick="toggleCoverage(this)">
                                                 <div class="option-checkbox"></div>
                                                 <div class="option-text">
                                                     <c:out value="${coverage.name}"/>
@@ -226,7 +232,10 @@
                                             </div>
                                         </c:forEach>
                                     </div>
-                                    <form:input path="coverage" id="coverage-input" cssClass="form-control" style="display: none;" />
+                                    <!-- Asegurarse de que el campo oculto tenga el ID (no el nombre) -->
+                                    <form:input path="coverage" id="coverage-input"
+                                                value="${not empty patient.coverage ? patient.coverage.id : ''}"
+                                                cssClass="form-control" style="display: none;" />
                                 </div>
                                 <form:errors path="coverage" cssClass="error-message" />
                             </div>
@@ -392,29 +401,50 @@
         }
 
         function toggleCoverage(optionElement) {
-            // Deselect all options first
+            // Deseleccionar todas las opciones primero
             const allOptions = document.querySelectorAll('#coverage-options .custom-multi-select-option');
             allOptions.forEach(option => {
                 option.classList.remove('selected');
             });
 
-            // Select the clicked option
+            // Seleccionar la opción clickeada
             optionElement.classList.add('selected');
 
-            // Get the coverage ID and name
+            // Obtener el ID y nombre de la cobertura
             const coverageId = optionElement.getAttribute('data-value');
             const coverageName = optionElement.getAttribute('data-name');
 
-            // Update the hidden input with the ID
+            // Actualizar el input oculto con el ID (no el nombre)
             const coverageInput = document.getElementById('coverage-input');
             coverageInput.value = coverageId;
 
-            // Update the current coverage display with the name
+            // Actualizar el nombre mostrado en pantalla
             const currentCoverageDisplay = document.getElementById('current-coverage-name');
             if (currentCoverageDisplay) {
                 currentCoverageDisplay.textContent = coverageName;
             }
         }
+
+        // Inicializar con la cobertura actual (si existe)
+        function initCoverageSelection() {
+            const coverageInput = document.getElementById('coverage-input');
+            const currentCoverageId = coverageInput.value;
+
+            if (currentCoverageId) {
+                const option = document.querySelector(`.custom-multi-select-option[data-value="${currentCoverageId}"]`);
+                if (option) {
+                    option.classList.add('selected');
+                    const coverageName = option.getAttribute('data-name');
+                    document.getElementById('current-coverage-name').textContent = coverageName;
+                }
+            }
+        }
+
+        // Llamar al inicializador cuando la página cargue
+        document.addEventListener('DOMContentLoaded', function() {
+            initCoverageSelection();
+            // Resto del código...
+        });
 
         function updateSelectedCoverage() {
             const coverageInput = document.getElementById('coverage-input');
