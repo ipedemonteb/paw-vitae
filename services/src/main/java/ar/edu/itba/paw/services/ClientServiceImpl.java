@@ -44,7 +44,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void updateClient(long id, String name, String lastName, String email, String phone, Coverage coverage) {
-        clientDao.updateClient(id, name, lastName, email, phone, coverage);
+    public void updateClient(long id, String name, String lastName, String phone, String coverage) {
+        Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);
+        clientDao.updateClient(id, name, lastName, phone, cov);
     }
 }

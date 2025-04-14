@@ -94,12 +94,6 @@ public class AuthController {
 
         final Client client = cls.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(), patientForm.getPhone(), patientForm.getCoverage());
 
-        try {
-            is.create(client.getId(), patientForm.getImage());
-        } catch (IOException e) {
-            errors.reject("image.upload.error", "Failed to upload image");
-            return patientForm(patientForm);
-        }
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(client.getEmail(), patientForm.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authentication);
