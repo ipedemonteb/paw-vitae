@@ -80,7 +80,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE client_id = ?", ROW_MAPPER, clientId);
         for (Appointment appointment : appointments) {
         appointment.setDoctor(doctorDaoImpl.getById(appointment.getDoctorId()).orElse(null));
-
         }
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }

@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
+import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
@@ -19,15 +22,22 @@ import ar.edu.itba.paw.webapp.controller.AuthController.*;
 
 import javax.print.Doc;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class DoctorController {
 
     private final DoctorService ds;
+    private final AppointmentService as;
 
     @Autowired
-    public DoctorController(DoctorService ds) {
+    public DoctorController(DoctorService ds, AppointmentService as) {
         this.ds = ds;
+        this.as = as;
     }
 
     @RequestMapping(value = "/{id:\\d+}", method = {RequestMethod.GET})
@@ -42,7 +52,10 @@ public class DoctorController {
     public ModelAndView getDoctorDashboard() {
         final ModelAndView mav = new ModelAndView("doctor/dashboard");
         Doctor doctor = loggedUser();
+        Map<Appointment, Client> appointments = as.getForDoctor(doctor.getId());
         mav.addObject("doctor", doctor);
+        mav.addObject("upcomingAppointments", appointments.entrySet().stream().filter(appointment -> appointment.getKey().getDate().isAfter(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))).toList());
+        mav.addObject("pastAppointments", appointments.entrySet().stream().filter(appointment -> appointment.getKey().getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))).toList());
         return mav;
     }
 

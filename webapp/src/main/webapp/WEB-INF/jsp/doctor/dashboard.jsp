@@ -84,61 +84,52 @@
                                 <div class="appointment-card">
                                     <div class="appointment-time">
                                         <div class="appointment-date">
-                                            <span class="day"><fmt:formatDate value="${appointment.date}" pattern="EEE" /></span>
-                                            <span class="date-number"><fmt:formatDate value="${appointment.date}" pattern="d" /></span>
-                                            <span class="month"><fmt:formatDate value="${appointment.date}" pattern="MMM" /></span>
+                                            <span class="day">${appointment.key.date.dayOfWeek}</span>
+                                            <span class="date-number">${appointment.key.date.dayOfMonth}</span>
+                                            <span class="month">${appointment.key.date.month}</span>
                                         </div>
                                         <div class="appointment-hour">
                                             <i class="icon icon-clock"></i>
-                                            <fmt:formatDate value="${appointment.date}" pattern="HH:mm" />
+                                            ${appointment.key.date.hour}:00
                                         </div>
                                     </div>
                                     <div class="appointment-details">
                                         <div class="patient-info">
                                             <div class="patient-avatar">
-                                                <c:choose>
-                                                    <c:when test="${not empty appointment.patient.imageId}">
-                                                        <img src="<c:url value='/images/${appointment.patient.imageId}' />" alt="${appointment.patient.name}" />
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <div class="avatar-placeholder small">
-                                                            <span>${appointment.patient.name.charAt(0)}</span>
-                                                        </div>
-                                                    </c:otherwise>
-                                                </c:choose>
+<%--                                                <img src="<c:url value='/doctor/${appointment.value.imageId}' />" alt="${appointment.value.name}"/>--%>
                                             </div>
                                             <div class="patient-name">
-                                                <c:out value="${appointment.patient.name}" /> <c:out value="${appointment.patient.lastName}" />
+                                                <c:out value="${appointment.value.name}" /> <c:out value="${appointment.value.lastName}" />
                                             </div>
                                         </div>
-                                        <div class="appointment-type">
-                                            <c:choose>
-                                                <c:when test="${appointment.virtual}">
-                                                    <span class="appointment-badge virtual">
-                                                        <i class="icon icon-video"></i>
-                                                        <spring:message code="appointment.type.virtual" />
-                                                    </span>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span class="appointment-badge in-person">
-                                                        <i class="icon icon-building"></i>
-                                                        <spring:message code="appointment.type.inPerson" />
-                                                    </span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </div>
-                                        <div class="appointment-actions">
-                                            <c:if test="${appointment.virtual}">
-                                                <a href="<c:url value='/appointments/${appointment.id}/join' />" class="btn btn-primary">
-                                                    <i class="icon icon-video"></i>
-                                                    <spring:message code="appointment.action.join" />
-                                                </a>
-                                            </c:if>
-                                            <a href="<c:url value='/appointments/${appointment.id}' />" class="btn btn-secondary">
-                                                <i class="icon icon-info"></i>
-                                                <spring:message code="appointment.action.details" />
-                                            </a>
-                                        </div>
+<%--                                        <div class="appointment-type">--%>
+<%--                                            <c:choose>--%>
+<%--                                                <c:when test="${appointment.virtual}">--%>
+<%--                                                    <span class="appointment-badge virtual">--%>
+<%--                                                        <i class="icon icon-video"></i>--%>
+<%--                                                        <spring:message code="appointment.type.virtual" />--%>
+<%--                                                    </span>--%>
+<%--                                                </c:when>--%>
+<%--                                                <c:otherwise>--%>
+<%--                                                    <span class="appointment-badge in-person">--%>
+<%--                                                        <i class="icon icon-building"></i>--%>
+<%--                                                        <spring:message code="appointment.type.inPerson" />--%>
+<%--                                                    </span>--%>
+<%--                                                </c:otherwise>--%>
+<%--                                            </c:choose>--%>
+<%--                                        </div>--%>
+<%--                                        <div class="appointment-actions">--%>
+<%--                                            <c:if test="${appointment.virtual}">--%>
+<%--                                                <a href="<c:url value='/appointments/${appointment.id}/join' />" class="btn btn-primary">--%>
+<%--                                                    <i class="icon icon-video"></i>--%>
+<%--                                                    <spring:message code="appointment.action.join" />--%>
+<%--                                                </a>--%>
+<%--                                            </c:if>--%>
+<%--                                            <a href="<c:url value='/appointments/${appointment.id}' />" class="btn btn-secondary">--%>
+<%--                                                <i class="icon icon-info"></i>--%>
+<%--                                                <spring:message code="appointment.action.details" />--%>
+<%--                                            </a>--%>
+<%--                                        </div>--%>
                                     </div>
                                 </div>
                             </c:forEach>

@@ -3,7 +3,9 @@ package ar.edu.itba.paw.interfacePersistence;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ClientDao {
 
@@ -14,5 +16,7 @@ public interface ClientDao {
     Optional<Client> getByEmail(String email);
 
     void updateClient(long id, String name, String lastName, String phone, Coverage coverage);
+
+    List<Client> getByIds(Set<Long> ids);
 
 }
