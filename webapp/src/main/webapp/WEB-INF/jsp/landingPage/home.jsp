@@ -48,18 +48,6 @@
                         </div>
                     </form>
                 </div>
-
-                <div class="popular-searches">
-                    <span class="popular-label"><spring:message code="landing.popular" />:</span>
-                    <c:forEach items="${specialties}" var="specialty" varStatus="status">
-                        <a href="<c:url value='/search?specialty=${specialty.id}' />" class="popular-tag">
-                            <spring:message code="${specialty.key}" />
-                        </a>
-                        <c:if test="${!status.last}">
-                            <span class="separator">•</span>
-                        </c:if>
-                    </c:forEach>
-                </div>
             </div>
         </div>
     </section>
@@ -93,9 +81,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Rest of the sections remain the same -->
-    <!-- ... -->
 
     <comp:site-footer />
 

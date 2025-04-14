@@ -201,6 +201,14 @@
                                 </a>
                             </sec:authorize>
 
+                            <sec:authorize access="hasRole('ROLE_PATIENT')">
+                                <div class="dropdown-divider"></div>
+                                <a href="<c:url value='/patient/dashboard' />" class="dropdown-item">
+                                    <span class="icon doctor-icon"></span>
+                                    <spring:message code="header.dropdown.patientDashboard" />
+                                </a>
+                            </sec:authorize>
+
                             <div class="dropdown-divider"></div>
                             <a href="javascript:void(0);" class="dropdown-item" onclick="showLogoutModal();">
                                 <span class="icon logout-icon"></span>

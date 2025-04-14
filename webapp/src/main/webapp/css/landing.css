@@ -132,6 +132,9 @@
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+
 }
 
 .search-button:hover {
