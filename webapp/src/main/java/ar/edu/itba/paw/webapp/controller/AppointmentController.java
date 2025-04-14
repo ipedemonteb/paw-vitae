@@ -114,6 +114,7 @@ public class AppointmentController {
         appointmentForm.setLastName(client.getLastName());
         appointmentForm.setEmail(client.getEmail());
         appointmentForm.setPhone(client.getPhone());
+        appointmentForm.setCoverageId(client.getCoverage().getId());
 
 
         return mav;

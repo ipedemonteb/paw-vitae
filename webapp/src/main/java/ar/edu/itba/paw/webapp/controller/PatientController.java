@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.ClientService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
+import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +26,13 @@ public class PatientController {
 
     private final ClientService cs;
     private final DoctorService ds;
+    private final AppointmentService as;
 
     @Autowired
-    public PatientController(ClientService cs, DoctorService ds) {
+    public PatientController(ClientService cs, DoctorService ds, AppointmentService as) {
         this.cs = cs;
         this.ds = ds;
+        this.as = as;
     }
     @RequestMapping(value = "/patient/dashboard")
     public ModelAndView getDoctorDashboard() {

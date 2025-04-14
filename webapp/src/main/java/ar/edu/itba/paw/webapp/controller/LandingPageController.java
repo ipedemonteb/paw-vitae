@@ -29,8 +29,8 @@ public class LandingPageController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView mav() {
         Optional<List<Specialty>> specialties = ss.getAll();
-        Optional<List<Doctor>> doctors = ds.getAll();
-        return new ModelAndView("landingPage/home").addObject("specialties", specialties.orElse(new ArrayList<>())).addObject("doctors", doctors.orElse(new ArrayList<>()));
+        List<Doctor> doctors = ds.getAll();
+        return new ModelAndView("landingPage/home").addObject("specialties", specialties.orElse(new ArrayList<>())).addObject("doctors", doctors);
     }
 
 
@@ -38,7 +38,7 @@ public class LandingPageController {
     @ResponseBody
     public String getDoctorsAsJson() {
         StringBuilder json = new StringBuilder();
-        List<Doctor> doctors = ds.getAll().orElse(new ArrayList<>());
+        List<Doctor> doctors = ds.getAll();
         json.append("[");
         doctors.forEach(doctor -> {
             json.append("\"").append(doctor.getName()).append(" ").append(doctor.getLastName()).append("\",");

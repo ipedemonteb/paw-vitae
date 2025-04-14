@@ -52,13 +52,15 @@ document.addEventListener('DOMContentLoaded', function() {
             name.toLowerCase().includes(input.toLowerCase())
         );
 
-        if (filteredNames.length === 0) {
+        const limitedNames = filteredNames.slice(0, 7); // Limit to 5 suggestions
+
+        if (limitedNames.length === 0) {
             suggestionsContainer.style.display = 'none';
             return;
         }
 
         // Create and append suggestion elements
-        filteredNames.forEach(name => {
+        limitedNames.forEach(name => {
             const suggestion = document.createElement('div');
             suggestion.className = 'suggestion-item';
             suggestion.textContent = name;
@@ -72,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Make sure the suggestions are visible
         suggestionsContainer.style.display = 'block';
-        console.log('Showing suggestions:', filteredNames);
     }
 
     // Function to check if search criteria are met
