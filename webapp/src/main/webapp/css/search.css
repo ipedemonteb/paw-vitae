@@ -1,0 +1,543 @@
+/* search.css - Modern doctor search page styling */
+
+/* Specialty Selector */
+.specialty-selector {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.specialty-label-search {
+    font-weight: 600;
+    margin-right: 1rem;
+    color: #333;
+    white-space: nowrap;
+}
+
+.specialty-select-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.specialty-select-search {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 1rem;
+    color: #333;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.specialty-select-search:focus {
+    outline: none;
+    border-color: #4a6bff;
+    box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
+}
+
+.specialty-select-wrapper::after {
+    content: '▼';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    pointer-events: none;
+    font-size: 0.8rem;
+}
+
+/* Empty Results */
+.empty-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #aaa;
+}
+
+/* Doctors Grid */
+.doctors-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* Doctor Card */
+.doctor-card {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    min-height: 450px; /* Fixed height for all cards */
+}
+
+.doctor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.doctor-card-header {
+    display: flex;
+    padding: 1.25rem;
+    border-bottom: 1px solid #eee;
+    height: 120px; /* Fixed height for header */
+}
+
+.doctor-image-search {
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.doctor-avatar-search {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f0f0f0;
+    background-color: #f8f9fa;
+}
+
+.doctor-info-search {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.doctor-name-search {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.doctor-specialties-search {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.doctor-specialty-tag-search {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #e6f0ff;
+    color: #4a6bff;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+}
+
+.more-tag {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.doctor-card-body {
+    padding: 1.25rem;
+    flex-grow: 1;
+    height: 120px; /* Fixed height for body */
+}
+
+.doctor-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+}
+
+.contact-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: #f0f4ff;
+    color: #4a6bff;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.contact-text {
+    color: #555;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.doctor-card-footer {
+    padding: 1.25rem;
+    border-top: 1px solid #eee;
+    background-color: #fafafa;
+}
+
+/* Availability Calendar */
+.availability-calendar {
+    margin-bottom: 1.25rem;
+}
+
+.calendar-header {
+    margin-bottom: 0.75rem;
+}
+
+.calendar-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.calendar-days {
+    display: flex;
+    justify-content: space-between;
+}
+
+.calendar-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% / 7);
+    text-align: center;
+}
+
+.day-name {
+    font-size: 0.8rem;
+    color: #777;
+    margin-bottom: 0.25rem;
+}
+
+.day-availability {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.day-availability.available {
+    background-color: #e6f7ee;
+    color: #28a745;
+}
+
+.day-availability.unavailable {
+    background-color: #f8f9fa;
+    color: #aaa;
+}
+
+.time-slot {
+    font-size: 0.7rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+/* Appointment Button */
+.btn-appointment {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: #4a6bff;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-appointment:hover {
+    background-color: #3a5be0;
+    text-decoration: none;
+    color: white;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.pagination-link {
+    padding: 0.5rem 1rem;
+    background-color: #4a6bff;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-link:hover {
+    background-color: #3a5be0;
+    text-decoration: none;
+    color: white;
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .doctors-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .specialty-selector {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .specialty-label-search {
+        margin-bottom: 0.5rem;
+        margin-right: 0;
+    }
+
+    .specialty-select-wrapper {
+        width: 100%;
+    }
+
+    .doctors-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .doctor-card-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        height: auto;
+    }
+
+    .doctor-image {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .doctor-specialties {
+        justify-content: center;
+    }
+
+    .contact-text {
+        max-width: 200px;
+    }
+}
+
+/* Date and Time Picker Styles for Search Page */
+
+/* Date Picker Container */
+.availability-section {
+    margin-bottom: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #f9f9f9;
+}
+
+.availability-header {
+    margin-bottom: 0.75rem;
+}
+
+.availability-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+/* Compact Date Picker for Search Page */
+.date-picker-container-search.compact {
+    position: relative;
+    margin-bottom: 1rem;
+    overflow: visible;
+    display: flex;
+
+}
+
+.date-picker-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.date-picker-calendar {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 0.5rem;
+}
+
+.date-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.date-picker-month-year {
+    font-weight: 600;
+    text-align: center;
+}
+
+.date-picker-nav {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #333;
+    padding: 0 0.5rem;
+}
+
+.date-picker-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 0.25rem;
+}
+
+.date-picker-weekday {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #666;
+    padding: 0.25rem 0;
+}
+
+.date-picker-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.date-picker-day {
+    text-align: center;
+    padding: 0.25rem 0;
+    font-size: 0.875rem;
+    border-radius: 4px;
+}
+
+.date-picker-day.empty {
+    visibility: hidden;
+}
+
+.date-picker-day.available {
+    cursor: pointer;
+    background-color: #f0f8ff;
+}
+
+.date-picker-day.available:hover {
+    background-color: #d0e8ff;
+}
+
+.date-picker-day.selected {
+    background-color: #4f46e5;
+    color: white;
+}
+
+.date-picker-day.disabled {
+    color: #ccc;
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+/* Time Slots */
+.time-slots-container {
+    margin-top: 1rem;
+
+}
+
+.time-slots-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 0.5rem;
+}
+
+.time-slot-display {
+    padding: 0.375rem;
+    text-align: center;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.time-slot-display.available {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.time-slot-display.unavailable {
+    background-color: #f5f5f5;
+    color: #bdbdbd;
+    border: 1px solid #e0e0e0;
+    text-decoration: line-through;
+}
+
+.no-slots-message {
+    padding: 0.5rem;
+    text-align: center;
+    color: #f44336;
+    font-style: italic;
+    font-size: 0.875rem;
+}
