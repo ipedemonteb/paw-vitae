@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -59,7 +60,10 @@ public class AuthController {
             return doctorForm(doctorForm);
         }
 
-        return new ModelAndView("redirect:/" + doctor.getId());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(doctor.getEmail(), doctor.getPassword());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return new ModelAndView("redirect:/doctor/dashboard");
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -97,7 +101,10 @@ public class AuthController {
             return patientForm(patientForm);
         }
 
-        return new ModelAndView("patient/dashboard");
+        Authentication authentication = new UsernamePasswordAuthenticationToken(client.getEmail(), patientForm.getPassword());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return new ModelAndView("redirect:/patient/dashboard");
     }
 
     @RequestMapping("/login")
