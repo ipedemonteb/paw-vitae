@@ -47,7 +47,7 @@
     </div>
 
     <div class="card-footer">
-        <a href="<c:url value="/portal"/>" class="btn btn-primary">
+        <a href="<c:url value="/patient/dashboard"/>" class="btn btn-primary">
             <spring:message code="appointment.confirmation.backToHome"/>
         </a>
     </div>

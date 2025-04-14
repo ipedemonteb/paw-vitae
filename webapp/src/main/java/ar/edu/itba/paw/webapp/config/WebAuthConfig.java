@@ -44,7 +44,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers("/").permitAll()
                     .antMatchers("/register", "/{id:\\d+}", "/login", "/register-patient").anonymous()
-                    .antMatchers("/portal", "/search", "/doctors").access("isAnonymous() or hasRole('PATIENT')")
+                    .antMatchers("/portal", "/search", "/doctors", "/appointment/booked-times-by-date").access("isAnonymous() or hasRole('PATIENT')")
                     .antMatchers("/appointment/**").hasRole("PATIENT")
                     .antMatchers("/**").authenticated()
                     .and()
@@ -73,7 +73,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/error/403");
+                .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/error/403","/doctor/*/image","**/image" );
     }
 
     @Bean
