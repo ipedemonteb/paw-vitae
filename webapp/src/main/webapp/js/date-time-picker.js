@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let FutureAppointments = [];
 
     // Fetch fully booked dates for the next month on page load
-    fetchFullyBookedDates().then((dates) => { //TODO implement this correctly for future sprint
+    fetchFullyBookedDates().then((dates) => {
         FutureAppointments = dates;
         initDatePicker(); // Initialize the date picker after fetching the dates
     });

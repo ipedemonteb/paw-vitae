@@ -43,7 +43,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .authorizeRequests()
                     .antMatchers("/").permitAll()
-                    .antMatchers("/register", "/{id:\\d+}", "/login", "/register-patient").anonymous()
+                    .antMatchers("/register", "/{id:\\d+}", "/login", "/register-patient", "/doctors").anonymous()
                     .antMatchers("/portal", "/search").access("isAnonymous() or hasRole('PATIENT')")
                     .antMatchers("/appointment/**").hasRole("PATIENT")
                     .antMatchers("/**").authenticated()

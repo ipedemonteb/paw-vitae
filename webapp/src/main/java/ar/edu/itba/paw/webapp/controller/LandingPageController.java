@@ -1,28 +1,54 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Specialty;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import javax.swing.text.html.Option;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Controller
 public class LandingPageController {
     private final SpecialtyService ss;
+    private final DoctorService ds;
 
-    public LandingPageController(SpecialtyService ss) {
+    public LandingPageController(SpecialtyService ss, DoctorService ds) {
         this.ss = ss;
+        this.ds = ds;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView mav() {
         Optional<List<Specialty>> specialties = ss.getAll();
-        return new ModelAndView("landingPage/home").addObject("specialties", specialties.orElse(new ArrayList<>()));
+        Optional<List<Doctor>> doctors = ds.getAll();
+        return new ModelAndView("landingPage/home").addObject("specialties", specialties.orElse(new ArrayList<>())).addObject("doctors", doctors.orElse(new ArrayList<>()));
     }
+
+
+    @GetMapping("/doctors")
+    @ResponseBody
+    public String getDoctorsAsJson() {
+        StringBuilder json = new StringBuilder();
+        List<Doctor> doctors = ds.getAll().orElse(new ArrayList<>());
+        json.append("[");
+        doctors.forEach(doctor -> {
+            json.append("\"").append(doctor.getName()).append(" ").append(doctor.getLastName()).append("\",");
+        });
+        if (json.length() > 1) {
+            json.deleteCharAt(json.length() - 1); // Remove the last comma
+        }
+        json.append("]");
+        System.out.println(json.toString());
+        return json.toString();
+    }
+
 }
