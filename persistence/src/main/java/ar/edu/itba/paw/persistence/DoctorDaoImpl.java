@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
+import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Specialty;
@@ -122,6 +123,11 @@ public class DoctorDaoImpl implements DoctorDao {
             doctor.setSpecialtyList(jdbcTemplate.query("SELECT * FROM doctor_specialties JOIN specialties ON doctor_specialties.specialty_id = specialties.id WHERE doctor_specialties.doctor_id = ?", (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key")), doctor.getId()));
         }
         return doctors;
+    }
+
+    @Override
+    public List<Doctor> getByIds(Set<Long> ids) {
+        return jdbcTemplate.query("SELECT * FROM Users u JOIN Doctors d ON d.doctor_id = u.id  WHERE u.id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) + ")", ROW_MAPPER, ids.toArray());
     }
 
     @Override
