@@ -44,7 +44,6 @@ public class AuthUserDetailsService implements UserDetailsService {
         if(user.getClass() == Doctor.class) {
             return new AuthUserDetails(email, user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_DOCTOR")));
         }
-
         return new AuthUserDetails(email, user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_PATIENT")));
 
 
