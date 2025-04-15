@@ -77,6 +77,7 @@
             </div>
             <form:errors path="coverage" cssClass="error-message" />
           </div>
+
           <div class="form-group terms-checkbox">
             <input type="checkbox" id="terms" class="custom-checkbox" required />
             <label for="terms" class="checkbox-label required-field">
