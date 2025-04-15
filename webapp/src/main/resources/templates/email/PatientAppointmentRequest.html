@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{email.title}"></title>
+    <title th:text="#{patient.request.title}"></title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -34,8 +34,8 @@
             padding: 20px 0;
         }
         .appointment-details {
-            background-color: #f5f8ff;
-            border-left: 4px solid #4a6bff;
+            background-color: #f5f5f5;
+            border-left: 4px solid #ff9800;
             padding: 15px;
             margin: 20px 0;
             border-radius: 4px;
@@ -60,7 +60,7 @@
         }
         .button {
             display: inline-block;
-            background-color: #4a6bff;
+            background-color: #ff9800;
             color: white;
             text-decoration: none;
             padding: 12px 24px;
@@ -69,8 +69,18 @@
             margin: 20px 0;
         }
         .highlight {
-            color: #4a6bff;
+            color: #ff9800;
             font-weight: bold;
+        }
+        .status-badge {
+            display: inline-block;
+            background-color: #ff9800;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
         @media only screen and (max-width: 600px) {
             .container {
@@ -83,33 +93,42 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1 th:text="#{email.title}"></h1>
+        <h1 th:text="#{patient.request.title}"></h1>
     </div>
 
     <div class="content">
-        <p><strong th:text="#{email.greeting(${doctorName})}"></strong></p>
+        <p><strong th:text="#{patient.greeting(${patientName})}"></strong></p>
 
-        <p th:text="#{email.notification(${patientName})}"></p>
+        <div style="text-align: center;">
+            <span class="status-badge" th:text="#{patient.status.pending}"></span>
+        </div>
+
+        <p th:text="#{patient.request.message(${doctorName})}"></p>
 
         <div class="appointment-details">
-            <h3 th:text="#{email.details}"></h3>
+            <h3 th:text="#{patient.request.details.title}"></h3>
             <ul>
-                <li><strong th:text="#{email.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
-                <li><strong th:text="#{email.time.label}"></strong> <span th:text="${appointmentTime} hs"></span></li>
-                <li><strong th:text="#{email.patient.label}"></strong> <span th:text="${patientName}"></span></li>
-                <li><strong th:text="#{email.reason.label}"></strong> <span th:text="${reason}"></span></li>
+                <li><strong th:text="#{patient.doctor.label}"></strong> <span th:text="${doctorName}"></span></li>
+                <li><strong th:text="#{patient.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
+                <li><strong th:text="#{patient.time.label}"></strong> <span th:text="${appointmentTime}"></span></li>
+                <li><strong th:text="#{patient.reason.label}"></strong> <span th:text="${reason}"></span></li>
             </ul>
         </div>
 
-        <p th:text="#{email.review.calendar}"></p>
+        <p>
+            <span class="highlight" th:text="#{patient.whats.next.title}"></span>
+            <span th:text="#{patient.whats.next.description}"></span>
+        </p>
 
-        <p th:text="#{email.thanks}"></p>
+        <p th:text="#{patient.modify.request}"></p>
+
+        <p th:text="#{patient.thanks}"></p>
 
         <p th:text="#{email.signature}"></p>
     </div>
 
     <div class="footer">
-        <p th:text="#{copyright}"></p>
+        <p th:text="#{email.copyright}"></p>
     </div>
 </div>
 </body>
