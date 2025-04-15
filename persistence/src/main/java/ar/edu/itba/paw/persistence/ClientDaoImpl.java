@@ -107,6 +107,9 @@ public class ClientDaoImpl implements ClientDao {
 
     @Override
     public List<Client> getByIds(Set<Long> ids) {
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
         return jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) + ")", ROW_MAPPER, ids.toArray());
     }
 }
