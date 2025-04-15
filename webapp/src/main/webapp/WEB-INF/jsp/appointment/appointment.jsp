@@ -131,6 +131,7 @@
             noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />'
         };
         contextPath = "${pageContext.request.contextPath}";
+        slots = "${doctor.availabilitySlots.stream().forEach(slot -> slots}";
     </script>
 
     <!-- Include the external JavaScript file -->

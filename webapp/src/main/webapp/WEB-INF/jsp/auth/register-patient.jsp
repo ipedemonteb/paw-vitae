@@ -78,19 +78,19 @@
             <form:errors path="coverage" cssClass="error-message" />
           </div>
 
-          <div class="form-group">
-            <label class="form-label"><spring:message code="register.uploadImage" /></label>
-            <div class="file-upload">
-              <label class="file-upload-label">
-                <span class="file-upload-icon"></span>
-                <span class="file-upload-text"><spring:message code="register.uploadImage" /></span>
-                <span class="file-upload-subtext"><spring:message code="register.dragOrClick" /></span>
-                <form:input type="file" path="image" id="image-upload" accept="image/*" cssClass="file-input" />
-              </label>
-            </div>
-            <div id="file-name" class="file-name"></div>
-            <form:errors path="image" cssClass="error-message" />
-          </div>
+<%--          <div class="form-group">--%>
+<%--            <label class="form-label"><spring:message code="register.uploadImage" /></label>--%>
+<%--            <div class="file-upload">--%>
+<%--              <label class="file-upload-label">--%>
+<%--                <span class="file-upload-icon"></span>--%>
+<%--                <span class="file-upload-text"><spring:message code="register.uploadImage" /></span>--%>
+<%--                <span class="file-upload-subtext"><spring:message code="register.dragOrClick" /></span>--%>
+<%--                <form:input type="file" path="image" id="image-upload" accept="image/*" cssClass="file-input" />--%>
+<%--              </label>--%>
+<%--            </div>--%>
+<%--            <div id="file-name" class="file-name"></div>--%>
+<%--            <form:errors path="image" cssClass="error-message" />--%>
+<%--          </div>--%>
 
           <div class="form-group terms-checkbox">
             <input type="checkbox" id="terms" class="custom-checkbox" required />

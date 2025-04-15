@@ -576,54 +576,24 @@
             }
         }
 
-        // Validate the form before submission
         function validateForm() {
-            // Check if we have at least one time slot
-            if (timeSlots.length === 0) {
-                showSlotError('<spring:message code="register.timeSlotRequired" javaScriptEscape="true" />');
+        // Check if we have at least one time slot
+        if (timeSlots.length === 0) {
+            showSlotError('<spring:message code="register.timeSlotRequired" javaScriptEscape="true" />');
+            return false;
+        }
+
+        // Check for any overlapping slots
+        for (let i = 0; i < timeSlots.length; i++) {
+            const slot = timeSlots[i];
+            const element = document.querySelector('select[data-index="' + slot.index + '"]');
+            if (!checkOverlap(element)) {
                 return false;
             }
+        }
 
-            // Check for any overlapping slots
-            for (let i = 0; i < timeSlots.length; i++) {
-                const slot = timeSlots[i];
-                const element = document.querySelector('select[data-index="' + slot.index + '"]');
-                if (!checkOverlap(element)) {
-                    return false;
-                }
-            }
-
-            // Create hidden inputs for the time slots
-            const form = document.querySelector('.register-form');
-            const slotsContainer = document.createElement('div');
-            slotsContainer.style.display = 'none';
-
-            timeSlots.forEach((slot, i) => {
-                // Create hidden input for day of week
-                const dayInput = document.createElement('input');
-                dayInput.type = 'hidden';
-                dayInput.name = 'availabilitySlots[' + i + '].dayOfWeek';
-                dayInput.value = slot.day;
-                slotsContainer.appendChild(dayInput);
-
-                // Create hidden input for start time
-                const startInput = document.createElement('input');
-                startInput.type = 'hidden';
-                startInput.name = 'availabilitySlots[' + i + '].startTime';
-                startInput.value = slot.startTime;
-                slotsContainer.appendChild(startInput);
-
-                // Create hidden input for end time
-                const endInput = document.createElement('input');
-                endInput.type = 'hidden';
-                endInput.name = 'availabilitySlots[' + i + '].endTime';
-                endInput.value = slot.endTime;
-                slotsContainer.appendChild(endInput);
-            });
-
-            form.appendChild(slotsContainer);
-
-            return true;
+        // Just return true - let the original select elements be submitted
+        return true;
         }
 
         // Global function to toggle option selection
