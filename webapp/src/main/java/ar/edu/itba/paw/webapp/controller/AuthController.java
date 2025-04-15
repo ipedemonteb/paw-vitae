@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,16 +37,18 @@ public class AuthController {
     private final SpecialtyService ss;
     private final ClientService cls;
     private final UserService us;
+    private AuthenticationManager authenticationManager;
 
 
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, ClientService clientService, UserService us) {
+    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, ClientService clientService, UserService us, AuthenticationManager authenticationManager) {
         this.ds = ds;
         this.cs = cs;
         this.is=is;
         this.ss = ss;
         this.cls = clientService;
         this.us = us;
+        this.authenticationManager = authenticationManager;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -69,8 +72,10 @@ public class AuthController {
             return doctorForm(doctorForm);
         }
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(doctor.getEmail(), doctor.getPassword());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(doctor.getEmail(), doctorForm.getPassword());
+        Authentication authentication = authenticationManager.authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
 
         return new ModelAndView("redirect:/doctor/dashboard");
     }
@@ -104,7 +109,8 @@ public class AuthController {
         final Client client = cls.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(), patientForm.getPhone(), patientForm.getCoverage());
 
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(client.getEmail(), patientForm.getPassword());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(client.getEmail(), patientForm.getPassword());
+        Authentication authentication = authenticationManager.authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new ModelAndView("redirect:/patient/dashboard");
