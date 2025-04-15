@@ -348,7 +348,9 @@ document.addEventListener("DOMContentLoaded", () => {
             timeSlots.innerHTML = "";
             const noSlotsMessages = document.getElementsByClassName("no-slots-message");
             Array.from(noSlotsMessages).forEach(message => {
-                timeSlotsContainer.removeChild(message);
+                if (timeSlotsContainer.contains(message)) {
+                    timeSlotsContainer.removeChild(message);
+                }
             });
             const argDate = new Date().toLocaleString("en-US", {
                 timeZone: "America/Argentina/Buenos_Aires"
