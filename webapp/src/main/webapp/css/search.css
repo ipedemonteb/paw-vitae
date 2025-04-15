@@ -496,22 +496,23 @@
 }
 
 /* Time Slots */
-.time-slots-container {
+.time-slots-container-search {
     margin-top: 1rem;
 
 }
 
-.time-slots-container label {
+.time-slots-container-search label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
     font-size: 0.875rem;
 }
 
-.time-slots-grid {
+.time-slots-grid-search {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
 }
 
 .time-slot-display {
@@ -519,6 +520,7 @@
     text-align: center;
     border-radius: 4px;
     font-size: 0.75rem;
+    max-width: 100px;
 }
 
 .time-slot-display.available {
@@ -533,11 +535,32 @@
     border: 1px solid #e0e0e0;
     text-decoration: line-through;
 }
-
 .no-slots-message {
-    padding: 0.5rem;
+    padding: 1rem;
     text-align: center;
     color: #f44336;
     font-style: italic;
     font-size: 0.875rem;
+    background-color: #fef2f2;
+    border: 1px solid #f8d7da;
+    border-radius: 4px;
+    margin: 0.5rem 0;
+    white-space: normal;
+    display: block;
+    width: 100%;
+}
+@media (max-width: 576px) {
+    .time-slots-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .date-picker-calendar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 400px) {
+    .time-slots-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
 }

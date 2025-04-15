@@ -1,9 +1,3 @@
-/**
- * Date and Time Picker for Doctor Search
- *
- * This script handles the custom date and time picker functionality
- * for the doctor search page, showing available hours for each doctor.
- */
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize date pickers for each doctor
     const doctorCards = document.querySelectorAll('.doctor-card');
@@ -50,6 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const currentDate = new Date(argDate);
         let selectedDate = null;
         let doctorAvailability = [];
+
+        // Get doctor's availability slots from the global object
+        const doctorAvailabilitySlots = window.doctorAvailabilitySlots ? window.doctorAvailabilitySlots[doctorId] || [] : [];
 
         // Declare contextPath (assuming it's defined globally or in the JSP)
         const contextPath = window.contextPath || ""; // Provide a default value if not available
@@ -349,48 +346,65 @@ document.addEventListener("DOMContentLoaded", () => {
          */
         function renderTimeSlots(date) {
             timeSlots.innerHTML = "";
-
+            const noSlotsMessages = document.getElementsByClassName("no-slots-message");
+            Array.from(noSlotsMessages).forEach(message => {
+                timeSlotsContainer.removeChild(message);
+            });
             const argDate = new Date().toLocaleString("en-US", {
                 timeZone: "America/Argentina/Buenos_Aires"
             });
             const currentHour = new Date(argDate).getHours();
 
-            const allSlots = Array.from({ length: 11 }, (_, i) => `${8 + i}`);
+            // Get the day of week (0-6, where 0 is Sunday)
+            const dayOfWeek = date.getDay();
+
+            const availableSlots = doctorAvailabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7)); //js getDate works in mysterious ways, 0 is Sunday and 1 is Mondays. I have saved you all from debugging hell
 
             // Find the booked hours for the selected date
             const formattedDate = formatDateForSubmission(date);
             const bookedEntry = doctorAvailability.find(entry => entry.date === formattedDate);
-            const unavailableSlots = bookedEntry ? bookedEntry.hours : [];
-
-            // Check if there are any available slots
-            const availableSlots = allSlots.filter(slot => {
-                const slotHour = parseInt(slot, 10);
-                return !(isToday(date) && slotHour <= currentHour) && !unavailableSlots.includes(slotHour);
-            });
+            const bookedHours = bookedEntry ? bookedEntry.hours : [];
 
             if (availableSlots.length === 0) {
                 const noSlotsMessage = document.createElement("div");
                 noSlotsMessage.className = "no-slots-message";
                 noSlotsMessage.textContent = messages.noAvailableSlots;
-                timeSlots.appendChild(noSlotsMessage);
+                timeSlotsContainer.appendChild(noSlotsMessage);
                 return;
             }
 
-            // Create time slot buttons
-            allSlots.forEach(slot => {
-                const slotHour = parseInt(slot, 10);
-                const timeSlotButton = document.createElement("div");
-                timeSlotButton.className = "time-slot-display";
-                timeSlotButton.textContent = slot + ":00";
 
-                if ((isToday(date) && slotHour <= currentHour) || unavailableSlots.includes(slotHour)) {
-                    timeSlotButton.classList.add("unavailable");
-                } else {
-                    timeSlotButton.classList.add("available");
+
+            // Create time slot buttons for each available slot
+            availableSlots.forEach(slot => {
+                // Generate all hours between start and end time
+                for (let hour = slot.startTime; hour < slot.endTime; hour++) {
+                    const timeSlotButton = document.createElement("div");
+                    timeSlotButton.className = "time-slot-display";
+                    timeSlotButton.textContent = `${hour}:00`;
+
+                    // Check if the slot is available (not booked and not in the past)
+                    if ((isToday(date) && hour <= currentHour) || bookedHours.includes(hour)) {
+                        timeSlotButton.classList.add("unavailable");
+                    } else {
+                        timeSlotButton.classList.add("available");
+
+                        // Add click event to select time slot
+                        //
+                    }
+
+                    timeSlots.appendChild(timeSlotButton);
                 }
-
-                timeSlots.appendChild(timeSlotButton);
             });
+        }
+
+        /**
+         * Get the specialty ID from the URL
+         * @returns {string} The specialty ID
+         */
+        function getSpecialtyId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('specialty') || '';
         }
 
         /**
