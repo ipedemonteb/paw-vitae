@@ -345,6 +345,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const currentHour = new Date(argDate).getHours();
 
         const allSlots = Array.from({ length: 11 }, (_, i) => `${8 + i}`);
+        console.log(availabilitySlots)
+        let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7)); //js getDate works in mysterious ways, 0 is Sunday and 1 is Mondays. I have saved you all from debugging hell
 
         // Find the fully booked hours for the selected date
         const formattedDate = formatDateForSubmission(date);
@@ -358,7 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
             timeSlotButton.className = "time-slot-btn";
             timeSlotButton.textContent = slot + ":00";
 
-            if ((isToday(date) && slotHour <= currentHour) || unavailableSlots.includes(slotHour)) {
+            if ((isToday(date) && slotHour <= currentHour) || unavailableSlots.includes(slotHour) || !available.find(slot => slot.startTime <= slotHour && slot.endTime >= slotHour)) {
                 timeSlotButton.disabled = true;
                 timeSlotButton.classList.add("disabled");
             } else {
