@@ -2,7 +2,6 @@ package ar.edu.itba.paw.interfaceServices;
 
 import ar.edu.itba.paw.models.*;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +16,6 @@ public interface DoctorService {
 
     List<Doctor> getAll();
     List<Doctor> getByAppointments(List<Appointment> appointments);
-    void updateDoctor(long id, String name, String lastName, String email, String phone,
-                      List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilitySlots);
+    void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots);
 
 }
