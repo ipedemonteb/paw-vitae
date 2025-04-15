@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.*;
@@ -34,7 +35,7 @@ public class DoctorServiceImpl implements DoctorService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
+    @Transactional
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
         List<Coverage> coverageList = new ArrayList<>();
@@ -68,6 +69,7 @@ public class DoctorServiceImpl implements DoctorService {
         return ids.isEmpty()? Collections.emptyList() : doctorDao.getByIds(ids);
     }
 
+    @Transactional
     @Override
     public void updateDoctor(long id, String name, String lastName, String email, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilitySlots) {
         doctorDao.updateDoctor(id, name, lastName, email, phone, specialties, coverages, availabilitySlots);

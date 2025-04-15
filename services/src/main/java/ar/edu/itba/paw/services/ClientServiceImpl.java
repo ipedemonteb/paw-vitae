@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.Coverage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +39,8 @@ public class ClientServiceImpl implements ClientService {
         return clientDao.getById(id);
     }
 
+    @Transactional
+    @Override
     public Client create(String name, String lastName, String email, String password, String phone, String coverage) {
         Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);
         return this.clientDao.create(name, lastName, email, passwordEncoder.encode(password), phone, cov);
@@ -48,6 +51,7 @@ public class ClientServiceImpl implements ClientService {
         return clientDao.getByEmail(email);
     }
 
+    @Transactional
     @Override
     public void updateClient(long id, String name, String lastName, String phone, String coverage) {
         Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);

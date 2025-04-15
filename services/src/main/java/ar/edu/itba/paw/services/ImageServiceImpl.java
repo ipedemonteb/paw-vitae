@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaceServices.ImageService;
 import ar.edu.itba.paw.models.Images;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ public class ImageServiceImpl implements ImageService{
         this.imageDao = imageDao;
     }
 
+    @Transactional
     @Override
     public Images create(long doctor_id, MultipartFile image) throws IOException {
         if (image.isEmpty()) {
