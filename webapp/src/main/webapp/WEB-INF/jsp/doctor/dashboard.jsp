@@ -85,10 +85,10 @@
                         <div class="status-filter">
                             <label for="status-filter"><spring:message code="dashboard.filter.status" />:</label>
                             <select id="status-filter" class="filter-select">
-                                <option value="all" selected><spring:message code="dashboard.filter.all" /></option>
-                                <option value="pending"><spring:message code="appointment.status.pending" /></option>
-                                <option value="confirmed"><spring:message code="appointment.status.confirmed" /></option>
-                                <option value="cancelled"><spring:message code="appointment.status.cancelled" /></option>
+                                <option value="<spring:message code="dashboard.filter.all"/>" selected><spring:message code="dashboard.filter.all" /></option>
+                                <option value="<spring:message code="appointment.status.pending" />"><spring:message code="appointment.status.pending" /></option>
+                                <option value="<spring:message code="appointment.status.confirmed" />"><spring:message code="appointment.status.confirmed" /></option>
+                                <option value="<spring:message code="appointment.status.cancelled" />"><spring:message code="appointment.status.cancelled" /></option>
                             </select>
                         </div>
                         <div class="date-filter">
@@ -107,22 +107,22 @@
                     <c:when test="${not empty upcomingAppointments}">
                         <div class="appointments-list">
                             <c:forEach items="${upcomingAppointments}" var="appointment">
-                                <div class="appointment-card" data-status="<spring:message code='${appointment.key.status}'/>" data-date="${appointment.key.date}">
+                                <div class="appointment-card" data-status="<spring:message code='${appointment.key.status}'/>"  data-date="<c:out value="${appointment.key.date}"/>">
                                     <div class="appointment-time">
                                         <div class="appointment-date">
                                             <span class="day">
-                                                    ${appointment.key.date.dayOfWeek}
+                                                    <spring:message code="${appointment.key.date.dayOfWeek}" />
                                             </span>
                                             <span class="date-number">
-                                                    ${appointment.key.date.dayOfMonth}
+                                                    <c:out value="${appointment.key.date.dayOfMonth}"/>
                                             </span>
                                             <span class="month">
-                                                    ${appointment.key.date.month}
+                                                     <spring:message code="${appointment.key.date.month}" />
                                             </span>
                                         </div>
                                         <div class="appointment-hour">
                                             <i class="fas fa-clock"></i>
-                                                ${appointment.key.date.hour}:00
+                                            <c:out value="${appointment.key.date.hour}"/>:00
                                         </div>
                                         <div class="appointment-status-indicator">
                                             <span class="status-badge ${appointment.key.status}">
@@ -156,9 +156,19 @@
                                             </span>
                                         </div>
                                         <div class="appointment-actions">
-                                            <c:set var="status" value="${appointment.key.status}" />
-
-                                            <c:if test="${status eq 'pendiente'}">
+                                            <c:set var="status" >
+                                                <spring:message code="${appointment.key.status}" />
+                                            </c:set>
+                                            <c:set var="pending">
+                                                <spring:message code="appointment.status.pending" />
+                                            </c:set>
+                                            <c:set var="confirmed">
+                                                <spring:message code="appointment.status.confirmed" />
+                                            </c:set>
+                                            <c:set var="all">
+                                                <spring:message code="dashboard.filter.all" />
+                                            </c:set>
+                                            <c:if test="${status eq pending}">
                                                 <button class="btn btn-confirm confirm-appointment" data-id="${appointment.key.id}">
                                                     <i class="fas fa-check-circle"></i>
                                                     <span><spring:message code="appointment.action.confirm" /></span>
@@ -169,7 +179,7 @@
                                                 </button>
                                             </c:if>
 
-                                            <c:if test="${status eq 'confirmado'}">
+                                            <c:if test="${status eq confirmed}">
                                                 <button class="btn btn-danger cancel-appointment" data-id="${appointment.key.id}">
                                                     <i class="fas fa-times-circle"></i>
                                                     <span><spring:message code="appointment.action.cancel" /></span>
@@ -201,10 +211,10 @@
                         <div class="status-filter">
                             <label for="history-status-filter"><spring:message code="dashboard.filter.status" />:</label>
                             <select id="history-status-filter" class="filter-select">
-                                <option value="all" selected><spring:message code="dashboard.filter.all" /></option>
-                                <option value="completed"><spring:message code="appointment.status.completed" /></option>
-                                <option value="cancelled"><spring:message code="appointment.status.cancelled" /></option>
-                                <option value="no-show"><spring:message code="appointment.status.noShow" /></option>
+                                <option value="<spring:message code="dashboard.filter.all" />" selected><spring:message code="dashboard.filter.all" /></option>
+                                <option value="<spring:message code="appointment.status.completed" />"><spring:message code="appointment.status.completed" /></option>
+                                <option value="<spring:message code="appointment.status.cancelled" />"><spring:message code="appointment.status.cancelled" /></option>
+                                <option value="<spring:message code="appointment.status.noShow" />"><spring:message code="appointment.status.noShow" /></option>
                             </select>
                         </div>
                         <div class="search-container">
@@ -224,13 +234,13 @@
                                     <div class="appointment-time">
                                         <div class="appointment-date">
                                             <span class="day">
-                                                    ${appointment.key.date.dayOfWeek}
+                                                    <spring:message code="${appointment.key.date.dayOfWeek}" />
                                             </span>
                                             <span class="date-number">
-                                                    ${appointment.key.date.dayOfMonth}
+                                                    <c:out value="${appointment.key.date.dayOfMonth}"/>
                                             </span>
                                             <span class="month">
-                                                    ${appointment.key.date.month}
+                                                     <spring:message code="${appointment.key.date.month}" />
                                             </span>
                                         </div>
                                         <div class="appointment-hour">
@@ -515,7 +525,7 @@
                     appointmentCards.forEach(card => {
                         const cardStatus = card.getAttribute('data-status');
 
-                        if (selectedStatus === 'all' || cardStatus.toLowerCase() === selectedStatus) {
+                        if (selectedStatus === '${all}' || cardStatus.toLowerCase() === selectedStatus) {
                             card.style.display = 'flex';
                         } else {
                             card.style.display = 'none';
@@ -534,7 +544,7 @@
                     appointmentCards.forEach(card => {
                         const cardStatus = card.getAttribute('data-status').toLowerCase();
 
-                        if (selectedStatus === 'all' || cardStatus === selectedStatus) {
+                        if (selectedStatus === '${all}' || cardStatus === selectedStatus) {
                             card.style.display = 'flex';
                         } else {
                             card.style.display = 'none';
