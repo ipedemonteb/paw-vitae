@@ -92,9 +92,9 @@
                     </div>
 
                     <!-- Time Slots Container -->
-                    <div id="timeSlotsContainer-${doctor.id}" class="time-slots-container" style="display: none;">
+                    <div id="timeSlotsContainer-${doctor.id}" class="time-slots-container-search" style="display: none;">
                       <label><spring:message code="appointment.form.availableTimes"/></label>
-                      <div id="timeSlots-${doctor.id}" class="time-slots-grid"></div>
+                      <div id="timeSlots-${doctor.id}" class="time-slots-grid-search"></div>
                     </div>
                   </div>
 
@@ -181,6 +181,22 @@
     function changeSpecialty(specialtyId) {
       window.location.href = "${pageContext.request.contextPath}/search?specialty=" + specialtyId;
     }
+
+    // Create a global object to store each doctor's availability slots
+    window.doctorAvailabilitySlots = {};
+
+    <c:forEach var="doctor" items="${paginatedDoctors}">
+    // Initialize availability slots array for this doctor
+    window.doctorAvailabilitySlots['${doctor.id}'] = [
+      <c:forEach var="slot" items="${doctor.availabilitySlots}" varStatus="status">
+      {
+        dayOfWeek: ${slot.dayOfWeek},
+        startTime: ${slot.startTime.hour},
+        endTime: ${slot.endTime.hour}
+      }<c:if test="${!status.last}">,</c:if>
+      </c:forEach>
+    ];
+    </c:forEach>
   </script>
 
   <!-- Include the modified date-time-picker for search page -->
