@@ -800,5 +800,4 @@
 
     <link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/components/inline-form.css' />" />
-    <link rel="stylesheet" href="<c:url value='/css/components/multi-select.css' />" />
 </layout:page>

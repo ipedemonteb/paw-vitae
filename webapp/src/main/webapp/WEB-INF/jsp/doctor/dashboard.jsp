@@ -753,7 +753,6 @@
         }
     </style>
 
-    <!-- Add this script at the end of the file, before the closing </layout:page> tag -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Add this to the existing DOMContentLoaded event handler
@@ -966,4 +965,4 @@
 <!-- Make sure these CSS files are included -->
 <link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
 <link rel="stylesheet" href="<c:url value='/css/components/inline-form.css' />" />
-<link rel="stylesheet" href="<c:url value='/css/components/multi-select.css' />" />
+</layout:page>
