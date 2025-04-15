@@ -12,10 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,7 +65,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public List<Doctor> getByAppointments(List<Appointment> appointments) {
         Set<Long> ids = appointments.stream().map(Appointment::getDoctorId).collect(Collectors.toSet());
-        return doctorDao.getByIds(ids);
+        return ids.isEmpty()? Collections.emptyList() : doctorDao.getByIds(ids);
     }
 
     @Override
