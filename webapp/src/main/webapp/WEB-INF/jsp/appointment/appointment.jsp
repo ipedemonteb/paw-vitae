@@ -5,6 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
 <layout:page title="appointment.page.title">
@@ -131,6 +132,15 @@
             noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />'
         };
         contextPath = "${pageContext.request.contextPath}";
+        const availabilitySlots = [
+            <c:forEach var="slot" items="${doctor.availabilitySlots}" varStatus="status">
+            {
+                dayOfWeek: ${slot.dayOfWeek},
+                startTime: ${slot.startTime.hour},
+                endTime: ${slot.endTime.hour}
+            }<c:if test="${!status.last}">,</c:if>
+            </c:forEach>
+        ];
     </script>
 
     <!-- Include the external JavaScript file -->
