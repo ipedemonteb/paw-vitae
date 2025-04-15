@@ -93,7 +93,7 @@
             <div class="steps-container">
                 <div class="step-item">
                     <div class="step-number">1</div>
-                    <div class="step-icon search-step-icon"></div>
+                    <div class="step-icon step-1 search-step-icon"></div>
                     <h3 class="step-title"><spring:message code="landing.howItWorks.step1.title" /></h3>
                     <p class="step-text"><spring:message code="landing.howItWorks.step1.text" /></p>
                 </div>
@@ -102,7 +102,7 @@
 
                 <div class="step-item">
                     <div class="step-number">2</div>
-                    <div class="step-icon calendar-step-icon"></div>
+                    <div class="step-icon step-2 calendar-step-icon"></div>
                     <h3 class="step-title"><spring:message code="landing.howItWorks.step2.title" /></h3>
                     <p class="step-text"><spring:message code="landing.howItWorks.step2.text" /></p>
                 </div>
@@ -111,7 +111,7 @@
 
                 <div class="step-item">
                     <div class="step-number">3</div>
-                    <div class="step-icon visit-step-icon"></div>
+                    <div class="step-icon step-3 visit-step-icon"></div>
                     <h3 class="step-title"><spring:message code="landing.howItWorks.step3.title" /></h3>
                     <p class="step-text"><spring:message code="landing.howItWorks.step3.text" /></p>
                 </div>

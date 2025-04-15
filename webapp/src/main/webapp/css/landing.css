@@ -320,11 +320,27 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    transition: transform 0.3s;
+    /*transition: transform 0.3s;*/
+    animation: steps 3s infinite;
 }
 
-.step-item:hover .step-icon {
-    transform: scale(1.1);
+.step-1 {
+    animation-delay: 0s;
+}
+.step-2 {
+    animation-delay: 1s;
+}
+.step-3 {
+    animation-delay: 2s;
+}
+
+/*.step-item:hover .step-icon {*/
+/*    transform: scale(1.1);*/
+/*}*/
+
+@keyframes steps {
+    0% , 20%, 100%{ transform: scale(1); }
+    10% { transform: scale(1.1); }
 }
 
 .search-step-icon {
