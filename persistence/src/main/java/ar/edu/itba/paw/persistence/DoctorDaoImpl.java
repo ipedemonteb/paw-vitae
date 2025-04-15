@@ -142,21 +142,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public List<Doctor> getByIds(Set<Long> ids) {
-        if (ids.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        String placeholders = String.join(",", Collections.nCopies(ids.size(), "?"));
-        List<Doctor> doctors = jdbcTemplate.query(
-                "SELECT * FROM users u JOIN doctors d ON d.doctor_id = u.id WHERE u.id IN (" + placeholders + ")",
-                ROW_MAPPER, ids.toArray()
-        );
-
-        for (Doctor doctor : doctors) {
-            populateDoctorDetails(doctor);
-        }
-
-        return doctors;
+        return jdbcTemplate.query("SELECT * FROM Users u JOIN Doctors d ON d.doctor_id = u.id  WHERE u.id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) + ")", ROW_MAPPER, ids.toArray());
     }
 
     @Override
