@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let FutureAppointments = [];
 
     // Fetch fully booked dates for the next month on page load
-    fetchFullyBookedDates().then((dates) => {
+    fetchFutureAppointments().then((dates) => {
         FutureAppointments = dates;
         initDatePicker(); // Initialize the date picker after fetching the dates
     });
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * Fetch fully booked dates from today to one month in advance
      * @returns {Promise<Array>} A promise that resolves to an array of fully booked dates
      */
-    function fetchFullyBookedDates() {
+    function fetchFutureAppointments() {
         const newDate = new Date().toLocaleString("en-US", {
             timeZone: "America/Argentina/Buenos_Aires",
         })
@@ -353,6 +353,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const fullyBookedEntry = FutureAppointments.find(entry => entry.date === formattedDate);
         const unavailableSlots = fullyBookedEntry ? fullyBookedEntry.hours : [];
 
+
+        if (available.length === 0) {
+            const noSlotsMessage = document.createElement("div");
+            noSlotsMessage.className = "no-slots-message";
+            noSlotsMessage.textContent = messages.noAvailableSlots;
+            timeSlots.appendChild(noSlotsMessage);
+            return;
+        }
+
         allSlots.forEach((slot) => {
             const slotHour = parseInt(slot, 10);
             const timeSlotButton = document.createElement("button");
@@ -360,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
             timeSlotButton.className = "time-slot-btn";
             timeSlotButton.textContent = slot + ":00";
 
-            if ((isToday(date) && slotHour <= currentHour) || unavailableSlots.includes(slotHour) || !available.find(slot => slot.startTime <= slotHour && slot.endTime >= slotHour)) {
+            if ((isToday(date) && slotHour <= currentHour) || unavailableSlots.includes(slotHour)) {
                 timeSlotButton.disabled = true;
                 timeSlotButton.classList.add("disabled");
             } else {
@@ -372,8 +381,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     timeSlotButton.classList.add("selected");
                 });
             }
-
-            timeSlots.appendChild(timeSlotButton);
+            if (available.find(slot => slot.startTime <= slotHour && slot.endTime >= slotHour)) {
+                timeSlots.appendChild(timeSlotButton);
+            }
         });
     }
 
