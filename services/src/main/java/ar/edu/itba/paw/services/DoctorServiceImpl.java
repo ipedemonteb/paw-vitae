@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
-import ar.edu.itba.paw.interfaceServices.AvailabilitySlotsService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 
@@ -12,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,8 +69,12 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateDoctor(long id, String name, String lastName, String email, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilitySlots) {
-        doctorDao.updateDoctor(id, name, lastName, email, phone, specialties, coverages, availabilitySlots);
+    public void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
+        List<Coverage> coverageList = new ArrayList<>();
+        List<Specialty> specialtyList = new ArrayList<>();
+        coverages.forEach(coverage -> coverageList.add(cs.findById(Long.parseLong(coverage)).orElse(null)));
+        specialties.forEach(specialty -> specialtyList.add(ss.getById(Long.parseLong(specialty)).orElse(null)));
+        doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList, availabilitySlots);
     }
 
 }
