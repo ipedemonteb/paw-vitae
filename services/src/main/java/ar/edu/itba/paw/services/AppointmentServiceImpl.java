@@ -6,10 +6,14 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Specialty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.mail.MessagingException;
 import java.time.LocalDate;
@@ -26,6 +30,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final MessageSource messageSource;
     private final ClientService clientService;
     private final DoctorService doctorService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentServiceImpl.class);
+
     @Autowired
     public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService, MessageSource messageSource, ClientService clientService,DoctorService doctorService) {
         this.appointmentDao = appointmentDao;
@@ -36,6 +43,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         this.clientService = clientService;
     }
 
+    @Transactional(noRollbackFor = MessagingException.class) //por si decidimos lanzar excepcion
     @Override
     public Appointment create(long clientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
@@ -46,7 +54,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         try {
             mailService.sendEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment, appointment.getDoctorId(), appointment.getClientId());
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            LOGGER.error(e.getMessage());
         }
 
         return appointment;

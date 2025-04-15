@@ -12,16 +12,6 @@ import java.util.Optional;
 @Service
 public class SpecialtyServiceImpl implements SpecialtyService {
 
-//    public List<String> getSpecialties() {
-//        return List.of(
-//                "General", "Cardiologia", "Dermatologia",
-//                "Endocrinologia", "Gastroenterología", "Hematologia",
-//                "Enfermedades Infecciosas", "Nefrologia", "Neurologia",
-//                "Oncologia", "Pulmonologia", "Reumatologia",
-//                "Urologia", "Pediatria", "Ginecologia", "Traumatologia"
-//        );
-//    }
-//
 private final SpecialtyDao specialtyDao;
 
     @Autowired

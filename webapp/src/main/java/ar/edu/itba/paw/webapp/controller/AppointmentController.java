@@ -120,11 +120,11 @@ public class AppointmentController {
         return mav;
     }
 
-    @RequestMapping(value = "/appointment/booked-times-by-date", method = RequestMethod.GET, produces = "application/json")
+    @GetMapping(value = "/appointment/booked-times-by-date", produces = "application/json")
     @ResponseBody
-    public String getFullyBookedDates(
-            @RequestParam Integer doctorId) {
+    public String getFullyBookedDates(@RequestParam Integer doctorId) {
         return appointmentService.getFutureAppointmentsPerDate(doctorId).orElse("[]");
     }
+
 
 }

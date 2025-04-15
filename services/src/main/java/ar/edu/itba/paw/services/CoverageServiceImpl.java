@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,7 @@ public class CoverageServiceImpl implements CoverageService {
         return coverageDao.findById(id);
     }
 
+    @Transactional
     @Override
     public Coverage create(String name) {
         return coverageDao.create(name);
