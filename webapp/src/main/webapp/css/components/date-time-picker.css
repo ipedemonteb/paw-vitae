@@ -188,6 +188,15 @@
     padding-left: var(--spacing-sm);
 }
 
+.no-slots-message {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    text-align: left;
+    color: #f44336;
+    font-style: italic;
+    font-size: 1rem;
+}
+
 .time-slots-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
