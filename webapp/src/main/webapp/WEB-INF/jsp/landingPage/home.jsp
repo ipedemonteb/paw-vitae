@@ -82,6 +82,80 @@
         </div>
     </section>
 
+    <!-- How It Works Section -->
+    <section class="how-it-works-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title"><spring:message code="landing.howItWorks.title" /></h2>
+                <p class="section-subtitle"><spring:message code="landing.howItWorks.subtitle" /></p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-icon search-step-icon"></div>
+                    <h3 class="step-title"><spring:message code="landing.howItWorks.step1.title" /></h3>
+                    <p class="step-text"><spring:message code="landing.howItWorks.step1.text" /></p>
+                </div>
+
+                <div class="step-connector"></div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-icon calendar-step-icon"></div>
+                    <h3 class="step-title"><spring:message code="landing.howItWorks.step2.title" /></h3>
+                    <p class="step-text"><spring:message code="landing.howItWorks.step2.text" /></p>
+                </div>
+
+                <div class="step-connector"></div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-icon visit-step-icon"></div>
+                    <h3 class="step-title"><spring:message code="landing.howItWorks.step3.title" /></h3>
+                    <p class="step-text"><spring:message code="landing.howItWorks.step3.text" /></p>
+                </div>
+            </div>
+
+<%--            <div class="cta-container">--%>
+<%--                <a href="<c:url value='/register' />" class="cta-button">--%>
+<%--                    <spring:message code="landing.cta.button" />--%>
+<%--                </a>--%>
+<%--                <p class="cta-subtext"><spring:message code="landing.cta.subtext" /></p>--%>
+<%--            </div>--%>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title"><spring:message code="landing.features.title" /></h2>
+                <p class="section-subtitle"><spring:message code="landing.features.subtitle" /></p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon verified-icon"></div>
+                    <h3 class="feature-title"><spring:message code="landing.features.verified.title" /></h3>
+                    <p class="feature-text"><spring:message code="landing.features.verified.text" /></p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon secure-icon"></div>
+                    <h3 class="feature-title"><spring:message code="landing.features.secure.title" /></h3>
+                    <p class="feature-text"><spring:message code="landing.features.secure.text" /></p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon easy-icon"></div>
+                    <h3 class="feature-title"><spring:message code="landing.features.easy.title" /></h3>
+                    <p class="feature-text"><spring:message code="landing.features.easy.text" /></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <comp:site-footer />
 
     <!-- Inline script for autocomplete functionality -->
