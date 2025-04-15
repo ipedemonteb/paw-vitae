@@ -5,30 +5,43 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<layout:page title="dashboard.doctor.title">
+<layout:page title="dashboard.patient.title">
     <div class="dashboard-container">
-        <!-- Doctor Profile Header -->
+        <!-- Patient Profile Header -->
         <div class="dashboard-header">
             <div class="doctor-info">
                 <div class="doctor-avatar">
-                    <img src="<c:url value="/doctor/${patient.id}/image"/>" alt="<c:out value="${patient.name} ${patient.lastName}"/>'">
+                    <img src="<c:url value="/doctor/${patient.id}/image"/>" alt="<c:out value="${patient.name} ${patient.lastName}"/>"/>
                 </div>
                 <div class="doctor-details">
-                    <h1 class="doctor-name">
-                        <c:out value="${patient.name}" /> <c:out value="${patient.lastName}" />
-                    </h1>
-                    <h4 class="doctor-specialties">
-                        <c:out value="${patient.coverage.name}" />
-                    </h4>
+                    <h1 class="doctor-name"><c:out value="${patient.name}" /> <c:out value="${patient.lastName}" /></h1>
+                    <div class="doctor-meta">
+                        <div class="doctor-meta-item">
+                            <i class="fas fa-envelope"></i>
+                            <span><c:out value="${patient.email}" /></span>
+                        </div>
+                        <div class="doctor-meta-item">
+                            <i class="fas fa-phone"></i>
+                            <span><c:out value="${patient.phone}" /></span>
+                        </div>
+                    </div>
+                    <div class="doctor-specialties">
+                        <span class="specialty-tag">
+                            <c:out value="${patient.coverage.name}" />
+                        </span>
+                    </div>
                 </div>
             </div>
-            <div class="dashboard-actions">
-                <div class="dropdown">
-                    <button class="btn btn-outline dropdown-toggle">
-                        <i class="icon-settings"></i>
-                        <span class="sr-only"><spring:message code="dashboard.settings.title" /></span>
-                    </button>
+            <div class="dashboard-stats">
+                <div class="stat-item">
+                    <div class="stat-value">${upcomingAppointments.size()}</div>
+                    <div class="stat-label"><spring:message code="dashboard.stats.upcoming" /></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${pastAppointments.size()}</div>
+                    <div class="stat-label"><spring:message code="dashboard.stats.past" /></div>
                 </div>
             </div>
         </div>
@@ -36,15 +49,15 @@
         <!-- Dashboard Navigation Tabs -->
         <div class="dashboard-nav">
             <button class="nav-tab active" data-tab="upcoming">
-                <i class="icon icon-calendar"></i>
+                <i class="fas fa-calendar-alt"></i>
                 <span><spring:message code="dashboard.tab.upcoming" /></span>
             </button>
             <button class="nav-tab" data-tab="history">
-                <i class="icon icon-history"></i>
+                <i class="fas fa-history"></i>
                 <span><spring:message code="dashboard.tab.history" /></span>
             </button>
             <button class="nav-tab" data-tab="profile">
-                <i class="icon icon-user"></i>
+                <i class="fas fa-user"></i>
                 <span><spring:message code="dashboard.tab.profile" /></span>
             </button>
         </div>
@@ -56,6 +69,15 @@
                 <div class="tab-header">
                     <h2><spring:message code="dashboard.upcoming.title" /></h2>
                     <div class="tab-actions">
+                        <div class="status-filter">
+                            <label for="status-filter"><spring:message code="dashboard.filter.status" />:</label>
+                            <select id="status-filter" class="filter-select">
+                                <option value="all" selected><spring:message code="dashboard.filter.all" /></option>
+                                <option value="pending"><spring:message code="appointment.status.pending" /></option>
+                                <option value="confirmed"><spring:message code="appointment.status.confirmed" /></option>
+                                <option value="cancelled"><spring:message code="appointment.status.cancelled" /></option>
+                            </select>
+                        </div>
                         <div class="date-filter">
                             <label for="date-range"><spring:message code="dashboard.filter.dateRange" />:</label>
                             <select id="date-range" class="filter-select">
@@ -69,33 +91,64 @@
                 </div>
 
                 <c:choose>
-                    <c:when test="${not empty patient.appointments}">
+                    <c:when test="${not empty upcomingAppointments}">
                         <div class="appointments-list">
-                            <c:forEach items="${patient.appointments}" var="appointment">
-                                <div class="appointment-card">
+                            <c:forEach items="${upcomingAppointments}" var="appointment">
+                                <div class="appointment-card" data-status="<spring:message code='${appointment.key.status}'/>" data-date="${appointment.key.date}">
                                     <div class="appointment-time">
                                         <div class="appointment-date">
-                                            <span class="day">${appointment.date.dayOfWeek}</span>
-                                            <span class="date-number">${appointment.date.dayOfMonth}</span>
-                                            <span class="month">${appointment.date.month}</span>
+                                            <span class="day">
+                                                    ${appointment.key.date.dayOfWeek}
+                                            </span>
+                                            <span class="date-number">
+                                                    ${appointment.key.date.dayOfMonth}
+                                            </span>
+                                            <span class="month">
+                                                    ${appointment.key.date.month}
+                                            </span>
                                         </div>
                                         <div class="appointment-hour">
-                                                ${appointment.date.hour < 10 ? '0' : ''}${appointment.date.hour}:${appointment.date.minute < 10 ? '0' : ''}${appointment.date.minute}
+                                            <i class="fas fa-clock"></i>
+                                                ${appointment.key.date.hour}:00
+                                        </div>
+                                        <div class="appointment-status-indicator">
+                                            <span class="status-badge ${appointment.key.status}">
+                                                <spring:message code='${appointment.key.status}'/>
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="appointment-details">
-                                        <div class="doctor-info">
-                                            <div class="doctor-avatar">
-                                                <img src="<c:url value="/doctor/${appointment.doctorId}/image"/>" alt="<c:out value="${appointment.doctorId} ${appointment.doctorId}"/>'">
+                                        <div class="patient-info">
+                                            <div class="patient-avatar">
+                                                <img src="<c:url value="/doctor/${appointment.value.id}/image"/>" alt="<c:out value="${appointment.value.name} ${appointment.value.lastName}"/>"/>
                                             </div>
-                                            <div class="doctor-details">
-                                                <h1 class="doctor-name">
-                                                    <c:out value="${appointment.doctor.name}" /> <c:out value="${appointment.doctor.lastName}" />
-                                                </h1>
-                                                <p class="doctor-specialty">
-                                                    <spring:message code="${appointment.specialty.key}" />
-                                                </p>
+                                            <div>
+                                                <div class="patient-name">
+                                                    <c:out value="${appointment.value.name}" /> <c:out value="${appointment.value.lastName}" />
+                                                </div>
+                                                <div class="patient-coverage">
+                                                    <c:out value="${appointment.value.specialtyList[0].key}" />
+                                                </div>
                                             </div>
+                                        </div>
+                                        <div class="appointment-reason">
+                                            <div class="reason-label"><spring:message code="appointment.reason" />:</div>
+                                            <div class="reason-text"><c:out value="${appointment.key.reason}" /></div>
+                                        </div>
+                                        <div class="appointment-specialty">
+                                            <span class="specialty-badge">
+                                                <spring:message code="${appointment.key.specialty.key}" />
+                                            </span>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <c:set var="status" value="${appointment.key.status}" />
+
+                                            <c:if test="${status eq 'pendiente' || status eq 'confirmado'}">
+                                                <button class="btn btn-danger cancel-appointment" data-id="${appointment.key.id}">
+                                                    <i class="fas fa-times-circle"></i>
+                                                    <span><spring:message code="appointment.action.cancel" /></span>
+                                                </button>
+                                            </c:if>
                                         </div>
                                     </div>
                                 </div>
@@ -105,7 +158,7 @@
                     <c:otherwise>
                         <div class="empty-state">
                             <div class="empty-icon">
-                                <i class="icon icon-calendar-empty"></i>
+                                <i class="fas fa-calendar-day fa-3x"></i>
                             </div>
                             <h3><spring:message code="dashboard.upcoming.empty.title" /></h3>
                             <p><spring:message code="dashboard.upcoming.empty.message" /></p>
@@ -119,24 +172,95 @@
                 <div class="tab-header">
                     <h2><spring:message code="dashboard.history.title" /></h2>
                     <div class="tab-actions">
+                        <div class="status-filter">
+                            <label for="history-status-filter"><spring:message code="dashboard.filter.status" />:</label>
+                            <select id="history-status-filter" class="filter-select">
+                                <option value="all" selected><spring:message code="dashboard.filter.all" /></option>
+                                <option value="completed"><spring:message code="appointment.status.completed" /></option>
+                                <option value="cancelled"><spring:message code="appointment.status.cancelled" /></option>
+                                <option value="no-show"><spring:message code="appointment.status.noShow" /></option>
+                            </select>
+                        </div>
                         <div class="search-container">
-                            <label>
-                                <input type="text" class="search-input" placeholder="<spring:message code="dashboard.search.placeholder" />" />
-                            </label>
                             <button class="search-button">
-                                <i class="icon icon-search"></i>
+                                <i class="fas fa-search"></i>
                             </button>
+                            <input type="text" class="search-input" placeholder="<spring:message code="dashboard.search.placeholder" />" />
                         </div>
                     </div>
                 </div>
 
-                <div class="empty-state">
-                    <div class="empty-icon">
-                        <i class="icon icon-history-empty"></i>
-                    </div>
-                    <h3><spring:message code="dashboard.history.empty.title" /></h3>
-                    <p><spring:message code="dashboard.history.empty.message" /></p>
-                </div>
+                <c:choose>
+                    <c:when test="${not empty pastAppointments}">
+                        <div class="appointments-list">
+                            <c:forEach items="${pastAppointments}" var="appointment">
+                                <div class="appointment-card past" data-status="<spring:message code='${appointment.key.status}'/>" data-date="${appointment.key.date}">
+                                    <div class="appointment-time">
+                                        <div class="appointment-date">
+                                            <span class="day">
+                                                    ${appointment.key.date.dayOfWeek}
+                                            </span>
+                                            <span class="date-number">
+                                                    ${appointment.key.date.dayOfMonth}
+                                            </span>
+                                            <span class="month">
+                                                    ${appointment.key.date.month}
+                                            </span>
+                                        </div>
+                                        <div class="appointment-hour">
+                                            <i class="fas fa-clock"></i>
+                                                ${appointment.key.date.hour}:00
+                                        </div>
+                                        <div class="appointment-status-indicator">
+                                            <span class="status-badge ${appointment.key.status}">
+                                                <spring:message code='${appointment.key.status}'/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <div class="patient-info">
+                                            <div class="patient-avatar">
+                                                <img src="<c:url value="/doctor/${patient.id}/image"/>" alt="<c:out value="${patient.name} ${patient.lastName}"/>'">
+                                            </div>
+                                            <div>
+                                                <div class="patient-name">
+                                                    <c:out value="${appointment.value.name}" /> <c:out value="${appointment.value.lastName}" />
+                                                </div>
+                                                <div class="patient-coverage">
+                                                    <c:out value="${appointment.value.specialtyList[0].key}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="appointment-reason">
+                                            <div class="reason-label"><spring:message code="appointment.reason" />:</div>
+                                            <div class="reason-text"><c:out value="${appointment.key.reason}" /></div>
+                                        </div>
+                                        <div class="appointment-specialty">
+                                            <span class="specialty-badge">
+                                                <spring:message code="${appointment.key.specialty.key}" />
+                                            </span>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <a href="<c:url value='/appointments/${appointment.key.id}/records' />" class="btn btn-secondary">
+                                                <i class="fas fa-file-medical-alt"></i>
+                                                <span><spring:message code="appointment.action.records" /></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-history fa-3x"></i>
+                            </div>
+                            <h3><spring:message code="dashboard.history.empty.title" /></h3>
+                            <p><spring:message code="dashboard.history.empty.message" /></p>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
             </div>
 
             <!-- Profile Tab -->
@@ -145,7 +269,7 @@
                     <h2><spring:message code="dashboard.profile.title" /></h2>
                     <div class="tab-actions">
                         <button id="edit-profile-btn" class="btn btn-primary">
-                            <i class="icon icon-edit"></i>
+                            <i class="fas fa-edit"></i>
                             <spring:message code="dashboard.profile.edit" />
                         </button>
                     </div>
@@ -214,8 +338,8 @@
                                 <div class="current-coverage">
                                     <spring:message code="register.selectCoverage" />:
                                     <span id="current-coverage-name">
-            <c:out value="${not empty patient.coverage ? patient.coverage.name : 'None'}" />
-        </span>
+                                        <c:out value="${not empty patient.coverage ? patient.coverage.name : 'None'}" />
+                                    </span>
                                 </div>
                                 <div class="multi-select-container" id="coverage-container">
                                     <div class="custom-multi-select" id="coverage-options">
@@ -245,7 +369,7 @@
                                     <spring:message code="logout.confirmation.cancel" />
                                 </button>
                                 <button type="submit" class="btn btn-primary">
-                                    Guardar
+                                    <spring:message code="appointment.form.save" />
                                 </button>
                             </div>
                         </form:form>
@@ -256,9 +380,6 @@
     </div>
 
     <link rel="stylesheet" href="<c:url value='/css/components/doctor-dashboard.css' />" />
-    <link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
-    <link rel="stylesheet" href="<c:url value='/css/components/inline-form.css' />" />
-    <link rel="stylesheet" href="<c:url value='/css/components/multi-select.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
@@ -331,7 +452,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-
+            // Tab switching functionality
             const tabs = document.querySelectorAll('.nav-tab');
             const tabContents = document.querySelectorAll('.tab-content');
 
@@ -353,8 +474,135 @@
                     // Add active class to the content if it exists
                     if (activeContent) {
                         activeContent.classList.add('active');
-                    } else {
-                        console.error('Tab content not found for: ' + tabId);
+                    }
+                });
+            });
+
+            // Status filter functionality for upcoming appointments
+            const statusFilter = document.getElementById('status-filter');
+            if (statusFilter) {
+                statusFilter.addEventListener('change', function() {
+                    const selectedStatus = this.value;
+                    const appointmentCards = document.querySelectorAll('#upcoming-tab .appointment-card');
+
+                    appointmentCards.forEach(card => {
+                        const cardStatus = card.getAttribute('data-status');
+
+                        if (selectedStatus === 'all' || cardStatus.toLowerCase() === selectedStatus) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Status filter functionality for history appointments
+            const historyStatusFilter = document.getElementById('history-status-filter');
+            if (historyStatusFilter) {
+                historyStatusFilter.addEventListener('change', function() {
+                    const selectedStatus = this.value;
+                    const appointmentCards = document.querySelectorAll('#history-tab .appointment-card');
+
+                    appointmentCards.forEach(card => {
+                        const cardStatus = card.getAttribute('data-status').toLowerCase();
+
+                        if (selectedStatus === 'all' || cardStatus === selectedStatus) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Date filter functionality
+            const dateFilter = document.getElementById('date-range');
+            if (dateFilter) {
+                dateFilter.addEventListener('change', function() {
+                    const selectedDateRange = this.value;
+                    const appointmentCards = document.querySelectorAll('#upcoming-tab .appointment-card');
+                    const today = new Date();
+                    const startOfWeek = new Date();
+                    startOfWeek.setDate(today.getDate() - today.getDay());
+                    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+                    const startOfAll = new Date(0);
+                    const endOfAll = new Date(9999, 11, 31);
+                    let startDate, endDate;
+                    switch (selectedDateRange) {
+                        case 'today':
+                            startDate = startOfToday;
+                            endDate = endOfToday;
+                            break;
+                        case 'week':
+                            startDate = startOfWeek;
+                            endDate = new Date(startOfWeek);
+                            endDate.setDate(endDate.getDate() + 7);
+                            break;
+                        case 'month':
+                            startDate = startOfMonth;
+                            endDate = endOfMonth;
+                            break;
+                        case 'all':
+                            startDate = startOfAll;
+                            endDate = endOfAll;
+                            break;
+                        default:
+                            startDate = startOfAll;
+                            endDate = endOfAll;
+                    }
+                    appointmentCards.forEach(card => {
+                        const cardDate = new Date(card.getAttribute('data-date'));
+                        if (cardDate >= startDate && cardDate <= endDate) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    // Filter appointments based on search input
+                    const searchTerm = this.value.toLowerCase();
+                    const appointmentCards = document.querySelectorAll('#history-tab .appointment-card');
+
+                    appointmentCards.forEach(card => {
+                        const doctorName = card.querySelector('.patient-name').textContent.toLowerCase();
+                        const reasonText = card.querySelector('.reason-text')?.textContent.toLowerCase() || '';
+
+                        if (doctorName.includes(searchTerm) || reasonText.includes(searchTerm)) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Cancel appointment functionality
+            const cancelButtons = document.querySelectorAll('.cancel-appointment');
+            cancelButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const appointmentId = this.getAttribute('data-id');
+                    if (confirm('Are you sure you want to cancel this appointment?')) {
+                        // This would typically involve an AJAX call to update the appointment status
+                        console.log('Cancelling appointment:', appointmentId);
+                        // Example AJAX call:
+                        // fetch(`/appointments/${appointmentId}/cancel`, { method: 'POST' })
+                        //     .then(response => response.json())
+                        //     .then(data => {
+                        //         if (data.success) {
+                        //             window.location.reload();
+                        //         }
+                        //     });
                     }
                 });
             });
@@ -424,27 +672,6 @@
                 currentCoverageDisplay.textContent = coverageName;
             }
         }
-
-        // Inicializar con la cobertura actual (si existe)
-        function initCoverageSelection() {
-            const coverageInput = document.getElementById('coverage-input');
-            const currentCoverageId = coverageInput.value;
-
-            if (currentCoverageId) {
-                const option = document.querySelector(`.custom-multi-select-option[data-value="${currentCoverageId}"]`);
-                if (option) {
-                    option.classList.add('selected');
-                    const coverageName = option.getAttribute('data-name');
-                    document.getElementById('current-coverage-name').textContent = coverageName;
-                }
-            }
-        }
-
-        // Llamar al inicializador cuando la página cargue
-        document.addEventListener('DOMContentLoaded', function() {
-            initCoverageSelection();
-            // Resto del código...
-        });
 
         function updateSelectedCoverage() {
             const coverageInput = document.getElementById('coverage-input');
@@ -544,6 +771,11 @@
                         }
                     });
                 }
-            }}
+            }
+        }
     </script>
+
+    <link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/components/inline-form.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/components/multi-select.css' />" />
 </layout:page>
