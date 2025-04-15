@@ -26,4 +26,11 @@ public class ErrorController {
     public ModelAndView serverError() {
         return new ModelAndView("error/500");
     }
+    @RequestMapping("/error/400")
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public ModelAndView badRequest() {
+        return new ModelAndView("error/400");
+    }
+
+
 }
