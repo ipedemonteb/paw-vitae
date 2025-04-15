@@ -13,7 +13,7 @@
         <div class="dashboard-header">
             <div class="doctor-info">
                 <div class="doctor-avatar">
-                    <img src="<c:url value="/doctor/${patient.id}/image"/>" alt="<c:out value="${patient.name} ${patient.lastName}"/>"/>
+                    <img src="<c:url value="/doctor/${patient.id}/image"/>" alt="<c:out value="${patient.name} ${patient.lastName}"/>'">
                 </div>
                 <div class="doctor-details">
                     <h1 class="doctor-name"><c:out value="${patient.name}" /> <c:out value="${patient.lastName}" /></h1>
@@ -73,9 +73,9 @@
                             <label for="status-filter"><spring:message code="dashboard.filter.status" />:</label>
                             <select id="status-filter" class="filter-select">
                                 <option value="all" selected><spring:message code="dashboard.filter.all" /></option>
-                                <option value="pending"><spring:message code="appointment.status.pending" /></option>
-                                <option value="confirmed"><spring:message code="appointment.status.confirmed" /></option>
-                                <option value="cancelled"><spring:message code="appointment.status.cancelled" /></option>
+                                <option value="pendiente"><spring:message code="appointment.status.pending" /></option>
+                                <option value="confirmada"><spring:message code="appointment.status.confirmed" /></option>
+                                <option value="cancelada"><spring:message code="appointment.status.cancelled" /></option>
                             </select>
                         </div>
                         <div class="date-filter">
@@ -94,25 +94,25 @@
                     <c:when test="${not empty upcomingAppointments}">
                         <div class="appointments-list">
                             <c:forEach items="${upcomingAppointments}" var="appointment">
-                                <div class="appointment-card" data-status="<spring:message code='${appointment.key.status}'/>" data-date="${appointment.key.date}">
+                                <div class="appointment-card" data-status=<c:out value="${appointment.key.status}"/> data-date=<c:out value="${appointment.key.date}"/> >
                                     <div class="appointment-time">
                                         <div class="appointment-date">
                                             <span class="day">
-                                                    ${appointment.key.date.dayOfWeek}
+                                                    <spring:message code="${appointment.key.date.dayOfWeek}" />
                                             </span>
                                             <span class="date-number">
-                                                    ${appointment.key.date.dayOfMonth}
+                                                    <c:out value="${appointment.key.date.dayOfMonth}"/>
                                             </span>
                                             <span class="month">
-                                                    ${appointment.key.date.month}
+                                                     <spring:message code="${appointment.key.date.month}" />
                                             </span>
                                         </div>
                                         <div class="appointment-hour">
                                             <i class="fas fa-clock"></i>
-                                                ${appointment.key.date.hour}:00
+                                                <c:out value="${appointment.key.date.hour}"/>:00
                                         </div>
                                         <div class="appointment-status-indicator">
-                                            <span class="status-badge ${appointment.key.status}">
+                                            <span class="status-badge <c:out value="${appointment.key.status}"/>">
                                                 <spring:message code='${appointment.key.status}'/>
                                             </span>
                                         </div>
@@ -143,8 +143,8 @@
                                         <div class="appointment-actions">
                                             <c:set var="status" value="${appointment.key.status}" />
 
-                                            <c:if test="${status eq 'pendiente' || status eq 'confirmado'}">
-                                                <button class="btn btn-danger cancel-appointment" data-id="${appointment.key.id}">
+                                            <c:if test="${status eq 'pendiente' || status eq 'confirmada'}">
+                                                <button class="btn btn-danger cancel-appointment" data-id=<c:out value="${appointment.key.id}"/>">
                                                     <i class="fas fa-times-circle"></i>
                                                     <span><spring:message code="appointment.action.cancel" /></span>
                                                 </button>
@@ -176,9 +176,9 @@
                             <label for="history-status-filter"><spring:message code="dashboard.filter.status" />:</label>
                             <select id="history-status-filter" class="filter-select">
                                 <option value="all" selected><spring:message code="dashboard.filter.all" /></option>
-                                <option value="completed"><spring:message code="appointment.status.completed" /></option>
-                                <option value="cancelled"><spring:message code="appointment.status.cancelled" /></option>
-                                <option value="no-show"><spring:message code="appointment.status.noShow" /></option>
+                                <option value="completada"><spring:message code="appointment.status.completed" /></option>
+                                <option value="cancelada"><spring:message code="appointment.status.cancelled" /></option>
+                                <option value="no-asistio"><spring:message code="appointment.status.noShow" /></option>
                             </select>
                         </div>
                         <div class="search-container">
@@ -194,25 +194,25 @@
                     <c:when test="${not empty pastAppointments}">
                         <div class="appointments-list">
                             <c:forEach items="${pastAppointments}" var="appointment">
-                                <div class="appointment-card past" data-status="<spring:message code='${appointment.key.status}'/>" data-date="${appointment.key.date}">
+                                <div class="appointment-card past" data-status="${appointment.key.status}" data-date="${appointment.key.date}">
                                     <div class="appointment-time">
                                         <div class="appointment-date">
                                             <span class="day">
-                                                    ${appointment.key.date.dayOfWeek}
+                                                    <spring:message code="${appointment.key.date.dayOfWeek}" />
                                             </span>
                                             <span class="date-number">
-                                                    ${appointment.key.date.dayOfMonth}
+                                                    <c:out value="${appointment.key.date.dayOfMonth}"/>
                                             </span>
                                             <span class="month">
-                                                    ${appointment.key.date.month}
+                                                     <spring:message code="${appointment.key.date.month}" />
                                             </span>
                                         </div>
                                         <div class="appointment-hour">
                                             <i class="fas fa-clock"></i>
-                                                ${appointment.key.date.hour}:00
+                                                <c:out value="${appointment.key.date.hour}"/>:00
                                         </div>
                                         <div class="appointment-status-indicator">
-                                            <span class="status-badge ${appointment.key.status}">
+                                            <span class="status-badge <c:out value="${appointment.key.status}"/>">
                                                 <spring:message code='${appointment.key.status}'/>
                                             </span>
                                         </div>
@@ -487,8 +487,9 @@
 
                     appointmentCards.forEach(card => {
                         const cardStatus = card.getAttribute('data-status');
+                        console.log('Card status:', cardStatus, 'Selected status:', selectedStatus);
 
-                        if (selectedStatus === 'all' || cardStatus.toLowerCase() === selectedStatus) {
+                        if (selectedStatus === 'all' || cardStatus === selectedStatus) {
                             card.style.display = 'flex';
                         } else {
                             card.style.display = 'none';
@@ -505,7 +506,8 @@
                     const appointmentCards = document.querySelectorAll('#history-tab .appointment-card');
 
                     appointmentCards.forEach(card => {
-                        const cardStatus = card.getAttribute('data-status').toLowerCase();
+                        const cardStatus = card.getAttribute('data-status');
+                        console.log('History card status:', cardStatus, 'Selected status:', selectedStatus);
 
                         if (selectedStatus === 'all' || cardStatus === selectedStatus) {
                             card.style.display = 'flex';
@@ -698,20 +700,23 @@
                 });
             } else {
                 // If no ID is set, try to match by name (for backward compatibility)
-                const currentCoverageName = document.getElementById('current-coverage-name').textContent;
-                if (currentCoverageName) {
-                    const options = document.querySelectorAll('#coverage-options .custom-multi-select-option');
+                const currentCoverageDisplay = document.getElementById('current-coverage-name');
+                if (currentCoverageDisplay) {
+                    const currentCoverageName = currentCoverageDisplay.textContent;
+                    if (currentCoverageName) {
+                        const options = document.querySelectorAll('#coverage-options .custom-multi-select-option');
 
-                    options.forEach(option => {
-                        const name = option.getAttribute('data-name');
-                        if (name === currentCoverageName) {
-                            option.classList.add('selected');
+                        options.forEach(option => {
+                            const name = option.getAttribute('data-name');
+                            if (name === currentCoverageName) {
+                                option.classList.add('selected');
 
-                            // Update the input with the ID
-                            const id = option.getAttribute('data-value');
-                            coverageInput.value = id;
-                        }
-                    });
+                                // Update the input with the ID
+                                const id = option.getAttribute('data-value');
+                                coverageInput.value = id;
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -756,20 +761,23 @@
                 });
             } else {
                 // Fallback: Match by name if ID is not set
-                const currentCoverageName = document.getElementById('current-coverage-name').textContent;
-                if (currentCoverageName) {
-                    const options = document.querySelectorAll('#coverage-options .custom-multi-select-option');
+                const currentCoverageDisplay = document.getElementById('current-coverage-name');
+                if (currentCoverageDisplay) {
+                    const currentCoverageName = currentCoverageDisplay.textContent;
+                    if (currentCoverageName) {
+                        const options = document.querySelectorAll('#coverage-options .custom-multi-select-option');
 
-                    options.forEach(option => {
-                        const name = option.getAttribute('data-name');
-                        if (name === currentCoverageName) {
-                            option.classList.add('selected');
+                        options.forEach(option => {
+                            const name = option.getAttribute('data-name');
+                            if (name === currentCoverageName) {
+                                option.classList.add('selected');
 
-                            // Update the input with the ID
-                            const id = option.getAttribute('data-value');
-                            coverageInput.value = id;
-                        }
-                    });
+                                // Update the input with the ID
+                                const id = option.getAttribute('data-value');
+                                coverageInput.value = id;
+                            }
+                        });
+                    }
                 }
             }
         }
