@@ -166,13 +166,11 @@ public class DoctorDaoImpl implements DoctorDao {
         return doctors;
     }
     @Override
-    public void updateDoctor(long id, String name, String lastName, String email, String phone,
-                             List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList) {
+    public void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList) {
         Doctor currentDoctor = getById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
 
         String updatedName = (name != null) ? name : currentDoctor.getName();
         String updatedLastName = (lastName != null) ? lastName : currentDoctor.getLastName();
-        String updatedEmail = (email != null) ? email : currentDoctor.getEmail();
         String updatedPhone = (phone != null) ? phone : currentDoctor.getPhone();
         List<Specialty> updatedSpecialties = (specialties != null) ? specialties : currentDoctor.getSpecialtyList();
         List<Coverage> updatedCoverages = (coverages != null) ? coverages : currentDoctor.getCoverageList();
@@ -180,8 +178,8 @@ public class DoctorDaoImpl implements DoctorDao {
 
         // Update basic doctor info
         jdbcTemplate.update(
-                "UPDATE users SET name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?",
-                updatedName, updatedLastName, updatedEmail, updatedPhone, id
+                "UPDATE users SET name = ?, last_name = ?, phone = ? WHERE id = ?",
+                updatedName, updatedLastName, updatedPhone, id
         );
 
         // Update specialties

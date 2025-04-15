@@ -19,8 +19,7 @@ public interface DoctorDao {
 
     List<Doctor> getAll();
     List<Doctor> getByIds(Set<Long> ids);
-    void updateDoctor(long id, String name, String lastName, String email, String phone,
-                      List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList);
+    void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList);
 
     void addAvailability(long doctorId, List<AvailabilitySlot> availabilityList);
     List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId);
