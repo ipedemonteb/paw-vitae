@@ -16,18 +16,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -90,4 +85,20 @@ public class PatientController {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return cs.getByEmail((String) auth.getName()).orElseThrow(UserNotFoundException::new);
     }
+    @PostMapping(value = "/patient/dashboard/appointment/cancel", produces = "application/json")
+    @ResponseBody
+    public String cancelAppointment(@RequestParam("appointmentId") Long appointmentId) {
+        try {
+            Appointment appt = as.getById(appointmentId).orElse(null);
+            if (appt == null) {
+                return "{\"success\": false, \"error\": \"Turno no encontrado\"}";
+            }
+            as.cancelAppointment(appointmentId);
+            return "{\"success\": true}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"success\": false, \"error\": \"Error inesperado del servidor\"}";
+        }
+    }
+
 }

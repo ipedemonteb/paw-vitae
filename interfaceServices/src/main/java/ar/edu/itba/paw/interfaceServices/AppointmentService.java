@@ -26,4 +26,7 @@ public interface AppointmentService {
 
     Map<Appointment, Client> getForDoctor(long doctorId);
     Map<Appointment, Doctor> getForClient(long clientId);
+    void cancelAppointment(long appointmentId);
+    void acceptAppointment(long appointmentId);
+    Optional<Appointment> getById(long appointmentId);
 }

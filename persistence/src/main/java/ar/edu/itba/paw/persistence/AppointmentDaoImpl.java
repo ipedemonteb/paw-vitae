@@ -100,4 +100,18 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ? AND date > NOW()", ROW_MAPPER, doctorId);
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
+
+    @Override
+    public void cancelApointment(long appointmentId) {
+        jdbcTemplate.update("UPDATE Appointments SET status = ? WHERE id = ?", AppointmentStatus.CANCELADO.getValue(), appointmentId);
+    }
+
+    @Override
+    public void acceptAppointment(long appointmentId) {
+        jdbcTemplate.update("UPDATE Appointments SET status = ? WHERE id = ?", AppointmentStatus.CONFIRMADO.getValue(), appointmentId);
+    }
+    @Override
+    public Optional<Appointment> getById(long appointmentId) {
+        return jdbcTemplate.query("SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id  WHERE Appointments.id = ?", ROW_MAPPER, appointmentId).stream().findFirst();
+    }
 }
