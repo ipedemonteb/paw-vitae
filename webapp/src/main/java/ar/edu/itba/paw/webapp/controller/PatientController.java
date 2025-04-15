@@ -71,12 +71,7 @@ public class PatientController {
             return mav;
         }
         Client client = loggedUser();
-        cs.updateClient(client.getId(),
-                updatePatientForm.getName(),
-                updatePatientForm.getLastName(),
-                updatePatientForm.getPhone(),
-                updatePatientForm.getCoverage());
-
+        cs.updateClient(client,updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
         return new ModelAndView("redirect:/patient/dashboard");
     }
 
