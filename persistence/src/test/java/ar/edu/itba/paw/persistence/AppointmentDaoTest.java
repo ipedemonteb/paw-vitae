@@ -116,7 +116,7 @@ public class AppointmentDaoTest {
     @Test
     public void testCreateAppointment() {
         //Preconditions
-        LocalDateTime date = LocalDateTime.now().plusDays(1);
+       LocalDateTime date =  LocalDateTime.of(2026, 1, 1, 10, 0);
 
         //Exercise
         //CHEQUEAR el new Specialty
@@ -147,7 +147,7 @@ public class AppointmentDaoTest {
     @Test
     public void testGetByClientExists() {
         //Preconditions
-        LocalDateTime date = LocalDateTime.now().plusDays(1);
+        LocalDateTime date = LocalDateTime.of(2026, 1, 1, 10, 0);
         Appointment appointment = appointmentDao.create(cliId, docId, date, APPOINTREASON, new Specialty(specId, "Cardiology"));
 
         //Exercise
@@ -175,7 +175,7 @@ public class AppointmentDaoTest {
     @Test
     public void testGetByDoctorExists() {
         //Preconditions
-        LocalDateTime date = LocalDateTime.now().plusDays(1);
+        LocalDateTime date = LocalDateTime.of(2026, 1, 1, 10, 0);
         Appointment appointment = appointmentDao.create(cliId, docId, date, APPOINTREASON, new Specialty(specId, "Cardiology"));
 
         //Exercise
@@ -191,9 +191,9 @@ public class AppointmentDaoTest {
     @Test
     public void testGetAllFutureAppointments() {
         //Preconditions
-        LocalDateTime old_date = LocalDateTime.now().minusDays(1);;
-        LocalDateTime new_date_1 = LocalDateTime.now().plusDays(1);
-        LocalDateTime new_date_2 = LocalDateTime.now().plusDays(2);
+        LocalDateTime old_date = LocalDateTime.of(2024, 1, 1, 10, 0);
+        LocalDateTime new_date_1 = LocalDateTime.of(2026, 1, 1, 10, 0);
+        LocalDateTime new_date_2 = LocalDateTime.of(2026, 1, 2, 10, 0);
         Appointment appointment_1 = appointmentDao.create(cliId, docId, old_date, APPOINTREASON, new Specialty(specId, "Cardiology"));
         Appointment appointment_2 = appointmentDao.create(cliId, docId, new_date_1, APPOINTREASON, new Specialty(specId, "Cardiology"));
         Appointment appointment_3 = appointmentDao.create(cliId, docId, new_date_2, APPOINTREASON, new Specialty(specId, "Cardiology"));

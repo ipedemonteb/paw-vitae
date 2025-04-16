@@ -1125,14 +1125,14 @@
             font-weight: 500;
         }
 
-             /* Time slots styles */
-         .timeslots-container {
-             border: 1px solid #ddd;
-             border-radius: 8px;
-             padding: 20px;
-             margin-bottom: 15px;
-             background-color: #f9f9f9;
-         }
+        /* Time slots styles */
+        .timeslots-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
 
         .no-slots-message {
             text-align: center;
@@ -1219,216 +1219,400 @@
         }
     </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add this to the existing DOMContentLoaded event handler
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add this to the existing DOMContentLoaded event handler
 
-        // Edit Profile Functionality
-        const editProfileBtn = document.getElementById('edit-profile-btn');
-        const cancelEditBtn = document.getElementById('cancel-edit-btn');
-        const profileView = document.getElementById('profile-view');
-        const specialtiesSection = document.getElementById('specialties-section');
-        const coveragesSection = document.getElementById('coverages-section');
-        const editProfileForm = document.getElementById('edit-profile-form');
+            // Edit Profile Functionality
+            const editProfileBtn = document.getElementById('edit-profile-btn');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            const profileView = document.getElementById('profile-view');
+            const specialtiesSection = document.getElementById('specialties-section');
+            const coveragesSection = document.getElementById('coverages-section');
+            const editProfileForm = document.getElementById('edit-profile-form');
 
-        if (editProfileBtn) {
-            editProfileBtn.addEventListener('click', function() {
-                profileView.style.display = 'none';
-                specialtiesSection.style.display = 'none';
-                coveragesSection.style.display = 'none';
-                editProfileForm.style.display = 'block';
-            });
-        }
-
-        if (cancelEditBtn) {
-            cancelEditBtn.addEventListener('click', function() {
-                profileView.style.display = 'block';
-                specialtiesSection.style.display = 'block';
-                coveragesSection.style.display = 'block';
-                editProfileForm.style.display = 'none';
-            });
-        }
-
-        // Initialize coverages dropdown
-        initCoveragesDropdown();
-
-        // Initialize search functionality for coverages
-        initCoveragesSearch();
-
-        // Pre-select the current coverages
-        preSelectCurrentCoverages();
-    });
-
-    function initCoveragesDropdown() {
-        const coverageOptions = document.querySelectorAll('#coverages-options .custom-multi-select-option');
-        const coveragesInput = document.getElementById('coverages-input');
-
-        // Set initial values from the input
-        updateSelectedCoverages();
-    }
-
-    function toggleCoverage(optionElement) {
-        // Toggle selection state
-        optionElement.classList.toggle('selected');
-
-        // Update the hidden input with all selected coverage IDs
-        updateSelectedCoverages();
-    }
-
-    function updateSelectedCoverages() {
-        const selectedOptions = document.querySelectorAll('#coverages-options .custom-multi-select-option.selected');
-        const coveragesInput = document.getElementById('coverages-input');
-        const selectedCoveragesDisplay = document.getElementById('selected-coverages-display');
-
-        // Create an array of selected coverage IDs
-        const selectedIds = Array.from(selectedOptions).map(option => option.getAttribute('data-value'));
-
-        // Update the hidden input value with comma-separated IDs
-        coveragesInput.value = selectedIds.join(',');
-
-        // Update the display of selected coverages
-        const selectedNames = Array.from(selectedOptions).map(option => option.getAttribute('data-name'));
-        selectedCoveragesDisplay.innerHTML = selectedNames.length > 0
-            ? selectedNames.join(', ')
-            : '<em>None selected</em>';
-    }
-
-    function initCoveragesSearch() {
-        const searchBox = document.getElementById('coverages-search');
-        const options = document.querySelectorAll('#coverages-options .custom-multi-select-option');
-
-        if (searchBox) {
-            searchBox.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-
-                options.forEach(option => {
-                    const text = option.querySelector('.option-text').textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        option.style.display = 'flex';
-                    } else {
-                        option.style.display = 'none';
-                    }
+            if (editProfileBtn) {
+                editProfileBtn.addEventListener('click', function() {
+                    profileView.style.display = 'none';
+                    specialtiesSection.style.display = 'none';
+                    coveragesSection.style.display = 'none';
+                    editProfileForm.style.display = 'block';
                 });
-            });
-        }
-    }
-
-    function preSelectCurrentCoverages() {
-        // Get the current doctor's coverages from the display
-        const currentCoverages = document.querySelectorAll('.coverages-list .coverage-item');
-        const coverageNames = Array.from(currentCoverages).map(item => item.textContent.trim());
-
-        // Find and select matching options in the dropdown
-        const options = document.querySelectorAll('#coverages-options .custom-multi-select-option');
-
-        options.forEach(option => {
-            const name = option.getAttribute('data-name');
-            if (coverageNames.includes(name)) {
-                option.classList.add('selected');
             }
+
+            if (cancelEditBtn) {
+                cancelEditBtn.addEventListener('click', function() {
+                    profileView.style.display = 'block';
+                    specialtiesSection.style.display = 'block';
+                    coveragesSection.style.display = 'block';
+                    editProfileForm.style.display = 'none';
+                });
+            }
+
+            // Initialize coverages dropdown
+            initCoveragesDropdown();
+
+            // Initialize search functionality for coverages
+            initCoveragesSearch();
+
+            // Pre-select the current coverages
+            preSelectCurrentCoverages();
         });
 
-        // Update the hidden input
-        updateSelectedCoverages();
-    }
+        function initCoveragesDropdown() {
+            const coverageOptions = document.querySelectorAll('#coverages-options .custom-multi-select-option');
+            const coveragesInput = document.getElementById('coverages-input');
 
-    // Add these functions to the existing script section
-
-    // Initialize specialties dropdown
-    function initSpecialtiesDropdown() {
-        const specialtyOptions = document.querySelectorAll('#specialties-options .custom-multi-select-option');
-        const specialtiesInput = document.getElementById('specialties-input');
-
-        // Set initial values from the input
-        updateSelectedSpecialties();
-    }
-
-    // Toggle specialty selection when clicked
-    function toggleSpecialty(optionElement) {
-        // Toggle selection state
-        optionElement.classList.toggle('selected');
-
-        // Update the hidden input with all selected specialty IDs
-        updateSelectedSpecialties();
-    }
-
-    // Update the hidden input field and display with selected specialties
-    function updateSelectedSpecialties() {
-        const selectedOptions = document.querySelectorAll('#specialties-options .custom-multi-select-option.selected');
-        const specialtiesInput = document.getElementById('specialties-input');
-        const selectedSpecialtiesDisplay = document.getElementById('selected-specialties-display');
-
-        // Create an array of selected specialty IDs
-        const selectedIds = Array.from(selectedOptions).map(option => option.getAttribute('data-value'));
-
-        // Update the hidden input value with comma-separated IDs
-        specialtiesInput.value = selectedIds.join(',');
-
-        // Update the display of selected specialties
-        const selectedNames = Array.from(selectedOptions).map(option => option.getAttribute('data-name'));
-        selectedSpecialtiesDisplay.innerHTML = selectedNames.length > 0
-            ? selectedNames.join(', ')
-            : '<em>None selected</em>';
-    }
-
-    // Initialize search functionality for specialties dropdown
-    function initSpecialtiesSearch() {
-        const searchBox = document.getElementById('specialties-search');
-        const options = document.querySelectorAll('#specialties-options .custom-multi-select-option');
-
-        if (searchBox) {
-            searchBox.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-
-                options.forEach(option => {
-                    const text = option.querySelector('.option-text').textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        option.style.display = 'flex';
-                    } else {
-                        option.style.display = 'none';
-                    }
-                });
-            });
+            // Set initial values from the input
+            updateSelectedCoverages();
         }
-    }
 
-    // Pre-select the current specialties in the dropdown
-    function preSelectCurrentSpecialties() {
-        // Get the current doctor's specialties from the display
-        const currentSpecialties = document.querySelectorAll('.specialties-list .specialty-item');
-        const specialtyNames = Array.from(currentSpecialties).map(item => item.textContent.trim());
+        function toggleCoverage(optionElement) {
+            // Toggle selection state
+            optionElement.classList.toggle('selected');
 
-        // Find and select matching options in the dropdown
-        const options = document.querySelectorAll('#specialties-options .custom-multi-select-option');
+            // Update the hidden input with all selected coverage IDs
+            updateSelectedCoverages();
+        }
 
-        options.forEach(option => {
-            const name = option.getAttribute('data-name');
-            if (specialtyNames.includes(name)) {
-                option.classList.add('selected');
+        function updateSelectedCoverages() {
+            const selectedOptions = document.querySelectorAll('#coverages-options .custom-multi-select-option.selected');
+            const coveragesInput = document.getElementById('coverages-input');
+            const selectedCoveragesDisplay = document.getElementById('selected-coverages-display');
+
+            // Create an array of selected coverage IDs
+            const selectedIds = Array.from(selectedOptions).map(option => option.getAttribute('data-value'));
+
+            // Update the hidden input value with comma-separated IDs
+            coveragesInput.value = selectedIds.join(',');
+
+            // Update the display of selected coverages
+            const selectedNames = Array.from(selectedOptions).map(option => option.getAttribute('data-name'));
+            selectedCoveragesDisplay.innerHTML = selectedNames.length > 0
+                ? selectedNames.join(', ')
+                : '<em>None selected</em>';
+        }
+
+        function initCoveragesSearch() {
+            const searchBox = document.getElementById('coverages-search');
+            const options = document.querySelectorAll('#coverages-options .custom-multi-select-option');
+
+            if (searchBox) {
+                searchBox.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+
+                    options.forEach(option => {
+                        const text = option.querySelector('.option-text').textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.display = 'flex';
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+                });
             }
-        });
+        }
 
-        // Update the hidden input
-        updateSelectedSpecialties();
-    }
+        function preSelectCurrentCoverages() {
+            // Get the current doctor's coverages from the display
+            const currentCoverages = document.querySelectorAll('.coverages-list .coverage-item');
+            const coverageNames = Array.from(currentCoverages).map(item => item.textContent.trim());
 
-    // Update the DOMContentLoaded event handler to initialize specialties
-    document.addEventListener('DOMContentLoaded', function() {
-        // Existing code...
+            // Find and select matching options in the dropdown
+            const options = document.querySelectorAll('#coverages-options .custom-multi-select-option');
 
-        // Add these lines to the existing DOMContentLoaded handler
+            options.forEach(option => {
+                const name = option.getAttribute('data-name');
+                if (coverageNames.includes(name)) {
+                    option.classList.add('selected');
+                }
+            });
+
+            // Update the hidden input
+            updateSelectedCoverages();
+        }
+
+        // Add these functions to the existing script section
+
         // Initialize specialties dropdown
-        initSpecialtiesDropdown();
+        function initSpecialtiesDropdown() {
+            const specialtyOptions = document.querySelectorAll('#specialties-options .custom-multi-select-option');
+            const specialtiesInput = document.getElementById('specialties-input');
 
-        // Initialize search functionality for specialties
-        initSpecialtiesSearch();
+            // Set initial values from the input
+            updateSelectedSpecialties();
+        }
 
-        // Pre-select the current specialties
-        preSelectCurrentSpecialties();
-    });
-</script>
+        // Toggle specialty selection when clicked
+        function toggleSpecialty(optionElement) {
+            // Toggle selection state
+            optionElement.classList.toggle('selected');
 
-<!-- Make sure these CSS files are included -->
-<link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
-<link rel="stylesheet" href="<c:url value='/css/components/inline-form.css' />" />
+            // Update the hidden input with all selected specialty IDs
+            updateSelectedSpecialties();
+        }
+
+        // Update the hidden input field and display with selected specialties
+        function updateSelectedSpecialties() {
+            const selectedOptions = document.querySelectorAll('#specialties-options .custom-multi-select-option.selected');
+            const specialtiesInput = document.getElementById('specialties-input');
+            const selectedSpecialtiesDisplay = document.getElementById('selected-specialties-display');
+
+            // Create an array of selected specialty IDs
+            const selectedIds = Array.from(selectedOptions).map(option => option.getAttribute('data-value'));
+
+            // Update the hidden input value with comma-separated IDs
+            specialtiesInput.value = selectedIds.join(',');
+
+            // Update the display of selected specialties
+            const selectedNames = Array.from(selectedOptions).map(option => option.getAttribute('data-name'));
+            selectedSpecialtiesDisplay.innerHTML = selectedNames.length > 0
+                ? selectedNames.join(', ')
+                : '<em>None selected</em>';
+        }
+
+        // Initialize search functionality for specialties dropdown
+        function initSpecialtiesSearch() {
+            const searchBox = document.getElementById('specialties-search');
+            const options = document.querySelectorAll('#specialties-options .custom-multi-select-option');
+
+            if (searchBox) {
+                searchBox.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+
+                    options.forEach(option => {
+                        const text = option.querySelector('.option-text').textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.display = 'flex';
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        }
+
+        // Pre-select the current specialties in the dropdown
+        function preSelectCurrentSpecialties() {
+            // Get the current doctor's specialties from the display
+            const currentSpecialties = document.querySelectorAll('.specialties-list .specialty-item');
+            const specialtyNames = Array.from(currentSpecialties).map(item => item.textContent.trim());
+
+            // Find and select matching options in the dropdown
+            const options = document.querySelectorAll('#specialties-options .custom-multi-select-option');
+
+            options.forEach(option => {
+                const name = option.getAttribute('data-name');
+                if (specialtyNames.includes(name)) {
+                    option.classList.add('selected');
+                }
+            });
+
+            // Update the hidden input
+            updateSelectedSpecialties();
+        }
+
+        // Update the DOMContentLoaded event handler to initialize specialties
+        document.addEventListener('DOMContentLoaded', function() {
+            // Existing code...
+
+            // Add these lines to the existing DOMContentLoaded handler
+            // Initialize specialties dropdown
+            initSpecialtiesDropdown();
+
+            // Initialize search functionality for specialties
+            initSpecialtiesSearch();
+
+            // Pre-select the current specialties
+            preSelectCurrentSpecialties();
+        });
+    </script>
+
+    <!-- Make sure these CSS files are included -->
+    <link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/components/inline-form.css' />" />
+    <script>
+        function updateSaveButtonState() {
+            const saveButton = document.querySelector('#updateAvailabilityForm button[type="submit"]');
+            const hasErrors = document.querySelectorAll('.slot-error').length > 0;
+
+            if (saveButton) {
+                saveButton.disabled = hasErrors;
+                if (hasErrors) {
+                    saveButton.classList.add('btn-disabled');
+                } else {
+                    saveButton.classList.remove('btn-disabled');
+                }
+            }
+        }
+
+        // Modify the checkOverlap function to validate all slots and update button state
+        function checkOverlap(changedElement) {
+            // Clear previous errors
+            clearSlotErrors();
+
+            const index = parseInt(changedElement.getAttribute('data-index'));
+            const row = document.getElementById('slot-row-' + index);
+
+            // Get values from the row
+            const daySelect = row.querySelector('select[name$=".dayOfWeek"]');
+            const startSelect = row.querySelector('select[name$=".startTime"]');
+            const endSelect = row.querySelector('select[name$=".endTime"]');
+
+            const day = parseInt(daySelect.value);
+            const startTime = startSelect.value;
+            const endTime = endSelect.value;
+
+            // Update the slot in our array
+            const slotIndex = timeSlots.findIndex(slot => slot.index === index);
+            if (slotIndex !== -1) {
+                timeSlots[slotIndex].day = day;
+                timeSlots[slotIndex].startTime = startTime;
+                timeSlots[slotIndex].endTime = endTime;
+            }
+
+            // Check if end time is after start time
+            if (startTime >= endTime) {
+                row.classList.add('slot-error');
+                showSlotError('<spring:message code="register.timeSlotInvalidTime" javaScriptEscape="true" />');
+                updateSaveButtonState();
+                return false;
+            }
+
+            // Check for overlaps with other slots
+            const overlaps = timeSlots.filter((slot, i) => {
+                if (slot.index === index) return false; // Skip the current slot
+
+                // Only check slots on the same day
+                if (slot.day !== day) return false;
+
+                // Check for time overlap
+                return !(endTime <= slot.startTime || startTime >= slot.endTime);
+            });
+
+            if (overlaps.length > 0) {
+                // Mark overlapping slots with error
+                row.classList.add('slot-error');
+                overlaps.forEach(overlap => {
+                    const overlapRow = document.getElementById('slot-row-' + overlap.index);
+                    if (overlapRow) {
+                        overlapRow.classList.add('slot-error');
+                    }
+                });
+
+                showSlotError('<spring:message code="register.timeSlotOverlap" javaScriptEscape="true" />');
+                updateSaveButtonState();
+                return false;
+            }
+
+            // Validate all slots to ensure we catch any other overlaps
+            validateAllSlots();
+            return true;
+        }
+
+        // Add a function to validate all slots
+        function validateAllSlots() {
+            // Clear all errors first
+            clearSlotErrors();
+
+            let hasErrors = false;
+
+            // Check each slot against all others
+            for (let i = 0; i < timeSlots.length; i++) {
+                const slot = timeSlots[i];
+                const row = document.getElementById('slot-row-' + slot.index);
+
+                if (!row) continue;
+
+                // Check if end time is after start time
+                if (slot.startTime >= slot.endTime) {
+                    row.classList.add('slot-error');
+                    showSlotError('<spring:message code="register.timeSlotInvalidTime" javaScriptEscape="true" />');
+                    hasErrors = true;
+                    continue;
+                }
+
+                // Check for overlaps with other slots
+                for (let j = i + 1; j < timeSlots.length; j++) {
+                    const otherSlot = timeSlots[j];
+
+                    // Only check slots on the same day
+                    if (slot.day !== otherSlot.day) continue;
+
+                    // Check for time overlap
+                    if (!(slot.endTime <= otherSlot.startTime || slot.startTime >= otherSlot.endTime)) {
+                        const row1 = document.getElementById('slot-row-' + slot.index);
+                        const row2 = document.getElementById('slot-row-' + otherSlot.index);
+
+                        if (row1) row1.classList.add('slot-error');
+                        if (row2) row2.classList.add('slot-error');
+
+                        showSlotError('<spring:message code="register.timeSlotOverlap" javaScriptEscape="true" />');
+                        hasErrors = true;
+                    }
+                }
+            }
+
+            updateSaveButtonState();
+            return !hasErrors;
+        }
+
+        // Modify the removeTimeSlotRow function to validate remaining slots
+        function removeTimeSlotRow(index) {
+            const row = document.getElementById('slot-row-' + index);
+
+            if (row) {
+                // Create a hidden input to mark this slot for deletion
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'deletedSlots';
+                hiddenInput.value = index;
+                document.getElementById('updateAvailabilityForm').appendChild(hiddenInput);
+
+                // Remove from DOM
+                row.parentNode.removeChild(row);
+
+                // Remove from array
+                const slotIndex = timeSlots.findIndex(slot => slot.index === index);
+                if (slotIndex !== -1) {
+                    timeSlots.splice(slotIndex, 1);
+                }
+
+                // Validate remaining slots
+                validateAllSlots();
+
+                // Update no slots message
+                updateNoSlotsMessage();
+            }
+        }
+
+        // Add CSS for disabled button
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add to existing DOMContentLoaded
+
+            // Initial validation of slots
+            validateAllSlots();
+
+            // Add form submission handler to prevent submission with errors
+            const availabilityForm = document.getElementById('updateAvailabilityForm');
+            if (availabilityForm) {
+                availabilityForm.addEventListener('submit', function(e) {
+                    if (!validateAllSlots()) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    return true;
+                });
+            }
+        });
+    </script>
+
+    <style>
+        /* Add this to your existing styles */
+        .btn-disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    </style>
 </layout:page>
