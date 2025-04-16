@@ -46,7 +46,7 @@ public class CoverageDaoImpl implements CoverageDao {
 
     @Override
     public Optional<Coverage> findByName(String name) {
-        return jdbcTemplate.query("SELECT * FROM coverages WHERE name = ?", COVERAGE_MAPPER,name).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM coverages WHERE coverage_name = ?", COVERAGE_MAPPER,name).stream().findFirst();
     }
 
     @Override
