@@ -77,4 +77,10 @@ public class DoctorServiceImpl implements DoctorService {
         doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList, availabilitySlots);
     }
 
+    @Transactional
+    @Override
+    public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
+        doctorDao.updateDoctorAvailability(id, availabilitySlots);
+    }
+
 }
