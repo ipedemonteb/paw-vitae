@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.models.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -209,5 +208,29 @@ public class AppointmentDaoTest {
         assertFalse(appointments.contains(old_date));
     }
 
-    //@TODO cancel && accept appointment
+    @Test
+    public void testCancelAppointment() {
+        //Preconditions
+        LocalDateTime date = LocalDateTime.of(2026, 1, 1, 10, 0);
+        Appointment appointment = appointmentDao.create(cliId, docId, date, APPOINTREASON, new Specialty(specId, "Cardiology"));
+
+        //Exercise
+        appointmentDao.cancelApointment(appointment.getId());
+
+        //Postconditions
+        assertEquals(AppointmentStatus.CANCELADO.getValue(), appointmentDao.getById(appointment.getId()).get().getStatus());
+    }
+
+    @Test
+    public void testAcceptAppointment() {
+        //Preconditions
+        LocalDateTime date = LocalDateTime.of(2026, 1, 1, 10, 0);
+        Appointment appointment = appointmentDao.create(cliId, docId, date, APPOINTREASON, new Specialty(specId, "Cardiology"));
+
+        //Exercise
+        appointmentDao.acceptAppointment(appointment.getId());
+
+        //Postconditions
+        assertEquals(AppointmentStatus.CONFIRMADO.getValue(), appointmentDao.getById(appointment.getId()).get().getStatus());
+    }
 }
