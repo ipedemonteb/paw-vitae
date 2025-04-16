@@ -33,6 +33,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class DoctorController {
@@ -155,6 +156,7 @@ public class DoctorController {
 
     @RequestMapping(value = "/doctor/dashboard/availability", method = RequestMethod.POST)
     public ModelAndView updateAvailability(@Valid @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm form,
+                                           @RequestParam(value = "deletedSlots", required = false) String[] deletedSlots,
                                            BindingResult errors) {
         if (errors.hasErrors()) {
             // Return to dashboard with errors displayed
@@ -162,7 +164,16 @@ public class DoctorController {
             mav.addObject("updateAvailabilityForm", form);
             return mav;
         }
+
         Doctor doctor = loggedUser();
+
+        // Filter out any null slots that might have been created when removing rows
+        List<AvailabilitySlot> validSlots = form.getAvailabilitySlots().stream()
+                .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
+                .collect(Collectors.toList());
+
+        form.setAvailabilitySlots(validSlots);
+
         ds.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());
 
         return new ModelAndView("redirect:/doctor/dashboard");
