@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -137,6 +138,20 @@ public class DoctorController {
         final Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
         return ds.getByEmail((String) auth.getName()).orElseThrow(UserNotFoundException::new);
     }
+    @PostMapping(value = "/doctor/dashboard/appointment/cancel", produces = "application/json")
+    @ResponseBody
+    public String cancelAppointment(@RequestParam("appointmentId") Long appointmentId){
+        try {
+            Appointment appt = as.getById(appointmentId).orElse(null);
+            if (appt == null) {
+                return "{\"success\": false}";
+            }
+            as.cancelAppointment(appointmentId);
+            return "{\"success\": true}";
+        } catch (Exception e) {
+            return "{\"success\": false}";
+        }
+    }
 
     @RequestMapping(value = "/doctor/dashboard/availability", method = RequestMethod.POST)
     public ModelAndView updateAvailability(@Valid @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm form,
@@ -147,6 +162,21 @@ public class DoctorController {
             mav.addObject("updateAvailabilityForm", form);
             return mav;
         }
+    @PostMapping(value = "/doctor/dashboard/appointment/accept", produces = "application/json")
+    @ResponseBody
+    public String acceptAppointment(@RequestParam("appointmentId") Long appointmentId){
+        try {
+            Appointment appt = as.getById(appointmentId).orElse(null);
+            if (appt == null) {
+                return "{\"success\": false}";
+            }
+            as.acceptAppointment(appointmentId);
+            return "{\"success\": true}";
+        } catch (Exception e) {
+            return "{\"success\": false}";
+        }
+    }
+}
 
         Doctor doctor = loggedUser();
         ds.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());

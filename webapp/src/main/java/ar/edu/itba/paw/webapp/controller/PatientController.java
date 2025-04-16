@@ -71,12 +71,7 @@ public class PatientController {
             return mav;
         }
         Client client = loggedUser();
-        cs.updateClient(client.getId(),
-                updatePatientForm.getName(),
-                updatePatientForm.getLastName(),
-                updatePatientForm.getPhone(),
-                updatePatientForm.getCoverage());
-
+        cs.updateClient(client,updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
         return new ModelAndView("redirect:/patient/dashboard");
     }
 
@@ -91,13 +86,12 @@ public class PatientController {
         try {
             Appointment appt = as.getById(appointmentId).orElse(null);
             if (appt == null) {
-                return "{\"success\": false, \"error\": \"Turno no encontrado\"}";
+                return "{\"success\": false}";
             }
             as.cancelAppointment(appointmentId);
             return "{\"success\": true}";
         } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"success\": false, \"error\": \"Error inesperado del servidor\"}";
+            return "{\"success\": false}";
         }
     }
 
