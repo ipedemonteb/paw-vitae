@@ -282,12 +282,6 @@
                                                 <spring:message code="${appointment.key.specialty.key}" />
                                             </span>
                                         </div>
-                                        <div class="appointment-actions">
-                                            <a href="<c:url value='/appointments/${appointment.key.id}/records' />" class="btn btn-secondary">
-                                                <i class="fas fa-file-medical-alt"></i>
-                                                <span><spring:message code="appointment.action.records" /></span>
-                                            </a>
-                                        </div>
                                     </div>
                                 </div>
                             </c:forEach>
@@ -613,7 +607,7 @@
                     appointmentCards.forEach(card => {
                         const cardStatus = card.getAttribute('data-status');
 
-                        if (selectedStatus === '${all}' || cardStatus.toLowerCase() === selectedStatus) {
+                        if (selectedStatus === '${all}' || cardStatus === selectedStatus) {
                             card.style.display = 'flex';
                         } else {
                             card.style.display = 'none';
@@ -721,16 +715,19 @@
                     e.preventDefault();
                     const appointmentId = this.getAttribute('data-id');
                     if (confirm('Are you sure you want to confirm this appointment?')) {
-                        // This would typically involve an AJAX call to update the appointment status
-                        console.log('Confirming appointment:', appointmentId);
-                        // Example AJAX call:
-                        // fetch(`/appointments/${appointmentId}/confirm`, { method: 'POST' })
-                        //     .then(response => response.json())
-                        //     .then(data => {
-                        //         if (data.success) {
-                        //             window.location.reload();
-                        //         }
-                        //     });
+                        fetch(`/doctor/dashboard/appointment/accept`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({ appointmentId })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.location.reload();
+                                }
+                            })
                     }
                 });
             });
@@ -745,14 +742,19 @@
                     if (confirm('Are you sure you want to cancel this appointment?')) {
                         // This would typically involve an AJAX call to update the appointment status
                         console.log('Cancelling appointment:', appointmentId);
-                        // Example AJAX call:
-                        // fetch(`/appointments/${appointmentId}/cancel`, { method: 'POST' })
-                        //     .then(response => response.json())
-                        //     .then(data => {
-                        //         if (data.success) {
-                        //             window.location.reload();
-                        //         }
-                        //     });
+                        fetch(`/doctor/dashboard/appointment/cancel`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({ appointmentId })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.location.reload();
+                                }
+                            })
                     }
                 });
             });
