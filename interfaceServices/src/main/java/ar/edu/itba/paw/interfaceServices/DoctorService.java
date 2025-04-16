@@ -17,5 +17,5 @@ public interface DoctorService {
     List<Doctor> getAll();
     List<Doctor> getByAppointments(List<Appointment> appointments);
     void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots);
-
+    void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 }

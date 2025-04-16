@@ -23,5 +23,6 @@ public interface DoctorDao {
 
     void addAvailability(long doctorId, List<AvailabilitySlot> availabilityList);
     List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId);
+    void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 
 }

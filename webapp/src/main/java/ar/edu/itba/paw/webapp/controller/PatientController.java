@@ -86,13 +86,12 @@ public class PatientController {
         try {
             Appointment appt = as.getById(appointmentId).orElse(null);
             if (appt == null) {
-                return "{\"success\": false, \"error\": \"Turno no encontrado\"}";
+                return "{\"success\": false}";
             }
             as.cancelAppointment(appointmentId);
             return "{\"success\": true}";
         } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"success\": false, \"error\": \"Error inesperado del servidor\"}";
+            return "{\"success\": false}";
         }
     }
 
