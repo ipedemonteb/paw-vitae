@@ -87,7 +87,7 @@
           </div>
 
           <div class="form-group">
-            <button type="submit" class="btn-submit">
+            <button type="submit" class="btn-submit-doctor">
               <spring:message code="register.button" />
             </button>
           </div>
