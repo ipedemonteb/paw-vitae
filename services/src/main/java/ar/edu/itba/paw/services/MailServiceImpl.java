@@ -57,6 +57,7 @@ public class MailServiceImpl implements MailService {
         templateModel.put("patientName", client.get().getName() + " " + client.get().getLastName());
         LocalDateTime date = appointment.getDate();
         templateModel.put("appointmentDate", date.toLocalDate().toString());
+        System.out.println("AYUDAAA" + date.getHour());
         templateModel.put("appointmentTime", date.getHour());
         templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : messageSource.getMessage("email.emptyReason", null, LocaleContextHolder.getLocale()));
 

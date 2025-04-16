@@ -95,7 +95,7 @@
             <h3 th:text="#{email.details}"></h3>
             <ul>
                 <li><strong th:text="#{email.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
-                <li><strong th:text="#{email.time.label}"></strong> <span th:text="${appointmentTime} hs"></span></li>
+                <li><strong th:text="#{email.time.label}"></strong> <span th:text="${appointmentTime + ' hs'}"></span></li>
                 <li><strong th:text="#{email.patient.label}"></strong> <span th:text="${patientName}"></span></li>
                 <li><strong th:text="#{email.reason.label}"></strong> <span th:text="${reason}"></span></li>
             </ul>
