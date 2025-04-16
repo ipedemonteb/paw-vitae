@@ -234,7 +234,7 @@
                             <button type="button" class="btn-prev" onclick="prevSection(3)">
                                 ← <spring:message code="register.previous" />
                             </button>
-                            <button type="submit" class="btn-submit-doctor">
+                            <button type="submit" class="btn-submit-doctor" onclick="this.disabled = true ; this.form.submit();">
                                 <spring:message code="register.button" />
                             </button>
                         </div>

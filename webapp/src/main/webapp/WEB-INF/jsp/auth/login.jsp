@@ -83,7 +83,7 @@
         </div>
 
         <div class="form-group">
-          <button type="submit" class="login-button">
+          <button type="submit" class="login-button" onclick="this.disabled = true ; this.form.submit();">
             <span class="button-text"><spring:message code="login.button" /></span>
             <span class="button-loader"></span>
           </button>
