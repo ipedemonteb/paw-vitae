@@ -36,6 +36,7 @@ public class ClientDaoImpl implements ClientDao {
                     rs.getString("email"),
                     rs.getString("password"),
                     rs.getString("phone"),
+                    rs.getString("language"),
                     new Coverage(rs.getLong("coverage_id"), rs.getString("coverage_name"))
             );
         }
@@ -61,13 +62,14 @@ public class ClientDaoImpl implements ClientDao {
     }
 
     @Override
-    public Client create(String name, String lastName, String email, String password, String phone, Coverage coverage) {
+    public Client create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage) {
         final Map<String, Object> argsUser = new HashMap<>();
         argsUser.put("email", email);
         argsUser.put("password", password);
         argsUser.put("name", name);
         argsUser.put("phone", phone);
         argsUser.put("last_name", lastName);
+        argsUser.put("language", language);
         final Number clientId = jdbcInsertUser.executeAndReturnKey(argsUser);
 
         final Map<String, Object> argsClient = new HashMap<>();
@@ -82,6 +84,7 @@ public class ClientDaoImpl implements ClientDao {
                 email,
                 password,
                 phone,
+                language,
                 coverage
         );
     }
@@ -116,5 +119,9 @@ public class ClientDaoImpl implements ClientDao {
     @Override
     public void changePassword(long id, String password) {
         jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
+    }
+    @Override
+    public String getLanguage(long id) {
+        return jdbcTemplate.query("SELECT language FROM Users WHERE id = ?", (rs, rowNum) -> rs.getString("language"), id).stream().findFirst().orElse(null);
     }
 }

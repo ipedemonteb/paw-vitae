@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,15 @@ public class UserServiceImpl implements UserService {
             clientDao.changePassword(id, newPassword);
         } else {
             doctorDao.changePassword(id, newPassword);
+        }
+    }
+
+    public String getLanguageById(long id) {
+        Optional<Client> client = clientDao.getById(id);
+        if (client.isPresent()) {
+            return clientDao.getLanguage(id);
+        } else {
+            return doctorDao.getLanguage(id);
         }
     }
 }
