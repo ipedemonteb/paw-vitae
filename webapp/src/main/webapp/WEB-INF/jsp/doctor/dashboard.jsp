@@ -715,7 +715,7 @@
                     e.preventDefault();
                     const appointmentId = this.getAttribute('data-id');
                     if (confirm('Are you sure you want to confirm this appointment?')) {
-                        fetch(`/doctor/dashboard/appointment/accept`, {
+                        fetch(`${pageContext.request.contextPath}/doctor/dashboard/appointment/accept`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -742,7 +742,7 @@
                     if (confirm('Are you sure you want to cancel this appointment?')) {
                         // This would typically involve an AJAX call to update the appointment status
                         console.log('Cancelling appointment:', appointmentId);
-                        fetch(`/doctor/dashboard/appointment/cancel`, {
+                        fetch(`${pageContext.request.contextPath}/doctor/dashboard/appointment/cancel`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'

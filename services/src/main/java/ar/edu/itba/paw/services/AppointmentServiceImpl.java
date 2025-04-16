@@ -6,6 +6,8 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Specialty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -27,6 +29,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final MessageSource messageSource;
     private final ClientService clientService;
     private final DoctorService doctorService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentServiceImpl.class);
+
     @Autowired
     public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService, MessageSource messageSource, ClientService clientService,DoctorService doctorService) {
         this.appointmentDao = appointmentDao;
@@ -37,6 +42,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         this.clientService = clientService;
     }
 
+    @Transactional(noRollbackFor = MessagingException.class)
     @Override
     public Appointment create(long clientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
@@ -44,10 +50,21 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         Appointment appointment = appointmentDao.create(clientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
 
+        Doctor doctor = doctorService.getById(doctorId).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
+        Client client = clientService.getById(clientId).orElseThrow(() -> new IllegalArgumentException("Client not found"));
+
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("doctorName", doctor.getName() + " " + doctor.getLastName());
+        templateModel.put("patientName", client.getName() + " " + client.getLastName());
+        LocalDateTime d = appointment.getDate();
+        templateModel.put("appointmentDate", d.toLocalDate().toString());
+        templateModel.put("appointmentTime", d.getHour());
+        templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : messageSource.getMessage("email.emptyReason", null, LocaleContextHolder.getLocale()));
+
         try {
-            mailService.sendEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment, appointment.getDoctorId(), appointment.getClientId());
+            mailService.sendEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), templateModel, doctor.getEmail(), "email");
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            LOGGER.error(e.getMessage());
         }
 
         return appointment;

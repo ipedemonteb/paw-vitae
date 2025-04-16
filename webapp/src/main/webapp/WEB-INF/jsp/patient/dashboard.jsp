@@ -607,7 +607,7 @@
                     e.preventDefault();
                     const appointmentId = this.getAttribute('data-id');
                     if (confirm('¿Estás seguro de que querés cancelar este turno?')) {
-                        fetch(`/patient/dashboard/appointment/cancel`, {
+                        fetch(`${pageContext.request.contextPath}/patient/dashboard/appointment/cancel`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'
