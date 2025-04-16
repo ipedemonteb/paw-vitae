@@ -162,6 +162,13 @@ public class DoctorController {
             mav.addObject("updateAvailabilityForm", form);
             return mav;
         }
+        Doctor doctor = loggedUser();
+        ds.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());
+
+        return new ModelAndView("redirect:/doctor/dashboard");
+    }
+
+
     @PostMapping(value = "/doctor/dashboard/appointment/accept", produces = "application/json")
     @ResponseBody
     public String acceptAppointment(@RequestParam("appointmentId") Long appointmentId){
@@ -175,12 +182,5 @@ public class DoctorController {
         } catch (Exception e) {
             return "{\"success\": false}";
         }
-    }
-}
-
-        Doctor doctor = loggedUser();
-        ds.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());
-
-        return new ModelAndView("redirect:/doctor/dashboard");
     }
 }

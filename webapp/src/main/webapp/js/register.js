@@ -20,8 +20,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add event listeners
     document.getElementById('add-slot-btn').addEventListener('click', addTimeSlotRow);
-    document.getElementById('password').addEventListener('keyup', checkPasswordStrength);
-    document.getElementById('repeatPassword').addEventListener('keyup', checkPasswordMatch);
+    document.getElementById('password').addEventListener('keyup', function () {
+        checkPasswordStrength();
+        updateNextButtonState(1);
+    });
+    document.getElementById('repeatPassword').addEventListener('keyup', function () {
+        checkPasswordMatch();
+        updateNextButtonState(1);
+    });
+
+    restorePasswordValues();
+
+    addInputValidationListeners();
+
+    updateAllButtonStates();
 });
 
 // Initialize file upload preview
@@ -37,6 +49,151 @@ function initFileUpload() {
             }
         });
     }
+}
+
+function restorePasswordValues() {
+    const passwordValue = document.getElementById('passwordValue');
+    const repeatPasswordValue = document.getElementById('repeatPasswordValue');
+    const passwordField = document.getElementById('password');
+    const repeatPasswordField = document.getElementById('repeatPassword');
+
+    if (passwordValue && passwordValue.value) {
+        passwordField.value = passwordValue.value;
+        checkPasswordStrength();
+    }
+
+    if (repeatPasswordValue && repeatPasswordValue.value) {
+        repeatPasswordField.value = repeatPasswordValue.value;
+        checkPasswordMatch();
+    }
+}
+
+function addInputValidationListeners() {
+    // Section 1 fields
+    const section1 = document.querySelector('.form-section[data-section="1"]');
+    const requiredFields1 = section1.querySelectorAll('input[required]');
+    requiredFields1.forEach(field => {
+        field.addEventListener('input', function() {
+            updateNextButtonState(1);
+        });
+    });
+
+    // Section 2 fields
+    const section2 = document.querySelector('.form-section[data-section="2"]');
+    const specialtiesContainer = document.getElementById('specialties-container');
+    const coveragesContainer = document.getElementById('coverages-container');
+
+    // Add custom event listeners for multi-select components
+    const specialtiesOptions = document.querySelectorAll('#specialties-options .custom-multi-select-option');
+    specialtiesOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            setTimeout(() => updateNextButtonState(2), 100);
+        });
+    });
+
+    const coveragesOptions = document.querySelectorAll('#coverages-options .custom-multi-select-option');
+    coveragesOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            setTimeout(() => updateNextButtonState(2), 100);
+        });
+    });
+
+    // Section 3 fields
+    const section3 = document.querySelector('.form-section[data-section="3"]');
+    const termsCheckbox = document.getElementById('terms');
+    termsCheckbox.addEventListener('change', function() {
+        updateSubmitButtonState();
+    });
+}
+
+function updateSubmitButtonState() {
+    const submitButton = document.querySelector('.btn-submit-doctor');
+    if (!submitButton) return;
+
+    const termsChecked = document.getElementById('terms').checked;
+    const hasTimeSlots = timeSlots.length > 0;
+    const isValid = termsChecked && hasTimeSlots;
+
+    submitButton.disabled = !isValid;
+
+    // Add/remove disabled class for styling
+    if (isValid) {
+        submitButton.classList.remove('disabled');
+    } else {
+        submitButton.classList.add('disabled');
+    }
+}
+
+function updateAllButtonStates() {
+    updateNextButtonState(1);
+    updateNextButtonState(2);
+    updateSubmitButtonState();
+}
+
+
+function updateNextButtonState(sectionNumber) {
+    const nextButton = document.querySelector(`.form-section[data-section="${sectionNumber}"] .btn-next`);
+    if (!nextButton) return;
+
+    const isValid = validateSectionWithoutUI(sectionNumber);
+    nextButton.disabled = !isValid;
+
+    // Add/remove disabled class for styling
+    if (isValid) {
+        nextButton.classList.remove('disabled');
+    } else {
+        nextButton.classList.add('disabled');
+    }
+}
+
+function validateSectionWithoutUI(sectionNumber) {
+    let isValid = true;
+    const section = document.querySelector(`.form-section[data-section="${sectionNumber}"]`);
+
+    // Check required fields in the current section
+    const requiredFields = section.querySelectorAll('input[required], select[required]');
+    requiredFields.forEach(field => {
+        if (!field.value) {
+            isValid = false;
+        }
+    });
+
+    // Section-specific validations
+    if (sectionNumber === 1) {
+        // Validate password match
+        const password = document.getElementById('password');
+        const repeatPassword = document.getElementById('repeatPassword');
+
+        if (password.value && repeatPassword.value && password.value !== repeatPassword.value) {
+            isValid = false;
+        }
+
+        // Validate email format
+        const email = document.getElementById('email');
+        if (email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+            isValid = false;
+        }
+
+        // Validate phone format
+        const phone = document.getElementById('phone');
+        if (phone.value && !/\+?[0-9. ()-]{7,25}/.test(phone.value)) {
+            isValid = false;
+        }
+    } else if (sectionNumber === 2) {
+        // Validate specialties and coverages
+        const specialties = document.getElementById('specialties');
+        const coverages = document.getElementById('coverages');
+
+        if (!specialties.options || specialties.selectedOptions.length === 0) {
+            isValid = false;
+        }
+
+        if (!coverages.options || coverages.selectedOptions.length === 0) {
+            isValid = false;
+        }
+    }
+
+    return isValid;
 }
 
 // Initialize password strength meter
@@ -249,6 +406,7 @@ function addTimeSlotRow() {
 
     // Increment counter
     slotCounter++;
+    updateTimeSlotValidation();
 }
 
 // Check for overlapping time slots
@@ -308,6 +466,8 @@ function checkOverlap(changedElement) {
         return false;
     }
 
+    setTimeout(updateTimeSlotValidation, 100);
+
     return true;
 }
 
@@ -357,6 +517,7 @@ function removeTimeSlotRow(index) {
 
             // Update no slots message
             updateNoSlotsMessage();
+            updateTimeSlotValidation();
         }, 300);
     }
 }
@@ -389,6 +550,13 @@ function nextSection(currentSection) {
 
     // Update progress indicator
     updateProgressIndicator(nextSection);
+
+    // Update button states for the new section
+    if (nextSection === 2) {
+        updateNextButtonState(2);
+    } else if (nextSection === 3) {
+        updateSubmitButtonState();
+    }
 }
 
 function prevSection(currentSection) {
@@ -456,6 +624,20 @@ function validateSection(sectionNumber) {
             document.getElementById('password-match-message').textContent = window.messages.passwordsDoNotMatch;
             document.getElementById('password-match-message').style.display = 'block';
             repeatPassword.classList.add('error');
+            isValid = false;
+        }
+
+        // Validate email format
+        const email = document.getElementById('email');
+        if (email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+            email.classList.add('error');
+            isValid = false;
+        }
+
+        // Validate phone format
+        const phone = document.getElementById('phone');
+        if (phone.value && !/\+?[0-9. ()-]{7,25}/.test(phone.value)) {
+            phone.classList.add('error');
             isValid = false;
         }
     } else if (sectionNumber === 2) {
@@ -650,6 +832,15 @@ function removeOption(removeButton, selectId) {
     }
 }
 
+function updateTimeSlotValidation() {
+    const hasValidTimeSlots = timeSlots.length > 0 && timeSlots.every(slot => {
+        const element = document.querySelector('select[data-index="' + slot.index + '"]');
+        return checkOverlap(element);
+    });
+
+    updateSubmitButtonState();
+}
+
 // Form validation
 function validateForm() {
     // Check if we have at least one time slot
@@ -675,6 +866,20 @@ function validateForm() {
             showSection(i);
             return false;
         }
+    }
+
+    // Store password values in hidden fields before submission
+    const passwordField = document.getElementById('password');
+    const repeatPasswordField = document.getElementById('repeatPassword');
+    const passwordValueField = document.getElementById('passwordValue');
+    const repeatPasswordValueField = document.getElementById('repeatPasswordValue');
+
+    if (passwordField && passwordValueField) {
+        passwordValueField.value = passwordField.value;
+    }
+
+    if (repeatPasswordField && repeatPasswordValueField) {
+        repeatPasswordValueField.value = repeatPasswordField.value;
     }
 
     return true;
