@@ -7,6 +7,8 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 @Controller
@@ -63,7 +66,9 @@ public class AuthController {
             System.out.println("Received availability slots: " + doctorForm.getAvailabilitySlots());
         }
 
-        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), doctorForm.getSpecialties(), doctorForm.getCoverages(), doctorForm.getAvailabilitySlots());
+        Locale locale = LocaleContextHolder.getLocale();
+
+        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), locale.getLanguage(), doctorForm.getSpecialties(), doctorForm.getCoverages(), doctorForm.getAvailabilitySlots());
 
         try {
             is.create(doctor.getId(), doctorForm.getImage());
@@ -106,7 +111,9 @@ public class AuthController {
             return patientForm(patientForm);
         }
 
-        final Client client = cls.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(), patientForm.getPhone(), patientForm.getCoverage());
+        Locale locale = LocaleContextHolder.getLocale();
+
+        final Client client = cls.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(), patientForm.getPhone(), locale.getLanguage(), patientForm.getCoverage());
 
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(client.getEmail(), patientForm.getPassword());

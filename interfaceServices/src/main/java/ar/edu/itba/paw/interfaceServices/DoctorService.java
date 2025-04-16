@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DoctorService {
-    Doctor create(String name, String lastName , String email, String password, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots);
+    Doctor create(String name, String lastName , String email, String password, String phone, String language, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots);
 
     Optional<Doctor> getById(final long id);
 

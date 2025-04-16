@@ -71,7 +71,7 @@ public class ClientDaoTest {
         Coverage coverage = new Coverage(coverageId.longValue(), "TestCoverage");
 
         //Exercise
-        Client client = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, coverage);
+        Client client = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
 
         //Postconditions
         assertNotNull(client);

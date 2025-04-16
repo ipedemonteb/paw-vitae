@@ -28,6 +28,7 @@ public class DoctorDaoImpl implements DoctorDao {
             rs.getString("email"),
             rs.getString("password"),
             rs.getString("phone"),
+            rs.getString("language"),
             new ArrayList<>(),
             new ArrayList<>(),
             new ArrayList<>()
@@ -54,7 +55,7 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone,
+    public Doctor create(String name, String lastName, String email, String password, String phone, String language,
                          List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList) {
         final Map<String, Object> argsUser = new HashMap<>();
         argsUser.put("name", name);
@@ -62,6 +63,7 @@ public class DoctorDaoImpl implements DoctorDao {
         argsUser.put("email", email);
         argsUser.put("password", password);
         argsUser.put("phone", phone);
+        argsUser.put("language", language);
         final Number docId = jdbcInsertUser.executeAndReturnKey(argsUser);
 
         final Map<String, Object> argsDoctor = new HashMap<>();
@@ -98,6 +100,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 email,
                 password,
                 phone,
+                language,
                 specialties,
                 coverages,
                 availabilityList
@@ -275,5 +278,9 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public void changePassword(long id, String password) {
         jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
+    }
+    @Override
+    public String getLanguage(long id) {
+        return jdbcTemplate.query("SELECT language FROM Users WHERE id = ?", (rs, rowNum) -> rs.getString("language"), id).stream().findFirst().orElse(null);
     }
 }

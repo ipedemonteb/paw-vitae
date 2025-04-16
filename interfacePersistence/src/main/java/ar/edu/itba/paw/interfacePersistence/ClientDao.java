@@ -11,7 +11,7 @@ public interface ClientDao {
 
     Optional<Client> getById(long id);
 
-    Client create(String name, String lastName, String email, String password, String phone, Coverage coverage);
+    Client create(String name, String lastName, String email, String password, String phone, String language,  Coverage coverage);
 
     Optional<Client> getByEmail(String email);
 
@@ -20,4 +20,5 @@ public interface ClientDao {
     List<Client> getByIds(Set<Long> ids);
 
     void changePassword(long id, String password);
+    String getLanguage(long id);
 }
