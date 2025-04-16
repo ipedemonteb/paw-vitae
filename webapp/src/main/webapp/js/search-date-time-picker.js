@@ -380,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Create time slot buttons for each available slot
             availableSlots.forEach(slot => {
                 // Generate all hours between start and end time
-                for (let hour = slot.startTime; hour < slot.endTime; hour++) {
+                for (let hour = slot.startTime; hour <= slot.endTime; hour++) {
                     const timeSlotButton = document.createElement("div");
                     timeSlotButton.className = "time-slot-display";
                     timeSlotButton.textContent = `${hour}:00`;
