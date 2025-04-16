@@ -77,7 +77,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public Optional<List<Appointment>> getByClientId(long clientId) {
         List<Appointment> appointments = jdbcTemplate.query(
-                "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE client_id = ?", ROW_MAPPER, clientId);
+                "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE client_id = ? ORDER BY Appointments.date", ROW_MAPPER, clientId);
         for (Appointment appointment : appointments) {
         appointment.setDoctor(doctorDaoImpl.getById(appointment.getDoctorId()).orElse(null));
         }
@@ -87,7 +87,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public Optional<List<Appointment>> getByDoctorId(long doctorId) {
         List<Appointment> appointments = jdbcTemplate.query(
-                "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ?", ROW_MAPPER, doctorId);
+                "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ? ORDER BY Appointments.date", ROW_MAPPER, doctorId);
         for (Appointment appointment : appointments) {
             appointment.setDoctor(doctorDaoImpl.getById(appointment.getDoctorId()).orElse(null));
         }
