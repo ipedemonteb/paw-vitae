@@ -169,6 +169,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const lastAvailableSlot = 18; // Example: last slot is 6:00 PM
         const minDate = currentHour >= lastAvailableSlot ? new Date(today.setDate(today.getDate() + 1)) : today;
 
+
+
         // Create empty cells for days before the first day of the month
         for (let i = 0; i < firstDayOfWeek; i++) {
             const emptyDay = document.createElement("div");
@@ -188,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const isFullyBooked = FutureAppointments.some(entry => entry.hours.length === 11 && entry.date === formattedDate);
 
             // Disable past dates
-            if (date < minDate.setHours(0, 0, 0, 0) || isFullyBooked) {
+            if (date < minDate.setHours(0, 0, 0, 0) || isFullyBooked || availabilitySlots.find(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7)) === undefined) {
                 dayElement.classList.add("disabled");
             }
             // Enable available dates
@@ -345,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const currentHour = new Date(argDate).getHours();
 
         const allSlots = Array.from({ length: 11 }, (_, i) => `${8 + i}`);
-        console.log(availabilitySlots)
+
         let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7)); //js getDate works in mysterious ways, 0 is Sunday and 1 is Mondays. I have saved you all from debugging hell
 
         // Find the fully booked hours for the selected date

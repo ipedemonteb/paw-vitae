@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
                 // Disable past dates and fully booked dates
-                if (date < minDate.setHours(0, 0, 0, 0) || isFullyBooked) {
+                if (date < minDate.setHours(0, 0, 0, 0) || isFullyBooked || doctorAvailabilitySlots.find(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7)) === undefined) {
                     dayElement.classList.add("disabled");
                 }
                 // Enable available dates
