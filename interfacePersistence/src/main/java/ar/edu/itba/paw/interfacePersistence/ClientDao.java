@@ -19,4 +19,5 @@ public interface ClientDao {
 
     List<Client> getByIds(Set<Long> ids);
 
+    void changePassword(long id, String password);
 }

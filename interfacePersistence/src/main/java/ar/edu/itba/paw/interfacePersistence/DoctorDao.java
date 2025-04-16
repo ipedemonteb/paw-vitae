@@ -25,4 +25,5 @@ public interface DoctorDao {
     List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId);
     void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 
+    void changePassword(long id, String password);
 }

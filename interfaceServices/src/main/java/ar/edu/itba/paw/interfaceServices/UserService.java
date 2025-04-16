@@ -8,5 +8,5 @@ public interface UserService {
 
     Optional<? extends User> getByEmail(String email);
 
-
+    void changePassword(Long id, String password);
 }
