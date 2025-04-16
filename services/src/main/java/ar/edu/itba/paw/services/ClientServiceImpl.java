@@ -53,9 +53,18 @@ public class ClientServiceImpl implements ClientService {
 
     @Transactional
     @Override
-    public void updateClient(long id, String name, String lastName, String phone, String coverage) {
-        Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);
-        clientDao.updateClient(id, name, lastName, phone, cov);
+    public void updateClient(Client currentClient, String name, String lastName, String phone, Coverage coverage) {
+        boolean hasChanged = false;
+        if(!currentClient.getName().equals(name)
+                || !currentClient.getLastName().equals(lastName)
+                || !currentClient.getPhone().equals(phone)
+                || !currentClient.getCoverage().getName().equals(coverage.getName())) {
+            hasChanged = true;
+        }
+        if (hasChanged) {
+            clientDao.updateClient(currentClient.getId(), name, lastName, phone, coverage);
+        }
+
     }
 
     @Override
