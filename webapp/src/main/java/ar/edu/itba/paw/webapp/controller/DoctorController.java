@@ -7,24 +7,29 @@ import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
+import ar.edu.itba.paw.webapp.form.UpdateAvailabilityForm;
 import ar.edu.itba.paw.webapp.form.UpdateDoctorForm;
 import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.webapp.controller.AuthController.*;
 
 import javax.print.Doc;
 import javax.validation.Valid;
+import java.beans.PropertyEditorSupport;
+import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +48,28 @@ public class DoctorController {
         this.as = as;
         this.cs = cs;
         this.ss = ss;
+    }
+
+    // Add this method to register a custom property editor for LocalTime
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                try {
+                    // Parse the time string in format "HH:mm"
+                    setValue(LocalTime.parse(text, DateTimeFormatter.ofPattern("HH:mm")));
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("Invalid time format. Expected HH:mm", e);
+                }
+            }
+
+            @Override
+            public String getAsText() {
+                LocalTime value = (LocalTime) getValue();
+                return (value != null ? value.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
+            }
+        });
     }
 
     @RequestMapping(value = "/{id:\\d+}", method = {RequestMethod.GET})
@@ -73,12 +100,18 @@ public class DoctorController {
         updateDoctorForm.setSpecialties(doctor.getSpecialtyList().stream().map(Specialty::getKey).toList());
         updateDoctorForm.setCoverages(doctor.getCoverageList().stream().map(Coverage::getName).toList());
         mav.addObject("updateDoctorForm", updateDoctorForm);
+
+        // Add the UpdateAvailabilityForm to the model
+        UpdateAvailabilityForm updateAvailabilityForm = new UpdateAvailabilityForm();
+        updateAvailabilityForm.setAvailabilitySlots(doctor.getAvailabilitySlots());
+        mav.addObject("updateAvailabilityForm", updateAvailabilityForm);
+
         return mav;
     }
 
     @RequestMapping(value = "/doctor/dashboard/update", method = RequestMethod.POST)
     public ModelAndView updateDoctor(@Valid @ModelAttribute("updateDoctorForm") final UpdateDoctorForm updateDoctorForm,
-                                      final BindingResult errors) {
+                                     final BindingResult errors) {
         if (errors.hasErrors()) {
             final ModelAndView mav = new ModelAndView("patient/dashboard");
             Doctor doctor = loggedUser();
@@ -105,5 +138,49 @@ public class DoctorController {
         final Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
         return ds.getByEmail((String) auth.getName()).orElseThrow(UserNotFoundException::new);
     }
+    @PostMapping(value = "/doctor/dashboard/appointment/cancel", produces = "application/json")
+    @ResponseBody
+    public String cancelAppointment(@RequestParam("appointmentId") Long appointmentId){
+        try {
+            Appointment appt = as.getById(appointmentId).orElse(null);
+            if (appt == null) {
+                return "{\"success\": false}";
+            }
+            as.cancelAppointment(appointmentId);
+            return "{\"success\": true}";
+        } catch (Exception e) {
+            return "{\"success\": false}";
+        }
+    }
 
+    @RequestMapping(value = "/doctor/dashboard/availability", method = RequestMethod.POST)
+    public ModelAndView updateAvailability(@Valid @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm form,
+                                           BindingResult errors) {
+        if (errors.hasErrors()) {
+            // Return to dashboard with errors displayed
+            ModelAndView mav = getDoctorDashboard();
+            mav.addObject("updateAvailabilityForm", form);
+            return mav;
+        }
+    @PostMapping(value = "/doctor/dashboard/appointment/accept", produces = "application/json")
+    @ResponseBody
+    public String acceptAppointment(@RequestParam("appointmentId") Long appointmentId){
+        try {
+            Appointment appt = as.getById(appointmentId).orElse(null);
+            if (appt == null) {
+                return "{\"success\": false}";
+            }
+            as.acceptAppointment(appointmentId);
+            return "{\"success\": true}";
+        } catch (Exception e) {
+            return "{\"success\": false}";
+        }
+    }
+}
+
+        Doctor doctor = loggedUser();
+        ds.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());
+
+        return new ModelAndView("redirect:/doctor/dashboard");
+    }
 }

@@ -255,4 +255,20 @@ public class DoctorDaoImpl implements DoctorDao {
 
         doctor.setAvailabilitySlots(getAvailabilityByDoctorId(id));
     }
+    // Add this method to the DoctorDaoImpl class
+    @Override
+    public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
+        // Delete existing availability slots
+        jdbcTemplate.update("DELETE FROM doctor_availability WHERE doctor_id = ?", id);
+
+        // Add new availability slots
+        for (AvailabilitySlot slot : availabilitySlots) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("doctor_id", id);
+            params.put("day_of_week", slot.getDayOfWeek());
+            params.put("start_time", slot.getStartTime());
+            params.put("end_time", slot.getEndTime());
+            jdbcInsertDoctorAvailability.execute(params);
+        }
+    }
 }
