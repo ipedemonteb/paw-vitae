@@ -91,7 +91,8 @@ public class AppointmentDaoTest {
                         "last_name", "Bilardo",
                         "email", "csb@gmail.com",
                         "password", "password",
-                        "phone", "1177777777"
+                        "phone", "1177777777",
+                        "language", "es"
                 )
         ).longValue();
         cliId = jdbcInsertUser.executeAndReturnKey(
@@ -100,7 +101,8 @@ public class AppointmentDaoTest {
                         "last_name", "Doe",
                         "email", "johndoe@gmail.com",
                         "password", "password",
-                        "phone", "1177777777"
+                        "phone", "1177777777",
+                        "language", "es"
                 )
         ).longValue();
 
