@@ -87,7 +87,7 @@
           </div>
 
           <div class="form-group">
-            <button type="submit" class="btn-submit">
+            <button type="submit" class="btn-submit" onclick="this.disabled = true ; this.form.submit();">
               <spring:message code="register.button" />
             </button>
           </div>
