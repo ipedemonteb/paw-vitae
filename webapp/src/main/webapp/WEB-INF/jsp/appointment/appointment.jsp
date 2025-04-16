@@ -84,7 +84,7 @@
                 <comp:form-group path="reason" label="appointment.form.reason" type="textarea" />
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block">
+                    <button type="submit" class="btn btn-primary btn-block" onclick="this.disabled=true; this.form.submit();">
                         <spring:message code="appointment.form.submit" />
                     </button>
                 </div>
