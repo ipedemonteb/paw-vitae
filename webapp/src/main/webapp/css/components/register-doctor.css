@@ -174,13 +174,13 @@
     color: white;
     border: none;
     border-radius: var(--radius-md);
-    padding: 0.875rem 1.5rem;
+    padding: 0.75rem 1.5rem;
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
-    width: 30%;
-    margin-top: 1rem;
+    /* Remove width: 30% to match other buttons */
+    margin-top: 0; /* Remove top margin to match other buttons */
 }
 
 .btn-submit-doctor:hover {
@@ -190,6 +190,24 @@
 
 .btn-submit-doctor:active {
     transform: translateY(0);
+}
+
+/* Add disabled button styling */
+.btn-next:disabled,
+.btn-prev:disabled,
+.btn-submit-doctor:disabled {
+    background-color: var(--border-color);
+    color: var(--text-light);
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.7;
+}
+
+.btn-next:disabled:hover,
+.btn-prev:disabled:hover,
+.btn-submit-doctor:disabled:hover {
+    background-color: var(--border-color);
+    transform: none;
 }
 
 /* File Upload */

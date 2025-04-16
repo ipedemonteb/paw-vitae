@@ -36,6 +36,8 @@
                 </div>
 
                 <form:form modelAttribute="registerForm" method="post" action="${pageContext.request.contextPath}/register" enctype="multipart/form-data" cssClass="register-form" onsubmit="return validateForm()">
+                    <input type="hidden" id="passwordValue" name="passwordValue" value="${registerForm.password}" />
+                    <input type="hidden" id="repeatPasswordValue" name="repeatPasswordValue" value="${registerForm.repeatPassword}" />
                     <!-- Section 1: Personal Information -->
                     <div class="form-section active" data-section="1">
                         <h2><spring:message code="register.personalInfo" /></h2>
@@ -73,9 +75,9 @@
                                 <label for="password" class="form-label required-field">
                                     <spring:message code="register.password" />
                                     <span class="tooltip">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-text"><spring:message code="register.passwordTooltip" /></span>
-                                    </span>
+                <span class="tooltip-icon">?</span>
+                <span class="tooltip-text"><spring:message code="register.passwordTooltip" /></span>
+            </span>
                                 </label>
                                 <form:password required="true" path="password" id="password" cssClass="form-control ${status.error ? 'error' : ''}" />
                                 <div class="password-strength">
