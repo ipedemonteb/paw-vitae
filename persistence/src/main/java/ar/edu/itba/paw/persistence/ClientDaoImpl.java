@@ -112,4 +112,9 @@ public class ClientDaoImpl implements ClientDao {
         }
         return jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) + ")", ROW_MAPPER, ids.toArray());
     }
+
+    @Override
+    public void changePassword(long id, String password) {
+        jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
+    }
 }

@@ -271,4 +271,9 @@ public class DoctorDaoImpl implements DoctorDao {
             jdbcInsertDoctorAvailability.execute(params);
         }
     }
+
+    @Override
+    public void changePassword(long id, String password) {
+        jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
+    }
 }
