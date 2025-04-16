@@ -28,6 +28,10 @@ document.addEventListener('DOMContentLoaded', function() {
         checkPasswordMatch();
         updateNextButtonState(1);
     });
+    document.getElementById('password').addEventListener('keyup', function () {
+        checkPasswordMatch();
+        updateNextButtonState(1);
+    });
 
     restorePasswordValues();
 
@@ -163,6 +167,10 @@ function validateSectionWithoutUI(sectionNumber) {
         // Validate password match
         const password = document.getElementById('password');
         const repeatPassword = document.getElementById('repeatPassword');
+
+        if (password.value.length < 8) {
+            isValid = false;
+        }
 
         if (password.value && repeatPassword.value && password.value !== repeatPassword.value) {
             isValid = false;
