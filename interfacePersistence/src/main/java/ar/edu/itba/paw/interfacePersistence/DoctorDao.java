@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface DoctorDao {
 
-    Doctor create(String name, String lastName , String email, String password, String phone, List<Specialty> specialty, List<Coverage> coverages, List<AvailabilitySlot> availabilitySlots);
+    Doctor create(String name, String lastName , String email, String password, String phone, String language, List<Specialty> specialty, List<Coverage> coverages, List<AvailabilitySlot> availabilitySlots);
 
     Optional<Doctor> getById(final long id);
 
@@ -26,4 +26,6 @@ public interface DoctorDao {
     void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 
     void changePassword(long id, String password);
+    String getLanguage(long id);
+
 }

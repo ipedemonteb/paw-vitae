@@ -38,6 +38,7 @@ public class ClientDaoTest {
     private static final String EMAIL = "john.doe@test.com";
     private static final String PASSWORD = "password";
     private static final String PHONE = "1177777777";
+    private static final String LANGUAGE = "es";
 
     private ClientDaoImpl clientDao;
     private JdbcTemplate jdbcTemplate;
@@ -71,7 +72,7 @@ public class ClientDaoTest {
         Coverage coverage = new Coverage(coverageId.longValue(), "TestCoverage");
 
         //Exercise
-        Client client = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, coverage);
+        Client client = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
 
         //Postconditions
         assertNotNull(client);
@@ -97,7 +98,7 @@ public class ClientDaoTest {
         //Preconditions
         Number coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "TestCoverage"));
         Coverage coverage = new Coverage(coverageId.longValue(), "TestCoverage");
-        Client created = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, coverage);
+        Client created = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
 
         //Exercise
         Optional<Client> maybeClient = clientDao.getById(created.getId());
@@ -125,7 +126,7 @@ public class ClientDaoTest {
         //Preconditions
         Number coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "TestCoverage"));
         Coverage coverage = new Coverage(coverageId.longValue(), "TestCoverage");
-        Client created = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, coverage);
+        Client created = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
 
         //Exercise
         Optional<Client> maybeClient = clientDao.getByEmail(created.getEmail());
@@ -145,7 +146,7 @@ public class ClientDaoTest {
         Coverage initialCoverage = new Coverage(coverageId1.longValue(), "TestCoverage");
         Number coverageId2 = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "UpdatedCoverage"));
         Coverage updatedCoverage = new Coverage(coverageId2.longValue(), "UpdatedCoverage");
-        Client client = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, initialCoverage);
+        Client client = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, initialCoverage);
         String updatedName = "Jane";
         String updatedLastName = "Smith";
         String updatedPhone = "1188888888";

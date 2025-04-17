@@ -11,7 +11,7 @@ public interface ClientService {
 
     Optional<Client> getById(long id);
 
-    Client create(String name, String lastName, String email, String password, String phone, String coverage);
+    Client create(String name, String lastName, String email, String password, String phone, String language, String coverage);
 
     Optional<Client> getByEmail(String email);
 

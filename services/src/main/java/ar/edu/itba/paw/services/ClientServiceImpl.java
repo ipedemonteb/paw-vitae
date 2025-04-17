@@ -41,9 +41,9 @@ public class ClientServiceImpl implements ClientService {
 
     @Transactional
     @Override
-    public Client create(String name, String lastName, String email, String password, String phone, String coverage) {
+    public Client create(String name, String lastName, String email, String password, String phone, String language, String coverage) {
         Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);
-        return this.clientDao.create(name, lastName, email, passwordEncoder.encode(password), phone, cov);
+        return this.clientDao.create(name, lastName, email, passwordEncoder.encode(password), phone, language, cov);
     }
 
     @Override
