@@ -6,11 +6,14 @@ import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Doctor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -20,6 +23,7 @@ import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -32,6 +36,8 @@ public class MailServiceImpl implements MailService {
     private final DoctorService doctorService;
     private final ClientService clientService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
+
     @Autowired
     public MailServiceImpl(final JavaMailSender mailSender, final TemplateEngine templateEngine, final MessageSource messageSource, final DoctorService doctorService, final ClientService clientService) {
         this.mailSender = mailSender;
@@ -41,52 +47,61 @@ public class MailServiceImpl implements MailService {
         this.clientService = clientService;
     }
 
-//    @Override
-//    public void sendEmail(String subject, Appointment appointment, long doctorId, long clientId) throws MessagingException{
-//
-//        Optional<Doctor> doctor = doctorService.getById(doctorId);
-//        Optional<Client> client = clientService.getById(clientId);
-//
-//        if (doctor.isEmpty() || client.isEmpty()) {
-//            throw new IllegalArgumentException("Doctor or Client not found");
-//        }
-//
-//        Context context = new Context();
-//        Map<String, Object> templateModel = new HashMap<>();
-//        templateModel.put("doctorName", doctor.get().getName() + " " + doctor.get().getLastName());
-//        templateModel.put("patientName", client.get().getName() + " " + client.get().getLastName());
-//        LocalDateTime date = appointment.getDate();
-//        templateModel.put("appointmentDate", date.toLocalDate().toString());
-//        templateModel.put("appointmentTime", date.getHour());
-//        templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : messageSource.getMessage("email.emptyReason", null, LocaleContextHolder.getLocale()));
-//
-//        context.setVariables(templateModel);
-//        String htmlContent = templateEngine.process("email", context);
-//
-//        MimeMessage message = mailSender.createMimeMessage();
-//        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-//        helper.setTo(doctor.get().getEmail());
-//        helper.setSubject(subject);
-//        helper.setText(htmlContent, true);
-//        helper.setFrom(from_mail);
-//
-//        mailSender.send(message);
-//    }
-
-
+    @Async
     @Override
-    public void sendEmail(String subject, Map<String, Object> args, String toMail, String template) throws MessagingException {
+    public void sendAppointmentStatusEmail(String subject, Appointment appointment){
+
+        Doctor doctor = doctorService.getById(appointment.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
+        Client client = clientService.getById(appointment.getClientId()).orElseThrow(() -> new IllegalArgumentException("Client not found"));
+
         Context context = new Context();
-        context.setVariables(args);
-        String htmlContent = templateEngine.process(template, context);
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("doctorName", doctor.getName() + " " + doctor.getLastName());
+        templateModel.put("patientName", client.getName() + " " + client.getLastName());
+        LocalDateTime date = appointment.getDate();
+        templateModel.put("appointmentDate", date.toLocalDate().toString());
+        templateModel.put("appointmentTime", date.getHour());
+        templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : messageSource.getMessage("email.emptyReason", null, LocaleContextHolder.getLocale()));
 
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        helper.setTo(toMail);
-        helper.setSubject(subject);
-        helper.setText(htmlContent, true);
-        helper.setFrom(from_mail);
+        context.setVariables(templateModel);
+        String htmlContentDoctor;
+        String htmlContentClient;
 
-        mailSender.send(message);
+        System.out.println("appointment.getStatus() = " + appointment.getStatus());
+
+        if (appointment.getStatus().equals("pendiente")) { //TODO use enum maybe for types, not magic strings
+            htmlContentDoctor = templateEngine.process("DoctorAppointmentRequest", context);
+            htmlContentClient = templateEngine.process("PatientAppointmentRequest", context);
+        } else if (appointment.getStatus().equals("confirmado")) {
+            htmlContentDoctor = templateEngine.process("DoctorAppointmentConfirmation", context);
+            htmlContentClient = templateEngine.process("PatientAppointmentConfirmation", context);
+        } else {
+            htmlContentDoctor = templateEngine.process("DoctorAppointmentCancellation", context);
+            htmlContentClient = templateEngine.process("PatientAppointmentCancellation", context);
+        }
+
+        MimeMessage doctorMessage = mailSender.createMimeMessage();
+        MimeMessage clientMessage = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper doctorHelper = new MimeMessageHelper(doctorMessage, true, "UTF-8");
+            MimeMessageHelper clientHelper = new MimeMessageHelper(clientMessage, true, "UTF-8");
+
+            doctorHelper.setTo(doctor.getEmail());
+            clientHelper.setTo(client.getEmail());
+
+            doctorHelper.setSubject(subject);
+            clientHelper.setSubject(subject);
+
+            doctorHelper.setText(htmlContentDoctor, true);
+            clientHelper.setText(htmlContentClient, true);
+
+            doctorHelper.setFrom(from_mail);
+            clientHelper.setFrom(from_mail);
+        } catch (MessagingException e) {
+            LOGGER.error("Error while sending email", e);
+        }
+
+        mailSender.send(doctorMessage);
+        mailSender.send(clientMessage);
     }
 }
