@@ -138,17 +138,8 @@
             <ul>
                 <li><strong th:text="#{doctor.patient.label}"></strong> <span th:text="${patientName}"></span></li>
                 <li><strong th:text="#{doctor.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
-                <li><strong th:text="#{doctor.time.label}"></strong> <span th:text="${appointmentTime}"></span></li>
+                <li><strong th:text="#{doctor.time.label}"></strong> <span th:text="${appointmentTime + ':00hs'}"></span></li>
                 <li><strong th:text="#{doctor.reason.label}"></strong> <span th:text="${reason}"></span></li>
-            </ul>
-        </div>
-
-        <div class="patient-info">
-            <h4 th:text="#{doctor.patient.info.title}"></h4>
-            <ul>
-                <li><strong th:text="#{doctor.patient.id.label}"></strong> <span th:text="${patientId}"></span></li>
-                <li><strong th:text="#{doctor.patient.contact.label}"></strong> <span th:text="${patientContact}"></span></li>
-                <li><strong th:text="#{doctor.patient.last.visit.label}"></strong> <span th:text="${lastVisit}"></span></li>
             </ul>
         </div>
 

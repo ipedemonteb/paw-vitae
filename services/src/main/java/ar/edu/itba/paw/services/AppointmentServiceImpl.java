@@ -2,10 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfaceServices.*;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Client;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,30 +38,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         this.clientService = clientService;
     }
 
-    @Transactional(noRollbackFor = MessagingException.class)
+    @Transactional
     @Override
     public Appointment create(long clientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
 
         Appointment appointment = appointmentDao.create(clientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
-
-        Doctor doctor = doctorService.getById(doctorId).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
-        Client client = clientService.getById(clientId).orElseThrow(() -> new IllegalArgumentException("Client not found"));
-
-        Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("doctorName", doctor.getName() + " " + doctor.getLastName());
-        templateModel.put("patientName", client.getName() + " " + client.getLastName());
-        LocalDateTime d = appointment.getDate();
-        templateModel.put("appointmentDate", d.toLocalDate().toString());
-        templateModel.put("appointmentTime", d.getHour());
-        templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : messageSource.getMessage("email.emptyReason", null, LocaleContextHolder.getLocale()));
-
-        try {
-            mailService.sendEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), templateModel, doctor.getEmail(), "email");
-        } catch (MessagingException e) {
-            LOGGER.error(e.getMessage());
-        }
+        mailService.sendAppointmentStatusEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment);
 
         return appointment;
     }
@@ -151,16 +131,21 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         return appointmentDoctorMap;
     }
+
     @Transactional
     @Override
     public void cancelAppointment(long appointmentId) {
         appointmentDao.cancelApointment(appointmentId);
+        Appointment appointment = getById(appointmentId).orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+        mailService.sendAppointmentStatusEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment);
     }
 
     @Transactional
     @Override
     public void acceptAppointment(long appointmentId) {
         appointmentDao.acceptAppointment(appointmentId);
+        Appointment appointment = getById(appointmentId).orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+        mailService.sendAppointmentStatusEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment);
     }
     @Override
     public Optional<Appointment> getById(long appointmentId) {
