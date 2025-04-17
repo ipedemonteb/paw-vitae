@@ -469,7 +469,7 @@
                                 <button type="button" id="cancel-edit-btn" class="btn btn-secondary">
                                     <spring:message code="logout.confirmation.cancel" />
                                 </button>
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary" onclick="this.disabled = true ; this.form.submit();">
                                     <spring:message code="appointment.form.save" />
                                 </button>
                             </div>
@@ -553,7 +553,7 @@
                             </div>
 
                             <div class="form-actions">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary" onclick="this.disabled=true; this.form.submit();">
                                     <spring:message code="dashboard.availability.saveChanges" />
                                 </button>
                             </div>

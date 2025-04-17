@@ -35,12 +35,12 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, String language, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
         List<Coverage> coverageList = new ArrayList<>();
         List<Specialty> specialtyList = new ArrayList<>();
         coverages.forEach(coverage -> coverageList.add(cs.findById(Long.parseLong(coverage)).orElse(null)));
         specialties.forEach(specialty -> specialtyList.add(ss.getById(Long.parseLong(specialty)).orElse(null)));
-        return this.doctorDao.create(name, lastName, email, passwordEncoder.encode(password), phone, specialtyList, coverageList, availabilitySlots);
+        return this.doctorDao.create(name, lastName, email, passwordEncoder.encode(password), phone, language, specialtyList, coverageList, availabilitySlots);
     }
 
     @Override

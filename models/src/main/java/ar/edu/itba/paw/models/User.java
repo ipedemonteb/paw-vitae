@@ -10,15 +10,17 @@ public abstract class User {
     private final String email;
     private String password;
     private String phone;
+    private String language;
     private List<Appointment> appointments = new ArrayList<>();
 
-    public User(String name, long id, String lastName, String email, String password, String phone) {
+    public User(String name, long id, String lastName, String email, String password, String phone, String language) {
         this.name = name;
         this.id = id;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.phone = phone;
+        this.language = language;
     }
 
     public List<Appointment> getAppointments() {

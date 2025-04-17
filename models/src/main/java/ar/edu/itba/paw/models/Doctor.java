@@ -13,8 +13,8 @@ public class Doctor extends User {
     private List<Coverage> coverageList = new ArrayList<>();
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
 
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, List<Specialty> specialty, List<Coverage> coverageList, List<AvailabilitySlot> availabilitySlots) {
-        super(name, id, lastName, email, password, phone);
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,List<Specialty> specialty, List<Coverage> coverageList, List<AvailabilitySlot> availabilitySlots) {
+        super(name, id, lastName, email, password, phone, language);
         this.specialtyList = specialty;
         this.coverageList = coverageList;
         this.availabilitySlots = availabilitySlots;
