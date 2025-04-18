@@ -24,10 +24,10 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(classes = TestConfig.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class DoctorDaoTest {
-    /*
+
     private static final String USERS_TABLE = "users";
     private static final String DOCTORS_TABLE = "doctors";
     private static final String COVERAGES_TABLE = "coverages";
@@ -80,7 +80,7 @@ public class DoctorDaoTest {
                 LocalTime.of(16, 0)));
 
         //Exercise
-        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, specialties, coverages, availability);
+        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, "es", specialties, coverages, availability);
 
         //Postconditions
         assertNotNull(doctor);
@@ -114,7 +114,7 @@ public class DoctorDaoTest {
                 LocalTime.of(8, 0),
                 LocalTime.of(16, 0))
         );
-        Doctor created = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, List.of(specialty), List.of(coverage), availability);
+        Doctor created = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, "es", List.of(specialty), List.of(coverage), availability);
 
         //Exercise
         Optional<Doctor> maybeDoctor = doctorDao.getById(created.getId());
@@ -149,7 +149,7 @@ public class DoctorDaoTest {
         List<AvailabilitySlot> availability = List.of(new AvailabilitySlot(1,
                 LocalTime.of(8, 0),
                 LocalTime.of(16, 0)));
-        Doctor created = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, List.of(specialty), List.of(coverage), availability);
+        Doctor created = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, "es", List.of(specialty), List.of(coverage), availability);
 
         //Excercise
         Optional<Doctor> maybeDoctor = doctorDao.getByEmail(EMAIL);
@@ -173,7 +173,7 @@ public class DoctorDaoTest {
         List<AvailabilitySlot> availability = List.of(new AvailabilitySlot(1,
                 LocalTime.of(8, 0),
                 LocalTime.of(16, 0)));
-        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, List.of(specialty), List.of(coverage), availability);
+        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, "es", List.of(specialty), List.of(coverage), availability);
 
         //Exercise
         List<Doctor> doctors = doctorDao.getAll();
@@ -212,7 +212,7 @@ public class DoctorDaoTest {
         List<AvailabilitySlot> availability = List.of(new AvailabilitySlot(1,
                 LocalTime.of(8, 0),
                 LocalTime.of(16, 0)));
-        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, List.of(specialty), List.of(coverage), availability);
+        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, "es", List.of(specialty), List.of(coverage), availability);
 
         //Exercise
         List<Doctor> doctors = doctorDao.getBySpecialty("Cardiology");
@@ -237,7 +237,7 @@ public class DoctorDaoTest {
         assertNotNull(doctors);
         assertTrue(doctors.isEmpty());
     }
-    */
+
     //@TODO: Implement update test
 }
 

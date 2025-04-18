@@ -70,4 +70,6 @@ public abstract class User {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    public String getLanguage() { return language; }
 }
