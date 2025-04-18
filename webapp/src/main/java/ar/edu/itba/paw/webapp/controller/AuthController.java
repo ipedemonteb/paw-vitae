@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.form.PatientForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -87,6 +88,11 @@ public class AuthController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView doctorForm(@ModelAttribute("registerForm") final DoctorForm doctorForm) {
+//        if (authentication != null
+//                && authentication.isAuthenticated()
+//                && !(authentication instanceof AnonymousAuthenticationToken)) {
+//            return new ModelAndView("redirect:/");
+//        }
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
         List<Specialty> specialtyList = ss.getAll().orElse(new ArrayList<>());
         ModelAndView mav = new ModelAndView("auth/register");
@@ -98,6 +104,12 @@ public class AuthController {
 
     @RequestMapping(value = "/register-patient", method = RequestMethod.GET)
     public ModelAndView patientForm(@ModelAttribute("patientForm") final PatientForm pacientForm) {
+//        if (authentication != null
+//                && authentication.isAuthenticated()
+//                && !(authentication instanceof AnonymousAuthenticationToken)) {
+//            return new ModelAndView("redirect:/");
+//
+//        }
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
         ModelAndView mav = new ModelAndView("auth/register-patient");
         mav.addObject("coverageList", coverageList);
@@ -124,7 +136,13 @@ public class AuthController {
     }
 
     @RequestMapping("/login")
-    public ModelAndView login() {
+    public ModelAndView login(Authentication authentication) {
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            return new ModelAndView("redirect:/");
+
+        }
         return new ModelAndView("auth/login");
     }
 
