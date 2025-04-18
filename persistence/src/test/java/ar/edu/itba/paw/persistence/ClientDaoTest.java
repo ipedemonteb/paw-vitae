@@ -78,6 +78,7 @@ public class ClientDaoTest {
         assertNotNull(client);
         assertEquals(EMAIL, client.getEmail());
         assertEquals(NAME, client.getName());
+        //agregar where
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, CLIENTS_TABLE));
     }

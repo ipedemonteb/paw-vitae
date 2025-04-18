@@ -45,7 +45,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
 
         Appointment appointment = appointmentDao.create(clientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
-        mailService.sendAppointmentStatusEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment);
+        mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
         return appointment;
     }
@@ -142,7 +142,7 @@ public Map<Appointment, Doctor> getForClient(long clientId) {
     public void cancelAppointment(long appointmentId) {
         appointmentDao.cancelApointment(appointmentId);
         Appointment appointment = getById(appointmentId).orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
-        mailService.sendAppointmentStatusEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment);
+        mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
     }
 
     @Transactional
@@ -150,7 +150,7 @@ public Map<Appointment, Doctor> getForClient(long clientId) {
     public void acceptAppointment(long appointmentId) {
         appointmentDao.acceptAppointment(appointmentId);
         Appointment appointment = getById(appointmentId).orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
-        mailService.sendAppointmentStatusEmail(messageSource.getMessage("emil.newAppointment", null, LocaleContextHolder.getLocale()), appointment);
+        mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
     }
     @Override
     public Optional<Appointment> getById(long appointmentId) {

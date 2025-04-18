@@ -38,6 +38,7 @@ public class TestConfig {
         return dsi;
     }
 
+    //@TODO: Poblar / si tira problema de ids, reiniciar secuencias o insertar ids manualmente
     private DatabasePopulator databasePopulator() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(schemaSql);

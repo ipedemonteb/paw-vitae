@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -21,10 +20,7 @@ import org.thymeleaf.context.Context;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MailServiceImpl implements MailService {
@@ -54,30 +50,40 @@ public class MailServiceImpl implements MailService {
         Doctor doctor = doctorService.getById(appointment.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
         Client client = clientService.getById(appointment.getClientId()).orElseThrow(() -> new IllegalArgumentException("Client not found"));
 
-        Context context = new Context();
+        Locale clientLocale = Locale.forLanguageTag(client.getLanguage());
+        Locale doctorLocale = Locale.forLanguageTag(doctor.getLanguage());
+
+        Context clientContext = new Context(clientLocale);
+        Context doctorContext = new Context(doctorLocale);
+
+        String doctorSubject = messageSource.getMessage(subject, null, doctorLocale);
+        String clientSubject = messageSource.getMessage(subject, null, clientLocale);
+
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("doctorName", doctor.getName() + " " + doctor.getLastName());
         templateModel.put("patientName", client.getName() + " " + client.getLastName());
         LocalDateTime date = appointment.getDate();
         templateModel.put("appointmentDate", date.toLocalDate().toString());
         templateModel.put("appointmentTime", date.getHour());
-        templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : messageSource.getMessage("email.emptyReason", null, LocaleContextHolder.getLocale()));
+        //@TODO: Check
+        templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : "-");
 
-        context.setVariables(templateModel);
+        clientContext.setVariables(templateModel);
+        doctorContext.setVariables(templateModel);
         String htmlContentDoctor;
         String htmlContentClient;
 
         System.out.println("appointment.getStatus() = " + appointment.getStatus());
 
         if (appointment.getStatus().equals("pendiente")) { //TODO use enum maybe for types, not magic strings
-            htmlContentDoctor = templateEngine.process("DoctorAppointmentRequest", context);
-            htmlContentClient = templateEngine.process("PatientAppointmentRequest", context);
+            htmlContentDoctor = templateEngine.process("DoctorAppointmentRequest", doctorContext);
+            htmlContentClient = templateEngine.process("PatientAppointmentRequest", clientContext);
         } else if (appointment.getStatus().equals("confirmado")) {
-            htmlContentDoctor = templateEngine.process("DoctorAppointmentConfirmation", context);
-            htmlContentClient = templateEngine.process("PatientAppointmentConfirmation", context);
+            htmlContentDoctor = templateEngine.process("DoctorAppointmentConfirmation", doctorContext);
+            htmlContentClient = templateEngine.process("PatientAppointmentConfirmation", clientContext);
         } else {
-            htmlContentDoctor = templateEngine.process("DoctorAppointmentCancellation", context);
-            htmlContentClient = templateEngine.process("PatientAppointmentCancellation", context);
+            htmlContentDoctor = templateEngine.process("DoctorAppointmentCancellation", doctorContext);
+            htmlContentClient = templateEngine.process("PatientAppointmentCancellation", clientContext);
         }
 
         MimeMessage doctorMessage = mailSender.createMimeMessage();
@@ -89,8 +95,8 @@ public class MailServiceImpl implements MailService {
             doctorHelper.setTo(doctor.getEmail());
             clientHelper.setTo(client.getEmail());
 
-            doctorHelper.setSubject(subject);
-            clientHelper.setSubject(subject);
+            doctorHelper.setSubject(doctorSubject);
+            clientHelper.setSubject(clientSubject);
 
             doctorHelper.setText(htmlContentDoctor, true);
             clientHelper.setText(htmlContentClient, true);
