@@ -56,11 +56,18 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(@Valid @ModelAttribute("registerForm") final DoctorForm doctorForm, final BindingResult errors)  {
+    public ModelAndView register(@Valid @ModelAttribute("registerForm") final DoctorForm doctorForm, final BindingResult errors, Authentication authentication)  {
+
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            // remember‑me or fully authenticated ↦ bounce home
+            return new ModelAndView("redirect:/");
+        }
 
         if(errors.hasErrors()) {
             System.out.println("Errors in form: " + errors.getAllErrors());
-            return doctorForm(doctorForm);
+            return doctorForm(doctorForm, authentication);
         }
 
         if (doctorForm.getAvailabilitySlots() != null) {
@@ -75,24 +82,25 @@ public class AuthController {
             is.create(doctor.getId(), doctorForm.getImage());
         } catch (IOException e) {
             errors.reject("image.upload.error", "Failed to upload image");
-            return doctorForm(doctorForm);
+            return doctorForm(doctorForm, authentication);
         }
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(doctor.getEmail(), doctorForm.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Authentication auth = authenticationManager.authenticate(authToken);
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
 
         return new ModelAndView("redirect:/doctor/dashboard");
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView doctorForm(@ModelAttribute("registerForm") final DoctorForm doctorForm) {
-//        if (authentication != null
-//                && authentication.isAuthenticated()
-//                && !(authentication instanceof AnonymousAuthenticationToken)) {
-//            return new ModelAndView("redirect:/");
-//        }
+    public ModelAndView doctorForm(@ModelAttribute("registerForm") final DoctorForm doctorForm, Authentication authentication) {
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            // remember‑me or fully authenticated ↦ bounce home
+            return new ModelAndView("redirect:/");
+        }
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
         List<Specialty> specialtyList = ss.getAll().orElse(new ArrayList<>());
         ModelAndView mav = new ModelAndView("auth/register");
@@ -103,13 +111,14 @@ public class AuthController {
 
 
     @RequestMapping(value = "/register-patient", method = RequestMethod.GET)
-    public ModelAndView patientForm(@ModelAttribute("patientForm") final PatientForm pacientForm) {
-//        if (authentication != null
-//                && authentication.isAuthenticated()
-//                && !(authentication instanceof AnonymousAuthenticationToken)) {
-//            return new ModelAndView("redirect:/");
-//
-//        }
+    public ModelAndView patientForm(@ModelAttribute("patientForm") final PatientForm pacientForm, Authentication authentication) {
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            // remember‑me or fully authenticated ↦ bounce home
+            return new ModelAndView("redirect:/");
+        }
+
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
         ModelAndView mav = new ModelAndView("auth/register-patient");
         mav.addObject("coverageList", coverageList);
@@ -117,10 +126,18 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/register-patient", method = RequestMethod.POST)
-    public ModelAndView registerPatient(@Valid @ModelAttribute("patientForm") final PatientForm patientForm, final BindingResult errors)  {
+    public ModelAndView registerPatient(@Valid @ModelAttribute("patientForm") final PatientForm patientForm, final BindingResult errors,Authentication authentication)  {
+
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            // remember‑me or fully authenticated ↦ bounce home
+            return new ModelAndView("redirect:/");
+        }
+
 
         if(errors.hasErrors()) {
-            return patientForm(patientForm);
+            return patientForm(patientForm, authentication);
         }
 
         Locale locale = LocaleContextHolder.getLocale();
@@ -129,8 +146,8 @@ public class AuthController {
 
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(client.getEmail(), patientForm.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Authentication auth = authenticationManager.authenticate(authToken);
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
         return new ModelAndView("redirect:/patient/dashboard");
     }
@@ -140,9 +157,10 @@ public class AuthController {
         if (authentication != null
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
+            // remember‑me or fully authenticated ↦ bounce home
             return new ModelAndView("redirect:/");
-
         }
+
         return new ModelAndView("auth/login");
     }
 
