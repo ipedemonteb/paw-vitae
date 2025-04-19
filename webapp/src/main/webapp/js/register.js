@@ -1,6 +1,7 @@
 // Global variables
 let slotCounter = 0;
 let timeSlots = [];
+let isFormSubmitting = false;
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize file upload preview
@@ -17,6 +18,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check if there are form errors and show the appropriate section
     checkFormErrors();
+
+    const form = document.querySelector('.register-form');
+    const submitButton = document.getElementById('registerButton');
+
+    if (form && submitButton) {
+        form.addEventListener('submit', function () {
+            // Disable the button to prevent multiple submissions
+            isFormSubmitting = true;
+            submitButton.disabled = true;
+        });
+    }
 
     // Add event listeners
     document.getElementById('add-slot-btn').addEventListener('click', addTimeSlotRow);
@@ -122,7 +134,7 @@ function addInputValidationListeners() {
 
 function updateSubmitButtonState() {
     const submitButton = document.querySelector('.btn-submit-doctor');
-    if (!submitButton) return;
+    if (!submitButton || isFormSubmitting) return;
 
     const termsChecked = document.getElementById('terms').checked;
     const hasTimeSlots = timeSlots.length > 0;
