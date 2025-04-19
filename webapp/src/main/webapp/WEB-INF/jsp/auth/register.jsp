@@ -60,12 +60,14 @@
                             <div class="form-group">
                                 <label for="email" class="form-label required-field"><spring:message code="register.email" /></label>
                                 <form:input required="true" path="email" id="email" cssClass="form-control ${status.error ? 'error' : ''}" />
+                                <div id="email-validation-message" class="error-message" style="display: none;"></div>
                                 <form:errors path="email" cssClass="error-message" />
                             </div>
 
                             <div class="form-group">
                                 <label for="phone" class="form-label required-field"><spring:message code="register.phone" /></label>
                                 <form:input required="true" path="phone" id="phone" cssClass="form-control ${status.error ? 'error' : ''}" placeholder="+1 (123) 456-7890" />
+                                <div id="phone-validation-message" class="error-message" style="display: none;"></div>
                                 <form:errors path="phone" cssClass="error-message" />
                             </div>
                         </div>
@@ -75,9 +77,9 @@
                                 <label for="password" class="form-label required-field">
                                     <spring:message code="register.password" />
                                     <span class="tooltip">
-                <span class="tooltip-icon">?</span>
-                <span class="tooltip-text"><spring:message code="register.passwordTooltip" /></span>
-            </span>
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-text"><spring:message code="register.passwordTooltip" /></span>
+                                     </span>
                                 </label>
                                 <form:password required="true" path="password" id="password" cssClass="form-control ${status.error ? 'error' : ''}" />
                                 <div class="password-strength">
@@ -86,6 +88,7 @@
                                     </div>
                                     <div class="strength-text"></div>
                                 </div>
+                                <div id="password-length-message" class="error-message" style="display: none;"></div>
                                 <form:errors path="password" cssClass="error-message" />
                             </div>
 
@@ -265,7 +268,10 @@
             passwordMedium: '<spring:message code="register.passwordMedium" javaScriptEscape="true" />',
             passwordStrong: '<spring:message code="register.passwordStrong" javaScriptEscape="true" />',
             passwordVeryStrong: '<spring:message code="register.passwordVeryStrong" javaScriptEscape="true" />',
-            passwordsDoNotMatch: '<spring:message code="register.passwordsDoNotMatch" javaScriptEscape="true" />'
+            passwordsDoNotMatch: '<spring:message code="register.passwordsDoNotMatch" javaScriptEscape="true" />',
+            passwordLength: '<spring:message code="register.passwordLength" javaScriptEscape="true" />',
+            emailInvalid: '<spring:message code="appointment.validation.email" javaScriptEscape="true" />',
+            phoneInvalid: '<spring:message code="appointment.validation.phone" javaScriptEscape="true" />',
         };
 
         // Store existing availability slots data if present

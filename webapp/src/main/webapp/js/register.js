@@ -33,6 +33,16 @@ document.addEventListener('DOMContentLoaded', function() {
         updateNextButtonState(1);
     });
 
+    document.getElementById('email').addEventListener('keyup', function () {
+        validateEmail(this);
+        updateNextButtonState(1)
+    })
+
+    document.getElementById('phone').addEventListener('keyup', function () {
+        validatePhone(this);
+        updateNextButtonState(1)
+    })
+
     restorePasswordValues();
 
     addInputValidationListeners();
@@ -670,14 +680,14 @@ function validateSection(sectionNumber) {
 // Password strength checker
 function checkPasswordStrength() {
     const password = document.getElementById('password').value;
-    const strengthMeter = document.querySelector('.strength-meter-fill');
+    const strengthMeterFill = document.querySelector('.strength-meter-fill');
     const strengthText = document.querySelector('.strength-text');
 
     // Remove all classes
     document.querySelector('.password-strength').className = 'password-strength';
 
     if (!password) {
-        strengthMeter.style.width = '0';
+        // strengthMeter.style.width = '0';
         strengthText.textContent = '';
         return;
     }
@@ -717,11 +727,43 @@ function checkPasswordStrength() {
     strengthText.textContent = strengthLabel;
 }
 
+
+function validateEmail(field) {
+    const email = field.value;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailValidMessage = document.getElementById('email-validation-message');
+
+    if (email && !emailPattern.test(email)) {
+        field.classList.add('error');
+        emailValidMessage.style.display = 'block';
+        emailValidMessage.textContent = window.messages.emailInvalid;
+    } else {
+        emailValidMessage.style.display = 'none';
+        field.classList.remove("error");
+    }
+}
+
+function validatePhone(field) {
+    const phone = field.value;
+    const phonePattern = /^\+?[0-9. ()-]{7,25}$/;
+    const phoneValidMessage = document.getElementById('phone-validation-message');
+
+    if (phone && !phonePattern.test(phone)) {
+        field.classList.add('error');
+        phoneValidMessage.style.display = 'block';
+        phoneValidMessage.textContent = window.messages.phoneInvalid;
+    } else {
+        phoneValidMessage.style.display = 'none';
+        field.classList.remove("error");
+    }
+}
+
 // Check if passwords match
 function checkPasswordMatch() {
     const password = document.getElementById('password').value;
     const repeatPassword = document.getElementById('repeatPassword').value;
     const matchMessage = document.getElementById('password-match-message');
+    const lengthMessage = document.getElementById('password-length-message');
 
     if (password && repeatPassword) {
         if (password !== repeatPassword) {
@@ -732,6 +774,21 @@ function checkPasswordMatch() {
             matchMessage.style.display = 'none';
             document.getElementById('repeatPassword').classList.remove('error');
         }
+
+
+    }
+    if (password) {
+        if (password.length > 0 && password.length < 8) {
+            lengthMessage.textContent = window.messages.passwordLength;
+            lengthMessage.style.display = 'block';
+            document.getElementById("password").classList.add("error");
+        } else {
+            lengthMessage.style.display = 'none';
+            document.getElementById('password').classList.remove('error');
+        }
+    } else {
+        lengthMessage.style.display = 'none';
+        document.getElementById('password').classList.remove('error');
     }
 }
 
