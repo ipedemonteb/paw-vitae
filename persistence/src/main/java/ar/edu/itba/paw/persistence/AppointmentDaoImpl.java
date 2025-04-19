@@ -26,7 +26,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     private SimpleJdbcInsert jdbcInsert;
 
     private DoctorDaoImpl doctorDaoImpl;
-
+    private ClientDaoImpl clientDaoImpl;
 
     private final static RowMapper<Appointment> ROW_MAPPER = new RowMapper<Appointment>() {
         @Override
@@ -44,13 +44,14 @@ public class AppointmentDaoImpl implements AppointmentDao {
     };
 
     @Autowired
-    public AppointmentDaoImpl(final DataSource ds, final DoctorDaoImpl doctorDaoImpl) {
+    public AppointmentDaoImpl(final DataSource ds, final DoctorDaoImpl doctorDaoImpl,final ClientDaoImpl clientDaoImpl) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
                 .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id")
                 .usingGeneratedKeyColumns("id");
         this.doctorDaoImpl = doctorDaoImpl;
+        this.clientDaoImpl = clientDaoImpl;
     }
 
 
@@ -80,6 +81,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE client_id = ? ORDER BY Appointments.date", ROW_MAPPER, clientId);
         for (Appointment appointment : appointments) {
         appointment.setDoctor(doctorDaoImpl.getById(appointment.getDoctorId()).orElse(null));
+        appointment.setClient(clientDaoImpl.getById(appointment.getClientId()).orElse(null));
         }
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
@@ -90,6 +92,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ? ORDER BY Appointments.date", ROW_MAPPER, doctorId);
         for (Appointment appointment : appointments) {
             appointment.setDoctor(doctorDaoImpl.getById(appointment.getDoctorId()).orElse(null));
+            appointment.setClient(clientDaoImpl.getById(appointment.getClientId()).orElse(null));
         }
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }

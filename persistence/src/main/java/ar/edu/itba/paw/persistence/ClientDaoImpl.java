@@ -18,8 +18,6 @@ import java.util.*;
 @Repository
 public class ClientDaoImpl implements ClientDao {
 
-    private final AppointmentDao appointmentDao;
-
     private JdbcTemplate jdbcTemplate;
 
     private final SimpleJdbcInsert jdbcInsertClient;
@@ -43,7 +41,7 @@ public class ClientDaoImpl implements ClientDao {
     };
 
     @Autowired
-    public ClientDaoImpl(final DataSource ds,AppointmentDao appointmentDao) {
+    public ClientDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertClient = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("clients")
@@ -51,14 +49,12 @@ public class ClientDaoImpl implements ClientDao {
         jdbcInsertUser = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
                 .usingGeneratedKeyColumns("id");
-        this.appointmentDao = appointmentDao;
     }
 
     @Override
     public Optional<Client> getById(long id) {
-        Optional<Client> client = jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id = ?", ROW_MAPPER, id).stream().findFirst();
-        client.ifPresent(value -> value.setAppointments(appointmentDao.getByClientId(value.getId()).orElse(new ArrayList<>())));
-        return client;
+
+        return jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id = ?", ROW_MAPPER, id).stream().findFirst();
     }
 
     @Override
@@ -91,18 +87,13 @@ public class ClientDaoImpl implements ClientDao {
 
     @Override
     public Optional<Client> getByEmail(String email) {
-        Optional<Client> client = jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.email = ?", ROW_MAPPER, email).stream().findFirst();
-        client.ifPresent(value -> value.setAppointments(appointmentDao.getByClientId(value.getId()).orElse(new ArrayList<>())));
-        return client;
+        return jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.email = ?", ROW_MAPPER, email).stream().findFirst();
     }
 
     @Override
     public void updateClient(long id, String name, String lastName, String phone, Coverage coverage) {
-        // Update the basic client information
         jdbcTemplate.update("UPDATE users SET name = ?, last_name = ?, phone = ? WHERE id = ?",
                 name, lastName, phone, id);
-
-        // Update the coverage if provided
         if (coverage != null) {
             jdbcTemplate.update("UPDATE clients SET coverage_id = ? WHERE client_id = ?", coverage.getId(), id);
         }

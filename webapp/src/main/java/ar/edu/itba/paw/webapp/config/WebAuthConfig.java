@@ -25,6 +25,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthUserDetailsService authUserDetailsService;
 
+    @Autowired
+    private String rememberMeSecretKey;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -65,7 +67,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe()
                     .rememberMeParameter("j_rememberme")
                     .userDetailsService(authUserDetailsService)
-                    .key("mysupersecretketthatnobodyknowsabout") //no deberia ser constante o harcodeado. usar ssl
+                    .key(rememberMeSecretKey) //no deberia ser constante o harcodeado. usar ssl
                     .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
                     .and()
                 .logout()

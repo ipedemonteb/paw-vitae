@@ -44,19 +44,20 @@ public class PatientController {
     public ModelAndView getDoctorDashboard() {
         final ModelAndView mav = new ModelAndView("patient/dashboard");
         Client patient = loggedUser();
-        Map<Appointment, Doctor> appointments = as.getForClient(patient.getId());
+        List<Appointment> appointments = as.getByClientId(patient.getId()).orElse(new ArrayList<>());
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+        Map<Boolean, List<Appointment>> partitionedAppointments = appointments.stream()
+                .collect(Collectors.partitioningBy(appointment -> appointment.getDate().isAfter(now)));
         List<Coverage> coverageList = covs.getAll().orElse(new ArrayList<>());
-        // Crear un nuevo objeto de formulario para actualización
         UpdatePatientForm updatePatientForm = new UpdatePatientForm();
         updatePatientForm.setName(patient.getName());
         updatePatientForm.setLastName(patient.getLastName());
         updatePatientForm.setPhone(patient.getPhone());
         updatePatientForm.setCoverage(patient.getCoverage().getName());
-
         mav.addObject("patient", patient);
         mav.addObject("updatePatientForm", updatePatientForm);
-        mav.addObject("upcomingAppointments", appointments.entrySet().stream().filter(appointment -> appointment.getKey().getDate().isAfter(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))).toList());
-        mav.addObject("pastAppointments", appointments.entrySet().stream().filter(appointment -> appointment.getKey().getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))).toList());
+        mav.addObject("upcomingAppointments", partitionedAppointments.get(true));
+        mav.addObject("pastAppointments", partitionedAppointments.get(false));
         mav.addObject("coverageList", coverageList);
         return mav;
     }

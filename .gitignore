@@ -41,7 +41,7 @@ Thumbs.db
 *.app
 *.exe
 *.war
-
+*.properties
 # Large media files
 *.mp4
 *.tiff
@@ -55,7 +55,7 @@ Thumbs.db
 
 # IDE specific files
 *.iml
-
+*.key
 .smarttomcat/
 
 
