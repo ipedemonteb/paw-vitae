@@ -103,40 +103,6 @@ public class AppointmentServiceImpl implements AppointmentService {
             return Optional.empty();
         }
     }
-
-    @Override
-    public Map<Appointment, Client> getForDoctor(long doctorId) {
-        Optional<List<Appointment>> appointments = appointmentDao.getByDoctorId(doctorId);
-        List<Client> clients = clientService.getByAppointments(appointments.orElse(Collections.emptyList()));
-        Map<Appointment, Client> appointmentClientMap = new LinkedHashMap<>();
-
-        if (appointments.isPresent()) {
-            for (Appointment appointment : appointments.get()) {
-                appointmentClientMap.put(appointment, clients.stream()
-                        .filter(c -> c.getId() == appointment.getClientId())
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("Client not found")));
-            }
-        }
-
-        return appointmentClientMap;
-    }
-
- @Override
-public Map<Appointment, Doctor> getForClient(long clientId) {
-    Optional<List<Appointment>> appointments = appointmentDao.getByClientId(clientId);
-    List<Doctor> doctors = doctorService.getByAppointments(appointments.orElse(Collections.emptyList()));
-    Map<Appointment, Doctor> appointmentDoctorMap = new LinkedHashMap<>();
-    if (appointments.isPresent()) {
-        for (Appointment appointment : appointments.get()) {
-            appointmentDoctorMap.put(appointment, doctors.stream()
-                .filter(d -> d.getId() == appointment.getDoctorId())
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Doctor not found")));
-        }
-    }
-    return appointmentDoctorMap;
-}
     @Transactional
     @Override
     public void cancelAppointment(long appointmentId) {
