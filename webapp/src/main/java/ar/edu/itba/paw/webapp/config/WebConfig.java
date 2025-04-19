@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -157,15 +158,15 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public String SecretKey() {
-        String path = env.getProperty("security.secret-file");
-        if (path == null) {
-            throw new IllegalStateException("La propiedad security.jwt.secret-file no está definida.");
-        }
+    public String secretKey() {
         try {
-            return Files.readString(Path.of(path)).trim();
+            // Load the file from the classpath
+            Resource resource = new ClassPathResource("secret.key");
+            Path path = resource.getFile().toPath();
+            // Read the file content
+            return Files.readString(path).trim();
         } catch (IOException e) {
-            throw new IllegalStateException("No se pudo leer el archivo de la clave secreta: " + path, e);
+            throw new IllegalStateException("Could not read the secret key file from the classpath", e);
         }
     }
 
