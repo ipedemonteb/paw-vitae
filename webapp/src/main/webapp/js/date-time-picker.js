@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
             dayElement.className = "date-picker-day";
             dayElement.textContent = day;
 
-            const isFullyBooked = FutureAppointments.some(entry => entry.hours.length === 11 && entry.date === formattedDate);
+            const isFullyBooked = FutureAppointments.some(entry => entry.hours.length === 13 && entry.date === formattedDate);
 
             // Disable past dates
             if (date < minDate.setHours(0, 0, 0, 0) || isFullyBooked || availabilitySlots.find(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7)) === undefined) {
@@ -346,7 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const currentHour = new Date(argDate).getHours();
 
-        const allSlots = Array.from({ length: 11 }, (_, i) => `${8 + i}`);
+        const allSlots = Array.from({ length: 13 }, (_, i) => `${8 + i}`);
 
         let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7)); //js getDate works in mysterious ways, 0 is Sunday and 1 is Mondays. I have saved you all from debugging hell
 
