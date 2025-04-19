@@ -207,7 +207,7 @@
                         <div class="appointments-list">
                             <c:forEach items="${pastAppointments}" var="appointment">
                                 <!-- CORREGIDO: Atributos data-status y data-date con comillas -->
-                                <div class="appointment-card past" data-status="<spring:message code="${appointment.status}"/>" data-date="<c:out value="${appointment.key.date}"/>">
+                                <div class="appointment-card past" data-status="<spring:message code="${appointment.status}"/>" data-date="<c:out value="${appointment.date}"/>">
                                     <div class="appointment-time">
                                         <div class="appointment-date">
                                             <span class="day">
