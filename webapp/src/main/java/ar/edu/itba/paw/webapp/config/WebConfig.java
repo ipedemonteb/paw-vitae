@@ -36,7 +36,10 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 @EnableAsync
@@ -151,6 +154,19 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
         templateResolver.setCacheable(false); // Disable cache for development
         return templateResolver;
+    }
+
+    @Bean
+    public String SecretKey() {
+        String path = env.getProperty("security.secret-file");
+        if (path == null) {
+            throw new IllegalStateException("La propiedad security.jwt.secret-file no está definida.");
+        }
+        try {
+            return Files.readString(Path.of(path)).trim();
+        } catch (IOException e) {
+            throw new IllegalStateException("No se pudo leer el archivo de la clave secreta: " + path, e);
+        }
     }
 
 }

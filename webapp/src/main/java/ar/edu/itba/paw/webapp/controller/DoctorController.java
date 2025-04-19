@@ -89,11 +89,12 @@ public class DoctorController {
         List<Specialty> specialtyList = ss.getAll().orElse(new ArrayList<>());
         mav.addObject("coverageList", coverageList);
         mav.addObject("specialtyList", specialtyList);
-        Map<Appointment, Client> appointments = as.getForDoctor(doctor.getId());
-        mav.addObject("doctor", doctor);
-        mav.addObject("upcomingAppointments", appointments.entrySet().stream().filter(appointment -> appointment.getKey().getDate().isAfter(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))).toList());
-        mav.addObject("pastAppointments", appointments.entrySet().stream().filter(appointment -> appointment.getKey().getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))).toList());
-
+        List<Appointment> appointments = as.getByDoctorId(doctor.getId()).orElse(new ArrayList<>());
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+        Map<Boolean, List<Appointment>> partitionedAppointments = appointments.stream()
+                .collect(Collectors.partitioningBy(appointment -> appointment.getDate().isAfter(now)));
+        mav.addObject("upcomingAppointments", partitionedAppointments.get(true));
+        mav.addObject("pastAppointments", partitionedAppointments.get(false));
         UpdateDoctorForm updateDoctorForm = new UpdateDoctorForm();
         updateDoctorForm.setName(doctor.getName());
         updateDoctorForm.setLastName(doctor.getLastName());
