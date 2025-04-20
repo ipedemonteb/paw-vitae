@@ -786,8 +786,9 @@ function checkPasswordMatch() {
             matchMessage.style.display = 'none';
             document.getElementById('repeatPassword').classList.remove('error');
         }
-
-
+    } else if (!password && !repeatPassword) {
+        matchMessage.style.display = "none"
+        document.getElementById("repeatPassword").classList.remove("error")
     }
     if (password) {
         if (password.length > 0 && password.length < 8) {
