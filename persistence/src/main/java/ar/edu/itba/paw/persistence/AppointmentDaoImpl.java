@@ -115,6 +115,11 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
     @Override
     public Optional<Appointment> getById(long appointmentId) {
-        return jdbcTemplate.query("SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id  WHERE Appointments.id = ?", ROW_MAPPER, appointmentId).stream().findFirst();
+        Optional<Appointment> appointment = jdbcTemplate.query("SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id  WHERE Appointments.id = ?", ROW_MAPPER, appointmentId).stream().findFirst();
+        appointment.ifPresent(app -> {
+            app.setDoctor(doctorDaoImpl.getById(app.getDoctorId()).orElse(null));
+            app.setClient(clientDaoImpl.getById(app.getClientId()).orElse(null));
+        });
+    return appointment;
     }
 }
