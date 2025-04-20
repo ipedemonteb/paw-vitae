@@ -59,7 +59,7 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="email" class="form-label required-field"><spring:message code="register.email" /></label>
-                                <form:input required="true" path="email" id="email" cssClass="form-control ${status.error ? 'error' : ''}" />
+                                <form:input required="true" path="email" id="email" cssClass="form-control ${status.error ? 'error' : ''}" placeholder="email@vitae.com" />
                                 <div id="email-validation-message" class="error-message" style="display: none;"></div>
                                 <form:errors path="email" cssClass="error-message" />
                             </div>
