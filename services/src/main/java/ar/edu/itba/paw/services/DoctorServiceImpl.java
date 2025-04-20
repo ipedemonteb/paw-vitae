@@ -72,8 +72,8 @@ public class DoctorServiceImpl implements DoctorService {
     public void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
         List<Coverage> coverageList = new ArrayList<>();
         List<Specialty> specialtyList = new ArrayList<>();
-        coverages.forEach(coverage -> coverageList.add(cs.findById(Long.parseLong(coverage)).orElse(null)));
-        specialties.forEach(specialty -> specialtyList.add(ss.getById(Long.parseLong(specialty)).orElse(null)));
+        coverages.forEach(coverage -> coverageList.add(cs.findById(Long.parseLong(coverage)).orElse(null))); //TODO create query to fetch list instead of individually
+        specialties.forEach(specialty -> specialtyList.add(ss.getById(Long.parseLong(specialty)).orElse(null))); //TODO create query to fetch list instead of individually
         doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList, availabilitySlots);
     }
 
