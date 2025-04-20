@@ -11,7 +11,6 @@ public abstract class User {
     private String password;
     private String phone;
     private String language;
-    private List<Appointment> appointments = new ArrayList<>();
 
     public User(String name, long id, String lastName, String email, String password, String phone, String language) {
         this.name = name;
@@ -23,10 +22,6 @@ public abstract class User {
         this.language = language;
     }
 
-
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
-    }
 
     public String getName() {
         return name;
