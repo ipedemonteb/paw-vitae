@@ -28,4 +28,5 @@ public interface DoctorDao {
     void changePassword(long id, String password);
     String getLanguage(long id);
 
+    void changeLanguage(long id, String language);
 }
