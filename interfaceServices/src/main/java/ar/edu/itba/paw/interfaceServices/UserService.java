@@ -10,4 +10,6 @@ public interface UserService {
 
     void changePassword(Long id, String password);
     String getLanguageById(long id);
+
+    void changeLanguage(long id, String language);
 }

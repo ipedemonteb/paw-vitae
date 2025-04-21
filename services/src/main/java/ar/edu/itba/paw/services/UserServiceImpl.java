@@ -51,4 +51,13 @@ public class UserServiceImpl implements UserService {
             return doctorDao.getLanguage(id);
         }
     }
+
+    public void changeLanguage(long id, String language) {
+        Optional<Client> client = clientDao.getById(id);
+        if (client.isPresent()) {
+            clientDao.changeLanguage(id, language);
+        } else {
+            doctorDao.changeLanguage(id, language);
+        }
+    }
 }
