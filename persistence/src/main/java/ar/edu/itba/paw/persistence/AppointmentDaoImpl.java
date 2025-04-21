@@ -100,7 +100,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public Optional<List<Appointment>> getAllFutureAppointments(long doctorId) {
         List<Appointment> appointments = jdbcTemplate.query(
-                "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ? AND date > NOW()", ROW_MAPPER, doctorId);
+                "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ? AND date > NOW() AND status <> 'cancelado'", ROW_MAPPER, doctorId);
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
 
