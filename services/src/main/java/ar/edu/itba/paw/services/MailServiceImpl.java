@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaceServices.ClientService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Doctor;
 import org.slf4j.Logger;
@@ -75,10 +76,10 @@ public class MailServiceImpl implements MailService {
 
         System.out.println("appointment.getStatus() = " + appointment.getStatus());
 
-        if (appointment.getStatus().equals("pendiente")) { //TODO use enum maybe for types, not magic strings
+        if (appointment.getStatus().equals(AppointmentStatus.PENDIENTE.getValue())) {
             htmlContentDoctor = templateEngine.process("DoctorAppointmentRequest", doctorContext);
             htmlContentClient = templateEngine.process("PatientAppointmentRequest", clientContext);
-        } else if (appointment.getStatus().equals("confirmado")) {
+        } else if (appointment.getStatus().equals(AppointmentStatus.CONFIRMADO.getValue())) {
             htmlContentDoctor = templateEngine.process("DoctorAppointmentConfirmation", doctorContext);
             htmlContentClient = templateEngine.process("PatientAppointmentConfirmation", clientContext);
         } else {

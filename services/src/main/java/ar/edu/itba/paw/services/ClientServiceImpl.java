@@ -54,22 +54,13 @@ public class ClientServiceImpl implements ClientService {
     @Transactional
     @Override
     public void updateClient(Client currentClient, String name, String lastName, String phone, Coverage coverage) {
-        boolean hasChanged = false;
-        if(!currentClient.getName().equals(name)
+        boolean hasChanged = !currentClient.getName().equals(name)
                 || !currentClient.getLastName().equals(lastName)
                 || !currentClient.getPhone().equals(phone)
-                || !currentClient.getCoverage().getName().equals(coverage.getName())) {
-            hasChanged = true;
-        }
+                || !currentClient.getCoverage().getName().equals(coverage.getName());
         if (hasChanged) {
             clientDao.updateClient(currentClient.getId(), name, lastName, phone, coverage);
         }
 
-    }
-
-    @Override
-    public List<Client> getByAppointments(List<Appointment> appointments) {
-        Set<Long> ids = appointments.stream().map(Appointment::getClientId).collect(Collectors.toSet());
-        return ids.isEmpty() ? Collections.emptyList() : clientDao.getByIds(ids);
     }
 }

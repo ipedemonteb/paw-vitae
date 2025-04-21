@@ -61,12 +61,6 @@ public class DoctorServiceImpl implements DoctorService {
         return this.doctorDao.getAll();
     }
 
-    @Override
-    public List<Doctor> getByAppointments(List<Appointment> appointments) {
-        Set<Long> ids = appointments.stream().map(Appointment::getDoctorId).collect(Collectors.toSet());
-        return ids.isEmpty()? Collections.emptyList() : doctorDao.getByIds(ids);
-    }
-
     @Transactional
     @Override
     public void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
