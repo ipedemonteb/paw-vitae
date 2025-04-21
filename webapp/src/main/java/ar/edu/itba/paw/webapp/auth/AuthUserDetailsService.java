@@ -7,6 +7,8 @@ import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 @Component
@@ -38,6 +41,13 @@ public class AuthUserDetailsService implements UserDetailsService {
 
         if (!BCRYPT_PATTERN.matcher(user.getPassword()).matches()) {;//manera rustica de hacerlo, se deberia pedir al usuario que cambie su contraseña
             us.changePassword(user.getId(), user.getPassword());
+            return loadUserByUsername(email);
+        }
+
+        if(user.getLanguage() == null){
+            Locale locale = LocaleContextHolder.getLocale();
+            String language = locale.getLanguage();
+            us.changeLanguage(user.getId(), language);
             return loadUserByUsername(email);
         }
 

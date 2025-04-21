@@ -283,4 +283,9 @@ public class DoctorDaoImpl implements DoctorDao {
     public String getLanguage(long id) {
         return jdbcTemplate.query("SELECT language FROM Users WHERE id = ?", (rs, rowNum) -> rs.getString("language"), id).stream().findFirst().orElse(null);
     }
+
+    @Override
+    public void changeLanguage(long id, String language) {
+        jdbcTemplate.update("UPDATE Users SET language = ? WHERE id = ?", language, id);
+    }
 }
