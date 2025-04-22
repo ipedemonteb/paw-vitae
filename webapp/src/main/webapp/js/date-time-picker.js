@@ -187,11 +187,12 @@ document.addEventListener("DOMContentLoaded", () => {
             dayElement.className = "date-picker-day";
             dayElement.textContent = day;
 
-            let available = availabilitySlots.find(slot => slot.dayOfWeek == ((date.getDay() -1) % 7))
+            let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7));
             let flag = true;
 
-            if (available !== undefined) {
-                flag = FutureAppointments.some(entry => entry.hours.length === available.slots && entry.date === formattedDate);
+            if (available !== undefined && available.length > 0) {
+                const totalSlots = available.reduce((sum, slot) => sum + slot.slots, 0);
+                flag = FutureAppointments.some(entry => entry.hours.length === totalSlots && entry.date === formattedDate);
             }
 
             // Disable past dates
