@@ -201,12 +201,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 dayElement.className = "date-picker-day";
                 dayElement.textContent = day;
 
-                const isFullyBooked = doctorAvailability.some(entry =>
-                    entry.date === formattedDate && entry.hours.length === 11
-                );
+                let available = doctorAvailabilitySlots.find(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7));
+                let flag = true;
+
+                if (available !== undefined) {
+                    flag = doctorAvailability.some(entry => entry.date === formattedDate && entry.hours.length === available.slots);
+                }
+
 
                 // Disable past dates and fully booked dates
-                if (date < minDate.setHours(0, 0, 0, 0) || isFullyBooked || doctorAvailabilitySlots.find(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7)) === undefined) {
+                if (date < minDate.setHours(0, 0, 0, 0) || flag) {
                     dayElement.classList.add("disabled");
                 }
                 // Enable available dates

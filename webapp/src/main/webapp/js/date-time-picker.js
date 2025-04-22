@@ -187,10 +187,15 @@ document.addEventListener("DOMContentLoaded", () => {
             dayElement.className = "date-picker-day";
             dayElement.textContent = day;
 
-            const isFullyBooked = FutureAppointments.some(entry => entry.hours.length === 13 && entry.date === formattedDate);
+            let available = availabilitySlots.find(slot => slot.dayOfWeek == ((date.getDay() -1) % 7))
+            let flag = true;
+
+            if (available !== undefined) {
+                flag = FutureAppointments.some(entry => entry.hours.length === available.slots && entry.date === formattedDate);
+            }
 
             // Disable past dates
-            if (date < minDate.setHours(0, 0, 0, 0) || isFullyBooked || availabilitySlots.find(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7)) === undefined) {
+            if (date < minDate.setHours(0, 0, 0, 0) || flag) {
                 dayElement.classList.add("disabled");
             }
             // Enable available dates
