@@ -16,26 +16,27 @@
                 <p class="hero-subtitle-landing"><spring:message code="landing.hero.subtitle" /></p>
 
                 <!-- Search Bar -->
+                <!-- Search Bar -->
                 <div class="search-container">
                     <form action="<c:url value='/search' />" method="get" class="search-form" id="searchForm">
                         <div class="search-bar">
-                            <div class="search-input-wrapper">
-                                <span class="search-icon"></span>
-                                <input
-                                        type="text"
-                                        name="query"
-                                        id="doctorSearch"
-                                        class="search-input"
-                                        placeholder="<spring:message code="landing.search.placeholder" />"
-                                        autocomplete="off"
-                                />
-                                <!-- Autocomplete suggestions container -->
-                                <div id="suggestions-container" class="suggestions-container"></div>
-                            </div>
+                                <%--                            <div class="search-input-wrapper">--%>
+                                <%--                                <span class="search-icon"></span>--%>
+                                <%--                                <input--%>
+                                <%--                                        type="text"--%>
+                                <%--                                        name="query"--%>
+                                <%--                                        id="doctorSearch"--%>
+                                <%--                                        class="search-input"--%>
+                                <%--                                        placeholder="<spring:message code="landing.search.placeholder" />"--%>
+                                <%--                                        autocomplete="off"--%>
+                                <%--                                />--%>
+                                <%--                                <!-- Autocomplete suggestions container -->--%>
+                                <%--                                <div id="suggestions-container" class="suggestions-container"></div>--%>
+                                <%--                            </div>--%>
 
                             <div class="specialty-dropdown-wrapper">
                                 <select name="specialty" class="specialty-dropdown" id="specialtyDropdown">
-                                    <option value=""><spring:message code="landing.search.allSpecialties" /></option>
+<%--                                    <option value=""><spring:message code="landing.search.allSpecialties" /></option>--%>
                                     <c:forEach items="${specialties}" var="specialty">
                                         <option value="${specialty.id}"><spring:message code="${specialty.key}" /></option>
                                     </c:forEach>

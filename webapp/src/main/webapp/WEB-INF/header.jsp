@@ -179,22 +179,22 @@
                             <span class="arrow-down"></span>
                         </button>
                         <div class="dropdown-menu">
-                            <a href="<c:url value='/' />" class="dropdown-item">
-                                <span class="icon calendar-icon"></span>
-                                <spring:message code="header.dropdown.appointments" />
-                            </a>
-                            <a href="<c:url value='/' />" class="dropdown-item">
-                                <span class="icon history-icon"></span>
-                                <spring:message code="header.dropdown.history" />
-                            </a>
-                            <a href="<c:url value='/' />" class="dropdown-item">
-                                <span class="icon profile-icon"></span>
-                                <spring:message code="header.dropdown.profile" />
-                            </a>
+<%--                            <a href="<c:url value='/' />" class="dropdown-item">--%>
+<%--                                <span class="icon calendar-icon"></span>--%>
+<%--                                <spring:message code="header.dropdown.appointments" />--%>
+<%--                            </a>--%>
+<%--                            <a href="<c:url value='/' />" class="dropdown-item">--%>
+<%--                                <span class="icon history-icon"></span>--%>
+<%--                                <spring:message code="header.dropdown.history" />--%>
+<%--                            </a>--%>
+<%--                            <a href="<c:url value='/' />" class="dropdown-item">--%>
+<%--                                <span class="icon profile-icon"></span>--%>
+<%--                                <spring:message code="header.dropdown.profile" />--%>
+<%--                            </a>--%>
 
                             <!-- Role-specific menu items -->
                             <sec:authorize access="hasRole('ROLE_DOCTOR')">
-                                <div class="dropdown-divider"></div>
+<%--                                <div class="dropdown-divider"></div>--%>
                                 <a href="<c:url value='/doctor/dashboard' />" class="dropdown-item">
                                     <span class="icon doctor-icon"></span>
                                     <spring:message code="header.dropdown.doctorDashboard" />
@@ -202,7 +202,7 @@
                             </sec:authorize>
 
                             <sec:authorize access="hasRole('ROLE_PATIENT')">
-                                <div class="dropdown-divider"></div>
+<%--                                <div class="dropdown-divider"></div>--%>
                                 <a href="<c:url value='/patient/dashboard' />" class="dropdown-item">
                                     <span class="icon doctor-icon"></span>
                                     <spring:message code="header.dropdown.patientDashboard" />
