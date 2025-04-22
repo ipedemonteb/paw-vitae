@@ -138,7 +138,7 @@
                                         <div class="patient-info">
                                             <div class="patient-avatar">
                                                 <div class="avatar-placeholder small">
-                                                        ${fn:substring(appointment.client.name, 0, 1)}${fn:substring(appointment.client.lastName, 0, 1)}
+                                                    <c:out value="${fn:substring(appointment.client.name, 0, 1)}${fn:substring(appointment.client.lastName, 0, 1)}"/>
                                                 </div>
                                             </div>
                                             <div>
@@ -261,7 +261,7 @@
                                         <div class="patient-info">
                                             <div class="patient-avatar">
                                                 <div class="avatar-placeholder small">
-                                                        ${fn:substring(appointment.client.name, 0, 1)}${fn:substring(appointment.client.lastName, 0, 1)}
+                                                        <c:out value="${fn:substring(appointment.client.name, 0, 1)}${fn:substring(appointment.client.lastName, 0, 1)}"/>
                                                 </div>
                                             </div>
                                             <div>
