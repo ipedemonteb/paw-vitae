@@ -201,11 +201,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 dayElement.className = "date-picker-day";
                 dayElement.textContent = day;
 
-                let available = doctorAvailabilitySlots.find(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7));
+                let available = doctorAvailabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7));
                 let flag = true;
 
-                if (available !== undefined) {
-                    flag = doctorAvailability.some(entry => entry.date === formattedDate && entry.hours.length === available.slots);
+                if (available !== undefined && available.length > 0) {
+                    const totalSlots = available.reduce((sum, slot) => sum + slot.slots, 0);
+                    flag = doctorAvailability.some(entry => entry.date === formattedDate && entry.hours.length === totalSlots);
                 }
 
 
