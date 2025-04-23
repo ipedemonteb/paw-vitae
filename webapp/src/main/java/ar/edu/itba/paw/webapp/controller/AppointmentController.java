@@ -22,6 +22,7 @@ import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class AppointmentController {
@@ -97,17 +98,13 @@ public class AppointmentController {
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
         specialty.ifPresent(s -> mav.addObject("specialty", s));
 
-        // Get today's date for initial available hours
-        LocalDate today = LocalDate.now();
-        Set<Integer> bookedHours = appointmentService.getBookedHoursByDoctorAndDate(doctorId, today);
-        mav.addObject("bookedHours", bookedHours);
-        mav.addObject("today", today);
+        Optional<List<Appointment>> futureAppointments = appointmentService.getAllFutureAppointments(doctorId);
+        futureAppointments.ifPresent(appointments -> mav.addObject("futureAppointments", appointments.stream().collect(Collectors.groupingBy(a -> a.getDate().toLocalDate(), Collectors.mapping(a -> a.getDate().toLocalTime().getHour(), Collectors.toList()))).entrySet()));
 
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final Client client = clientService.getByEmail((String) auth.getName()).orElseThrow(RuntimeException::new);
 
         appointmentForm.setDoctorId(doctorId);
-//        appointmentForm.setClientId(1);
         appointmentForm.setClientId(client.getId());
         appointmentForm.setSpecialtyId(specialtyId);
         appointmentForm.setName(client.getName());
@@ -119,12 +116,5 @@ public class AppointmentController {
 
         return mav;
     }
-
-    @GetMapping(value = "/appointment/booked-times-by-date", produces = "application/json")
-    @ResponseBody
-    public String getFullyBookedDates(@RequestParam Integer doctorId) {
-        return appointmentService.getFutureAppointmentsPerDate(doctorId).orElse("[]");
-    }
-
 
 }

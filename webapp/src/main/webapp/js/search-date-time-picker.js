@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const currentDate = new Date(argDate);
         let selectedDate = null;
-        let doctorAvailability = [];
+        let doctorAvailability = doctorsAvailability.find(doctor => doctor.id === doctorId) || [];
 
         // Get doctor's availability slots from the global object
         const doctorAvailabilitySlots = window.doctorAvailabilitySlots ? window.doctorAvailabilitySlots[doctorId] || [] : [];
@@ -54,11 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Move calendar to body for better positioning
         document.body.appendChild(datePickerCalendar);
 
-        // Fetch doctor's availability for the next month
-        fetchDoctorAvailability(doctorId).then(availability => {
-            doctorAvailability = availability;
-            initDatePicker();
-        });
+
+        initDatePicker();
 
         /**
          * Initialize the date picker component
@@ -138,30 +135,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         /**
-         * Fetch doctor's availability
-         * @param {string} doctorId - The doctor's ID
-         * @returns {Promise<Array>} A promise that resolves to an array of availability data
-         */
-        function fetchDoctorAvailability(doctorId) {
-            const url = `${contextPath}/appointment/booked-times-by-date?doctorId=${doctorId}`;
-
-            return fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch doctor availability");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    return data || [];
-                })
-                .catch(error => {
-                    console.error("Error fetching doctor availability:", error);
-                    return [];
-                });
-        }
-
-        /**
          * Render the calendar days for the current month
          */
         function renderCalendarDays() {
@@ -206,7 +179,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (available !== undefined && available.length > 0) {
                     const totalSlots = available.reduce((sum, slot) => sum + slot.slots, 0);
-                    flag = doctorAvailability.some(entry => entry.date === formattedDate && entry.hours.length === totalSlots);
+                    // flag = doctorAvailability.some(entry => entry.date === formattedDate && entry.hours.length === totalSlots);
+                    if (isToday(date)) {
+                        const passedSlots = available.reduce((sum, slot) => {
+                            const passed = Math.max(0, currentHour - slot.startTime + 1);
+                            return sum + Math.min(passed, slot.slots);
+                        }, 0);
+
+                        flag = doctorAvailability.some(entry =>
+                            entry.date === formattedDate &&
+                            entry.hours.filter(hour => hour > currentHour).length + passedSlots === totalSlots
+                        ) || passedSlots === totalSlots;
+                    } else {
+                        flag = doctorAvailability.some(entry =>
+                            entry.date === formattedDate &&
+                            entry.hours.length === totalSlots
+                        );
+                    }
                 }
 
 
