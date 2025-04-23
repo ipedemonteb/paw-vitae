@@ -22,7 +22,6 @@ public interface AppointmentService {
 
     Optional<List<Appointment>> getAllFutureAppointments(long doctorId);
 
-    Optional<String> getFutureAppointmentsPerDate(long doctorId);
     void cancelAppointment(long appointmentId);
     void acceptAppointment(long appointmentId);
     Optional<Appointment> getById(long appointmentId);

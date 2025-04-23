@@ -76,33 +76,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentDao.getAllFutureAppointments(doctorId);
     }
 
-    @Override
-    public Optional<String> getFutureAppointmentsPerDate(long doctorId) {
-        Optional<List<Appointment>> futureAppointments = getAllFutureAppointments(doctorId);
-
-        if (futureAppointments.isPresent()) {
-            Map<LocalDate, List<Integer>> appointmentsByDate = new HashMap<>();
-            for (Appointment appointment : futureAppointments.get()) {
-                LocalDate date = appointment.getDate().toLocalDate();
-                appointmentsByDate.computeIfAbsent(date, k -> new ArrayList<>()).add(appointment.getDate().getHour());
-            }
-
-            StringBuilder result = new StringBuilder();
-            result.append("[");
-            for (Map.Entry<LocalDate, List<Integer>> entry : appointmentsByDate.entrySet()) {
-                LocalDate date = entry.getKey();
-                List<Integer> appointments = entry.getValue();
-                result.append("{").append("\"date\": ").append("\"").append(date).append("\"").append(", ").append("\"hours\": ").append(Arrays.toString(appointments.toArray())).append("},");
-            }
-            if (!appointmentsByDate.isEmpty()) {
-                result.deleteCharAt(result.length() - 1); // Remove the trailing comma
-            }
-            result.append("]");
-            return Optional.of(result.toString());
-        } else {
-            return Optional.empty();
-        }
-    }
     @Transactional
     @Override
     public void cancelAppointment(long appointmentId) {
