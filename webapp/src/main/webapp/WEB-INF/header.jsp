@@ -179,10 +179,10 @@
                             <span class="arrow-down"></span>
                         </button>
                         <div class="dropdown-menu">
-<%--                            <a href="<c:url value='/' />" class="dropdown-item">--%>
-<%--                                <span class="icon calendar-icon"></span>--%>
-<%--                                <spring:message code="header.dropdown.appointments" />--%>
-<%--                            </a>--%>
+                            <a href="<c:url value='/' />" class="dropdown-item">
+                                <span class="icon home-icon"></span>
+                                <spring:message code="header.dropdown.home" />
+                            </a>
 <%--                            <a href="<c:url value='/' />" class="dropdown-item">--%>
 <%--                                <span class="icon history-icon"></span>--%>
 <%--                                <spring:message code="header.dropdown.history" />--%>
