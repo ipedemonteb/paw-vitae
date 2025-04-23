@@ -6,6 +6,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
+<link rel="stylesheet" href="<c:url value='/css/components/confirmation.css' />">
 
 <layout:page title="appointment.confirmation.title">
 <div class="card">
