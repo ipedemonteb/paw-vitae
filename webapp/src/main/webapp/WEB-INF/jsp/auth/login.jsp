@@ -6,6 +6,9 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 
+<link rel="stylesheet" href="<c:url value='/css/components/login.css' />">
+
+
 <layout:page title="login.title">
   <div class="login-page">
     <div class="login-visual">

@@ -1,9 +1,19 @@
 /* Form layout */
+:root {
+  --error-color: #ef4444;
+}
 .form-row {
   display: flex;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-md);
 }
+
+.required-field::after {
+  content: "*";
+  color: var(--error-color);
+  margin-left: 0.25rem;
+}
+
 
 .form-group {
   margin-bottom: var(--spacing-lg);

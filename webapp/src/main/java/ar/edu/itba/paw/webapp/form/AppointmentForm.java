@@ -29,11 +29,11 @@ public class AppointmentForm {
     @NotNull()
     private Long coverageId;
 
-    @NotNull()
+    @NotNull(message = "{appointment.date.notnull}")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate appointmentDate;
 
-    @NotNull()
+    @NotNull(message = "{appointment.hour.notnull}")
     @Min(value = 8, message = "Hour must be between 8 and 18")
     @Max(value = 18, message = "Hour must be between 8 and 18")
     private Integer appointmentHour;
