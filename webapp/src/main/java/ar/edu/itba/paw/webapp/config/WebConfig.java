@@ -115,7 +115,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return messageSource;
     }
 
-
+    @Bean
+    public LocalValidatorFactoryBean getValidator() {
+        LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
+        bean.setValidationMessageSource(messageSource());
+        return bean;
+    }
 
     @Bean
     public MultipartResolver multipartResolver() {
