@@ -5,6 +5,7 @@ package ar.edu.itba.paw.webapp.form;
 import ar.edu.itba.paw.models.AvailabilitySlot;
 import ar.edu.itba.paw.webapp.validation.EmailExistance;
 import ar.edu.itba.paw.webapp.validation.FileSize;
+import ar.edu.itba.paw.webapp.validation.FileType;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
@@ -44,8 +45,8 @@ public class DoctorForm {
 
     @NotEmpty
     private List<String> coverages;
-
-    @FileSize(max = 2 * 1024 * 1024) // 2MB
+    @FileType(types = {"image/jpeg", "image/png", "image/jpg"})
+    @FileSize(max = 2097154) // 2MB
     private MultipartFile image;
 
     @NotEmpty

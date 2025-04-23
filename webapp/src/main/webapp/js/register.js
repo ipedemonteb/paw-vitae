@@ -69,8 +69,15 @@ function initFileUpload() {
 
     if (fileInput) {
         fileInput.addEventListener('change', function() {
+            const errorElement = document.getElementById('image-error');
             if (this.files && this.files[0]) {
                 const file = this.files[0];
+                if (file.size > 2 * 1024 * 1024) {
+                    errorElement.textContent = window.messages.fileSizeError;
+                    errorElement.style.display = 'block';
+                    return;
+                }
+                errorElement.textContent = '';
                 fileName.textContent = file.name;
             }
         });
