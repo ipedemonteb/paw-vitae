@@ -8,7 +8,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <link rel="stylesheet" href="<c:url value='/css/components/doctor-dashboard.css' />">
-
+<link rel="stylesheet" href="<c:url value='/css/components/modal.css' />">
 <layout:page title="dashboard.doctor.title">
     <div class="dashboard-container">
         <!-- Doctor Profile Header -->
@@ -479,6 +479,56 @@
                     </div>
                 </div>
             </div>
+
+
+            <div id="confirmAppointmentModal" class="modal-overlay">
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="modal-title"><spring:message code="appointment.confirm.title" /></h3>
+                    </div>
+                    <div class="modal-body">
+                        <p class="modal-message"><spring:message code="appointment.confirm.message" /></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-modal btn-cancel" onclick="hideConfirmModal();">
+                            <spring:message code="logout.confirmation.cancel"/>
+                        </button>
+                        <button type="button" class="btn-modal btn-confirm" id="confirmAppointmentBtn">
+                            <spring:message code="appointment.action.confirm"/>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="cancelAppointmentModal" class="modal-overlay">
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="modal-title"><spring:message code="appointment.cancel.title" /></h3>
+                    </div>
+                    <div class="modal-body">
+                        <p class="modal-message"><spring:message code="appointment.cancel.message" /></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
+                            <spring:message code="logout.confirmation.cancel"/>
+                        </button>
+                        <button type="button" class="btn-modal btn-danger" id="cancelAppointmentBtn">
+                            <spring:message code="appointment.action.cancel"/>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div class="tab-content" id="availability-tab">
                 <div class="tab-header">
                     <h2><spring:message code="dashboard.availability.title" /></h2>
@@ -576,7 +626,104 @@
             const tabs = document.querySelectorAll('.nav-tab');
             const tabContents = document.querySelectorAll('.tab-content');
 
+            let currentAppointmentId = null;
 
+            // Funciones para mostrar/ocultar modales
+            function showConfirmModal(appointmentId) {
+                currentAppointmentId = appointmentId;
+                document.getElementById('confirmAppointmentModal').classList.add('show');
+            }
+
+            function hideConfirmModal() {
+                document.getElementById('confirmAppointmentModal').classList.remove('show');
+            }
+
+            function showCancelModal(appointmentId) {
+                currentAppointmentId = appointmentId;
+                document.getElementById('cancelAppointmentModal').classList.add('show');
+            }
+
+            function hideCancelModal() {
+                document.getElementById('cancelAppointmentModal').classList.remove('show');
+            }
+
+            // Confirm appointment functionality
+            const confirmButtons = document.querySelectorAll('.confirm-appointment');
+            confirmButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const appointmentId = this.getAttribute('data-id');
+                    showConfirmModal(appointmentId);
+                });
+            });
+
+            // Confirm button in modal
+            document.getElementById('confirmAppointmentBtn').addEventListener('click', function() {
+                if (currentAppointmentId) {
+                    fetch(`${pageContext.request.contextPath}/doctor/dashboard/appointment/accept`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({ appointmentId: currentAppointmentId })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.reload();
+                            }
+                        });
+                }
+                hideConfirmModal();
+            });
+
+            // Cancel appointment functionality
+            const cancelButtons = document.querySelectorAll('.cancel-appointment');
+            cancelButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const appointmentId = this.getAttribute('data-id');
+                    showCancelModal(appointmentId);
+                });
+            });
+
+            // Cancel button in modal
+            document.getElementById('cancelAppointmentBtn').addEventListener('click', function() {
+                if (currentAppointmentId) {
+                    fetch(`${pageContext.request.contextPath}/doctor/dashboard/appointment/cancel`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({ appointmentId: currentAppointmentId })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.reload();
+                            }
+                        });
+                }
+                hideCancelModal();
+            });
+
+            // Cerrar modales al hacer clic fuera
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('show');
+                    }
+                });
+            });
+
+            // Cerrar modales con tecla Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal-overlay').forEach(modal => {
+                        modal.classList.remove('show');
+                    });
+                }
+            });
             tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
                     // Remove active class from all tabs and contents
@@ -711,55 +858,9 @@
             }
 
             // Confirm appointment functionality
-            const confirmButtons = document.querySelectorAll('.confirm-appointment');
-            confirmButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const appointmentId = this.getAttribute('data-id');
-                    if (confirm('Are you sure you want to confirm this appointment?')) {
-                        fetch(`${pageContext.request.contextPath}/doctor/dashboard/appointment/accept`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: new URLSearchParams({ appointmentId })
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    window.location.reload();
-                                }
-                            })
-                    }
-                });
-            });
+
             initializeTimeSlots();
 
-            // Cancel appointment functionality
-            const cancelButtons = document.querySelectorAll('.cancel-appointment');
-            cancelButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const appointmentId = this.getAttribute('data-id');
-                    if (confirm('Are you sure you want to cancel this appointment?')) {
-                        // This would typically involve an AJAX call to update the appointment status
-                        console.log('Cancelling appointment:', appointmentId);
-                        fetch(`${pageContext.request.contextPath}/doctor/dashboard/appointment/cancel`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: new URLSearchParams({ appointmentId })
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    window.location.reload();
-                                }
-                            })
-                    }
-                });
-            });
         });
 
         let slotCounter = ${doctor.availabilitySlots.size()};
@@ -1042,6 +1143,13 @@
             } else {
                 noSlotsMessage.style.display = 'none';
             }
+        }
+        function hideConfirmModal() {
+            document.getElementById('confirmAppointmentModal').classList.remove('show');
+        }
+
+        function hideCancelModal() {
+            document.getElementById('cancelAppointmentModal').classList.remove('show');
         }
     </script>
 
