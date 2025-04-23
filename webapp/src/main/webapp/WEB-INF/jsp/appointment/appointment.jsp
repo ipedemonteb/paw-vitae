@@ -49,8 +49,12 @@
                 <div class="form-group">
                     <label for="datePickerInput" class="required-field"><spring:message code="appointment.form.datetime"/></label>
                     <div class="date-picker-container">
-                        <input type="text" id="datePickerInput" class="form-control date-picker-input"
-                               placeholder="<spring:message code="appointment.placeholder.selectDate"/>" readonly>
+                        <div class="date-picker-container">
+                            <input type="text" id="datePickerInput" class="form-control date-picker-input"
+                                   placeholder="<spring:message code='appointment.placeholder.selectDate'/>" readonly>
+                            <form:errors path="appointmentDate" cssClass="error-message" />
+                            <form:errors path="appointmentHour" cssClass="error-message" />
+                        </div>
 
                         <!-- Custom Calendar -->
                         <div id="datePickerCalendar" class="date-picker-calendar">
@@ -72,6 +76,7 @@
                     <div id="timeSlotsContainer" class="time-slots-container" style="display: none;">
                         <label><spring:message code="appointment.form.selectTime"/></label>
                         <div id="timeSlots" class="time-slots-grid"></div>
+
                     </div>
 
                     <!-- Appointment summary -->
