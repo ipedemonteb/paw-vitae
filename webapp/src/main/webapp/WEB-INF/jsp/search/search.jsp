@@ -198,6 +198,22 @@
       </c:forEach>
     ];
     </c:forEach>
+    const doctorsAvailability = [
+        <c:forEach var="doctor" items="${futureAppointmentsMap}" varStatus="status" >
+      {
+        id: ${doctor.key},
+        info: [
+            <c:forEach var="entry" items="${doctor.value}" varStatus="statusValue">
+                {
+                date: '${entry.key}',
+                hours: ${entry.value}
+                }<c:if test="${!statusValue.last}">,</c:if>
+            </c:forEach>
+        ]
+      }<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    ];
+
   </script>
 
   <!-- Include the modified date-time-picker for search page -->

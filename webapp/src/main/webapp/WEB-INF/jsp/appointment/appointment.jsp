@@ -147,6 +147,15 @@
             }<c:if test="${!status.last}">,</c:if>
             </c:forEach>
         ];
+        const FutureAppointments = [
+            <c:forEach var="entry" items="${futureAppointments}" varStatus="status">
+            {
+                date: '${entry.key}',
+                hours: ${entry.value}
+            }
+            <c:if test="${!status.last}">,</c:if>
+            </c:forEach>
+        ];
     </script>
 
     <!-- Include the external JavaScript file -->

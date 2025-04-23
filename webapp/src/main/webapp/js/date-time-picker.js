@@ -51,15 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedDate = null
     let selectedTimeSlot = null
 
-    let FutureAppointments = [];
+    // let FutureAppointments = [];
+    FutureAppointments.forEach(entry => {
+        console.log(entry.date + ": " + entry.hours);
+    })
 
-    // Fetch fully booked dates for the next month on page load
-    fetchFutureAppointments().then((dates) => {
-        FutureAppointments = dates;
-        initDatePicker(); // Initialize the date picker after fetching the dates
-    });
-
-    // initDatePicker();
+    initDatePicker();
 
     /**
      * Initialize the date picker component
@@ -116,36 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Fetch fully booked dates from today to one month in advance
-     * @returns {Promise<Array>} A promise that resolves to an array of fully booked dates
-     */
-    function fetchFutureAppointments() {
-        const newDate = new Date().toLocaleString("en-US", {
-            timeZone: "America/Argentina/Buenos_Aires",
-        })
-        const today = new Date(newDate);
-        const startDate = formatDateForSubmission(today);
-        const endDate = formatDateForSubmission(new Date(today.setMonth(today.getMonth() + 1)));
-
-        const url = `${contextPath}/appointment/booked-times-by-date?doctorId=${appointmentForm.doctorId.value}`;
-
-        return fetch(url)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch fully booked dates");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                return data || [];
-            })
-            .catch((error) => {
-                console.error("Error fetching fully booked dates:", error);
-                return [];
-            });
-    }
-
-    /**
      * Render the calendar days for the current month
      */
     function renderCalendarDays() {
@@ -166,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const today = new Date(argDate);
         const currentHour = today.getHours();
-        const lastAvailableSlot = 18; // Example: last slot is 6:00 PM
+        const lastAvailableSlot = 20; // Example: last slot is 6:00 PM
         const minDate = currentHour >= lastAvailableSlot ? new Date(today.setDate(today.getDate() + 1)) : today;
 
 
@@ -177,6 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
             emptyDay.className = "date-picker-day empty";
             calendarDays.appendChild(emptyDay);
         }
+
+
 
         // Create cells for each day of the month
         for (let day = 1; day <= lastDay.getDate(); day++) {
@@ -192,7 +161,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (available !== undefined && available.length > 0) {
                 const totalSlots = available.reduce((sum, slot) => sum + slot.slots, 0);
-                flag = FutureAppointments.some(entry => entry.hours.length === totalSlots && entry.date === formattedDate);
+                // flag = FutureAppointments.some(entry => entry.hours.length === totalSlots && entry.date === formattedDate);
+                if (isToday(date)) {
+                    const passedSlots = available.reduce((sum, slot) => {
+                        const passed = Math.max(0, currentHour - slot.startTime + 1);
+                        return sum + Math.min(passed, slot.slots);
+                    }, 0);
+
+                    flag = FutureAppointments.some(entry =>
+                        entry.date === formattedDate &&
+                        entry.hours.filter(hour => hour > currentHour).length + passedSlots === totalSlots
+                    ) || passedSlots === totalSlots;
+                } else {
+                    flag = FutureAppointments.some(entry =>
+                        entry.date === formattedDate &&
+                        entry.hours.length === totalSlots
+                    );
+                }
             }
 
             // Disable past dates
