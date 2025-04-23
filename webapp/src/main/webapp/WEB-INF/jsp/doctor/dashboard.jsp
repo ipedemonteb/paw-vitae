@@ -7,6 +7,8 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<link rel="stylesheet" href="<c:url value='/css/components/doctor-dashboard.css' />">
+
 <layout:page title="dashboard.doctor.title">
     <div class="dashboard-container">
         <!-- Doctor Profile Header -->

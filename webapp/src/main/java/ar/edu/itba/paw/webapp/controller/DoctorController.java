@@ -117,9 +117,6 @@ public class DoctorController {
         if (errors.hasErrors()) {
             final ModelAndView mav = new ModelAndView("patient/dashboard");
             Doctor doctor = loggedUser();
-
-            //ver si es legal esto
-
             mav.addObject("doctor", doctor);
             return mav;
         }
@@ -146,6 +143,10 @@ public class DoctorController {
         try {
             Appointment appt = as.getById(appointmentId).orElse(null);
             if (appt == null) {
+                return "{\"success\": false}";
+            }
+            Doctor doctor = loggedUser();
+            if (appt.getDoctor().getId() != doctor.getId()){
                 return "{\"success\": false}";
             }
             as.cancelAppointment(appointmentId);
@@ -187,6 +188,10 @@ public class DoctorController {
         try {
             Appointment appt = as.getById(appointmentId).orElse(null);
             if (appt == null) {
+                return "{\"success\": false}";
+            }
+            Doctor doctor = loggedUser();
+            if (appt.getDoctor().getId() != doctor.getId()){
                 return "{\"success\": false}";
             }
             as.acceptAppointment(appointmentId);
