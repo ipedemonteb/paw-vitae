@@ -45,7 +45,7 @@ public class DoctorForm {
 
     @NotEmpty
     private List<String> coverages;
-    @FileType(types = {"image/jpeg", "image/png", "image/jpg"})
+    @FileType(types = {"image/jpeg", "image/png", "image/jpg"},message = "{fileType.invalid}")
     @FileSize(max = 2097154) // 2MB
     private MultipartFile image;
 
