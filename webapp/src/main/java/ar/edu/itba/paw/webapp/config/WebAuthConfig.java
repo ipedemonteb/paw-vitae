@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -53,8 +54,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers("/", "/login", "/register-patient", "/register").permitAll()
                     .antMatchers( "/{id:\\d+}").anonymous()
-                    .antMatchers("/portal", "/search", "/doctors", "/appointment/booked-times-by-date").access("isAnonymous() or hasRole('PATIENT')")
+                    .antMatchers("/portal", "/search", "/appointment/booked-times-by-date").access("isAnonymous() or hasRole('PATIENT')")
                     .antMatchers("/appointment/**").hasRole("PATIENT")
+                    .antMatchers(HttpMethod.GET, "/doctors").permitAll() // Permite solo solicitudes GET a /doctors
+                    .antMatchers("/doctors").denyAll() // Bloquea otros métodos HTTP en /doctors
                     .antMatchers("/**").authenticated()
                     .and()
                 .formLogin()

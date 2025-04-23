@@ -4,6 +4,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 <link rel="stylesheet" href="<c:url value='/css/landing.css' />" />
 
@@ -17,6 +19,7 @@
 
                 <!-- Search Bar -->
                 <!-- Search Bar -->
+                <sec:authorize access="!hasRole('ROLE_DOCTOR')">
                 <div class="search-container">
                     <form action="<c:url value='/search' />" method="get" class="search-form" id="searchForm">
                         <div class="search-bar">
@@ -49,6 +52,7 @@
                         </div>
                     </form>
                 </div>
+                </sec:authorize>
             </div>
         </div>
     </section>
