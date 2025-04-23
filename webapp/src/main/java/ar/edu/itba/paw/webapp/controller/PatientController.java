@@ -90,7 +90,7 @@ public class PatientController {
                 return "{\"success\": false}";
             }
             Client patient = loggedUser();
-            if (appt.getDoctor().getId() != patient.getId()){
+            if (appt.getClientId() != patient.getId()){
                 return "{\"success\": false}";
             }
             as.cancelAppointment(appointmentId);

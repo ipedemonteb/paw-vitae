@@ -8,9 +8,33 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <link rel="stylesheet" href="<c:url value='/css/components/doctor-dashboard.css' />">
-
+<link rel="stylesheet" href="<c:url value='/css/components/modal.css' />">
 <layout:page title="dashboard.patient.title">
     <div class="dashboard-container">
+        <!-- Add modal here, right at the beginning -->
+        <div id="cancelAppointmentModal" class="modal-overlay">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <div class="modal-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="modal-title"><spring:message code="appointment.cancel.title" /></h3>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-message"><spring:message code="appointment.cancel.message" /></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
+                        <spring:message code="logout.confirmation.cancel"/>
+                    </button>
+                    <button type="button" class="btn-modal btn-danger" id="cancelAppointmentBtn">
+                        <spring:message code="appointment.action.cancel"/>
+                    </button>
+                </div>
+            </div>
+        </div>
         <!-- Patient Profile Header -->
         <div class="dashboard-header">
             <div class="doctor-info">
@@ -149,16 +173,16 @@
                                                 <spring:message code="${appointment.status}" />
                                             </c:set>
                                             <c:set var="pending">
-                                            <spring:message code="appointment.status.pending" />
+                                                <spring:message code="appointment.status.pending" />
                                             </c:set>
                                             <c:set var="confirmed">
-                                            <spring:message code="appointment.status.confirmed" />
+                                                <spring:message code="appointment.status.confirmed" />
                                             </c:set>
                                             <c:set var="all">
                                                 <spring:message code="dashboard.filter.all" />
                                             </c:set>
                                             <c:if test="${status eq pending|| status eq confirmed}">
-                                                <button class="btn btn-danger cancel-appointment" data-id="<c:out value="${appointment.id}"/>">
+                                                <button class="btn btn-danger cancel-appointment" data-id="<c:out value="${appointment.id}"/>" id="cancel-appointment">
                                                     <i class="fas fa-times-circle"></i>
                                                     <span><spring:message code="appointment.action.cancel" /></span>
                                                 </button>
@@ -255,12 +279,12 @@
                                                 <spring:message code="${appointment.specialty.key}" />
                                             </span>
                                         </div>
-<%--                                        <div class="appointment-actions">--%>
-<%--                                            <a href="<c:url value='/appointments/${appointment.key.id}/records' />" class="btn btn-secondary">--%>
-<%--                                                <i class="fas fa-file-medical-alt"></i>--%>
-<%--                                                <span><spring:message code="appointment.action.records" /></span>--%>
-<%--                                            </a>--%>
-<%--                                        </div>--%>
+                                            <%--                                        <div class="appointment-actions">--%>
+                                            <%--                                            <a href="<c:url value='/appointments/${appointment.key.id}/records' />" class="btn btn-secondary">--%>
+                                            <%--                                                <i class="fas fa-file-medical-alt"></i>--%>
+                                            <%--                                                <span><spring:message code="appointment.action.records" /></span>--%>
+                                            <%--                                            </a>--%>
+                                            <%--                                        </div>--%>
                                     </div>
                                 </div>
                             </c:forEach>
@@ -471,6 +495,86 @@
             const tabs = document.querySelectorAll('.nav-tab');
             const tabContents = document.querySelectorAll('.tab-content');
 
+            let currentAppointmentId = null;
+
+            // Explicitly define modal functions
+            window.showCancelModal = function(appointmentId) {
+                currentAppointmentId = appointmentId;
+                const modal = document.getElementById('cancelAppointmentModal');
+                if (modal) {
+                    modal.classList.add('show');
+                    console.log("Modal should be visible now");
+                } else {
+                    console.error("Modal element not found");
+                }
+            };
+
+            window.hideCancelModal = function() {
+                const modal = document.getElementById('cancelAppointmentModal');
+                if (modal) {
+                    modal.classList.remove('show');
+                }
+            };
+
+            // Cancel appointment functionality
+            const cancelButtons = document.querySelectorAll('.cancel-appointment');
+            cancelButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const appointmentId = this.getAttribute('data-id');
+                    console.log("Cancel button clicked for appointment:", appointmentId);
+                    showCancelModal(appointmentId);
+                });
+            });
+
+            // Cancel button in modal
+            const cancelAppointmentBtn = document.getElementById('cancelAppointmentBtn');
+
+                cancelAppointmentBtn.addEventListener('click', function() {
+                    console.log("Cancel appointment button clicked in modal:", currentAppointmentId)
+                    if (currentAppointmentId) {
+                        fetch(`${pageContext.request.contextPath}/patient/dashboard/appointment/cancel`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({ appointmentId: currentAppointmentId })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.location.reload();
+                                } else {
+                                    console.error("Error canceling appointment:", data);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error canceling appointment:", error);
+                            });
+                    }
+                    hideCancelModal();
+                });
+
+
+            // Cerrar modales al hacer clic fuera
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('show');
+                    }
+                });
+            });
+
+            // Cerrar modales con tecla Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal-overlay').forEach(modal => {
+                        modal.classList.remove('show');
+                    });
+                }
+            });
+
+            // Rest of your existing code...
             tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
                     // Remove active class from all tabs and contents
@@ -500,10 +604,8 @@
                     const selectedStatus = this.value;
                     const appointmentCards = document.querySelectorAll('#upcoming-tab .appointment-card');
 
-
                     appointmentCards.forEach(card => {
                         const cardStatus = card.getAttribute('data-status');
-                        console.log(selectedStatus)
                         if (selectedStatus === '${all}' || cardStatus === selectedStatus) {
                             card.style.display = 'flex';
                         } else {
@@ -519,7 +621,6 @@
                 historyStatusFilter.addEventListener('change', function() {
                     const selectedStatus = this.value;
                     const appointmentCards = document.querySelectorAll('#history-tab .appointment-card');
-
 
                     appointmentCards.forEach(card => {
                         const cardStatus = card.getAttribute('data-status');
@@ -601,30 +702,6 @@
                     });
                 });
             }
-
-            // Cancel appointment functionality
-            const cancelButtons = document.querySelectorAll('.cancel-appointment');
-            cancelButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const appointmentId = this.getAttribute('data-id');
-                    if (confirm('¿Estás seguro de que querés cancelar este turno?')) {
-                        fetch(`${pageContext.request.contextPath}/patient/dashboard/appointment/cancel`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: new URLSearchParams({ appointmentId })
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    window.location.reload();
-                                }
-                            })
-                    }
-                });
-            });
 
             // Edit Profile Functionality
             const editProfileBtn = document.getElementById('edit-profile-btn');
@@ -799,6 +876,79 @@
             }
         }
     </script>
+
+    <style>
+        .text-center {
+            text-align: center;
+        }
+
+        .profile-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .profile-section {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        #edit-profile-form {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            background-color: #f9fafb;
+        }
+
+        .info-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .coverages-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .coverage-item {
+            background-color: #e1effe;
+            color: #2a5caa;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        /* Add this to your existing styles section */
+        .modal-overlay.show {
+            display: flex !important;
+            z-index: 9999;
+        }
+    </style>
 
     <link rel="stylesheet" href="<c:url value='/css/components/forms.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/components/inline-form.css' />" />
