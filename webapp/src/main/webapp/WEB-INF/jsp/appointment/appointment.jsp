@@ -47,7 +47,7 @@
 
                 <!-- Custom Date and Time Picker -->
                 <div class="form-group">
-                    <label for="datePickerInput"><spring:message code="appointment.form.datetime"/></label>
+                    <label for="datePickerInput" class="required-field"><spring:message code="appointment.form.datetime"/></label>
                     <div class="date-picker-container">
                         <input type="text" id="datePickerInput" class="form-control date-picker-input"
                                placeholder="<spring:message code="appointment.placeholder.selectDate"/>" readonly>
