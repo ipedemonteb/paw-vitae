@@ -109,6 +109,7 @@
                                 </label>
                             </div>
                             <div id="file-name" class="file-name"></div>
+                            <div id="image-error" class="error-message" style="display: none; margin-bottom: 10px;"></div>
                             <form:errors path="image" cssClass="error-message" />
                         </div>
 
@@ -272,6 +273,7 @@
             passwordLength: '<spring:message code="register.passwordLength" javaScriptEscape="true" />',
             emailInvalid: '<spring:message code="appointment.validation.email" javaScriptEscape="true" />',
             phoneInvalid: '<spring:message code="appointment.validation.phone" javaScriptEscape="true" />',
+            fileSizeError: '<spring:message code="fileSizeError" javaScriptEscape="true" />',
         };
 
         // Store existing availability slots data if present
