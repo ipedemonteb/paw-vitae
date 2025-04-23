@@ -108,7 +108,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     public void cancelAppointment(long appointmentId) {
         appointmentDao.cancelApointment(appointmentId);
         Appointment appointment = getById(appointmentId).orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
-        mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
+        mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appointment);
     }
 
     @Transactional
@@ -116,7 +116,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     public void acceptAppointment(long appointmentId) {
         appointmentDao.acceptAppointment(appointmentId);
         Appointment appointment = getById(appointmentId).orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
-        mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
+        mailService.sendAppointmentStatusEmail("email.acceptedAppointment", appointment);
     }
     @Override
     public Optional<Appointment> getById(long appointmentId) {
