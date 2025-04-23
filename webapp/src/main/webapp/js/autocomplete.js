@@ -1,32 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-
-
-    function fetchDoctors() {
-
-        const url = `${contextPath}/doctors`;
-
-        return fetch(url)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch fully booked dates");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                return data || [];
-            })
-            .catch((error) => {
-                console.error("Error fetching fully booked dates:", error);
-                return [];
-            });
-    }
-
-    let doctorNames = [];
-    fetchDoctors().then(data => {
-        doctorNames = data;
-    })
-
-
     const searchInput = document.getElementById('doctorSearch');
     const suggestionsContainer = document.getElementById('suggestions-container');
     const specialtyDropdown = document.getElementById('specialtyDropdown');
@@ -78,11 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to check if search criteria are met
     function checkSearchCriteria() {
-        if (searchInput.value.trim() !== '' || specialtyDropdown.value !== '') {
-            searchButton.disabled = false;
-        } else {
-            searchButton.disabled = true;
-        }
+        searchButton.disabled = !(searchInput.value.trim() !== '' || specialtyDropdown.value !== '');
     }
 
     // Event listeners

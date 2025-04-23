@@ -33,22 +33,4 @@ public class LandingPageController {
         return new ModelAndView("landingPage/home").addObject("specialties", specialties.orElse(new ArrayList<>())).addObject("doctors", doctors);
     }
 
-
-    @GetMapping("/doctors")
-    @ResponseBody
-    public String getDoctorsAsJson() {
-        StringBuilder json = new StringBuilder();
-        List<Doctor> doctors = ds.getAll();
-        json.append("[");
-        doctors.forEach(doctor -> {
-            json.append("\"").append(doctor.getName()).append(" ").append(doctor.getLastName()).append("\",");
-        });
-        if (json.length() > 1) {
-            json.deleteCharAt(json.length() - 1); // Remove the last comma
-        }
-        json.append("]");
-        System.out.println(json.toString());
-        return json.toString();
-    }
-
 }

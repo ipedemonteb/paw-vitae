@@ -5,6 +5,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
 <link rel="stylesheet" href="<c:url value='/css/landing.css' />" />
@@ -167,5 +168,10 @@
     <script src="<c:url value='/js/autocomplete.js'/>"></script>
     <script>
         contextPath = "${pageContext.request.contextPath}";
+        doctorNames = [
+            <c:forEach items="${doctors}" var="doctor" varStatus="status">
+                "${fn:escapeXml(doctor.name)} ${fn:escapeXml(doctor.lastName)}"<c:if test="${!status.last}">,</c:if>
+            </c:forEach>
+        ]
     </script>
 </layout:page>
