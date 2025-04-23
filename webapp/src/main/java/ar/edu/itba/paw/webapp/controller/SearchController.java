@@ -69,7 +69,6 @@ public class SearchController {
                 }
                 futureAppointmentsMap.put(doctor.getId(), appointmentsMap);
             }
-
         }
 
         ModelAndView mav = new ModelAndView("search/search");
