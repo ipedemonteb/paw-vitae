@@ -43,7 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const currentDate = new Date(argDate);
         let selectedDate = null;
-        let doctorAvailability = doctorsAvailability.find(doctor => doctor.id === doctorId) || [];
+        const doctorFound = doctorsAvailability.find(doctor => doctor.id === doctorId);
+        let doctorAvailability = doctorFound !== undefined ? doctorFound.info : [];
 
         // Get doctor's availability slots from the global object
         const doctorAvailabilitySlots = window.doctorAvailabilitySlots ? window.doctorAvailabilitySlots[doctorId] || [] : [];

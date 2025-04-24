@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,46 +40,20 @@ public class SearchController {
 
         // Get specialty and all doctors with that specialty
         Optional<Specialty> specialtyObj = specialtyService.getById(specialty);
-        List<Doctor> allDoctors = doctorService.getBySpecialty(specialtyObj.map(Specialty::getKey).orElse(null));
+        Page<Doctor> doctorPage = doctorService.getBySpecialty(specialty, page, 9); //TODO MAGIC PAGE NUMBER NOT GOOD.
+        List<Doctor> paginatedDoctors = doctorPage.getContent();
         List<Specialty> allSpecialties = specialtyService.getAll().orElse(new ArrayList<>());
-        // Pagination logic
-        int pageSize = 9;
-        int totalDoctors = allDoctors.size();
-        int totalPages = (int) Math.ceil((double) totalDoctors / pageSize);
 
-        // Ensure page is within valid range
-        if (page < 1) page = 1;
-        if (page > totalPages && totalPages > 0) page = totalPages;
-
-        // Get the subset of doctors for the current page
-        int fromIndex = (page - 1) * pageSize;
-        int toIndex = Math.min(fromIndex + pageSize, totalDoctors);
-
-        List<Doctor> paginatedDoctors = fromIndex < totalDoctors
-                ? allDoctors.subList(fromIndex, toIndex)
-                : new ArrayList<>();
-
-        Map<Long, Map<LocalDate, List<Integer>>> futureAppointmentsMap = new HashMap<>();
-        for (Doctor doctor : paginatedDoctors) {
-            Optional<List<Appointment>> futureAppointments = appointmentService.getAllFutureAppointments(doctor.getId());
-            if (futureAppointments.isPresent()) {
-                Map<LocalDate, List<Integer>> appointmentsMap = new HashMap<>();
-                for (Appointment appointment : futureAppointments.get()) {
-                    int hour = appointment.getDate().getHour();
-                    appointmentsMap.computeIfAbsent(appointment.getDate().toLocalDate(), k -> new ArrayList<>()).add(hour);
-                }
-                futureAppointmentsMap.put(doctor.getId(), appointmentsMap);
-            }
-        }
+        Map<Long, List<Appointment>> futureAppointmentsMap = appointmentService.getAllFutureAppointments(paginatedDoctors).orElse(new HashMap<>());
 
         ModelAndView mav = new ModelAndView("search/search");
-        mav.addObject("doctors", allDoctors); // All doctors (for reference if needed)
+        mav.addObject("doctors", paginatedDoctors); // All doctors (for reference if needed)
         mav.addObject("paginatedDoctors", paginatedDoctors); // Doctors for current page
         mav.addObject("futureAppointmentsMap", futureAppointmentsMap);
         mav.addObject("specialty", specialtyObj.orElse(null));
         mav.addObject("allSpecialties", allSpecialties);
         mav.addObject("currentPage", page);
-        mav.addObject("totalPages", totalPages);
+        mav.addObject("totalPages", doctorPage.getTotalPages());
 
         return mav;
     }

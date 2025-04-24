@@ -198,21 +198,45 @@
       </c:forEach>
     ];
     </c:forEach>
-    const doctorsAvailability = [
-        <c:forEach var="doctor" items="${futureAppointmentsMap}" varStatus="status" >
-      {
-        id: ${doctor.key},
-        info: [
-            <c:forEach var="entry" items="${doctor.value}" varStatus="statusValue">
-                {
-                date: '${entry.key}',
-                hours: ${entry.value}
-                }<c:if test="${!statusValue.last}">,</c:if>
+
+    const futureAppointmentsMap = [
+        <c:forEach var="entry" items="${futureAppointmentsMap}" varStatus="status">
+        {
+            doctorId: '${entry.key}',
+            appointments: [
+            <c:forEach var="appointment" items="${entry.value}" varStatus="status2">
+            {
+                date: '${appointment.date}',
+                hour: ${appointment.date.hour}
+            }<c:if test="${!status2.last}">,</c:if>
             </c:forEach>
-        ]
-      }<c:if test="${!status.last}">,</c:if>
+            ]
+        }<c:if test="${!status.last}">,</c:if>
         </c:forEach>
     ];
+
+    const doctorsAvailability = Object.entries(futureAppointmentsMap).map(([doctorId, appointments]) => {
+      const groupedByDate = appointments.appointments.reduce((acc, appointment) => {
+        const date = new Date(appointment.date).toISOString().split('T')[0]; // Extract date (YYYY-MM-DD)
+        const hour = appointment.hour;
+
+
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(hour);
+
+        return acc;
+      }, {});
+
+      return {
+        id: appointments.doctorId,
+        info: Object.entries(groupedByDate).map(([date, hours]) => ({
+          date,
+          hours
+        }))
+      };
+    });
 
   </script>
 
