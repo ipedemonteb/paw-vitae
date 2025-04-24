@@ -531,7 +531,6 @@
             const cancelAppointmentBtn = document.getElementById('cancelAppointmentBtn');
 
                 cancelAppointmentBtn.addEventListener('click', function() {
-                    console.log("Cancel appointment button clicked in modal:", currentAppointmentId)
                     if (currentAppointmentId) {
                         fetch(`${pageContext.request.contextPath}/patient/dashboard/appointment/cancel`, {
                             method: 'POST',

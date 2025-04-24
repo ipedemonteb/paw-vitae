@@ -22,7 +22,9 @@ public interface AppointmentService {
 
     Optional<List<Appointment>> getAllFutureAppointments(long doctorId);
 
-    void cancelAppointment(long appointmentId);
-    void acceptAppointment(long appointmentId);
+    Boolean cancelAppointment(long appointmentId,long userId);
+    Boolean acceptAppointment(long appointmentId, long userId);
     Optional<Appointment> getById(long appointmentId);
+    Map<Boolean,List<Appointment>> getByDoctorIdPartitionedByDate(long doctorId);
+    Map<Boolean,List<Appointment>> getByClientIdPartitionedByDate(long clientId);
 }

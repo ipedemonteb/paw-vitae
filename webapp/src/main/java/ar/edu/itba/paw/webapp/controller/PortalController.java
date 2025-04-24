@@ -14,11 +14,9 @@ import java.util.Optional;
 @Controller
 public class PortalController {
     private final SpecialtyService ss;
-
     public PortalController(SpecialtyService ss) {
         this.ss = ss;
     }
-
     @RequestMapping(value = "/portal", method = RequestMethod.GET)
     public ModelAndView showPortal() {
         Optional<List<Specialty>> specialties = ss.getAll();
