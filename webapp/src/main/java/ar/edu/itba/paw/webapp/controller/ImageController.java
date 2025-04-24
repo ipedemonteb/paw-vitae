@@ -29,7 +29,6 @@ public class ImageController {
     public void getDoctorImage(@PathVariable("doctorId") long doctorId, HttpServletResponse response) throws IOException {
         Optional<Images> imageOpt = imageService.findByDoctorId(doctorId);
         byte[] imageBytes;
-
         if (imageOpt.isPresent()) {
             imageBytes = imageOpt.get().getImage();
         } else {
@@ -38,7 +37,6 @@ public class ImageController {
                 imageBytes = inputStream.readAllBytes();
             }
         }
-
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         response.getOutputStream().write(imageBytes);
         response.getOutputStream().flush();
