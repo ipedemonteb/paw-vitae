@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,19 +60,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Set<Integer> getBookedHoursByDoctorAndDate(long doctorId, LocalDate date) {
-        Optional<List<Appointment>> appointments = getByDoctorId(doctorId);
-
-        return appointments.map(appointmentList -> appointmentList.stream()
-                .filter(appointment -> appointment.getDate().toLocalDate().equals(date))
-                .map(appointment -> appointment.getDate().getHour())
-                .collect(Collectors.toSet())).orElse(Collections.emptySet());
-
-    }
-
-    @Override
     public Optional<List<Appointment>> getAllFutureAppointments(long doctorId) {
-        return appointmentDao.getAllFutureAppointments(doctorId);
+        return appointmentDao.getAllFutureAppointments(Collections.singletonList(doctorId));
     }
 
     @Transactional
@@ -94,5 +82,18 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Optional<Appointment> getById(long appointmentId) {
         return appointmentDao.getById(appointmentId);
+    }
+
+    @Override
+    public Optional<Map<Long, List<Appointment>>> getAllFutureAppointments(List<Doctor> doctors) {
+        Map<Long, List<Appointment>> futureAppointmentsMap = new HashMap<>();
+        List<Long> doctorIds = doctors.stream().map(Doctor::getId).collect(Collectors.toList());
+        Optional<List<Appointment>> appointments = appointmentDao.getAllFutureAppointments(doctorIds);
+        if (appointments.isPresent()) {
+            for (Appointment appointment : appointments.get()) {
+                futureAppointmentsMap.computeIfAbsent(appointment.getDoctorId(), k -> new ArrayList<>()).add(appointment);
+            }
+        }
+        return Optional.of(futureAppointmentsMap);
     }
 }

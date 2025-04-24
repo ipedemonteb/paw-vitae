@@ -98,13 +98,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
     @Override
-    public Optional<List<Appointment>> getAllFutureAppointments(long doctorId) {
-        List<Appointment> appointments = jdbcTemplate.query(
-                "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ? AND date > NOW() AND status <> 'cancelado'", ROW_MAPPER, doctorId);
-        return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
-    }
-
-    @Override
     public void cancelApointment(long appointmentId) {
         jdbcTemplate.update("UPDATE Appointments SET status = ? WHERE id = ?", AppointmentStatus.CANCELADO.getValue(), appointmentId);
     }
@@ -121,5 +114,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
             app.setClient(clientDaoImpl.getById(app.getClientId()).orElse(null));
         });
     return appointment;
+    }
+
+    @Override
+    public Optional<List<Appointment>> getAllFutureAppointments(List<Long> doctorIds) {
+        String sql = "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id IN (" +
+                String.join(",", Collections.nCopies(doctorIds.size(), "?")) + ") AND date > NOW() AND status <> 'cancelado'";
+        List<Appointment> appointments = jdbcTemplate.query(sql, ROW_MAPPER, doctorIds.toArray());
+        return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
 }

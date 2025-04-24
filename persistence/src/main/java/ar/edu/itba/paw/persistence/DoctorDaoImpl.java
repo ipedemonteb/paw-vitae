@@ -152,13 +152,15 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public List<Doctor> getBySpecialty(String specialty) {
+    public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
         List<Doctor> doctors = jdbcTemplate.query(
                 "SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id " +
                         "JOIN doctor_specialties ON doctors.doctor_id = doctor_specialties.doctor_id " +
                         "JOIN specialties ON doctor_specialties.specialty_id = specialties.id " +
-                        "WHERE specialties.key = ?",
-                new Object[]{specialty},
+                        "WHERE doctor_specialties.specialty_id = ?"
+                        + " LIMIT ? OFFSET ?"
+                ,
+                new Object[]{specialtyId, pageSize, (page - 1) * pageSize},
                 ROW_MAPPER
         );
 
@@ -287,5 +289,14 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public void changeLanguage(long id, String language) {
         jdbcTemplate.update("UPDATE Users SET language = ? WHERE id = ?", language, id);
+    }
+
+    @Override
+    public int countBySpecialty(long specialtyId) {
+        return jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM doctor_specialties WHERE specialty_id = ?",
+                Integer.class,
+                specialtyId
+        );
     }
 }

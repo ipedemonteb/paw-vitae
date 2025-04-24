@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
@@ -49,7 +48,11 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<Doctor> getBySpecialty(String specialty) { return this.doctorDao.getBySpecialty(specialty); }
+    public Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
+        int total = doctorDao.countBySpecialty(specialtyId);
+        List<Doctor> docs = doctorDao.getBySpecialty(specialtyId, page, pageSize);
+        return new Page<>(docs, page, pageSize, total);
+    }
 
     @Override
     public Optional<Doctor> getByEmail(String email) {

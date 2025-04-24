@@ -10,7 +10,7 @@ public interface DoctorService {
 
     Optional<Doctor> getById(final long id);
 
-    List<Doctor> getBySpecialty(String specialty);
+    Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize);
 
     Optional<Doctor> getByEmail(String email);
 

@@ -147,15 +147,34 @@
             }<c:if test="${!status.last}">,</c:if>
             </c:forEach>
         ];
-        const FutureAppointments = [
-            <c:forEach var="entry" items="${futureAppointments}" varStatus="status">
+        const appointments = [
+            <c:forEach var="app" varStatus="status" items="${appointments}">
             {
-                date: '${entry.key}',
-                hours: ${entry.value}
-            }
-            <c:if test="${!status.last}">,</c:if>
+                date: "${app.date}",
+                hour: ${app.date.hour},
+            }<c:if test="${!status.last}">,</c:if>
             </c:forEach>
         ];
+        const futureAppointments = Object.entries(
+            appointments.reduce((acc, appointment) => {
+                const date = new Date(appointment.date).toISOString().split('T')[0];  // Extract local date
+                const hour = appointment.hour; // Extract hour
+                if (!acc[date]) {
+                    acc[date] = [];
+                } else if(acc[date].includes(hour)) {
+                    return acc;
+
+                }
+                acc[date].push(hour);
+                return acc;
+            }, {})
+        );
+        const FutureAppointments = futureAppointments.map(([date, hours]) => {
+            return {
+                date: date,
+                hours: hours
+            };
+        });
     </script>
 
     <!-- Include the external JavaScript file -->

@@ -13,7 +13,9 @@ public interface DoctorDao {
 
     Optional<Doctor> getById(final long id);
 
-    List<Doctor> getBySpecialty(String specialty);
+    List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize);
+
+    int countBySpecialty(long specialtyId);
 
     Optional<Doctor> getByEmail(String email);
 

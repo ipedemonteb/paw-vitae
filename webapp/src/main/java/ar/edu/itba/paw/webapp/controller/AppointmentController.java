@@ -98,7 +98,8 @@ public class AppointmentController {
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
         specialty.ifPresent(s -> mav.addObject("specialty", s));
         Optional<List<Appointment>> futureAppointments = appointmentService.getAllFutureAppointments(doctorId);
-        futureAppointments.ifPresent(appointments -> mav.addObject("futureAppointments", appointments.stream().collect(Collectors.groupingBy(a -> a.getDate().toLocalDate(), Collectors.mapping(a -> a.getDate().toLocalTime().getHour(), Collectors.toList()))).entrySet()));
+        futureAppointments.ifPresent(appointments -> mav.addObject("appointments", futureAppointments.get()));
+//        futureAppointments.ifPresent(appointments -> mav.addObject("futureAppointments", appointments.stream().collect(Collectors.groupingBy(a -> a.getDate().toLocalDate(), Collectors.mapping(a -> a.getDate().toLocalTime().getHour(), Collectors.toList()))).entrySet()));
 
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final Client client = clientService.getByEmail((String) auth.getName()).orElseThrow(RuntimeException::new);

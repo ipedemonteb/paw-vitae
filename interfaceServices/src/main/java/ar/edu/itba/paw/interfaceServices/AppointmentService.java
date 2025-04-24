@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.interfaceServices;
 
 import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Doctor;
 
 import java.time.LocalDate;
@@ -18,11 +17,12 @@ public interface AppointmentService {
 
     Optional<List<Appointment>> getByDoctorId(long doctorId);
 
-    Set<Integer> getBookedHoursByDoctorAndDate(long doctorId, LocalDate date);
-
     Optional<List<Appointment>> getAllFutureAppointments(long doctorId);
+
+    Optional<Map<Long, List<Appointment>>> getAllFutureAppointments(List<Doctor> doctors);
 
     void cancelAppointment(long appointmentId);
     void acceptAppointment(long appointmentId);
     Optional<Appointment> getById(long appointmentId);
+
 }
