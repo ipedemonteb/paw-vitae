@@ -110,4 +110,16 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         return Optional.of(futureAppointmentsMap);
     }
+
+    @Override
+    public Map<Boolean, List<Appointment>> getByDoctorIdPartitionedByDate(long doctorId) {
+        return  appointmentDao.getByDoctorId(doctorId).orElseThrow(() -> new IllegalArgumentException("Doctor not found")).stream()
+                .collect(Collectors.partitioningBy(appointment -> appointment.getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))));
+    }
+
+    @Override
+    public Map<Boolean, List<Appointment>> getByClientIdPartitionedByDate(long clientId) {
+        return appointmentDao.getByClientId(clientId).orElseThrow(() -> new IllegalArgumentException("Client not found")).stream()
+                .collect(Collectors.partitioningBy(appointment -> appointment.getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))));
+    }
 }
