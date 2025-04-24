@@ -110,4 +110,8 @@ public class AuthUserDetailsService implements UserDetailsService {
         Authentication auth = authenticationManager.authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
+    public Boolean isLoggedUser(User user) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.isAuthenticated() && auth.getName().equals(user.getEmail());
+    }
 }

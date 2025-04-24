@@ -1,15 +1,16 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.validation.EmailExistance;
 import ar.edu.itba.paw.webapp.validation.FileSize;
 import org.springframework.web.multipart.MultipartFile;
-
+import ar.edu.itba.paw.models.Coverage;
+import ar.edu.itba.paw.models.Specialty;
 import javax.validation.constraints.*;
 import java.util.List;
 
 public class UpdateDoctorForm {
-
     @NotEmpty
     @Size(min = 1, max = 100)
     private String name;
@@ -28,6 +29,14 @@ public class UpdateDoctorForm {
 
     private List<String> specialties;
 
+
+    public UpdateDoctorForm(Doctor doctor) {
+        this.name = doctor.getName();
+        this.lastName = doctor.getLastName();
+        this.phone = doctor.getPhone();
+        this.coverages = doctor.getCoverageList().stream().map(Coverage::getName).toList();
+        this.specialties = doctor.getSpecialtyList().stream().map(Specialty::getKey).toList();
+    }
     public String getName() {
         return name;
     }
