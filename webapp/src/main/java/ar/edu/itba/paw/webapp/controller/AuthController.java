@@ -93,7 +93,6 @@ public class AuthController {
             // remember‑me or fully authenticated ↦ bounce home
             return new ModelAndView("redirect:/");
         }
-
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
         ModelAndView mav = new ModelAndView("auth/register-patient");
         mav.addObject("coverageList", coverageList);
