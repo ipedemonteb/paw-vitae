@@ -97,7 +97,6 @@ public class AppointmentController {
         doctor.ifPresent(d -> mav.addObject("doctor", d));
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
         specialty.ifPresent(s -> mav.addObject("specialty", s));
-
         Optional<List<Appointment>> futureAppointments = appointmentService.getAllFutureAppointments(doctorId);
         futureAppointments.ifPresent(appointments -> mav.addObject("futureAppointments", appointments.stream().collect(Collectors.groupingBy(a -> a.getDate().toLocalDate(), Collectors.mapping(a -> a.getDate().toLocalTime().getHour(), Collectors.toList()))).entrySet()));
 

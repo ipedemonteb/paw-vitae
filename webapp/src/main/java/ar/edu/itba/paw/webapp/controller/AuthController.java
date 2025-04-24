@@ -4,6 +4,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,55 +42,29 @@ public class AuthController {
     private final SpecialtyService ss;
     private final ClientService cls;
     private final UserService us;
-    private AuthenticationManager authenticationManager;
 
+    private final AuthUserDetailsService authService;
 
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, ClientService clientService, UserService us, AuthenticationManager authenticationManager) {
+    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, ClientService clientService, UserService us, AuthUserDetailsService authService) {
         this.ds = ds;
         this.cs = cs;
         this.is=is;
         this.ss = ss;
         this.cls = clientService;
         this.us = us;
-        this.authenticationManager = authenticationManager;
+        this.authService = authService;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(@Valid @ModelAttribute("registerForm") final DoctorForm doctorForm, final BindingResult errors, Authentication authentication)  {
-
-        if (authentication != null
-                && authentication.isAuthenticated()
-                && !(authentication instanceof AnonymousAuthenticationToken)) {
-            // remember‑me or fully authenticated ↦ bounce home
+    public ModelAndView register(@Valid @ModelAttribute("registerForm") DoctorForm form, BindingResult errors, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
             return new ModelAndView("redirect:/");
         }
-
-        if(errors.hasErrors()) {
-            System.out.println("Errors in form: " + errors.getAllErrors());
-            return doctorForm(doctorForm, authentication);
+        if (errors.hasErrors()) {
+            return doctorForm(form, authentication);
         }
-
-        if (doctorForm.getAvailabilitySlots() != null) {
-            System.out.println("Received availability slots: " + doctorForm.getAvailabilitySlots());
-        }
-
-        Locale locale = LocaleContextHolder.getLocale();
-
-        final Doctor doctor = ds.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), locale.getLanguage(), doctorForm.getSpecialties(), doctorForm.getCoverages(), doctorForm.getAvailabilitySlots());
-
-        try {
-            is.create(doctor.getId(), doctorForm.getImage());
-        } catch (IOException e) {
-            errors.reject("image.upload.error", "Failed to upload image");
-            return doctorForm(doctorForm, authentication);
-        }
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(doctor.getEmail(), doctorForm.getPassword());
-        Authentication auth = authenticationManager.authenticate(authToken);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-
+        authService.registerDoctor(form);
         return new ModelAndView("redirect:/doctor/dashboard");
     }
 
@@ -127,28 +102,16 @@ public class AuthController {
 
     @RequestMapping(value = "/register-patient", method = RequestMethod.POST)
     public ModelAndView registerPatient(@Valid @ModelAttribute("patientForm") final PatientForm patientForm, final BindingResult errors,Authentication authentication)  {
-
         if (authentication != null
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             // remember‑me or fully authenticated ↦ bounce home
             return new ModelAndView("redirect:/");
         }
-
-
         if(errors.hasErrors()) {
             return patientForm(patientForm, authentication);
         }
-
-        Locale locale = LocaleContextHolder.getLocale();
-
-        final Client client = cls.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(), patientForm.getPhone(), locale.getLanguage(), patientForm.getCoverage());
-
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(client.getEmail(), patientForm.getPassword());
-        Authentication auth = authenticationManager.authenticate(authToken);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
+        authService.registerPatient(patientForm);
         return new ModelAndView("redirect:/patient/dashboard");
     }
 
@@ -160,7 +123,6 @@ public class AuthController {
             // remember‑me or fully authenticated ↦ bounce home
             return new ModelAndView("redirect:/");
         }
-
         return new ModelAndView("auth/login");
     }
 
