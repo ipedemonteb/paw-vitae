@@ -76,6 +76,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             return false;
         }
         appointmentDao.cancelApointment(appointmentId);
+        appt.get().setStatus(AppointmentStatus.CANCELADO.getValue());
         mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appt.get());
         return true;
     }
@@ -90,6 +91,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             return false;
         }
         appointmentDao.acceptAppointment(appointmentId);
+        appt.get().setStatus(AppointmentStatus.CONFIRMADO.getValue());
         mailService.sendAppointmentStatusEmail("email.acceptedAppointment", appt.get());
         return true;
     }
