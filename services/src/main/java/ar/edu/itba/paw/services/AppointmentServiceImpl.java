@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,18 +67,31 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional
     @Override
-    public void cancelAppointment(long appointmentId) {
+    public Boolean cancelAppointment(long appointmentId,long userId) {
+        Optional<Appointment> appt = getById(appointmentId);
+        if (appt.isEmpty()) {
+            return false;}
+
+        if (appt.get().getDoctor().getId() != userId && appt.get().getClient().getId() != userId) {
+            return false;
+        }
         appointmentDao.cancelApointment(appointmentId);
-        Appointment appointment = getById(appointmentId).orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
-        mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appointment);
+        mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appt.get());
+        return true;
     }
 
     @Transactional
     @Override
-    public void acceptAppointment(long appointmentId) {
+    public Boolean acceptAppointment(long appointmentId,long userId) {
+        Optional<Appointment> appt = getById(appointmentId);
+        if (appt.isEmpty()) return false;
+
+        if (appt.get().getDoctor().getId() != userId) {
+            return false;
+        }
         appointmentDao.acceptAppointment(appointmentId);
-        Appointment appointment = getById(appointmentId).orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
-        mailService.sendAppointmentStatusEmail("email.acceptedAppointment", appointment);
+        mailService.sendAppointmentStatusEmail("email.acceptedAppointment", appt.get());
+        return true;
     }
     @Override
     public Optional<Appointment> getById(long appointmentId) {

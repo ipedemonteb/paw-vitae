@@ -44,20 +44,13 @@ public class PatientController {
     public ModelAndView getDoctorDashboard() {
         final ModelAndView mav = new ModelAndView("patient/dashboard");
         Client patient = loggedUser();
-        List<Appointment> appointments = as.getByClientId(patient.getId()).orElse(new ArrayList<>());
-        LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
-        Map<Boolean, List<Appointment>> partitionedAppointments = appointments.stream()
-                .collect(Collectors.partitioningBy(appointment -> appointment.getDate().isAfter(now)));
+        Map <Boolean,List<Appointment>> partitionedAppointments = as.getByClientIdPartitionedByDate(patient.getId());
         List<Coverage> coverageList = covs.getAll().orElse(new ArrayList<>());
-        UpdatePatientForm updatePatientForm = new UpdatePatientForm();
-        updatePatientForm.setName(patient.getName());
-        updatePatientForm.setLastName(patient.getLastName());
-        updatePatientForm.setPhone(patient.getPhone());
-        updatePatientForm.setCoverage(patient.getCoverage().getName());
+        UpdatePatientForm updatePatientForm = new UpdatePatientForm(patient);
         mav.addObject("patient", patient);
         mav.addObject("updatePatientForm", updatePatientForm);
-        mav.addObject("upcomingAppointments", partitionedAppointments.get(true));
-        mav.addObject("pastAppointments", partitionedAppointments.get(false));
+        mav.addObject("upcomingAppointments", partitionedAppointments.get(false));
+        mav.addObject("pastAppointments", partitionedAppointments.get(true));
         mav.addObject("coverageList", coverageList);
         return mav;
     }
@@ -84,20 +77,8 @@ public class PatientController {
     @PostMapping(value = "/patient/dashboard/appointment/cancel", produces = "application/json")
     @ResponseBody
     public String cancelAppointment(@RequestParam("appointmentId") Long appointmentId) {
-        try {
-            Appointment appt = as.getById(appointmentId).orElse(null);
-            if (appt == null) {
-                return "{\"success\": false}";
-            }
-            Client patient = loggedUser();
-            if (appt.getClient().getId() != patient.getId()){
-                return "{\"success\": false}";
-            }
-            as.cancelAppointment(appointmentId);
-            return "{\"success\": true}";
-        } catch (Exception e) {
-            return "{\"success\": false}";
-        }
+        boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
+        return "{\"success\": " + result + "}";
     }
 
 }
