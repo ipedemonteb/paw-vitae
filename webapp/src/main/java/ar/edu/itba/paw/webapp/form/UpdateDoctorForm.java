@@ -29,8 +29,7 @@ public class UpdateDoctorForm {
 
     private List<String> specialties;
 
-
-    public UpdateDoctorForm(Doctor doctor) {
+    public void setForm(Doctor doctor) {
         this.name = doctor.getName();
         this.lastName = doctor.getLastName();
         this.phone = doctor.getPhone();

@@ -36,12 +36,12 @@ public class PatientController {
     }
 
     @RequestMapping(value = "/patient/dashboard")
-    public ModelAndView getDoctorDashboard() {
+    public ModelAndView getDoctorDashboard(@ModelAttribute("updatePatientForm") final UpdatePatientForm updatePatientForm) {
         final ModelAndView mav = new ModelAndView("patient/dashboard");
         Patient patient = loggedUser();
         Map <Boolean,List<Appointment>> partitionedAppointments = as.getByPatientIdPartitionedByDate(patient.getId());
         List<Coverage> coverageList = covs.getAll().orElse(new ArrayList<>());
-        UpdatePatientForm updatePatientForm = new UpdatePatientForm(patient);
+        updatePatientForm.setForm(patient);
         mav.addObject("patient", patient);
         mav.addObject("updatePatientForm", updatePatientForm);
         mav.addObject("upcomingAppointments", partitionedAppointments.get(false));

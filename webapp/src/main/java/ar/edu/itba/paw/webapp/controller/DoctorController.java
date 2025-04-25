@@ -78,29 +78,27 @@ public class DoctorController {
 
 
     @RequestMapping(value = "/doctor/dashboard")
-    public ModelAndView getDoctorDashboard() {
+    public ModelAndView getDoctorDashboard(@ModelAttribute ("updateDoctorForm") final UpdateDoctorForm updateDoctorForm,@ModelAttribute ("updateAvailabilityForm") UpdateAvailabilityForm updateAvailabilityForm) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard");
         Doctor doctor = loggedUser();
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
         List<Specialty> specialtyList = ss.getAll().orElse(new ArrayList<>());
+        updateDoctorForm.setForm(doctor);
+        updateAvailabilityForm.setForm(doctor.getAvailabilitySlots());
         mav.addObject("coverageList", coverageList);
         mav.addObject("specialtyList", specialtyList);
         Map <Boolean,List<Appointment>> partitionedAppointments = as.getByDoctorIdPartitionedByDate(doctor.getId());
         mav.addObject("upcomingAppointments", partitionedAppointments.get(false));
         mav.addObject("pastAppointments", partitionedAppointments.get(true));
-        mav.addObject("updateDoctorForm", new UpdateDoctorForm(doctor));
-        mav.addObject("updateAvailabilityForm", new UpdateAvailabilityForm(doctor.getAvailabilitySlots()));
+
         return mav;
     }
 
     @RequestMapping(value = "/doctor/dashboard/update", method = RequestMethod.POST)
-    public ModelAndView updateDoctor(@Valid @ModelAttribute("updateDoctorForm") final UpdateDoctorForm updateDoctorForm,
+    public ModelAndView updateDoctor(@Valid @ModelAttribute("updateDoctorForm") final UpdateDoctorForm updateDoctorForm,@ModelAttribute ("updateAvailabilityForm") UpdateAvailabilityForm updateAvailabilityForm,
                                      final BindingResult errors) {
         if (errors.hasErrors()) {
-            final ModelAndView mav = new ModelAndView("patient/dashboard");
-            Doctor doctor = loggedUser();
-            mav.addObject("doctor", doctor);
-            return mav;
+            return getDoctorDashboard(updateDoctorForm, updateAvailabilityForm);
         }
         Doctor doctor = loggedUser();
         ds.updateDoctor(doctor.getId(),
@@ -127,13 +125,11 @@ public class DoctorController {
     }
 
     @RequestMapping(value = "/doctor/dashboard/availability", method = RequestMethod.POST)
-    public ModelAndView updateAvailability(@Valid @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm form,
+    public ModelAndView updateAvailability(@Valid @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm form,@ModelAttribute("updateDoctorForm") UpdateDoctorForm updateDoctorForm,
                                            @RequestParam(value = "deletedSlots", required = false) String[] deletedSlots,
                                            BindingResult errors) {
         if (errors.hasErrors()) {
-            ModelAndView mav = getDoctorDashboard();
-            mav.addObject("updateAvailabilityForm", form);
-            return mav;
+            return getDoctorDashboard(updateDoctorForm, form);
         }
         form.setAvailabilitySlots(form.getAvailabilitySlots());
         ds.updateDoctorAvailability(loggedUser().getId(), form.getAvailabilitySlots());
