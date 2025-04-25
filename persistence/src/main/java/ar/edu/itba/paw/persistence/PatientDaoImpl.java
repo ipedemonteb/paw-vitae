@@ -23,7 +23,7 @@ public class PatientDaoImpl implements PatientDao {
 
     private final SimpleJdbcInsert jdbcInsertUser;
 
-    private final static RowMapper<Patient> ROW_MAPPER = new RowMapper<Patient>() {
+    public final static RowMapper<Patient> ROW_MAPPER = new RowMapper<Patient>() {
         @Override
         public Patient mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Patient(
