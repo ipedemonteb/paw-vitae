@@ -11,14 +11,14 @@ public class UpdateAvailabilityForm {
 
     @NotEmpty
     private List<AvailabilitySlot> availabilitySlots;
-    public UpdateAvailabilityForm(List<AvailabilitySlot> availabilitySlots) {
-        this.availabilitySlots = availabilitySlots.stream().filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null).collect(Collectors.toList());;
-    }
     public List<AvailabilitySlot> getAvailabilitySlots() {
         return availabilitySlots;
     }
 
     public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) {
         this.availabilitySlots = availabilitySlots;
+    }
+    public void setForm(List<AvailabilitySlot> availabilitySlots) {
+        this.availabilitySlots = availabilitySlots.stream().filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null).collect(Collectors.toList());
     }
 }

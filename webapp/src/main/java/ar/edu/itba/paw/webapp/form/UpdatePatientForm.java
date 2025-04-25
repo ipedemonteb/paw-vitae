@@ -25,7 +25,7 @@ public class UpdatePatientForm {
     private String coverage;
 
 
-    public UpdatePatientForm(Patient patient) {
+    public void setForm(Patient patient) {
         this.name = patient.getName();
         this.lastName = patient.getLastName();
         this.phone = patient.getPhone();
