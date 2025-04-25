@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface CoverageService {
 
     Optional<Coverage> findById(long id);
+    Optional<List<Coverage>> findByIds(List<Long> ids);
 
     Coverage create(String name);
 

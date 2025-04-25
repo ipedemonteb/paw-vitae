@@ -53,4 +53,9 @@ public class CoverageDaoImpl implements CoverageDao {
     public Optional<List<Coverage>> getAll() {
         return Optional.of(jdbcTemplate.query("SELECT * FROM coverages", COVERAGE_MAPPER));
     }
+
+    @Override
+    public Optional<List<Coverage>> findByIds(List<Long> ids) {
+        return Optional.of(jdbcTemplate.query("SELECT * FROM coverages WHERE id IN (" + String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new)) + ")", COVERAGE_MAPPER));
+    }
 }
