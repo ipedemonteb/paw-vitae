@@ -211,7 +211,7 @@
             appointments: [
             <c:forEach var="appointment" items="${entry.appointments}" varStatus="status2">
             {
-                date: '${appointment.date.toLocalDate()}',
+                date: '${appointment.date}',
                 hour: ${appointment.date.hour}
             }<c:if test="${!status2.last}">,</c:if>
             </c:forEach>
@@ -247,6 +247,8 @@
         }))
       };
     });
+
+    console.log(doctorsAvailability)
 
   </script>
 
