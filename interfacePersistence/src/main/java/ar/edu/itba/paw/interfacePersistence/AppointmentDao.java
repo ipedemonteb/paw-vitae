@@ -5,14 +5,13 @@ import ar.edu.itba.paw.models.Specialty;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface AppointmentDao {
 
-    Appointment create(long clientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty);
+    Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty);
 
-    Optional<List<Appointment>> getByClientId(long clientId);
+    Optional<List<Appointment>> getByPatientId(long patientId);
 
     Optional<List<Appointment>> getByDoctorId(long doctorId);
 

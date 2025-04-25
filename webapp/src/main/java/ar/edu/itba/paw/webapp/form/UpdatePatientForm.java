@@ -2,13 +2,9 @@ package ar.edu.itba.paw.webapp.form;
 
 
 
-import ar.edu.itba.paw.models.Client;
-import ar.edu.itba.paw.webapp.validation.EmailExistance;
-import ar.edu.itba.paw.webapp.validation.FileSize;
-import org.springframework.web.multipart.MultipartFile;
+import ar.edu.itba.paw.models.Patient;
 
 import javax.validation.constraints.*;
-import java.util.List;
 
 public class UpdatePatientForm {
 
@@ -29,7 +25,7 @@ public class UpdatePatientForm {
     private String coverage;
 
 
-    public UpdatePatientForm(Client patient) {
+    public UpdatePatientForm(Patient patient) {
         this.name = patient.getName();
         this.lastName = patient.getLastName();
         this.phone = patient.getPhone();

@@ -140,15 +140,15 @@
                                         <div class="patient-info">
                                             <div class="patient-avatar">
                                                 <div class="avatar-placeholder small">
-                                                    <c:out value="${fn:substring(appointment.client.name, 0, 1)}${fn:substring(appointment.client.lastName, 0, 1)}"/>
+                                                    <c:out value="${fn:substring(appointment.patient.name, 0, 1)}${fn:substring(appointment.patient.lastName, 0, 1)}"/>
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="patient-name">
-                                                    <c:out value="${appointment.client.name}" /> <c:out value="${appointment.client.lastName}" />
+                                                    <c:out value="${appointment.patient.name}" /> <c:out value="${appointment.patient.lastName}" />
                                                 </div>
                                                 <div class="patient-coverage">
-                                                    <c:out value="${appointment.client.coverage.name}" />
+                                                    <c:out value="${appointment.patient.coverage.name}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -263,15 +263,15 @@
                                         <div class="patient-info">
                                             <div class="patient-avatar">
                                                 <div class="avatar-placeholder small">
-                                                        <c:out value="${fn:substring(appointment.client.name, 0, 1)}${fn:substring(appointment.client.lastName, 0, 1)}"/>
+                                                        <c:out value="${fn:substring(appointment.patient.name, 0, 1)}${fn:substring(appointment.patient.lastName, 0, 1)}"/>
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="patient-name">
-                                                    <c:out value="${appointment.client.name}" /> <c:out value="${appointment.client.lastName}" />
+                                                    <c:out value="${appointment.patient.name}" /> <c:out value="${appointment.patient.lastName}" />
                                                 </div>
                                                 <div class="patient-coverage">
-                                                    <c:out value="${appointment.client.coverage.name}" />
+                                                    <c:out value="${appointment.patient.coverage.name}" />
                                                 </div>
                                             </div>
                                         </div>

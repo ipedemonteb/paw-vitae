@@ -25,7 +25,7 @@
                 <!-- Hidden field for doctor ID -->
                 <form:hidden path="doctorId" />
                 <form:hidden path="specialtyId" />
-                <form:hidden path="clientId" />
+                <form:hidden path="patientId" />
 
                 <!-- Hidden personal information fields -->
                 <form:hidden path="name" />

@@ -1,7 +1,7 @@
 //package ar.edu.itba.paw.persistence;
 //
 //import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
-//import ar.edu.itba.paw.models.Client;
+//import ar.edu.itba.paw.models.Patient;
 //import ar.edu.itba.paw.models.Coverage;
 //import org.junit.Assert;
 //import org.junit.Before;
@@ -40,7 +40,7 @@
 //    private static final String PHONE = "1177777777";
 //    private static final String LANGUAGE = "es";
 //
-//    private ClientDaoImpl clientDao;
+//    private PatientDaoImpl clientDao;
 //    private JdbcTemplate jdbcTemplate;
 //    private SimpleJdbcInsert jdbcInsertCoverage;
 //
@@ -56,7 +56,7 @@
 //
 //        jdbcTemplate = new JdbcTemplate(ds);
 //
-//        clientDao = new ClientDaoImpl(ds);
+//        clientDao = new PatientDaoImpl(ds);
 //
 //        jdbcInsertCoverage = new SimpleJdbcInsert(jdbcTemplate)
 //                .withTableName(COVERAGES_TABLE)
@@ -72,7 +72,7 @@
 //        Coverage coverage = new Coverage(coverageId.longValue(), "TestCoverage");
 //
 //        //Exercise
-//        Client client = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
+//        Patient client = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
 //
 //        //Postconditions
 //        assertNotNull(client);
@@ -88,7 +88,7 @@
 //        //Preconditions
 //
 //        //Exercise
-//        Optional<Client> maybeClient = clientDao.getById(1000);
+//        Optional<Patient> maybeClient = clientDao.getById(1000);
 //
 //        //Postconditions
 //        Assert.assertFalse(maybeClient.isPresent());
@@ -99,10 +99,10 @@
 //        //Preconditions
 //        Number coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "TestCoverage"));
 //        Coverage coverage = new Coverage(coverageId.longValue(), "TestCoverage");
-//        Client created = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
+//        Patient created = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
 //
 //        //Exercise
-//        Optional<Client> maybeClient = clientDao.getById(created.getId());
+//        Optional<Patient> maybeClient = clientDao.getById(created.getId());
 //
 //        //Postconditions
 //        assertTrue(maybeClient.isPresent());
@@ -116,7 +116,7 @@
 //        //Preconditions
 //
 //        //Exercise
-//        Optional<Client> maybeClient = clientDao.getByEmail("notexists@gmail.com");
+//        Optional<Patient> maybeClient = clientDao.getByEmail("notexists@gmail.com");
 //
 //        //Postconditions
 //        Assert.assertFalse(maybeClient.isPresent());
@@ -127,10 +127,10 @@
 //        //Preconditions
 //        Number coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "TestCoverage"));
 //        Coverage coverage = new Coverage(coverageId.longValue(), "TestCoverage");
-//        Client created = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
+//        Patient created = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
 //
 //        //Exercise
-//        Optional<Client> maybeClient = clientDao.getByEmail(created.getEmail());
+//        Optional<Patient> maybeClient = clientDao.getByEmail(created.getEmail());
 //
 //        //Postconditions
 //        assertTrue(maybeClient.isPresent());
@@ -147,7 +147,7 @@
 //        Coverage initialCoverage = new Coverage(coverageId1.longValue(), "TestCoverage");
 //        Number coverageId2 = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "UpdatedCoverage"));
 //        Coverage updatedCoverage = new Coverage(coverageId2.longValue(), "UpdatedCoverage");
-//        Client client = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, initialCoverage);
+//        Patient client = clientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, initialCoverage);
 //        String updatedName = "Jane";
 //        String updatedLastName = "Smith";
 //        String updatedPhone = "1188888888";
@@ -156,9 +156,9 @@
 //        clientDao.updateClient(client.getId(), updatedName, updatedLastName, updatedPhone, updatedCoverage);
 //
 //        //Postconditions
-//        Optional<Client> maybeClient = clientDao.getById(client.getId());
+//        Optional<Patient> maybeClient = clientDao.getById(client.getId());
 //        assertTrue(maybeClient.isPresent());
-//        Client updatedClient = maybeClient.get();
+//        Patient updatedClient = maybeClient.get();
 //        assertEquals(updatedName, updatedClient.getName());
 //        assertEquals(updatedLastName, updatedClient.getLastName());
 //        assertEquals(updatedPhone, updatedClient.getPhone());

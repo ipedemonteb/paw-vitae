@@ -4,7 +4,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class AppointmentForm {
 
@@ -45,19 +44,19 @@ public class AppointmentForm {
     private Long doctorId;
 
     @NotNull
-    private Long clientId;
+    private Long patientId;
 
     @NotNull
     private Long specialtyId;
 
 
 
-    public Long getClientId() {
-        return clientId;
+    public Long getPatientId() {
+        return patientId;
     }
 
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
+    public void setPatientId(Long patientId) {
+        this.patientId = patientId;
     }
 
     public Long getDoctorId() {

@@ -8,13 +8,8 @@ import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContext;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -26,13 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
-import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Logger;
-
 @Controller
 public class AuthController {
 
@@ -40,18 +31,18 @@ public class AuthController {
     private final CoverageService cs;
     private final ImageService is;
     private final SpecialtyService ss;
-    private final ClientService cls;
+    private final PatientService ps;
     private final UserService us;
 
     private final AuthUserDetailsService authService;
 
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, ClientService clientService, UserService us, AuthUserDetailsService authService) {
+    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, PatientService patientService, UserService us, AuthUserDetailsService authService) {
         this.ds = ds;
         this.cs = cs;
         this.is=is;
         this.ss = ss;
-        this.cls = clientService;
+        this.ps = patientService;
         this.us = us;
         this.authService = authService;
     }

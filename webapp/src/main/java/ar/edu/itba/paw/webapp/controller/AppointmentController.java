@@ -6,8 +6,6 @@ import ar.edu.itba.paw.webapp.form.AppointmentForm;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -18,32 +16,29 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 public class AppointmentController {
 
-    private AppointmentService appointmentService;
-    private ClientService clientService;
-    private DoctorService doctorService;
-    private CoverageService coverageService;
-    private MailService mailService;
+    private AppointmentService as;
+    private PatientService ps;
+    private DoctorService ds;
+    private CoverageService cs;
+    private MailService ms;
     private MessageSource messageSource;
-    private SpecialtyService specialtyService;
+    private SpecialtyService ss;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService, ClientService clientService, DoctorService doctorService, CoverageService coverageService, MailService mailService, MessageSource messageSource, SpecialtyService specialtyService) {
-        this.appointmentService = appointmentService;
-        this.clientService = clientService;
-        this.doctorService = doctorService;
-        this.coverageService = coverageService;
-        this.mailService = mailService;
+    public AppointmentController(AppointmentService as, PatientService ps, DoctorService ds, CoverageService cs, MailService ms, MessageSource messageSource, SpecialtyService ss) {
+        this.as = as;
+        this.ps = ps;
+        this.ds = ds;
+        this.cs = cs;
+        this.ms = ms;
         this.messageSource = messageSource;
-        this.specialtyService = specialtyService;
+        this.ss = ss;
     }
 
     // Add the following method to handle MessagingException
@@ -64,7 +59,7 @@ public class AppointmentController {
             return appointment(appointmentForm, appointmentForm.getDoctorId(), appointmentForm.getSpecialtyId());
         }
 
-        Appointment appointment = appointmentService.create(appointmentForm.getClientId(), appointmentForm.getDoctorId(), appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
+        Appointment appointment = as.create(appointmentForm.getPatientId(), appointmentForm.getDoctorId(), appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
@@ -88,26 +83,26 @@ public class AppointmentController {
             @RequestParam(required = true) Long specialtyId
     ) {
         ModelAndView mav = new ModelAndView("appointment/appointment");
-        Optional<List<Coverage>> coverage = coverageService.getAll();
+        Optional<List<Coverage>> coverage = cs.getAll();
         mav.addObject("coverages", coverage.orElse(Collections.emptyList()));
 
-        Optional<Doctor> doctor = doctorService.getByIdWithAppointments(doctorId);
+        Optional<Doctor> doctor = ds.getByIdWithAppointments(doctorId);
         doctor.ifPresent(d -> mav.addObject("doctor", d));
-        Optional<Specialty> specialty = specialtyService.getById(specialtyId);
+        Optional<Specialty> specialty = ss.getById(specialtyId);
         specialty.ifPresent(s -> mav.addObject("specialty", s));
 
 
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final Client client = clientService.getByEmail((String) auth.getName()).orElseThrow(RuntimeException::new);
+        final Patient patient = ps.getByEmail((String) auth.getName()).orElseThrow(RuntimeException::new);
 
         appointmentForm.setDoctorId(doctorId);
-        appointmentForm.setClientId(client.getId());
+        appointmentForm.setPatientId(patient.getId());
         appointmentForm.setSpecialtyId(specialtyId);
-        appointmentForm.setName(client.getName());
-        appointmentForm.setLastName(client.getLastName());
-        appointmentForm.setEmail(client.getEmail());
-        appointmentForm.setPhone(client.getPhone());
-        appointmentForm.setCoverageId(client.getCoverage().getId());
+        appointmentForm.setName(patient.getName());
+        appointmentForm.setLastName(patient.getLastName());
+        appointmentForm.setEmail(patient.getEmail());
+        appointmentForm.setPhone(patient.getPhone());
+        appointmentForm.setCoverageId(patient.getCoverage().getId());
 
 
         return mav;
