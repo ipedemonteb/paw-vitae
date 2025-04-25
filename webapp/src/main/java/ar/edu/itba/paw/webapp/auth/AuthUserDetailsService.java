@@ -1,25 +1,22 @@
 package ar.edu.itba.paw.webapp.auth;
 
 
-import ar.edu.itba.paw.interfaceServices.ClientService;
+import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.ImageService;
 import ar.edu.itba.paw.interfaceServices.UserService;
-import ar.edu.itba.paw.models.Client;
+import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,8 +25,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -39,7 +34,7 @@ public class AuthUserDetailsService implements UserDetailsService {
     @Autowired
     private DoctorService doctorService;
     @Autowired
-    private ClientService clientService;
+    private PatientService patientService;
     @Autowired
     private ImageService imageService;
 
@@ -105,8 +100,8 @@ public class AuthUserDetailsService implements UserDetailsService {
     }
     public void registerPatient(PatientForm form){
         Locale locale = LocaleContextHolder.getLocale();
-        Client client = clientService.create(form.getName(), form.getLastName(), form.getEmail(), form.getPassword(), form.getPhone(), locale.getLanguage(), form.getCoverage());
-        Authentication authToken = new UsernamePasswordAuthenticationToken(client.getEmail(), form.getPassword());
+        Patient patient = patientService.create(form.getName(), form.getLastName(), form.getEmail(), form.getPassword(), form.getPhone(), locale.getLanguage(), form.getCoverage());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(patient.getEmail(), form.getPassword());
         Authentication auth = authenticationManager.authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }

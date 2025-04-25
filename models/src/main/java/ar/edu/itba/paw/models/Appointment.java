@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.models;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class Appointment {
 
@@ -11,15 +10,15 @@ public class Appointment {
     private String reason;
     private Specialty specialty;
     private Doctor doctor;
-    private Client client;
-    public Appointment(LocalDateTime date, String status, String reason, long id, Specialty specialty, Doctor doctor, Client client) {
+    private Patient patient;
+    public Appointment(LocalDateTime date, String status, String reason, long id, Specialty specialty, Doctor doctor, Patient patient) {
         this.date = date;
         this.status = status;
         this.reason = reason;
         this.id = id;
         this.specialty = specialty;
         this.doctor = doctor;
-        this.client = client;
+        this.patient = patient;
     }
 
     public Specialty getSpecialty() {
@@ -62,13 +61,13 @@ public class Appointment {
     public Doctor getDoctor() {
         return doctor;
     }
-    public Client getClient() {
-        return client;
+    public Patient getPatient() {
+        return patient;
     }
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
     }
-    public void setClient(Client client) {
-        this.client = client;
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 }

@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,19 +33,19 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional
     @Override
-    public Appointment create(long clientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
+    public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
 
-        Appointment appointment = appointmentDao.create(clientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
+        Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
         return appointment;
     }
 
     @Override
-    public Optional<List<Appointment>> getByClientId(long clientId) {
-        return  appointmentDao.getByClientId(clientId);
+    public Optional<List<Appointment>> getByPatientId(long patientId) {
+        return  appointmentDao.getByPatientId(patientId);
     }
 
     @Override
@@ -66,7 +65,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appt.isEmpty()) {
             return false;}
 
-        if (appt.get().getDoctor().getId() != userId && appt.get().getClient().getId() != userId) {
+        if (appt.get().getDoctor().getId() != userId && appt.get().getPatient().getId() != userId) {
             return false;
         }
         appointmentDao.cancelApointment(appointmentId);
@@ -101,8 +100,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Map<Boolean, List<Appointment>> getByClientIdPartitionedByDate(long clientId) {
-        return appointmentDao.getByClientId(clientId).orElseThrow(() -> new IllegalArgumentException("Client not found")).stream()
+    public Map<Boolean, List<Appointment>> getByPatientIdPartitionedByDate(long patientId) {
+        return appointmentDao.getByPatientId(patientId).orElseThrow(() -> new IllegalArgumentException("Patient not found")).stream()
                 .collect(Collectors.partitioningBy(appointment -> appointment.getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))));
     }
 }

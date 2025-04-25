@@ -52,7 +52,7 @@
 //    private DataSource ds;
 //
 //    private DoctorDaoImpl mockDoctorDao;
-//    private ClientDaoImpl mockClientDao;
+//    private PatientDaoImpl mockClientDao;
 //    @Before
 //    public void setUp() {
 //

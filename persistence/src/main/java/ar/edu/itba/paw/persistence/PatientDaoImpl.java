@@ -1,11 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
-import ar.edu.itba.paw.interfacePersistence.ClientDao;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Client;
+import ar.edu.itba.paw.interfacePersistence.PatientDao;
+import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,18 +15,18 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Repository
-public class ClientDaoImpl implements ClientDao {
+public class PatientDaoImpl implements PatientDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    private final SimpleJdbcInsert jdbcInsertClient;
+    private final SimpleJdbcInsert jdbcInsertPatient;
 
     private final SimpleJdbcInsert jdbcInsertUser;
 
-    private final static RowMapper<Client> ROW_MAPPER = new RowMapper<Client>() {
+    private final static RowMapper<Patient> ROW_MAPPER = new RowMapper<Patient>() {
         @Override
-        public Client mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Client(
+        public Patient mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Patient(
                     rs.getString("name"),
                     rs.getLong("id"),
                     rs.getString("last_name"),
@@ -43,9 +40,9 @@ public class ClientDaoImpl implements ClientDao {
     };
 
     @Autowired
-    public ClientDaoImpl(final DataSource ds) {
+    public PatientDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsertClient = new SimpleJdbcInsert(jdbcTemplate)
+        jdbcInsertPatient = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("clients")
                 .usingColumns("client_id", "coverage_id");
         jdbcInsertUser = new SimpleJdbcInsert(jdbcTemplate)
@@ -54,12 +51,12 @@ public class ClientDaoImpl implements ClientDao {
     }
 
     @Override
-    public Optional<Client> getById(long id) {
+    public Optional<Patient> getById(long id) {
         return jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id = ?", ROW_MAPPER, id).stream().findFirst();
     }
 
     @Override
-    public Client create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage) {
+    public Patient create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage) {
         final Map<String, Object> argsUser = new HashMap<>();
         argsUser.put("email", email);
         argsUser.put("password", password);
@@ -67,16 +64,15 @@ public class ClientDaoImpl implements ClientDao {
         argsUser.put("phone", phone);
         argsUser.put("last_name", lastName);
         argsUser.put("language", language);
-        final Number clientId = jdbcInsertUser.executeAndReturnKey(argsUser);
+        final Number patientId = jdbcInsertUser.executeAndReturnKey(argsUser);
+        final Map<String, Object> argsPatient = new HashMap<>();
+        argsPatient.put("client_id", patientId);
+        argsPatient.put("coverage_id", coverage.getId());
+        jdbcInsertPatient.execute(argsPatient);
 
-        final Map<String, Object> argsClient = new HashMap<>();
-        argsClient.put("client_id", clientId);
-        argsClient.put("coverage_id", coverage.getId());
-        jdbcInsertClient.execute(argsClient);
-
-        return new Client (
+        return new Patient(
                 name,
-                clientId.longValue(),
+                patientId.longValue(),
                 lastName,
                 email,
                 password,
@@ -87,12 +83,12 @@ public class ClientDaoImpl implements ClientDao {
     }
 
     @Override
-    public Optional<Client> getByEmail(String email) {
+    public Optional<Patient> getByEmail(String email) {
         return jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.email = ?", ROW_MAPPER, email).stream().findFirst();
     }
 
     @Override
-    public void updateClient(long id, String name, String lastName, String phone, Coverage coverage) {
+    public void updatePatient(long id, String name, String lastName, String phone, Coverage coverage) {
         jdbcTemplate.update("UPDATE users SET name = ?, last_name = ?, phone = ? WHERE id = ?",
                 name, lastName, phone, id);
         if (coverage != null) {
@@ -101,7 +97,7 @@ public class ClientDaoImpl implements ClientDao {
     }
 
     @Override
-    public List<Client> getByIds(Set<Long> ids) {
+    public List<Patient> getByIds(Set<Long> ids) {
         if (ids.isEmpty()) {
             return Collections.emptyList();
         }

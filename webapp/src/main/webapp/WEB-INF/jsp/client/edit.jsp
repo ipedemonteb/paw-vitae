@@ -12,7 +12,7 @@
             <p><spring:message code="dashboard.profile.personalInfo" /></p>
         </div>
 
-        <form:form modelAttribute="updatePatientForm" method="post" action="${pageContext.request.contextPath}/client?update" cssClass="edit-profile-form">
+        <form:form modelAttribute="updatePatientForm" method="post" action="${pageContext.request.contextPath}/patient?update" cssClass="edit-profile-form">
             <div class="form-row">
                 <div class="form-group">
                     <form:label path="name"><spring:message code="register.firstName" /></form:label>
