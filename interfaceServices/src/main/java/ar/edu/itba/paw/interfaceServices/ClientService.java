@@ -17,4 +17,5 @@ public interface ClientService {
 
      void updateClient(Client currentClient, String name, String lastName, String phone, Coverage coverage);
 
+     Optional<Client> getClientWithAppointments(long id);
 }

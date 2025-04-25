@@ -63,4 +63,9 @@ public class ClientServiceImpl implements ClientService {
         }
 
     }
+
+    @Override
+    public Optional<Client> getClientWithAppointments(long id) {
+        return clientDao.getClientWithAppointments(id);
+    }
 }

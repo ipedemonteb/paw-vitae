@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 @Repository
@@ -34,6 +36,21 @@ public class DoctorDaoImpl implements DoctorDao {
             new ArrayList<>()
     );
 
+
+    private final static RowMapper<Appointment> ROW_MAPPER_APPOINTMENT = new RowMapper<Appointment>() {
+        @Override
+        public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Appointment(
+                    rs.getLong("client_id"),
+                    rs.getLong("doctor_id"),
+                    rs.getTimestamp("date").toLocalDateTime(),
+                    rs.getString("status"),
+                    rs.getString("reason"),
+                    rs.getLong("id"),
+                    new Specialty(rs.getLong("specialty_id"), rs.getString("key"))
+            );
+        }
+    };
     @Autowired
     public DoctorDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -113,7 +130,6 @@ public class DoctorDaoImpl implements DoctorDao {
                 "SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE users.id = ?",
                 ROW_MAPPER, id
         ).stream().findFirst();
-
         doc.ifPresent(this::populateDoctorDetails);
         return doc;
     }
@@ -126,6 +142,17 @@ public class DoctorDaoImpl implements DoctorDao {
         ).stream().findFirst();
 
         doc.ifPresent(this::populateDoctorDetails);
+        return doc;
+    }
+
+    @Override
+    public Optional<Doctor> getDoctorWithAppointments(long id) {
+        Optional<Doctor> doc = getById(id);
+        if (doc.isPresent()) {
+            List<Appointment> appointments = jdbcTemplate.query(
+                    "SELECT * FROM appointments JOIN specialties ON appointments.specialty_id = specialties.id WHERE doctor_id = ?",ROW_MAPPER_APPOINTMENT, id);
+            doc.get().setAppointments(appointments);
+        }
         return doc;
     }
 
@@ -299,4 +326,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 specialtyId
         );
     }
+
+
+
 }
