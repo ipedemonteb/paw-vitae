@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,17 +50,27 @@ public class AppointmentController {
         return mav;
     }
 
+    @ModelAttribute
+    public Patient loggedUser() {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return ps.getByEmail((String) auth.getName()).orElseThrow(UserNotFoundException::new);
+    }
+
     @RequestMapping(value = "/appointment", method = RequestMethod.POST)
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
+            @RequestParam(required = true) Long specialtyId,
+            @RequestParam(required = true) Long doctorId,
             final BindingResult errors,
             RedirectAttributes redirectAttributes
     ) {
+        Patient patient = loggedUser();
+
         if (errors.hasErrors()) {
-            return appointment(appointmentForm, appointmentForm.getDoctorId(), appointmentForm.getSpecialtyId());
+            return appointment(appointmentForm, specialtyId, doctorId, errors, redirectAttributes);
         }
 
-        Appointment appointment = as.create(appointmentForm.getPatientId(), appointmentForm.getDoctorId(), appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
+        Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), specialtyId);
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
@@ -90,20 +101,6 @@ public class AppointmentController {
         doctor.ifPresent(d -> mav.addObject("doctor", d));
         Optional<Specialty> specialty = ss.getById(specialtyId);
         specialty.ifPresent(s -> mav.addObject("specialty", s));
-
-
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final Patient patient = ps.getByEmail((String) auth.getName()).orElseThrow(RuntimeException::new);
-
-        appointmentForm.setDoctorId(doctorId);
-        appointmentForm.setPatientId(patient.getId());
-        appointmentForm.setSpecialtyId(specialtyId);
-        appointmentForm.setName(patient.getName());
-        appointmentForm.setLastName(patient.getLastName());
-        appointmentForm.setEmail(patient.getEmail());
-        appointmentForm.setPhone(patient.getPhone());
-        appointmentForm.setCoverageId(patient.getCoverage().getId());
-
 
         return mav;
     }

@@ -21,20 +21,7 @@
                 <comp:doctor-info doctor="${doctor}" />
             </c:if>
 
-            <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment">
-                <!-- Hidden field for doctor ID -->
-                <form:hidden path="doctorId" />
-                <form:hidden path="specialtyId" />
-                <form:hidden path="patientId" />
-
-                <!-- Hidden personal information fields -->
-                <form:hidden path="name" />
-                <form:hidden path="lastName" />
-                <form:hidden path="email" />
-                <form:hidden path="phone" />
-                <form:hidden path="coverageId"/>
-
-
+            <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment?specialtyId=${specialty.id}&doctorId=${doctor.id}" class="appointment-form">
                 <div class="specialty-card-appointment">
                     <div class="specialty-icon-appointment">
                         &#9877;
