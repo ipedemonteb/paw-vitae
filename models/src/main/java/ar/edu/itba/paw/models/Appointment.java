@@ -6,22 +6,20 @@ import java.util.Date;
 public class Appointment {
 
     private final long id;
-    private final long clientId;
-    private final long doctorId;
     private LocalDateTime date;
     private String status;
     private String reason;
     private Specialty specialty;
     private Doctor doctor;
     private Client client;
-    public Appointment(long clientId, long doctorId, LocalDateTime date, String status, String reason, long id, Specialty specialty) {
-        this.clientId = clientId;
-        this.doctorId = doctorId;
+    public Appointment(LocalDateTime date, String status, String reason, long id, Specialty specialty, Doctor doctor, Client client) {
         this.date = date;
         this.status = status;
         this.reason = reason;
         this.id = id;
         this.specialty = specialty;
+        this.doctor = doctor;
+        this.client = client;
     }
 
     public Specialty getSpecialty() {
@@ -34,14 +32,6 @@ public class Appointment {
 
     public long getId() {
         return id;
-    }
-
-    public long getClientId() {
-        return clientId;
-    }
-
-    public long getDoctorId() {
-        return doctorId;
     }
 
     public LocalDateTime getDate() {

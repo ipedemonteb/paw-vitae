@@ -58,13 +58,16 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Optional<Doctor> getByEmail(String email) {
-        return this.doctorDao.getByEmail(email);
+    public Page<Doctor> getBySpecialtyWithAppointments(long specialtyId, int page, int pageSize) {
+        List<Doctor> docs = doctorDao.getBySpecialty(specialtyId, page, pageSize);
+        int total = doctorDao.countBySpecialty(specialtyId);
+        docs.forEach(doctor -> doctor.setAppointments(as.getByDoctorId(doctor.getId()).orElse(Collections.emptyList())));
+        return new Page<>(docs, page, pageSize, total);
     }
 
     @Override
-    public List<Doctor> getAll() {
-        return this.doctorDao.getAll();
+    public Optional<Doctor> getByEmail(String email) {
+        return this.doctorDao.getByEmail(email);
     }
 
     @Transactional

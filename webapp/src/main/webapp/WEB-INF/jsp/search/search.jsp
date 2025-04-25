@@ -199,18 +199,28 @@
     ];
     </c:forEach>
 
+    const argDate = new Date().toLocaleString("en-US", {
+      timeZone: "America/Argentina/Buenos_Aires",
+    });
+    const today = new Date(argDate);
+
     const futureAppointmentsMap = [
-        <c:forEach var="entry" items="${futureAppointmentsMap}" varStatus="status">
+        <c:forEach var="entry" items="${doctors}" varStatus="status">
         {
-            doctorId: '${entry.key}',
+            doctorId: '${entry.id}',
             appointments: [
-            <c:forEach var="appointment" items="${entry.value}" varStatus="status2">
+            <c:forEach var="appointment" items="${entry.appointments}" varStatus="status2">
             {
-                date: '${appointment.date}',
+                date: '${appointment.date.toLocalDate()}',
                 hour: ${appointment.date.hour}
             }<c:if test="${!status2.last}">,</c:if>
             </c:forEach>
-            ]
+            ].filter(
+                (appointment) => {
+                    const appointmentDate = new Date(appointment.date);
+                    return appointmentDate > today || (appointmentDate === today && appointment.hour > today.getHours());
+                }
+            )
         }<c:if test="${!status.last}">,</c:if>
         </c:forEach>
     ];

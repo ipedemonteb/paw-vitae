@@ -74,11 +74,9 @@ public class AppointmentController {
     @RequestMapping(value = "/appointment/confirmation")
     public ModelAndView appointmentConfirmation(Model model) {
         Appointment appointment = (Appointment) model.asMap().get("appointment");
-        Optional<Doctor> doctor = doctorService.getById(appointment.getDoctorId());
 
         ModelAndView mav = new ModelAndView("appointment/confirmation");
         mav.addObject("appointment", appointment);
-        mav.addObject("doctor", doctor.orElse(null));
         mav.addObject("specialty", appointment.getSpecialty());
         return mav;
     }

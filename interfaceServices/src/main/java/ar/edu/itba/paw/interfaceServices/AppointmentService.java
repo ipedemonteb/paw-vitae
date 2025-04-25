@@ -21,7 +21,6 @@ public interface AppointmentService {
 
     Boolean cancelAppointment(long appointmentId,long userId);
     Boolean acceptAppointment(long appointmentId, long userId);
-    Optional<Map<Long, List<Appointment>>> getAllFutureAppointments(List<Doctor> doctors);
 
     Optional<Appointment> getById(long appointmentId);
     Map<Boolean,List<Appointment>> getByDoctorIdPartitionedByDate(long doctorId);
