@@ -12,9 +12,9 @@ public interface DoctorService {
 
     Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize);
 
-    Optional<Doctor> getByEmail(String email);
+    Page<Doctor> getBySpecialtyWithAppointments(long specialtyId, int page, int pageSize);
 
-    List<Doctor> getAll();
+    Optional<Doctor> getByEmail(String email);
 
     void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots);
 

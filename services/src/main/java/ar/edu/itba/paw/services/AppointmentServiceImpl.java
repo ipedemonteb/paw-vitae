@@ -95,19 +95,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Optional<Map<Long, List<Appointment>>> getAllFutureAppointments(List<Doctor> doctors) {
-        Map<Long, List<Appointment>> futureAppointmentsMap = new HashMap<>();
-        List<Long> doctorIds = doctors.stream().map(Doctor::getId).collect(Collectors.toList());
-        Optional<List<Appointment>> appointments = appointmentDao.getAllFutureAppointments(doctorIds);
-        if (appointments.isPresent()) {
-            for (Appointment appointment : appointments.get()) {
-                futureAppointmentsMap.computeIfAbsent(appointment.getDoctorId(), k -> new ArrayList<>()).add(appointment);
-            }
-        }
-        return Optional.of(futureAppointmentsMap);
-    }
-
-    @Override
     public Map<Boolean, List<Appointment>> getByDoctorIdPartitionedByDate(long doctorId) {
         return  appointmentDao.getByDoctorId(doctorId).orElseThrow(() -> new IllegalArgumentException("Doctor not found")).stream()
                 .collect(Collectors.partitioningBy(appointment -> appointment.getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))));

@@ -23,7 +23,7 @@
 
             <div class="confirmation-item">
                 <div class="confirmation-label"><spring:message code="appointment.selectedDoctor"/></div>
-                <div class="confirmation-value"><c:out value="${doctor.name} ${doctor.lastName}"/></div>
+                <div class="confirmation-value"><c:out value="${appointment.doctor.name} ${appointment.doctor.lastName}"/></div>
             </div>
 
             <div class="confirmation-item">
@@ -42,8 +42,8 @@
             </div>
         </div>
 
-        <c:if test="${not empty doctor}">
-            <comp:doctor-info doctor="${doctor}" />
+        <c:if test="${not empty appointment.doctor}">
+            <comp:doctor-info doctor="${appointment.doctor}" />
         </c:if>
     </div>
 
