@@ -137,6 +137,8 @@
             noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />'
         };
         contextPath = "${pageContext.request.contextPath}";
+
+
         const availabilitySlots = [
             <c:forEach var="slot" items="${doctor.availabilitySlots}" varStatus="status">
             {
@@ -147,14 +149,26 @@
             }<c:if test="${!status.last}">,</c:if>
             </c:forEach>
         ];
+
+
+        const argDate = new Date().toLocaleString("en-US", {
+            timeZone: "America/Argentina/Buenos_Aires",
+        });
+        const today = new Date(argDate);
+
+
         const appointments = [
-            <c:forEach var="app" varStatus="status" items="${appointments}">
+            <c:forEach var="app" varStatus="status" items="${doctor.appointments}">
             {
                 date: "${app.date}",
                 hour: ${app.date.hour},
             }<c:if test="${!status.last}">,</c:if>
             </c:forEach>
-        ];
+        ].filter(app => {
+            const appointmentDate = new Date(app.date);
+            return appointmentDate > today || (appointmentDate === today && appointmentDate.getHours() > today.getHours()); // Filter out past appointments
+        })
+
         const futureAppointments = Object.entries(
             appointments.reduce((acc, appointment) => {
                 const date = new Date(appointment.date).toISOString().split('T')[0];  // Extract local date
@@ -163,7 +177,6 @@
                     acc[date] = [];
                 } else if(acc[date].includes(hour)) {
                     return acc;
-
                 }
                 acc[date].push(hour);
                 return acc;
@@ -175,6 +188,8 @@
                 hours: hours
             };
         });
+
+        console.log(FutureAppointments)
     </script>
 
     <!-- Include the external JavaScript file -->

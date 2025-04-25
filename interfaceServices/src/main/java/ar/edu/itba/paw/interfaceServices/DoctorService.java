@@ -15,7 +15,10 @@ public interface DoctorService {
     Optional<Doctor> getByEmail(String email);
 
     List<Doctor> getAll();
+
     void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots);
+
     void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
-    Optional<Doctor> getDoctorWithAppointments(long id);
+
+    Optional<Doctor> getByIdWithAppointments(long id);
 }

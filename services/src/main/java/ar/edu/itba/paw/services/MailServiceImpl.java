@@ -30,26 +30,21 @@ public class MailServiceImpl implements MailService {
     private final MessageSource messageSource;
     private final static String from_mail = "vitaepaw@gmail.com";
 
-    private final DoctorService doctorService;
-    private final ClientService clientService;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
 
     @Autowired
-    public MailServiceImpl(final JavaMailSender mailSender, final TemplateEngine templateEngine, final MessageSource messageSource, final DoctorService doctorService, final ClientService clientService) {
+    public MailServiceImpl(final JavaMailSender mailSender, final TemplateEngine templateEngine, final MessageSource messageSource) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
         this.messageSource = messageSource;
-        this.doctorService = doctorService;
-        this.clientService = clientService;
     }
 
     @Async
     @Override
     public void sendAppointmentStatusEmail(String subject, Appointment appointment){
 
-        Doctor doctor = doctorService.getById(appointment.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
-        Client client = clientService.getById(appointment.getClientId()).orElseThrow(() -> new IllegalArgumentException("Client not found"));
+        Doctor doctor = appointment.getDoctor();
+        Client client = appointment.getClient();
 
         Locale clientLocale = Locale.forLanguageTag(client.getLanguage());
         Locale doctorLocale = Locale.forLanguageTag(doctor.getLanguage());
