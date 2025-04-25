@@ -18,16 +18,21 @@ public interface DoctorDao {
     int countBySpecialty(long specialtyId);
 
     Optional<Doctor> getByEmail(String email);
-    Optional<Doctor> getDoctorWithAppointments(long id);
+
     List<Doctor> getAll();
+
     List<Doctor> getByIds(Set<Long> ids);
+
     void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList);
 
     void addAvailability(long doctorId, List<AvailabilitySlot> availabilityList);
+
     List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId);
+
     void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 
     void changePassword(long id, String password);
+
     String getLanguage(long id);
 
     void changeLanguage(long id, String language);

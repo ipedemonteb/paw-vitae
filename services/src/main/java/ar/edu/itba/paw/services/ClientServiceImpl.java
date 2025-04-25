@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.ClientDao;
+import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.ClientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.ImageService;
@@ -27,11 +28,14 @@ public class ClientServiceImpl implements ClientService {
 
     private final CoverageService cs;
 
+    private final AppointmentService as;
+
     @Autowired
-    public ClientServiceImpl(ClientDao clientDao, PasswordEncoder passwordEncoder, CoverageService cs) {
+    public ClientServiceImpl(ClientDao clientDao, PasswordEncoder passwordEncoder, CoverageService cs, AppointmentService as) {
         this.clientDao = clientDao;
         this.passwordEncoder = passwordEncoder;
         this.cs = cs;
+        this.as = as;
     }
 
     @Override
@@ -65,7 +69,9 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Optional<Client> getClientWithAppointments(long id) {
-        return clientDao.getClientWithAppointments(id);
+    public Optional<Client> getByIdWithAppointments(long id) {
+        Optional<Client> client = clientDao.getById(id);
+        client.ifPresent(c -> c.setAppointments(as.getByClientId(id).orElse(Collections.emptyList())));
+        return client;
     }
 }

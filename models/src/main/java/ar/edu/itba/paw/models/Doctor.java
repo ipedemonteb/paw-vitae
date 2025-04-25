@@ -1,11 +1,7 @@
 package ar.edu.itba.paw.models;
 
-import javax.swing.*;
-
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class Doctor extends User {
 
@@ -13,11 +9,8 @@ public class Doctor extends User {
     private List<Coverage> coverageList = new ArrayList<>();
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
 
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,List<Specialty> specialty, List<Coverage> coverageList, List<AvailabilitySlot> availabilitySlots) {
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language) {
         super(name, id, lastName, email, password, phone, language);
-        this.specialtyList = specialty;
-        this.coverageList = coverageList;
-        this.availabilitySlots = availabilitySlots;
     }
 
     public List<Specialty> getSpecialtyList() {

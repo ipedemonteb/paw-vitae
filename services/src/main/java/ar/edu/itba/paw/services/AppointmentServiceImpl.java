@@ -22,20 +22,14 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentDao appointmentDao;
     private final SpecialtyService specialtyService;
     private final MailService mailService;
-    private final MessageSource messageSource;
-    private final ClientService clientService;
-    private final DoctorService doctorService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentServiceImpl.class);
 
     @Autowired
-    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService, MessageSource messageSource, ClientService clientService,DoctorService doctorService) {
+    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;
         this.mailService = mailService;
-        this.messageSource = messageSource;
-        this.doctorService = doctorService;
-        this.clientService = clientService;
     }
 
     @Transactional

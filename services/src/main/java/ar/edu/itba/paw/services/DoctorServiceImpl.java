@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
+import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 
@@ -20,16 +21,18 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final SpecialtyService ss;
     private final CoverageService cs;
+    private final AppointmentService as;
 
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder) {
+    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder, AppointmentService as) {
         this.doctorDao = doctorDao;
         this.ss = ss;
         this.cs = cs;
         this.passwordEncoder = passwordEncoder;
+        this.as = as;
     }
 
     @Transactional
@@ -81,8 +84,10 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Optional<Doctor> getDoctorWithAppointments(long id) {
-        return doctorDao.getDoctorWithAppointments(id);
+    public Optional<Doctor> getByIdWithAppointments(long id) {
+        Optional<Doctor> doctor = doctorDao.getById(id);
+        doctor.ifPresent(d -> d.setAppointments(as.getByDoctorId(id).orElse(Collections.emptyList())));
+        return doctor;
     }
 
 }
