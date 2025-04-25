@@ -47,4 +47,9 @@ public class CoverageServiceImpl implements CoverageService {
     public Optional<List<Coverage>> getAll() {
         return coverageDao.getAll();
     }
+
+    @Override
+    public Optional<List<Coverage>> findByIds(List<Long> ids) {
+        return coverageDao.findByIds(ids);
+    }
 }

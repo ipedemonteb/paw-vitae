@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
@@ -38,10 +39,8 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, String language, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
-        List<Coverage> coverageList = new ArrayList<>();
-        List<Specialty> specialtyList = new ArrayList<>();
-        coverages.forEach(coverage -> coverageList.add(cs.findById(Long.parseLong(coverage)).orElse(null)));
-        specialties.forEach(specialty -> specialtyList.add(ss.getById(Long.parseLong(specialty)).orElse(null)));
+        List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
+        List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
         return this.doctorDao.create(name, lastName, email, passwordEncoder.encode(password), phone, language, specialtyList, coverageList, availabilitySlots);
     }
 
@@ -73,10 +72,8 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
-        List<Coverage> coverageList = new ArrayList<>();
-        List<Specialty> specialtyList = new ArrayList<>();
-        coverages.forEach(coverage -> coverageList.add(cs.findById(Long.parseLong(coverage)).orElse(null))); //TODO create query to fetch list instead of individually
-        specialties.forEach(specialty -> specialtyList.add(ss.getById(Long.parseLong(specialty)).orElse(null))); //TODO create query to fetch list instead of individually
+        List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
+        List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
         doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList, availabilitySlots);
     }
 

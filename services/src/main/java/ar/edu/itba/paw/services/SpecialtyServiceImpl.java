@@ -40,5 +40,9 @@ private final SpecialtyDao specialtyDao;
         return specialtyDao.getAll();
     }
 
+    @Override
+    public Optional<List<Specialty>> getByIds(List<Long> ids) {
+        return specialtyDao.getByIds(ids);
+    }
 }
 

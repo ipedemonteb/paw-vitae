@@ -44,5 +44,8 @@ public class SpecialtyDaoImpl implements SpecialtyDao {
         return Optional.of(jdbcTemplate.query("SELECT * FROM specialties", SPECIALTY_MAPPER));
     }
 
-
+    @Override
+    public Optional<List<Specialty>> getByIds(List<Long> ids) {
+        return Optional.of(jdbcTemplate.query("SELECT * FROM specialties WHERE id IN (" + String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new)) + ")", SPECIALTY_MAPPER));
+    }
 }
