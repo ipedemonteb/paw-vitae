@@ -18,7 +18,7 @@ public interface DoctorDao {
     int countBySpecialty(long specialtyId);
 
     Optional<Doctor> getByEmail(String email);
-
+    Optional<Doctor> getDoctorWithAppointments(long id);
     List<Doctor> getAll();
     List<Doctor> getByIds(Set<Long> ids);
     void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList);

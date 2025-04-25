@@ -2,8 +2,10 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfacePersistence.ClientDao;
+import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Client;
 import ar.edu.itba.paw.models.Coverage;
+import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -40,6 +42,20 @@ public class ClientDaoImpl implements ClientDao {
         }
     };
 
+    private final static RowMapper<Appointment> ROW_MAPPER_APPOINTMENT = new RowMapper<Appointment>() {
+        @Override
+        public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Appointment(
+                    rs.getLong("client_id"),
+                    rs.getLong("doctor_id"),
+                    rs.getTimestamp("date").toLocalDateTime(),
+                    rs.getString("status"),
+                    rs.getString("reason"),
+                    rs.getLong("id"),
+                    new Specialty(rs.getLong("specialty_id"), rs.getString("key"))
+            );
+        }
+    };
     @Autowired
     public ClientDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -119,5 +135,18 @@ public class ClientDaoImpl implements ClientDao {
     @Override
     public void changeLanguage(long id, String language) {
         jdbcTemplate.update("UPDATE users SET language = ? WHERE id = ?", language, id);
+    }
+    @Override
+    public Optional<Client> getClientWithAppointments(long id) {
+        Optional<Client> client = getById(id);
+        if (client.isPresent()) {
+            List<Appointment> appointments = jdbcTemplate.query("SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE client_id = ?", ROW_MAPPER_APPOINTMENT, id);
+            for (Appointment appointment : appointments) {
+                appointment.setDoctor(appointment.getDoctor());
+                appointment.setClient(client.get());
+            }
+            client.get().setAppointments(appointments);
+        }
+        return client;
     }
 }

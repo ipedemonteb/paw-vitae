@@ -80,4 +80,9 @@ public class DoctorServiceImpl implements DoctorService {
         doctorDao.updateDoctorAvailability(id, availabilitySlots);
     }
 
+    @Override
+    public Optional<Doctor> getDoctorWithAppointments(long id) {
+        return doctorDao.getDoctorWithAppointments(id);
+    }
+
 }
