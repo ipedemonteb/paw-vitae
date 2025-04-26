@@ -71,7 +71,7 @@
                                 <c:out value="${appointment.doctor.name}" /> <c:out value="${appointment.doctor.lastName}" />
                             </div>
                             <div class="patient-coverage">
-                                <spring:message code="${appointment.specialty.key}" />
+                                <c:out value="${appointment.patient.coverage.name}"/>
                             </div>
                         </div>
                     </div>
