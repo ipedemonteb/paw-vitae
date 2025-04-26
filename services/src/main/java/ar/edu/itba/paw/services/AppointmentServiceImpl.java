@@ -95,7 +95,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Map<Boolean, List<Appointment>> getByDoctorIdPartitionedByDate(long doctorId) {
-        return  appointmentDao.getByDoctorId(doctorId).orElseThrow(() -> new IllegalArgumentException("Doctor not found")).stream()
+        return  appointmentDao.getByDoctorId(doctorId).orElse(Collections.emptyList()).stream()
                 .collect(Collectors.partitioningBy(appointment -> appointment.getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))));
     }
 
