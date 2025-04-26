@@ -21,8 +21,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     private SimpleJdbcInsert jdbcInsert;
 
-    private DoctorDaoImpl doctorDaoImpl;
-    private PatientDaoImpl patientDaoImpl;
+//    private DoctorDaoImpl doctorDaoImpl;
+//    private PatientDaoImpl patientDaoImpl;
 
     private final RowMapper<Appointment> ROW_MAPPER = (rs, rowNum) -> new Appointment(
             rs.getTimestamp("date").toLocalDateTime(),
@@ -51,6 +51,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             )
     );
 
+    //todo: change signature
     @Autowired
     public AppointmentDaoImpl(final DataSource ds, final DoctorDaoImpl doctorDaoImpl,final PatientDaoImpl patientDaoImpl) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -58,30 +59,10 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 .withTableName("appointments")
                 .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id")
                 .usingGeneratedKeyColumns("id");
-        this.doctorDaoImpl = doctorDaoImpl;
-        this.patientDaoImpl = patientDaoImpl;
+//        this.doctorDaoImpl = doctorDaoImpl;
+//        this.patientDaoImpl = patientDaoImpl;
     }
 
-
-    @Override
-    public Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty) {
-        final Map<String, Object> args = new HashMap<>();
-        args.put("client_id", patientId);
-        args.put("doctor_id", doctorId);
-        args.put("date", java.sql.Timestamp.valueOf(startDate));
-        args.put("reason", reason);
-        args.put("specialty_id", specialty.getId());
-        final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
-        return new Appointment(
-                startDate,
-                AppointmentStatus.PENDIENTE.getValue(),
-                reason,
-                appointmentId.longValue(),
-                specialty,
-                doctorDaoImpl.getById(doctorId).orElse(null),
-                patientDaoImpl.getById(patientId).orElse(null)
-        );
-    }
 
 //    @Override
 //    public Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty) {
@@ -92,48 +73,68 @@ public class AppointmentDaoImpl implements AppointmentDao {
 //        args.put("reason", reason);
 //        args.put("specialty_id", specialty.getId());
 //        final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
-//
-//        // Query for doctor details
-//        String doctorSql = "SELECT u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-//                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language " +
-//                "FROM Doctors d JOIN Users u ON d.doctor_id = u.id WHERE d.doctor_id = ?";
-//        Doctor doctor = jdbcTemplate.queryForObject(doctorSql, (rs, rowNum) -> new Doctor(
-//                rs.getString("doctor_name"),
-//                doctorId,
-//                rs.getString("doctor_last_name"),
-//                rs.getString("doctor_email"),
-//                rs.getString("doctor_password"),
-//                rs.getString("doctor_phone"),
-//                rs.getString("doctor_language")
-//        ), doctorId);
-//
-//        // Query for patient details
-//        String patientSql = "SELECT u.name AS patient_name, u.last_name AS patient_last_name, u.email AS patient_email, " +
-//                "u.password AS patient_password, u.phone AS patient_phone, u.language AS patient_language, " +
-//                "c.id AS coverage_id, c.coverage_name " +
-//                "FROM Clients p JOIN Users u ON p.client_id = u.id " +
-//                "LEFT JOIN Coverages c ON p.coverage_id = c.id WHERE p.client_id = ?";
-//        Patient patient = jdbcTemplate.queryForObject(patientSql, (rs, rowNum) -> new Patient(
-//                rs.getString("patient_name"),
-//                patientId,
-//                rs.getString("patient_last_name"),
-//                rs.getString("patient_email"),
-//                rs.getString("patient_password"),
-//                rs.getString("patient_phone"),
-//                rs.getString("patient_language"),
-//                new Coverage(rs.getLong("coverage_id"), rs.getString("coverage_name"))
-//        ), patientId);
-//
 //        return new Appointment(
 //                startDate,
 //                AppointmentStatus.PENDIENTE.getValue(),
 //                reason,
 //                appointmentId.longValue(),
 //                specialty,
-//                doctor,
-//                patient
+//                doctorDaoImpl.getById(doctorId).orElse(null),
+//                patientDaoImpl.getById(patientId).orElse(null)
 //        );
 //    }
+
+    @Override
+    public Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty) {
+        final Map<String, Object> args = new HashMap<>();
+        args.put("client_id", patientId);
+        args.put("doctor_id", doctorId);
+        args.put("date", java.sql.Timestamp.valueOf(startDate));
+        args.put("reason", reason);
+        args.put("specialty_id", specialty.getId());
+        final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
+
+        // Query for doctor details
+        String doctorSql = "SELECT u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language " +
+                "FROM Doctors d JOIN Users u ON d.doctor_id = u.id WHERE d.doctor_id = ?";
+        Doctor doctor = jdbcTemplate.queryForObject(doctorSql, (rs, rowNum) -> new Doctor(
+                rs.getString("doctor_name"),
+                doctorId,
+                rs.getString("doctor_last_name"),
+                rs.getString("doctor_email"),
+                rs.getString("doctor_password"),
+                rs.getString("doctor_phone"),
+                rs.getString("doctor_language")
+        ), doctorId);
+
+        // Query for patient details
+        String patientSql = "SELECT u.name AS patient_name, u.last_name AS patient_last_name, u.email AS patient_email, " +
+                "u.password AS patient_password, u.phone AS patient_phone, u.language AS patient_language, " +
+                "c.id AS coverage_id, c.coverage_name " +
+                "FROM Clients p JOIN Users u ON p.client_id = u.id " +
+                "LEFT JOIN Coverages c ON p.coverage_id = c.id WHERE p.client_id = ?";
+        Patient patient = jdbcTemplate.queryForObject(patientSql, (rs, rowNum) -> new Patient(
+                rs.getString("patient_name"),
+                patientId,
+                rs.getString("patient_last_name"),
+                rs.getString("patient_email"),
+                rs.getString("patient_password"),
+                rs.getString("patient_phone"),
+                rs.getString("patient_language"),
+                new Coverage(rs.getLong("coverage_id"), rs.getString("coverage_name"))
+        ), patientId);
+
+        return new Appointment(
+                startDate,
+                AppointmentStatus.PENDIENTE.getValue(),
+                reason,
+                appointmentId.longValue(),
+                specialty,
+                doctor,
+                patient
+        );
+    }
 
 //    @Override
 //    public Optional<List<Appointment>> getByPatientId(long patientId) {
