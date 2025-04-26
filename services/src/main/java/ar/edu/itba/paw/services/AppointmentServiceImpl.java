@@ -11,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
@@ -68,7 +66,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appt.get().getDoctor().getId() != userId && appt.get().getPatient().getId() != userId) {
             return false;
         }
-        appointmentDao.cancelApointment(appointmentId);
+        appointmentDao.cancelAppointment(appointmentId);
         appt.get().setStatus(AppointmentStatus.CANCELADO.getValue());
         mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appt.get());
         return true;
@@ -93,15 +91,21 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentDao.getById(appointmentId);
     }
 
-    @Override
-    public Map<Boolean, List<Appointment>> getByDoctorIdPartitionedByDate(long doctorId) {
-        return  appointmentDao.getByDoctorId(doctorId).orElse(Collections.emptyList()).stream()
-                .collect(Collectors.partitioningBy(appointment -> appointment.getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))));
-    }
 
     @Override
-    public Map<Boolean, List<Appointment>> getByPatientIdPartitionedByDate(long patientId) {
-        return appointmentDao.getByPatientId(patientId).orElseThrow(() -> new IllegalArgumentException("Patient not found")).stream()
-                .collect(Collectors.partitioningBy(appointment -> appointment.getDate().isBefore(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")))));
+    public List<Appointment> getPastDoctorAppointments(long doctorId) {
+        return appointmentDao.getPastDoctorAppointments(doctorId).orElse(new ArrayList<>());
+    }
+    @Override
+    public List<Appointment> getFutureDoctorAppointments(long doctorId) {
+        return appointmentDao.getFutureDoctorAppointments(doctorId).orElse(new ArrayList<>());
+    }
+    @Override
+    public List<Appointment> getFuturePatientAppointments(long patientId) {
+        return appointmentDao.getFuturePatientAppointments(patientId).orElse(new ArrayList<>());
+    }
+    @Override
+    public List<Appointment> getPastPatientAppointments(long patientId) {
+        return appointmentDao.getPastPatientAppointments(patientId).orElse(new ArrayList<>());
     }
 }

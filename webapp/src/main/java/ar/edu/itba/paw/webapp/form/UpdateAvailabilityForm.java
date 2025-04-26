@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.AvailabilitySlot;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
