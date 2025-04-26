@@ -238,6 +238,9 @@
                                 </div>
 
                                 <div id="time-slot-error" class="error-message" style="display: none; margin-bottom: 10px;"></div>
+                                <div id="server-time-slot-error" class="error-message">
+                                    <form:errors path="availabilitySlots" cssClass="error-message visible" />
+                                </div>
 
                                 <button type="button" class="btn-add-slot" id="add-slot-btn">
                                     + <spring:message code="register.addTimeSlot" />
