@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.AvailabilitySlot;
 import ar.edu.itba.paw.webapp.validation.EmailExistance;
 import ar.edu.itba.paw.webapp.validation.FileSize;
 import ar.edu.itba.paw.webapp.validation.FileType;
+import ar.edu.itba.paw.webapp.validation.TimeSlotIntersection;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
@@ -50,6 +51,7 @@ public class DoctorForm {
     private MultipartFile image;
 
     @NotEmpty
+    @TimeSlotIntersection(message = "{slots.overlap}")
     private List<AvailabilitySlot> availabilitySlots;
 
 
