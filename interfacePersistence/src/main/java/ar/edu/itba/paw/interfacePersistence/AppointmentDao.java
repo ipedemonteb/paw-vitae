@@ -17,7 +17,11 @@ public interface AppointmentDao {
 
     Optional<List<Appointment>> getAllFutureAppointments(List<Long> doctorIds);
 
-    void cancelApointment(long appointmentId);
+    void cancelAppointment(long appointmentId);
     void acceptAppointment(long appointmentId);
     Optional<Appointment> getById(long appointmentId);
+    Optional<List<Appointment>> getPastDoctorAppointments(long doctorId);
+    Optional<List<Appointment>> getFutureDoctorAppointments(long doctorId);
+    Optional<List<Appointment>> getFuturePatientAppointments(long patientId);
+    Optional<List<Appointment>> getPastPatientAppointments(long patientId);
 }

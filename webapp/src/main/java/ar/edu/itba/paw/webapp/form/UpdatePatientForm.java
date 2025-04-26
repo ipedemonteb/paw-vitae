@@ -9,11 +9,9 @@ import javax.validation.constraints.*;
 public class UpdatePatientForm {
 
     @NotEmpty
-    @Size(min = 1, max = 100)
     private String name;
 
     @NotEmpty
-    @Size(min = 1, max = 100)
     private String lastName;
 
 

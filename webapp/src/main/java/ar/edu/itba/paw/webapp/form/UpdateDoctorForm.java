@@ -12,11 +12,9 @@ import java.util.List;
 
 public class UpdateDoctorForm {
     @NotEmpty
-    @Size(min = 1, max = 100)
     private String name;
 
     @NotEmpty
-    @Size(min = 1, max = 100)
     private String lastName;
 
 
@@ -27,6 +25,7 @@ public class UpdateDoctorForm {
     @NotEmpty
     private List<String> coverages;
 
+    @NotEmpty
     private List<String> specialties;
 
     public void setForm(Doctor doctor) {

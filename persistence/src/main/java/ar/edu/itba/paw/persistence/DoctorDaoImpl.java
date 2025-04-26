@@ -21,7 +21,7 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
     private final SimpleJdbcInsert jdbcInsertDoctorAvailability;
 
-    private final RowMapper<Doctor> ROW_MAPPER = (rs, rowNum) -> new Doctor(
+    public static final RowMapper<Doctor> ROW_MAPPER = (rs, rowNum) -> new Doctor(
             rs.getString("name"),
             rs.getLong("id"),
             rs.getString("last_name"),
