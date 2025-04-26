@@ -777,6 +777,12 @@ function validateForm() {
         return false
     }
 
+    // ✅ Validate time slots
+    if (!areTimeSlotsValid()) {
+        return false
+    }
+
+
     // Store password values in hidden fields before submission
     const passwordField = document.getElementById("password")
     const repeatPasswordField = document.getElementById("repeatPassword")
@@ -1348,6 +1354,7 @@ function renderAllTimeSlots() {
     availabilitySlots.forEach((slot) => {
         renderTimeSlot(slot)
     })
+    validateTimeSlots();
 }
 
 // Add a new time slot
@@ -1625,18 +1632,28 @@ function validateTimeSlots() {
     updateSubmitButtonState()
 }
 
-// Mark a slot row as having an error
-function markSlotError(row) {
-    row.classList.add("slot-error")
-}
-
-// Show error message for time slots
+// Modify the showTimeSlotError function to make the error more visible:
 function showTimeSlotError(message) {
     const errorElement = document.getElementById("time-slot-error")
     if (errorElement) {
         errorElement.textContent = message
         errorElement.style.display = "block"
+        errorElement.classList.add("visible"); // Add visible class for better visibility
+
+        // Also show the server-side error if it exists
+        // const serverErrorElement = document.querySelector("form .error-message[data-path='availabilitySlots']");
+        // if (serverErrorElement && serverErrorElement.textContent.trim()) {
+        //     errorElement.textContent += " " + serverErrorElement.textContent;
+        // }
+
+        // Scroll to the error message
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+}
+
+// Mark a slot row as having an error
+function markSlotError(row) {
+    row.classList.add("slot-error")
 }
 
 // Clear all time slot errors
