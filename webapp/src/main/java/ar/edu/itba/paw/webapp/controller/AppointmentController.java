@@ -59,15 +59,15 @@ public class AppointmentController {
     @RequestMapping(value = "/appointment", method = RequestMethod.POST)
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
+            final BindingResult errors,
             @RequestParam(required = true) Long specialtyId,
             @RequestParam(required = true) Long doctorId,
-            final BindingResult errors,
             RedirectAttributes redirectAttributes
     ) {
         Patient patient = loggedUser();
 
         if (errors.hasErrors()) {
-            return appointment(appointmentForm, specialtyId, doctorId, errors, redirectAttributes);
+            return appointment(appointmentForm, errors, specialtyId, doctorId, redirectAttributes);
         }
 
         Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), specialtyId);

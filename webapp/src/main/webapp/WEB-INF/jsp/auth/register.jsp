@@ -45,30 +45,44 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="name" class="form-label required-field"><spring:message code="register.firstName" /></label>
-                                <form:input required="true" path="name" id="name" cssClass="form-control ${status.error ? 'error' : ''}" />
-                                <form:errors path="name" cssClass="error-message" />
+                                <div class="input-wrapper">
+                                    <form:input required="true" path="name" id="name" cssClass="form-control ${status.error ? 'error' : ''}" />
+                                </div>
+                                <div id="name-validation-message" class="error-message">
+                                    <form:errors path="name" />
+                                </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="lastName" class="form-label required-field"><spring:message code="register.lastName" /></label>
-                                <form:input required="true" path="lastName" id="lastName" cssClass="form-control ${status.error ? 'error' : ''}" />
-                                <form:errors path="lastName" cssClass="error-message" />
+                                <div class="input-wrapper">
+                                    <form:input required="true" path="lastName" id="lastName" cssClass="form-control ${status.error ? 'error' : ''}" />
+                                </div>
+                                <div id="lastName-validation-message" class="error-message">
+                                    <form:errors path="lastName" />
+                                </div>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="email" class="form-label required-field"><spring:message code="register.email" /></label>
-                                <form:input required="true" path="email" id="email" cssClass="form-control ${status.error ? 'error' : ''}" placeholder="email@vitae.com" />
-                                <div id="email-validation-message" class="error-message" style="display: none;"></div>
-                                <form:errors path="email" cssClass="error-message" />
+                                <div class="input-wrapper">
+                                    <form:input required="true" path="email" id="email" cssClass="form-control ${status.error ? 'error' : ''}" placeholder="email@vitae.com" />
+                                </div>
+                                <div id="email-validation-message" class="error-message">
+                                    <form:errors path="email" />
+                                </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="phone" class="form-label required-field"><spring:message code="register.phone" /></label>
-                                <form:input required="true" path="phone" id="phone" cssClass="form-control ${status.error ? 'error' : ''}" placeholder="+1 (123) 456-7890" />
-                                <div id="phone-validation-message" class="error-message" style="display: none;"></div>
-                                <form:errors path="phone" cssClass="error-message" />
+                                <div class="input-wrapper">
+                                    <form:input required="true" path="phone" id="phone" cssClass="form-control ${status.error ? 'error' : ''}" placeholder="+1 (123) 456-7890" />
+                                </div>
+                                <div id="phone-validation-message" class="error-message">
+                                    <form:errors path="phone" />
+                                </div>
                             </div>
                         </div>
 
@@ -81,22 +95,28 @@
                                         <span class="tooltip-text"><spring:message code="register.passwordTooltip" /></span>
                                      </span>
                                 </label>
-                                <form:password required="true" path="password" id="password" cssClass="form-control ${status.error ? 'error' : ''}" />
+                                <div class="input-wrapper">
+                                    <form:password required="true" path="password" id="password" cssClass="form-control ${status.error ? 'error' : ''}" />
+                                </div>
                                 <div class="password-strength">
                                     <div class="strength-meter">
                                         <div class="strength-meter-fill"></div>
                                     </div>
                                     <div class="strength-text"></div>
                                 </div>
-                                <div id="password-length-message" class="error-message" style="display: none;"></div>
-                                <form:errors path="password" cssClass="error-message" />
+                                <div id="password-length-message" class="error-message">
+                                    <form:errors path="password" />
+                                </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="repeatPassword" class="form-label required-field"><spring:message code="register.confirmPassword" /></label>
-                                <form:password required="true" path="repeatPassword" id="repeatPassword" cssClass="form-control ${status.error ? 'error' : ''}" />
-                                <div id="password-match-message" class="error-message" style="display: none;"></div>
-                                <form:errors path="repeatPassword" cssClass="error-message" />
+                                <div class="input-wrapper">
+                                    <form:password required="true" path="repeatPassword" id="repeatPassword" cssClass="form-control ${status.error ? 'error' : ''}" />
+                                </div>
+                                <div id="password-match-message" class="error-message">
+                                    <form:errors path="repeatPassword" />
+                                </div>
                             </div>
                         </div>
 
@@ -274,6 +294,19 @@
             emailInvalid: '<spring:message code="appointment.validation.email" javaScriptEscape="true" />',
             phoneInvalid: '<spring:message code="appointment.validation.phone" javaScriptEscape="true" />',
             fileSizeError: '<spring:message code="fileSizeError" javaScriptEscape="true" />',
+            fileTypeError: '<spring:message code="fileTypeError" javaScriptEscape="true" />',
+            fieldRequired: '<spring:message code="register.fieldRequired" javaScriptEscape="true" />',
+            nameTooShort: '<spring:message code="register.nameTooShort" javaScriptEscape="true" />',
+            nameInvalid: '<spring:message code="register.nameInvalid" javaScriptEscape="true" />',
+            passwordInvalid: '<spring:message code="register.passwordInvalid" javaScriptEscape="true" />',
+            passwordReqLength: '<spring:message code="register.passwordReqLength" javaScriptEscape="true" />',
+            passwordReqUppercase: '<spring:message code="register.passwordReqUppercase" javaScriptEscape="true" />',
+            passwordReqLowercase: '<spring:message code="register.passwordReqLowercase" javaScriptEscape="true" />',
+            passwordReqNumber: '<spring:message code="register.passwordReqNumber" javaScriptEscape="true" />',
+            passwordReqSpecial: '<spring:message code="register.passwordReqSpecial" javaScriptEscape="true" />',
+            specialtiesRequired: '<spring:message code="register.specialtiesRequired" javaScriptEscape="true" />',
+            coveragesRequired: '<spring:message code="register.coveragesRequired" javaScriptEscape="true" />',
+            submitting: '<spring:message code="register.submitting" javaScriptEscape="true" />'
         };
 
         // Store existing availability slots data if present
