@@ -11,7 +11,7 @@
     <!-- Upcoming Appointments Tab -->
     <div class="tab-content active" id="upcoming-tab">
         <div class="tab-header">
-            <h2><spring:message code="dashboard.upcoming.title" /></h2>
+            <h2><spring:message code="dashboard.upcoming.title"/></h2>
             <div class="tab-actions">
                 <div class="status-filter">
                     <label for="status-filter"><spring:message code="dashboard.filter.status" />:</label>
@@ -71,7 +71,7 @@
                                             <c:out value="${appointment.doctor.name}" /> <c:out value="${appointment.doctor.lastName}" />
                                         </div>
                                         <div class="patient-coverage">
-                                            <spring:message code="${appointment.doctor.specialtyList[0].key}" />
+                                            <c:out value="${appointment.patient.coverage.name}"/>
                                         </div>
                                     </div>
                                 </div>
