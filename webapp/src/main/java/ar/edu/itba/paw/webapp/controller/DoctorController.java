@@ -11,6 +11,8 @@ import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.UpdateAvailabilityForm;
 import ar.edu.itba.paw.webapp.form.UpdateDoctorForm;
 import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.core.Authentication;
@@ -38,6 +40,8 @@ import java.util.stream.Collectors;
 
 @Controller
 public class DoctorController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DoctorController.class);
 
     private final DoctorService ds;
     private final AppointmentService as;
@@ -82,6 +86,7 @@ public class DoctorController {
         mav.addObject("doctor", doctor);
         mav.addObject("upcomingAppointments",as.getFutureDoctorAppointments(doctor.getId()));
         mav.addObject("activeTab", "upcoming");
+        LOGGER.debug("Loading dashboard and upcoming appointments for doctor ID: {}", doctor.getId());
         return mav;
     }
 
@@ -134,7 +139,6 @@ public class DoctorController {
                 updateDoctorForm.getSpecialties(),
                 updateDoctorForm.getCoverages(),
                 null);
-
         return new ModelAndView("redirect:/doctor/dashboard/profile");
     }
 

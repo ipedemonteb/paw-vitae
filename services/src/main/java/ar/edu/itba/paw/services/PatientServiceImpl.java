@@ -6,6 +6,8 @@ import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Coverage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.Optional;
 
 @Service
 public class PatientServiceImpl implements PatientService {
+
+    Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
 
     private final PatientDao patientDao;
 
@@ -42,7 +46,10 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Patient create(String name, String lastName, String email, String password, String phone, String language, String coverage) {
         Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);
-        return this.patientDao.create(name, lastName, email, passwordEncoder.encode(password), phone, language, cov);
+        Patient patient = this.patientDao.create(name, lastName, email, passwordEncoder.encode(password), phone, language, cov);
+        LOGGER.debug("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
+        return patient;
+
     }
 
     @Override
@@ -59,6 +66,7 @@ public class PatientServiceImpl implements PatientService {
                 || !currentPatient.getCoverage().getName().equals(coverage.getName());
         if (hasChanged) {
             patientDao.updatePatient(currentPatient.getId(), name, lastName, phone, coverage);
+            LOGGER.debug("Patient updated successfully: id={}, email={}", currentPatient.getId(), currentPatient.getEmail());
         }
 
     }

@@ -7,6 +7,8 @@ import ar.edu.itba.paw.interfaceServices.DoctorService;
 
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
+
+    Logger LOGGER = LoggerFactory.getLogger(DoctorServiceImpl.class);
 
     private final DoctorDao doctorDao;
 
@@ -41,7 +45,14 @@ public class DoctorServiceImpl implements DoctorService {
     public Doctor create(String name, String lastName, String email, String password, String phone, String language, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
         List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
         List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
-        return this.doctorDao.create(name, lastName, email, passwordEncoder.encode(password), phone, language, specialtyList, coverageList, availabilitySlots);
+
+        Doctor doctor = this.doctorDao.create(
+                name, lastName, email, passwordEncoder.encode(password), phone, language, specialtyList, coverageList, availabilitySlots
+        );
+
+        LOGGER.debug("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
+
+        return doctor;
     }
 
     @Override
@@ -75,12 +86,16 @@ public class DoctorServiceImpl implements DoctorService {
         List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
         List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
         doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList, availabilitySlots);
+
+        LOGGER.debug("Doctor actualizado exitosamente: id={}, nombre={}, apellido={}", id, name, lastName);
+
     }
 
     @Transactional
     @Override
     public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
         doctorDao.updateDoctorAvailability(id, availabilitySlots);
+        LOGGER.debug("Disponibilidad actualizada para el doctor con id={}, slots={}", id, availabilitySlots.size()); //Only log the new size, if the user has many, then it might be too heavy
     }
 
     @Override

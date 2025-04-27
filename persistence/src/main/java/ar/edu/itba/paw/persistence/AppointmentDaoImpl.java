@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -127,7 +128,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
         return new Appointment(
                 startDate,
-                AppointmentStatus.PENDIENTE.getValue(),
+                AppointmentStatus.CONFIRMADO.getValue(),
                 reason,
                 appointmentId.longValue(),
                 specialty,
@@ -349,6 +350,28 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
         List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, patientId);
         return apps.isEmpty() ? Optional.empty() : Optional.of(apps);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByDate(LocalDate today) {
+        String sql = "SELECT a.id, a.date, a.status, a.reason, " +
+                "s.id AS specialty_id, s.key AS specialty_key, " +
+                "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
+                "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
+                "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
+                "c.id AS coverage_id, c.coverage_name " +
+                "FROM Appointments a " +
+                "JOIN Specialties s ON a.specialty_id = s.id " +
+                "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
+                "JOIN Users u ON d.doctor_id = u.id " +
+                "JOIN Clients p ON a.client_id = p.client_id " +
+                "JOIN Users pu ON p.client_id = pu.id " +
+                "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
+                "WHERE DATE(a.date) = ? " +
+                "ORDER BY a.date";
+
+        return jdbcTemplate.query(sql, ROW_MAPPER, today);
     }
 
 }
