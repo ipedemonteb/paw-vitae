@@ -7,7 +7,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
 <link rel="stylesheet" href="<c:url value='/css/landing.css' />" />
 
 <layout:page title="landing.page.title" container="false">
