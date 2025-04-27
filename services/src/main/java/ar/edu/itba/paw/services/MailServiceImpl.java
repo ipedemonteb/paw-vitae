@@ -59,14 +59,13 @@ public class MailServiceImpl implements MailService {
         templateModel.put("appointmentDate", date.toLocalDate().toString());
         templateModel.put("appointmentTime", date.getHour());
         //@TODO: Check
-        templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : "-");
-
+        templateModel.put("reason", (appointment.getReason() != null && !appointment.getReason().isEmpty()) ? appointment.getReason() : "-");
         patientContext.setVariables(templateModel);
         doctorContext.setVariables(templateModel);
         String htmlContentDoctor;
         String htmlContentPatient;
 
-        System.out.println("appointment.getStatus() = " + appointment.getStatus());
+        System.out.println("Reason = " + appointment.getReason());
 
         if (appointment.getStatus().equals(AppointmentStatus.PENDIENTE.getValue())) {
             htmlContentDoctor = templateEngine.process("DoctorAppointmentRequest", doctorContext);
