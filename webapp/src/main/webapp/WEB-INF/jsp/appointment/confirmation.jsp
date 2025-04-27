@@ -102,12 +102,12 @@
                 </c:if>
 
                 <!-- QR Code for appointment -->
-                <div class="qr-code-container">
-                    <div class="qr-code">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AppointmentID:${appointment.id}" alt="Appointment QR Code">
-                    </div>
-                    <p class="qr-code-text"><spring:message code="appointment.confirmation.qrcode.info"/></p>
-                </div>
+<%--                <div class="qr-code-container">--%>
+<%--                    <div class="qr-code">--%>
+<%--                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AppointmentID:${appointment.id}" alt="Appointment QR Code">--%>
+<%--                    </div>--%>
+<%--                    <p class="qr-code-text"><spring:message code="appointment.confirmation.qrcode.info"/></p>--%>
+<%--                </div>--%>
             </div>
 
             <div class="confirmation-footer">
@@ -117,9 +117,6 @@
                 <a href="<c:url value="/patient/dashboard"/>" class="btn btn-outline">
                     <i class="fas fa-calendar-alt"></i> <spring:message code="appointment.confirmation.viewAppointments"/>
                 </a>
-                <button onclick="window.print()" class="btn btn-success">
-                    <i class="fas fa-print"></i> <spring:message code="appointment.confirmation.print"/>
-                </button>
             </div>
         </div>
     </div>
