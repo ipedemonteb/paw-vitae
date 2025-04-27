@@ -1,10 +1,11 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.validation.AppointmentValidDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-
+@AppointmentValidDate(date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.valid}")
 public class AppointmentForm {
 
 
