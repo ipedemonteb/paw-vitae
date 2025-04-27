@@ -3,9 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <!DOCTYPE html>
-<html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/V-logo.svg/2048px-V-logo.svg.png" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><spring:message code="login.title" /></title>
@@ -32,8 +30,8 @@
               <i class="fas fa-user-md"></i>
             </div>
             <div class="feature-text">
-              <h3>Expert Doctors</h3>
-              <p>Connect with verified healthcare professionals</p>
+              <h3><spring:message code="login.feature.doctors.title" /></h3>
+              <p><spring:message code="login.feature.doctors.description" /></p>
             </div>
           </div>
 
@@ -42,8 +40,8 @@
               <i class="fas fa-calendar-check"></i>
             </div>
             <div class="feature-text">
-              <h3>Easy Appointments</h3>
-              <p>Book and manage your appointments online</p>
+              <h3><spring:message code="login.feature.appointments.title" /></h3>
+              <p><spring:message code="login.feature.appointments.description" /></p>
             </div>
           </div>
 
@@ -52,8 +50,8 @@
               <i class="fas fa-shield-alt"></i>
             </div>
             <div class="feature-text">
-              <h3>Secure Platform</h3>
-              <p>Your health data is protected and private</p>
+              <h3><spring:message code="login.feature.security.title" /></h3>
+              <p><spring:message code="login.feature.security.description" /></p>
             </div>
           </div>
         </div>
@@ -83,7 +81,7 @@
               <div class="notification-content">
                 <p><spring:message code="login.error" /></p>
               </div>
-              <button class="notification-close" aria-label="Close notification">
+              <button class="notification-close" aria-label="<spring:message code="general.close" />">
                 <i class="fas fa-times"></i>
               </button>
             </div>
@@ -97,7 +95,7 @@
               <div class="notification-content">
                 <p><spring:message code="login.logout.success" /></p>
               </div>
-              <button class="notification-close" aria-label="Close notification">
+              <button class="notification-close" aria-label="<spring:message code="general.close" />">
                 <i class="fas fa-times"></i>
               </button>
             </div>
@@ -118,7 +116,7 @@
                         type="email"
                         required
                         autocomplete="email"
-                        placeholder="Email address"
+                        placeholder="<spring:message code="login.email.placeholder" />"
                 />
                 <label for="email" class="floating-label"><spring:message code="login.email" /></label>
               </div>
@@ -138,10 +136,10 @@
                         type="password"
                         required
                         autocomplete="current-password"
-                        placeholder="Password"
+                        placeholder="<spring:message code="login.password.placeholder" />"
                 />
                 <label for="password" class="floating-label"><spring:message code="login.password" /></label>
-                <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                <button type="button" class="password-toggle" aria-label="<spring:message code="login.password.toggle" />">
                   <i class="fas fa-eye"></i>
                 </button>
               </div>
@@ -158,7 +156,8 @@
               </label>
             </div>
 
-            <a href="#" class="forgot-password">
+<%--            <a href="<c:url value='/forgot-password' />" class="forgot-password">--%>
+            <a href="<c:url value='/login' />" class="forgot-password">
               <spring:message code="login.forgotPassword" />
             </a>
           </div>
@@ -249,12 +248,12 @@
 
         // Validate email
         if (!emailInput.value.trim()) {
-          emailError.textContent = 'Email is required';
+          emailError.textContent = '<spring:message code="login.validation.email.required" javaScriptEscape="true" />';
           emailInput.classList.add('error');
           emailInput.parentElement.classList.add('error');
           isValid = false;
         } else if (!/^\S+@\S+\.\S+$/.test(emailInput.value.trim())) {
-          emailError.textContent = 'Please enter a valid email address';
+          emailError.textContent = '<spring:message code="login.validation.email.invalid" javaScriptEscape="true" />';
           emailInput.classList.add('error');
           emailInput.parentElement.classList.add('error');
           isValid = false;
@@ -266,7 +265,7 @@
 
         // Validate password
         if (!passwordInput.value) {
-          passwordError.textContent = 'Password is required';
+          passwordError.textContent = '<spring:message code="login.validation.password.required" javaScriptEscape="true" />';
           passwordInput.classList.add('error');
           passwordInput.parentElement.classList.add('error');
           isValid = false;
@@ -330,4 +329,3 @@
   });
 </script>
 </body>
-</html>
