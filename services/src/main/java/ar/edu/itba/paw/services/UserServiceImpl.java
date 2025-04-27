@@ -5,6 +5,8 @@ import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,8 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private PatientDao patientDao;
     private DoctorDao doctorDao;
@@ -37,8 +41,10 @@ public class UserServiceImpl implements UserService {
         String newPassword = passwordEncoder.encode(password);
         if (patient.isPresent()) {
             patientDao.changePassword(id, newPassword);
+            LOGGER.debug("Password changed successfully for patient with id: {}", id);
         } else {
             doctorDao.changePassword(id, newPassword);
+            LOGGER.debug("Password changed successfully for doctor with id: {}", id);
         }
     }
 
@@ -55,8 +61,10 @@ public class UserServiceImpl implements UserService {
         Optional<Patient> patient = patientDao.getById(id);
         if (patient.isPresent()) {
             patientDao.changeLanguage(id, language);
+            LOGGER.debug("Language changed successfully for patient with id: {}", id);
         } else {
             doctorDao.changeLanguage(id, language);
+            LOGGER.debug("Language changed successfully for doctor with id: {}", id);
         }
     }
 }

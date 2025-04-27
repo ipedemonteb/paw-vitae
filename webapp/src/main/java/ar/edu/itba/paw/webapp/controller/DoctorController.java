@@ -147,14 +147,6 @@ public class DoctorController {
                 updateDoctorForm.getSpecialties(),
                 updateDoctorForm.getCoverages(),
                 null);
-        LOGGER.debug("Updating profile for doctor ID: {}", doctor.getId());
-        LOGGER.debug("Updating values: name={}, lastName={}, phone={}",
-                updateDoctorForm.getName(),
-                updateDoctorForm.getLastName(),
-                updateDoctorForm.getPhone());
-//                updateDoctorForm.getSpecialties().stream().map(s -> s.getId()).collect(Collectors.toList()),
-//                updateDoctorForm.getCoverages().stream().map(c -> c.getId()).collect(Collectors.toList()));
-
         return new ModelAndView("redirect:/doctor/dashboard/profile");
     }
 
@@ -168,11 +160,6 @@ public class DoctorController {
     @ResponseBody
     public String cancelAppointment(@RequestParam("appointmentId") Long appointmentId){
         boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
-        if (result) {
-            LOGGER.debug("Appointment cancelled successfully: AppointmentId={}, DoctorId={}", appointmentId, loggedUser().getId());
-        } else {
-            LOGGER.debug("Failed to cancel appointment: AppointmentId={}, DoctorId={}", appointmentId, loggedUser().getId());
-        }
         return "{\"success\": " + result + "}";
     }
 
@@ -186,9 +173,6 @@ public class DoctorController {
         }
         form.setAvailabilitySlots(form.getAvailabilitySlots());
         ds.updateDoctorAvailability(loggedUser().getId(), form.getAvailabilitySlots());
-        LOGGER.debug("Updating availability for doctor ID: {}", loggedUser().getId());
-        LOGGER.debug("Updating values: availabilitySlots={}",
-                form.getAvailabilitySlots().stream().map(s -> s.getStartTime() + " - " + s.getEndTime()).toList());
         return new ModelAndView("redirect:/doctor/dashboard/availability");
     }
 
@@ -197,11 +181,6 @@ public class DoctorController {
     @ResponseBody
     public String acceptAppointment(@RequestParam("appointmentId") Long appointmentId){
         boolean result = as.acceptAppointment(appointmentId, loggedUser().getId());
-        if (result) {
-            LOGGER.debug("Appointment accepted successfully: AppointmentId={}, DoctorId={}", appointmentId, loggedUser().getId());
-        } else {
-            LOGGER.debug("Failed to accept appointment: AppointmentId={}, DoctorId={}", appointmentId, loggedUser().getId());
-        }
         return "{\"success\": " + result + "}";
     }
 }

@@ -22,8 +22,6 @@ import java.util.*;
 @Controller
 public class SearchController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
-
     private final DoctorService doctorService;
     private final SpecialtyService specialtyService;
     private final AppointmentService appointmentService;
@@ -57,9 +55,6 @@ public class SearchController {
         mav.addObject("allSpecialties", allSpecialties);
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", doctorPage.getTotalPages());
-
-        LOGGER.debug("Search Specialty: {}", specialtyObj.orElse(null));
-
         return mav;
     }
 }
