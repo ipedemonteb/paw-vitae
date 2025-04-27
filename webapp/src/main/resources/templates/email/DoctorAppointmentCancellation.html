@@ -61,7 +61,7 @@
         .button {
             display: inline-block;
             background-color: #4a6bff;
-            color: white;
+            color: white !important;
             text-decoration: none;
             padding: 12px 24px;
             border-radius: 4px;
@@ -71,6 +71,9 @@
         .highlight {
             color: #d32f2f;
             font-weight: bold;
+        }
+        .text-center {
+            text-align: center;
         }
         @media only screen and (max-width: 600px) {
             .container {
@@ -99,6 +102,10 @@
                 <li><strong th:text="#{email.patient.label}"></strong> <span th:text="${patientName}"></span></li>
                 <li><strong th:text="#{email.reason.label}"></strong> <span th:text="${reason}"></span></li>
             </ul>
+        </div>
+
+        <div class="text-center">
+            <a href="http://pawserver.it.itba.edu.ar/paw-2025a-11/doctor/dashboard/upcoming" class="button" th:text="#{doctor.see.other.appointments}"></a>
         </div>
 
         <p th:text="#{doctor.cancellation.calendar.update}"></p>
