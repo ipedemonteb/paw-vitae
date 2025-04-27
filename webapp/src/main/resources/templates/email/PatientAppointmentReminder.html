@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{patient.request.title}"></title>
+    <title th:text="#{patient.reminder.title}"></title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -34,8 +34,8 @@
             padding: 20px 0;
         }
         .appointment-details {
-            background-color: #f5f5f5;
-            border-left: 4px solid #ff9800;
+            background-color: #f0f7ff;
+            border-left: 4px solid #2e7d32;
             padding: 15px;
             margin: 20px 0;
             border-radius: 4px;
@@ -60,7 +60,7 @@
         }
         .button {
             display: inline-block;
-            background-color: #ff9800;
+            background-color: #2e7d32;
             color: white;
             text-decoration: none;
             padding: 12px 24px;
@@ -69,18 +69,15 @@
             margin: 20px 0;
         }
         .highlight {
-            color: #ff9800;
+            color: #2e7d32;
             font-weight: bold;
         }
-        .status-badge {
-            display: inline-block;
-            background-color: #ff9800;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 15px;
+        .reminder-box {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
         }
         @media only screen and (max-width: 600px) {
             .container {
@@ -93,34 +90,33 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1 th:text="#{patient.request.title}"></h1>
+        <h1 th:text="#{patient.reminder.title}"></h1>
     </div>
 
     <div class="content">
         <p><strong th:text="#{patient.greeting(${patientName})}"></strong></p>
 
-        <div style="text-align: center;">
-            <span class="status-badge" th:text="#{patient.status.pending}"></span>
-        </div>
-
-        <p th:text="#{patient.request.message(${doctorName})}"></p>
+        <p th:text="#{patient.reminder.message(${doctorName})}"></p>
 
         <div class="appointment-details">
-            <h3 th:text="#{patient.request.details.title}"></h3>
+            <h3 th:text="#{patient.details.title}"></h3>
             <ul>
                 <li><strong th:text="#{patient.doctor.label}"></strong> <span th:text="${doctorName}"></span></li>
                 <li><strong th:text="#{patient.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
                 <li><strong th:text="#{patient.time.label}"></strong> <span th:text="${appointmentTime}"></span></li>
                 <li><strong th:text="#{patient.reason.label}"></strong> <span th:text="${reason}"></span></li>
+                <li><strong th:text="#{patient.location.label}"></strong> <span th:text="${location}"></span></li>
             </ul>
         </div>
 
-        <p>
-            <span class="highlight" th:text="#{patient.whats.next.title}"></span>
-            <span th:text="#{patient.whats.next.description}"></span>
-        </p>
-
-        <p th:text="#{patient.modify.request}"></p>
+        <div class="reminder-box">
+            <h4 th:text="#{patient.reminders.title}"></h4>
+            <ul>
+                <li th:text="#{patient.reminder.arrive}"></li>
+                <li th:text="#{patient.reminder.documents}"></li>
+                <li th:text="#{patient.reminder.cancel}"></li>
+            </ul>
+        </div>
 
         <p th:text="#{patient.thanks}"></p>
 

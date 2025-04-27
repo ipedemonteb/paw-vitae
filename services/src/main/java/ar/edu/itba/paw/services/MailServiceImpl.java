@@ -130,7 +130,6 @@ public class MailServiceImpl implements MailService {
         patientContext.setVariables(templateModel);
         String htmlContentPatient;
 
-        System.out.println("appointment.getStatus() = " + appointment.getStatus());
         htmlContentPatient = templateEngine.process("PatientAppointmentReminder", patientContext);
         MimeMessage patientMessage = mailSender.createMimeMessage();
         try {
