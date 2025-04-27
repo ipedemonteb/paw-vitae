@@ -609,7 +609,7 @@ function validateSectionWithoutUI(sectionNumber) {
             isValid = false
         }
 
-        if (password.value && repeatPassword.value && password.value !== repeatPassword.value) {
+        if ((password.value && repeatPassword.value && password.value !== repeatPassword.value) || (password.value && repeatPassword.value && !validatePasswordRequirements(password.value))) {
             isValid = false
         }
 
