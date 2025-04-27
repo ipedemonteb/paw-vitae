@@ -24,7 +24,6 @@ import java.util.*;
 
 @Controller
 public class AppointmentController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
     private AppointmentService as;
     private PatientService ps;
