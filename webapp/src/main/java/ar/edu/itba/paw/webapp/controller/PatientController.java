@@ -9,6 +9,8 @@ import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,18 +25,21 @@ import java.util.*;
 @Controller
 public class PatientController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PatientController.class);
+
     private final PatientService ps;
     private final AppointmentService as;
     private final CoverageService covs;
     @Autowired
     public PatientController(PatientService ps, AppointmentService as, CoverageService covs) {
+
         this.ps = ps;
         this.as = as;
         this.covs = covs;
     }
 
     @RequestMapping(value = "/patient/dashboard")
-    public ModelAndView getDoctorDashboard() {
+    public ModelAndView getPatientDashboard() {
         return new ModelAndView("redirect:/patient/dashboard/upcoming");
     }
 
@@ -45,6 +50,7 @@ public class PatientController {
         mav.addObject("patient", patient);
         mav.addObject("upcomingAppointments", as.getFuturePatientAppointments(patient.getId()));
         mav.addObject("activeTab", "upcoming");
+        LOGGER.debug("Loading dashboard and upcoming appointments for patient ID: {}", patient.getId());
         return mav;
     }
 
@@ -79,6 +85,9 @@ public class PatientController {
         }
         Patient patient = loggedUser();
         ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
+        LOGGER.debug("Patient updated successfully: PatientId={}", patient.getId());
+        LOGGER.debug("Patient updated successfully: PatientId={}, Name={}, LastName={}, Phone={}, CoverageId={}",
+                patient.getId(), updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), updatePatientForm.getCoverage());
         return new ModelAndView("redirect:/patient/dashboard/profile");
     }
 
@@ -92,6 +101,11 @@ public class PatientController {
     @ResponseBody
     public String cancelAppointment(@RequestParam("appointmentId") Long appointmentId) {
         boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
+        if (result) {
+            LOGGER.debug("Appointment cancelled successfully: AppointmentId={}, PatientId={}", appointmentId, loggedUser().getId());
+        } else {
+            LOGGER.debug("Failed to cancel appointment: AppointmentId={}, PatientId={}", appointmentId, loggedUser().getId());
+        }
         return "{\"success\": " + result + "}";
     }
 }
