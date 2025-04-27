@@ -730,8 +730,7 @@ a:hover {
 
 /* Focus styles for accessibility */
 input:focus, button:focus {
-    outline: 2px solid var(--primary-light);
-    outline-offset: 2px;
+    outline: none;
 }
 
 /* Accessibility helper class */
