@@ -23,12 +23,11 @@ import java.util.*;
 
 @Service
 public class MailServiceImpl implements MailService {
+    private final static String from_mail = "vitaepaw@gmail.com";
+    private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final MessageSource messageSource;
-    private final static String from_mail = "vitaepaw@gmail.com";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
 
     @Autowired
     public MailServiceImpl(final JavaMailSender mailSender, final TemplateEngine templateEngine, final MessageSource messageSource) {
@@ -39,7 +38,7 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendAppointmentStatusEmail(String subject, Appointment appointment){
+    public void sendAppointmentStatusEmail(String subject, Appointment appointment) {
 
         Doctor doctor = appointment.getDoctor();
         Patient patient = appointment.getPatient();
@@ -104,6 +103,46 @@ public class MailServiceImpl implements MailService {
         mailSender.send(doctorMessage);
         mailSender.send(patientMessage);
         LOGGER.debug("Email sent to doctor: {}", doctor.getEmail());
+        LOGGER.debug("Email sent to patient: {}", patient.getEmail());
+    }
+
+    @Async
+    @Override
+    public void sendReminderEmail(String subject, Appointment appointment) {
+
+        Doctor doctor = appointment.getDoctor();
+        Patient patient = appointment.getPatient();
+
+        Locale patientLocale = Locale.forLanguageTag(patient.getLanguage());
+
+        Context patientContext = new Context(patientLocale);
+
+        String patientSubject = messageSource.getMessage(subject, null, patientLocale);
+
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("doctorName", doctor.getName() + " " + doctor.getLastName());
+        templateModel.put("patientName", patient.getName() + " " + patient.getLastName());
+        LocalDateTime date = appointment.getDate();
+        templateModel.put("appointmentDate", date.toLocalDate().toString());
+        templateModel.put("appointmentTime", date.getHour());
+        templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : "-");
+
+        patientContext.setVariables(templateModel);
+        String htmlContentPatient;
+
+        System.out.println("appointment.getStatus() = " + appointment.getStatus());
+        htmlContentPatient = templateEngine.process("PatientAppointmentReminder", patientContext);
+        MimeMessage patientMessage = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper patientHelper = new MimeMessageHelper(patientMessage, true, "UTF-8");
+            patientHelper.setTo(patient.getEmail());
+            patientHelper.setSubject(patientSubject);
+            patientHelper.setText(htmlContentPatient, true);
+            patientHelper.setFrom(from_mail);
+        } catch (MessagingException e) {
+            LOGGER.debug("Error creating email message", e);
+        }
+        mailSender.send(patientMessage);
         LOGGER.debug("Email sent to patient: {}", patient.getEmail());
     }
 }
