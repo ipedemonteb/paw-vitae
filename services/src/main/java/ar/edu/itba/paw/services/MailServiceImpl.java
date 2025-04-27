@@ -98,10 +98,12 @@ public class MailServiceImpl implements MailService {
             doctorHelper.setFrom(from_mail);
             patientHelper.setFrom(from_mail);
         } catch (MessagingException e) {
-            LOGGER.error("Error while sending email", e);
+            LOGGER.debug("Error creating email message", e);
         }
 
         mailSender.send(doctorMessage);
         mailSender.send(patientMessage);
+        LOGGER.debug("Email sent to doctor: {}", doctor.getEmail());
+        LOGGER.debug("Email sent to patient: {}", patient.getEmail());
     }
 }

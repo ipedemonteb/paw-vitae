@@ -85,10 +85,7 @@ public class PatientController {
         }
         Patient patient = loggedUser();
         ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
-        LOGGER.debug("Patient updated successfully: PatientId={}", patient.getId());
-        LOGGER.debug("Patient updated successfully: PatientId={}, Name={}, LastName={}, Phone={}, CoverageId={}",
-                patient.getId(), updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), updatePatientForm.getCoverage());
-        return new ModelAndView("redirect:/patient/dashboard/profile");
+       return new ModelAndView("redirect:/patient/dashboard/profile");
     }
 
     @ModelAttribute
@@ -101,11 +98,6 @@ public class PatientController {
     @ResponseBody
     public String cancelAppointment(@RequestParam("appointmentId") Long appointmentId) {
         boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
-        if (result) {
-            LOGGER.debug("Appointment cancelled successfully: AppointmentId={}, PatientId={}", appointmentId, loggedUser().getId());
-        } else {
-            LOGGER.debug("Failed to cancel appointment: AppointmentId={}, PatientId={}", appointmentId, loggedUser().getId());
-        }
         return "{\"success\": " + result + "}";
     }
 }

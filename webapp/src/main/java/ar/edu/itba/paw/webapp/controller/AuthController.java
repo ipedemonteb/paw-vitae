@@ -58,7 +58,7 @@ public class AuthController {
             return new ModelAndView("redirect:/");
         }
         if (errors.hasErrors()) {
-            LOGGER.debug("Errors found: {}", errors.getAllErrors());
+            LOGGER.debug("Errors found registering: {}", errors.getAllErrors());
             return doctorForm(form, authentication);
         }
         authService.registerDoctor(form);
@@ -74,7 +74,6 @@ public class AuthController {
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             // remember‑me or fully authenticated ↦ bounce home
-            LOGGER.debug("Authenticated user tried to access login page. Logged user: {}", authentication.getName());
             return new ModelAndView("redirect:/");
         }
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
@@ -82,7 +81,6 @@ public class AuthController {
         ModelAndView mav = new ModelAndView("auth/register");
         mav.addObject("coverageList", coverageList);
         mav.addObject("specialtyList", specialtyList);
-        LOGGER.debug("Loading doctor registration form");
         return mav;
     }
 
@@ -93,7 +91,6 @@ public class AuthController {
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             // remember‑me or fully authenticated ↦ bounce home
-            LOGGER.debug("Authenticated user tried to access register page. Logged user: {}", authentication.getName());
             return new ModelAndView("redirect:/");
         }
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
@@ -111,11 +108,10 @@ public class AuthController {
             return new ModelAndView("redirect:/");
         }
         if(errors.hasErrors()) {
-            LOGGER.debug("Errors found: {}", errors.getAllErrors());
+            LOGGER.debug("Errors found registering patient: {}", errors.getAllErrors());
             return patientForm(patientForm, authentication);
         }
         authService.registerPatient(patientForm);
-        LOGGER.debug("Registering patient with email: {}", patientForm.getEmail());
         return new ModelAndView("redirect:/patient/dashboard");
     }
 
@@ -125,7 +121,6 @@ public class AuthController {
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             // remember‑me or fully authenticated ↦ bounce home
-            LOGGER.debug("Authenticated user tried to access login page. Logged user: {}", authentication.getName());
             return new ModelAndView("redirect:/");
         }
         return new ModelAndView("auth/login");
