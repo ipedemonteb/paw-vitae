@@ -3,54 +3,164 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<link rel="stylesheet" href="<c:url value='/css/components/confirmation.css' />">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><spring:message code="appointment.confirmation.title" /></title>
+    <link rel="stylesheet" href="<c:url value='/css/confirmation.css' />" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- Include the header -->
+<jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<layout:page title="appointment.confirmation.title">
-<div class="card">
-    <div class="card-header">
-        <h1 class="card-title"><spring:message code="appointment.confirmation.title"/></h1>
-    </div>
-
-    <div class="card-body">
-        <div class="confirmation-details">
-            <div class="confirmation-item">
-                <div class="confirmation-label"><spring:message code="appointment.form.reason"/></div>
-                <div class="confirmation-value"><c:out value="${appointment.reason}"/></div>
+<!-- Main Content -->
+<main class="main-content">
+    <div class="container">
+        <div class="confirmation-container">
+            <div class="confirmation-header">
+                <div class="confirmation-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h1 class="confirmation-title"><spring:message code="appointment.confirmation.title"/></h1>
+                <p class="confirmation-subtitle"><spring:message code="appointment.confirmation.subtitle"/></p>
             </div>
 
-            <div class="confirmation-item">
-                <div class="confirmation-label"><spring:message code="appointment.selectedDoctor"/></div>
-                <div class="confirmation-value"><c:out value="${appointment.doctor.name} ${appointment.doctor.lastName}"/></div>
+            <div class="confirmation-body">
+                <!-- Appointment Details -->
+                <div class="confirmation-details">
+                    <div class="confirmation-item">
+                        <div class="confirmation-label"><spring:message code="appointment.form.reason"/></div>
+                        <div class="confirmation-value"><c:out value="${appointment.reason}"/></div>
+                    </div>
+
+                    <div class="confirmation-item">
+                        <div class="confirmation-label"><spring:message code="appointment.selectedDoctor"/></div>
+                        <div class="confirmation-value"><c:out value="${appointment.doctor.name} ${appointment.doctor.lastName}"/></div>
+                    </div>
+
+                    <div class="confirmation-item">
+                        <div class="confirmation-label"><spring:message code="appointment.form.specialty"/></div>
+                        <div class="confirmation-value"><spring:message code='${specialty.key}' /></div>
+                    </div>
+
+                    <div class="confirmation-item">
+                        <div class="confirmation-label"><spring:message code="appointment.form.date"/></div>
+                        <div class="confirmation-value">
+                            <div style="display: flex; align-items: center;">
+                                <div class="calendar-icon">
+                                    <div class="calendar-month">
+                                        ${appointment.date.month}
+                                    </div>
+                                    <div class="calendar-day">
+                                        ${appointment.date.dayOfMonth}
+                                    </div>
+                                </div>
+                                <span>${appointment.date.toLocalDate().toString()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="confirmation-item">
+                        <div class="confirmation-label"><spring:message code="appointment.form.time"/></div>
+                        <div class="confirmation-value">
+                            <div style="display: flex; align-items: center;">
+                                <i class="fas fa-clock" style="color: var(--primary-color); margin-right: 10px; font-size: 1.5rem;"></i>
+                                <span>${appointment.date.hour}:00hs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctor Information -->
+                <c:if test="${not empty appointment.doctor}">
+                    <div class="doctor-info">
+                        <div class="doctor-image">
+                            <img src="<c:url value='/doctor/${appointment.doctor.id}/image'/>" alt="<c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/> " class="doctor-avatar">
+                        </div>
+                        <div class="doctor-details">
+                            <h3 class="doctor-name"><c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/> </h3>
+                            <p class="doctor-specialty"><spring:message code="${specialty.key}" /></p>
+                            <div class="doctor-contact">
+                                <div class="contact-item">
+                                    <span class="contact-icon"><i class="fas fa-envelope"></i></span>
+                                    <span class="contact-text"><c:out value="${appointment.doctor.email}"/> </span>
+                                </div>
+                                <div class="contact-item">
+                                    <span class="contact-icon"><i class="fas fa-phone"></i></span>
+                                    <span class="contact-text"><c:out value="${appointment.doctor.phone}"/> </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+
+                <!-- QR Code for appointment -->
+                <div class="qr-code-container">
+                    <div class="qr-code">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AppointmentID:${appointment.id}" alt="Appointment QR Code">
+                    </div>
+                    <p class="qr-code-text"><spring:message code="appointment.confirmation.qrcode.info"/></p>
+                </div>
             </div>
 
-            <div class="confirmation-item">
-                <div class="confirmation-label"><spring:message code="appointment.form.specialty"/></div>
-                <div class="confirmation-value"><spring:message code='${specialty.key}' /></div>
-            </div>
-
-            <div class="confirmation-item">
-                <div class="confirmation-label"><spring:message code="appointment.form.date"/></div>
-                <div class="confirmation-value"><c:out value="${appointment.date.toLocalDate()}"/></div>
-            </div>
-
-            <div class="confirmation-item">
-                <div class="confirmation-label"><spring:message code="appointment.form.time"/></div>
-                <div class="confirmation-value"><c:out value="${appointment.date.toLocalTime()}"/></div>
+            <div class="confirmation-footer">
+                <a href="<c:url value="/patient/dashboard"/>" class="btn btn-primary">
+                    <i class="fas fa-home"></i> <spring:message code="appointment.confirmation.backToHome"/>
+                </a>
+                <a href="<c:url value="/patient/dashboard"/>" class="btn btn-outline">
+                    <i class="fas fa-calendar-alt"></i> <spring:message code="appointment.confirmation.viewAppointments"/>
+                </a>
+                <button onclick="window.print()" class="btn btn-success">
+                    <i class="fas fa-print"></i> <spring:message code="appointment.confirmation.print"/>
+                </button>
             </div>
         </div>
-
-        <c:if test="${not empty appointment.doctor}">
-            <comp:doctor-info doctor="${appointment.doctor}" />
-        </c:if>
     </div>
+</main>
 
-    <div class="card-footer">
-        <a href="<c:url value="/patient/dashboard"/>" class="btn btn-primary">
-            <spring:message code="appointment.confirmation.backToHome"/>
-        </a>
-    </div>
-</div>
-</layout:page>
+<script>
+    // Add some interactive elements
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to confirmation items
+        const items = document.querySelectorAll('.confirmation-item');
+        items.forEach((item, index) => {
+            item.style.animation = `fadeIn 0.5s ease forwards ${index * 0.1}s`;
+            item.style.opacity = '0';
+        });
+
+        // Add calendar animation
+        const calendar = document.querySelector('.calendar-icon');
+        if (calendar) {
+            calendar.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1)';
+            });
+            calendar.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        }
+
+        const fixedHeader = document.querySelector(".main-header");
+        const mainContent = document.querySelector(".main-content");
+
+        if (fixedHeader && mainContent) {
+            const adjustContentMargin = () => {
+                const headerHeight = fixedHeader.offsetHeight;
+                mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
+            };
+
+            // Adjust on page load
+            adjustContentMargin();
+
+            // Adjust on window resize
+            window.addEventListener("resize", adjustContentMargin);
+        }
+    });
+</script>
+</body>
+</html>
