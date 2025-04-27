@@ -7,6 +7,8 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 @Controller
 public class AuthController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
+
 
     private final DoctorService ds;
     private final CoverageService cs;
@@ -53,9 +58,13 @@ public class AuthController {
             return new ModelAndView("redirect:/");
         }
         if (errors.hasErrors()) {
+            LOGGER.debug("Errors found: {}", errors.getAllErrors());
             return doctorForm(form, authentication);
         }
         authService.registerDoctor(form);
+
+    LOGGER.debug("Registering doctor with email: {}", form.getEmail());
+
         return new ModelAndView("redirect:/doctor/dashboard");
     }
 
@@ -65,6 +74,7 @@ public class AuthController {
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             // remember‑me or fully authenticated ↦ bounce home
+            LOGGER.debug("Authenticated user tried to access login page. Logged user: {}", authentication.getName());
             return new ModelAndView("redirect:/");
         }
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
@@ -72,6 +82,7 @@ public class AuthController {
         ModelAndView mav = new ModelAndView("auth/register");
         mav.addObject("coverageList", coverageList);
         mav.addObject("specialtyList", specialtyList);
+        LOGGER.debug("Loading doctor registration form");
         return mav;
     }
 
@@ -82,6 +93,7 @@ public class AuthController {
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             // remember‑me or fully authenticated ↦ bounce home
+            LOGGER.debug("Authenticated user tried to access register page. Logged user: {}", authentication.getName());
             return new ModelAndView("redirect:/");
         }
         List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
@@ -99,9 +111,11 @@ public class AuthController {
             return new ModelAndView("redirect:/");
         }
         if(errors.hasErrors()) {
+            LOGGER.debug("Errors found: {}", errors.getAllErrors());
             return patientForm(patientForm, authentication);
         }
         authService.registerPatient(patientForm);
+        LOGGER.debug("Registering patient with email: {}", patientForm.getEmail());
         return new ModelAndView("redirect:/patient/dashboard");
     }
 
@@ -111,6 +125,7 @@ public class AuthController {
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             // remember‑me or fully authenticated ↦ bounce home
+            LOGGER.debug("Authenticated user tried to access login page. Logged user: {}", authentication.getName());
             return new ModelAndView("redirect:/");
         }
         return new ModelAndView("auth/login");
@@ -135,7 +150,6 @@ public class AuthController {
             }
         });
     }
-
 }
 
 

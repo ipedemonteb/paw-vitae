@@ -5,6 +5,8 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
@@ -22,6 +24,7 @@ import java.util.*;
 
 @Controller
 public class AppointmentController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
     private AppointmentService as;
     private PatientService ps;
@@ -47,6 +50,7 @@ public class AppointmentController {
     public ModelAndView handleMessagingException(MessagingException e) {
         ModelAndView mav = new ModelAndView("error");
         mav.addObject("message", "There was an error sending the confirmation email. Please try again later.");
+        LOGGER.debug("MessagingException occurred while sending confirmation email", e);
         return mav;
     }
 
@@ -73,6 +77,8 @@ public class AppointmentController {
         Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), specialtyId);
 
         redirectAttributes.addFlashAttribute("appointment", appointment);
+
+        LOGGER.debug("Appointment created successfully: AppointmentId={}, PatientId={}", appointment.getId(), patient.getId());
 
         return new ModelAndView("redirect:/appointment/confirmation");
     }
@@ -101,6 +107,15 @@ public class AppointmentController {
         doctor.ifPresent(d -> mav.addObject("doctor", d));
         Optional<Specialty> specialty = ss.getById(specialtyId);
         specialty.ifPresent(s -> mav.addObject("specialty", s));
+
+        LOGGER.debug("Loading appointment form for doctorId={} and specialtyId={}", doctorId, specialtyId);
+
+        if (!doctor.isPresent()) {
+            LOGGER.debug("Doctor with id {} not found", doctorId);
+        }
+        if (!specialty.isPresent()) {
+            LOGGER.debug("Specialty with id {} not found", specialtyId);
+        }
 
         return mav;
     }
