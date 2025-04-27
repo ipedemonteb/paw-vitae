@@ -37,6 +37,10 @@ body {
     background-color: var(--background-light);
 }
 
+.main-content {
+    margin-bottom: 100px;
+}
+
 .container {
     width: 100%;
     max-width: 1200px;
