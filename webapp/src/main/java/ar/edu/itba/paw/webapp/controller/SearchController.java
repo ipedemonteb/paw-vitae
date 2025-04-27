@@ -7,6 +7,8 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +34,6 @@ public class SearchController {
     }
 
 
-
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ModelAndView searchBySpecialty(
             @RequestParam("specialty") long specialty,
@@ -54,7 +55,6 @@ public class SearchController {
         mav.addObject("allSpecialties", allSpecialties);
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", doctorPage.getTotalPages());
-
         return mav;
     }
 }

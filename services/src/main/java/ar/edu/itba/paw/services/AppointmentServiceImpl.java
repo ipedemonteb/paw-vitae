@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,15 @@ public class AppointmentServiceImpl implements AppointmentService {
         this.mailService = mailService;
     }
 
+    @Scheduled(cron = "0 0 0 * * ?") // Todos los días a las 00:00
+    public void sendDailyReminders() {
+        LocalDate today = LocalDate.now();
+        List<Appointment> appointments = appointmentDao.getAppointmentsByDate(today);
+        for (Appointment appointment : appointments) {
+            mailService.sendReminderEmail(appointment);
+        }
+    }
+
     @Transactional
     @Override
     public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
@@ -37,6 +47,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
+
+        LOGGER.debug("New appointment created: {}", appointment);
 
         return appointment;
     }
@@ -61,14 +73,18 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Boolean cancelAppointment(long appointmentId,long userId) {
         Optional<Appointment> appt = getById(appointmentId);
         if (appt.isEmpty()) {
-            return false;}
+            LOGGER.debug("Appointment not found: {}", appointmentId);
+            return false;
+        }
 
         if (appt.get().getDoctor().getId() != userId && appt.get().getPatient().getId() != userId) {
+            LOGGER.debug("User {} is not authorized to cancel appointment {}", userId, appointmentId);
             return false;
         }
         appointmentDao.cancelAppointment(appointmentId);
         appt.get().setStatus(AppointmentStatus.CANCELADO.getValue());
         mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appt.get());
+        LOGGER.debug("Appointment cancelled: {}", appt.get());
         return true;
     }
 
@@ -76,14 +92,19 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Boolean acceptAppointment(long appointmentId,long userId) {
         Optional<Appointment> appt = getById(appointmentId);
-        if (appt.isEmpty()) return false;
+        if (appt.isEmpty()){
+            LOGGER.debug("Appointment not found: {}", appointmentId);
+            return false;
+        }
 
         if (appt.get().getDoctor().getId() != userId) {
+            LOGGER.debug("User {} is not authorized to accept appointment {}", userId, appointmentId);
             return false;
         }
         appointmentDao.acceptAppointment(appointmentId);
         appt.get().setStatus(AppointmentStatus.CONFIRMADO.getValue());
         mailService.sendAppointmentStatusEmail("email.acceptedAppointment", appt.get());
+        LOGGER.debug("Appointment accepted: {}", appt.get());
         return true;
     }
     @Override
