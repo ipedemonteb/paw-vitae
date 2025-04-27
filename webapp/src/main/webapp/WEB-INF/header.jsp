@@ -4,6 +4,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+<link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/favicon.png">
+
 <fmt:setLocale value="${pageContext.response.locale}" />
 <fmt:setBundle basename="messages" var="msg" />
 
