@@ -127,7 +127,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
         return new Appointment(
                 startDate,
-                AppointmentStatus.PENDIENTE.getValue(),
+                AppointmentStatus.CONFIRMADO.getValue(),
                 reason,
                 appointmentId.longValue(),
                 specialty,
