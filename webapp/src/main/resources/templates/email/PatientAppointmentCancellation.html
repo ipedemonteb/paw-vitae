@@ -61,7 +61,7 @@
         .button {
             display: inline-block;
             background-color: #2e7d32;
-            color: white;
+            color: white !important;
             text-decoration: none;
             padding: 12px 24px;
             border-radius: 4px;
@@ -78,6 +78,9 @@
             padding: 15px;
             margin: 20px 0;
             border-radius: 4px;
+        }
+        .text-center {
+            text-align: center;
         }
         @media only screen and (max-width: 600px) {
             .container {
@@ -109,6 +112,9 @@
             </ul>
         </div>
 
+        <div class="text-center">
+            <a href="http://pawserver.it.itba.edu.ar/paw-2025a-11/" class="button" th:text="#{patient.browse.other.doctors}"></a>
+        </div>
 
         <p th:text="#{patient.thanks}"></p>
 
