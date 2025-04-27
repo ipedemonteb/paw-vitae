@@ -108,7 +108,7 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendReminderEmail(String subject, Appointment appointment) {
+    public void sendReminderEmail(Appointment appointment) {
 
         Doctor doctor = appointment.getDoctor();
         Patient patient = appointment.getPatient();
@@ -117,7 +117,7 @@ public class MailServiceImpl implements MailService {
 
         Context patientContext = new Context(patientLocale);
 
-        String patientSubject = messageSource.getMessage(subject, null, patientLocale);
+        String patientSubject = messageSource.getMessage("email.reminder", null, patientLocale);
 
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("doctorName", doctor.getName() + " " + doctor.getLastName());

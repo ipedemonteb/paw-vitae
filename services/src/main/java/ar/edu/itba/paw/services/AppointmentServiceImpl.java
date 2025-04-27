@@ -35,7 +35,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         LocalDate today = LocalDate.now();
         List<Appointment> appointments = appointmentDao.getAppointmentsByDate(today);
         for (Appointment appointment : appointments) {
-            mailService.sendAppointmentStatusEmail("email.reminder", appointment);
+            mailService.sendReminderEmail(appointment);
         }
     }
 

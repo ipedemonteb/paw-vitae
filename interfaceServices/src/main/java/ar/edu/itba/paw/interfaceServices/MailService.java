@@ -8,5 +8,5 @@ public interface MailService {
     public void sendAppointmentStatusEmail(String subject, Appointment appointment);
 
     @Async
-    void sendReminderEmail(String subject, Appointment appointment);
+    void sendReminderEmail(Appointment appointment);
 }
