@@ -64,11 +64,12 @@ public class AppointmentController {
             @RequestParam(required = true) Long doctorId,
             RedirectAttributes redirectAttributes
     ) {
-        Patient patient = loggedUser();
 
         if (errors.hasErrors()) {
-            return appointment(appointmentForm, errors, specialtyId, doctorId, redirectAttributes);
+            return appointment(appointmentForm, doctorId, specialtyId);
         }
+
+        Patient patient = loggedUser();
 
         Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), specialtyId);
 

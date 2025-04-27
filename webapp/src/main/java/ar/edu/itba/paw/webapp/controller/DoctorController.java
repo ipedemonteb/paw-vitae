@@ -69,13 +69,6 @@ public class DoctorController {
         });
     }
 
-    @RequestMapping(value = "/{id:\\d+}", method = {RequestMethod.GET})
-    public ModelAndView getUser(@PathVariable("id") long id) {
-        final ModelAndView mav = new ModelAndView("doctor/doctor");
-        mav.addObject("doctor", ds.getById(id).orElseThrow(UserNotFoundException::new));
-        return mav;
-    }
-
 
     @RequestMapping(value = "/doctor/dashboard")
     public ModelAndView getDoctorDashboard() {

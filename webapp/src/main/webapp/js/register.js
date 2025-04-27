@@ -659,7 +659,7 @@ function validatePasswordRequirements(password) {
         const passwordField = document.getElementById("password")
         if (!passwordField) return false
 
-        const passwordContainer = passwordField.parentElement
+        const passwordContainer = document.getElementById("pass-validations")
         if (!passwordContainer) return false
 
         requirementsList = document.createElement("ul")

@@ -2,58 +2,69 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/components" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><spring:message code="landing.page.title" /></title>
+    <link rel="stylesheet" href="<c:url value='/css/landing.css' />" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<link rel="stylesheet" href="<c:url value='/css/landing.css' />" />
-
-<layout:page title="landing.page.title" container="false">
-    <!-- Hero Section with Search -->
+<main>
+    <!-- Hero Section -->
     <section class="hero-section">
-        <div class="hero-container">
+        <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title-landing"><spring:message code="landing.hero.title" /></h1>
-                <p class="hero-subtitle-landing"><spring:message code="landing.hero.subtitle" /></p>
+                <h1 class="hero-title"><spring:message code="landing.hero.title" /></h1>
+                <p class="hero-subtitle"><spring:message code="landing.hero.subtitle" /></p>
 
-                <!-- Search Bar -->
-                <!-- Search Bar -->
                 <sec:authorize access="!hasRole('ROLE_DOCTOR')">
-                <div class="search-container">
-                    <form action="<c:url value='/search' />" method="get" class="search-form" id="searchForm">
-                        <div class="search-bar">
-                                <%--                            <div class="search-input-wrapper">--%>
-                                <%--                                <span class="search-icon"></span>--%>
-                                <%--                                <input--%>
-                                <%--                                        type="text"--%>
-                                <%--                                        name="query"--%>
-                                <%--                                        id="doctorSearch"--%>
-                                <%--                                        class="search-input"--%>
-                                <%--                                        placeholder="<spring:message code="landing.search.placeholder" />"--%>
-                                <%--                                        autocomplete="off"--%>
-                                <%--                                />--%>
-                                <%--                                <!-- Autocomplete suggestions container -->--%>
-                                <%--                                <div id="suggestions-container" class="suggestions-container"></div>--%>
-                                <%--                            </div>--%>
-
-                            <div class="specialty-dropdown-wrapper">
-                                <select name="specialty" class="specialty-dropdown" id="specialtyDropdown">
-<%--                                    <option value=""><spring:message code="landing.search.allSpecialties" /></option>--%>
-                                    <c:forEach items="${specialties}" var="specialty">
-                                        <option value="${specialty.id}"><spring:message code="${specialty.key}" /></option>
-                                    </c:forEach>
-                                </select>
+                    <div class="search-container">
+                        <form action="<c:url value='/search' />" method="get" class="search-form" id="searchForm">
+                            <div class="search-bar">
+                                <div class="specialty-select-wrapper">
+                                    <i class="fas fa-stethoscope"></i>
+                                    <select name="specialty" class="specialty-select" id="specialtyDropdown">
+                                        <c:forEach items="${specialties}" var="specialty">
+                                            <option value="${specialty.id}"><spring:message code="${specialty.key}" /></option>
+                                        </c:forEach>
+                                    </select>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <button type="submit" class="search-button" id="searchButton">
+                                    <i class="fas fa-search"></i>
+                                    <span><spring:message code="landing.search.button" /></span>
+                                </button>
                             </div>
-
-                            <button type="submit" class="search-button" id="searchButton">
-                                <span class="search-button-text"><spring:message code="landing.search.button" /></span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
                 </sec:authorize>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number"><spring:message code="landing.stats.doctors.number" /></span>
+                        <span class="stat-label"><spring:message code="landing.stats.doctors.label" /></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number"><spring:message code="landing.stats.patients.number" /></span>
+                        <span class="stat-label"><spring:message code="landing.stats.patients.label" /></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number"><spring:message code="landing.stats.rating.number" /></span>
+                        <span class="stat-label"><spring:message code="landing.stats.rating.label" /></span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <%--            <img src="<c:url value='/images/doctor-hero.png' />" alt="<spring:message code="landing.hero.image.alt" />" />--%>
             </div>
         </div>
     </section>
@@ -62,27 +73,34 @@
     <section class="mission-section">
         <div class="container">
             <div class="section-header">
+                <span class="section-tag"><spring:message code="landing.mission.tag" /></span>
                 <h2 class="section-title"><spring:message code="landing.mission.title" /></h2>
                 <p class="section-subtitle"><spring:message code="landing.mission.subtitle" /></p>
             </div>
 
-            <div class="mission-grid">
+            <div class="mission-cards">
                 <div class="mission-card">
-                    <div class="mission-icon accessibility-icon"></div>
-                    <h3 class="mission-card-title"><spring:message code="landing.mission.accessibility.title" /></h3>
-                    <p class="mission-card-text"><spring:message code="landing.mission.accessibility.text" /></p>
+                    <div class="card-icon">
+                        <i class="fas fa-universal-access"></i>
+                    </div>
+                    <h3><spring:message code="landing.mission.accessibility.title" /></h3>
+                    <p><spring:message code="landing.mission.accessibility.text" /></p>
                 </div>
 
                 <div class="mission-card">
-                    <div class="mission-icon quality-icon"></div>
-                    <h3 class="mission-card-title"><spring:message code="landing.mission.quality.title" /></h3>
-                    <p class="mission-card-text"><spring:message code="landing.mission.quality.text" /></p>
+                    <div class="card-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3><spring:message code="landing.mission.quality.title" /></h3>
+                    <p><spring:message code="landing.mission.quality.text" /></p>
                 </div>
 
                 <div class="mission-card">
-                    <div class="mission-icon innovation-icon"></div>
-                    <h3 class="mission-card-title"><spring:message code="landing.mission.innovation.title" /></h3>
-                    <p class="mission-card-text"><spring:message code="landing.mission.innovation.text" /></p>
+                    <div class="card-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3><spring:message code="landing.mission.innovation.title" /></h3>
+                    <p><spring:message code="landing.mission.innovation.text" /></p>
                 </div>
             </div>
         </div>
@@ -92,43 +110,51 @@
     <section class="how-it-works-section">
         <div class="container">
             <div class="section-header">
+                <span class="section-tag"><spring:message code="landing.howItWorks.tag" /></span>
                 <h2 class="section-title"><spring:message code="landing.howItWorks.title" /></h2>
                 <p class="section-subtitle"><spring:message code="landing.howItWorks.subtitle" /></p>
             </div>
 
             <div class="steps-container">
-                <div class="step-item">
+                <div class="step">
                     <div class="step-number">1</div>
-                    <div class="step-icon step-1 search-step-icon"></div>
-                    <h3 class="step-title"><spring:message code="landing.howItWorks.step1.title" /></h3>
-                    <p class="step-text"><spring:message code="landing.howItWorks.step1.text" /></p>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3><spring:message code="landing.howItWorks.step1.title" /></h3>
+                        <p><spring:message code="landing.howItWorks.step1.text" /></p>
+                    </div>
                 </div>
 
-                <div class="step-connector"></div>
-
-                <div class="step-item">
+                <div class="step">
                     <div class="step-number">2</div>
-                    <div class="step-icon step-2 calendar-step-icon"></div>
-                    <h3 class="step-title"><spring:message code="landing.howItWorks.step2.title" /></h3>
-                    <p class="step-text"><spring:message code="landing.howItWorks.step2.text" /></p>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3><spring:message code="landing.howItWorks.step2.title" /></h3>
+                        <p><spring:message code="landing.howItWorks.step2.text" /></p>
+                    </div>
                 </div>
 
-                <div class="step-connector"></div>
-
-                <div class="step-item">
+                <div class="step">
                     <div class="step-number">3</div>
-                    <div class="step-icon step-3 visit-step-icon"></div>
-                    <h3 class="step-title"><spring:message code="landing.howItWorks.step3.title" /></h3>
-                    <p class="step-text"><spring:message code="landing.howItWorks.step3.text" /></p>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <h3><spring:message code="landing.howItWorks.step3.title" /></h3>
+                        <p><spring:message code="landing.howItWorks.step3.text" /></p>
+                    </div>
                 </div>
             </div>
 
-<%--            <div class="cta-container">--%>
-<%--                <a href="<c:url value='/register' />" class="cta-button">--%>
-<%--                    <spring:message code="landing.cta.button" />--%>
-<%--                </a>--%>
-<%--                <p class="cta-subtext"><spring:message code="landing.cta.subtext" /></p>--%>
-<%--            </div>--%>
+            <div class="cta-container">
+                <a href="<c:url value='/register' />" class="btn btn-primary btn-large">
+                    <spring:message code="landing.cta.button" />
+                </a>
+            </div>
         </div>
     </section>
 
@@ -136,42 +162,240 @@
     <section class="features-section">
         <div class="container">
             <div class="section-header">
+                <span class="section-tag"><spring:message code="landing.features.tag" /></span>
                 <h2 class="section-title"><spring:message code="landing.features.title" /></h2>
                 <p class="section-subtitle"><spring:message code="landing.features.subtitle" /></p>
             </div>
 
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon verified-icon"></div>
-                    <h3 class="feature-title"><spring:message code="landing.features.verified.title" /></h3>
-                    <p class="feature-text"><spring:message code="landing.features.verified.text" /></p>
+                    <div class="feature-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3><spring:message code="landing.features.verified.title" /></h3>
+                    <p><spring:message code="landing.features.verified.text" /></p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon secure-icon"></div>
-                    <h3 class="feature-title"><spring:message code="landing.features.secure.title" /></h3>
-                    <p class="feature-text"><spring:message code="landing.features.secure.text" /></p>
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3><spring:message code="landing.features.secure.title" /></h3>
+                    <p><spring:message code="landing.features.secure.text" /></p>
                 </div>
 
                 <div class="feature-card">
-                    <div class="feature-icon easy-icon"></div>
-                    <h3 class="feature-title"><spring:message code="landing.features.easy.title" /></h3>
-                    <p class="feature-text"><spring:message code="landing.features.easy.text" /></p>
+                    <div class="feature-icon">
+                        <i class="fas fa-hand-pointer"></i>
+                    </div>
+                    <h3><spring:message code="landing.features.easy.title" /></h3>
+                    <p><spring:message code="landing.features.easy.text" /></p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3><spring:message code="landing.features.communication.title" /></h3>
+                    <p><spring:message code="landing.features.communication.text" /></p>
                 </div>
             </div>
         </div>
     </section>
 
-    <comp:site-footer />
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag"><spring:message code="landing.testimonials.tag" /></span>
+                <h2 class="section-title"><spring:message code="landing.testimonials.title" /></h2>
+                <p class="section-subtitle"><spring:message code="landing.testimonials.subtitle" /></p>
+            </div>
 
-    <!-- Inline script for autocomplete functionality -->
-    <script src="<c:url value='/js/autocomplete.js'/>"></script>
-    <script>
-        contextPath = "${pageContext.request.contextPath}";
-        doctorNames = [
-            <c:forEach items="${doctors}" var="doctor" varStatus="status">
-                "${fn:escapeXml(doctor.name)} ${fn:escapeXml(doctor.lastName)}"<c:if test="${!status.last}">,</c:if>
-            </c:forEach>
-        ]
-    </script>
-</layout:page>
+            <div class="testimonials-slider">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                        <p class="testimonial-text"><spring:message code="landing.testimonials.1.text" /></p>
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <%--                        <img src="<c:url value='/images/avatar-1.jpg' />" alt="<spring:message code="landing.testimonials.1.name" />" />--%>
+                        </div>
+                        <div class="author-info">
+                            <h4 class="author-name"><spring:message code="landing.testimonials.1.name" /></h4>
+                            <p class="author-title"><spring:message code="landing.testimonials.1.title" /></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                        <p class="testimonial-text"><spring:message code="landing.testimonials.2.text" /></p>
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <%--                        <img src="<c:url value='/images/avatar-2.jpg' />" alt="<spring:message code="landing.testimonials.2.name" />" />--%>
+                        </div>
+                        <div class="author-info">
+                            <h4 class="author-name"><spring:message code="landing.testimonials.2.name" /></h4>
+                            <p class="author-title"><spring:message code="landing.testimonials.2.title" /></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-controls">
+                <button class="testimonial-prev"><i class="fas fa-arrow-left"></i></button>
+                <button class="testimonial-next"><i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <h2><spring:message code="app.name" /></h2>
+                    </div>
+                    <p class="footer-description"><spring:message code="footer.description" /></p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-heading"><spring:message code="footer.quickLinks" /></h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><spring:message code="footer.links.home" /></a></li>
+                        <li><a href="#"><spring:message code="footer.links.about" /></a></li>
+                        <li><a href="#"><spring:message code="footer.links.services" /></a></li>
+                        <li><a href="#"><spring:message code="footer.links.doctors" /></a></li>
+                        <li><a href="#"><spring:message code="footer.links.contact" /></a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-heading"><spring:message code="footer.services" /></h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><spring:message code="footer.services.appointments" /></a></li>
+                        <li><a href="#"><spring:message code="footer.services.consultations" /></a></li>
+                        <li><a href="#"><spring:message code="footer.services.emergency" /></a></li>
+                        <li><a href="#"><spring:message code="footer.services.diagnostics" /></a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-heading"><spring:message code="footer.contact" /></h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> <spring:message code="footer.contact.address" /></li>
+                        <li><i class="fas fa-phone"></i> <spring:message code="footer.contact.phone" /></li>
+                        <li><i class="fas fa-envelope"></i> <spring:message code="footer.contact.email" /></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="copyright"><spring:message code="footer.copyright" arguments="2025" /></p>
+                <div class="footer-bottom-links">
+                    <a href="#"><spring:message code="footer.privacy" /></a>
+                    <a href="#"><spring:message code="footer.terms" /></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+</main>
+
+<!-- Scripts -->
+<script src="<c:url value='/js/autocomplete.js'/>"></script>
+<script>
+    contextPath = "${pageContext.request.contextPath}";
+    doctorNames = [
+        <c:forEach items="${doctors}" var="doctor" varStatus="status">
+        "${fn:escapeXml(doctor.name)} ${fn:escapeXml(doctor.lastName)}"<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    ]
+
+
+
+    // Mobile menu toggle
+    document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+        document.querySelector('.main-nav').classList.toggle('active');
+        this.classList.toggle('active');
+    });
+
+    // Back to top button
+    const backToTopButton = document.getElementById('backToTop');
+
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            backToTopButton.classList.add('show');
+        } else {
+            backToTopButton.classList.remove('show');
+        }
+    });
+
+    backToTopButton.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // Testimonial slider controls
+    const prevButton = document.querySelector('.testimonial-prev');
+    const nextButton = document.querySelector('.testimonial-next');
+    const testimonials = document.querySelectorAll('.testimonial-card');
+    let currentTestimonial = 0;
+
+    function showTestimonial(index) {
+        testimonials.forEach((testimonial, i) => {
+            testimonial.style.display = i === index ? 'flex' : 'none';
+        });
+    }
+
+    prevButton.addEventListener('click', () => {
+        currentTestimonial = (currentTestimonial - 1 + testimonials.length) % testimonials.length;
+        showTestimonial(currentTestimonial);
+    });
+
+    nextButton.addEventListener('click', () => {
+        currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+        showTestimonial(currentTestimonial);
+    });
+
+    // Initialize testimonial display
+    showTestimonial(currentTestimonial);
+
+    // Set current year for copyright
+    document.addEventListener('DOMContentLoaded', function() {
+        window.currentYear = new Date().getFullYear();
+    });
+</script>
+</body>
+</html>
