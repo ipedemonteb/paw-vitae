@@ -74,7 +74,7 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Optional<Patient> getByIdWithAppointments(long id) {
         Optional<Patient> patient = patientDao.getById(id);
-        patient.ifPresent(c -> c.setAppointments(as.getByPatientId(id).orElse(Collections.emptyList())));
+        patient.ifPresent(c -> c.setAppointments(as.getByPatientId(id)));
         return patient;
     }
 }

@@ -98,8 +98,8 @@ public class DoctorController {
         Doctor doctor = loggedUser();
         updateDoctorForm.setForm(doctor);
         mav.addObject("doctor", doctor);
-        mav.addObject("coverageList", cs.getAll().orElse(new ArrayList<>()) );
-        mav.addObject("specialtyList", ss.getAll().orElse(new ArrayList<>()) );
+        mav.addObject("coverageList", cs.getAll());
+        mav.addObject("specialtyList", ss.getAll());
         mav.addObject("activeTab", "profile");
         mav.addObject("display","none");
         return mav;

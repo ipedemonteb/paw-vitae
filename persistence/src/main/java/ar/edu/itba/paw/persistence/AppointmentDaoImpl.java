@@ -67,6 +67,26 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
 
+    private static final String BASE_SQL = "SELECT a.id, a.date, a.status, a.reason, " +
+            "s.id AS specialty_id, s.key AS specialty_key, " +
+            "d.doctor_id, d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+            "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
+            "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
+            "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
+            "c.id AS coverage_id, c.coverage_name " +
+            "FROM Appointments a " +
+            "JOIN Specialties s ON a.specialty_id = s.id " +
+            "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
+            "JOIN Users u ON d.doctor_id = u.id " +
+            "JOIN Clients p ON a.client_id = p.client_id " +
+            "JOIN Users pu ON p.client_id = pu.id " +
+            "LEFT JOIN Coverages c ON p.coverage_id = c.id ";
+
+    private static final String ORDER_BY_DATE_ASC = "ORDER BY a.date ASC ";
+    private static final String ORDER_BY_DATE_DESC = "ORDER BY a.date DESC ";
+
+
+
 
     @Override
     public Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty) {
@@ -130,26 +150,12 @@ public class AppointmentDaoImpl implements AppointmentDao {
 //    }
 
     @Override
-    public Optional<List<Appointment>> getByPatientId(long patientId) {
-        String sql = "SELECT a.id, a.date, a.status, a.reason, " +
-                "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
-                "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
-                "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
-                "c.id AS coverage_id, c.coverage_name " +
-                "FROM Appointments a " +
-                "JOIN Specialties s ON a.specialty_id = s.id " +
-                "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
-                "JOIN Users u ON d.doctor_id = u.id " +
-                "JOIN Clients p ON a.client_id = p.client_id " +
-                "JOIN Users pu ON p.client_id = pu.id " +
-                "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
+    public List<Appointment> getByPatientId(long patientId) {
+        String sql = BASE_SQL +
                 "WHERE a.client_id = ? " +
-                "ORDER BY a.date";
+                ORDER_BY_DATE_ASC;
 
-        List<Appointment> appointments = jdbcTemplate.query(sql, ROW_MAPPER, patientId);
-        return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
+        return jdbcTemplate.query(sql, ROW_MAPPER, patientId);
     }
 
 //    @Override
@@ -160,37 +166,16 @@ public class AppointmentDaoImpl implements AppointmentDao {
 //    }
 
     @Override
-    public Optional<List<Appointment>> getByDoctorId(long doctorId) {
+    public List<Appointment> getByDoctorId(long doctorId) {
         LocalDate today = LocalDate.now();
         LocalDate endOfNextMonth = today.plusMonths(1).withDayOfMonth(today.plusMonths(1).lengthOfMonth()).plusDays(1);
-        String sql = "SELECT a.id, a.date, a.status, a.reason, " +
-                "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
-                "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
-                "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
-                "c.id AS coverage_id, c.coverage_name " +
-                "FROM Appointments a " +
-                "JOIN Specialties s ON a.specialty_id = s.id " +
-                "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
-                "JOIN Users u ON d.doctor_id = u.id " +
-                "JOIN Clients p ON a.client_id = p.client_id " +
-                "JOIN Users pu ON p.client_id = pu.id " +
-                "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
+        String sql = BASE_SQL +
                 "WHERE a.doctor_id = ? " +
                 "AND a.status != 'cancelado' " +
                 "AND a.date BETWEEN ? AND ? " +
-                "ORDER BY a.date";
+                ORDER_BY_DATE_ASC;
 
-        List<Appointment> appointments = jdbcTemplate.query(
-                sql,
-                ROW_MAPPER,
-                doctorId,
-                today,
-                endOfNextMonth
-        );
-
-        return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
+        return jdbcTemplate.query(sql, ROW_MAPPER, doctorId, today, endOfNextMonth);
     }
 
 
@@ -203,147 +188,64 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public void acceptAppointment(long appointmentId) {
         jdbcTemplate.update("UPDATE Appointments SET status = ? WHERE id = ?", AppointmentStatus.CONFIRMADO.getValue(), appointmentId);
     }
-//    @Override
-//    public Optional<Appointment> getById(long appointmentId) {
-//        return jdbcTemplate.query("SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id  WHERE Appointments.id = ?", ROW_MAPPER, appointmentId).stream().findFirst();
-//    }
+
 
     @Override
     public Optional<Appointment> getById(long appointmentId) {
-        String sql = "SELECT a.id, a.date, a.status, a.reason, " +
-                "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
-                "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
-                "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
-                "c.id AS coverage_id, c.coverage_name " +
-                "FROM Appointments a " +
-                "JOIN Specialties s ON a.specialty_id = s.id " +
-                "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
-                "JOIN Users u ON d.doctor_id = u.id " +
-                "JOIN Clients p ON a.client_id = p.client_id " +
-                "JOIN Users pu ON p.client_id = pu.id " +
-                "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
+        String sql = BASE_SQL +
                 "WHERE a.id = ?";
 
         return jdbcTemplate.query(sql, ROW_MAPPER, appointmentId).stream().findFirst();
     }
 
 
+
+
     @Override
-    public Optional<List<Appointment>> getPastDoctorAppointments(long doctorId, int page, int size) {
-        String sql = "SELECT a.id, a.date, a.status, a.reason, " +
-                "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
-                "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
-                "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
-                "c.id AS coverage_id, c.coverage_name " +
-                "FROM Appointments a " +
-                "JOIN Specialties s ON a.specialty_id = s.id " +
-                "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
-                "JOIN Users u ON d.doctor_id = u.id " +
-                "JOIN Clients p ON a.client_id = p.client_id " +
-                "JOIN Users pu ON p.client_id = pu.id " +
-                "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
+    public List<Appointment> getPastDoctorAppointments(long doctorId, int page, int size) {
+        String sql = BASE_SQL +
                 "WHERE a.doctor_id = ? AND (a.date < NOW() OR a.status = 'cancelado') " +
-                "ORDER BY a.date DESC " +
+                ORDER_BY_DATE_DESC +
                 "LIMIT ? OFFSET ?";
 
-        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, doctorId, size, (page-1) * size);
-        return apps.isEmpty() ? Optional.empty() : Optional.of(apps);
+        return jdbcTemplate.query(sql, ROW_MAPPER, doctorId, size, (page - 1) * size);
     }
 
     @Override
-    public Optional<List<Appointment>> getFutureDoctorAppointments(long doctorId, int page, int size) {
-        String sql = "SELECT a.id, a.date, a.status, a.reason, " +
-                "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
-                "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
-                "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
-                "c.id AS coverage_id, c.coverage_name " +
-                "FROM Appointments a " +
-                "JOIN Specialties s ON a.specialty_id = s.id " +
-                "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
-                "JOIN Users u ON d.doctor_id = u.id " +
-                "JOIN Clients p ON a.client_id = p.client_id " +
-                "JOIN Users pu ON p.client_id = pu.id " +
-                "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
+    public List<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size) {
+        String sql = BASE_SQL +
                 "WHERE a.doctor_id = ? AND a.date > NOW() AND a.status <> 'cancelado' " +
-                "ORDER BY a.date ASC " +
+                ORDER_BY_DATE_ASC +
                 "LIMIT ? OFFSET ?";
 
-        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, doctorId, size, (page-1) * size);
-        return apps.isEmpty() ? Optional.empty() : Optional.of(apps);
+        return jdbcTemplate.query(sql, ROW_MAPPER, doctorId, size, (page - 1) * size);
     }
 
     @Override
-    public Optional<List<Appointment>> getFuturePatientAppointments(long patientId, int page, int size) {
-        String sql = "SELECT a.id, a.date, a.status, a.reason, " +
-                "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
-                "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
-                "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
-                "c.id AS coverage_id, c.coverage_name " +
-                "FROM Appointments a " +
-                "JOIN Specialties s ON a.specialty_id = s.id " +
-                "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
-                "JOIN Users u ON d.doctor_id = u.id " +
-                "JOIN Clients p ON a.client_id = p.client_id " +
-                "JOIN Users pu ON p.client_id = pu.id " +
-                "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
+    public List<Appointment> getFuturePatientAppointments(long patientId, int page, int size) {
+        String sql = BASE_SQL +
                 "WHERE a.client_id = ? AND a.date > NOW() AND a.status <> 'cancelado' " +
-                "ORDER BY a.date ASC " +
+                ORDER_BY_DATE_ASC +
                 "LIMIT ? OFFSET ?";
 
-        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, patientId, size, (page-1) * size);
-        return apps.isEmpty() ? Optional.empty() : Optional.of(apps);
+        return jdbcTemplate.query(sql, ROW_MAPPER, patientId, size, (page - 1) * size);
     }
 
     @Override
-    public Optional<List<Appointment>> getPastPatientAppointments(long patientId, int page, int size) {
-        String sql = "SELECT a.id, a.date, a.status, a.reason, " +
-                "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
-                "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
-                "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
-                "c.id AS coverage_id, c.coverage_name " +
-                "FROM Appointments a " +
-                "JOIN Specialties s ON a.specialty_id = s.id " +
-                "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
-                "JOIN Users u ON d.doctor_id = u.id " +
-                "JOIN Clients p ON a.client_id = p.client_id " +
-                "JOIN Users pu ON p.client_id = pu.id " +
-                "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
+    public List<Appointment> getPastPatientAppointments(long patientId, int page, int size) {
+        String sql = BASE_SQL +
                 "WHERE a.client_id = ? AND (a.date < NOW() OR a.status = 'cancelado') " +
-                "ORDER BY a.date DESC " +
+                ORDER_BY_DATE_DESC +
                 "LIMIT ? OFFSET ?";
 
-        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, patientId, size, (page-1) * size);
-        return apps.isEmpty() ? Optional.empty() : Optional.of(apps);
+        return jdbcTemplate.query(sql, ROW_MAPPER, patientId, size, (page - 1) * size);
     }
 
     @Override
     public List<Appointment> getAppointmentsByDate(LocalDate today) {
-        String sql = "SELECT a.id, a.date, a.status, a.reason, " +
-                "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
-                "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
-                "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
-                "c.id AS coverage_id, c.coverage_name " +
-                "FROM Appointments a " +
-                "JOIN Specialties s ON a.specialty_id = s.id " +
-                "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
-                "JOIN Users u ON d.doctor_id = u.id " +
-                "JOIN Clients p ON a.client_id = p.client_id " +
-                "JOIN Users pu ON p.client_id = pu.id " +
-                "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
+        String sql = BASE_SQL +
                 "WHERE DATE(a.date) = ? " +
-                "ORDER BY a.date";
+                ORDER_BY_DATE_ASC;
 
         return jdbcTemplate.query(sql, ROW_MAPPER, today);
     }

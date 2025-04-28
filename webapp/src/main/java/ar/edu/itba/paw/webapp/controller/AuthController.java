@@ -75,8 +75,8 @@ public class AuthController {
             // remember‑me or fully authenticated ↦ bounce home
             return new ModelAndView("redirect:/");
         }
-        List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
-        List<Specialty> specialtyList = ss.getAll().orElse(new ArrayList<>());
+        List<Coverage> coverageList = cs.getAll();
+        List<Specialty> specialtyList = ss.getAll();
         ModelAndView mav = new ModelAndView("auth/register");
         mav.addObject("coverageList", coverageList);
         mav.addObject("specialtyList", specialtyList);
@@ -92,7 +92,7 @@ public class AuthController {
             // remember‑me or fully authenticated ↦ bounce home
             return new ModelAndView("redirect:/");
         }
-        List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
+        List<Coverage> coverageList = cs.getAll();
         ModelAndView mav = new ModelAndView("auth/register-patient");
         mav.addObject("coverageList", coverageList);
         return mav;
