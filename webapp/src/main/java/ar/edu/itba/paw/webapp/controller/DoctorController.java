@@ -55,26 +55,6 @@ public class DoctorController {
         this.cs = cs;
         this.ss = ss;
     }
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) throws IllegalArgumentException {
-                try {
-                    setValue(LocalTime.parse(text, DateTimeFormatter.ofPattern("HH:mm")));
-                } catch (DateTimeParseException e) {
-                    throw new IllegalArgumentException("Invalid time format. Expected HH:mm", e);
-                }
-            }
-            @Override
-            public String getAsText() {
-                LocalTime value = (LocalTime) getValue();
-                return (value != null ? value.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
-            }
-        });
-    }
-
-
     @RequestMapping(value = "/doctor/dashboard")
     public ModelAndView getDoctorDashboard() {
         return new ModelAndView("redirect:/doctor/dashboard/upcoming");
