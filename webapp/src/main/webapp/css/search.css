@@ -85,6 +85,16 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+.coverage-tag {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 0.25rem 0.6rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
 .container {
     width: 100%;
     max-width: 1280px;

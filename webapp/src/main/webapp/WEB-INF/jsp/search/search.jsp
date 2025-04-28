@@ -173,6 +173,14 @@
                   <div class="doctor-specialty">
                     <i class="fas fa-stethoscope"></i> <c:out value="${specialtyName}"/>
                   </div>
+                  <div class="doctor-specialty">
+                    <i class="fas fa-shield-alt"></i>
+                    <c:forEach var="covrg" items="${doctor.coverageList}">
+                      <span class="coverage-tag">
+                            <c:out value="${covrg.name}"/>
+                        </span>
+                    </c:forEach>
+                  </div>
                   <div class="doctor-info">
                     <div class="info-item">
                       <i class="fas fa-envelope"></i>
