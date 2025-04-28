@@ -71,6 +71,19 @@
           </div>
         </div>
 
+        <div class="filter-group">
+          <label for="orderBy" class="filter-label"><i class="fas fa-sort"></i> <spring:message code="search.order" /></label>
+          <div class="select-container">
+            <select id="orderBy" class="filter-select" onchange="changeOrder(this.value)">
+              <option value="name" ${param.orderBy == "name" ? 'selected' : ''}><spring:message code="search.sort.name" /></option>
+              <option value="last_name" ${param.orderBy == "last_name" ? 'selected' : ''}><spring:message code="search.sort.last_name" /></option>
+              <option value="email" ${param.orderBy == "email" ? 'selected' : ''}><spring:message code="search.sort.email" /></option>
+              <option value="rating" ${param.orderBy == "rating" ? 'selected' : ''}><spring:message code="search.sort.rating" /></option>
+            <%--              <option value="location" ${param.direction == "desc" ? 'selected' : ''}><spring:message code="search.sort.name_desc" /></option>--%>
+            </select>
+          </div>
+        </div>
+
         <!-- Sort Filter -->
         <div class="filter-group">
           <label for="sortSelect" class="filter-label"><i class="fas fa-sort"></i> <spring:message code="search.sort" /></label>
@@ -258,6 +271,11 @@
     applyFilters();
   }
 
+  function changeOrder(order) {
+    currentFilters.orderBy = order;
+    applyFilters();
+  }
+
 
   function viewDoctorProfile(doctorId) {
     window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;
@@ -300,8 +318,8 @@
     // Build URL with all parameters
     let url = `${pageContext.request.contextPath}/search?specialty=` + currentFilters.specialty + `&page=` + currentFilters.page;
     currentFilters.coverage != 0 ? url +=  `&coverage=` + currentFilters.coverage : url += ``;
-    currentFilters.orderBy != null ? url += `&orderBy=` + currentFilters.orderBy : url += ``;
-    currentFilters.direction !=null ? url += `&direction=` + currentFilters.direction : url += ``;
+    currentFilters.orderBy != '' ? url += `&orderBy=` + currentFilters.orderBy : url += ``;
+    currentFilters.direction != '' ? url += `&direction=` + currentFilters.direction : url += ``;
 
     // Add weekdays if any selected
     currentFilters.weekdays.forEach(day => {
