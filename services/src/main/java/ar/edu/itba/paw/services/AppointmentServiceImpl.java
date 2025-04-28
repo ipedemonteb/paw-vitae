@@ -63,10 +63,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentDao.getByDoctorId(doctorId);
     }
 
-    @Override
-    public Optional<List<Appointment>> getAllFutureAppointments(long doctorId) {
-        return appointmentDao.getAllFutureAppointments(Collections.singletonList(doctorId));
-    }
+
 
     @Transactional
     @Override
@@ -114,19 +111,23 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 
     @Override
-    public List<Appointment> getPastDoctorAppointments(long doctorId) {
-        return appointmentDao.getPastDoctorAppointments(doctorId).orElse(new ArrayList<>());
+    public Page<Appointment> getPastDoctorAppointments(long doctorId, int page, int size) {
+        List<Appointment> appointments = appointmentDao.getPastDoctorAppointments(doctorId, page, size).orElse(new ArrayList<>());
+        return new Page<>(appointments, page, size, appointmentDao.countPastDoctorAppointments(doctorId));
     }
     @Override
-    public List<Appointment> getFutureDoctorAppointments(long doctorId) {
-        return appointmentDao.getFutureDoctorAppointments(doctorId).orElse(new ArrayList<>());
+    public Page<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size) {
+        List<Appointment> appointments = appointmentDao.getFutureDoctorAppointments(doctorId, page, size).orElse(new ArrayList<>());
+        return new Page<>(appointments, page, size, appointmentDao.countFutureDoctorAppointments(doctorId));
     }
     @Override
-    public List<Appointment> getFuturePatientAppointments(long patientId) {
-        return appointmentDao.getFuturePatientAppointments(patientId).orElse(new ArrayList<>());
+    public Page<Appointment> getFuturePatientAppointments(long patientId, int page, int size) {
+        List<Appointment> appointments = appointmentDao.getFuturePatientAppointments(patientId, page, size).orElse(new ArrayList<>());
+        return new Page<>(appointments, page, size, appointmentDao.countFuturePatientAppointments(patientId));
     }
     @Override
-    public List<Appointment> getPastPatientAppointments(long patientId) {
-        return appointmentDao.getPastPatientAppointments(patientId).orElse(new ArrayList<>());
+    public Page<Appointment> getPastPatientAppointments(long patientId, int page, int size) {
+        List<Appointment> appointments = appointmentDao.getPastPatientAppointments(patientId, page, size).orElse(new ArrayList<>());
+        return new Page<>(appointments, page, size, appointmentDao.countPastPatientAppointments(patientId));
     }
 }

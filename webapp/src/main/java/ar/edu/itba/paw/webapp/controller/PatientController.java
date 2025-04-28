@@ -44,25 +44,35 @@ public class PatientController {
     }
 
     @RequestMapping(value = "/patient/dashboard/upcoming")
-    public ModelAndView getUpcomingAppointments() {
+    public ModelAndView getUpcomingAppointments(@RequestParam(value = "page", defaultValue = "1") int page) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-upcoming");
         Patient patient = loggedUser();
         mav.addObject("patient", patient);
-        mav.addObject("upcomingAppointments", as.getFuturePatientAppointments(patient.getId()));
+        var appointmentsPage = as.getFuturePatientAppointments(patient.getId(), page, 5);
+        mav.addObject("upcomingAppointments", appointmentsPage.getContent());
         mav.addObject("activeTab", "upcoming");
+        mav.addObject("currentPage", page);
+        mav.addObject("totalPages", appointmentsPage.getTotalPages());
+        mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
         LOGGER.debug("Loading dashboard and upcoming appointments for patient ID: {}", patient.getId());
         return mav;
     }
 
     @RequestMapping(value = "/patient/dashboard/history")
-    public ModelAndView getAppointmentHistory() {
+    public ModelAndView getAppointmentHistory(@RequestParam(value = "page", defaultValue = "1") int page) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-history");
         Patient patient = loggedUser();
         mav.addObject("patient", patient);
-        mav.addObject("pastAppointments", as.getPastPatientAppointments(patient.getId()));
+        var appointmentsPage = as.getPastPatientAppointments(patient.getId(), page, 5);
+        mav.addObject("pastAppointments", appointmentsPage.getContent());
+        System.out.println("acaaaa" + appointmentsPage.getContent());
         mav.addObject("activeTab", "history");
+        mav.addObject("currentPage", page);
+        mav.addObject("totalPages", appointmentsPage.getTotalPages());
+        mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
         return mav;
     }
+
     @RequestMapping(value = "/patient/dashboard/profile")
     public ModelAndView getProfile(@ModelAttribute("updatePatientForm") final UpdatePatientForm updatePatientForm) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-profile");
@@ -85,7 +95,7 @@ public class PatientController {
         }
         Patient patient = loggedUser();
         ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
-       return new ModelAndView("redirect:/patient/dashboard/profile?updated=true");
+        return new ModelAndView("redirect:/patient/dashboard/profile?updated=true");
     }
 
     @ModelAttribute

@@ -55,7 +55,7 @@
                 <c:when test="${not empty pastAppointments}">
                     <div class="appointments-list">
                         <c:forEach items="${pastAppointments}" var="appointment">
-                            <div class="appointment-card past" data-status="<spring:message code="${appointment.status}"/>" data-date="<c:out value="${appointment.date}"/>">
+                            <div class="appointment-card past" data-id="${appointment.id}" data-status="<spring:message code="${appointment.status}"/>" data-date="<c:out value="${appointment.date}"/>">
                                 <div class="appointment-left">
                                     <div class="appointment-date">
                                             <span class="day">
@@ -104,6 +104,14 @@
                                 </div>
                             </div>
                         </c:forEach>
+                        <c:if test="${hasMore}">
+                            <div class="load-more-container">
+                                <button id="loadMoreHistory" class="btn-load-more" data-current-page="${currentPage}" data-total-pages="${totalPages}">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>
+                                </button>
+                            </div>
+                        </c:if>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -175,6 +183,163 @@
                         card.style.display = 'none';
                     }
                 });
+            });
+        }
+
+        // Función para inicializar filtros y eventos en las citas cargadas
+        function initializeFiltersAndEvents() {
+            // Aplicar el filtro actual a las nuevas citas
+            const historyStatusFilter = document.getElementById('history-status-filter');
+            if (historyStatusFilter) {
+                const selectedStatus = historyStatusFilter.value;
+                const appointmentCards = document.querySelectorAll('#history-tab .appointment-card');
+
+                appointmentCards.forEach(card => {
+                    const cardStatus = card.getAttribute('data-status');
+
+                    if (selectedStatus === '<spring:message code="dashboard.filter.all" />' || cardStatus === selectedStatus) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Aplicar la búsqueda actual a las nuevas citas
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput && searchInput.value.trim() !== '') {
+                const searchTerm = searchInput.value.toLowerCase();
+                const appointmentCards = document.querySelectorAll('#history-tab .appointment-card');
+
+                appointmentCards.forEach(card => {
+                    const doctorName = card.querySelector('.patient-name').textContent.toLowerCase();
+                    const reasonText = card.querySelector('.reason-text')?.textContent.toLowerCase() || '';
+
+                    if (doctorName.includes(searchTerm) || reasonText.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Cargar más citas históricas
+        const loadMoreHistoryBtn = document.getElementById('loadMoreHistory');
+        if (loadMoreHistoryBtn) {
+            loadMoreHistoryBtn.addEventListener('click', function() {
+                const currentPage = parseInt(this.getAttribute('data-current-page'));
+                const nextPage = currentPage + 1;
+                const totalPages = parseInt(this.getAttribute('data-total-pages'));
+
+                // Verificar si ya estamos en la última página
+                if (nextPage > totalPages) {
+                    this.parentNode.remove();
+                    return;
+                }
+
+                // Mostrar indicador de carga
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Cargando...</span>';
+                this.disabled = true;
+
+                // Construir la URL con el parámetro de página y asegurarse de que sea reconocida como AJAX
+                const url = new URL(`${pageContext.request.contextPath}/patient/dashboard/history`, window.location.origin);
+                url.searchParams.append('page', nextPage);
+                url.searchParams.append('ajax', 'true'); // Añadir un parámetro para indicar que es una solicitud AJAX
+
+                // Realizar la petición AJAX
+                fetch(url.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest', // Cabecera estándar para solicitudes AJAX
+                        'Accept': 'text/html' // Especificar que esperamos HTML
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la respuesta del servidor: ' + response.status);
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        // Crear un elemento temporal para parsear el HTML
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+
+                        // Extraer las nuevas citas
+                        const newAppointments = doc.querySelectorAll('.appointment-card');
+
+                        console.log(`Se encontraron ${newAppointments.length} citas en la respuesta`);
+
+                        if (newAppointments.length === 0) {
+                            console.log('No se encontraron citas en la respuesta');
+                            // Si no hay más citas, eliminar el botón
+                            this.parentNode.remove();
+                            return;
+                        }
+
+                        // Obtener los IDs de las citas actuales
+                        const currentAppointmentIds = Array.from(
+                            document.querySelectorAll('.appointment-card')
+                        ).map(card => card.getAttribute('data-id'));
+
+                        // Agregar las nuevas citas
+                        const appointmentsList = document.querySelector('.appointments-list');
+                        const loadMoreContainer = document.querySelector('.load-more-container');
+                        let addedCount = 0;
+
+                        newAppointments.forEach(appointment => {
+                            const appointmentId = appointment.getAttribute('data-id');
+
+                            // Verificar si la cita ya existe
+                            if (!currentAppointmentIds.includes(appointmentId)) {
+                                // Clonar el nodo para agregarlo a nuestro DOM
+                                const appointmentNode = document.importNode(appointment, true);
+                                appointmentsList.insertBefore(appointmentNode, loadMoreContainer);
+                                addedCount++;
+                            }
+                        });
+
+                        console.log(`Se agregaron ${addedCount} citas nuevas`);
+
+                        if (addedCount === 0) {
+                            // Si no se agregaron citas nuevas, podría ser que estemos en la última página
+                            if (nextPage >= totalPages) {
+                                this.parentNode.remove();
+                            } else {
+                                // O podría ser que todas las citas ya estaban cargadas
+                                // Intentar con la siguiente página
+                                this.setAttribute('data-current-page', nextPage);
+                                setTimeout(() => {
+                                    this.click();
+                                }, 500);
+                            }
+                            return;
+                        }
+
+                        // Actualizar el botón con la nueva página
+                        this.setAttribute('data-current-page', nextPage);
+
+                        // Verificar si hay más páginas
+                        if (nextPage >= totalPages) {
+                            this.parentNode.remove(); // Eliminar el botón si no hay más páginas
+                        } else {
+                            // Restaurar el botón
+                            this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>';
+                            this.disabled = false;
+                        }
+
+                        // Reinicializar los filtros y eventos para las nuevas citas
+                        initializeFiltersAndEvents();
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar más citas:', error);
+                        this.innerHTML = '<i class="fas fa-exclamation-circle"></i> <span>Error al cargar</span>';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>';
+                            this.disabled = false;
+                        }, 2000);
+                    });
             });
         }
     });
