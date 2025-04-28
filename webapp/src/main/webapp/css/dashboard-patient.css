@@ -192,13 +192,13 @@ body {
 }
 
 .stat-item {
-    background-color: var(--background-light);
+    /*background-color: var(--background-light);*/
     border-radius: var(--border-radius);
     padding: 0.6rem;
     min-width: 90px;
     text-align: center;
     transition: var(--transition);
-    border: 1px solid #e2e8f0;
+    /*border: 1px solid #e2e8f0;*/
     position: relative;
     overflow: hidden;
 }
@@ -217,7 +217,7 @@ body {
 
 .stat-item:hover {
     transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+    /*box-shadow: var(--shadow-md);*/
 }
 
 .stat-item:hover::before {
@@ -490,10 +490,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: var(--white);
+    background-color: var(--background-light);
     border-radius: var(--border-radius);
     padding: 0.5rem;
-    box-shadow: var(--shadow-sm);
+    /*box-shadow: var(--shadow-sm);*/
     transition: var(--transition);
     width: 80px;
     height: 80px;
@@ -502,7 +502,7 @@ body {
 
 .appointment-card:hover .appointment-date {
     transform: scale(1.05);
-    box-shadow: var(--shadow-md);
+    /*box-shadow: var(--shadow-md);*/
 }
 
 .day {
@@ -533,10 +533,10 @@ body {
     gap: 0.4rem;
     font-size: 0.9rem;
     color: var(--text-color);
-    background-color: var(--white);
+    background-color: var(--background-light);
     padding: 0.35rem 0.75rem;
     border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
+    /*box-shadow: var(--shadow-sm);*/
     transition: var(--transition);
     width: 100%;
     text-align: center;
