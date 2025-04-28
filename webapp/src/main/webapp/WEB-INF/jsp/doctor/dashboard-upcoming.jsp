@@ -177,8 +177,6 @@
                                             <span class="specialty-badge">
                                                 <spring:message code="${appointment.specialty.key}" />
                                             </span>
-                                    </div>
-                                    <div class="appointment-actions">
                                         <c:set var="status" >
                                             <spring:message code="${appointment.status}" />
                                         </c:set>
