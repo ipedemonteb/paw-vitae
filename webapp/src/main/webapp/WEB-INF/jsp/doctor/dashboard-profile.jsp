@@ -5,7 +5,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,12 +15,27 @@
     <title><spring:message code="dashboard.profile.title" /></title>
     <link rel="stylesheet" href="<c:url value='/css/doctor-dashboard.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/modal.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
+
+<!-- Success Notification Toast -->
+<div id="successToast" class="success-toast">
+    <div class="success-toast-icon">
+        <i class="fas fa-check"></i>
+    </div>
+    <div class="success-toast-content">
+        <div class="success-toast-title"><spring:message code="profile.update.success.title" /></div>
+        <div class="success-toast-message"><spring:message code="profile.update.success.message" /></div>
+    </div>
+    <button class="success-toast-close" onclick="hideSuccessToast()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
 
 <div class="dashboard-container">
     <!-- Doctor Profile Header -->
@@ -295,7 +309,6 @@
     </div>
 </div>
 
-<!-- Modales comunes -->
 <div id="confirmAppointmentModal" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
@@ -343,6 +356,8 @@
         </div>
     </div>
 </div>
+
+<script src="<c:url value='/js/toast-notification.js' />"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

@@ -85,7 +85,7 @@ public class PatientController {
         }
         Patient patient = loggedUser();
         ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
-       return new ModelAndView("redirect:/patient/dashboard/profile");
+       return new ModelAndView("redirect:/patient/dashboard/profile?updated=true");
     }
 
     @ModelAttribute

@@ -139,7 +139,7 @@ public class DoctorController {
                 updateDoctorForm.getSpecialties(),
                 updateDoctorForm.getCoverages(),
                 null);
-        return new ModelAndView("redirect:/doctor/dashboard/profile");
+        return new ModelAndView("redirect:/doctor/dashboard/profile?updated=true");
     }
 
     @ModelAttribute
@@ -165,7 +165,7 @@ public class DoctorController {
         }
         form.setAvailabilitySlots(form.getAvailabilitySlots());
         ds.updateDoctorAvailability(loggedUser().getId(), form.getAvailabilitySlots());
-        return new ModelAndView("redirect:/doctor/dashboard/availability");
+        return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
 
 
