@@ -158,7 +158,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public Optional<List<Appointment>> getByDoctorId(long doctorId) {
         LocalDate today = LocalDate.now();
-        LocalDate endOfNextMonth = today.plusMonths(1).withDayOfMonth(today.plusMonths(1).lengthOfMonth());
+        LocalDate endOfNextMonth = today.plusMonths(1).withDayOfMonth(today.plusMonths(1).lengthOfMonth()).plusDays(1);
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
                 "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
