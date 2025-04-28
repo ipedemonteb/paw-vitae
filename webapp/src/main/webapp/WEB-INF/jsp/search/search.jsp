@@ -55,6 +55,22 @@
           </div>
         </div>
 
+        <div class="filter-group">
+          <label for="coverageSelect" class="filter-label"><i class="fas fa-shield-alt"></i> <spring:message code="search.coverage" /></label>
+          <div class="select-container">
+            <select id="coverageSelect" class="filter-select" onchange="changeCoverage(this.value)">
+              <c:forEach var="cov" items="${allCoverages}">
+                <option value="<c:out value='${cov.id}'/>" ${param.coverage == cov.id ? 'selected' : ''}>
+                  <c:out value="${cov.name}" />
+                </option>
+              </c:forEach>
+              <option value="0" ${param.coverage == null ? 'selected' : ''}>
+                <spring:message code="search.coverage.all" />
+                </option>
+            </select>
+          </div>
+        </div>
+
         <!-- Sort Filter -->
         <div class="filter-group">
           <label for="sortSelect" class="filter-label"><i class="fas fa-sort"></i> <spring:message code="search.sort" /></label>
@@ -214,15 +230,36 @@
 <script src="<c:url value='/js/search.js'/>"></script>
 
 <script>
+
   contextPath = "${pageContext.request.contextPath}";
 
+  // Current filter state
+  let currentFilters = {
+    specialty: "${specialty.id}",
+    page: ${currentPage},
+    coverage: "${param.coverage || null}",
+    weekdays: [],
+    orderBy: "${param.orderBy}",
+    direction: "${param.direction}"
+  };
+
+
   function changeSpecialty(specialtyId) {
-    window.location.href = "${pageContext.request.contextPath}/search?specialty=" + specialtyId;
+    currentFilters.specialty = specialtyId;
+    applyFilters();
   }
+
+  function changeCoverage(coverageId) {
+    currentFilters.coverage = coverageId;
+    applyFilters();
+  }
+
 
   function viewDoctorProfile(doctorId) {
     window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;
   }
+
+  // function changeFilters()
 
   // Adjust content margin based on header height
   const fixedHeader = document.querySelector(".main-header");
@@ -249,8 +286,48 @@
     </c:forEach>
   ];
 
+  function getDayName(day) {
+    const days = ['all', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    return days[day];
+  }
+
+  function applyFilters() {
+
+    // Build URL with all parameters
+    let url = `${pageContext.request.contextPath}/search?specialty=` + currentFilters.specialty + `&page=` + currentFilters.page;
+    currentFilters.coverage !=0 ? url +=  `&coverage=` + currentFilters.coverage : url += ``;
+    url += `&orderBy=` + currentFilters.orderBy + `&direction=` + currentFilters.direction;
+
+    // Add weekdays if any selected
+    currentFilters.weekdays.forEach(day => {
+      url += `&weekdays=` + day;
+    });
+
+    // Navigate to the URL
+    window.location.href = url;
+  }
+
   // Initialize search functionality
   document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('weekdays')) {
+      const weekdaysParam = urlParams.getAll('weekdays');
+      currentFilters.weekdays = weekdaysParam.map(day => parseInt(day));
+      // Update UI to reflect selected weekdays
+      // updateWeekdayButtons();
+    }
+    // Set sort dropdown based on URL parameters
+    if (urlParams.has('orderBy')) {
+      currentFilters.orderBy= urlParams.get('orderBy');
+    }
+
+    if(urlParams.has('direction')){
+        currentFilters.direction = urlParams.get('direction');
+    }
+    // Set coverage dropdown if present
+    if (urlParams.has('coverage')) {
+      currentFilters.coverage = urlParams.get('coverage');
+    }
     initializeSearch();
     initializeViewToggle();
     initializeQuickFilters();

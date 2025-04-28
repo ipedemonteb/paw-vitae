@@ -1,12 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
+import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Page;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +23,14 @@ public class SearchController {
     private final DoctorService doctorService;
     private final SpecialtyService specialtyService;
     private final AppointmentService appointmentService;
+    private final CoverageService coverageService;
 
     @Autowired
-    public SearchController(DoctorService doctorService, SpecialtyService specialtyService, AppointmentService appointmentService) {
+    public SearchController(DoctorService doctorService, SpecialtyService specialtyService, AppointmentService appointmentService, CoverageService coverageService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.appointmentService = appointmentService;
+        this.coverageService = coverageService;
     }
 
 
@@ -47,11 +47,13 @@ public class SearchController {
 //        Page<Doctor> doctorPage = doctorService.getBySpecialtyWithAppointments(specialtyId, page, 9); //TODO MAGIC PAGE NUMBER NOT GOOD.
         Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, 9);
         List<Specialty> allSpecialties = specialtyService.getAll().orElse(new ArrayList<>());
+        List<Coverage> allCoverages = coverageService.getAll().orElse(new ArrayList<>());
         ModelAndView mav = new ModelAndView("search/search");
         mav.addObject("doctors", doctorPage.getContent());
         mav.addObject("totalDoctors", doctorPage.getTotalElements());
         mav.addObject("specialty", specialtyObj.orElse(null));
         mav.addObject("allSpecialties", allSpecialties);
+        mav.addObject("allCoverages", allCoverages);
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", doctorPage.getTotalPages());
         return mav;
