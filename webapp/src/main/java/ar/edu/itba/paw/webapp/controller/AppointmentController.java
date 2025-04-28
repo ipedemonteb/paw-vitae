@@ -97,8 +97,8 @@ public class AppointmentController {
             @RequestParam(required = true) Long specialtyId
     ) {
         ModelAndView mav = new ModelAndView("appointment/appointment");
-        Optional<List<Coverage>> coverage = cs.getAll();
-        mav.addObject("coverages", coverage.orElse(Collections.emptyList()));
+        List<Coverage> coverage = cs.getAll();
+        mav.addObject("coverages", coverage);
 
         Optional<Doctor> doctor = ds.getByIdWithAppointments(doctorId);
         doctor.ifPresent(d -> mav.addObject("doctor", d));

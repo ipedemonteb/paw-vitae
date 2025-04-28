@@ -29,8 +29,8 @@ public class LandingPageController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView mav() {
-        Optional<List<Specialty>> specialties = ss.getAll();
-        return new ModelAndView("landingPage/home").addObject("specialties", specialties.orElse(new ArrayList<>()));
+        List<Specialty> specialties = ss.getAll();
+        return new ModelAndView("landingPage/home").addObject("specialties", specialties);
     }
 
 }

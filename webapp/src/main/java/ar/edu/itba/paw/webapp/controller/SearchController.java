@@ -41,7 +41,7 @@ public class SearchController {
         Optional<Specialty> specialtyObj = specialtyService.getById(specialty);
         Page<Doctor> doctorPage = doctorService.getBySpecialtyWithAppointments(specialty, page, 9); //TODO MAGIC PAGE NUMBER NOT GOOD.
         List<Doctor> paginatedDoctors = doctorPage.getContent();
-        List<Specialty> allSpecialties = specialtyService.getAll().orElse(new ArrayList<>());
+        List<Specialty> allSpecialties = specialtyService.getAll();
         ModelAndView mav = new ModelAndView("search/search");
         mav.addObject("doctors", paginatedDoctors);
         mav.addObject("totalDoctors", doctorPage.getTotalElements());
