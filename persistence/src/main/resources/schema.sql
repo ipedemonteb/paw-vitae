@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS Clients (
 
 CREATE TABLE IF NOT EXISTS Doctors (
                                        doctor_id INT PRIMARY KEY,
+                                       rating FLOAT CHECK (rating >= 1 AND rating <= 5),
+                                       rating_count INT DEFAULT 0,
                                        FOREIGN KEY (doctor_id) REFERENCES Users(id) ON DELETE CASCADE
     );
 
@@ -76,5 +78,14 @@ CREATE TABLE IF NOT EXISTS Images (
                         FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
 );
 
-
+CREATE TABLE IF NOT EXISTS Reviews (
+                        id SERIAL PRIMARY KEY,
+                        doctor_id INT NOT NULL,
+                        client_id INT NOT NULL,
+                        appointment_id INT NOT NULL,
+                        rating FLOAT CHECK (rating >= 1 AND rating <= 5),
+                        comment TEXT,
+                        FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
+                        FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE
+);
 
