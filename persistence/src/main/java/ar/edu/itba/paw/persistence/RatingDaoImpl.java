@@ -21,7 +21,7 @@ public class RatingDaoImpl implements RatingDao
     public RatingDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("ratings")
+                .withTableName("reviews")
                 .usingColumns("rating", "doctor_id", "patient_id", "appointment_id", "comment")
                 .usingGeneratedKeyColumns("id");
     }
