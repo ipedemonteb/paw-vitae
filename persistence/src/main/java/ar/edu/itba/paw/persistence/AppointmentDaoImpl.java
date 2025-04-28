@@ -176,6 +176,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     @Override
     public Optional<List<Appointment>> getByDoctorId(long doctorId) {
+        LocalDate today = LocalDate.now();
+        LocalDate thirtyDaysLater = today.plusDays(30);
+
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
                 "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
@@ -191,11 +194,21 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "JOIN Users pu ON p.client_id = pu.id " +
                 "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
                 "WHERE a.doctor_id = ? " +
+                "AND a.status != 'cancelado' " +
+                "AND a.date BETWEEN ? AND ? " +
                 "ORDER BY a.date";
 
-        List<Appointment> appointments = jdbcTemplate.query(sql, ROW_MAPPER, doctorId);
+        List<Appointment> appointments = jdbcTemplate.query(
+                sql,
+                ROW_MAPPER,
+                doctorId,
+                today,
+                thirtyDaysLater
+        );
+
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
+
 
     @Override
     public void cancelAppointment(long appointmentId) {
