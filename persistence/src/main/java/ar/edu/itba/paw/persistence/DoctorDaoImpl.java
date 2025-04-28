@@ -297,6 +297,76 @@ public class DoctorDaoImpl implements DoctorDao {
         );
     }
 
+    @Override
+    public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id  WHERE 1=1");
+        List<Object> params = new ArrayList<>();
 
+        if (specialtyId > 0) {
+            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_specialties where specialty_id = ?)");
+            params.add(specialtyId);
+        }
 
+        if (coverageId > 0) {
+            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_coverages where coverage_id = ?)");
+            params.add(coverageId);
+        }
+
+        if (!weekdays.isEmpty()) {
+            sql.append(" AND user.id IN (SELECT doctor_id FROM doctor_availability WHERE");
+            for (int i = 0; i < weekdays.size(); i++) {
+                sql.append(" day_of_week = ?");
+                if (i < weekdays.size() - 1) {
+                    sql.append(" OR");
+                } else {
+                    sql.append(")");
+                }
+                params.add(weekdays.get(i));
+            }
+        }
+
+        sql.append(" ORDER BY ").append(orderBy).append(" ").append(direction);
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(pageSize);
+        params.add((page - 1) * pageSize);
+
+        List<Doctor> doctors = jdbcTemplate.query(sql.toString(), ROW_MAPPER, params.toArray());
+
+        for (Doctor doctor : doctors) {
+            populateDoctorDetails(doctor);
+        }
+
+        return doctors;
+    }
+
+    @Override
+    public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (specialtyId > 0) {
+            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_specialties where specialty_id = ?)");
+            params.add(specialtyId);
+        }
+
+        if (coverageId > 0) {
+            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_coverages where coverage_id = ?)");
+            params.add(coverageId);
+        }
+
+        if (!weekdays.isEmpty()) {
+            sql.append(" AND user.id IN (SELECT doctor_id FROM doctor_availability WHERE");
+            for (int i = 0; i < weekdays.size(); i++) {
+                sql.append(" day_of_week = ?");
+                if (i < weekdays.size() - 1) {
+                    sql.append(" OR");
+                } else {
+                    sql.append(")");
+                }
+                params.add(weekdays.get(i));
+            }
+        }
+
+        return jdbcTemplate.queryForObject(sql.toString(), Integer.class, params.toArray());
+    }
 }

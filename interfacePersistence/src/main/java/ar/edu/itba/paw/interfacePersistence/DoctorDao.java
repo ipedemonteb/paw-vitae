@@ -36,4 +36,8 @@ public interface DoctorDao {
     String getLanguage(long id);
 
     void changeLanguage(long id, String language);
+
+    List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);
+
+    int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction);
 }
