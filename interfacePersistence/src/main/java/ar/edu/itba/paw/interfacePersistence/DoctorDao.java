@@ -20,7 +20,7 @@ public interface DoctorDao {
     Optional<Doctor> getByEmail(String email);
 
     List<Doctor> getAll();
-
+    void UpdateDoctorRating(long id, double rating);
     List<Doctor> getByIds(Set<Long> ids);
 
     void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList);

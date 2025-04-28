@@ -104,5 +104,9 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.ifPresent(d -> d.setAppointments(as.getByDoctorId(id).orElse(Collections.emptyList())));
         return doctor;
     }
-
+    @Override
+    public void UpdateDoctorRating(long id, double rating) {
+        doctorDao.UpdateDoctorRating(id, rating);
+        LOGGER.debug("Rating actualizado para el doctor con id={}, rating={}", id, rating);
+    }
 }

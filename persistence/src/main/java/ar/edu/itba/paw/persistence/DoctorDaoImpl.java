@@ -28,7 +28,9 @@ public class DoctorDaoImpl implements DoctorDao {
             rs.getString("email"),
             rs.getString("password"),
             rs.getString("phone"),
-            rs.getString("language")
+            rs.getString("language"),
+            rs.getDouble("rating"),
+            rs.getInt("rating_count")
     );
 
     @Autowired
@@ -138,6 +140,17 @@ public class DoctorDaoImpl implements DoctorDao {
         }
 
         return doctors;
+    }
+
+    @Override
+    public void UpdateDoctorRating (long id, double newRating) {
+        jdbcTemplate.update(
+                "UPDATE doctors " +
+                        "SET rating = ((rating * rating_count + ?) / (rating_count + 1)), " +
+                        "    rating_count = rating_count + 1 " +
+                        "WHERE doctor_id = ?",
+                newRating, id
+        );
     }
 
     @Override
@@ -254,7 +267,6 @@ public class DoctorDaoImpl implements DoctorDao {
                 (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key")),
                 id
         ));
-
         doctor.setAvailabilitySlots(getAvailabilityByDoctorId(id));
     }
     // Add this method to the DoctorDaoImpl class
