@@ -116,7 +116,7 @@
                         <option value="today"><spring:message code="dashboard.filter.today" /></option>
                         <option value="week" ><spring:message code="dashboard.filter.thisWeek" /></option>
                         <option value="month"><spring:message code="dashboard.filter.thisMonth" /></option>
-                        <option value="all"selected><spring:message code="dashboard.filter.all" /></option>
+                        <option value="all"selected><spring:message code="dashboard.history.all" /></option>
                     </select>
                 </div>
             </div>
