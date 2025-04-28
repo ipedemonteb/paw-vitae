@@ -45,7 +45,7 @@ public class AuthController {
     public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, PatientService patientService, UserService us, AuthUserDetailsService authService) {
         this.ds = ds;
         this.cs = cs;
-        this.is=is;
+        this.is = is;
         this.ss = ss;
         this.ps = patientService;
         this.us = us;
@@ -62,7 +62,6 @@ public class AuthController {
             return doctorForm(form, authentication);
         }
         authService.registerDoctor(form);
-
     LOGGER.debug("Registering doctor with email: {}", form.getEmail());
 
         return new ModelAndView("redirect:/doctor/dashboard");
@@ -131,20 +130,6 @@ public class AuthController {
         return new ModelAndView("redirect:/");
     }
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) throws IllegalArgumentException {
-                if (text == null || text.isEmpty()) {
-                    setValue(null);
-                } else {
-                    // Parse the time string (format: HH:mm)
-                    setValue(LocalTime.parse(text));
-                }
-            }
-        });
-    }
 }
 
 

@@ -25,16 +25,14 @@ public class RatingDaoImpl implements RatingDao
                 .usingColumns("rating", "doctor_id", "patient_id", "appointment_id", "comment")
                 .usingGeneratedKeyColumns("id");
     }
-    private static final RowMapper<Rating> ROW_MAPPER = (rs, rowNum) -> {
-        return new Rating(
-            rs.getDouble("rating"),
-            rs.getInt("doctor_id"),
-            rs.getInt("patient_id"),
-            rs.getInt("appointment_id"),
-            rs.getString("comment"),
-            rs.getInt("id")
-        );
-    };
+    private static final RowMapper<Rating> ROW_MAPPER = (rs, rowNum) -> new Rating(
+        rs.getDouble("rating"),
+        rs.getInt("doctor_id"),
+        rs.getInt("patient_id"),
+        rs.getInt("appointment_id"),
+        rs.getString("comment"),
+        rs.getInt("id")
+    );
     @Override
     public Rating create(double rating, int doctorId, int patientId, int appointmentId, String comment, long id) {
         final Map<String,Object> args = new HashMap<>(Map.of(
