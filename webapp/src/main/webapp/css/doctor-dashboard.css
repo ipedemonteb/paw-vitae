@@ -1101,6 +1101,11 @@ body {
 
 .appointment-specialty {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px dashed #e2e8f0
 }
 
 .specialty-badge {
