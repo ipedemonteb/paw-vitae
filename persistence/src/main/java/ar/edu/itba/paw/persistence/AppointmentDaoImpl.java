@@ -38,7 +38,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
                     rs.getString("doctor_email"),
                     rs.getString("doctor_password"),
                     rs.getString("doctor_phone"),
-                    rs.getString("doctor_language")
+                    rs.getString("doctor_language"),
+                    rs.getDouble("rating"),
+                    rs.getInt("rating_count")
             ),
             new Patient(
                     rs.getString("patient_name"),
@@ -78,7 +80,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
         // Query for doctor details
         String doctorSql = "SELECT u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language " +
+                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language,d.rating AS rating, d.rating_count AS rating_count " +
                 "FROM Doctors d JOIN Users u ON d.doctor_id = u.id WHERE d.doctor_id = ?";
         Doctor doctor = jdbcTemplate.queryForObject(doctorSql, (rs, rowNum) -> new Doctor(
                 rs.getString("doctor_name"),
@@ -87,7 +89,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 rs.getString("doctor_email"),
                 rs.getString("doctor_password"),
                 rs.getString("doctor_phone"),
-                rs.getString("doctor_language")
+                rs.getString("doctor_language"),
+                rs.getDouble("rating"),
+                rs.getInt("rating_count")
         ), doctorId);
 
         // Query for patient details
@@ -129,7 +133,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public Optional<List<Appointment>> getByPatientId(long patientId) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
                 "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
                 "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
                 "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
@@ -161,7 +165,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         LocalDate endOfNextMonth = today.plusMonths(1).withDayOfMonth(today.plusMonths(1).lengthOfMonth()).plusDays(1);
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
                 "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
                 "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
                 "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
@@ -208,7 +212,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public Optional<Appointment> getById(long appointmentId) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
                 "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
                 "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
                 "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
@@ -230,7 +234,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public Optional<List<Appointment>> getPastDoctorAppointments(long doctorId, int page, int size) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
                 "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
                 "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
                 "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
@@ -254,7 +258,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public Optional<List<Appointment>> getFutureDoctorAppointments(long doctorId, int page, int size) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
                 "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
                 "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
                 "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
@@ -278,7 +282,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public Optional<List<Appointment>> getFuturePatientAppointments(long patientId, int page, int size) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
                 "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
                 "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
                 "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
@@ -302,7 +306,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public Optional<List<Appointment>> getPastPatientAppointments(long patientId, int page, int size) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
                 "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
                 "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
                 "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
@@ -326,7 +330,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public List<Appointment> getAppointmentsByDate(LocalDate today) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+                "d.doctor_id,d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
                 "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
                 "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
                 "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +

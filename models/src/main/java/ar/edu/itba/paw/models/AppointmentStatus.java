@@ -2,7 +2,7 @@ package ar.edu.itba.paw.models;
 
 
 public enum AppointmentStatus {
-    PENDIENTE("pendiente"),
+    COMPLETO("completo"),
     CONFIRMADO("confirmado"),
     CANCELADO("cancelado");
 
