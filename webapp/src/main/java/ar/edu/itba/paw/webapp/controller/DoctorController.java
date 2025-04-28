@@ -34,6 +34,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -80,25 +81,36 @@ public class DoctorController {
     }
 
     @RequestMapping(value = "/doctor/dashboard/upcoming")
-    public ModelAndView getUpcomingAppointments() {
+    public ModelAndView getUpcomingAppointments(@RequestParam(defaultValue = "1") int page) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-upcoming");
         Doctor doctor = loggedUser();
         mav.addObject("doctor", doctor);
-        mav.addObject("upcomingAppointments",as.getFutureDoctorAppointments(doctor.getId()));
+        Page<Appointment> appointmentsPage = as.getFutureDoctorAppointments(doctor.getId(), page, 5);
+        mav.addObject("upcomingAppointments", appointmentsPage.getContent());
+        mav.addObject("currentPage", page);
+        mav.addObject("totalPages", appointmentsPage.getTotalPages());
+        mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
         mav.addObject("activeTab", "upcoming");
         LOGGER.debug("Loading dashboard and upcoming appointments for doctor ID: {}", doctor.getId());
         return mav;
     }
 
+
+
     @RequestMapping(value = "/doctor/dashboard/history")
-    public ModelAndView getAppointmentHistory() {
+    public ModelAndView getAppointmentHistory(@RequestParam(defaultValue = "1") int page) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-history");
         Doctor doctor = loggedUser();
         mav.addObject("doctor", doctor);
-        mav.addObject("pastAppointments", as.getPastDoctorAppointments(doctor.getId()));
+        Page<Appointment> appointmentsPage = as.getPastDoctorAppointments(doctor.getId(), page, 5);
+        mav.addObject("pastAppointments", appointmentsPage.getContent());
+        mav.addObject("currentPage", page);
+        mav.addObject("totalPages", appointmentsPage.getTotalPages());
+        mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
         mav.addObject("activeTab", "history");
         return mav;
     }
+
 
     @RequestMapping(value = "/doctor/dashboard/profile")
     public ModelAndView getProfile(@ModelAttribute("updateDoctorForm") final UpdateDoctorForm updateDoctorForm) {
@@ -139,7 +151,7 @@ public class DoctorController {
                 updateDoctorForm.getSpecialties(),
                 updateDoctorForm.getCoverages(),
                 null);
-        return new ModelAndView("redirect:/doctor/dashboard/profile");
+        return new ModelAndView("redirect:/doctor/dashboard/profile?updated=true");
     }
 
     @ModelAttribute
@@ -165,7 +177,7 @@ public class DoctorController {
         }
         form.setAvailabilitySlots(form.getAvailabilitySlots());
         ds.updateDoctorAvailability(loggedUser().getId(), form.getAvailabilitySlots());
-        return new ModelAndView("redirect:/doctor/dashboard/availability");
+        return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
 
 

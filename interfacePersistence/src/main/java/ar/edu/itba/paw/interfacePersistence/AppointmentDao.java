@@ -8,29 +8,35 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface AppointmentDao {
 
-    Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty);
 
-    Optional<List<Appointment>> getByPatientId(long patientId);
+    public interface AppointmentDao {
 
-    Optional<List<Appointment>> getByDoctorId(long doctorId);
+        Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty);
 
-    Optional<List<Appointment>> getAllFutureAppointments(List<Long> doctorIds);
+        Optional<List<Appointment>> getByPatientId(long patientId);
 
-    void cancelAppointment(long appointmentId);
+        Optional<List<Appointment>> getByDoctorId(long doctorId);
 
-    void acceptAppointment(long appointmentId);
 
-    Optional<Appointment> getById(long appointmentId);
+        void cancelAppointment(long appointmentId);
 
-    Optional<List<Appointment>> getPastDoctorAppointments(long doctorId);
+        void acceptAppointment(long appointmentId);
 
-    Optional<List<Appointment>> getFutureDoctorAppointments(long doctorId);
+        Optional<Appointment> getById(long appointmentId);
 
-    Optional<List<Appointment>> getFuturePatientAppointments(long patientId);
+        Optional<List<Appointment>> getPastDoctorAppointments(long doctorId, int page, int size);
 
-    Optional<List<Appointment>> getPastPatientAppointments(long patientId);
+        Optional<List<Appointment>> getFutureDoctorAppointments(long doctorId, int page, int size);
 
-    List<Appointment> getAppointmentsByDate(LocalDate today);
+        Optional<List<Appointment>> getFuturePatientAppointments(long patientId, int page, int size);
+
+        Optional<List<Appointment>> getPastPatientAppointments(long patientId, int page, int size);
+
+        List<Appointment> getAppointmentsByDate(LocalDate today);
+        int countFuturePatientAppointments(long patientId);
+        int countPastPatientAppointments(long patientId);
+        int countFutureDoctorAppointments(long doctorId);
+        int countPastDoctorAppointments(long doctorId);
+
 }
