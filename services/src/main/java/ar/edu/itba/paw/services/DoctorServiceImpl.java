@@ -105,4 +105,13 @@ public class DoctorServiceImpl implements DoctorService {
         return doctor;
     }
 
+    @Override
+    public Page<Doctor> getWithFilters(Long specialtyId, Long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
+        if (weekdays == null) {
+            weekdays = new ArrayList<>();
+        }
+        List<Doctor> docs = doctorDao.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, pageSize);
+        int total = doctorDao.countWithFilters(specialtyId, coverageId, weekdays, orderBy, direction);
+        return new Page<>(docs, page, pageSize, total);
+    }
 }

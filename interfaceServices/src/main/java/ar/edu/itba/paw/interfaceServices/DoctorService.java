@@ -21,4 +21,7 @@ public interface DoctorService {
     void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 
     Optional<Doctor> getByIdWithAppointments(long id);
+
+    Page<Doctor> getWithFilters(Long specialtyId, Long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);
+
 }
