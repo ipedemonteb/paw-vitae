@@ -176,6 +176,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     @Override
     public Optional<List<Appointment>> getByDoctorId(long doctorId) {
+        LocalDate today = LocalDate.now();
+        LocalDate thirtyDaysLater = today.plusDays(30);
+
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
                 "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
@@ -191,11 +194,21 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "JOIN Users pu ON p.client_id = pu.id " +
                 "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
                 "WHERE a.doctor_id = ? " +
+                "AND a.status != 'cancelado' " +
+                "AND a.date BETWEEN ? AND ? " +
                 "ORDER BY a.date";
 
-        List<Appointment> appointments = jdbcTemplate.query(sql, ROW_MAPPER, doctorId);
+        List<Appointment> appointments = jdbcTemplate.query(
+                sql,
+                ROW_MAPPER,
+                doctorId,
+                today,
+                thirtyDaysLater
+        );
+
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
     }
+
 
     @Override
     public void cancelAppointment(long appointmentId) {
@@ -233,9 +246,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
 
-
     @Override
-    public Optional<List<Appointment>> getPastDoctorAppointments(long doctorId) {
+    public Optional<List<Appointment>> getPastDoctorAppointments(long doctorId, int page, int size) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
                 "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
@@ -251,15 +263,15 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "JOIN Users pu ON p.client_id = pu.id " +
                 "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
                 "WHERE a.doctor_id = ? AND (a.date < NOW() OR a.status = 'cancelado') " +
-                "ORDER BY a.date DESC";
+                "ORDER BY a.date DESC " +
+                "LIMIT ? OFFSET ?";
 
-        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, doctorId);
+        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, doctorId, size, (page-1) * size);
         return apps.isEmpty() ? Optional.empty() : Optional.of(apps);
     }
 
-
     @Override
-    public Optional<List<Appointment>> getFutureDoctorAppointments(long doctorId) {
+    public Optional<List<Appointment>> getFutureDoctorAppointments(long doctorId, int page, int size) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
                 "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
@@ -275,39 +287,15 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "JOIN Users pu ON p.client_id = pu.id " +
                 "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
                 "WHERE a.doctor_id = ? AND a.date > NOW() AND a.status <> 'cancelado' " +
-                "ORDER BY a.date ASC";
+                "ORDER BY a.date ASC " +
+                "LIMIT ? OFFSET ?";
 
-        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, doctorId);
+        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, doctorId, size, (page-1) * size);
         return apps.isEmpty() ? Optional.empty() : Optional.of(apps);
     }
 
-
-
-
     @Override
-    public Optional<List<Appointment>> getAllFutureAppointments(List<Long> doctorIds) {
-        String sql = "SELECT a.id, a.date, a.status, a.reason, " +
-                "s.id AS specialty_id, s.key AS specialty_key, " +
-                "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
-                "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
-                "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
-                "c.id AS coverage_id, c.coverage_name " +
-                "FROM Appointments a " +
-                "JOIN Specialties s ON a.specialty_id = s.id " +
-                "JOIN Doctors d ON a.doctor_id = d.doctor_id " +
-                "JOIN Users u ON d.doctor_id = u.id " +
-                "JOIN Clients p ON a.client_id = p.client_id " +
-                "JOIN Users pu ON p.client_id = pu.id " +
-                "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
-                "WHERE a.doctor_id IN (" + String.join(",", Collections.nCopies(doctorIds.size(), "?")) + ") " +
-                "AND a.date > NOW() AND a.status <> 'cancelado'";
-
-        List<Appointment> appointments = jdbcTemplate.query(sql, ROW_MAPPER, doctorIds.toArray());
-        return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
-    }
-    @Override
-    public Optional<List<Appointment>> getFuturePatientAppointments(long patientId) {
+    public Optional<List<Appointment>> getFuturePatientAppointments(long patientId, int page, int size) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
                 "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
@@ -323,14 +311,15 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "JOIN Users pu ON p.client_id = pu.id " +
                 "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
                 "WHERE a.client_id = ? AND a.date > NOW() AND a.status <> 'cancelado' " +
-                "ORDER BY a.date ASC";
+                "ORDER BY a.date ASC " +
+                "LIMIT ? OFFSET ?";
 
-        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, patientId);
+        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, patientId, size, (page-1) * size);
         return apps.isEmpty() ? Optional.empty() : Optional.of(apps);
     }
 
     @Override
-    public Optional<List<Appointment>> getPastPatientAppointments(long patientId) {
+    public Optional<List<Appointment>> getPastPatientAppointments(long patientId, int page, int size) {
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
                 "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
@@ -346,9 +335,10 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "JOIN Users pu ON p.client_id = pu.id " +
                 "LEFT JOIN Coverages c ON p.coverage_id = c.id " +
                 "WHERE a.client_id = ? AND (a.date < NOW() OR a.status = 'cancelado') " +
-                "ORDER BY a.date DESC";
+                "ORDER BY a.date DESC " +
+                "LIMIT ? OFFSET ?";
 
-        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, patientId);
+        List<Appointment> apps = jdbcTemplate.query(sql, ROW_MAPPER, patientId, size, (page-1) * size);
         return apps.isEmpty() ? Optional.empty() : Optional.of(apps);
     }
 
@@ -372,6 +362,30 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 "ORDER BY a.date";
 
         return jdbcTemplate.query(sql, ROW_MAPPER, today);
+    }
+
+    @Override
+    public int countFuturePatientAppointments(long patientId) {
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE client_id = ? AND date > NOW() AND status <> 'cancelado'";
+        return jdbcTemplate.queryForObject(sql, Integer.class, patientId);
+    }
+
+    @Override
+    public int countPastPatientAppointments(long patientId) {
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE client_id = ? AND (date < NOW() OR status = 'cancelado')";
+        return jdbcTemplate.queryForObject(sql, Integer.class, patientId);
+    }
+
+    @Override
+    public int countFutureDoctorAppointments(long doctorId) {
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE doctor_id = ? AND date > NOW() AND status <> 'cancelado'";
+        return jdbcTemplate.queryForObject(sql, Integer.class, doctorId);
+    }
+
+    @Override
+    public int countPastDoctorAppointments(long doctorId) {
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE doctor_id = ? AND (date < NOW() OR status = 'cancelado')";
+        return jdbcTemplate.queryForObject(sql, Integer.class, doctorId);
     }
 
 }

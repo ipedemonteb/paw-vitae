@@ -57,22 +57,13 @@
             <div class="tab-header">
                 <h2><spring:message code="dashboard.upcoming.title" /></h2>
                 <div class="tab-actions">
-                    <div class="status-filter">
-                        <label for="status-filter"><spring:message code="dashboard.filter.status" />:</label>
-                        <select id="status-filter" class="filter-select">
-                            <option value="<spring:message code="dashboard.filter.all" />" selected><spring:message code="dashboard.filter.all" /></option>
-                            <option value="<spring:message code="appointment.status.pending" />"><spring:message code="appointment.status.pending" /></option>
-                            <option value="<spring:message code="appointment.status.confirmed" />"><spring:message code="appointment.status.confirmed" /></option>
-                            <option value="<spring:message code="appointment.status.cancelled" />"><spring:message code="appointment.status.cancelled" /></option>
-                        </select>
-                    </div>
                     <div class="date-filter">
                         <label for="date-range"><spring:message code="dashboard.filter.dateRange" />:</label>
                         <select id="date-range" class="filter-select">
                             <option value="today"><spring:message code="dashboard.filter.today" /></option>
-                            <option value="week" selected><spring:message code="dashboard.filter.thisWeek" /></option>
+                            <option value="week" ><spring:message code="dashboard.filter.thisWeek" /></option>
                             <option value="month"><spring:message code="dashboard.filter.thisMonth" /></option>
-                            <option value="all"><spring:message code="dashboard.filter.all" /></option>
+                            <option value="all" selected><spring:message code="dashboard.history.all" /></option>
                         </select>
                     </div>
                 </div>
@@ -82,7 +73,7 @@
                 <c:when test="${not empty upcomingAppointments}">
                     <div class="appointments-list">
                         <c:forEach items="${upcomingAppointments}" var="appointment">
-                            <div class="appointment-card" data-status="<spring:message code="${appointment.status}"/>" data-date="<c:out value="${appointment.date}"/>">
+                            <div class="appointment-card" data-id="${appointment.id}" data-status="<spring:message code="${appointment.status}"/>" data-date="<c:out value="${appointment.date}"/>">
                                 <div class="appointment-left">
                                     <div class="appointment-date">
                                             <span class="day">
@@ -113,7 +104,7 @@
                                                 <c:out value="${appointment.doctor.name}" /> <c:out value="${appointment.doctor.lastName}" />
                                             </div>
                                             <div class="patient-coverage">
-                                                    <c:out value="${patient.coverage.name}"/>
+                                                <c:out value="${patient.coverage.name}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -151,6 +142,14 @@
                                 </div>
                             </div>
                         </c:forEach>
+                        <c:if test="${hasMore}">
+                            <div class="load-more-container">
+                                <button id="loadMoreUpcoming" class="btn-load-more" data-current-page="${currentPage}" data-total-pages="${totalPages}">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>
+                                </button>
+                            </div>
+                        </c:if>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -170,22 +169,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Status filter functionality for upcoming appointments
-        const statusFilter = document.getElementById('status-filter');
-        if (statusFilter) {
-            statusFilter.addEventListener('change', function() {
-                const selectedStatus = this.value;
-                const appointmentCards = document.querySelectorAll('#upcoming-tab .appointment-card');
 
-                appointmentCards.forEach(card => {
-                    const cardStatus = card.getAttribute('data-status');
-                    if (selectedStatus === '<spring:message code="dashboard.filter.all" />' || cardStatus === selectedStatus) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        }
 
         // Date filter functionality
         const dateFilter = document.getElementById('date-range');
@@ -321,6 +305,191 @@
                 });
             }
         });
+
+        // Función para inicializar eventos en las nuevas citas
+        function initializeEvents() {
+            // Inicializar los botones de cancelar para las nuevas citas
+            document.querySelectorAll('.cancel-appointment').forEach(button => {
+                if (!button.hasAttribute('data-initialized')) {
+                    button.setAttribute('data-initialized', 'true');
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const appointmentId = this.getAttribute('data-id');
+                        showCancelModal(appointmentId);
+                    });
+                }
+            });
+
+            // Aplicar los filtros actuales a las nuevas citas
+
+
+            // Aplicar el filtro de fecha a las nuevas citas
+            if (dateFilter) {
+                const selectedDateRange = dateFilter.value;
+                const today = new Date();
+                const startOfWeek = new Date();
+                startOfWeek.setDate(today.getDate() - today.getDay());
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+                const startOfAll = new Date(0);
+                const endOfAll = new Date(9999, 11, 31);
+                let startDate, endDate;
+
+                switch (selectedDateRange) {
+                    case 'today':
+                        startDate = startOfToday;
+                        endDate = endOfToday;
+                        break;
+                    case 'week':
+                        startDate = startOfWeek;
+                        endDate = new Date(startOfWeek);
+                        endDate.setDate(endDate.getDate() + 7);
+                        break;
+                    case 'month':
+                        startDate = startOfMonth;
+                        endDate = endOfMonth;
+                        break;
+                    case 'all':
+                        startDate = startOfAll;
+                        endDate = endOfAll;
+                        break;
+                    default:
+                        startDate = startOfAll;
+                        endDate = endOfAll;
+                }
+
+                const newCards = document.querySelectorAll('#upcoming-tab .appointment-card:not([data-date-filtered])');
+
+                newCards.forEach(card => {
+                    card.setAttribute('data-date-filtered', 'true');
+                    const cardDate = new Date(card.getAttribute('data-date'));
+                    if (!(cardDate >= startDate && cardDate <= endDate)) {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Cargar más citas próximas
+        const loadMoreUpcomingBtn = document.getElementById('loadMoreUpcoming');
+        if (loadMoreUpcomingBtn) {
+            loadMoreUpcomingBtn.addEventListener('click', function() {
+                const currentPage = parseInt(this.getAttribute('data-current-page'));
+                const nextPage = currentPage + 1;
+                const totalPages = parseInt(this.getAttribute('data-total-pages'));
+
+                // Verificar si ya estamos en la última página
+                if (nextPage > totalPages) {
+                    this.parentNode.remove();
+                    return;
+                }
+
+                // Mostrar indicador de carga
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Cargando...</span>';
+                this.disabled = true;
+
+                // Construir la URL con el parámetro de página y asegurarse de que sea reconocida como AJAX
+                const url = new URL(`${pageContext.request.contextPath}/patient/dashboard/upcoming`, window.location.origin);
+                url.searchParams.append('page', nextPage);
+                url.searchParams.append('ajax', 'true'); // Añadir un parámetro para indicar que es una solicitud AJAX
+
+                // Realizar la petición AJAX
+                fetch(url.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest', // Cabecera estándar para solicitudes AJAX
+                        'Accept': 'text/html' // Especificar que esperamos HTML
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta del servidor: ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    // Crear un elemento temporal para parsear el HTML
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    // Extraer las nuevas citas
+                    const newAppointments = doc.querySelectorAll('.appointment-card');
+
+                    console.log(`Se encontraron ${newAppointments.length} citas en la respuesta`);
+
+                    if (newAppointments.length === 0) {
+                        console.log('No se encontraron citas en la respuesta');
+                        // Si no hay más citas, eliminar el botón
+                        this.parentNode.remove();
+                        return;
+                    }
+
+                    // Obtener los IDs de las citas actuales
+                    const currentAppointmentIds = Array.from(
+                        document.querySelectorAll('.appointment-card')
+                    ).map(card => card.getAttribute('data-id'));
+
+                    // Agregar las nuevas citas
+                    const appointmentsList = document.querySelector('.appointments-list');
+                    const loadMoreContainer = document.querySelector('.load-more-container');
+                    let addedCount = 0;
+
+                    newAppointments.forEach(appointment => {
+                        const appointmentId = appointment.getAttribute('data-id');
+
+                        // Verificar si la cita ya existe
+                        if (!currentAppointmentIds.includes(appointmentId)) {
+                            // Clonar el nodo para agregarlo a nuestro DOM
+                            const appointmentNode = document.importNode(appointment, true);
+                            appointmentsList.insertBefore(appointmentNode, loadMoreContainer);
+                            addedCount++;
+                        }
+                    });
+
+                    console.log(`Se agregaron ${addedCount} citas nuevas`);
+
+                    if (addedCount === 0) {
+                        // Si no se agregaron citas nuevas, podría ser que estemos en la última página
+                        if (nextPage >= totalPages) {
+                            this.parentNode.remove();
+                        } else {
+                            // O podría ser que todas las citas ya estaban cargadas
+                            // Intentar con la siguiente página
+                            this.setAttribute('data-current-page', nextPage);
+                            setTimeout(() => {
+                                this.click();
+                            }, 500);
+                        }
+                        return;
+                    }
+
+                    // Actualizar el botón con la nueva página
+                    this.setAttribute('data-current-page', nextPage);
+
+                    // Verificar si hay más páginas
+                    if (nextPage >= totalPages) {
+                        this.parentNode.remove(); // Eliminar el botón si no hay más páginas
+                    } else {
+                        // Restaurar el botón
+                        this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>';
+                        this.disabled = false;
+                    }
+
+                    // Inicializar eventos para las nuevas citas
+                    initializeEvents();
+                })
+                .catch(error => {
+                    console.error('Error al cargar más citas:', error);
+                    this.innerHTML = '<i class="fas fa-exclamation-circle"></i> <span>Error al cargar</span>';
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>';
+                        this.disabled = false;
+                    }, 2000);
+                });
+            });
+        }
     });
 </script>
 </body>

@@ -38,19 +38,13 @@ public class SearchController {
     public ModelAndView searchBySpecialty(
             @RequestParam("specialty") long specialty,
             @RequestParam(value = "page", defaultValue = "1") int page) {
-
-        // Get specialty and all doctors with that specialty
         Optional<Specialty> specialtyObj = specialtyService.getById(specialty);
         Page<Doctor> doctorPage = doctorService.getBySpecialtyWithAppointments(specialty, page, 9); //TODO MAGIC PAGE NUMBER NOT GOOD.
         List<Doctor> paginatedDoctors = doctorPage.getContent();
         List<Specialty> allSpecialties = specialtyService.getAll().orElse(new ArrayList<>());
-
-//        Map<Long, List<Appointment>> futureAppointmentsMap = appointmentService.getAllFutureAppointments(paginatedDoctors).orElse(new HashMap<>());
-
         ModelAndView mav = new ModelAndView("search/search");
-        mav.addObject("doctors", paginatedDoctors); // All doctors (for reference if needed)
-        mav.addObject("paginatedDoctors", paginatedDoctors); // Doctors for current page
-//        mav.addObject("futureAppointmentsMap", futureAppointmentsMap);
+        mav.addObject("doctors", paginatedDoctors);
+        mav.addObject("paginatedDoctors", paginatedDoctors);
         mav.addObject("specialty", specialtyObj.orElse(null));
         mav.addObject("allSpecialties", allSpecialties);
         mav.addObject("currentPage", page);

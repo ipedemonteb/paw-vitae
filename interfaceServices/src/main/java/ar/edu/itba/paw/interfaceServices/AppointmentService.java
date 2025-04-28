@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.interfaceServices;
 
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.Page;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,15 +16,15 @@ public interface AppointmentService {
 
     Optional<List<Appointment>> getByDoctorId(long doctorId);
 
-    Optional<List<Appointment>> getAllFutureAppointments(long doctorId);
+
 
     Boolean cancelAppointment(long appointmentId,long userId);
     Boolean acceptAppointment(long appointmentId, long userId);
 
     Optional<Appointment> getById(long appointmentId);
-    List<Appointment> getPastDoctorAppointments(long doctorId);
-    List<Appointment> getFutureDoctorAppointments(long doctorId);
-    List<Appointment> getFuturePatientAppointments(long patientId);
-    List<Appointment> getPastPatientAppointments(long patientId);
+    Page<Appointment> getPastDoctorAppointments(long doctorId, int page, int size);
+    Page<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size);
+    Page<Appointment> getFuturePatientAppointments(long patientId,int page, int size);
+    Page<Appointment> getPastPatientAppointments(long patientId, int page, int size);
 
 }
