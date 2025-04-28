@@ -65,8 +65,6 @@ public class MailServiceImpl implements MailService {
         String htmlContentDoctor;
         String htmlContentPatient;
 
-        System.out.println("Reason = " + appointment.getReason());
-
          if (appointment.getStatus().equals(AppointmentStatus.CONFIRMADO.getValue())) {
             htmlContentDoctor = templateEngine.process("DoctorAppointmentConfirmation", doctorContext);
             htmlContentPatient = templateEngine.process("PatientAppointmentConfirmation", patientContext);

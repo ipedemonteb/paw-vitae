@@ -7,9 +7,7 @@
 </c:set>
 
 <!DOCTYPE html>
-<html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/V-logo.svg/2048px-V-logo.svg.png" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><spring:message code="search.page.title" /></title>
@@ -30,7 +28,7 @@
         <p class="search-subtitle"><spring:message code="search.doctors.specialty" arguments="${specialtyName}"/></p>
       </div>
 
-      <div class="search-body">
+      <div class="search-filters">
         <!-- Specialty Selector -->
         <div class="specialty-selector">
           <label for="specialtySelect" class="specialty-label"><spring:message code="search.change.specialty" />:</label>
@@ -45,6 +43,17 @@
           </div>
         </div>
 
+        <div class="view-toggle">
+          <button class="view-toggle-btn active" data-view="list">
+            <i class="fas fa-list"></i> <span><spring:message code="search.view.list" /></span>
+          </button>
+          <button class="view-toggle-btn" data-view="grid">
+            <i class="fas fa-th-large"></i> <span><spring:message code="search.view.grid" /></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="search-body">
         <c:choose>
           <c:when test="${empty doctors}">
             <div class="empty-results">
@@ -53,67 +62,60 @@
             </div>
           </c:when>
           <c:otherwise>
-            <div class="doctors-grid">
+            <div class="doctors-list-view">
               <c:forEach var="doctor" items="${paginatedDoctors}" varStatus="status">
                 <div class="doctor-card">
-                  <div class="doctor-card-header">
-                    <div class="doctor-image">
+                  <div class="doctor-info">
+                    <div class="doctor-avatar-container">
                       <img src="<c:url value='/doctor/${doctor.id}/image'/>" alt="<c:out value='${doctor.name} ${doctor.lastName}'/>" class="doctor-avatar">
                     </div>
-                    <div class="doctor-info">
+                    <div class="doctor-details">
                       <h3 class="doctor-name" title="<c:out value='${doctor.name} ${doctor.lastName}'/>">
                         <c:out value='${doctor.name} ${doctor.lastName}'/>
                       </h3>
-                    </div>
-                  </div>
-
-                  <div class="doctor-card-body">
-                    <div class="doctor-contact">
-                      <div class="contact-item">
-                        <span class="contact-icon"><i class="fas fa-envelope"></i></span>
-                        <span class="contact-text"><c:out value='${doctor.email}'/></span>
+                      <div class="doctor-specialty">
+                        <i class="fas fa-stethoscope"></i> <c:out value="${specialtyName}"/>
                       </div>
-                      <div class="contact-item">
-                        <span class="contact-icon"><i class="fas fa-phone"></i></span>
-                        <span class="contact-text"><c:out value='${doctor.phone}'/></span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="doctor-card-footer">
-                    <!-- Date Picker for Available Hours -->
-                    <div class="availability-section" id="availability-section-${doctor.id}">
-                      <div class="availability-header">
-                        <h4><spring:message code="search.available.hours" /></h4>
-                      </div>
-
-                      <!-- Date Picker -->
-                      <div class="date-picker-container compact">
-                        <input type="text" id="datePickerInput-${doctor.id}" class="date-picker-input"
-                               placeholder="<spring:message code="appointment.placeholder.selectDate"/>" readonly>
-
-                        <!-- Custom Calendar -->
-                        <div id="datePickerCalendar-${doctor.id}" class="date-picker-calendar">
-                          <div class="date-picker-header">
-                            <button type="button" id="prevMonthBtn-${doctor.id}" class="date-picker-nav">&lsaquo;</button>
-                            <div id="currentMonthYear-${doctor.id}" class="date-picker-month-year"></div>
-                            <button type="button" id="nextMonthBtn-${doctor.id}" class="date-picker-nav">&rsaquo;</button>
-                          </div>
-                          <div class="date-picker-weekdays" id="calendarWeekdays-${doctor.id}"></div>
-                          <div class="date-picker-days" id="calendarDays-${doctor.id}"></div>
+                      <div class="doctor-contact">
+                        <div class="contact-item">
+                          <i class="fas fa-envelope"></i> <c:out value='${doctor.email}'/>
+                        </div>
+                        <div class="contact-item">
+                          <i class="fas fa-phone"></i> <c:out value='${doctor.phone}'/>
                         </div>
                       </div>
+                    </div>
+                  </div>
 
-                      <!-- Time Slots Container -->
-                      <div id="timeSlotsContainer-${doctor.id}" class="time-slots-container" style="display: none;">
-<%--                        <label><spring:message code="appointment.form.availableTimes"/></label>--%>
-                        <div id="timeSlots-${doctor.id}" class="time-slots-grid"></div>
-                      </div>
+                  <div class="doctor-schedule">
+                    <div class="schedule-header">
+                      <button type="button" class="nav-btn prev-week" id="prevWeek-${doctor.id}">
+                        <i class="fas fa-chevron-left"></i>
+                      </button>
+                      <div class="current-week" id="currentWeek-${doctor.id}"></div>
+                      <button type="button" class="nav-btn next-week" id="nextWeek-${doctor.id}">
+                        <i class="fas fa-chevron-right"></i>
+                      </button>
                     </div>
 
+                    <div class="weekly-schedule" id="weeklySchedule-${doctor.id}">
+                      <!-- Weekly schedule will be populated by JavaScript -->
+                    </div>
+
+                    <div class="no-slots-message" id="noSlots-${doctor.id}" style="display: none;">
+                      <i class="fas fa-calendar-times"></i>
+                      <p><spring:message code="search.no.slots.available" /></p>
+                      <span class="next-available" id="nextAvailable-${doctor.id}"></span>
+                    </div>
+                  </div>
+
+                  <div class="doctor-actions">
                     <a href="<c:url value='/appointment?doctorId=${doctor.id}&specialtyId=${specialty.id}'/>" class="btn-appointment">
                       <i class="fas fa-calendar-check"></i> <spring:message code="search.button.schedule" />
                     </a>
+                    <button class="btn-view-profile" onclick="viewDoctorProfile('${doctor.id}')">
+                      <i class="fas fa-user-md"></i> <spring:message code="search.button.view.profile" />
+                    </button>
                   </div>
                 </div>
               </c:forEach>
@@ -128,8 +130,17 @@
                   </a>
                 </c:if>
 
-                <div class="pagination-info">
-                  <spring:message code="pagination.page" arguments="${currentPage},${totalPages}" />
+                <div class="pagination-numbers">
+                  <c:forEach begin="1" end="${totalPages}" var="pageNum">
+                    <c:choose>
+                      <c:when test="${pageNum == currentPage}">
+                        <span class="pagination-number active">${pageNum}</span>
+                      </c:when>
+                      <c:otherwise>
+                        <a href="<c:url value='/search?specialty=${specialty.id}&page=${pageNum}'/>" class="pagination-number">${pageNum}</a>
+                      </c:otherwise>
+                    </c:choose>
+                  </c:forEach>
                 </div>
 
                 <c:if test="${currentPage < totalPages}">
@@ -188,13 +199,20 @@
       '<spring:message code="calendar.day.short.fri" />',
       '<spring:message code="calendar.day.short.sat" />'
     ],
-    appointmentAt: '<spring:message code="appointment.at" />',
-    noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />'
+    noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />',
+    nextAvailable: '<spring:message code="search.next.available" />',
+    seeMoreSchedules: '<spring:message code="search.see.more.schedules" />',
+    seeLessSchedules: '<spring:message code="search.see.less.schedules" />'
   };
+
   contextPath = "${pageContext.request.contextPath}";
 
   function changeSpecialty(specialtyId) {
     window.location.href = "${pageContext.request.contextPath}/search?specialty=" + specialtyId;
+  }
+
+  function viewDoctorProfile(doctorId) {
+    window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;
   }
 
   // Create a global object to store each doctor's availability slots
@@ -278,10 +296,32 @@
     window.addEventListener("resize", adjustContentMargin);
   }
 
-  console.log(doctorsAvailability);
+  // View toggle functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const viewToggleBtns = document.querySelectorAll('.view-toggle-btn');
+    const doctorsList = document.querySelector('.doctors-list-view');
+
+    viewToggleBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const view = this.getAttribute('data-view');
+
+        // Remove active class from all buttons
+        viewToggleBtns.forEach(b => b.classList.remove('active'));
+
+        // Add active class to clicked button
+        this.classList.add('active');
+
+        // Toggle view class on doctors container
+        if (view === 'grid') {
+          doctorsList.classList.add('grid-view');
+        } else {
+          doctorsList.classList.remove('grid-view');
+        }
+      });
+    });
+  });
 </script>
 
-<!-- Include the modified date-time-picker for search page -->
+<!-- Include the weekly schedule script -->
 <script src="<c:url value='/js/search-date-time-picker.js'/>"></script>
 </body>
-</html>

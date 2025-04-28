@@ -51,10 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedDate = null
     let selectedTimeSlot = null
 
-    // let FutureAppointments = [];
-    FutureAppointments.forEach(entry => {
-        console.log(entry.date + ": " + entry.hours);
-    })
 
     initDatePicker();
 

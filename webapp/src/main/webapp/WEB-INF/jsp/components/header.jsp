@@ -170,7 +170,6 @@
 
     if (mobileMenuToggle && mainNav) {
       mobileMenuToggle.addEventListener('click', function() {
-        console.log("ACA adentro")
         mainNav.classList.toggle('active');
         this.classList.toggle('active');
         document.body.classList.toggle('menu-open');

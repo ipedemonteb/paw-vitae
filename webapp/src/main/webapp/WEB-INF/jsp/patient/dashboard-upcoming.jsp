@@ -245,9 +245,6 @@
             const modal = document.getElementById('cancelAppointmentModal');
             if (modal) {
                 modal.classList.add('show');
-                console.log("Modal should be visible now");
-            } else {
-                console.error("Modal element not found");
             }
         };
 
@@ -264,7 +261,6 @@
             button.addEventListener('click', function(e) {
                 e.preventDefault();
                 const appointmentId = this.getAttribute('data-id');
-                console.log("Cancel button clicked for appointment:", appointmentId);
                 showCancelModal(appointmentId);
             });
         });
@@ -285,13 +281,8 @@
                         .then(data => {
                             if (data.success) {
                                 window.location.reload();
-                            } else {
-                                console.error("Error canceling appointment:", data);
                             }
                         })
-                        .catch(error => {
-                            console.error("Error canceling appointment:", error);
-                        });
                 }
                 hideCancelModal();
             });
