@@ -15,12 +15,26 @@
     <title><spring:message code="dashboard.availability.title" /></title>
     <link rel="stylesheet" href="<c:url value='/css/doctor-dashboard.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/modal.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
+
+<div id="successToast" class="success-toast">
+    <div class="success-toast-icon">
+        <i class="fas fa-check"></i>
+    </div>
+    <div class="success-toast-content">
+        <div class="success-toast-title"><spring:message code="profile.update.success.title"/></div>
+        <div class="success-toast-message"><spring:message code="profile.update.success.message"/></div>
+    </div>
+    <button class="success-toast-close" onclick="hideSuccessToast()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
 
 <div class="dashboard-container">
     <!-- Doctor Profile Header -->
@@ -237,6 +251,9 @@
     </div>
 </div>
 
+<!-- Include the toast notification script -->
+<script src="<c:url value='/js/toast-notification.js' />"></script>
+
 <script>
     let slotCounter = ${doctor.availabilitySlots.size()};
     let timeSlots = [];
@@ -246,6 +263,16 @@
 
         // Initial validation of slots
         validateAllSlots();
+
+        // Check if availability was updated successfully
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('updated') === 'true') {
+            showSuccessToast();
+
+            // Remove the query parameter without refreshing the page
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
 
         // Add form submission handler to prevent submission with errors
         const availabilityForm = document.getElementById('updateAvailabilityForm');
@@ -362,6 +389,7 @@
                 document.querySelectorAll('.modal-overlay').forEach(modal => {
                     modal.classList.remove('show');
                 });
+                hideSuccessToast();
             }
         });
     });
