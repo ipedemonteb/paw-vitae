@@ -75,10 +75,9 @@
         <div class="filter-group">
           <label for="sortSelect" class="filter-label"><i class="fas fa-sort"></i> <spring:message code="search.sort" /></label>
           <div class="select-container">
-            <select id="sortSelect" class="filter-select">
-              <option value="recommended"><spring:message code="search.sort.recommended" /></option>
-              <option value="name_asc"><spring:message code="search.sort.name_asc" /></option>
-              <option value="name_desc"><spring:message code="search.sort.name_desc" /></option>
+            <select id="sortSelect" class="filter-select" onchange="changeDirection(this.value)">
+              <option value="asc" ${param.direction == "asc" ? 'selected' : ''}><spring:message code="search.sort.name_asc" /></option>
+              <option value="desc" ${param.direction == "desc" ? 'selected' : ''}><spring:message code="search.sort.name_desc" /></option>
             </select>
           </div>
         </div>
@@ -254,6 +253,11 @@
     applyFilters();
   }
 
+  function changeDirection(direction) {
+    currentFilters.direction = direction;
+    applyFilters();
+  }
+
 
   function viewDoctorProfile(doctorId) {
     window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;
@@ -295,8 +299,9 @@
 
     // Build URL with all parameters
     let url = `${pageContext.request.contextPath}/search?specialty=` + currentFilters.specialty + `&page=` + currentFilters.page;
-    currentFilters.coverage !=0 ? url +=  `&coverage=` + currentFilters.coverage : url += ``;
-    url += `&orderBy=` + currentFilters.orderBy + `&direction=` + currentFilters.direction;
+    currentFilters.coverage != 0 ? url +=  `&coverage=` + currentFilters.coverage : url += ``;
+    currentFilters.orderBy != null ? url += `&orderBy=` + currentFilters.orderBy : url += ``;
+    currentFilters.direction !=null ? url += `&direction=` + currentFilters.direction : url += ``;
 
     // Add weekdays if any selected
     currentFilters.weekdays.forEach(day => {
