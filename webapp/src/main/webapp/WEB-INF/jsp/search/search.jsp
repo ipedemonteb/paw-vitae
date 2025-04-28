@@ -97,8 +97,8 @@
       <div class="results-header">
         <div class="results-count">
           <c:choose>
-            <c:when test="${not empty paginatedDoctors}">
-              <span><spring:message code="search.results.count" arguments="${doctors.size()}" /></span>
+            <c:when test="${not empty totalDoctors}">
+              <span><spring:message code="search.results.count" arguments="${totalDoctors}" /></span>
             </c:when>
             <c:otherwise>
               <span><spring:message code="search.results.none" /></span>
@@ -120,7 +120,7 @@
         </c:when>
         <c:otherwise>
           <div class="doctors-grid">
-            <c:forEach var="doctor" items="${paginatedDoctors}" varStatus="status">
+            <c:forEach var="doctor" items="${doctors}" varStatus="status">
               <div class="doctor-card">
                 <div class="doctor-card-header">
                   <div class="doctor-avatar">
