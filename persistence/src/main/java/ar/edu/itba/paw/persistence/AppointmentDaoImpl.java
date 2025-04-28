@@ -65,25 +65,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
 
-//    @Override
-//    public Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty) {
-//        final Map<String, Object> args = new HashMap<>();
-//        args.put("client_id", patientId);
-//        args.put("doctor_id", doctorId);
-//        args.put("date", java.sql.Timestamp.valueOf(startDate));
-//        args.put("reason", reason);
-//        args.put("specialty_id", specialty.getId());
-//        final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
-//        return new Appointment(
-//                startDate,
-//                AppointmentStatus.PENDIENTE.getValue(),
-//                reason,
-//                appointmentId.longValue(),
-//                specialty,
-//                doctorDaoImpl.getById(doctorId).orElse(null),
-//                patientDaoImpl.getById(patientId).orElse(null)
-//        );
-//    }
 
     @Override
     public Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty) {
@@ -177,8 +158,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public Optional<List<Appointment>> getByDoctorId(long doctorId) {
         LocalDate today = LocalDate.now();
-        LocalDate thirtyDaysLater = today.plusDays(30);
-
+        LocalDate endOfNextMonth = today.plusMonths(1).withDayOfMonth(today.plusMonths(1).lengthOfMonth());
         String sql = "SELECT a.id, a.date, a.status, a.reason, " +
                 "s.id AS specialty_id, s.key AS specialty_key, " +
                 "d.doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
@@ -203,7 +183,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 ROW_MAPPER,
                 doctorId,
                 today,
-                thirtyDaysLater
+                endOfNextMonth
         );
 
         return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
