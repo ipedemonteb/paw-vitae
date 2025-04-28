@@ -237,7 +237,7 @@
   let currentFilters = {
     specialty: "${specialty.id}",
     page: ${currentPage},
-    coverage: "${param.coverage || null}",
+    coverage: "${param.coverage}",
     weekdays: [],
     orderBy: "${param.orderBy}",
     direction: "${param.direction}"
