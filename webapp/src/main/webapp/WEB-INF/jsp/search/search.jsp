@@ -22,18 +22,30 @@
 <!-- Main Content -->
 <main class="main-content">
   <div class="container">
-    <div class="search-container">
-      <div class="search-header">
+    <!-- Search Header -->
+    <div class="search-header">
+      <div class="search-header-content">
         <h1 class="search-title"><spring:message code="search.title" /></h1>
         <p class="search-subtitle"><spring:message code="search.doctors.specialty" arguments="${specialtyName}"/></p>
       </div>
 
-      <div class="search-filters">
-        <!-- Specialty Selector -->
-        <div class="specialty-selector">
-          <label for="specialtySelect" class="specialty-label"><spring:message code="search.change.specialty" />:</label>
-          <div class="specialty-select-container">
-            <select id="specialtySelect" class="specialty-select" onchange="changeSpecialty(this.value)">
+      <!-- Search Bar -->
+      <div class="search-bar-container">
+        <div class="search-bar">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input">
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="filters-container">
+        <!-- Specialty Filter -->
+        <div class="filter-group">
+          <label for="specialtySelect" class="filter-label"><i class="fas fa-stethoscope"></i> <spring:message code="search.specialty" /></label>
+          <div class="select-container">
+            <select id="specialtySelect" class="filter-select" onchange="changeSpecialty(this.value)">
               <c:forEach var="spec" items="${allSpecialties}">
                 <option value="<c:out value='${spec.id}'/>" ${spec.id == specialty.id ? 'selected' : ''}>
                   <spring:message code="${spec.key}" />
@@ -43,168 +55,165 @@
           </div>
         </div>
 
+        <!-- Sort Filter -->
+        <div class="filter-group">
+          <label for="sortSelect" class="filter-label"><i class="fas fa-sort"></i> <spring:message code="search.sort" /></label>
+          <div class="select-container">
+            <select id="sortSelect" class="filter-select">
+              <option value="recommended"><spring:message code="search.sort.recommended" /></option>
+              <option value="name_asc"><spring:message code="search.sort.name_asc" /></option>
+              <option value="name_desc"><spring:message code="search.sort.name_desc" /></option>
+            </select>
+          </div>
+        </div>
+
+        <!-- View Toggle -->
         <div class="view-toggle">
-          <button class="view-toggle-btn active" data-view="list">
-            <i class="fas fa-list"></i> <span><spring:message code="search.view.list" /></span>
+          <button class="view-toggle-btn active" data-view="grid">
+            <i class="fas fa-th-large"></i>
           </button>
-          <button class="view-toggle-btn" data-view="grid">
-            <i class="fas fa-th-large"></i> <span><spring:message code="search.view.grid" /></span>
+          <button class="view-toggle-btn" data-view="list">
+            <i class="fas fa-list"></i>
           </button>
         </div>
       </div>
 
-      <div class="search-body">
-        <c:choose>
-          <c:when test="${empty doctors}">
-            <div class="empty-results">
-              <div class="empty-icon"><i class="fas fa-user-md fa-3x"></i></div>
-              <p><spring:message code="search.no.doctors.available" /></p>
-            </div>
-          </c:when>
-          <c:otherwise>
-            <div class="doctors-list-view">
-              <c:forEach var="doctor" items="${paginatedDoctors}" varStatus="status">
-                <div class="doctor-card">
+      <!-- Quick Filters -->
+      <div class="quick-filters">
+        <button class="quick-filter-btn" data-filter="all">
+          <spring:message code="search.filter.all" />
+        </button>
+        <button class="quick-filter-btn" data-filter="top-rated">
+          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />
+        </button>
+        <button class="quick-filter-btn" data-filter="new">
+          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section">
+      <div class="results-header">
+        <div class="results-count">
+          <c:choose>
+            <c:when test="${not empty paginatedDoctors}">
+              <span><spring:message code="search.results.count" arguments="${doctors.size()}" /></span>
+            </c:when>
+            <c:otherwise>
+              <span><spring:message code="search.results.none" /></span>
+            </c:otherwise>
+          </c:choose>
+        </div>
+      </div>
+
+      <c:choose>
+        <c:when test="${empty doctors}">
+          <div class="empty-results">
+            <div class="empty-icon"><i class="fas fa-user-md"></i></div>
+            <h3><spring:message code="search.no.doctors.title" /></h3>
+            <p><spring:message code="search.no.doctors.available" /></p>
+            <a href="<c:url value='/'/>" class="btn btn-primary">
+              <i class="fas fa-home"></i> <spring:message code="search.link.back.home" />
+            </a>
+          </div>
+        </c:when>
+        <c:otherwise>
+          <div class="doctors-grid">
+            <c:forEach var="doctor" items="${paginatedDoctors}" varStatus="status">
+              <div class="doctor-card">
+                <div class="doctor-card-header">
+                  <div class="doctor-avatar">
+                    <img src="<c:url value='/doctor/${doctor.id}/image'/>" alt="<c:out value='${doctor.name} ${doctor.lastName}'/>" class="avatar-img">
+                  </div>
+                  <div class="doctor-rating">
+                    <div class="stars">
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="rating-count">4.5</span>
+                  </div>
+                </div>
+
+                <div class="doctor-card-body">
+                  <h3 class="doctor-name">
+                    <c:out value='${doctor.name} ${doctor.lastName}'/>
+                  </h3>
+                  <div class="doctor-specialty">
+                    <i class="fas fa-stethoscope"></i> <c:out value="${specialtyName}"/>
+                  </div>
                   <div class="doctor-info">
-                    <div class="doctor-avatar-container">
-                      <img src="<c:url value='/doctor/${doctor.id}/image'/>" alt="<c:out value='${doctor.name} ${doctor.lastName}'/>" class="doctor-avatar">
+                    <div class="info-item">
+                      <i class="fas fa-envelope"></i>
+                      <span><c:out value='${doctor.email}'/></span>
                     </div>
-                    <div class="doctor-details">
-                      <h3 class="doctor-name" title="<c:out value='${doctor.name} ${doctor.lastName}'/>">
-                        <c:out value='${doctor.name} ${doctor.lastName}'/>
-                      </h3>
-                      <div class="doctor-specialty">
-                        <i class="fas fa-stethoscope"></i> <c:out value="${specialtyName}"/>
-                      </div>
-                      <div class="doctor-contact">
-                        <div class="contact-item">
-                          <i class="fas fa-envelope"></i> <c:out value='${doctor.email}'/>
-                        </div>
-                        <div class="contact-item">
-                          <i class="fas fa-phone"></i> <c:out value='${doctor.phone}'/>
-                        </div>
-                      </div>
+                    <div class="info-item">
+                      <i class="fas fa-phone"></i>
+                      <span><c:out value='${doctor.phone}'/></span>
                     </div>
-                  </div>
-
-                  <div class="doctor-schedule">
-                    <div class="schedule-header">
-                      <button type="button" class="nav-btn prev-week" id="prevWeek-${doctor.id}">
-                        <i class="fas fa-chevron-left"></i>
-                      </button>
-                      <div class="current-week" id="currentWeek-${doctor.id}"></div>
-                      <button type="button" class="nav-btn next-week" id="nextWeek-${doctor.id}">
-                        <i class="fas fa-chevron-right"></i>
-                      </button>
+                    <div class="info-item">
+                      <i class="fas fa-calendar-check"></i>
+                      <span class="availability-badge available">
+                        <spring:message code="search.available" />
+                      </span>
                     </div>
-
-                    <div class="weekly-schedule" id="weeklySchedule-${doctor.id}">
-                      <!-- Weekly schedule will be populated by JavaScript -->
-                    </div>
-
-                    <div class="no-slots-message" id="noSlots-${doctor.id}" style="display: none;">
-                      <i class="fas fa-calendar-times"></i>
-                      <p><spring:message code="search.no.slots.available" /></p>
-                      <span class="next-available" id="nextAvailable-${doctor.id}"></span>
-                    </div>
-                  </div>
-
-                  <div class="doctor-actions">
-                    <a href="<c:url value='/appointment?doctorId=${doctor.id}&specialtyId=${specialty.id}'/>" class="btn-appointment">
-                      <i class="fas fa-calendar-check"></i> <spring:message code="search.button.schedule" />
-                    </a>
-                    <button class="btn-view-profile" onclick="viewDoctorProfile('${doctor.id}')">
-                      <i class="fas fa-user-md"></i> <spring:message code="search.button.view.profile" />
-                    </button>
                   </div>
                 </div>
-              </c:forEach>
-            </div>
 
-            <!-- Pagination -->
-            <c:if test="${totalPages > 1}">
-              <div class="pagination">
-                <c:if test="${currentPage > 1}">
-                  <a href="<c:url value='/search?specialty=${specialty.id}&page=${currentPage - 1}'/>" class="pagination-link prev">
-                    <i class="fas fa-chevron-left"></i> <spring:message code="pagination.previous" />
+                <div class="doctor-card-footer">
+                  <a href="<c:url value='/appointment?doctorId=${doctor.id}&specialtyId=${specialty.id}'/>" class="btn btn-primary">
+                    <i class="fas fa-calendar-check"></i> <spring:message code="search.button.schedule" />
                   </a>
-                </c:if>
-
-                <div class="pagination-numbers">
-                  <c:forEach begin="1" end="${totalPages}" var="pageNum">
-                    <c:choose>
-                      <c:when test="${pageNum == currentPage}">
-                        <span class="pagination-number active">${pageNum}</span>
-                      </c:when>
-                      <c:otherwise>
-                        <a href="<c:url value='/search?specialty=${specialty.id}&page=${pageNum}'/>" class="pagination-number">${pageNum}</a>
-                      </c:otherwise>
-                    </c:choose>
-                  </c:forEach>
+                  <button class="btn btn-secondary" onclick="viewDoctorProfile('${doctor.id}')">
+                    <i class="fas fa-user-md"></i> <spring:message code="search.button.view.profile" />
+                  </button>
                 </div>
-
-                <c:if test="${currentPage < totalPages}">
-                  <a href="<c:url value='/search?specialty=${specialty.id}&page=${currentPage + 1}'/>" class="pagination-link next">
-                    <spring:message code="pagination.next" /> <i class="fas fa-chevron-right"></i>
-                  </a>
-                </c:if>
               </div>
-            </c:if>
-          </c:otherwise>
-        </c:choose>
-      </div>
+            </c:forEach>
+          </div>
 
-      <div class="search-footer">
-        <a href="<c:url value='/'/>" class="btn btn-outline">
-          <i class="fas fa-home"></i> <spring:message code="search.link.back.home" />
-        </a>
-      </div>
+          <!-- Pagination -->
+          <c:if test="${totalPages > 1}">
+            <div class="pagination">
+              <c:if test="${currentPage > 1}">
+                <a href="<c:url value='/search?specialty=${specialty.id}&page=${currentPage - 1}'/>" class="pagination-btn prev">
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+              </c:if>
+
+              <div class="pagination-numbers">
+                <c:forEach begin="1" end="${totalPages}" var="pageNum">
+                  <c:choose>
+                    <c:when test="${pageNum == currentPage}">
+                      <span class="pagination-number active">${pageNum}</span>
+                    </c:when>
+                    <c:otherwise>
+                      <a href="<c:url value='/search?specialty=${specialty.id}&page=${pageNum}'/>" class="pagination-number">${pageNum}</a>
+                    </c:otherwise>
+                  </c:choose>
+                </c:forEach>
+              </div>
+
+              <c:if test="${currentPage < totalPages}">
+                <a href="<c:url value='/search?specialty=${specialty.id}&page=${currentPage + 1}'/>" class="pagination-btn next">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+              </c:if>
+            </div>
+          </c:if>
+        </c:otherwise>
+      </c:choose>
     </div>
   </div>
 </main>
 
-<!-- Add message translations for JavaScript -->
-<script>
-  // Create a messages object to be used by the JavaScript
-  window.appointmentMessages = {
-    months: [
-      '<spring:message code="calendar.month.january" />',
-      '<spring:message code="calendar.month.february" />',
-      '<spring:message code="calendar.month.march" />',
-      '<spring:message code="calendar.month.april" />',
-      '<spring:message code="calendar.month.may" />',
-      '<spring:message code="calendar.month.june" />',
-      '<spring:message code="calendar.month.july" />',
-      '<spring:message code="calendar.month.august" />',
-      '<spring:message code="calendar.month.september" />',
-      '<spring:message code="calendar.month.october" />',
-      '<spring:message code="calendar.month.november" />',
-      '<spring:message code="calendar.month.december" />'
-    ],
-    weekdays: [
-      '<spring:message code="calendar.day.sunday" />',
-      '<spring:message code="calendar.day.monday" />',
-      '<spring:message code="calendar.day.tuesday" />',
-      '<spring:message code="calendar.day.wednesday" />',
-      '<spring:message code="calendar.day.thursday" />',
-      '<spring:message code="calendar.day.friday" />',
-      '<spring:message code="calendar.day.saturday" />'
-    ],
-    weekdaysShort: [
-      '<spring:message code="calendar.day.short.sun" />',
-      '<spring:message code="calendar.day.short.mon" />',
-      '<spring:message code="calendar.day.short.tue" />',
-      '<spring:message code="calendar.day.short.wed" />',
-      '<spring:message code="calendar.day.short.thu" />',
-      '<spring:message code="calendar.day.short.fri" />',
-      '<spring:message code="calendar.day.short.sat" />'
-    ],
-    noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />',
-    nextAvailable: '<spring:message code="search.next.available" />',
-    seeMoreSchedules: '<spring:message code="search.see.more.schedules" />',
-    seeLessSchedules: '<spring:message code="search.see.less.schedules" />'
-  };
+<!-- Include the search script -->
+<script src="<c:url value='/js/search.js'/>"></script>
 
+<script>
   contextPath = "${pageContext.request.contextPath}";
 
   function changeSpecialty(specialtyId) {
@@ -215,78 +224,14 @@
     window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;
   }
 
-  // Create a global object to store each doctor's availability slots
-  window.doctorAvailabilitySlots = {};
-
-  <c:forEach var="doctor" items="${paginatedDoctors}">
-  // Initialize availability slots array for this doctor
-  window.doctorAvailabilitySlots['${doctor.id}'] = [
-    <c:forEach var="slot" items="${doctor.availabilitySlots}" varStatus="status">
-    {
-      dayOfWeek: ${slot.dayOfWeek},
-      startTime: ${slot.startTime.hour},
-      endTime: ${slot.endTime.hour},
-      slots: ${slot.endTime.hour - slot.startTime.hour + 1}
-    }<c:if test="${!status.last}">,</c:if>
-    </c:forEach>
-  ];
-  </c:forEach>
-
-  const argDate = new Date().toLocaleString("en-US", {
-    timeZone: "America/Argentina/Buenos_Aires",
-  });
-  const today = new Date(argDate);
-
-  const futureAppointmentsMap = [
-    <c:forEach var="entry" items="${doctors}" varStatus="status">
-    {
-      doctorId: '${entry.id}',
-      appointments: [
-        <c:forEach var="appointment" items="${entry.appointments}" varStatus="status2">
-        {
-          date: '${appointment.date}',
-          hour: ${appointment.date.hour}
-        }<c:if test="${!status2.last}">,</c:if>
-        </c:forEach>
-      ].filter(
-              (appointment) => {
-                const appointmentDate = new Date(appointment.date);
-                return appointmentDate > today || (appointmentDate === today && appointment.hour > today.getHours());
-              }
-      )
-    }<c:if test="${!status.last}">,</c:if>
-    </c:forEach>
-  ];
-
-  const doctorsAvailability = Object.entries(futureAppointmentsMap).map(([doctorId, appointments]) => {
-    const groupedByDate = appointments.appointments.reduce((acc, appointment) => {
-      const date = new Date(appointment.date).toISOString().split('T')[0]; // Extract date (YYYY-MM-DD)
-      const hour = appointment.hour;
-
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push(hour);
-
-      return acc;
-    }, {});
-
-    return {
-      id: appointments.doctorId,
-      info: Object.entries(groupedByDate).map(([date, hours]) => ({
-        date,
-        hours
-      }))
-    };
-  });
-
+  // Adjust content margin based on header height
   const fixedHeader = document.querySelector(".main-header");
-  const mainContent = document.querySelector("main");
+  const mainContent = document.querySelector(".main-content");
 
   if (fixedHeader && mainContent) {
     const adjustContentMargin = () => {
       const headerHeight = fixedHeader.offsetHeight;
-      mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
+      mainContent.style.marginTop = (headerHeight * 1.1) + `px`;
     };
 
     // Adjust on page load
@@ -296,32 +241,20 @@
     window.addEventListener("resize", adjustContentMargin);
   }
 
-  // View toggle functionality
+  const doctorsIds = [
+          <c:forEach var="doctor" items="${doctors}" varStatus="status">
+            {
+              id: "${doctor.id}",
+            }<c:if test="${!status.last}">,</c:if>
+    </c:forEach>
+  ];
+
+  // Initialize search functionality
   document.addEventListener('DOMContentLoaded', function() {
-    const viewToggleBtns = document.querySelectorAll('.view-toggle-btn');
-    const doctorsList = document.querySelector('.doctors-list-view');
-
-    viewToggleBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const view = this.getAttribute('data-view');
-
-        // Remove active class from all buttons
-        viewToggleBtns.forEach(b => b.classList.remove('active'));
-
-        // Add active class to clicked button
-        this.classList.add('active');
-
-        // Toggle view class on doctors container
-        if (view === 'grid') {
-          doctorsList.classList.add('grid-view');
-        } else {
-          doctorsList.classList.remove('grid-view');
-        }
-      });
-    });
+    initializeSearch();
+    initializeViewToggle();
+    initializeQuickFilters();
+    initializeSorting();
   });
 </script>
-
-<!-- Include the weekly schedule script -->
-<script src="<c:url value='/js/search-date-time-picker.js'/>"></script>
 </body>
