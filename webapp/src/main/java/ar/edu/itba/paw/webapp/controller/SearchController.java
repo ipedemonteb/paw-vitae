@@ -44,7 +44,7 @@ public class SearchController {
         List<Specialty> allSpecialties = specialtyService.getAll().orElse(new ArrayList<>());
         ModelAndView mav = new ModelAndView("search/search");
         mav.addObject("doctors", paginatedDoctors);
-        mav.addObject("paginatedDoctors", paginatedDoctors);
+        mav.addObject("totalDoctors", doctorPage.getTotalElements());
         mav.addObject("specialty", specialtyObj.orElse(null));
         mav.addObject("allSpecialties", allSpecialties);
         mav.addObject("currentPage", page);

@@ -521,7 +521,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Update results count
                 const visibleCards = Array.from(doctorCards).filter((card) => card.style.display !== "none")
-                updateResultsCount(visibleCards.length)
+                // updateResultsCount(visibleCards.length)
             })
         })
     }
