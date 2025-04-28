@@ -1,10 +1,11 @@
-/* Search Page Styles - Matching Landing Page Design
+/* Enhanced Search Page Styles
 -------------------------------------------------- */
 
 :root {
     --primary-color: #2563eb;
     --primary-dark: #1e40af;
     --primary-light: #93c5fd;
+    --primary-lighter: #dbeafe;
     --secondary-color: #0284c7;
     --accent-color: #7c3aed;
     --text-color: #1e293b;
@@ -12,16 +13,22 @@
     --background-light: #f8fafc;
     --background-dark: #1a202c;
     --white: #ffffff;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --border-radius-sm: 4px;
     --border-radius: 8px;
     --border-radius-lg: 12px;
     --transition: all 0.3s ease;
-    --color-text-disabled: #c0c0c0;
-    --color-primary-rgb: 37, 99, 235; /* RGB value of primary color */
-    --active: #2563eb;
-    --disabled: #e5e7eb;
 }
 
 * {
@@ -38,7 +45,7 @@ body {
 }
 
 .main-content {
-    margin-bottom: 100px;
+    margin-bottom: 60px;
 }
 
 .container {
@@ -48,15 +55,13 @@ body {
     padding: 0 20px;
 }
 
-
-
 /* Search Page Container */
 .search-container {
     background-color: var(--white);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
     overflow: hidden;
-    margin: 0 auto;
+    margin: 20px auto;
     transition: var(--transition);
 }
 
@@ -67,42 +72,47 @@ body {
 /* Search Header */
 .search-header {
     background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-    padding: 40px 30px;
+    padding: 30px;
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .search-title {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: var(--text-color);
     margin-bottom: 10px;
 }
 
 .search-subtitle {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: var(--text-light);
     max-width: 700px;
     margin: 0 auto;
 }
 
-/* Search Body */
-.search-body {
-    padding: 30px;
+/* Search Filters */
+.search-filters {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 30px;
+    background-color: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 /* Specialty Selector */
 .specialty-selector {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
     gap: 15px;
+    flex-wrap: wrap;
 }
 
 .specialty-label {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--text-color);
 }
@@ -114,9 +124,9 @@ body {
 
 .specialty-select {
     width: 100%;
-    padding: 12px 16px;
+    padding: 10px 16px;
     border-radius: var(--border-radius);
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--gray-300);
     background-color: var(--white);
     font-size: 1rem;
     color: var(--text-color);
@@ -143,6 +153,41 @@ body {
     pointer-events: none;
 }
 
+/* View Toggle */
+.view-toggle {
+    display: flex;
+    gap: 10px;
+}
+
+.view-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-300);
+    background-color: var(--white);
+    color: var(--text-light);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.view-toggle-btn:hover {
+    background-color: var(--gray-100);
+}
+
+.view-toggle-btn.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+/* Search Body */
+.search-body {
+    padding: 30px;
+}
+
 /* Empty Results */
 .empty-results {
     text-align: center;
@@ -163,10 +208,17 @@ body {
     color: var(--text-light);
 }
 
-/* Doctors Grid */
-.doctors-grid {
+/* Doctors List View */
+.doctors-list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Grid View Toggle */
+.doctors-list-view.grid-view {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 30px;
 }
 
@@ -177,10 +229,10 @@ body {
     box-shadow: var(--shadow-sm);
     overflow: hidden;
     transition: var(--transition);
+    border: 1px solid var(--gray-200);
     display: flex;
     flex-direction: column;
     height: 100%;
-    border: 1px solid #e2e8f0;
 }
 
 .doctor-card:hover {
@@ -189,23 +241,22 @@ body {
     border-color: var(--primary-light);
 }
 
-/* Doctor Card Header */
-.doctor-card-header {
-    padding: 24px;
+/* Doctor Info */
+.doctor-info {
+    padding: 20px;
     display: flex;
     align-items: center;
-    gap: 16px;
-    border-bottom: 1px solid #e2e8f0;
-    background-color: var(--background-light);
+    border-bottom: 1px solid var(--gray-200);
 }
 
-.doctor-image {
+.doctor-avatar-container {
     width: 80px;
     height: 80px;
     border-radius: 50%;
     overflow: hidden;
     border: 3px solid var(--white);
     box-shadow: var(--shadow-sm);
+    margin-right: 20px;
     flex-shrink: 0;
 }
 
@@ -215,220 +266,266 @@ body {
     object-fit: cover;
 }
 
-.doctor-info {
+.doctor-details {
     flex-grow: 1;
 }
 
 .doctor-name {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 600;
     color: var(--text-color);
-    margin: 0;
+    margin-bottom: 5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 100%;
 }
 
-/* Doctor Card Body */
-.doctor-card-body {
-    padding: 24px;
-    flex-grow: 1;
+.doctor-specialty {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .doctor-contact {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 .contact-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    color: var(--text-light);
+    font-size: 0.95rem;
 }
 
-.contact-icon {
-    width: 36px;
-    height: 36px;
+.contact-item i {
+    color: var(--primary-color);
+    width: 16px;
+    text-align: center;
+}
+
+/* Doctor Schedule */
+.doctor-schedule {
+    padding: 20px;
+    background-color: var(--gray-50);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.schedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #dbeafe;
-    color: var(--primary-color);
-    border-radius: 50%;
-    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
-.contact-text {
-    font-size: 0.95rem;
-    color: var(--text-light);
-    word-break: break-word;
+.nav-btn:hover {
+    background-color: var(--primary-lighter);
 }
 
-/* Doctor Card Footer */
-.doctor-card-footer {
-    padding: 24px;
-    border-top: 1px solid #e2e8f0;
-    background-color: var(--background-light);
-}
-
-/* Availability Section */
-.availability-section {
-    margin-bottom: 24px;
-}
-
-.availability-header {
-    margin-bottom: 16px;
-}
-
-.availability-header h4 {
-    font-size: 1.1rem;
+.current-week {
     font-weight: 600;
     color: var(--text-color);
-    margin: 0;
-}
-
-/* Date Picker Customization for Search Page */
-.date-picker-container {
-    position: relative;
-    width: 100%;
-    margin-bottom: 16px;
-}
-
-.date-picker-container.compact .date-picker-calendar {
-    width: 280px;
-}
-
-.date-picker-input {
-    width: 100%;
-    padding: 12px 16px;
-    border-radius: var(--border-radius);
-    border: 1px solid #e2e8f0;
-    background-color: var(--white);
-    font-size: 1rem;
-    color: var(--text-color);
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.date-picker-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-}
-
-/* Time Slots for Search Page - Improved styling */
-.time-slots-container {
-    margin-top: 16px;
-    background-color: var(--white);
-    padding: 12px;
-    border-radius: var(--border-radius);
-    border: 1px solid #e2e8f0;
-}
-
-.time-slots-container label {
-    display: block;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text-color);
-    margin-bottom: 12px;
-    border-left: 3px solid var(--primary-color);
-    padding-left: 10px;
-}
-
-.time-slots-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    max-height: 150px;
-    overflow-y: auto;
-    padding-right: 8px;
-}
-
-/* Improved time slot button styling */
-.time-slot-btn {
-    padding: 10px 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: var(--border-radius);
-    background-color: var(--white);
-    font-size: 0.9rem;
-    color: var(--text-color);
-    cursor: pointer;
-    transition: var(--transition);
     text-align: center;
-    box-shadow: var(--shadow-sm);
 }
 
-.time-slot-btn:hover {
-    background-color: var(--background-light);
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
+/* Weekly Schedule */
+.weekly-schedule {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.time-slot-btn.selected,
-.time-slot-btn.active {
-    background-color: var(--primary-color);
-    color: var(--white);
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(var(--color-primary-rgb), 0.3);
+.day-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* Time slot disabled state - Made more visible */
-.time-slot-btn.disabled {
-    background-color: #f3f4f6;
-    color: var(--color-text-disabled);
-    border-color: #e5e7eb;
-    cursor: default;
-    transform: none;
-    box-shadow: none;
-    text-decoration: line-through;
-    opacity: 0.7;
+.week-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
 }
 
-.no-slots-message {
-    padding: 10px;
-    text-align: left;
-    color: #f44336;
-    font-style: italic;
+.day-header {
+    text-align: center;
+    padding: 8px 0;
+    font-weight: 600;
     font-size: 0.9rem;
 }
 
-/* Appointment Button */
-.btn-appointment {
+.day-name {
+    color: var(--text-color);
+}
+
+.day-date {
+    color: var(--text-light);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.day-today .day-name {
+    color: var(--primary-color);
+}
+
+.day-today .day-date {
+    color: var(--primary-color);
+}
+
+.time-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    min-height: 100px;
+}
+
+.time-slot {
+    padding: 6px 10px;
+    background-color: var(--primary-lighter);
+    color: var(--primary-color);
+    border-radius: var(--border-radius-sm);
+    font-size: 0.85rem;
+    text-align: center;
+    width: 90%;
+    transition: var(--transition);
+    border: 1px solid var(--primary-light);
+}
+
+.time-slot:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.no-slot {
+    color: var(--gray-400);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.see-more {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.see-more-btn {
+    color: var(--primary-color);
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: var(--transition);
+}
+
+.see-more-btn:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* No Slots Message */
+.no-slots-message {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-light);
+}
+
+.no-slots-message i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--gray-400);
+}
+
+.no-slots-message p {
+    margin-bottom: 10px;
+}
+
+.next-available {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Doctor Actions */
+.doctor-actions {
+    padding: 20px;
+    display: flex;
+    gap: 15px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.btn-appointment,
+.btn-view-profile {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 24px;
-    background-color: var(--primary-color);
-    color: var(--white);
+    padding: 10px 20px;
     border-radius: var(--border-radius);
     font-weight: 500;
-    font-size: 1rem;
-    text-decoration: none;
+    font-size: 0.95rem;
     transition: var(--transition);
-    width: 100%;
-    text-align: center;
-    border: none;
     cursor: pointer;
+    text-decoration: none;
+    flex: 1;
+}
+
+.btn-appointment {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
 }
 
 .btn-appointment:hover {
     background-color: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-    color: var(--white);
 }
 
-.btn-appointment i {
+.btn-view-profile {
+    background-color: var(--white);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-view-profile:hover {
+    background-color: var(--primary-lighter);
+    transform: translateY(-2px);
+}
+
+.btn-appointment i,
+.btn-view-profile i {
     margin-right: 8px;
 }
 
 /* Search Footer */
 .search-footer {
-    padding: 24px 30px;
-    border-top: 1px solid #e2e8f0;
+    padding: 20px 30px;
+    border-top: 1px solid var(--gray-200);
     text-align: center;
+    background-color: var(--gray-50);
 }
 
 /* Button Styles */
@@ -436,7 +533,7 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 24px;
+    padding: 10px 20px;
     border-radius: var(--border-radius);
     font-weight: 500;
     font-size: 1rem;
@@ -478,7 +575,7 @@ body {
     padding: 8px 16px;
     background-color: var(--white);
     color: var(--primary-color);
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--gray-200);
     border-radius: var(--border-radius);
     font-weight: 500;
     font-size: 0.95rem;
@@ -487,232 +584,197 @@ body {
 }
 
 .pagination-link:hover {
-    background-color: var(--primary-color);
-    color: var(--white);
+    background-color: var(--primary-lighter);
+    color: var(--primary-color);
     transform: translateY(-2px);
 }
 
-.pagination-info {
-    font-size: 0.95rem;
-    color: var(--text-light);
-}
-
-/* Custom Calendar Styling */
-.date-picker-calendar {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 1000;
-    width: 300px;
-    background: var(--white);
-    border: 1px solid #e2e8f0;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-md);
-    margin-top: 8px;
-}
-
-.date-picker-calendar.show {
-    display: block;
-    animation: calendarFadeIn 0.3s ease;
-}
-
-@keyframes calendarFadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.date-picker-header {
+.pagination-numbers {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    background-color: var(--primary-light);
-    border-top-left-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
+    gap: 8px;
 }
 
-.date-picker-month-year {
-    font-weight: 600;
-    text-align: center;
-    flex-grow: 1;
-}
-
-.date-picker-nav {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    padding: 4px 8px;
-    color: var(--primary-color);
-    border-radius: 4px;
-    display: flex;
+.pagination-number {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.date-picker-nav:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
-}
-
-.date-picker-weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    padding: 8px 0;
-    background-color: var(--background-light);
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.date-picker-days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    padding: 8px;
-}
-
-.date-picker-day {
+    width: 36px;
     height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    margin: 2px;
+    border-radius: 50%;
+    font-weight: 500;
+    font-size: 0.95rem;
     transition: var(--transition);
+    text-decoration: none;
+    color: var(--text-color);
+    background-color: var(--white);
+    border: 1px solid var(--gray-200);
 }
 
-.date-picker-day:hover:not(.disabled):not(.outside-month) {
-    background-color: var(--background-light);
-    transform: scale(1.1);
-}
-
-.date-picker-day.today {
-    font-weight: 700;
+.pagination-number:hover {
+    background-color: var(--primary-lighter);
     color: var(--primary-color);
-    border: 1px solid var(--primary-color);
+    transform: translateY(-2px);
 }
 
-.date-picker-day.selected {
+.pagination-number.active {
     background-color: var(--primary-color);
     color: var(--white);
-    transform: scale(1.05);
+    border-color: var(--primary-color);
 }
 
-.date-picker-day.disabled {
-    color: var(--color-text-disabled);
-    cursor: default;
-    text-decoration: line-through;
+/* Grid View Adjustments */
+.doctors-list-view.grid-view .doctor-card {
+    height: 100%;
 }
 
-.date-picker-day.outside-month {
-    color: #a0a0a0;
-    opacity: 0.5;
-}
-
-.time-slot-display {
-    padding: 0.375rem;
+.doctors-list-view.grid-view .doctor-info {
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    max-width: 100px;
 }
 
-.time-slot-display.available {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    border: 1px solid #c8e6c9;
+.doctors-list-view.grid-view .doctor-avatar-container {
+    margin-right: 0;
+    margin-bottom: 15px;
 }
 
-.time-slot-display.unavailable {
-    background-color: #f5f5f5;
-    color: #bdbdbd;
-    border: 1px solid #e0e0e0;
+.doctors-list-view.grid-view .doctor-actions {
+    flex-direction: column;
 }
 
-/* Custom Scrollbar */
-.time-slots-grid::-webkit-scrollbar {
-    width: 6px;
+/* Add these styles to your existing CSS file */
+
+/* Expanded time slots */
+.time-slots.expanded {
+    max-height: none;
+    overflow: visible;
 }
 
-.time-slots-grid::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
+/* Animation for expanding/collapsing */
+.time-slots {
+    transition: max-height 0.3s ease;
 }
 
-.time-slots-grid::-webkit-scrollbar-thumb {
-    background: var(--primary-light);
-    border-radius: 10px;
+/* Style for the see more/less button */
+.see-more-btn {
+    color: var(--primary-color);
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: var(--transition);
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
 }
 
-.time-slots-grid::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color);
+.see-more-btn:hover {
+    color: var(--primary-dark);
+    background-color: var(--primary-lighter);
+}
+
+.see-more-btn i {
+    transition: transform 0.3s ease;
+}
+
+.see-more-btn:hover i.fa-chevron-down {
+    transform: translateY(3px);
+}
+
+.see-more-btn:hover i.fa-chevron-up {
+    transform: translateY(-3px);
 }
 
 /* Responsive Styles */
-@media (max-width: 1024px) {
-    .doctors-grid {
+@media (max-width: 1200px) {
+    .doctors-list-view.grid-view {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+
+    .week-row {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .day-column:nth-child(6),
+    .day-column:nth-child(7) {
+        display: none;
+    }
+}
+
+@media (max-width: 992px) {
+    .doctors-list-view.grid-view {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+
+    .week-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .day-column:nth-child(4),
+    .day-column:nth-child(5) {
+        display: none;
     }
 }
 
 @media (max-width: 768px) {
     .search-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
-    .doctors-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-    }
-
-    .doctor-card-header {
+    .search-filters {
         flex-direction: column;
-        text-align: center;
-    }
-
-    .doctor-image {
-        margin: 0 auto;
-    }
-
-    .main-content {
-        padding-top: 80px; /* Adjusted for smaller screens */
-    }
-}
-
-@media (max-width: 576px) {
-    .search-header,
-    .search-body,
-    .search-footer {
-        padding: 20px 15px;
-    }
-
-    .doctors-grid {
-        grid-template-columns: 1fr;
+        align-items: flex-start;
     }
 
     .specialty-selector {
-        flex-direction: column;
-        align-items: flex-start;
+        width: 100%;
     }
 
     .specialty-select-container {
         width: 100%;
     }
 
-    .time-slots-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .view-toggle {
+        width: 100%;
+        justify-content: center;
     }
 
-    .main-content {
-        padding-top: 70px; /* Further adjusted for mobile */
+    .doctor-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .doctor-avatar-container {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .doctor-actions {
+        flex-direction: column;
+    }
+
+    .week-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .search-header,
+    .search-body,
+    .search-footer,
+    .search-filters {
+        padding: 15px;
+    }
+
+    .week-row {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 10px;
     }
 }

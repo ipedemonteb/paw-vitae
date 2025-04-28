@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchButton = document.getElementById('searchButton');
 
     if (!searchInput || !suggestionsContainer) {
-        console.error('Search input or suggestions container not found');
         return;
     }
 
@@ -56,7 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners
     searchInput.addEventListener('input', function() {
         const inputValue = this.value.trim();
-        console.log('Input changed:', inputValue);
         showSuggestions(inputValue);
         checkSearchCriteria();
     });

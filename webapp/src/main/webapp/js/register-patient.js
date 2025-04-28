@@ -167,7 +167,6 @@ function initPasswordStrength() {
 // Check if there are form errors and show the appropriate section
 function checkFormErrors() {
     if (window.hasErrors && window.errorSection) {
-        console.log("IN HERE")
         showSection(window.errorSection)
     }
 }
