@@ -155,7 +155,7 @@ public class AuthController {
         Optional<User> userOpt = us.getByEmail(form.getEmail()).map(user -> (User) user);
         if (userOpt.isEmpty()) {
             // Optionally: show generic message like "If your email is registered, you’ll receive a recovery email"
-            return new ModelAndView("redirect:/recover-password?recover=notfound");
+            return new ModelAndView("redirect:/recover-password?recover=sent");
         }
 
         User user = userOpt.get();
