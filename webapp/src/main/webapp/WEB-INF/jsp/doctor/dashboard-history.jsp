@@ -174,6 +174,14 @@
                                         <span class="specialty-badge">
                                             <spring:message code="${appointment.specialty.key}" />
                                         </span>
+                                        <div class="appointment-actions">
+                                            <div class="appointment-actions">
+                                                <button class="btn btn-primary view-appointment" onclick="window.location.href='/appointment/${appointment.id}'">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span>View Appointment</span>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

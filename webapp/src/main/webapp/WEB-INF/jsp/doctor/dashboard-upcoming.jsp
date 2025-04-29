@@ -173,6 +173,7 @@
                                         <span class="specialty-badge">
                                             <spring:message code="${appointment.specialty.key}" />
                                         </span>
+                                    <div class="appointment-actions">
                                     <c:set var="status" >
                                         <spring:message code="${appointment.status}" />
                                     </c:set>
@@ -202,6 +203,12 @@
                                             <span><spring:message code="appointment.action.cancel" /></span>
                                         </button>
                                     </c:if>
+                                            <button class="btn btn-primary view-appointment" onclick="window.location.href='/appointment/${appointment.id}'">
+                                                <i class="fas fa-eye"></i>
+                                                <span>View Appointment</span>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
