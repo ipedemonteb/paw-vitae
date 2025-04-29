@@ -44,13 +44,13 @@ public class SearchController {
             @RequestParam(value = "direction", defaultValue = "asc") String direction
     ) {
         Optional<Specialty> specialtyObj = specialtyService.getById(specialtyId);
-        Optional<List<Coverage>> coverages = coverageService.getAll();
+        List<Coverage> coverages = coverageService.getAll();
 //        Page<Doctor> doctorPage = doctorService.getBySpecialtyWithAppointments(specialtyId, page, 9); //TODO MAGIC PAGE NUMBER NOT GOOD.
         Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, 9);
-        List<Specialty> allSpecialties = specialtyService.getAll().orElse(new ArrayList<>());
-        List<Coverage> allCoverages = coverageService.getAll().orElse(new ArrayList<>());
+        List<Specialty> allSpecialties = specialtyService.getAll();
+        List<Coverage> allCoverages = coverageService.getAll();
         ModelAndView mav = new ModelAndView("search/search");
-        coverages.ifPresent(coverageList -> mav.addObject("coverages", coverageList));
+        mav.addObject("coverages", coverages);
         mav.addObject("doctors", doctorPage.getContent());
         mav.addObject("totalDoctors", doctorPage.getTotalElements());
         mav.addObject("specialty", specialtyObj.orElse(null));

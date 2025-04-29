@@ -313,13 +313,26 @@
                   </div>
                   <div class="doctor-rating">
                     <div class="stars">
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star-half-alt"></i>
+                      <c:set var="fullStars" value="${doctor.rating.intValue()}" />
+                      <c:set var="hasHalfStar" value="${doctor.rating - fullStars >= 0.5}" />
+                      <c:set var="emptyStars" value="${5 - fullStars - (hasHalfStar ? 1 : 0)}" />
+
+                      <!-- Render full stars -->
+                      <c:forEach begin="1" end="${fullStars}" var="i">
+                        <i class="fas fa-star"></i>
+                      </c:forEach>
+
+                      <!-- Render half star if applicable -->
+                      <c:if test="${hasHalfStar}">
+                        <i class="fas fa-star-half-alt"></i>
+                      </c:if>
+
+                      <!-- Render empty stars -->
+                      <c:forEach begin="1" end="${emptyStars}" var="i">
+                        <i class="far fa-star"></i>
+                      </c:forEach>
                     </div>
-                    <span class="rating-count">4.5</span>
+                    <span class="rating-count">${doctor.rating}</span>
                   </div>
                 </div>
 
