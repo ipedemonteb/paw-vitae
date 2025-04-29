@@ -84,8 +84,38 @@
           <label for="sortSelect" class="filter-label"><i class="fas fa-sort"></i> <spring:message code="search.sort" /></label>
           <div class="select-container">
             <select id="sortSelect" class="filter-select">
-              <option value="name_asc" ${param.orderBy == 'name' && param.direction == 'asc' ? 'selected' : ''}><spring:message code="search.sort.name_asc" /></option>
-              <option value="name_desc" ${param.orderBy == 'name' && param.direction == 'desc' ? 'selected' : ''}><spring:message code="search.sort.name_desc" /></option>
+              <optgroup label="<spring:message code="search.sort.by.name" />">
+                <option value="name_asc" ${param.orderBy == 'name' && param.direction == 'asc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.name_asc" />
+                </option>
+                <option value="name_desc" ${param.orderBy == 'name' && param.direction == 'desc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.name_desc" />
+                </option>
+              </optgroup>
+              <optgroup label="<spring:message code="search.sort.by.last_name" />">
+                <option value="last_name_asc" ${param.orderBy == 'last_name' && param.direction == 'asc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.last_name_asc" />
+                </option>
+                <option value="last_name_desc" ${param.orderBy == 'last_name' && param.direction == 'desc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.last_name_desc" />
+                </option>
+              </optgroup>
+              <optgroup label="<spring:message code="search.sort.by.rating" />">
+                <option value="rating_asc" ${param.orderBy == 'rating' && param.direction == 'asc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.rating_asc" />
+                </option>
+                <option value="rating_desc" ${param.orderBy == 'rating' && param.direction == 'desc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.rating_desc" />
+                </option>
+              </optgroup>
+              <optgroup label="<spring:message code="search.sort.by.email" />">
+                <option value="email_asc" ${param.orderBy == 'email' && param.direction == 'asc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.email_asc" />
+                </option>
+                <option value="email_desc" ${param.orderBy == 'email' && param.direction == 'desc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.email_desc" />
+                </option>
+              </optgroup>
             </select>
           </div>
         </div>
@@ -98,6 +128,75 @@
           <button class="view-toggle-btn" data-view="list">
             <i class="fas fa-list"></i>
           </button>
+        </div>
+      </div>
+
+      <!-- Interactive Filter Tags -->
+      <div class="filter-tags">
+        <div class="filter-tags-label">
+          <i class="fas fa-filter"></i> <spring:message code="search.active.filters" />
+        </div>
+        <div class="filter-tags-container">
+<%--          <c:if test="${not empty param.orderBy}">--%>
+            <div class="filter-tag">
+              <i class="fas fa-sort"></i>
+              <span>
+                <c:choose>
+                  <c:when test="${param.orderBy == 'name' || empty param.orderBy}">
+                    <spring:message code="search.sort.by.name" />
+                  </c:when>
+                  <c:when test="${param.orderBy == 'last_name'}">
+                    <spring:message code="search.sort.by.last_name" />
+                  </c:when>
+                  <c:when test="${param.orderBy == 'rating'}">
+                    <spring:message code="search.sort.by.rating" />
+                  </c:when>
+                  <c:when test="${param.orderBy == 'email'}">
+                    <spring:message code="search.sort.by.email" />
+                  </c:when>
+                </c:choose>
+                <c:if test="${param.direction == 'asc' || empty param.direction}">
+                  <i class="fas fa-arrow-up"></i>
+                </c:if>
+                <c:if test="${param.direction == 'desc'}">
+                  <i class="fas fa-arrow-down"></i>
+                </c:if>
+              </span>
+            </div>
+<%--          </c:if>--%>
+          <c:if test="${not empty param.specialty && param.specialty != '0'}">
+            <div class="filter-tag">
+              <i class="fas fa-stethoscope"></i>
+              <span>
+                <c:forEach var="spec" items="${allSpecialties}">
+                  <c:if test="${spec.id == param.specialty}">
+                    <spring:message code="${spec.key}" />
+                  </c:if>
+                </c:forEach>
+              </span>
+              <button class="filter-tag-remove" onclick="clearSpecialtyFilter()">×</button>
+            </div>
+          </c:if>
+          <c:if test="${not empty param.coverage && param.coverage != '0'}">
+            <div class="filter-tag">
+              <i class="fas fa-shield-alt"></i>
+              <span>
+                <c:forEach var="coverage" items="${coverages}">
+                  <c:if test="${coverage.id == param.coverage}">
+                    <c:out value="${coverage.name}" />
+                  </c:if>
+                </c:forEach>
+              </span>
+              <button class="filter-tag-remove" onclick="clearCoverageFilter()">×</button>
+            </div>
+          </c:if>
+          <c:if test="${not empty param.weekdays}">
+            <div class="filter-tag">
+              <i class="fas fa-calendar-week"></i>
+              <span><spring:message code="search.filter.weekdays" /></span>
+              <button class="filter-tag-remove" onclick="clearWeekdaysFilter()">×</button>
+            </div>
+          </c:if>
         </div>
       </div>
 
@@ -171,26 +270,26 @@
         </div>
 
         <!-- Active Filters -->
-        <div class="active-filters">
-          <c:if test="${not empty param.weekdays}">
-            <div class="active-filter">
-              <i class="fas fa-calendar-week"></i> <spring:message code="search.filter.weekdays" />
-              <button class="clear-filter" onclick="clearWeekdaysFilter()">×</button>
-            </div>
-          </c:if>
-          <c:if test="${param.coverage != '0' && not empty param.coverage}">
-            <div class="active-filter">
-              <i class="fas fa-shield-alt"></i> <spring:message code="search.filter.coverage" />
-              <button class="clear-filter" onclick="clearCoverageFilter()">×</button>
-            </div>
-          </c:if>
-          <c:if test="${param.specialty != '0' && not empty param.specialty}">
-            <div class="active-filter">
-              <i class="fas fa-stethoscope"></i> <spring:message code="search.filter.specialty" />
-              <button class="clear-filter" onclick="clearSpecialtyFilter()">×</button>
-            </div>
-          </c:if>
-        </div>
+<%--        <div class="active-filters">--%>
+<%--          <c:if test="${not empty param.weekdays}">--%>
+<%--            <div class="active-filter">--%>
+<%--              <i class="fas fa-calendar-week"></i> <spring:message code="search.filter.weekdays" />--%>
+<%--              <button class="clear-filter" onclick="clearWeekdaysFilter()">×</button>--%>
+<%--            </div>--%>
+<%--          </c:if>--%>
+<%--          <c:if test="${param.coverage != '0' && not empty param.coverage}">--%>
+<%--            <div class="active-filter">--%>
+<%--              <i class="fas fa-shield-alt"></i> <spring:message code="search.filter.coverage" />--%>
+<%--              <button class="clear-filter" onclick="clearCoverageFilter()">×</button>--%>
+<%--            </div>--%>
+<%--          </c:if>--%>
+<%--          <c:if test="${param.specialty != '0' && not empty param.specialty}">--%>
+<%--            <div class="active-filter">--%>
+<%--              <i class="fas fa-stethoscope"></i> <spring:message code="search.filter.specialty" />--%>
+<%--              <button class="clear-filter" onclick="clearSpecialtyFilter()">×</button>--%>
+<%--            </div>--%>
+<%--          </c:if>--%>
+<%--        </div>--%>
       </div>
 
       <c:choose>
@@ -334,13 +433,13 @@
 
   function clearCoverageFilter() {
     const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set('coverage', '0');
+    currentUrl.searchParams.delete('coverage');
     window.location.href = currentUrl.toString();
   }
 
   function clearSpecialtyFilter() {
     const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set('specialty', '0');
+    currentUrl.searchParams.delete('specialty');
     window.location.href = currentUrl.toString();
   }
 
