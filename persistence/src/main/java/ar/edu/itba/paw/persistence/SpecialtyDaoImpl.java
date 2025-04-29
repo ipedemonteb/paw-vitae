@@ -40,12 +40,12 @@ public class SpecialtyDaoImpl implements SpecialtyDao {
     }
 
     @Override
-    public Optional<List<Specialty>> getAll() {
-        return Optional.of(jdbcTemplate.query("SELECT * FROM specialties", SPECIALTY_MAPPER));
+    public List<Specialty> getAll() {
+        return jdbcTemplate.query("SELECT * FROM specialties", SPECIALTY_MAPPER);
     }
 
     @Override
-    public Optional<List<Specialty>> getByIds(List<Long> ids) {
-        return Optional.of(jdbcTemplate.query("SELECT * FROM specialties WHERE id IN (" + String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new)) + ")", SPECIALTY_MAPPER));
+    public List<Specialty> getByIds(List<Long> ids) {
+        return jdbcTemplate.query("SELECT * FROM specialties WHERE id IN (" + String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new)) + ")", SPECIALTY_MAPPER);
     }
 }

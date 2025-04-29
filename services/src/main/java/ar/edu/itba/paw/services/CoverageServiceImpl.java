@@ -44,12 +44,12 @@ public class CoverageServiceImpl implements CoverageService {
 
     @Cacheable
     @Override
-    public Optional<List<Coverage>> getAll() {
+    public List<Coverage> getAll() {
         return coverageDao.getAll();
     }
 
     @Override
-    public Optional<List<Coverage>> findByIds(List<Long> ids) {
+    public List<Coverage> findByIds(List<Long> ids) {
         return coverageDao.findByIds(ids);
     }
 }

@@ -32,9 +32,9 @@ public class AppointmentController {
     private MailService ms;
     private MessageSource messageSource;
     private SpecialtyService ss;
-
+    private AppointmentFileService afs;
     @Autowired
-    public AppointmentController(AppointmentService as, PatientService ps, DoctorService ds, CoverageService cs, MailService ms, MessageSource messageSource, SpecialtyService ss) {
+    public AppointmentController(AppointmentService as, PatientService ps, DoctorService ds, CoverageService cs, MailService ms, MessageSource messageSource, SpecialtyService ss,AppointmentFileService afs) {
         this.as = as;
         this.ps = ps;
         this.ds = ds;
@@ -42,6 +42,7 @@ public class AppointmentController {
         this.ms = ms;
         this.messageSource = messageSource;
         this.ss = ss;
+        this.afs = afs;
     }
 
     // Add the following method to handle MessagingException
@@ -74,7 +75,7 @@ public class AppointmentController {
         Patient patient = loggedUser();
 
         Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), specialtyId);
-
+        afs.create( appointmentForm.getFiles(),"patient",appointment.getId());
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
         return new ModelAndView("redirect:/appointment/confirmation");
@@ -85,6 +86,7 @@ public class AppointmentController {
         Appointment appointment = (Appointment) model.asMap().get("appointment");
 
         ModelAndView mav = new ModelAndView("appointment/confirmation");
+        mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
         mav.addObject("appointment", appointment);
         mav.addObject("specialty", appointment.getSpecialty());
         return mav;
@@ -97,8 +99,8 @@ public class AppointmentController {
             @RequestParam(required = true) Long specialtyId
     ) {
         ModelAndView mav = new ModelAndView("appointment/appointment");
-        Optional<List<Coverage>> coverage = cs.getAll();
-        mav.addObject("coverages", coverage.orElse(Collections.emptyList()));
+        List<Coverage> coverage = cs.getAll();
+        mav.addObject("coverages", coverage);
 
         Optional<Doctor> doctor = ds.getByIdWithAppointments(doctorId);
         doctor.ifPresent(d -> mav.addObject("doctor", d));
@@ -107,4 +109,14 @@ public class AppointmentController {
         return mav;
     }
 
+
+    @RequestMapping(value = "/appointment/{id}", method = RequestMethod.GET)
+    public ModelAndView appointmentDetails(@PathVariable("id") Long id) {
+        ModelAndView mav = new ModelAndView("appointment/details");
+        Appointment appointment = as.getById(id).orElseThrow(() ->
+                new IllegalArgumentException("Invalid appointment Id:" + id));
+        mav.addObject("appointment", appointment);
+        mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
+        return mav;
+    }
 }

@@ -14,6 +14,13 @@ import java.util.*;
 @Repository
 public class DoctorDaoImpl implements DoctorDao {
 
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsertUser;
+    private final SimpleJdbcInsert jdbcInsertDoctor;
+    private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
+    private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
+    private final SimpleJdbcInsert jdbcInsertDoctorAvailability;
+
     public static final RowMapper<Doctor> ROW_MAPPER = (rs, rowNum) -> new Doctor(
             rs.getString("name"),
             rs.getLong("id"),
@@ -21,14 +28,10 @@ public class DoctorDaoImpl implements DoctorDao {
             rs.getString("email"),
             rs.getString("password"),
             rs.getString("phone"),
-            rs.getString("language")
+            rs.getString("language"),
+            rs.getDouble("rating"),
+            rs.getInt("rating_count")
     );
-    private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsertUser;
-    private final SimpleJdbcInsert jdbcInsertDoctor;
-    private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
-    private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
-    private final SimpleJdbcInsert jdbcInsertDoctorAvailability;
 
     @Autowired
     public DoctorDaoImpl(final DataSource ds) {
@@ -168,6 +171,17 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
+    public void UpdateDoctorRating(long id, double newRating) {
+        jdbcTemplate.update(
+                "UPDATE doctors " +
+                        "SET rating = ((rating * rating_count + ?) / (rating_count + 1)), " +
+                        "    rating_count = rating_count + 1 " +
+                        "WHERE doctor_id = ?",
+                newRating, id
+        );
+    }
+
+    @Override
     public List<Doctor> getByIds(Set<Long> ids) {
         if (ids.isEmpty()) {
             return Collections.emptyList();
@@ -281,7 +295,6 @@ public class DoctorDaoImpl implements DoctorDao {
                 (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key")),
                 id
         ));
-
         doctor.setAvailabilitySlots(getAvailabilityByDoctorId(id));
     }
 

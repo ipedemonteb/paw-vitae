@@ -56,13 +56,13 @@
                             <div style="display: flex; align-items: center;">
                                 <div class="calendar-icon">
                                     <div class="calendar-month">
-                                        ${appointment.date.month}
+                                        <c:out value="${appointment.date.month}"/>
                                     </div>
                                     <div class="calendar-day">
-                                        ${appointment.date.dayOfMonth}
+                                        <c:out value="${appointment.date.dayOfMonth}"/>
                                     </div>
                                 </div>
-                                <span>${appointment.date.toLocalDate().toString()}</span>
+                                <span><c:out value="${appointment.date.toLocalDate().toString()}"/></span>
                             </div>
                         </div>
                     </div>
@@ -72,11 +72,39 @@
                         <div class="confirmation-value">
                             <div style="display: flex; align-items: center;">
                                 <i class="fas fa-clock" style="color: var(--primary-color); margin-right: 10px; font-size: 1.5rem;"></i>
-                                <span>${appointment.date.hour}:00hs</span>
+                                <span><c:out value="${appointment.date.hour}"/>:00hs</span>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Attached Files Section -->
+                <c:if test="${not empty patientFiles}">
+                    <div class="files-section">
+                        <h3 class="files-title">
+                            <i class="fas fa-paperclip"></i>
+                            <spring:message code="appointment.confirmation.attachedFiles" text="Archivos adjuntos" />
+                        </h3>
+                        <div class="files-container">
+                            <c:forEach var="file" items="${patientFiles}" varStatus="status">
+                                <div class="file-card" data-file-id="<c:out value="${file.id}"/>">
+                                    <div class="file-icon">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </div>
+                                    <div class="file-details">
+                                        <div class="file-name">${file.fileName}</div>
+                                        <div class="file-meta">
+                                            <span class="file-type">PDF</span>
+                                        </div>
+                                    </div>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download="<c:out value="${file.fileName}"/>">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </c:if>
 
                 <!-- Doctor Information -->
                 <c:if test="${not empty appointment.doctor}">
@@ -101,13 +129,6 @@
                     </div>
                 </c:if>
 
-                <!-- QR Code for appointment -->
-<%--                <div class="qr-code-container">--%>
-<%--                    <div class="qr-code">--%>
-<%--                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AppointmentID:${appointment.id}" alt="Appointment QR Code">--%>
-<%--                    </div>--%>
-<%--                    <p class="qr-code-text"><spring:message code="appointment.confirmation.qrcode.info"/></p>--%>
-<%--                </div>--%>
             </div>
 
             <div class="confirmation-footer">
@@ -126,7 +147,7 @@
     // Add some interactive elements
     document.addEventListener('DOMContentLoaded', function() {
         // Add animation to confirmation items
-        const items = document.querySelectorAll('.confirmation-item');
+        const items = document.querySelectorAll('.confirmation-item, .file-card');
         items.forEach((item, index) => {
             item.style.animation = `fadeIn 0.5s ease forwards ${index * 0.1}s`;
             item.style.opacity = '0';
@@ -142,6 +163,17 @@
                 this.style.transform = 'scale(1)';
             });
         }
+
+        // Add file card hover effects
+        const fileCards = document.querySelectorAll('.file-card');
+        fileCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.classList.add('hover');
+            });
+            card.addEventListener('mouseleave', function() {
+                this.classList.remove('hover');
+            });
+        });
 
         const fixedHeader = document.querySelector(".main-header");
         const mainContent = document.querySelector(".main-content");

@@ -5,7 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layouts" %>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -116,7 +116,7 @@
                         <option value="today"><spring:message code="dashboard.filter.today" /></option>
                         <option value="week" ><spring:message code="dashboard.filter.thisWeek" /></option>
                         <option value="month"><spring:message code="dashboard.filter.thisMonth" /></option>
-                        <option value="all"selected><spring:message code="dashboard.history.all" /></option>
+                        <option value="all"selected><spring:message code="dashboard.filter.all" /></option>
                     </select>
                 </div>
             </div>
@@ -173,6 +173,7 @@
                                         <span class="specialty-badge">
                                             <spring:message code="${appointment.specialty.key}" />
                                         </span>
+                                    <div class="appointment-actions">
                                     <c:set var="status" >
                                         <spring:message code="${appointment.status}" />
                                     </c:set>
@@ -202,6 +203,12 @@
                                             <span><spring:message code="appointment.action.cancel" /></span>
                                         </button>
                                     </c:if>
+                                            <button class="btn btn-primary view-appointment" onclick="window.location.href='/appointment/${appointment.id}'">
+                                                <i class="fas fa-eye"></i>
+                                                <span>View Appointment</span>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -210,7 +217,7 @@
                         <div class="load-more-container">
                             <button id="loadMoreUpcoming" class="btn-load-more" data-current-page="${currentPage}" data-total-pages="${totalPages}">
                                 <i class="fas fa-sync-alt"></i>
-                                <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>
+                                <span><spring:message code="dashboard.loadMore"  /></span>
                             </button>
                         </div>
                     </c:if>
@@ -470,7 +477,7 @@
                 }
 
                 // Mostrar indicador de carga
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Cargando...</span>';
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                 this.disabled = true;
 
                 // Construir la URL con el parámetro de página y asegurarse de que sea reconocida como AJAX
