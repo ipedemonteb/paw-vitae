@@ -53,31 +53,6 @@
                             </div>
                         </c:when>
 
-                        <%-- Email not found error --%>
-                        <c:when test="${param.recover eq 'notfound'}">
-                            <div class="status-message error-message">
-                                <div class="status-icon">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                </div>
-                                <div class="status-content">
-                                    <h3><spring:message code="recover.password.email.notfound.title" /></h3>
-                                    <p><spring:message code="recover.password.email.notfound.message" /></p>
-                                </div>
-                            </div>
-
-                            <div class="form-links mt-4">
-                                <a href="${pageContext.request.contextPath}/recover-password" class="link">
-                                    <i class="fas fa-redo"></i>
-                                    <spring:message code="recover.password.try.again" />
-                                </a>
-                                <span class="link-separator">|</span>
-                                <a href="${pageContext.request.contextPath}/login" class="link">
-                                    <i class="fas fa-arrow-left"></i>
-                                    <spring:message code="recover.password.back.to.login" />
-                                </a>
-                            </div>
-                        </c:when>
-
                         <%-- Default: show the form --%>
                         <c:otherwise>
                             <!-- Success Message -->
