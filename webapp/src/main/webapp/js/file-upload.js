@@ -46,12 +46,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 return false
             }
 
-            // Verificar tamaño de archivo
+
             if (files[i].size > MAX_FILE_SIZE) {
                 showNotification(
                     window.appointmentMessages?.fileUpload?.fileTooLarge || `El archivo ${files[i].name} excede el límite de 3MB`,
                     "error",
                 )
+
                 return false
             }
         }
@@ -61,7 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para actualizar la vista previa
     const updatePreview = (files) => {
-        if (!validateFiles(files)) return
+        if (!validateFiles(files)){
+            fileInput.value = ""
+            return
+        }
 
         Array.from(files).forEach((file) => {
             // Crear contenedor del archivo
