@@ -23,6 +23,8 @@
 <!-- Main Content -->
 <main class="main-content">
     <div class="container">
+        <!-- Back button to My Appointments -->
+
         <div class="appointment-container">
             <div class="appointment-header">
                 <h1 class="appointment-title"><spring:message code="appointment.details.page.title" /></h1>
@@ -52,77 +54,90 @@
                     </div>
                 </c:if>
 
-                <div class="specialty-card-appointment">
+                <!-- Status field - NEW -->
+                <div class="specialty-card-appointment status-card">
+                    <div class="specialty-icon-appointment">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
                     <div class="specialty-content">
-                        <div class="calendar-icon">
-                            <div class="calendar-month">
-                                <c:out value="${appointment.date.month}"/>
-                            </div>
-                            <div class="calendar-day">
-                                <c:out value="${appointment.date.dayOfMonth}"/>
-                            </div>
+                        <span class="specialty-label-appointment"><spring:message code="appointment.details.info.status" text="Status" />:</span>
+                        <div class="status-display">
+                            <span class="specialty-value-appointment">
+                                <spring:message code="appointment.status.${appointment.status}" text="${appointment.status}" />
+                            </span>
                         </div>
-                        <span class="specialty-value-appointment"><c:out value="${appointment.date.toLocalTime().toString()}"/></span>
                     </div>
                 </div>
 
-                <form:form modelAttribute="doctorFileForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/appointment-details/${appointment.id}" class="appointment-form" enctype="multipart/form-data">
-                    <div class="specialty-card-appointment">
-                        <div class="specialty-icon-appointment">
-                            <i class="fas fa-stethoscope"></i>
-                        </div>
-                        <div class="specialty-content">
-                            <span class="specialty-label-appointment"><spring:message code="appointment.form.specialty" />:</span>
-                            <span class="specialty-value-appointment"><spring:message code="${appointment.specialty.key}" /></span>
+                <!-- Improved date display -->
+                <div class="specialty-card-appointment">
+                    <div class="specialty-icon-appointment">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="specialty-content">
+                        <span class="specialty-label-appointment"><spring:message code="appointment.form.date" text="Date" />:</span>
+                        <div class="enhanced-date-display">
+                            <div class="date-time-info">
+                                <div class="date-info">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <c:out value="${appointment.date.toLocalDate()}"/>                                </div>
+                                <div class="time-info">
+                                    <i class="fas fa-clock"></i>
+                                    <c:out value="${appointment.date.toLocalTime()}"/>                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="specialty-card-appointment">
-                        <div class="specialty-icon-appointment">
-                            <i class="fas fa-comment"></i>
-                        </div>
-                        <div class="specialty-content">
-                            <span class="specialty-label-appointment"><spring:message code="appointment.form.reason" />:</span>
-                            <span class="specialty-value-appointment"><c:out value="${appointment.reason}"/> </span>
-                        </div>
+                <div class="specialty-card-appointment">
+                    <div class="specialty-icon-appointment">
+                        <i class="fas fa-stethoscope"></i>
                     </div>
+                    <div class="specialty-content">
+                        <span class="specialty-label-appointment"><spring:message code="appointment.form.specialty" />:</span>
+                        <span class="specialty-value-appointment"><spring:message code="${appointment.specialty.key}" /></span>
+                    </div>
+                </div>
 
-                    <div class="files-list">
-                       <lable class="files-lable"><spring:message code="appointment.details.patient.files.title"/></lable>
-                        <c:forEach var="file" items="${patientFiles}">
-                            <c:if test="${file.uploader_role == 'patient'}">
-                                <div class="file-item">
-                                    <div class="file-icon">
-                                        <i class="far fa-file-pdf"></i>
-                                    </div>
-                                    <div class="file-info">
-                                        <div class="file-name"><c:out value="${file.fileName}" /></div>
-<%--                                        <div class="file-date">--%>
-<%--                                            <fmt:formatDate value="${file.uploadDate}" pattern="MMM d, yyyy" />--%>
-<%--                                        </div>--%>
-                                    </div>
-                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
-                                        <i class="fas fa-download"></i>
-                                    </a>
+                <div class="specialty-card-appointment">
+                    <div class="specialty-icon-appointment">
+                        <i class="fas fa-comment"></i>
+                    </div>
+                    <div class="specialty-content">
+                        <span class="specialty-label-appointment"><spring:message code="appointment.form.reason" />:</span>
+                        <span class="specialty-value-appointment"><c:out value="${appointment.reason}"/> </span>
+                    </div>
+                </div>
+
+                <div class="files-list">
+                    <lable class="files-lable"><spring:message code="appointment.details.patient.files.title"/></lable>
+                    <c:forEach var="file" items="${patientFiles}">
+                        <c:if test="${file.uploader_role == 'patient'}">
+                            <div class="file-item">
+                                <div class="file-icon">
+                                    <i class="far fa-file-pdf"></i>
                                 </div>
-                            </c:if>
-                        </c:forEach>
-                    </div>
+                                <div class="file-info">
+                                    <div class="file-name"><c:out value="${file.fileName}" /></div>
+                                </div>
+                                <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                </div>
 
-<%--                    <!-- Reason for appointment -->--%>
-<%--                    <div class="form-group">--%>
-<%--                        <label for="reason"><spring:message code="appointment.form.reason"/></label>--%>
-<%--                        <form:textarea path="reason" id="reason" class="form-control" rows="4" />--%>
-<%--                        <form:errors path="reason" cssClass="error-message" />--%>
-<%--                    </div>--%>
-
-                    <!-- File Upload Section -->
+                <!-- Form - Preserved as in original -->
+                <form:form modelAttribute="doctorFileForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/appointment-details/${appointment.id}" class="appointment-form" enctype="multipart/form-data">
+                    <!-- Report textarea -->
                     <div class="form-group">
                         <label for="report"><spring:message code="appointment.details.report"/></label>
                         <form:textarea path="report" id="report" class="form-control" rows="4" />
                         <form:errors path="report" cssClass="error-message" />
                     </div>
 
+                    <!-- File Upload Section -->
                     <div class="form-group">
                         <label for="files">
                             <spring:message code="appointment.details.files"  />
@@ -143,8 +158,6 @@
                         </div>
                     </div>
 
-
-
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block">
                             <span>
@@ -154,6 +167,12 @@
                         </button>
                     </div>
                 </form:form>
+                <div class="back-button-container">
+                    <a href="${pageContext.request.contextPath}/doctor/dashboard" class="back-button">
+                        <i class="fas fa-arrow-left"></i>
+                        <span><spring:message code="appointment.details.back" text="Back to My Appointments" /></span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
