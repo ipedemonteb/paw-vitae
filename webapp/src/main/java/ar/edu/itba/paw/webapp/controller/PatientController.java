@@ -110,4 +110,16 @@ public class PatientController {
         boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
         return "{\"success\": " + result + "}";
     }
+
+//        @RequestMapping(value = "patient/dashboard/appointment/{id}", method = RequestMethod.GET)
+//    public ModelAndView patientAppointmentDetails(
+//            @ModelAttribute("patientRatingForm") final PatientRatingForm patientRatingForm,
+//            @PathVariable("id") Long id) {
+//        ModelAndView mav = new ModelAndView("patient/details");
+//        Appointment appointment = as.getById(id).orElseThrow(() ->
+//                new IllegalArgumentException("Invalid appointment Id:" + id));
+//        mav.addObject("appointment", appointment);
+//        mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
+//        return mav;
+//    }
 }

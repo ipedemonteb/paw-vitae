@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 
+import ar.edu.itba.paw.webapp.form.DoctorFileForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,23 @@ public class AppointmentController {
         return ps.getByEmail((String) auth.getName()).orElseThrow(UserNotFoundException::new);
     }
 
+    @RequestMapping(value = "/appointment", method = RequestMethod.GET)
+    public ModelAndView appointment(
+            @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
+            @RequestParam(required = true) Long doctorId,
+            @RequestParam(required = true) Long specialtyId
+    ) {
+        ModelAndView mav = new ModelAndView("appointment/appointment");
+        List<Coverage> coverage = cs.getAll();
+        mav.addObject("coverages", coverage);
+
+        Optional<Doctor> doctor = ds.getByIdWithAppointments(doctorId);
+        doctor.ifPresent(d -> mav.addObject("doctor", d));
+        Optional<Specialty> specialty = ss.getById(specialtyId);
+        specialty.ifPresent(s -> mav.addObject("specialty", s));
+        return mav;
+    }
+
     @RequestMapping(value = "/appointment", method = RequestMethod.POST)
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
@@ -89,34 +107,6 @@ public class AppointmentController {
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
         mav.addObject("appointment", appointment);
         mav.addObject("specialty", appointment.getSpecialty());
-        return mav;
-    }
-
-    @RequestMapping(value = "/appointment", method = RequestMethod.GET)
-    public ModelAndView appointment(
-            @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
-            @RequestParam(required = true) Long doctorId,
-            @RequestParam(required = true) Long specialtyId
-    ) {
-        ModelAndView mav = new ModelAndView("appointment/appointment");
-        List<Coverage> coverage = cs.getAll();
-        mav.addObject("coverages", coverage);
-
-        Optional<Doctor> doctor = ds.getByIdWithAppointments(doctorId);
-        doctor.ifPresent(d -> mav.addObject("doctor", d));
-        Optional<Specialty> specialty = ss.getById(specialtyId);
-        specialty.ifPresent(s -> mav.addObject("specialty", s));
-        return mav;
-    }
-
-
-    @RequestMapping(value = "/appointment/{id}", method = RequestMethod.GET)
-    public ModelAndView appointmentDetails(@PathVariable("id") Long id) {
-        ModelAndView mav = new ModelAndView("appointment/details");
-        Appointment appointment = as.getById(id).orElseThrow(() ->
-                new IllegalArgumentException("Invalid appointment Id:" + id));
-        mav.addObject("appointment", appointment);
-        mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
         return mav;
     }
 }

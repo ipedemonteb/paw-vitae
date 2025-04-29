@@ -940,6 +940,7 @@ body {
     opacity: 1;
 }
 
+
 /* Print Styles */
 @media print {
     .appointment-actions,

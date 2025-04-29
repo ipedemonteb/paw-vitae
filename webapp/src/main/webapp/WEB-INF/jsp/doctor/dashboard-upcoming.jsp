@@ -98,11 +98,6 @@
         </a>
     </div>
 
-    <!-- Dashboard Content Area -->
-    <div class="  /></span>
-    </a>
-</div>
-
 <!-- Dashboard Content Area -->
 <div class="dashboard-content">
     <!-- Upcoming Appointments Tab -->
@@ -173,7 +168,6 @@
                                         <span class="specialty-badge">
                                             <spring:message code="${appointment.specialty.key}" />
                                         </span>
-                                    <div class="appointment-actions">
                                     <c:set var="status" >
                                         <spring:message code="${appointment.status}" />
                                     </c:set>
@@ -186,29 +180,22 @@
                                     <c:set var="all">
                                         <spring:message code="dashboard.filter.all" />
                                     </c:set>
-                                    <c:if test="${status eq pending}">
-                                        <button class="btn btn-confirm confirm-appointment" data-id="${appointment.id}">
-                                            <i class="fas fa-check-circle"></i>
-                                            <span><spring:message code="appointment.action.confirm" /></span>
-                                        </button>
-                                        <button class="btn btn-danger cancel-appointment" data-id="${appointment.id}">
-                                            <i class="fas fa-times-circle"></i>
-                                            <span><spring:message code="appointment.action.cancel" /></span>
-                                        </button>
-                                    </c:if>
 
-                                    <c:if test="${status eq confirmed}">
-                                        <button class="btn btn-danger cancel-appointment" data-id="${appointment.id}">
-                                            <i class="fas fa-times-circle"></i>
-                                            <span><spring:message code="appointment.action.cancel" /></span>
-                                        </button>
-                                    </c:if>
-                                            <button class="btn btn-primary view-appointment" onclick="window.location.href='/appointment/${appointment.id}'">
+                                        <div class="appointment-actions">
+
+                                            <c:if test="${status eq confirmed}">
+                                                <button class="btn btn-danger cancel-appointment" data-id="${appointment.id}">
+                                                    <i class="fas fa-times-circle"></i>
+                                                    <span><spring:message code="appointment.action.cancel" /></span>
+                                                </button>
+                                            </c:if>
+
+                                            <button class="btn btn-primary view-appointment" onclick="window.location.href='/appointment-details/${appointment.id}'">
                                                 <i class="fas fa-eye"></i>
                                                 <span>View Appointment</span>
                                             </button>
                                         </div>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
