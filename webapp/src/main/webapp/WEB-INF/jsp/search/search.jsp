@@ -503,18 +503,21 @@
   function clearWeekdaysFilter() {
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.delete('weekdays');
+    currentUrl.searchParams.set('page', '1');
     window.location.href = currentUrl.toString();
   }
 
   function clearCoverageFilter() {
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.delete('coverage');
+    currentUrl.searchParams.set('page', '1');
     window.location.href = currentUrl.toString();
   }
 
   function clearSpecialtyFilter() {
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.delete('specialty');
+    currentUrl.searchParams.set('page', '1');
     window.location.href = currentUrl.toString();
   }
 
