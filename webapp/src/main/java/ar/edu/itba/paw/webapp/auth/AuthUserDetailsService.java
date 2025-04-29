@@ -89,11 +89,7 @@ public class AuthUserDetailsService implements UserDetailsService {
                 form.getPhone(), locale.getLanguage(), form.getSpecialties(),
                 form.getCoverages(), form.getAvailabilitySlots()
         );
-        try{
         imageService.create(doctor.getId(), form.getImage());
-        }catch (IOException e){
-           LOGGER.error("Error uploading image", e);
-        }
         Authentication authToken = new UsernamePasswordAuthenticationToken(doctor.getEmail(), form.getPassword());
         Authentication auth = authenticationManager.authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(auth);

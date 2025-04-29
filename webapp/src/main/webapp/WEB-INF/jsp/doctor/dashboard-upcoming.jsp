@@ -210,7 +210,7 @@
                         <div class="load-more-container">
                             <button id="loadMoreUpcoming" class="btn-load-more" data-current-page="${currentPage}" data-total-pages="${totalPages}">
                                 <i class="fas fa-sync-alt"></i>
-                                <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>
+                                <span><spring:message code="dashboard.loadMore"  /></span>
                             </button>
                         </div>
                     </c:if>
@@ -470,7 +470,7 @@
                 }
 
                 // Mostrar indicador de carga
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Cargando...</span>';
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                 this.disabled = true;
 
                 // Construir la URL con el parámetro de página y asegurarse de que sea reconocida como AJAX
