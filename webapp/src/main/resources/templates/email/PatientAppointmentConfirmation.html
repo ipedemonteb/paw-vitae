@@ -8,7 +8,7 @@
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #333333;
+            color: #333333 !important;
             background-color: #f9f9f9;
             margin: 0;
             padding: 0;
@@ -32,10 +32,14 @@
         }
         .content {
             padding: 20px 0;
+            color: #333333;
+        }
+        .content p, .content strong {
+            color: #333333;
         }
         .appointment-details {
-            background-color: #f0f7ff;
-            border-left: 4px solid #2e7d32;
+            background-color: #f5f8ff;
+            border-left: 4px solid #4a6bff;
             padding: 15px;
             margin: 20px 0;
             border-radius: 4px;
@@ -60,8 +64,8 @@
         }
         .button {
             display: inline-block;
-            background-color: #2e7d32;
-            color: white;
+            background-color: #4a6bff;
+            color: white !important;
             text-decoration: none;
             padding: 12px 24px;
             border-radius: 4px;
@@ -69,15 +73,32 @@
             margin: 20px 0;
         }
         .highlight {
-            color: #2e7d32;
+            color: #4a6bff;
             font-weight: bold;
         }
         .reminder-box {
-            background-color: #fff8e1;
-            border-left: 4px solid #ffc107;
+            background-color: #fff8e1 !important;
+            border-left: 4px solid #ffc107 !important;
             padding: 15px;
             margin: 20px 0;
             border-radius: 4px;
+            color: #333333;
+        }
+        .reminder-box h4 {
+            color: #333333;
+            margin-top: 0;
+        }
+        .reminder-box ul {
+            list-style-type: none;
+            padding-left: 0;
+            color: #333333;
+        }
+        .reminder-box li {
+            padding: 8px 0;
+            color: #333333;
+        }
+        .text-center {
+            text-align: center;
         }
         @media only screen and (max-width: 600px) {
             .container {
@@ -107,6 +128,10 @@
                 <li><strong th:text="#{patient.reason.label}"></strong> <span th:text="${reason}"></span></li>
                 <li><strong th:text="#{patient.location.label}"></strong> <span th:text="${location}"></span></li>
             </ul>
+        </div>
+
+        <div class="text-center">
+            <a href="http://pawserver.it.itba.edu.ar/paw-2025a-11/appointment/details/appointmentId" class="button" th:text="#{mail.see.details}"></a>
         </div>
 
         <div class="reminder-box">
