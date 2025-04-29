@@ -35,6 +35,9 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         }
         List <AppointmentFile> appointmentFiles = new ArrayList<>();
         for (MultipartFile file : files) {
+            if (file == null || file.isEmpty()) {
+                continue;
+            }
             try {
                 appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment_id));
             }
