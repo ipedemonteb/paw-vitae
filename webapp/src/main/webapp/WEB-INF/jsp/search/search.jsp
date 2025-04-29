@@ -104,20 +104,35 @@
             <i class="fas fa-list"></i>
           </button>
         </div>
-      </div>
 
-      <!-- Quick Filters -->
-      <div class="quick-filters">
-        <button class="quick-filter-btn" data-filter="all">
-          <spring:message code="search.filter.all" />
-        </button>
-        <button class="quick-filter-btn" data-filter="top-rated">
-          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />
-        </button>
-        <button class="quick-filter-btn" data-filter="new">
-          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />
-        </button>
       </div>
+      <label class="filter-label"><i class="fas fa-calendar"></i> <spring:message code="search.filter.days" /></label>
+      <br>
+      <div class="filter-group">
+        <div class="day-checkbox-container">
+          <c:forEach var="day" begin="0" end="6">
+            <label class="day-checkbox-label">
+              <input type="checkbox" class="day-checkbox" value="${day}" ${param.weekdays.contains(day.toString()) ? 'checked' : ''}>
+              <span class="day-checkbox-text"><spring:message code="calendar.day.${day}" /></span>
+            </label>
+          </c:forEach>
+        </div>
+      </div>
+      <br>
+      <button class="btn btn-primary" onclick="applyDayFilters()">Apply</button>
+      <!-- Quick Filters -->
+      <br>
+<%--      <div class="quick-filters">--%>
+<%--        <button class="quick-filter-btn" data-filter="all">--%>
+<%--          <spring:message code="search.filter.all" />--%>
+<%--        </button>--%>
+<%--        <button class="quick-filter-btn" data-filter="top-rated">--%>
+<%--          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />--%>
+<%--        </button>--%>
+<%--        <button class="quick-filter-btn" data-filter="new">--%>
+<%--          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />--%>
+<%--        </button>--%>
+<%--      </div>--%>
     </div>
 
     <!-- Results Section -->
@@ -285,6 +300,17 @@
   }
 
 
+  function applyDayFilters() {
+    // Get all selected checkboxes
+    const selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked')).map(cb => cb.value);
+    // Update the current filters
+    currentFilters.weekdays = selectedDays;
+
+    // Apply the filters
+    applyFilters();
+  }
+
+
   function viewDoctorProfile(doctorId) {
     window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;
   }
@@ -322,17 +348,12 @@
   }
 
   function applyFilters() {
-
     // Build URL with all parameters
     let url = `${pageContext.request.contextPath}/search?specialty=` + currentFilters.specialty + `&page=` + currentFilters.page;
-    currentFilters.coverage != 0 ? url +=  `&coverage=` + currentFilters.coverage : url += ``;
+    currentFilters.coverage != 0 ? url += `&coverage=` + currentFilters.coverage : url += ``;
     currentFilters.orderBy != '' ? url += `&orderBy=` + currentFilters.orderBy : url += ``;
     currentFilters.direction != '' ? url += `&direction=` + currentFilters.direction : url += ``;
-
-    // Add weekdays if any selected
-    currentFilters.weekdays.forEach(day => {
-      url += `&weekdays=` + day;
-    });
+    currentFilters.weekdays.length != 0 ? url += `&weekdays=` + currentFilters.weekdays.join(',') : url += ``;
 
     // Navigate to the URL
     window.location.href = url;
