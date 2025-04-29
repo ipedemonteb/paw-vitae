@@ -6,6 +6,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const ALLOWED_TYPES = ["application/pdf"]
     const MAX_FILE_SIZE = 3 * 1024 * 1024 // 3MB en bytes
 
+
+
+    window.addEventListener("pageshow", () => {
+        const fileInput = document.getElementById("files")
+        const filePreview = document.getElementById("filePreview")
+
+        if (fileInput) fileInput.value = ""
+        if (filePreview) filePreview.innerHTML = ""
+
+        dropZone.classList.remove("disabled")
+    })
+
     // Función para mostrar notificación
     const showNotification = (message, type = "info") => {
         const notification = document.createElement("div")
