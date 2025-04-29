@@ -237,7 +237,9 @@ function applyAllFilters() {
     const specialtyId = document.getElementById("specialtySelect").value
     const coverageId = document.getElementById("coverageSelect").value
     const sortValue = document.getElementById("sortSelect").value
-    const [orderBy, direction] = sortValue.split("_")
+    const lastUnderscoreIndex = sortValue.lastIndexOf("_");
+    const orderBy = sortValue.substring(0, lastUnderscoreIndex);
+    const direction = sortValue.substring(lastUnderscoreIndex + 1);
 
     const weekdayCheckboxes = document.querySelectorAll(".weekday-checkbox:checked")
     const selectedWeekdays = Array.from(weekdayCheckboxes).map((cb) => cb.value)
