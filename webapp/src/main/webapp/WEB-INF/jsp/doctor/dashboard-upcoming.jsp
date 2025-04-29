@@ -190,7 +190,7 @@
                                                 </button>
                                             </c:if>
 
-                                            <button class="btn btn-primary view-appointment" onclick="window.location.href='/appointment-details/${appointment.id}'">
+                                            <button class="btn btn-primary" onclick="window.location.href='/doctor/dashboard/appointment-details/${appointment.id}'">
                                                 <i class="fas fa-eye"></i>
                                                 <span>View Appointment</span>
                                             </button>
