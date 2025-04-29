@@ -17,8 +17,8 @@ public class AppointmentForm {
     private LocalDate appointmentDate;
 
     @NotNull(message = "{appointment.hour.notnull}")
-    @Min(value = 8, message = "Hour must be between 8 and 18")
-    @Max(value = 18, message = "Hour must be between 8 and 18")
+    @Min(value = 8, message = "Hour must be between 8 and 20")
+    @Max(value = 20, message = "Hour must be between 8 and 20")
     private Integer appointmentHour;
 
     @Size(max = 255)
@@ -27,6 +27,25 @@ public class AppointmentForm {
     @Size(max = 5, message = "{appointment.files.max}")
     @AppointmentFileValid(message = "{appointment.files.valid}")
     private MultipartFile[] patientFiles;
+
+    @NotNull
+    private Long specialtyId;
+
+    public MultipartFile[] getPatientFiles() {
+        return patientFiles;
+    }
+
+    public void setPatientFiles(MultipartFile[] patientFiles) {
+        this.patientFiles = patientFiles;
+    }
+
+    public Long getSpecialtyId() {
+        return specialtyId;
+    }
+
+    public void setSpecialtyId(Long specialtyId) {
+        this.specialtyId = specialtyId;
+    }
 
     public LocalDate getAppointmentDate() {
         return appointmentDate;

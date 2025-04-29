@@ -63,17 +63,12 @@ public class AppointmentController {
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
     public ModelAndView appointment(
             @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
-            @RequestParam(required = true) Long doctorId,
-            @RequestParam(required = true) Long specialtyId
+            @RequestParam(required = true) Long doctorId
     ) {
         ModelAndView mav = new ModelAndView("appointment/appointment");
-        List<Coverage> coverage = cs.getAll();
-        mav.addObject("coverages", coverage);
 
         Optional<Doctor> doctor = ds.getByIdWithAppointments(doctorId);
         doctor.ifPresent(d -> mav.addObject("doctor", d));
-        Optional<Specialty> specialty = ss.getById(specialtyId);
-        specialty.ifPresent(s -> mav.addObject("specialty", s));
         return mav;
     }
 
@@ -81,18 +76,17 @@ public class AppointmentController {
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
             final BindingResult errors,
-            @RequestParam(required = true) Long specialtyId,
             @RequestParam(required = true) Long doctorId,
             RedirectAttributes redirectAttributes
     ) {
 
         if (errors.hasErrors()) {
-            return appointment(appointmentForm, doctorId, specialtyId);
+            return appointment(appointmentForm, doctorId);
         }
 
         Patient patient = loggedUser();
 
-        Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), specialtyId);
+        Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
         afs.create( appointmentForm.getFiles(),"patient",appointment.getId());
         redirectAttributes.addFlashAttribute("appointment", appointment);
 
