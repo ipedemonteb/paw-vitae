@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.Rating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -36,4 +37,15 @@ public class RatingServiceImpl implements RatingService {
     public Optional<Rating> getRatingByAppointmentId(int appointmentId) {
         return ratingDao.getRatingByAppointmentId(appointmentId);
     }
+
+    @Override
+    public List<Rating> getRatingsByDoctorId(int doctorId) {
+        return ratingDao.getRatingsByDoctorId(doctorId);
+    }
+
+    @Override
+    public List<Rating> getRatingsByPatientId(int patientId) {
+        return ratingDao.getRatingsByPatientId(patientId);
+    }
+
 }

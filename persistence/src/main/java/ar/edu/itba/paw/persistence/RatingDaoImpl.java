@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 @Repository
@@ -66,6 +67,16 @@ public class RatingDaoImpl implements RatingDao
         return jdbcTemplate.query("SELECT * FROM ratings WHERE appointment_id = ?", ROW_MAPPER, appointmentId)
                 .stream()
                 .findFirst();
+    }
+
+    @Override
+    public List<Rating> getRatingsByDoctorId(int doctorId) {
+        return jdbcTemplate.query("SELECT * FROM ratings WHERE doctor_id = ?", ROW_MAPPER, doctorId);
+    }
+
+    @Override
+    public List<Rating> getRatingsByPatientId(int patientId) {
+        return jdbcTemplate.query("SELECT * FROM ratings WHERE patient_id = ?", ROW_MAPPER, patientId);
     }
 
 }
