@@ -36,12 +36,12 @@ private final SpecialtyDao specialtyDao;
 
     @Cacheable
     @Override
-    public Optional<List<Specialty>> getAll() {
+    public List<Specialty> getAll() {
         return specialtyDao.getAll();
     }
 
     @Override
-    public Optional<List<Specialty>> getByIds(List<Long> ids) {
+    public List<Specialty> getByIds(List<Long> ids) {
         return specialtyDao.getByIds(ids);
     }
 }

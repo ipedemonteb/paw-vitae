@@ -12,9 +12,9 @@ public interface AppointmentService {
 
     Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId);
 
-    Optional<List<Appointment>> getByPatientId(long patientId);
+    List<Appointment> getByPatientId(long patientId);
 
-    Optional<List<Appointment>> getByDoctorId(long doctorId);
+    List<Appointment> getByDoctorId(long doctorId);
 
 
 

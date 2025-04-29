@@ -43,8 +43,8 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, String language, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
-        List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
-        List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
+        List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList()));
+        List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList()));
 
         Doctor doctor = this.doctorDao.create(
                 name, lastName, email, passwordEncoder.encode(password), phone, language, specialtyList, coverageList, availabilitySlots
@@ -71,7 +71,7 @@ public class DoctorServiceImpl implements DoctorService {
     public Page<Doctor> getBySpecialtyWithAppointments(long specialtyId, int page, int pageSize) {
         List<Doctor> docs = doctorDao.getBySpecialty(specialtyId, page, pageSize);
         int total = doctorDao.countBySpecialty(specialtyId);
-        docs.forEach(doctor -> doctor.setAppointments(as.getByDoctorId(doctor.getId()).orElse(Collections.emptyList())));
+        docs.forEach(doctor -> doctor.setAppointments(as.getByDoctorId(doctor.getId())));
         return new Page<>(docs, page, pageSize, total);
     }
 
@@ -83,8 +83,8 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
-        List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
-        List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList())).orElse(Collections.emptyList());
+        List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList()));
+        List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList()));
         doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList, availabilitySlots);
 
         LOGGER.debug("Doctor actualizado exitosamente: id={}, nombre={}, apellido={}", id, name, lastName);
@@ -101,7 +101,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Optional<Doctor> getByIdWithAppointments(long id) {
         Optional<Doctor> doctor = doctorDao.getById(id);
-        doctor.ifPresent(d -> d.setAppointments(as.getByDoctorId(id).orElse(Collections.emptyList())));
+        doctor.ifPresent(d -> d.setAppointments(as.getByDoctorId(id)));
         return doctor;
     }
 
@@ -113,5 +113,10 @@ public class DoctorServiceImpl implements DoctorService {
         List<Doctor> docs = doctorDao.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, pageSize);
         int total = doctorDao.countWithFilters(specialtyId, coverageId, weekdays, orderBy, direction);
         return new Page<>(docs, page, pageSize, total);
+    }
+    @Override
+    public void UpdateDoctorRating(long id, double rating) {
+        doctorDao.UpdateDoctorRating(id, rating);
+        LOGGER.debug("Rating actualizado para el doctor con id={}, rating={}", id, rating);
     }
 }

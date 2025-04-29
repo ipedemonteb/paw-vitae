@@ -45,7 +45,7 @@ public class AuthController {
     public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, PatientService patientService, UserService us, AuthUserDetailsService authService) {
         this.ds = ds;
         this.cs = cs;
-        this.is=is;
+        this.is = is;
         this.ss = ss;
         this.ps = patientService;
         this.us = us;
@@ -62,7 +62,6 @@ public class AuthController {
             return doctorForm(form, authentication);
         }
         authService.registerDoctor(form);
-
     LOGGER.debug("Registering doctor with email: {}", form.getEmail());
 
         return new ModelAndView("redirect:/doctor/dashboard");
@@ -76,8 +75,8 @@ public class AuthController {
             // remember‑me or fully authenticated ↦ bounce home
             return new ModelAndView("redirect:/");
         }
-        List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
-        List<Specialty> specialtyList = ss.getAll().orElse(new ArrayList<>());
+        List<Coverage> coverageList = cs.getAll();
+        List<Specialty> specialtyList = ss.getAll();
         ModelAndView mav = new ModelAndView("auth/register");
         mav.addObject("coverageList", coverageList);
         mav.addObject("specialtyList", specialtyList);
@@ -93,7 +92,7 @@ public class AuthController {
             // remember‑me or fully authenticated ↦ bounce home
             return new ModelAndView("redirect:/");
         }
-        List<Coverage> coverageList = cs.getAll().orElse(new ArrayList<>());
+        List<Coverage> coverageList = cs.getAll();
         ModelAndView mav = new ModelAndView("auth/register-patient");
         mav.addObject("coverageList", coverageList);
         return mav;
@@ -131,20 +130,6 @@ public class AuthController {
         return new ModelAndView("redirect:/");
     }
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) throws IllegalArgumentException {
-                if (text == null || text.isEmpty()) {
-                    setValue(null);
-                } else {
-                    // Parse the time string (format: HH:mm)
-                    setValue(LocalTime.parse(text));
-                }
-            }
-        });
-    }
 }
 
 

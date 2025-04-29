@@ -79,7 +79,7 @@ public class PatientController {
         Patient patient = loggedUser();
         updatePatientForm.setForm(patient);
         mav.addObject("patient", patient);
-        mav.addObject("coverageList", covs.getAll().orElse(new ArrayList<>()));
+        mav.addObject("coverageList", covs.getAll());
         mav.addObject("activeTab", "profile");
         mav.addObject("display", "none");
         return mav;

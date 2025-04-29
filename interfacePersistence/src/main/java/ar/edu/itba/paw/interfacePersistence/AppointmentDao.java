@@ -14,9 +14,9 @@ import java.util.Optional;
 
         Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty);
 
-        Optional<List<Appointment>> getByPatientId(long patientId);
+        List<Appointment> getByPatientId(long patientId);
 
-        Optional<List<Appointment>> getByDoctorId(long doctorId);
+        List<Appointment> getByDoctorId(long doctorId);
 
 
         void cancelAppointment(long appointmentId);
@@ -25,13 +25,13 @@ import java.util.Optional;
 
         Optional<Appointment> getById(long appointmentId);
 
-        Optional<List<Appointment>> getPastDoctorAppointments(long doctorId, int page, int size);
+        List<Appointment> getPastDoctorAppointments(long doctorId, int page, int size);
 
-        Optional<List<Appointment>> getFutureDoctorAppointments(long doctorId, int page, int size);
+        List<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size);
 
-        Optional<List<Appointment>> getFuturePatientAppointments(long patientId, int page, int size);
+        List<Appointment> getFuturePatientAppointments(long patientId, int page, int size);
 
-        Optional<List<Appointment>> getPastPatientAppointments(long patientId, int page, int size);
+        List<Appointment> getPastPatientAppointments(long patientId, int page, int size);
 
         List<Appointment> getAppointmentsByDate(LocalDate today);
         int countFuturePatientAppointments(long patientId);

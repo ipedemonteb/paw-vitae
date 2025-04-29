@@ -82,10 +82,19 @@ CREATE TABLE IF NOT EXISTS Reviews (
                         id SERIAL PRIMARY KEY,
                         doctor_id INT NOT NULL,
                         client_id INT NOT NULL,
-                        appointment_id INT NOT NULL,
-                        rating FLOAT CHECK (rating >= 1 AND rating <= 5),
+                        appointment_id INT NOT NULL UNIQUE,
+                        rating INT CHECK (rating >= 1 AND rating <= 5),
                         comment TEXT,
                         FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
-                        FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE
+                        FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE,
+                        FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS appointment_files (
+                                   id SERIAL PRIMARY KEY,
+                                   appointment_id INTEGER NOT NULL,
+                                   uploader_role VARCHAR(20) NOT NULL,
+                                   file_name VARCHAR(255) NOT NULL,
+                                   file_data BYTEA NOT NULL,
+                                   FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
+);

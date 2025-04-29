@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import javax.print.Doc;
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,13 +10,35 @@ public class Doctor extends User {
     private List<Specialty> specialtyList;
     private List<Coverage> coverageList = new ArrayList<>();
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
-
+    private Double rating = 5.0;
+    private int ratingCount = 0;
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,Double rating,int ratingCount) {
+        super(name, id, lastName, email, password, phone, language);
+        this.rating = rating;
+        this.ratingCount = ratingCount;
+    }
     public Doctor(String name, long id, String lastName, String email, String password, String phone, String language) {
         super(name, id, lastName, email, password, phone, language);
     }
 
     public List<Specialty> getSpecialtyList() {
         return specialtyList;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(int ratingCount) {
+        this.ratingCount = ratingCount;
     }
 
     public void setSpecialtyList(List<Specialty> specialtyList) {

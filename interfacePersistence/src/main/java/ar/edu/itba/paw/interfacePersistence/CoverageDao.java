@@ -9,10 +9,10 @@ import java.util.Optional;
 public interface CoverageDao {
 
     Optional<Coverage> findById(long id);
-    Optional<List<Coverage>> findByIds(List<Long> ids);
+    List<Coverage> findByIds(List<Long> ids);
 
     Coverage create(String name);
 
     Optional<Coverage> findByName(String name);
-    Optional<List<Coverage>> getAll();
+    List<Coverage> getAll();
 }
