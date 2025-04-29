@@ -586,7 +586,7 @@ textarea.form-control {
     width: 100%;
 }
 
-.files-list{
+.files-list {
     margin-bottom: 30px;
 }
 
@@ -771,6 +771,28 @@ textarea.form-control {
     transform: rotate(90deg);
 }
 
+.file-download {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f5f9;
+    color: var(--primary-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.file-download:hover {
+    background-color: #dbeafe;
+    color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
 /* Notification Styles */
 .file-notification {
     position: fixed;
@@ -865,6 +887,186 @@ textarea.form-control {
     }
 }
 
+/* Back Button Styles - NEW */
+.back-button-container {
+    margin-bottom: 20px;
+    padding-top: 20px;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.back-button:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.back-button i {
+    font-size: 0.9rem;
+}
+
+/* Enhanced Date Display - NEW */
+.enhanced-date-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.calendar-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    background-color: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #e2e8f0;
+}
+
+.calendar-month {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: var(--white);
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 2px 0;
+    text-transform: uppercase;
+}
+
+.calendar-day {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.date-time-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.date-info,
+.time-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.date-info i,
+.time-info i {
+    color: var(--primary-color);
+    width: 16px;
+    text-align: center;
+}
+
+/* Status Styles - NEW */
+.status-card {
+    margin-bottom: 20px;
+}
+
+.status-display {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-scheduled {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.status-completed {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-cancelled {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-rescheduled {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-update-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-select {
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    border: 1px solid #e2e8f0;
+    background-color: var(--white);
+    font-size: 0.9rem;
+    color: var(--text-color);
+    transition: var(--transition);
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.status-update-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.status-update-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
     .appointment-container {
@@ -911,6 +1113,27 @@ textarea.form-control {
     .file-upload-secondary {
         font-size: 0.8rem;
     }
+
+    .status-display {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .status-update-form {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .enhanced-date-display {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .calendar-icon {
+        margin-bottom: 10px;
+    }
 }
 
 @media (max-width: 576px) {
@@ -942,88 +1165,9 @@ textarea.form-control {
     .file-name {
         max-width: 150px;
     }
-}
 
-/* Header Styles */
-.header,
-.header-container,
-.logo,
-.logo-img,
-.logo-text,
-.nav-menu,
-.nav-link,
-.user-menu,
-.user-menu-btn,
-.mobile-menu-btn {
-    /* Reset these styles as they'll come from the included header */
-    display: initial;
-    position: initial;
-}
-
-
-.confirmation-item {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px dashed #e2e8f0;
-    transition: var(--transition);
-}
-
-.confirmation-item:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.confirmation-item:hover {
-    transform: translateX(5px);
-}
-
-.confirmation-label {
-    flex: 0 0 200px;
-    font-weight: 600;
-    color: var(--text-light);
-    font-size: 1rem;
-}
-
-.confirmation-value {
-    flex: 1;
-    font-size: 1.1rem;
-    color: var(--text-color);
-    word-break: break-word;
-}
-
-.calendar-icon {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    width: 60px;
-    height: 60px;
-    background-color: var(--white);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    margin-right: 15px;
-}
-
-.calendar-month {
-    width: 100%;
-    background-color: var(--primary-color);
-    color: var(--white);
-    text-align: center;
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 2px 0;
-    text-transform: uppercase;
-}
-
-.calendar-day {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-color);
+    .back-button {
+        width: 100%;
+        justify-content: center;
+    }
 }
