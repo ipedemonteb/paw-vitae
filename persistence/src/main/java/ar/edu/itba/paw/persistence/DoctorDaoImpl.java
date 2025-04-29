@@ -143,7 +143,7 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public void UpdateDoctorRating (long id, double newRating) {
+    public void UpdateDoctorRating(long id, double newRating) {
         jdbcTemplate.update(
                 "UPDATE doctors " +
                         "SET rating = ((rating * rating_count + ?) / (rating_count + 1)), " +
@@ -180,6 +180,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
         return doctors;
     }
+
     @Override
     public void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList) {
         Doctor currentDoctor = getById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
@@ -269,6 +270,7 @@ public class DoctorDaoImpl implements DoctorDao {
         ));
         doctor.setAvailabilitySlots(getAvailabilityByDoctorId(id));
     }
+
     // Add this method to the DoctorDaoImpl class
     @Override
     public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
@@ -290,6 +292,7 @@ public class DoctorDaoImpl implements DoctorDao {
     public void changePassword(long id, String password) {
         jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
     }
+
     @Override
     public String getLanguage(long id) {
         return jdbcTemplate.query("SELECT language FROM Users WHERE id = ?", (rs, rowNum) -> rs.getString("language"), id).stream().findFirst().orElse(null);
@@ -308,7 +311,4 @@ public class DoctorDaoImpl implements DoctorDao {
                 specialtyId
         );
     }
-
-
-
 }
