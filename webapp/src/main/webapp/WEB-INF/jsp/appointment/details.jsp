@@ -15,384 +15,426 @@
     <title><spring:message code="appointment.details.page.title" /></title>
     <link rel="stylesheet" href="<c:url value='/css/appointment-details.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
-<%--TODO: acces from dashboard/upcoming and dashboard/history--%>
 
 <!-- Main Content -->
 <main class="main-content">
     <div class="container">
         <div class="appointment-details-container">
-            <div class="appointment-header">
-                <h1 class="appointment-title"><spring:message code="appointment.details.title" /></h1>
-                <p class="appointment-subtitle"><spring:message code="appointment.details.subtitle" /></p>
-
-                <!-- Appointment Status Badge -->
-                <div class="appointment-status">
-                    <span class="status-badge <c:out value="${appointment.status}"/>">
-                        <spring:message code='${appointment.status}'/>
-                    </span>
-                    <span class="appointment-date">
-                        <i class="far fa-calendar-alt"></i>
+            <!-- Appointment Status Banner -->
+            <div class="appointment-status-banner status-${appointment.status.toLowerCase()}">
+                <div class="status-icon">
+                    <i class="fas fa-${appointment.status == 'CONFIRMED' ? 'check-circle' : appointment.status == 'COMPLETED' ? 'clipboard-check' : 'times-circle'}"></i>
+                </div>
+                <div class="status-text">
+                    <h1><spring:message code='${appointment.status}'/></h1>
+                    <p>
                         <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDate" type="both" />
                         <fmt:formatDate value="${parsedDate}" pattern="EEEE, MMMM d, yyyy 'at' h:mm a" />
-                    </span>
-
-                    <!-- Check if appointment has passed -->
-                    <c:set var="now" value="<%= new java.util.Date() %>" />
-                    <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="appointmentDate" type="both" />
-                    <c:if test="${appointmentDate.time < now.time}">
-                        <span class="appointment-past-indicator">
-                            <i class="fas fa-history"></i>
-                            <spring:message code="appointment.details.past" />
-                        </span>
-                    </c:if>
+                    </p>
                 </div>
-            </div>
-
-            <div class="appointment-body">
-                <div class="details-grid">
-                    <!-- Doctor Information Card -->
-                    <div class="details-card doctor-card">
-                        <div class="card-header">
-                            <h2><spring:message code="appointment.details.doctor.title" /></h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="profile-section">
-                                <div class="profile-image">
-                                    <img src="<c:url value='/doctor/${appointment.doctor.id}/image'/>" alt="<c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/>" class="avatar">
-                                </div>
-                                <div class="profile-info">
-                                    <h3 class="profile-name"><c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/></h3>
-                                    <div class="rating-display">
-                                        <div class="stars">
-                                            <c:forEach begin="1" end="5" var="star">
-                                                <i class="fa${star <= appointment.doctor.rating ? ' fa-star' : star <= appointment.doctor.rating + 0.5 ? ' fa-star-half-alt' : 'r fa-star'}" aria-hidden="true"></i>
-                                            </c:forEach>
-                                        </div>
-                                        <span class="rating-value"><c:out value="${appointment.doctor.rating}"/></span>
-                                        <span class="rating-count">(<c:out value="${appointment.doctor.ratingCount}"/> <spring:message code="ratings" />)</span>
-                                    </div>
-                                    <p class="specialty-tag"><spring:message code="${appointment.specialty.key}" /></p>
-                                </div>
-                            </div>
-                            <div class="contact-info">
-                                <div class="contact-item">
-                                    <span class="contact-icon"><i class="fas fa-envelope"></i></span>
-                                    <span class="contact-text"><c:out value="${appointment.doctor.email}"/></span>
-                                </div>
-                                <div class="contact-item">
-                                    <span class="contact-icon"><i class="fas fa-phone"></i></span>
-                                    <span class="contact-text"><c:out value="${appointment.doctor.phone}"/></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Patient Information Card -->
-                    <div class="details-card patient-card">
-                        <div class="card-header">
-                            <h2><spring:message code="appointment.details.patient.title" /></h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="profile-section">
-                                <div class="profile-image">
-                                    <img src="<c:url value='/patient/${appointment.patient.id}/image'/>" alt="<c:out value="${appointment.patient.name}"/> <c:out value="${appointment.patient.lastName}"/>" class="avatar">
-                                </div>
-                                <div class="profile-info">
-                                    <h3 class="profile-name"><c:out value="${appointment.patient.name}"/> <c:out value="${appointment.patient.lastName}"/></h3>
-                                </div>
-                            </div>
-                            <div class="contact-info">
-                                <div class="contact-item">
-                                    <span class="contact-icon"><i class="fas fa-envelope"></i></span>
-                                    <span class="contact-text"><c:out value="${appointment.patient.email}"/></span>
-                                </div>
-                                <div class="contact-item">
-                                    <span class="contact-icon"><i class="fas fa-phone"></i></span>
-                                    <span class="contact-text"><c:out value="${appointment.patient.phone}"/></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Appointment Details Card -->
-                    <div class="details-card appointment-info-card">
-                        <div class="card-header">
-                            <h2><spring:message code="appointment.details.info.title" /></h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="info-item">
-                                <span class="info-label"><spring:message code="appointment.details.info.id" />:</span>
-                                <span class="info-value"><c:out value="${appointment.id}"/></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label"><spring:message code="appointment.details.info.date" />:</span>
-                                <span class="info-value">
-                                    <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDate" type="both" />
-                                    <fmt:formatDate value="${parsedDate}" pattern="EEEE, MMMM d, yyyy" />
-                                </span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label"><spring:message code="appointment.details.info.time" />:</span>
-                                <span class="info-value">
-                                    <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedTime" type="both" />
-                                    <fmt:formatDate value="${parsedTime}" pattern="h:mm a" />
-                                </span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label"><spring:message code="appointment.details.info.status" />:</span>
-                                <span class="status-badge <c:out value="${appointment.status}"/>">
-                                            <spring:message code='${appointment.status}'/>
-                                </span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label"><spring:message code="appointment.details.info.specialty" />:</span>
-                                <span class="info-value"><spring:message code="${appointment.specialty.key}" /></span>
-                            </div>
-                            <div class="info-item reason-item">
-                                <span class="info-label"><spring:message code="appointment.details.info.reason" />:</span>
-                                <div class="reason-text">
-                                    <c:out value="${appointment.reason}" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Patient Files Section -->
-                <c:if test="${not empty patientFiles}">
-                    <div class="details-card files-card">
-                        <div class="card-header">
-                            <h2><spring:message code="appointment.details.patient.files.title" /></h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="files-grid">
-                                <c:forEach var="file" items="${patientFiles}">
-                                    <c:if test="${file.uploader_role == 'patient'}">
-                                        <div class="file-item">
-                                            <div class="file-icon">
-                                                <i class="far fa-file-pdf"></i>
-                                            </div>
-                                            <div class="file-info">
-                                                <span class="file-name"><c:out value="${file.fileName}" /></span>
-                                                <span class="file-date">
-                                                    <fmt:formatDate value="${file.uploadDate}" pattern="MMM d, yyyy" />
-                                                </span>
-                                            </div>
-                                            <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
-                                                <i class="fas fa-download"></i>
-                                            </a>
-                                        </div>
-                                    </c:if>
-                                </c:forEach>
-                            </div>
-                        </div>
-                    </div>
-                </c:if>
 
                 <!-- Check if appointment has passed -->
                 <c:set var="now" value="<%= new java.util.Date() %>" />
                 <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="appointmentDate" type="both" />
                 <c:if test="${appointmentDate.time < now.time}">
-                    <!-- Doctor Files Section (Only show if appointment has passed) -->
-                    <sec:authorize access="hasRole('DOCTOR')">
-                        <div class="details-card files-card doctor-files-card">
-                            <div class="card-header">
-                                <h2><spring:message code="appointment.details.doctor.files.title" /></h2>
-                            </div>
-                            <div class="card-body">
-<%--                                <form:form modelAttribute="doctorFileForm" method="post" action="${pageContext.request.contextPath}/appointment/${appointment.id}/doctor-files" class="doctor-files-form" enctype="multipart/form-data">--%>
-<%--                                    <div class="form-group">--%>
-<%--                                        <label for="doctorFiles">--%>
-<%--                                            <spring:message code="appointment.details.doctor.files.upload" />--%>
-<%--                                        </label>--%>
-<%--                                        <div class="file-upload-container">--%>
-<%--                                            <div class="file-upload-dropzone" id="doctorDropZone">--%>
-<%--                                                <div class="file-upload-icon">--%>
-<%--                                                    <i class="fas fa-cloud-upload-alt"></i>--%>
-<%--                                                </div>--%>
-<%--                                                <div class="file-upload-text">--%>
-<%--                                                    <p class="file-upload-primary"><spring:message code="file.upload.dragHere"/></p>--%>
-<%--                                                    <p class="file-upload-secondary"><spring:message code="file.upload.onlyPdf"/></p>--%>
-<%--                                                </div>--%>
-<%--                                                <form:input type="file" path="files" id="doctorFiles" multiple="true" accept=".pdf" class="file-upload-input-hidden" />--%>
-<%--                                            </div>--%>
-<%--                                            <div id="doctorFilePreview" class="file-upload-preview"></div>--%>
-<%--                                            <form:errors path="files" cssClass="error-message" />--%>
-<%--                                        </div>--%>
-<%--                                    </div>--%>
-
-<%--                                    <div class="form-group">--%>
-<%--                                        <label for="doctorComment">--%>
-<%--                                            <spring:message code="appointment.details.doctor.comment" />--%>
-<%--                                        </label>--%>
-<%--                                        <form:textarea path="comment" id="doctorComment" class="form-control" rows="4" />--%>
-<%--                                        <form:errors path="comment" cssClass="error-message" />--%>
-<%--                                    </div>--%>
-
-<%--                                    <div class="form-group">--%>
-<%--                                        <button type="submit" class="btn btn-primary">--%>
-<%--                                            <span>--%>
-<%--                                                <i class="fas fa-paper-plane"></i>--%>
-<%--                                                <spring:message code="appointment.details.doctor.submit" />--%>
-<%--                                            </span>--%>
-<%--                                        </button>--%>
-<%--                                    </div>--%>
-<%--                                </form:form>--%>
-                            </div>
-                        </div>
-                    </sec:authorize>
-
-                    <!-- Patient Review Section (Only show if appointment has passed OR CANCELED) -->
-<%--                    TODO: show if has been canceled as well--%>
-                    <sec:authorize access="hasRole('PATIENT')">
-                        <div class="details-card review-card">
-                            <div class="card-header">
-                                <h2><spring:message code="appointment.details.review.title" /></h2>
-                            </div>
-                            <div class="card-body">
-                                <c:choose>
-                                    <c:when test="${not empty existingRating}">
-                                        <!-- Display existing rating -->
-                                        <div class="existing-review">
-                                            <div class="review-header">
-                                                <div class="review-stars">
-                                                    <c:forEach begin="1" end="5" var="star">
-                                                        <i class="fa${star <= existingRating.rating ? ' fa-star' : star <= existingRating.rating + 0.5 ? ' fa-star-half-alt' : 'r fa-star'}" aria-hidden="true"></i>
-                                                    </c:forEach>
-                                                    <span class="rating-value"><c:out value="${existingRating.rating}"/></span>
-                                                </div>
-                                                <div class="review-date">
-                                                    <fmt:formatDate value="${existingRating.date}" pattern="MMM d, yyyy" />
-                                                </div>
-                                            </div>
-                                            <div class="review-comment">
-                                                <c:out value="${existingRating.comment}" />
-                                            </div>
-                                            <div class="review-actions">
-                                                <button id="editReviewBtn" class="btn btn-secondary">
-                                                    <i class="fas fa-edit"></i>
-                                                    <spring:message code="appointment.details.review.edit" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <h1>NOT IMPLEMENTED</h1>
-                                        <!-- Review form -->
-<%--                                        <form:form modelAttribute="ratingForm" method="post" action="${pageContext.request.contextPath}/appointment/${appointment.id}/rating" class="review-form">--%>
-<%--                                            <div class="form-group">--%>
-<%--                                                <label for="rating" class="required-field">--%>
-<%--                                                    <spring:message code="appointment.details.review.rating" />--%>
-<%--                                                </label>--%>
-<%--                                                <div class="star-rating">--%>
-<%--                                                    <div class="stars-input">--%>
-<%--                                                        <c:forEach begin="1" end="5" var="star">--%>
-<%--                                                            <input type="radio" id="star${star}" name="rating" value="${star}" <c:if test="${star == 5}">checked</c:if> />--%>
-<%--                                                            <label for="star${star}"><i class="fas fa-star"></i></label>--%>
-<%--                                                        </c:forEach>--%>
-<%--                                                    </div>--%>
-<%--                                                    <div class="rating-value-display">5.0</div>--%>
-<%--                                                </div>--%>
-<%--                                                <form:errors path="rating" cssClass="error-message" />--%>
-<%--                                            </div>--%>
-
-<%--                                            <div class="form-group">--%>
-<%--                                                <label for="comment" class="required-field">--%>
-<%--                                                    <spring:message code="appointment.details.review.comment" />--%>
-<%--                                                </label>--%>
-<%--                                                <form:textarea path="comment" id="comment" class="form-control" rows="4" />--%>
-<%--                                                <form:errors path="comment" cssClass="error-message" />--%>
-<%--                                            </div>--%>
-
-<%--                                            <div class="form-group">--%>
-<%--                                                <button type="submit" class="btn btn-primary">--%>
-<%--                                                    <span>--%>
-<%--                                                        <i class="fas fa-star"></i>--%>
-<%--                                                        <spring:message code="appointment.details.review.submit" />--%>
-<%--                                                    </span>--%>
-<%--                                                </button>--%>
-<%--                                            </div>--%>
-<%--                                        </form:form>--%>
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
-                        </div>
-                    </sec:authorize>
+                    <div class="past-indicator">
+                        <i class="fas fa-history"></i>
+                        <spring:message code="appointment.details.past" />
+                    </div>
                 </c:if>
             </div>
 
+            <!-- Appointment Progress -->
+            <div class="appointment-progress">
+                <div class="progress-track">
+                    <div class="progress-bar" style="width: <c:choose>
+                    <c:when test="${appointment.status == 'confirmado'}">50%</c:when>
+                    <c:when test="${appointment.status == 'completado'}">100%</c:when>
+                    <c:otherwise>0%</c:otherwise>
+                    </c:choose>;">
+                    </div>                </div>
+                <div class="progress-steps">
+                    <div class="progress-step ${appointment.status == 'confirmado' || appointment.status == 'completado' ? 'active' : ''}">
+                        <div class="step-marker"><i class="fas fa-check-circle"></i></div>
+                        <div class="step-label">Confirmed</div>
+                    </div>
+                    <div class="progress-step ${appointment.status == 'completado' ? 'active' : ''}">
+                        <div class="step-marker"><i class="fas fa-clipboard-check"></i></div>
+                        <div class="step-label">Completed</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment Details -->
+            <section class="details-section">
+                <h2 class="section-title"><i class="fas fa-info-circle"></i> <spring:message code="appointment.details.info.title" /></h2>
+
+                <div class="details-list">
+                    <div class="detail-item">
+                        <div class="detail-label"><i class="fas fa-hashtag"></i> <spring:message code="appointment.details.info.id" /></div>
+                        <div class="detail-value"><c:out value="${appointment.id}"/></div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label"><i class="fas fa-calendar-day"></i> <spring:message code="appointment.details.info.date" /></div>
+                        <div class="detail-value">
+                            <fmt:formatDate value="${parsedDate}" pattern="EEEE, MMMM d, yyyy" />
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label"><i class="fas fa-clock"></i> <spring:message code="appointment.details.info.time" /></div>
+                        <div class="detail-value">
+                            <fmt:formatDate value="${parsedDate}" pattern="h:mm a" />
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label"><i class="fas fa-stethoscope"></i> <spring:message code="appointment.details.info.specialty" /></div>
+                        <div class="detail-value"><spring:message code="${appointment.specialty.key}" /></div>
+                    </div>
+                </div>
+
+                <div class="reason-container">
+                    <h3 class="reason-title"><i class="fas fa-comment-medical"></i> <spring:message code="appointment.details.info.reason" /></h3>
+                    <div class="reason-content">
+                        <c:out value="${appointment.reason}" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Participants Section -->
+            <section class="details-section">
+                <h2 class="section-title"><i class="fas fa-users"></i> <spring:message code="appointment.details.page.title" /></h2>
+
+                <!-- Doctor Information -->
+                <sec:authorize access="hasRole('ROLE_PATIENT')">
+                <div class="participant-container">
+                    <div class="participant-header">
+                        <i class="fas fa-user-md"></i>
+                        <h3><spring:message code="appointment.details.doctor.title" /></h3>
+                    </div>
+
+                    <div class="participant-profile">
+                        <div class="profile-image">
+                            <img src="<c:url value='/doctor/${appointment.doctor.id}/image'/>" alt="<c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/>" />
+                        </div>
+
+                        <div class="profile-info">
+                            <h4 class="profile-name"><c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/></h4>
+
+                            <div class="profile-rating">
+                                <div class="rating-stars">
+                                    <c:forEach begin="1" end="5" var="star">
+                                        <i class="fa${star <= appointment.doctor.rating ? ' fa-star' : star <= appointment.doctor.rating + 0.5 ? ' fa-star-half-alt' : 'r fa-star'}" aria-hidden="true"></i>
+                                    </c:forEach>
+                                </div>
+                                <span class="rating-value"><c:out value="${appointment.doctor.rating}"/></span>
+                                <span class="rating-count">(<c:out value="${appointment.doctor.ratingCount}"/> <spring:message code="ratings" />)</span>
+                            </div>
+
+                            <div class="profile-specialty">
+                                <span class="specialty-badge"><spring:message code="${appointment.specialty.key}" /></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="participant-contact">
+                        <a href="mailto:<c:out value="${appointment.doctor.email}"/>" class="contact-link">
+                            <i class="fas fa-envelope"></i>
+                            <span><c:out value="${appointment.doctor.email}"/></span>
+                        </a>
+                        <a href="tel:<c:out value="${appointment.doctor.phone}"/>" class="contact-link">
+                            <i class="fas fa-phone"></i>
+                            <span><c:out value="${appointment.doctor.phone}"/></span>
+                        </a>
+                    </div>
+                </div>
+                </sec:authorize>
+
+                <!-- Patient Information -->
+                <sec:authorize access="hasRole('ROLE_DOCTOR')">
+                <div class="participant-container">
+                    <div class="participant-header">
+                        <i class="fas fa-user"></i>
+                        <h3><spring:message code="appointment.details.patient.title" /></h3>
+                    </div>
+
+                    <div class="participant-profile">
+                        <div class="profile-image">
+                            <img src="<c:url value='/patient/${appointment.patient.id}/image'/>" alt="<c:out value="${appointment.patient.name}"/> <c:out value="${appointment.patient.lastName}"/>" />
+                        </div>
+
+                        <div class="profile-info">
+                            <h4 class="profile-name"><c:out value="${appointment.patient.name}"/> <c:out value="${appointment.patient.lastName}"/></h4>
+                        </div>
+                    </div>
+
+                    <div class="participant-contact">
+                        <a href="mailto:<c:out value="${appointment.patient.email}"/>" class="contact-link">
+                            <i class="fas fa-envelope"></i>
+                            <span><c:out value="${appointment.patient.email}"/></span>
+                        </a>
+                        <a href="tel:<c:out value="${appointment.patient.phone}"/>" class="contact-link">
+                            <i class="fas fa-phone"></i>
+                            <span><c:out value="${appointment.patient.phone}"/></span>
+                        </a>
+                    </div>
+                </div>
+                </sec:authorize>
+            </section>
+
+            <!-- Files Section -->
+            <c:if test="${not empty patientFiles}">
+                <section class="details-section">
+                    <h2 class="section-title"><i class="fas fa-file-medical"></i> <spring:message code="appointment.details.patient.files.title" /></h2>
+
+                    <div class="files-list">
+                        <c:forEach var="file" items="${patientFiles}">
+                            <c:if test="${file.uploader_role == 'patient'}">
+                                <div class="file-item">
+                                    <div class="file-icon">
+                                        <i class="far fa-file-pdf"></i>
+                                    </div>
+                                    <div class="file-info">
+                                        <div class="file-name"><c:out value="${file.fileName}" /></div>
+                                        <div class="file-date">
+                                            <fmt:formatDate value="${file.uploadDate}" pattern="MMM d, yyyy" />
+                                        </div>
+                                    </div>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+                </section>
+            </c:if>
+
+            <!-- Doctor Files Section (Only show if appointment has passed) -->
+            <c:if test="${appointmentDate.time < now.time}">
+                <sec:authorize access="hasRole('DOCTOR')">
+                    <section class="details-section">
+                        <h2 class="section-title"><i class="fas fa-file-medical-alt"></i> <spring:message code="appointment.details.doctor.files.title" /></h2>
+
+                        <form:form modelAttribute="doctorFileForm" method="post" action="${pageContext.request.contextPath}/appointment/${appointment.id}/doctor-files" class="file-upload-form" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <div class="dropzone-container">
+                                    <div class="dropzone" id="doctorDropZone">
+                                        <div class="dropzone-icon">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                        </div>
+                                        <div class="dropzone-text">
+                                            <p class="dropzone-title"><spring:message code="file.upload.dragHere"/></p>
+                                            <p class="dropzone-subtitle"><spring:message code="file.upload.onlyPdf"/></p>
+                                        </div>
+                                        <form:input type="file" path="files" id="doctorFiles" multiple="true" accept=".pdf" class="dropzone-input" />
+                                    </div>
+
+                                    <div id="doctorFilePreview" class="file-preview"></div>
+                                    <form:errors path="files" cssClass="error-message" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="doctorComment" class="form-label">
+                                    <i class="fas fa-comment-medical"></i>
+                                    <span><spring:message code="appointment.details.doctor.comment" /></span>
+                                </label>
+                                <form:textarea path="comment" id="doctorComment" class="form-control" rows="4" />
+                                <form:errors path="comment" cssClass="error-message" />
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i>
+                                    <span><spring:message code="appointment.details.doctor.submit" /></span>
+                                </button>
+                            </div>
+                        </form:form>
+                    </section>
+                </sec:authorize>
+
+                <!-- Review Section (Only show if appointment has passed) -->
+                <sec:authorize access="hasRole('PATIENT')">
+                    <section class="details-section">
+                        <h2 class="section-title"><i class="fas fa-star"></i> <spring:message code="appointment.details.review.title" /></h2>
+
+                        <c:choose>
+                            <c:when test="${not empty existingRating}">
+                                <!-- Display existing rating -->
+                                <div class="existing-review">
+                                    <div class="review-header">
+                                        <div class="review-rating">
+                                            <div class="rating-stars">
+                                                <c:forEach begin="1" end="5" var="star">
+                                                    <i class="fa${star <= existingRating.rating ? ' fa-star' : star <= existingRating.rating + 0.5 ? ' fa-star-half-alt' : 'r fa-star'}" aria-hidden="true"></i>
+                                                </c:forEach>
+                                            </div>
+                                            <span class="rating-value"><c:out value="${existingRating.rating}"/></span>
+                                        </div>
+
+                                        <div class="review-date">
+                                            <i class="far fa-calendar-alt"></i>
+                                            <span><fmt:formatDate value="${existingRating.date}" pattern="MMM d, yyyy" /></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="review-body">
+                                        <p class="review-text"><c:out value="${existingRating.comment}" /></p>
+                                    </div>
+
+                                    <div class="review-actions">
+                                        <button id="editReviewBtn" class="btn btn-secondary">
+                                            <i class="fas fa-edit"></i>
+                                            <span><spring:message code="appointment.details.review.edit" /></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <!-- Review form -->
+                                <form:form modelAttribute="ratingForm" method="post" action="${pageContext.request.contextPath}/appointment/${appointment.id}/rating" class="review-form">
+                                    <div class="form-group">
+                                        <label for="rating" class="form-label required">
+                                            <i class="fas fa-star"></i>
+                                            <span><spring:message code="appointment.details.review.rating" /></span>
+                                        </label>
+
+                                        <div class="rating-input">
+                                            <div class="stars-container">
+                                                <c:forEach begin="1" end="5" var="star">
+                                                    <input type="radio" id="star${star}" name="rating" value="${star}" <c:if test="${star == 5}">checked</c:if> />
+                                                    <label for="star${star}"><i class="fas fa-star"></i></label>
+                                                </c:forEach>
+                                            </div>
+                                            <div class="rating-display">5.0</div>
+                                        </div>
+
+                                        <form:errors path="rating" cssClass="error-message" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="comment" class="form-label required">
+                                            <i class="fas fa-comment"></i>
+                                            <span><spring:message code="appointment.details.review.comment" /></span>
+                                        </label>
+                                        <form:textarea path="comment" id="comment" class="form-control" rows="4" />
+                                        <form:errors path="comment" cssClass="error-message" />
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane"></i>
+                                            <span><spring:message code="appointment.details.review.submit" /></span>
+                                        </button>
+                                    </div>
+                                </form:form>
+                            </c:otherwise>
+                        </c:choose>
+                    </section>
+                </sec:authorize>
+            </c:if>
+
             <!-- Action Buttons -->
-            <sec:authorize access="hasRole('DOCTOR')">
-                <div class="appointment-actions">
-                    <a href="${pageContext.request.contextPath}/doctor/dashboard/upcoming" class="btn btn-secondary">
+            <div class="appointment-actions">
+                <sec:authorize access="hasRole('ROLE_DOCTOR')">
+                <a href="${pageContext.request.contextPath}/doctor/dashboard" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    <span><spring:message code="appointment.details.back" /></span>
+                </a>
+                </sec:authorize>
+
+                <sec:authorize access="hasRole('ROLE_PATIENT')">
+                    <a href="${pageContext.request.contextPath}/patient/dashboard" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i>
-                        <spring:message code="appointment.details.back" />
+                        <span><spring:message code="appointment.details.back" /></span>
                     </a>
+                </sec:authorize>
 
-                    <!-- Only show cancel button if appointment is in the future and status is SCHEDULED or CONFIRMED -->
-                    <c:if test="${(appointment.status == 'SCHEDULED' || appointment.status == 'CONFIRMED') && appointmentDate.time > now.time}">
-                        <a href="${pageContext.request.contextPath}/appointment/${appointment.id}/cancel" class="btn btn-danger">
-                            <i class="fas fa-times-circle"></i>
-                            <spring:message code="appointment.details.cancel" />
-                        </a>
-                    </c:if>
+                <div class="action-buttons">
+                    <button class="btn btn-icon" id="printBtn">
+                        <i class="fas fa-print"></i>
+                    </button>
+                    <button class="btn btn-icon" id="shareBtn">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
                 </div>
-            </sec:authorize>
-            <sec:authorize access="hasRole('PATIENT')">
-                <div class="appointment-actions">
-                    <a href="${pageContext.request.contextPath}/patient/dashboard/upcoming" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i>
-                        <spring:message code="appointment.details.back" />
-                    </a>
-
-                    <!-- Only show cancel button if appointment is in the future and status is SCHEDULED or CONFIRMED -->
-                    <c:if test="${(appointment.status == 'SCHEDULED' || appointment.status == 'CONFIRMED') && appointmentDate.time > now.time}">
-                        <a href="${pageContext.request.contextPath}/appointment/${appointment.id}/cancel" class="btn btn-danger">
-                            <i class="fas fa-times-circle"></i>
-                            <spring:message code="appointment.details.cancel" />
-                        </a>
-                    </c:if>
-                </div>
-            </sec:authorize>
-
+            </div>
         </div>
     </div>
 </main>
 
 <!-- JavaScript for the page -->
 <script>
-    // Handle file uploads for doctor
     document.addEventListener('DOMContentLoaded', function() {
-        // Fixed header adjustment
-        const fixedHeader = document.querySelector(".main-header");
-        const mainContent = document.querySelector("main");
+        // Print functionality
+        const printBtn = document.getElementById('printBtn');
+        if (printBtn) {
+            printBtn.addEventListener('click', function() {
+                window.print();
+            });
+        }
 
-        if (fixedHeader && mainContent) {
-            const adjustContentMargin = () => {
-                const headerHeight = fixedHeader.offsetHeight;
-                mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-            };
+        // Share functionality
+        const shareBtn = document.getElementById('shareBtn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Appointment Details',
+                        text: 'Check out my appointment details',
+                        url: window.location.href
+                    })
+                        .catch(error => console.log('Error sharing:', error));
+                } else {
+                    // Fallback - copy to clipboard
+                    const tempInput = document.createElement('input');
+                    tempInput.value = window.location.href;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
 
-            // Adjust on page load
-            adjustContentMargin();
+                    // Show copied notification
+                    const notification = document.createElement('div');
+                    notification.className = 'copy-notification';
+                    notification.textContent = 'Link copied to clipboard!';
+                    document.body.appendChild(notification);
 
-            // Adjust on window resize
-            window.addEventListener("resize", adjustContentMargin);
+                    setTimeout(() => {
+                        notification.classList.add('show');
+                    }, 10);
+
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                        setTimeout(() => {
+                            document.body.removeChild(notification);
+                        }, 300);
+                    }, 2000);
+                }
+            });
         }
 
         // Star rating functionality
-        const starInputs = document.querySelectorAll('.stars-input input');
-        const ratingDisplay = document.querySelector('.rating-value-display');
+        const starInputs = document.querySelectorAll('.stars-container input');
+        const ratingDisplay = document.querySelector('.rating-display');
 
         if (starInputs.length > 0 && ratingDisplay) {
             starInputs.forEach(input => {
                 input.addEventListener('change', function() {
                     ratingDisplay.textContent = this.value + '.0';
+                    ratingDisplay.classList.add('pulse');
+
+                    setTimeout(() => {
+                        ratingDisplay.classList.remove('pulse');
+                    }, 500);
                 });
             });
         }
@@ -401,11 +443,20 @@
         const editReviewBtn = document.getElementById('editReviewBtn');
         if (editReviewBtn) {
             editReviewBtn.addEventListener('click', function() {
-                window.location.href = '${pageContext.request.contextPath}/appointment/${appointment.id}/rating/edit';
+                const existingReview = document.querySelector('.existing-review');
+                if (existingReview) {
+                    existingReview.classList.add('slide-out');
+
+                    setTimeout(() => {
+                        window.location.href = '${pageContext.request.contextPath}/appointment/${appointment.id}/rating/edit';
+                    }, 300);
+                } else {
+                    window.location.href = '${pageContext.request.contextPath}/appointment/${appointment.id}/rating/edit';
+                }
             });
         }
 
-        // Doctor file upload functionality
+        // File upload functionality
         const doctorDropZone = document.getElementById('doctorDropZone');
         const doctorFileInput = document.getElementById('doctorFiles');
         const doctorFilePreview = document.getElementById('doctorFilePreview');
@@ -426,6 +477,11 @@
                 this.classList.remove('dragover');
                 doctorFileInput.files = e.dataTransfer.files;
                 updateFilePreview(doctorFileInput, doctorFilePreview);
+
+                this.classList.add('drop-success');
+                setTimeout(() => {
+                    this.classList.remove('drop-success');
+                }, 1000);
             });
 
             doctorDropZone.addEventListener('click', function() {
@@ -434,6 +490,11 @@
 
             doctorFileInput.addEventListener('change', function() {
                 updateFilePreview(this, doctorFilePreview);
+
+                doctorDropZone.classList.add('drop-success');
+                setTimeout(() => {
+                    doctorDropZone.classList.remove('drop-success');
+                }, 1000);
             });
 
             function updateFilePreview(input, preview) {
@@ -443,43 +504,52 @@
                     for (let i = 0; i < input.files.length; i++) {
                         const file = input.files[i];
                         const fileItem = document.createElement('div');
-                        fileItem.className = 'file-preview-item';
+                        fileItem.className = 'preview-item';
+
+                        fileItem.classList.add('slide-in');
+                        setTimeout(() => {
+                            fileItem.classList.remove('slide-in');
+                        }, 500);
 
                         const fileIcon = document.createElement('div');
-                        fileIcon.className = 'file-preview-icon';
+                        fileIcon.className = 'preview-icon';
                         fileIcon.innerHTML = '<i class="far fa-file-pdf"></i>';
 
                         const fileInfo = document.createElement('div');
-                        fileInfo.className = 'file-preview-info';
+                        fileInfo.className = 'preview-info';
 
-                        const fileName = document.createElement('span');
-                        fileName.className = 'file-preview-name';
+                        const fileName = document.createElement('div');
+                        fileName.className = 'preview-name';
                         fileName.textContent = file.name;
 
-                        const fileSize = document.createElement('span');
-                        fileSize.className = 'file-preview-size';
+                        const fileSize = document.createElement('div');
+                        fileSize.className = 'preview-size';
                         fileSize.textContent = formatFileSize(file.size);
 
                         fileInfo.appendChild(fileName);
                         fileInfo.appendChild(fileSize);
 
                         const removeBtn = document.createElement('button');
-                        removeBtn.className = 'file-preview-remove';
+                        removeBtn.className = 'preview-remove';
                         removeBtn.innerHTML = '<i class="fas fa-times"></i>';
                         removeBtn.type = 'button';
                         removeBtn.addEventListener('click', function() {
-                            // Remove this file from the input
-                            const dataTransfer = new DataTransfer();
-                            const files = input.files;
+                            fileItem.classList.add('slide-out');
 
-                            for (let j = 0; j < files.length; j++) {
-                                if (j !== i) {
-                                    dataTransfer.items.add(files[j]);
+                            setTimeout(() => {
+                                // Remove this file from the input
+                                const dataTransfer = new DataTransfer();
+                                const files = input.files;
+
+                                for (let j = 0; j < files.length; j++) {
+                                    if (j !== i) {
+                                        dataTransfer.items.add(files[j]);
+                                    }
                                 }
-                            }
 
-                            input.files = dataTransfer.files;
-                            updateFilePreview(input, preview);
+                                input.files = dataTransfer.files;
+                                updateFilePreview(input, preview);
+                            }, 300);
                         });
 
                         fileItem.appendChild(fileIcon);
@@ -499,8 +569,38 @@
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
         }
+
+        // Animate progress bar on load
+        const progressBar = document.querySelector('.progress-bar');
+        if (progressBar) {
+            setTimeout(() => {
+                progressBar.style.transition = 'width 1s ease-in-out';
+                progressBar.style.width = progressBar.getAttribute('style').split(':')[1];
+            }, 300);
+        }
+
+        // Reveal sections on scroll
+        const sections = document.querySelectorAll('.details-section');
+
+        const revealSection = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('section-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+
+        const sectionObserver = new IntersectionObserver(revealSection, {
+            root: null,
+            threshold: 0.15
+        });
+
+        sections.forEach(section => {
+            sectionObserver.observe(section);
+            section.classList.add('section-hidden');
+        });
     });
 </script>
-
 </body>
 </html>
