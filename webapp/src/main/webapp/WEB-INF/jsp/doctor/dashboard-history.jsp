@@ -176,9 +176,8 @@
                                         </span>
                                         <div class="appointment-actions">
                                             <div class="appointment-actions">
-                                                <button class="btn btn-primary view-appointment" onclick="window.location.href='/appointment/${appointment.id}'">
-                                                    <i class="fas fa-eye"></i>
-                                                    <span>View Appointment</span>
+                                                <button class="btn btn-primary" onclick="window.location.href='/doctor/dashboard/appointment-details/${appointment.id}'">
+                                                    Ver Detalles
                                                 </button>
                                             </div>
                                         </div>

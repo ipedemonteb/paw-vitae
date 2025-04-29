@@ -1,16 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaceServices.AppointmentService;
-import ar.edu.itba.paw.interfaceServices.CoverageService;
-import ar.edu.itba.paw.interfaceServices.DoctorService;
-import ar.edu.itba.paw.interfaceServices.SpecialtyService;
+import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
-import ar.edu.itba.paw.webapp.form.DoctorForm;
-import ar.edu.itba.paw.webapp.form.UpdateAvailabilityForm;
-import ar.edu.itba.paw.webapp.form.UpdateDoctorForm;
-import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
+import ar.edu.itba.paw.webapp.form.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +18,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.webapp.controller.AuthController.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.print.Doc;
 import javax.validation.Valid;
@@ -48,12 +43,14 @@ public class DoctorController {
     private final AppointmentService as;
     private final CoverageService cs;
     private final SpecialtyService ss;
+    private final AppointmentFileService afs;
     @Autowired
-    public DoctorController(DoctorService ds, AppointmentService as, CoverageService cs, SpecialtyService ss) {
+    public DoctorController(DoctorService ds, AppointmentService as, CoverageService cs, SpecialtyService ss, AppointmentFileService afs) {
         this.ds = ds;
         this.as = as;
         this.cs = cs;
         this.ss = ss;
+        this.afs = afs;
     }
     @RequestMapping(value = "/doctor/dashboard")
     public ModelAndView getDoctorDashboard() {
@@ -166,5 +163,36 @@ public class DoctorController {
     public String acceptAppointment(@RequestParam("appointmentId") Long appointmentId){
         boolean result = as.acceptAppointment(appointmentId, loggedUser().getId());
         return "{\"success\": " + result + "}";
+    }
+
+    @RequestMapping(value = "doctor/dashboard/appointment-details/{id}", method = RequestMethod.GET)
+    public ModelAndView doctorAppointmentDetails(
+            @ModelAttribute("doctorFileForm") final DoctorFileForm doctorFileForm,
+            @PathVariable("id") Long id) {
+        ModelAndView mav = new ModelAndView("doctor/details");
+        Appointment appointment = as.getById(id).orElseThrow(() ->
+                new IllegalArgumentException("Invalid appointment Id:" + id));
+        mav.addObject("appointment", appointment);
+        mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
+        return mav;
+    }
+
+    @RequestMapping(value = "doctor/dashboard/appointment-details/{id}", method = RequestMethod.POST)
+    public ModelAndView doctorAppointmentDetails(
+            @ModelAttribute("doctorFileForm") final DoctorFileForm doctorFileForm,
+            BindingResult errors,
+            @PathVariable("id") Long id,
+            RedirectAttributes redirectAttributes
+    ) {
+
+        if (errors.hasErrors()) {
+            return doctorAppointmentDetails(doctorFileForm, id);
+        }
+
+        Appointment appointment = as.getById(id).orElseThrow(() ->
+                new IllegalArgumentException("Invalid appointment Id:" + id));
+
+        afs.create(doctorFileForm.getFiles(),"doctor",appointment.getId());
+        return new ModelAndView("redirect:/patient/dashboard/appointment/" + id);
     }
 }
