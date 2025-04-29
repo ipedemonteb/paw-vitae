@@ -6,19 +6,21 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
-public class AppointmentFileValidator implements ConstraintValidator<AppointmentFileValid, MultipartFile[]>{
+public class AppointmentFileValidator implements ConstraintValidator<AppointmentFileValid, MultipartFile[]> {
 
-        @Override
-        public boolean isValid(MultipartFile[] multipartFiles, ConstraintValidatorContext constraintValidatorContext) {
-            if (multipartFiles == null) {
-                return true;
-            }
-
-            for (MultipartFile file : multipartFiles) {
-                if (!Objects.equals(file.getContentType(), "application/pdf")) {
-                    return false;
-                }
-            }
+    @Override
+    public boolean isValid(MultipartFile[] multipartFiles, ConstraintValidatorContext context) {
+        if (multipartFiles == null || multipartFiles.length == 0) {
             return true;
         }
+        for (MultipartFile file : multipartFiles) {
+            if (file == null || file.isEmpty()) {
+                continue;
+            }
+            if (!"application/pdf".equals(file.getContentType())) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
