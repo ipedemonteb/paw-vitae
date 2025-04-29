@@ -137,6 +137,12 @@
                                                     <span><spring:message code="appointment.action.cancel" /></span>
                                                 </button>
                                             </c:if>
+                                            <div class="appointment-actions">
+                                                <button class="btn btn-primary view-appointment" onclick="window.location.href='/appointment/${appointment.id}'">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span>View Appointment</span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
