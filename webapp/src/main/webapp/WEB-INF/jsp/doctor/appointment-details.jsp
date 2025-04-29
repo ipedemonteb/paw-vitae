@@ -12,7 +12,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><spring:message code="appointment.page.title" /></title>
-    <link rel="stylesheet" href="<c:url value='/css/appointment.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/appointment-details.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -52,6 +52,20 @@
                     </div>
                 </c:if>
 
+                <div class="specialty-card-appointment">
+                    <div class="specialty-content">
+                        <div class="calendar-icon">
+                            <div class="calendar-month">
+                                <c:out value="${appointment.date.month}"/>
+                            </div>
+                            <div class="calendar-day">
+                                <c:out value="${appointment.date.dayOfMonth}"/>
+                            </div>
+                        </div>
+                        <span class="specialty-value-appointment"><c:out value="${appointment.date.toLocalTime().toString()}"/></span>
+                    </div>
+                </div>
+
                 <form:form modelAttribute="doctorFileForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/appointment-details/${appointment.id}" class="appointment-form" enctype="multipart/form-data">
                     <div class="specialty-card-appointment">
                         <div class="specialty-icon-appointment">
@@ -74,7 +88,7 @@
                     </div>
 
                     <div class="files-list">
-                        <span class="specialty-label-appointment"><spring:message code="appointment.form.files" />:</span>
+                       <lable class="files-lable"><spring:message code="appointment.details.patient.files.title"/></lable>
                         <c:forEach var="file" items="${patientFiles}">
                             <c:if test="${file.uploader_role == 'patient'}">
                                 <div class="file-item">
@@ -104,8 +118,14 @@
 
                     <!-- File Upload Section -->
                     <div class="form-group">
+                        <label for="report"><spring:message code="appointment.details.report"/></label>
+                        <form:textarea path="report" id="report" class="form-control" rows="4" />
+                        <form:errors path="report" cssClass="error-message" />
+                    </div>
+
+                    <div class="form-group">
                         <label for="files">
-                            <spring:message code="appointment.form.files"  />
+                            <spring:message code="appointment.details.files"  />
                         </label>
                         <div class="file-upload-container">
                             <div class="file-upload-dropzone" id="dropZone">
@@ -123,11 +143,13 @@
                         </div>
                     </div>
 
+
+
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block">
                             <span>
                                 <i class="fas fa-calendar-check"></i>
-                                <spring:message code="appointment.form.submit" />
+                                <spring:message code="appointment.details.doctor.files.upload" />
                             </span>
                         </button>
                     </div>
