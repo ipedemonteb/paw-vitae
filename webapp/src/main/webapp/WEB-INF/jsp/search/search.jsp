@@ -382,7 +382,8 @@
                 </div>
 
                 <div class="doctor-card-footer">
-                  <a href="<c:url value='/appointment?doctorId=${doctor.id}${not empty specialty ? "&specialtyId=".concat(specialty.id) : ""}'/>" class="btn btn-primary">
+                  <c:set var="defaultSpecId" value="${doctor.specialtyList.stream().findFirst().get().id}"/>
+                  <a href="<c:url value='/appointment?doctorId=${doctor.id}${not empty specialty ? "&specialtyId=".concat(specialty.id) : "&specialtyId=".concat(defaultSpecId)}'/>" class="btn btn-primary">
                     <i class="fas fa-calendar-check"></i> <spring:message code="search.button.schedule" />
                   </a>
                   <button class="btn btn-secondary" onclick="viewDoctorProfile('${doctor.id}')">
