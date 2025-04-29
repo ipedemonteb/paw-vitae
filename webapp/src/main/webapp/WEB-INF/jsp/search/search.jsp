@@ -383,12 +383,34 @@
           <!-- Pagination -->
           <c:if test="${totalPages > 1}">
             <div class="pagination">
+
+              <!-- prev link -->
               <c:if test="${currentPage > 1}">
-                <a href="<c:url value='/search?page=${currentPage - 1}${param.specialty == "0" || empty param.specialty ? "" : "&specialty=".concat(param.specialty)}${not empty param.coverage ? "&coverage=".concat(param.coverage) : ""}${not empty param.weekdays ? "&weekdays=".concat(param.weekdays) : ""}${not empty param.orderBy ? "&orderBy=".concat(param.orderBy) : ""}${not empty param.direction ? "&direction=".concat(param.direction) : ""}'/>" class="pagination-btn prev">
+                <c:url var="prevUrl" value="/search">
+                  <c:param name="page" value="${currentPage - 1}" />
+                  <c:if test="${not empty param.specialty and param.specialty != '0'}">
+                    <c:param name="specialty" value="${param.specialty}" />
+                  </c:if>
+                  <c:if test="${not empty param.coverage}">
+                    <c:param name="coverage" value="${param.coverage}" />
+                  </c:if>
+                  <!-- here’s the trick: emit one param per selected weekday -->
+                  <c:forEach var="wd" items="${paramValues.weekdays}">
+                    <c:param name="weekdays" value="${wd}" />
+                  </c:forEach>
+                  <c:if test="${not empty param.orderBy}">
+                    <c:param name="orderBy"  value="${param.orderBy}" />
+                  </c:if>
+                  <c:if test="${not empty param.direction}">
+                    <c:param name="direction" value="${param.direction}" />
+                  </c:if>
+                </c:url>
+                <a href="${prevUrl}" class="pagination-btn prev">
                   <i class="fas fa-chevron-left"></i>
                 </a>
               </c:if>
 
+              <!-- page‐number links -->
               <div class="pagination-numbers">
                 <c:forEach begin="1" end="${totalPages}" var="pageNum">
                   <c:choose>
@@ -396,19 +418,58 @@
                       <span class="pagination-number active">${pageNum}</span>
                     </c:when>
                     <c:otherwise>
-                      <a href="<c:url value='/search?page=${pageNum}${param.specialty == "0" || empty param.specialty ? "" : "&specialty=".concat(param.specialty)}${not empty param.coverage ? "&coverage=".concat(param.coverage) : ""}${not empty param.weekdays ? "&weekdays=".concat(param.weekdays) : ""}${not empty param.orderBy ? "&orderBy=".concat(param.orderBy) : ""}${not empty param.direction ? "&direction=".concat(param.direction) : ""}'/>" class="pagination-number">${pageNum}</a>
+                      <c:url var="pageUrl" value="/search">
+                        <c:param name="page" value="${pageNum}" />
+                        <c:if test="${not empty param.specialty and param.specialty != '0'}">
+                          <c:param name="specialty" value="${param.specialty}" />
+                        </c:if>
+                        <c:if test="${not empty param.coverage}">
+                          <c:param name="coverage" value="${param.coverage}" />
+                        </c:if>
+                        <c:forEach var="wd" items="${paramValues.weekdays}">
+                          <c:param name="weekdays" value="${wd}" />
+                        </c:forEach>
+                        <c:if test="${not empty param.orderBy}">
+                          <c:param name="orderBy"  value="${param.orderBy}" />
+                        </c:if>
+                        <c:if test="${not empty param.direction}">
+                          <c:param name="direction" value="${param.direction}" />
+                        </c:if>
+                      </c:url>
+                      <a href="${pageUrl}" class="pagination-number">${pageNum}</a>
                     </c:otherwise>
                   </c:choose>
                 </c:forEach>
               </div>
 
+              <!-- next link -->
               <c:if test="${currentPage < totalPages}">
-                <a href="<c:url value='/search?page=${currentPage + 1}${param.specialty == "0" || empty param.specialty ? "" : "&specialty=".concat(param.specialty)}${not empty param.coverage ? "&coverage=".concat(param.coverage) : ""}${not empty param.weekdays ? "&weekdays=".concat(param.weekdays) : ""}${not empty param.orderBy ? "&orderBy=".concat(param.orderBy) : ""}${not empty param.direction ? "&direction=".concat(param.direction) : ""}'/>" class="pagination-btn next">
+                <c:url var="nextUrl" value="/search">
+                  <c:param name="page" value="${currentPage + 1}" />
+                  <c:if test="${not empty param.specialty and param.specialty != '0'}">
+                    <c:param name="specialty" value="${param.specialty}" />
+                  </c:if>
+                  <c:if test="${not empty param.coverage}">
+                    <c:param name="coverage" value="${param.coverage}" />
+                  </c:if>
+                  <c:forEach var="wd" items="${paramValues.weekdays}">
+                    <c:param name="weekdays" value="${wd}" />
+                  </c:forEach>
+                  <c:if test="${not empty param.orderBy}">
+                    <c:param name="orderBy"  value="${param.orderBy}" />
+                  </c:if>
+                  <c:if test="${not empty param.direction}">
+                    <c:param name="direction" value="${param.direction}" />
+                  </c:if>
+                </c:url>
+                <a href="${nextUrl}" class="pagination-btn next">
                   <i class="fas fa-chevron-right"></i>
                 </a>
               </c:if>
+
             </div>
           </c:if>
+
         </c:otherwise>
       </c:choose>
     </div>
