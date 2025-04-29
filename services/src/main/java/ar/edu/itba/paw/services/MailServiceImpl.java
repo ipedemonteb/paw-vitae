@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaceServices.MailService;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.AppointmentStatus;
-import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,4 +136,39 @@ public class MailServiceImpl implements MailService {
         mailSender.send(patientMessage);
         LOGGER.debug("Email sent to patient: {}", patient.getEmail());
     }
+
+    @Async
+    @Override
+    public void sendRecoverPasswordEmail(User user, String resetLink) {
+
+        Locale userLocale =  Locale.forLanguageTag(user.getLanguage());
+
+
+
+        // Optionally, retrieve the user's locale if available
+        // You could inject UserService and do: userService.findByEmail(email) to get language
+        // For now, hardcoding EN
+
+        Context context = new Context(userLocale);
+        context.setVariable("resetUrl", resetLink);
+        context.setVariable("userName", user.getName()+ " " + user.getLastName()); // Replace with actual name if available
+        context.setVariable("expiryHours", 1); // e.g., 1 hour expiry
+
+        String htmlContent = templateEngine.process("RecoverPassword", context);
+
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(user.getEmail());
+            helper.setSubject(messageSource.getMessage("recover.password.email.subject", null, userLocale));
+            helper.setText(htmlContent, true);
+            helper.setFrom(from_mail);
+
+            mailSender.send(message);
+            LOGGER.debug("Recovery email sent to: {}", user.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending password recovery email to {}", user.getEmail(), e);
+        }
+    }
+
 }

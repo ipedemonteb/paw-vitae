@@ -157,7 +157,7 @@
             </div>
 
 <%--            <a href="<c:url value='/forgot-password' />" class="forgot-password">--%>
-            <a href="<c:url value='/login' />" class="forgot-password">
+            <a href="<c:url value='/recover-password' />" class="forgot-password">
               <spring:message code="login.forgotPassword" />
             </a>
           </div>
