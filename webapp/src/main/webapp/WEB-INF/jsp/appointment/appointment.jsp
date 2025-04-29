@@ -38,7 +38,14 @@
                         </div>
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/></h3>
-                            <p class="doctor-specialty"><spring:message code="${specialty.key}" /></p>
+                            <div class="card-specialty-list">
+                                <c:forEach var="specialty" items="${doctor.specialtyList}" varStatus="status">
+                                    <p class="doctor-specialty"><spring:message code="${specialty.key}" /></p>
+                                    <c:if test="${!status.last}">
+                                        <span style="white-space: pre">, </span>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
                             <div class="doctor-contact">
                                 <div class="contact-item">
                                     <span class="contact-icon"><i class="fas fa-envelope"></i></span>
@@ -53,16 +60,27 @@
                     </div>
                 </c:if>
 
-                <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment?specialtyId=${specialty.id}&doctorId=${doctor.id}" class="appointment-form" enctype="multipart/form-data">
+                <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment" id="appointmentForm" class="appointment-form" enctype="multipart/form-data">
                     <div class="specialty-card-appointment">
                         <div class="specialty-icon-appointment">
                             <i class="fas fa-stethoscope"></i>
                         </div>
                         <div class="specialty-content">
                             <span class="specialty-label-appointment"><spring:message code="appointment.form.specialty" />:</span>
-                            <span class="specialty-value-appointment"><spring:message code="${specialty.key}" /></span>
+                            <div class="specialty-select-container">
+                                <form:select path="specialtyId" id="specialtySelect" class="specialty-select">
+                                    <c:forEach var="doctorSpecialty" items="${doctor.specialtyList}">
+                                        <form:option value="${doctorSpecialty.id}">
+                                            <spring:message code="${doctorSpecialty.key}" />
+                                        </form:option>
+                                    </c:forEach>
+                                </form:select>
+                            </div>
                         </div>
                     </div>
+
+                    <form:hidden path="specialtyId" id="specialtyId" />
+                    <input type="hidden" name="doctorId" value="${doctor.id}" />
 
                     <!-- Custom Date and Time Picker -->
                     <div class="form-group">
@@ -262,6 +280,39 @@
         // Adjust on window resize
         window.addEventListener("resize", adjustContentMargin);
     }
+
+    // Handle specialty selection
+    document.addEventListener('DOMContentLoaded', function() {
+        const specialtySelect = document.getElementById('specialtySelect');
+        const specialtyId = document.getElementById('specialtyId');
+        const appointmentForm = document.getElementById('appointmentForm');
+
+        // Set initial value
+        if (specialtySelect && specialtyId) {
+            specialtyId.value = specialtySelect.value;
+        }
+
+        // Update hidden field and form action when specialty changes
+        if (specialtySelect) {
+            specialtySelect.addEventListener('change', function() {
+                if (specialtyId) {
+                    specialtyId.value = this.value;
+                }
+
+                // Update form action with selected specialty
+                if (appointmentForm) {
+                    const doctorId = ${doctor.id};
+                    appointmentForm.action = contextPath + `/appointment?doctorId=` + doctorId;
+                }
+            });
+        }
+
+        // Set initial form action
+        if (appointmentForm && specialtySelect) {
+            const doctorId = ${doctor.id};
+            appointmentForm.action = contextPath + `/appointment?doctorId=`+ doctorId;
+        }
+    });
 </script>
 
 <!-- Include the external JavaScript file -->
