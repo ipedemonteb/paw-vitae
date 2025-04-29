@@ -63,6 +63,38 @@
                         </div>
                     </div>
 
+                    <div class="specialty-card-appointment">
+                        <div class="specialty-icon-appointment">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div class="specialty-content">
+                            <span class="specialty-label-appointment"><spring:message code="appointment.form.reason" />:</span>
+                            <span class="specialty-value-appointment"><c:out value="${appointment.reason}"/> </span>
+                        </div>
+                    </div>
+
+                    <div class="files-list">
+                        <span class="specialty-label-appointment"><spring:message code="appointment.form.files" />:</span>
+                        <c:forEach var="file" items="${patientFiles}">
+                            <c:if test="${file.uploader_role == 'patient'}">
+                                <div class="file-item">
+                                    <div class="file-icon">
+                                        <i class="far fa-file-pdf"></i>
+                                    </div>
+                                    <div class="file-info">
+                                        <div class="file-name"><c:out value="${file.fileName}" /></div>
+<%--                                        <div class="file-date">--%>
+<%--                                            <fmt:formatDate value="${file.uploadDate}" pattern="MMM d, yyyy" />--%>
+<%--                                        </div>--%>
+                                    </div>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+
 <%--                    <!-- Reason for appointment -->--%>
 <%--                    <div class="form-group">--%>
 <%--                        <label for="reason"><spring:message code="appointment.form.reason"/></label>--%>
