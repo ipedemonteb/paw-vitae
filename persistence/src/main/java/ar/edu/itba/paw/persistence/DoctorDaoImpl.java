@@ -14,13 +14,6 @@ import java.util.*;
 @Repository
 public class DoctorDaoImpl implements DoctorDao {
 
-    private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsertUser;
-    private final SimpleJdbcInsert jdbcInsertDoctor;
-    private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
-    private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
-    private final SimpleJdbcInsert jdbcInsertDoctorAvailability;
-
     public static final RowMapper<Doctor> ROW_MAPPER = (rs, rowNum) -> new Doctor(
             rs.getString("name"),
             rs.getLong("id"),
@@ -30,6 +23,12 @@ public class DoctorDaoImpl implements DoctorDao {
             rs.getString("phone"),
             rs.getString("language")
     );
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsertUser;
+    private final SimpleJdbcInsert jdbcInsertDoctor;
+    private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
+    private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
+    private final SimpleJdbcInsert jdbcInsertDoctorAvailability;
 
     @Autowired
     public DoctorDaoImpl(final DataSource ds) {
@@ -49,6 +48,34 @@ public class DoctorDaoImpl implements DoctorDao {
         jdbcInsertDoctorAvailability = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctor_availability")
                 .usingColumns("doctor_id", "day_of_week", "start_time", "end_time");
+    }
+
+    private static List<Object> getObjects(long specialtyId, long coverageId, List<Integer> weekdays, StringBuilder sql) {
+        List<Object> params = new ArrayList<>();
+
+        if (specialtyId > 0) {
+            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_specialties where specialty_id = ?)");
+            params.add(specialtyId);
+        }
+
+        if (coverageId > 0) {
+            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_coverages where coverage_id = ?)");
+            params.add(coverageId);
+        }
+
+        if (!weekdays.isEmpty()) {
+            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_availability WHERE");
+            for (int i = 0; i < weekdays.size(); i++) {
+                sql.append(" day_of_week = ?");
+                if (i < weekdays.size() - 1) {
+                    sql.append(" OR");
+                } else {
+                    sql.append(")");
+                }
+                params.add(weekdays.get(i));
+            }
+        }
+        return params;
     }
 
     @Override
@@ -167,6 +194,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
         return doctors;
     }
+
     @Override
     public void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList) {
         Doctor currentDoctor = getById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
@@ -214,7 +242,6 @@ public class DoctorDaoImpl implements DoctorDao {
         }
     }
 
-
     @Override
     public void addAvailability(long doctorId, List<AvailabilitySlot> availabilityList) {
         for (AvailabilitySlot slot : availabilityList) {
@@ -257,6 +284,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
         doctor.setAvailabilitySlots(getAvailabilityByDoctorId(id));
     }
+
     // Add this method to the DoctorDaoImpl class
     @Override
     public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
@@ -278,6 +306,7 @@ public class DoctorDaoImpl implements DoctorDao {
     public void changePassword(long id, String password) {
         jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
     }
+
     @Override
     public String getLanguage(long id) {
         return jdbcTemplate.query("SELECT language FROM Users WHERE id = ?", (rs, rowNum) -> rs.getString("language"), id).stream().findFirst().orElse(null);
@@ -300,30 +329,7 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
         StringBuilder sql = new StringBuilder("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id  WHERE 1=1");
-        List<Object> params = new ArrayList<>();
-
-        if (specialtyId > 0) {
-            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_specialties where specialty_id = ?)");
-            params.add(specialtyId);
-        }
-
-        if (coverageId > 0) {
-            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_coverages where coverage_id = ?)");
-            params.add(coverageId);
-        }
-
-        if (!weekdays.isEmpty()) {
-            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_availability WHERE");
-            for (int i = 0; i < weekdays.size(); i++) {
-                sql.append(" day_of_week = ?");
-                if (i < weekdays.size() - 1) {
-                    sql.append(" OR");
-                } else {
-                    sql.append(")");
-                }
-                params.add(weekdays.get(i));
-            }
-        }
+        List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
 
         sql.append(" ORDER BY ").append(orderBy).append(" ").append(direction);
         sql.append(" LIMIT ? OFFSET ?");
@@ -342,30 +348,7 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction) {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE 1=1");
-        List<Object> params = new ArrayList<>();
-
-        if (specialtyId > 0) {
-            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_specialties where specialty_id = ?)");
-            params.add(specialtyId);
-        }
-
-        if (coverageId > 0) {
-            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_coverages where coverage_id = ?)");
-            params.add(coverageId);
-        }
-
-        if (!weekdays.isEmpty()) {
-            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_availability WHERE");
-            for (int i = 0; i < weekdays.size(); i++) {
-                sql.append(" day_of_week = ?");
-                if (i < weekdays.size() - 1) {
-                    sql.append(" OR");
-                } else {
-                    sql.append(")");
-                }
-                params.add(weekdays.get(i));
-            }
-        }
+        List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
 
         return jdbcTemplate.queryForObject(sql.toString(), Integer.class, params.toArray());
     }

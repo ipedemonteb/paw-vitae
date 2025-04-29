@@ -48,12 +48,14 @@ public class SearchController {
 //        Page<Doctor> doctorPage = doctorService.getBySpecialtyWithAppointments(specialtyId, page, 9); //TODO MAGIC PAGE NUMBER NOT GOOD.
         Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, 9);
         List<Specialty> allSpecialties = specialtyService.getAll().orElse(new ArrayList<>());
+        List<Coverage> allCoverages = coverageService.getAll().orElse(new ArrayList<>());
         ModelAndView mav = new ModelAndView("search/search");
         coverages.ifPresent(coverageList -> mav.addObject("coverages", coverageList));
         mav.addObject("doctors", doctorPage.getContent());
         mav.addObject("totalDoctors", doctorPage.getTotalElements());
         mav.addObject("specialty", specialtyObj.orElse(null));
         mav.addObject("allSpecialties", allSpecialties);
+        mav.addObject("allCoverages", allCoverages);
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", doctorPage.getTotalPages());
         return mav;
