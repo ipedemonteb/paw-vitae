@@ -26,7 +26,6 @@
 //
 //    private CoverageDaoImpl coverageDao;
 //    private JdbcTemplate jdbcTemplate;
-//    private SimpleJdbcInsert jdbcInsertCoverage;
 //
 //    @Autowired
 //    private DataSource ds;
@@ -35,10 +34,6 @@
 //    public void setUp() {
 //        coverageDao = new CoverageDaoImpl(ds);
 //        jdbcTemplate = new JdbcTemplate(ds);
-//        jdbcInsertCoverage = new SimpleJdbcInsert(ds)
-//                .withTableName("coverages")
-//                .usingGeneratedKeyColumns("id");
-//        JdbcTestUtils.deleteFromTables(jdbcTemplate, "coverages");
 //    }
 //
 //    @Test

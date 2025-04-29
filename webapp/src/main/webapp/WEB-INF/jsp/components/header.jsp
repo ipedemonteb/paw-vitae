@@ -23,7 +23,7 @@
       <ul class="nav-links">
         <li><a href="<c:url value='/' />" class="nav-link"><spring:message code="nav.home" /></a></li>
         <sec:authorize access="isAnonymous() or hasRole('ROLE_PATIENT')">
-          <li><a href="<c:url value='/search?specialty=1' />" class="nav-link"><spring:message code="nav.doctors" /></a></li>
+          <li><a href="<c:url value='/search' />" class="nav-link"><spring:message code="nav.doctors" /></a></li>
         </sec:authorize>
         <li><a href="<c:url value='#' />" class="nav-link"><spring:message code="nav.services" /></a></li>
         <li><a href="<c:url value='#' />" class="nav-link"><spring:message code="nav.about" /></a></li>
