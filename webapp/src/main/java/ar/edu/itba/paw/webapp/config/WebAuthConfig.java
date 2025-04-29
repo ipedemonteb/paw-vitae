@@ -58,6 +58,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/appointment/**").hasRole("PATIENT")
                     .antMatchers(HttpMethod.GET, "/doctors").permitAll() // Permite solo solicitudes GET a /doctors
                     .antMatchers("/doctors").denyAll() // Bloquea otros métodos HTTP en /doctors
+                    .antMatchers("/doctor/**").hasRole("DOCTOR")
+                    .antMatchers("/patient/**").hasRole("PATIENT")
                     .antMatchers("/**").authenticated()
                     .antMatchers("/appointment/*/file/*").authenticated()
                     .and()
