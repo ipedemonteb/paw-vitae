@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
+import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ import java.beans.PropertyEditorSupport;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Controller
 public class AuthController {
 
@@ -38,11 +41,12 @@ public class AuthController {
     private final SpecialtyService ss;
     private final PatientService ps;
     private final UserService us;
+    private final MailService ms;
 
     private final AuthUserDetailsService authService;
 
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, PatientService patientService, UserService us, AuthUserDetailsService authService) {
+    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, PatientService patientService, UserService us, AuthUserDetailsService authService, MailService ms) {
         this.ds = ds;
         this.cs = cs;
         this.is = is;
@@ -50,6 +54,7 @@ public class AuthController {
         this.ps = patientService;
         this.us = us;
         this.authService = authService;
+        this.ms = ms;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -128,6 +133,36 @@ public class AuthController {
     @RequestMapping("/logout")
     public ModelAndView logout() {
         return new ModelAndView("redirect:/");
+    }
+
+    @RequestMapping(value="/recover-password", method = RequestMethod.GET)
+    public ModelAndView recoverPassword(@ModelAttribute("recoverPasswordForm") final RecoverPasswordForm recoverPasswordForm, Authentication authentication) {
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            // remember‑me or fully authenticated ↦ bounce home
+            return new ModelAndView("redirect:/");
+        }
+        return new ModelAndView("auth/recover-password");
+    }
+
+    @RequestMapping(value = "/recover-password", method = RequestMethod.POST)
+    public ModelAndView recoverPassword(@Valid @ModelAttribute("recoverPasswordForm") RecoverPasswordForm form, BindingResult errors) {
+        if (errors.hasErrors()) {
+            LOGGER.debug("Errors found recovering password: {}", errors.getAllErrors());
+            return new ModelAndView("auth/recover-password");
+        }
+        Optional<User> userOpt = us.getByEmail(form.getEmail()).map(user -> (User) user);
+        if (userOpt.isEmpty()) {
+            // Optionally: show generic message like "If your email is registered, you’ll receive a recovery email"
+            return new ModelAndView("redirect:/recover-password?recover=notfound");
+        }
+
+        User user = userOpt.get();
+        String token = "TOKEN";
+        String link = "https://yourapp.com/reset-password?token=" + token;
+        ms.sendRecoverPasswordEmail(user, link);
+        return new ModelAndView("redirect:/recover-password?recover=sent");
     }
 
 }
