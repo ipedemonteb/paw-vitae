@@ -109,4 +109,14 @@ public class AppointmentController {
         return mav;
     }
 
+
+    @RequestMapping(value = "/appointment/{id}", method = RequestMethod.GET)
+    public ModelAndView appointmentDetails(@PathVariable("id") Long id) {
+        ModelAndView mav = new ModelAndView("appointment/details");
+        Appointment appointment = as.getById(id).orElseThrow(() ->
+                new IllegalArgumentException("Invalid appointment Id:" + id));
+        mav.addObject("appointment", appointment);
+        mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
+        return mav;
+    }
 }
