@@ -62,7 +62,7 @@
                                         <c:out value="${appointment.date.dayOfMonth}"/>
                                     </div>
                                 </div>
-                                <span><c:out value="${appointment.date.toLocalDate().toString()}"/></span>
+                                <span><c:out value="${appointment.date.year.toString()}"/></span>
                             </div>
                         </div>
                     </div>
