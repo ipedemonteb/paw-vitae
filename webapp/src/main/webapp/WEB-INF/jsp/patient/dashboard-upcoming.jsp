@@ -146,7 +146,7 @@
                             <div class="load-more-container">
                                 <button id="loadMoreUpcoming" class="btn-load-more" data-current-page="${currentPage}" data-total-pages="${totalPages}">
                                     <i class="fas fa-sync-alt"></i>
-                                    <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>
+                                    <span><spring:message code="dashboard.loadMore"  /></span>
                                 </button>
                             </div>
                         </c:if>
@@ -387,7 +387,7 @@
                 }
 
                 // Mostrar indicador de carga
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Cargando...</span>';
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ';
                 this.disabled = true;
 
                 // Construir la URL con el parámetro de página y asegurarse de que sea reconocida como AJAX
@@ -473,7 +473,7 @@
                         this.parentNode.remove(); // Eliminar el botón si no hay más páginas
                     } else {
                         // Restaurar el botón
-                        this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>';
+                        this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore" /></span>';
                         this.disabled = false;
                     }
 
@@ -482,9 +482,9 @@
                 })
                 .catch(error => {
                     console.error('Error al cargar más citas:', error);
-                    this.innerHTML = '<i class="fas fa-exclamation-circle"></i> <span>Error al cargar</span>';
+                    this.innerHTML = '<i class="fas fa-exclamation-circle"></i> ';
                     setTimeout(() => {
-                        this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore" text="Cargar más" /></span>';
+                        this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore"  /></span>';
                         this.disabled = false;
                     }, 2000);
                 });

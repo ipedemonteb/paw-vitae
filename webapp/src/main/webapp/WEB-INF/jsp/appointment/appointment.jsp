@@ -53,7 +53,7 @@
                     </div>
                 </c:if>
 
-                <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment?specialtyId=${specialty.id}&doctorId=${doctor.id}" class="appointment-form">
+                <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment?specialtyId=${specialty.id}&doctorId=${doctor.id}" class="appointment-form" enctype="multipart/form-data">
                     <div class="specialty-card-appointment">
                         <div class="specialty-icon-appointment">
                             <i class="fas fa-stethoscope"></i>
@@ -111,6 +111,27 @@
                         <form:errors path="reason" cssClass="error-message" />
                     </div>
 
+                    <!-- File Upload Section -->
+                    <div class="form-group">
+                        <label for="files">
+                            <spring:message code="appointment.form.files"  />
+                        </label>
+                        <div class="file-upload-container">
+                            <div class="file-upload-dropzone" id="dropZone">
+                                <div class="file-upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <div class="file-upload-text">
+                                    <p class="file-upload-primary"><spring:message code="file.upload.dragHere"/></p>
+                                    <p class="file-upload-secondary"><spring:message code="file.upload.onlyPdf"/></p>
+                                </div>
+                                <form:input type="file" path="files" id="files" multiple="true" accept=".pdf" class="file-upload-input-hidden" />
+                            </div>
+                            <div id="filePreview" class="file-upload-preview"></div>
+                            <form:errors path="files" cssClass="error-message" />
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block">
                             <span>
@@ -162,7 +183,16 @@
             '<spring:message code="calendar.day.short.sat" />'
         ],
         appointmentAt: '<spring:message code="appointment.at" />',
-        noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />'
+        noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />',
+        fileUpload: {
+            dragHere: '<spring:message code="file.upload.dragHere"  />',
+            onlyPdf: '<spring:message code="file.upload.onlyPdf"  />',
+            tooManyFiles: '<spring:message code="file.upload.tooManyFiles"  />',
+            invalidType: '<spring:message code="file.upload.invalidType"  />',
+            fileAdded: '<spring:message code="file.upload.fileAdded"  />',
+            fileRemoved: '<spring:message code="file.upload.fileRemoved" />',
+            fileTooLarge: '<spring:message code="file.upload.fileTooLarge" />'
+        }
     };
     contextPath = "${pageContext.request.contextPath}";
 
@@ -236,5 +266,6 @@
 
 <!-- Include the external JavaScript file -->
 <script src="<c:url value='/js/date-time-picker.js'/>"></script>
+<script src="<c:url value='/js/file-upload.js'/>"></script>
 </body>
 </html>

@@ -22,11 +22,17 @@ public class ImageServiceImpl implements ImageService{
 
     @Transactional
     @Override
-    public Images create(long doctor_id, MultipartFile image) throws IOException {
+    public Images create(long doctor_id, MultipartFile image) {
         if (image.isEmpty()) {
             return null;
         }
-        Images toReturnImage = imageDao.create(doctor_id, image.getBytes());
+        Images toReturnImage = null;
+        try {
+            toReturnImage = imageDao.create(doctor_id, image.getBytes());
+        } catch (IOException e) {
+            LOGGER.error("Error while creating image", e);
+            return null;
+        }
         LOGGER.debug("Image created: {}", toReturnImage);
         return toReturnImage;
     }
