@@ -2,37 +2,20 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import ar.edu.itba.paw.webapp.controller.AuthController.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.print.Doc;
 import javax.validation.Valid;
-import java.beans.PropertyEditorSupport;
-import java.time.LocalTime;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 public class DoctorController {
@@ -169,7 +152,7 @@ public class DoctorController {
     public ModelAndView doctorAppointmentDetails(
             @ModelAttribute("doctorFileForm") final DoctorFileForm doctorFileForm,
             @PathVariable("id") Long id) {
-        ModelAndView mav = new ModelAndView("doctor/details");
+        ModelAndView mav = new ModelAndView("/doctor/appointment-details");
         Appointment appointment = as.getById(id).orElseThrow(() ->
                 new IllegalArgumentException("Invalid appointment Id:" + id));
         mav.addObject("appointment", appointment);

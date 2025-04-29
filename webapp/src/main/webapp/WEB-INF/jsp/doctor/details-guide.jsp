@@ -112,53 +112,7 @@
             <section class="details-section">
                 <h2 class="section-title"><i class="fas fa-users"></i> <spring:message code="appointment.details.page.title" /></h2>
 
-                <!-- Doctor Information -->
-                <sec:authorize access="hasRole('ROLE_PATIENT')">
-                <div class="participant-container">
-                    <div class="participant-header">
-                        <i class="fas fa-user-md"></i>
-                        <h3><spring:message code="appointment.details.doctor.title" /></h3>
-                    </div>
-
-                    <div class="participant-profile">
-                        <div class="profile-image">
-                            <img src="<c:url value='/doctor/${appointment.doctor.id}/image'/>" alt="<c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/>" />
-                        </div>
-
-                        <div class="profile-info">
-                            <h4 class="profile-name"><c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/></h4>
-
-                            <div class="profile-rating">
-                                <div class="rating-stars">
-                                    <c:forEach begin="1" end="5" var="star">
-                                        <i class="fa${star <= appointment.doctor.rating ? ' fa-star' : star <= appointment.doctor.rating + 0.5 ? ' fa-star-half-alt' : 'r fa-star'}" aria-hidden="true"></i>
-                                    </c:forEach>
-                                </div>
-                                <span class="rating-value"><c:out value="${appointment.doctor.rating}"/></span>
-                                <span class="rating-count">(<c:out value="${appointment.doctor.ratingCount}"/> <spring:message code="ratings" />)</span>
-                            </div>
-
-                            <div class="profile-specialty">
-                                <span class="specialty-badge"><spring:message code="${appointment.specialty.key}" /></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="participant-contact">
-                        <a href="mailto:<c:out value="${appointment.doctor.email}"/>" class="contact-link">
-                            <i class="fas fa-envelope"></i>
-                            <span><c:out value="${appointment.doctor.email}"/></span>
-                        </a>
-                        <a href="tel:<c:out value="${appointment.doctor.phone}"/>" class="contact-link">
-                            <i class="fas fa-phone"></i>
-                            <span><c:out value="${appointment.doctor.phone}"/></span>
-                        </a>
-                    </div>
-                </div>
-                </sec:authorize>
-
                 <!-- Patient Information -->
-                <sec:authorize access="hasRole('ROLE_DOCTOR')">
                 <div class="participant-container">
                     <div class="participant-header">
                         <i class="fas fa-user"></i>
@@ -186,7 +140,6 @@
                         </a>
                     </div>
                 </div>
-                </sec:authorize>
             </section>
 
             <!-- Files Section -->
@@ -219,7 +172,6 @@
 
             <!-- Doctor Files Section (Only show if appointment has passed) -->
             <c:if test="${appointmentDate.time < now.time}">
-                <sec:authorize access="hasRole('DOCTOR')">
                     <section class="details-section">
                         <h2 class="section-title"><i class="fas fa-file-medical-alt"></i> <spring:message code="appointment.details.doctor.files.title" /></h2>
 
@@ -256,104 +208,15 @@
                         </form:form>
 
                     </section>
-                </sec:authorize>
-
                 <!-- Review Section (Only show if appointment has passed) -->
-                <sec:authorize access="hasRole('PATIENT')">
-                    <section class="details-section">
-                        <h2 class="section-title"><i class="fas fa-star"></i> <spring:message code="appointment.details.review.title" /></h2>
-
-                        <c:choose>
-                            <c:when test="${not empty existingRating}">
-                                <!-- Display existing rating -->
-                                <div class="existing-review">
-                                    <div class="review-header">
-                                        <div class="review-rating">
-                                            <div class="rating-stars">
-                                                <c:forEach begin="1" end="5" var="star">
-                                                    <i class="fa${star <= existingRating.rating ? ' fa-star' : star <= existingRating.rating + 0.5 ? ' fa-star-half-alt' : 'r fa-star'}" aria-hidden="true"></i>
-                                                </c:forEach>
-                                            </div>
-                                            <span class="rating-value"><c:out value="${existingRating.rating}"/></span>
-                                        </div>
-
-                                        <div class="review-date">
-                                            <i class="far fa-calendar-alt"></i>
-                                            <span><fmt:formatDate value="${existingRating.date}" pattern="MMM d, yyyy" /></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="review-body">
-                                        <p class="review-text"><c:out value="${existingRating.comment}" /></p>
-                                    </div>
-
-                                    <div class="review-actions">
-                                        <button id="editReviewBtn" class="btn btn-secondary">
-                                            <i class="fas fa-edit"></i>
-                                            <span><spring:message code="appointment.details.review.edit" /></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </c:when>
-                            <c:otherwise>
-                                <!-- Review form -->
-<%--                                <form:form modelAttribute="ratingForm" method="post" action="${pageContext.request.contextPath}/appointment/${appointment.id}/rating" class="review-form">--%>
-<%--                                    <div class="form-group">--%>
-<%--                                        <label for="rating" class="form-label required">--%>
-<%--                                            <i class="fas fa-star"></i>--%>
-<%--                                            <span><spring:message code="appointment.details.review.rating" /></span>--%>
-<%--                                        </label>--%>
-
-<%--                                        <div class="rating-input">--%>
-<%--                                            <div class="stars-container">--%>
-<%--                                                <c:forEach begin="1" end="5" var="star">--%>
-<%--                                                    <input type="radio" id="star${star}" name="rating" value="${star}" <c:if test="${star == 5}">checked</c:if> />--%>
-<%--                                                    <label for="star${star}"><i class="fas fa-star"></i></label>--%>
-<%--                                                </c:forEach>--%>
-<%--                                            </div>--%>
-<%--                                            <div class="rating-display">5.0</div>--%>
-<%--                                        </div>--%>
-
-<%--                                        <form:errors path="rating" cssClass="error-message" />--%>
-<%--                                    </div>--%>
-
-<%--                                    <div class="form-group">--%>
-<%--                                        <label for="comment" class="form-label required">--%>
-<%--                                            <i class="fas fa-comment"></i>--%>
-<%--                                            <span><spring:message code="appointment.details.review.comment" /></span>--%>
-<%--                                        </label>--%>
-<%--                                        <form:textarea path="comment" id="comment" class="form-control" rows="4" />--%>
-<%--                                        <form:errors path="comment" cssClass="error-message" />--%>
-<%--                                    </div>--%>
-
-<%--                                    <div class="form-actions">--%>
-<%--                                        <button type="submit" class="btn btn-primary">--%>
-<%--                                            <i class="fas fa-paper-plane"></i>--%>
-<%--                                            <span><spring:message code="appointment.details.review.submit" /></span>--%>
-<%--                                        </button>--%>
-<%--                                    </div>--%>
-<%--                                </form:form>--%>
-                            </c:otherwise>
-                        </c:choose>
-                    </section>
-                </sec:authorize>
             </c:if>
 
             <!-- Action Buttons -->
             <div class="appointment-actions">
-                <sec:authorize access="hasRole('ROLE_DOCTOR')">
                 <a href="${pageContext.request.contextPath}/doctor/dashboard" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i>
                     <span><spring:message code="appointment.details.back" /></span>
                 </a>
-                </sec:authorize>
-
-                <sec:authorize access="hasRole('ROLE_PATIENT')">
-                    <a href="${pageContext.request.contextPath}/patient/dashboard" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i>
-                        <span><spring:message code="appointment.details.back" /></span>
-                    </a>
-                </sec:authorize>
 
                 <div class="action-buttons">
                     <button class="btn btn-icon" id="printBtn">
