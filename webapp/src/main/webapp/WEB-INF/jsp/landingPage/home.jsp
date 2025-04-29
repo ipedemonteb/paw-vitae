@@ -34,6 +34,7 @@
                                 <div class="specialty-select-wrapper">
                                     <i class="fas fa-stethoscope"></i>
                                     <select name="specialty" class="specialty-select" id="specialtyDropdown">
+                                        <option value="0"><spring:message code="search.all.specialties"/></option>
                                         <c:forEach items="${specialties}" var="specialty">
                                             <option value="${specialty.id}"><spring:message code="${specialty.key}" /></option>
                                         </c:forEach>

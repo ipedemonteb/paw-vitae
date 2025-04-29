@@ -313,7 +313,7 @@ public class DoctorDaoImpl implements DoctorDao {
         }
 
         if (!weekdays.isEmpty()) {
-            sql.append(" AND user.id IN (SELECT doctor_id FROM doctor_availability WHERE");
+            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_availability WHERE");
             for (int i = 0; i < weekdays.size(); i++) {
                 sql.append(" day_of_week = ?");
                 if (i < weekdays.size() - 1) {
@@ -355,7 +355,7 @@ public class DoctorDaoImpl implements DoctorDao {
         }
 
         if (!weekdays.isEmpty()) {
-            sql.append(" AND user.id IN (SELECT doctor_id FROM doctor_availability WHERE");
+            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_availability WHERE");
             for (int i = 0; i < weekdays.size(); i++) {
                 sql.append(" day_of_week = ?");
                 if (i < weekdays.size() - 1) {
