@@ -55,14 +55,42 @@
           </div>
         </div>
 
+        <div class="filter-group">
+          <label for="coverageSelect" class="filter-label"><i class="fas fa-shield-alt"></i> <spring:message code="search.coverage" /></label>
+          <div class="select-container">
+            <select id="coverageSelect" class="filter-select" onchange="changeCoverage(this.value)">
+              <c:forEach var="cov" items="${allCoverages}">
+                <option value="<c:out value='${cov.id}'/>" ${param.coverage == cov.id ? 'selected' : ''}>
+                  <c:out value="${cov.name}" />
+                </option>
+              </c:forEach>
+              <option value="0" ${param.coverage == null ? 'selected' : ''}>
+                <spring:message code="search.coverage.all" />
+                </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label for="orderBy" class="filter-label"><i class="fas fa-sort"></i> <spring:message code="search.order" /></label>
+          <div class="select-container">
+            <select id="orderBy" class="filter-select" onchange="changeOrder(this.value)">
+              <option value="name" ${param.orderBy == "name" ? 'selected' : ''}><spring:message code="search.sort.name" /></option>
+              <option value="last_name" ${param.orderBy == "last_name" ? 'selected' : ''}><spring:message code="search.sort.last_name" /></option>
+              <option value="email" ${param.orderBy == "email" ? 'selected' : ''}><spring:message code="search.sort.email" /></option>
+              <option value="rating" ${param.orderBy == "rating" ? 'selected' : ''}><spring:message code="search.sort.rating" /></option>
+            <%--              <option value="location" ${param.direction == "desc" ? 'selected' : ''}><spring:message code="search.sort.name_desc" /></option>--%>
+            </select>
+          </div>
+        </div>
+
         <!-- Sort Filter -->
         <div class="filter-group">
           <label for="sortSelect" class="filter-label"><i class="fas fa-sort"></i> <spring:message code="search.sort" /></label>
           <div class="select-container">
-            <select id="sortSelect" class="filter-select">
-              <option value="recommended"><spring:message code="search.sort.recommended" /></option>
-              <option value="name_asc"><spring:message code="search.sort.name_asc" /></option>
-              <option value="name_desc"><spring:message code="search.sort.name_desc" /></option>
+            <select id="sortSelect" class="filter-select" onchange="changeDirection(this.value)">
+              <option value="asc" ${param.direction == "asc" ? 'selected' : ''}><spring:message code="search.sort.name_asc" /></option>
+              <option value="desc" ${param.direction == "desc" ? 'selected' : ''}><spring:message code="search.sort.name_desc" /></option>
             </select>
           </div>
         </div>
@@ -76,20 +104,35 @@
             <i class="fas fa-list"></i>
           </button>
         </div>
-      </div>
 
-      <!-- Quick Filters -->
-      <div class="quick-filters">
-        <button class="quick-filter-btn" data-filter="all">
-          <spring:message code="search.filter.all" />
-        </button>
-        <button class="quick-filter-btn" data-filter="top-rated">
-          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />
-        </button>
-        <button class="quick-filter-btn" data-filter="new">
-          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />
-        </button>
       </div>
+      <label class="filter-label"><i class="fas fa-calendar"></i> <spring:message code="search.filter.days" /></label>
+      <br>
+      <div class="filter-group">
+        <div class="day-checkbox-container">
+          <c:forEach var="day" begin="0" end="6">
+            <label class="day-checkbox-label">
+              <input type="checkbox" class="day-checkbox" value="${day}" ${param.weekdays.contains(day.toString()) ? 'checked' : ''}>
+              <span class="day-checkbox-text"><spring:message code="calendar.day.${day}" /></span>
+            </label>
+          </c:forEach>
+        </div>
+      </div>
+      <br>
+      <button class="btn btn-primary" onclick="applyDayFilters()">Apply</button>
+      <!-- Quick Filters -->
+      <br>
+<%--      <div class="quick-filters">--%>
+<%--        <button class="quick-filter-btn" data-filter="all">--%>
+<%--          <spring:message code="search.filter.all" />--%>
+<%--        </button>--%>
+<%--        <button class="quick-filter-btn" data-filter="top-rated">--%>
+<%--          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />--%>
+<%--        </button>--%>
+<%--        <button class="quick-filter-btn" data-filter="new">--%>
+<%--          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />--%>
+<%--        </button>--%>
+<%--      </div>--%>
     </div>
 
     <!-- Results Section -->
@@ -144,6 +187,14 @@
                   </h3>
                   <div class="doctor-specialty">
                     <i class="fas fa-stethoscope"></i> <c:out value="${specialtyName}"/>
+                  </div>
+                  <div class="doctor-specialty">
+                    <i class="fas fa-shield-alt"></i>
+                    <c:forEach var="covrg" items="${doctor.coverageList}">
+                      <span class="coverage-tag">
+                            <c:out value="${covrg.name}"/>
+                        </span>
+                    </c:forEach>
                   </div>
                   <div class="doctor-info">
                     <div class="info-item">
@@ -214,15 +265,57 @@
 <script src="<c:url value='/js/search.js'/>"></script>
 
 <script>
+
   contextPath = "${pageContext.request.contextPath}";
 
+  // Current filter state
+  let currentFilters = {
+    specialty: "${specialty.id}",
+    page: ${currentPage},
+    coverage: "${param.coverage}",
+    weekdays: [],
+    orderBy: "${param.orderBy}",
+    direction: "${param.direction}"
+  };
+
+
   function changeSpecialty(specialtyId) {
-    window.location.href = "${pageContext.request.contextPath}/search?specialty=" + specialtyId;
+    currentFilters.specialty = specialtyId;
+    applyFilters();
   }
+
+  function changeCoverage(coverageId) {
+    currentFilters.coverage = coverageId;
+    applyFilters();
+  }
+
+  function changeDirection(direction) {
+    currentFilters.direction = direction;
+    applyFilters();
+  }
+
+  function changeOrder(order) {
+    currentFilters.orderBy = order;
+    applyFilters();
+  }
+
+
+  function applyDayFilters() {
+    // Get all selected checkboxes
+    const selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked')).map(cb => cb.value);
+    // Update the current filters
+    currentFilters.weekdays = selectedDays;
+
+    // Apply the filters
+    applyFilters();
+  }
+
 
   function viewDoctorProfile(doctorId) {
     window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;
   }
+
+  // function changeFilters()
 
   // Adjust content margin based on header height
   const fixedHeader = document.querySelector(".main-header");
@@ -249,8 +342,44 @@
     </c:forEach>
   ];
 
+  function getDayName(day) {
+    const days = ['all', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    return days[day];
+  }
+
+  function applyFilters() {
+    // Build URL with all parameters
+    let url = `${pageContext.request.contextPath}/search?specialty=` + currentFilters.specialty + `&page=` + currentFilters.page;
+    currentFilters.coverage != 0 ? url += `&coverage=` + currentFilters.coverage : url += ``;
+    currentFilters.orderBy != '' ? url += `&orderBy=` + currentFilters.orderBy : url += ``;
+    currentFilters.direction != '' ? url += `&direction=` + currentFilters.direction : url += ``;
+    currentFilters.weekdays.length != 0 ? url += `&weekdays=` + currentFilters.weekdays.join(',') : url += ``;
+
+    // Navigate to the URL
+    window.location.href = url;
+  }
+
   // Initialize search functionality
   document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('weekdays')) {
+      const weekdaysParam = urlParams.getAll('weekdays');
+      currentFilters.weekdays = weekdaysParam.map(day => parseInt(day));
+      // Update UI to reflect selected weekdays
+      // updateWeekdayButtons();
+    }
+    // Set sort dropdown based on URL parameters
+    if (urlParams.has('orderBy')) {
+      currentFilters.orderBy= urlParams.get('orderBy');
+    }
+
+    if(urlParams.has('direction')){
+        currentFilters.direction = urlParams.get('direction');
+    }
+    // Set coverage dropdown if present
+    if (urlParams.has('coverage')) {
+      currentFilters.coverage = urlParams.get('coverage');
+    }
     initializeSearch();
     initializeViewToggle();
     initializeQuickFilters();

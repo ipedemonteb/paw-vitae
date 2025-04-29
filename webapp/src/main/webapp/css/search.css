@@ -85,6 +85,52 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+.day-checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.day-checkbox-label {
+    display: flex;
+    align-items: center;
+    background-color: var(--gray-100);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-fast) var(--ease);
+}
+
+.day-checkbox-label:hover {
+    background-color: var(--primary-light);
+}
+
+.day-checkbox {
+    display: none;
+}
+
+.day-checkbox:checked + .day-checkbox-text {
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.day-checkbox-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-left: 0.5rem;
+}
+
+.coverage-tag {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 0.25rem 0.6rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
 .container {
     width: 100%;
     max-width: 1280px;
