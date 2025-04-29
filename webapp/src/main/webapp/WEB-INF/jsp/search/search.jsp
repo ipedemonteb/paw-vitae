@@ -1,9 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="specialtyName">
-  <spring:message code="${specialty.key}"/>
+  <c:choose>
+    <c:when test="${empty specialty}">
+      <spring:message code="search.all.specialties"/>
+    </c:when>
+    <c:otherwise>
+      <spring:message code="${specialty.key}"/>
+    </c:otherwise>
+  </c:choose>
 </c:set>
 
 <!DOCTYPE html>
@@ -45,10 +53,26 @@
         <div class="filter-group">
           <label for="specialtySelect" class="filter-label"><i class="fas fa-stethoscope"></i> <spring:message code="search.specialty" /></label>
           <div class="select-container">
-            <select id="specialtySelect" class="filter-select" onchange="changeSpecialty(this.value)">
+            <select id="specialtySelect" class="filter-select">
+              <option value="0" ${empty specialty ? 'selected' : ''}><spring:message code="search.all.specialties" /></option>
               <c:forEach var="spec" items="${allSpecialties}">
-                <option value="<c:out value='${spec.id}'/>" ${spec.id == specialty.id ? 'selected' : ''}>
+                <option value="<c:out value='${spec.id}'/>" ${not empty specialty && spec.id == specialty.id ? 'selected' : ''}>
                   <spring:message code="${spec.key}" />
+                </option>
+              </c:forEach>
+            </select>
+          </div>
+        </div>
+
+        <!-- Coverage Filter -->
+        <div class="filter-group">
+          <label for="coverageSelect" class="filter-label"><i class="fas fa-shield-alt"></i> <spring:message code="search.coverage" /></label>
+          <div class="select-container">
+            <select id="coverageSelect" class="filter-select">
+              <option value="0"><spring:message code="search.coverage.all" /></option>
+              <c:forEach var="coverage" items="${coverages}">
+                <option value="<c:out value='${coverage.id}'/>" ${param.coverage == coverage.id ? 'selected' : ''}>
+                  <c:out value="${coverage.name}" />
                 </option>
               </c:forEach>
             </select>
@@ -60,9 +84,38 @@
           <label for="sortSelect" class="filter-label"><i class="fas fa-sort"></i> <spring:message code="search.sort" /></label>
           <div class="select-container">
             <select id="sortSelect" class="filter-select">
-              <option value="recommended"><spring:message code="search.sort.recommended" /></option>
-              <option value="name_asc"><spring:message code="search.sort.name_asc" /></option>
-              <option value="name_desc"><spring:message code="search.sort.name_desc" /></option>
+              <optgroup label="<spring:message code="search.sort.by.name" />">
+                <option value="name_asc" ${param.orderBy == 'name' && param.direction == 'asc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.name_asc" />
+                </option>
+                <option value="name_desc" ${param.orderBy == 'name' && param.direction == 'desc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.name_desc" />
+                </option>
+              </optgroup>
+              <optgroup label="<spring:message code="search.sort.by.last_name" />">
+                <option value="last_name_asc" ${param.orderBy == 'last_name' && param.direction == 'asc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.last_name_asc" />
+                </option>
+                <option value="last_name_desc" ${param.orderBy == 'last_name' && param.direction == 'desc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.last_name_desc" />
+                </option>
+              </optgroup>
+              <optgroup label="<spring:message code="search.sort.by.rating" />">
+                <option value="rating_asc" ${param.orderBy == 'rating' && param.direction == 'asc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.rating_asc" />
+                </option>
+                <option value="rating_desc" ${param.orderBy == 'rating' && param.direction == 'desc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.rating_desc" />
+                </option>
+              </optgroup>
+              <optgroup label="<spring:message code="search.sort.by.email" />">
+                <option value="email_asc" ${param.orderBy == 'email' && param.direction == 'asc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.email_asc" />
+                </option>
+                <option value="email_desc" ${param.orderBy == 'email' && param.direction == 'desc' ? 'selected' : ''}>
+                  <spring:message code="search.sort.email_desc" />
+                </option>
+              </optgroup>
             </select>
           </div>
         </div>
@@ -78,9 +131,119 @@
         </div>
       </div>
 
+      <!-- Interactive Filter Tags -->
+      <div class="filter-tags">
+        <div class="filter-tags-label">
+          <i class="fas fa-filter"></i> <spring:message code="search.active.filters" />
+        </div>
+        <div class="filter-tags-container">
+<%--          <c:if test="${not empty param.orderBy}">--%>
+            <div class="filter-tag">
+              <i class="fas fa-sort"></i>
+              <span>
+                <c:choose>
+                  <c:when test="${param.orderBy == 'name' || empty param.orderBy}">
+                    <spring:message code="search.sort.by.name" />
+                  </c:when>
+                  <c:when test="${param.orderBy == 'last_name'}">
+                    <spring:message code="search.sort.by.last_name" />
+                  </c:when>
+                  <c:when test="${param.orderBy == 'rating'}">
+                    <spring:message code="search.sort.by.rating" />
+                  </c:when>
+                  <c:when test="${param.orderBy == 'email'}">
+                    <spring:message code="search.sort.by.email" />
+                  </c:when>
+                </c:choose>
+                <c:if test="${param.direction == 'asc' || empty param.direction}">
+                  <i class="fas fa-arrow-up"></i>
+                </c:if>
+                <c:if test="${param.direction == 'desc'}">
+                  <i class="fas fa-arrow-down"></i>
+                </c:if>
+              </span>
+            </div>
+<%--          </c:if>--%>
+          <c:if test="${not empty param.specialty && param.specialty != '0'}">
+            <div class="filter-tag">
+              <i class="fas fa-stethoscope"></i>
+              <span>
+                <c:forEach var="spec" items="${allSpecialties}">
+                  <c:if test="${spec.id == param.specialty}">
+                    <spring:message code="${spec.key}" />
+                  </c:if>
+                </c:forEach>
+              </span>
+              <button class="filter-tag-remove" onclick="clearSpecialtyFilter()">×</button>
+            </div>
+          </c:if>
+          <c:if test="${not empty param.coverage && param.coverage != '0'}">
+            <div class="filter-tag">
+              <i class="fas fa-shield-alt"></i>
+              <span>
+                <c:forEach var="coverage" items="${coverages}">
+                  <c:if test="${coverage.id == param.coverage}">
+                    <c:out value="${coverage.name}" />
+                  </c:if>
+                </c:forEach>
+              </span>
+              <button class="filter-tag-remove" onclick="clearCoverageFilter()">×</button>
+            </div>
+          </c:if>
+          <c:if test="${not empty param.weekdays}">
+            <div class="filter-tag">
+              <i class="fas fa-calendar-week"></i>
+              <span><spring:message code="search.filter.weekdays" /></span>
+              <button class="filter-tag-remove" onclick="clearWeekdaysFilter()">×</button>
+            </div>
+          </c:if>
+        </div>
+      </div>
+
+      <!-- Advanced Filters -->
+      <div class="advanced-filters">
+        <div class="filter-section">
+          <h3 class="filter-section-title"><i class="fas fa-calendar-week"></i> <spring:message code="search.availability" /></h3>
+          <div class="weekday-filters">
+            <label class="weekday-label">
+              <input type="checkbox" class="weekday-checkbox" value="0" ${param.weekdays.contains('0') ? 'checked' : ''}>
+              <span class="weekday-text"><spring:message code="search.weekday.monday" /></span>
+            </label>
+            <label class="weekday-label">
+              <input type="checkbox" class="weekday-checkbox" value="1" ${param.weekdays.contains('1') ? 'checked' : ''}>
+              <span class="weekday-text"><spring:message code="search.weekday.tuesday" /></span>
+            </label>
+            <label class="weekday-label">
+              <input type="checkbox" class="weekday-checkbox" value="2" ${param.weekdays.contains('2') ? 'checked' : ''}>
+              <span class="weekday-text"><spring:message code="search.weekday.wednesday" /></span>
+            </label>
+            <label class="weekday-label">
+              <input type="checkbox" class="weekday-checkbox" value="3" ${param.weekdays.contains('3') ? 'checked' : ''}>
+              <span class="weekday-text"><spring:message code="search.weekday.thursday" /></span>
+            </label>
+            <label class="weekday-label">
+              <input type="checkbox" class="weekday-checkbox" value="4" ${param.weekdays.contains('4') ? 'checked' : ''}>
+              <span class="weekday-text"><spring:message code="search.weekday.friday" /></span>
+            </label>
+            <label class="weekday-label">
+              <input type="checkbox" class="weekday-checkbox" value="5" ${param.weekdays.contains('5') ? 'checked' : ''}>
+              <span class="weekday-text"><spring:message code="search.weekday.saturday" /></span>
+            </label>
+            <label class="weekday-label">
+              <input type="checkbox" class="weekday-checkbox" value="6" ${param.weekdays.contains('6') ? 'checked' : ''}>
+              <span class="weekday-text"><spring:message code="search.weekday.sunday" /></span>
+            </label>
+          </div>
+        </div>
+
+        <button id="applyFiltersBtn" class="btn btn-primary apply-filters-btn">
+          <i class="fas fa-filter"></i> <spring:message code="search.button.apply_filters" />
+        </button>
+      </div>
+
       <!-- Quick Filters -->
       <div class="quick-filters">
-        <button class="quick-filter-btn" data-filter="all">
+        <button class="quick-filter-btn active" data-filter="all">
           <spring:message code="search.filter.all" />
         </button>
         <button class="quick-filter-btn" data-filter="top-rated">
@@ -105,6 +268,28 @@
             </c:otherwise>
           </c:choose>
         </div>
+
+        <!-- Active Filters -->
+<%--        <div class="active-filters">--%>
+<%--          <c:if test="${not empty param.weekdays}">--%>
+<%--            <div class="active-filter">--%>
+<%--              <i class="fas fa-calendar-week"></i> <spring:message code="search.filter.weekdays" />--%>
+<%--              <button class="clear-filter" onclick="clearWeekdaysFilter()">×</button>--%>
+<%--            </div>--%>
+<%--          </c:if>--%>
+<%--          <c:if test="${param.coverage != '0' && not empty param.coverage}">--%>
+<%--            <div class="active-filter">--%>
+<%--              <i class="fas fa-shield-alt"></i> <spring:message code="search.filter.coverage" />--%>
+<%--              <button class="clear-filter" onclick="clearCoverageFilter()">×</button>--%>
+<%--            </div>--%>
+<%--          </c:if>--%>
+<%--          <c:if test="${param.specialty != '0' && not empty param.specialty}">--%>
+<%--            <div class="active-filter">--%>
+<%--              <i class="fas fa-stethoscope"></i> <spring:message code="search.filter.specialty" />--%>
+<%--              <button class="clear-filter" onclick="clearSpecialtyFilter()">×</button>--%>
+<%--            </div>--%>
+<%--          </c:if>--%>
+<%--        </div>--%>
       </div>
 
       <c:choose>
@@ -128,13 +313,26 @@
                   </div>
                   <div class="doctor-rating">
                     <div class="stars">
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star-half-alt"></i>
+                      <c:set var="fullStars" value="${doctor.rating.intValue()}" />
+                      <c:set var="hasHalfStar" value="${doctor.rating - fullStars >= 0.5}" />
+                      <c:set var="emptyStars" value="${5 - fullStars - (hasHalfStar ? 1 : 0)}" />
+
+                      <!-- Render full stars -->
+                      <c:forEach begin="1" end="${fullStars}" var="i">
+                        <i class="fas fa-star"></i>
+                      </c:forEach>
+
+                      <!-- Render half star if applicable -->
+                      <c:if test="${hasHalfStar}">
+                        <i class="fas fa-star-half-alt"></i>
+                      </c:if>
+
+                      <!-- Render empty stars -->
+                      <c:forEach begin="1" end="${emptyStars}" var="i">
+                        <i class="far fa-star"></i>
+                      </c:forEach>
                     </div>
-                    <span class="rating-count">4.5</span>
+                    <span class="rating-count">${doctor.rating}</span>
                   </div>
                 </div>
 
@@ -143,7 +341,27 @@
                     <c:out value='${doctor.name} ${doctor.lastName}'/>
                   </h3>
                   <div class="doctor-specialty">
-                    <i class="fas fa-stethoscope"></i> <c:out value="${specialtyName}"/>
+                    <i class="fas fa-stethoscope"></i>
+                      <%--                    <c:choose>--%>
+                      <%--                      <c:when test="${empty specialty}">--%>
+                    <c:set var="specialtiesText" value="" />
+                    <c:forEach var="doctorSpecialty" items="${doctor.specialtyList}" varStatus="specStatus">
+                      <spring:message code="${doctorSpecialty.key}" var="specialtyName" />
+                      <c:set var="specialtiesText" value="${specialtiesText}${not specStatus.first ? ', ' : ''}${specialtyName}" />
+                    </c:forEach>
+                    <c:choose>
+                      <c:when test="${fn:length(specialtiesText) > 30}">
+                        <span title="${specialtiesText}"><c:out value="${fn:substring(specialtiesText, 0, 27)}..." /></span>
+                      </c:when>
+                      <c:otherwise>
+                        <c:out value="${specialtiesText}" />
+                      </c:otherwise>
+                    </c:choose>
+                      <%--                      </c:when>--%>
+                      <%--                      <c:otherwise>--%>
+                      <%--                        <c:out value="${specialtyName}"/>--%>
+                      <%--                      </c:otherwise>--%>
+                      <%--                    </c:choose>--%>
                   </div>
                   <div class="doctor-info">
                     <div class="info-item">
@@ -164,7 +382,8 @@
                 </div>
 
                 <div class="doctor-card-footer">
-                  <a href="<c:url value='/appointment?doctorId=${doctor.id}&specialtyId=${specialty.id}'/>" class="btn btn-primary">
+                  <c:set var="defaultSpecId" value="${doctor.specialtyList.stream().findFirst().get().id}"/>
+                  <a href="<c:url value='/appointment?doctorId=${doctor.id}${not empty specialty ? "&specialtyId=".concat(specialty.id) : "&specialtyId=".concat(defaultSpecId)}'/>" class="btn btn-primary">
                     <i class="fas fa-calendar-check"></i> <spring:message code="search.button.schedule" />
                   </a>
                   <button class="btn btn-secondary" onclick="viewDoctorProfile('${doctor.id}')">
@@ -178,12 +397,34 @@
           <!-- Pagination -->
           <c:if test="${totalPages > 1}">
             <div class="pagination">
+
+              <!-- prev link -->
               <c:if test="${currentPage > 1}">
-                <a href="<c:url value='/search?specialty=${specialty.id}&page=${currentPage - 1}'/>" class="pagination-btn prev">
+                <c:url var="prevUrl" value="/search">
+                  <c:param name="page" value="${currentPage - 1}" />
+                  <c:if test="${not empty param.specialty and param.specialty != '0'}">
+                    <c:param name="specialty" value="${param.specialty}" />
+                  </c:if>
+                  <c:if test="${not empty param.coverage}">
+                    <c:param name="coverage" value="${param.coverage}" />
+                  </c:if>
+                  <!-- here’s the trick: emit one param per selected weekday -->
+                  <c:forEach var="wd" items="${paramValues.weekdays}">
+                    <c:param name="weekdays" value="${wd}" />
+                  </c:forEach>
+                  <c:if test="${not empty param.orderBy}">
+                    <c:param name="orderBy"  value="${param.orderBy}" />
+                  </c:if>
+                  <c:if test="${not empty param.direction}">
+                    <c:param name="direction" value="${param.direction}" />
+                  </c:if>
+                </c:url>
+                <a href="${prevUrl}" class="pagination-btn prev">
                   <i class="fas fa-chevron-left"></i>
                 </a>
               </c:if>
 
+              <!-- page‐number links -->
               <div class="pagination-numbers">
                 <c:forEach begin="1" end="${totalPages}" var="pageNum">
                   <c:choose>
@@ -191,19 +432,58 @@
                       <span class="pagination-number active">${pageNum}</span>
                     </c:when>
                     <c:otherwise>
-                      <a href="<c:url value='/search?specialty=${specialty.id}&page=${pageNum}'/>" class="pagination-number">${pageNum}</a>
+                      <c:url var="pageUrl" value="/search">
+                        <c:param name="page" value="${pageNum}" />
+                        <c:if test="${not empty param.specialty and param.specialty != '0'}">
+                          <c:param name="specialty" value="${param.specialty}" />
+                        </c:if>
+                        <c:if test="${not empty param.coverage}">
+                          <c:param name="coverage" value="${param.coverage}" />
+                        </c:if>
+                        <c:forEach var="wd" items="${paramValues.weekdays}">
+                          <c:param name="weekdays" value="${wd}" />
+                        </c:forEach>
+                        <c:if test="${not empty param.orderBy}">
+                          <c:param name="orderBy"  value="${param.orderBy}" />
+                        </c:if>
+                        <c:if test="${not empty param.direction}">
+                          <c:param name="direction" value="${param.direction}" />
+                        </c:if>
+                      </c:url>
+                      <a href="${pageUrl}" class="pagination-number">${pageNum}</a>
                     </c:otherwise>
                   </c:choose>
                 </c:forEach>
               </div>
 
+              <!-- next link -->
               <c:if test="${currentPage < totalPages}">
-                <a href="<c:url value='/search?specialty=${specialty.id}&page=${currentPage + 1}'/>" class="pagination-btn next">
+                <c:url var="nextUrl" value="/search">
+                  <c:param name="page" value="${currentPage + 1}" />
+                  <c:if test="${not empty param.specialty and param.specialty != '0'}">
+                    <c:param name="specialty" value="${param.specialty}" />
+                  </c:if>
+                  <c:if test="${not empty param.coverage}">
+                    <c:param name="coverage" value="${param.coverage}" />
+                  </c:if>
+                  <c:forEach var="wd" items="${paramValues.weekdays}">
+                    <c:param name="weekdays" value="${wd}" />
+                  </c:forEach>
+                  <c:if test="${not empty param.orderBy}">
+                    <c:param name="orderBy"  value="${param.orderBy}" />
+                  </c:if>
+                  <c:if test="${not empty param.direction}">
+                    <c:param name="direction" value="${param.direction}" />
+                  </c:if>
+                </c:url>
+                <a href="${nextUrl}" class="pagination-btn next">
                   <i class="fas fa-chevron-right"></i>
                 </a>
               </c:if>
+
             </div>
           </c:if>
+
         </c:otherwise>
       </c:choose>
     </div>
@@ -216,38 +496,44 @@
 <script>
   contextPath = "${pageContext.request.contextPath}";
 
-  function changeSpecialty(specialtyId) {
-    window.location.href = "${pageContext.request.contextPath}/search?specialty=" + specialtyId;
-  }
-
   function viewDoctorProfile(doctorId) {
     window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;
   }
 
-  // Adjust content margin based on header height
-  const fixedHeader = document.querySelector(".main-header");
-  const mainContent = document.querySelector(".main-content");
-
-  if (fixedHeader && mainContent) {
-    const adjustContentMargin = () => {
-      const headerHeight = fixedHeader.offsetHeight;
-      mainContent.style.marginTop = (headerHeight * 1.1) + `px`;
-    };
-
-    // Adjust on page load
-    adjustContentMargin();
-
-    // Adjust on window resize
-    window.addEventListener("resize", adjustContentMargin);
+  function clearWeekdaysFilter() {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('weekdays');
+    window.location.href = currentUrl.toString();
   }
 
-  const doctorsIds = [
-          <c:forEach var="doctor" items="${doctors}" varStatus="status">
-            {
-              id: "${doctor.id}",
-            }<c:if test="${!status.last}">,</c:if>
-    </c:forEach>
-  ];
+  function clearCoverageFilter() {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('coverage');
+    window.location.href = currentUrl.toString();
+  }
+
+  function clearSpecialtyFilter() {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('specialty');
+    window.location.href = currentUrl.toString();
+  }
+
+  // Adjust content margin based on header height
+  // const fixedHeader = document.querySelector(".main-header");
+  // const mainContent = document.querySelector(".main-content");
+
+  // if (fixedHeader && mainContent) { //TODO decide if margin is magic or based on header, extend to all jsp
+  //   const adjustContentMargin = () => {
+  //     const headerHeight = fixedHeader.offsetHeight;
+  //     mainContent.style.marginTop = (headerHeight * 1.1) + `px`;
+  //   };
+  //
+  //   // Adjust on page load
+  //   adjustContentMargin();
+  //
+  //   // Adjust on window resize
+  //   window.addEventListener("resize", adjustContentMargin);
+  // }
 
   // Initialize search functionality
   document.addEventListener('DOMContentLoaded', function() {
@@ -255,6 +541,15 @@
     initializeViewToggle();
     initializeQuickFilters();
     initializeSorting();
+    initializeCoverageFilter();
+    initializeSpecialtyFilter();
+    initializeWeekdaysFilter();
+
+    // Add event listener for filter button
+    const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+    if (applyFiltersBtn) {
+      applyFiltersBtn.addEventListener('click', applyAllFilters);
+    }
   });
 </script>
 </body>
