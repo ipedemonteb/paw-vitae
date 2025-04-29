@@ -108,7 +108,7 @@
                     <div class="status-filter">
                         <label for="history-status-filter"><spring:message code="dashboard.filter.status" />:</label>
                         <select id="history-status-filter" class="filter-select">
-                            <option value="<spring:message code="dashboard.filter.all" />" selected><spring:message code="dashboard.filter.all" /></option>
+                            <option value="<spring:message code="dashboard.filter.all" />" selected><spring:message code="dashboard.history.all" /></option>
                             <option value="<spring:message code="appointment.status.completed" />"><spring:message code="appointment.status.completed" /></option>
                             <option value="<spring:message code="appointment.status.cancelled" />"><spring:message code="appointment.status.cancelled" /></option>
                             <option value="<spring:message code="appointment.status.noShow" />"><spring:message code="appointment.status.noShow" /></option>
