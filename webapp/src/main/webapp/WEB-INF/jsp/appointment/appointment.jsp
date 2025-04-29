@@ -106,7 +106,7 @@
 
                     <!-- Reason for appointment -->
                     <div class="form-group">
-                        <label for="reason" class="required-field"><spring:message code="appointment.form.reason"/></label>
+                        <label for="reason"><spring:message code="appointment.form.reason"/></label>
                         <form:textarea path="reason" id="reason" class="form-control" rows="4" />
                         <form:errors path="reason" cssClass="error-message" />
                     </div>

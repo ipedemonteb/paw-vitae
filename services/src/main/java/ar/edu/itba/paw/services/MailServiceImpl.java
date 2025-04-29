@@ -58,6 +58,7 @@ public class MailServiceImpl implements MailService {
         LocalDateTime date = appointment.getDate();
         templateModel.put("appointmentDate", date.toLocalDate().toString());
         templateModel.put("appointmentTime", date.getHour());
+        templateModel.put("appointmentId", appointment.getId());
         //@TODO: Check
         templateModel.put("reason", (appointment.getReason() != null && !appointment.getReason().isEmpty()) ? appointment.getReason() : "-");
         patientContext.setVariables(templateModel);
