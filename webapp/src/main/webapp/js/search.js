@@ -33,12 +33,17 @@ function initializeViewToggle() {
                 // Add active class to clicked button
                 this.classList.add("active")
 
+                const currentUrl = new URL(window.location.href)
+
                 const viewType = this.getAttribute("data-view")
                 if (viewType === "list") {
                     doctorsGrid.classList.add("list-view")
+                    currentUrl.searchParams.set('view', 'list')
                 } else {
                     doctorsGrid.classList.remove("list-view")
+                    currentUrl.searchParams.set('view', 'grid')
                 }
+                window.location.href = currentUrl.toString()
             })
         })
     }

@@ -41,7 +41,8 @@ public class SearchController {
             @RequestParam(value = "coverage", required = false, defaultValue = "0") Long coverageId,
             @RequestParam(value = "weekdays", required = false) List<Integer> weekdays,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
-            @RequestParam(value = "direction", defaultValue = "asc") String direction
+            @RequestParam(value = "direction", defaultValue = "asc") String direction,
+            @RequestParam(value = "view", required = false, defaultValue = "grid") String view
     ) {
         Optional<Specialty> specialtyObj = specialtyService.getById(specialtyId);
         List<Coverage> coverages = coverageService.getAll();
@@ -58,6 +59,7 @@ public class SearchController {
         mav.addObject("allCoverages", allCoverages);
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", doctorPage.getTotalPages());
+        mav.addObject("view", view);
         return mav;
     }
 }
