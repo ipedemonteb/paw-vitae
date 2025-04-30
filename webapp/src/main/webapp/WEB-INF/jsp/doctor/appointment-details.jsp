@@ -23,8 +23,6 @@
 <!-- Main Content -->
 <main class="main-content">
     <div class="container">
-        <!-- Back button to My Appointments -->
-
         <div class="appointment-container">
             <div class="appointment-header">
                 <h1 class="appointment-title"><spring:message code="appointment.details.page.title" /></h1>
@@ -107,6 +105,50 @@
                         <span class="specialty-label-appointment"><spring:message code="appointment.form.reason" />:</span>
                         <span class="specialty-value-appointment"><c:out value="${appointment.reason}"/> </span>
                     </div>
+                </div>
+
+                <div class="rating-section">
+                    <h2 class="rating-title">
+                        <i class="fas fa-star"></i>
+                        <spring:message code="appointment.details.review.title.doctor" />
+                    </h2>
+                    <%-- Replace the existing review section with this updated version --%>
+                    <c:choose>
+                        <c:when test="${not empty existingRating}">
+                            <!-- Display existing rating with title -->
+                            <div class="review-card">
+                                <div class="review-card-content">
+                                    <div class="review-header">
+                                        <div class="review-stars">
+                                            <c:forEach begin="1" end="5" var="star">
+                                                <i class="fa${star <= existingRating.rating ? 's' : 'r'} fa-star" aria-hidden="true"></i>
+                                            </c:forEach>
+                                            <span class="rating-value"><c:out value="${existingRating.rating}"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="review-comment">
+                                        <c:out value="${existingRating.comment}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <!-- Styled No Reviews Message -->
+                            <div class="review-card">
+                                <div class="review-card-title">
+                                    <i class="fas fa-star"></i>
+                                    <spring:message code="appointment.details.review.title" text="Patient Review" />
+                                </div>
+                                <div class="no-reviews-message" style="border: none; box-shadow: none; margin-bottom: 0;">
+                                    <div class="no-reviews-icon">
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <h3 class="no-reviews-title"><spring:message code="appointment.details.review.none" text="No Reviews Yet" /></h3>
+                                    <p class="no-reviews-text"><spring:message code="appointment.details.review.none.message" text="This doctor hasn't received any reviews for this appointment." /></p>
+                                </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
 
                 <div class="files-list">
