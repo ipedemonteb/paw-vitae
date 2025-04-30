@@ -47,17 +47,17 @@ public class DoctorDaoImpl implements DoctorDao {
         List<Object> params = new ArrayList<>();
 
         if (specialtyId > 0) {
-            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_specialties where specialty_id = ?)");
+            sql.append(" AND u.id IN (SELECT doctor_id FROM doctor_specialties where specialty_id = ?)");
             params.add(specialtyId);
         }
 
         if (coverageId > 0) {
-            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_coverages where coverage_id = ?)");
+            sql.append(" AND u.id IN (SELECT doctor_id FROM doctor_coverages where coverage_id = ?)");
             params.add(coverageId);
         }
 
         if (!weekdays.isEmpty()) {
-            sql.append(" AND users.id IN (SELECT doctor_id FROM doctor_availability WHERE");
+            sql.append(" AND u.id IN (SELECT doctor_id FROM doctor_availability WHERE");
             for (int i = 0; i < weekdays.size(); i++) {
                 sql.append(" day_of_week = ?");
                 if (i < weekdays.size() - 1) {
@@ -372,7 +372,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE 1=1");
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
 
         return jdbcTemplate.queryForObject(sql.toString(), Integer.class, params.toArray());

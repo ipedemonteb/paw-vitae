@@ -70,11 +70,13 @@
                         <i class="fas fa-clipboard-check"></i>
                     </div>
                     <div class="specialty-content">
-                        <span class="specialty-label-appointment"><spring:message code="appointment.details.info.status" text="Status" />:</span>
+                        <span class="specialty-label-appointment">
+                            <spring:message code="appointment.details.info.status" text="Status" />:
+                        </span>
                         <div class="status-display">
-                            <span class="specialty-value-appointment">
-                                <spring:message code="appointment.status.${appointment.status}" text="${appointment.status}" />
-                            </span>
+                        <span class="specialty-value-appointment status-${appointment.status}">
+                            <spring:message code="appointment.status.${appointment.status}" text="${appointment.status}" />
+                        </span>
                         </div>
                     </div>
                 </div>
@@ -121,6 +123,43 @@
                     </div>
                 </div>
 
+                <!-- Patient Files Section -->
+                <div class="files-section">
+                    <h2 class="files-title">
+                        <i class="fas fa-file-medical"></i>
+                        <spring:message code="appointment.details.yours.files.title"/>
+                    </h2>
+
+                    <div class="files-list">
+                        <c:set var="hasPatientFiles" value="false" />
+                        <c:forEach var="file" items="${patientFiles}">
+                            <c:if test="${file.uploader_role == 'patient'}">
+                                <c:set var="hasPatientFiles" value="true" />
+                                <div class="file-item">
+                                    <div class="file-icon">
+                                        <i class="far fa-file-pdf"></i>
+                                    </div>
+                                    <div class="file-info">
+                                        <div class="file-name"><c:out value="${file.fileName}" /></div>
+                                    </div>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+
+                        <c:if test="${not hasPatientFiles}">
+                            <div class="no-files-message">
+                                <div class="no-files-content">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p><spring:message code="appointment.details.you.nofiles" /></p>
+                                </div>
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+
                 <!-- Check if appointment has passed -->
                 <c:set var="now">
                     <%
@@ -131,14 +170,14 @@
                     %>
                 </c:set>
                 <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="appointmentDate" type="both" />
-                <c:if test="${appointmentDate.time < nowTime}">
+                <c:if test="${appointmentDate.time < nowTime && appointment.status != 'cancelado'}">
+                    <c:set var="appointmentPassed" value="true" />
                 <sec:authorize access="hasRole('PATIENT')">
+                    <h2 class="rating-title">
+                        <i class="fas fa-star"></i>
+                        <spring:message code="appointment.details.review.title" />
+                    </h2>
                         <div class="rating-section">
-                            <h2 class="rating-title">
-                                <i class="fas fa-star"></i>
-                                <spring:message code="appointment.details.review.title" />
-                            </h2>
-
                             <c:choose>
                                 <c:when test="${not empty existingRating}">
                                     <!-- Display existing rating -->
@@ -196,44 +235,6 @@
                             </c:choose>
                         </div>
                     </sec:authorize>
-                </c:if>
-
-                <!-- Patient Files Section -->
-                <div class="files-section">
-                    <h2 class="files-title">
-                        <i class="fas fa-file-medical"></i>
-                        <spring:message code="appointment.details.patient.files.title"/>
-                    </h2>
-
-                    <div class="files-list">
-                        <c:set var="hasPatientFiles" value="false" />
-                        <c:forEach var="file" items="${patientFiles}">
-                            <c:if test="${file.uploader_role == 'patient'}">
-                                <c:set var="hasPatientFiles" value="true" />
-                                <div class="file-item">
-                                    <div class="file-icon">
-                                        <i class="far fa-file-pdf"></i>
-                                    </div>
-                                    <div class="file-info">
-                                        <div class="file-name"><c:out value="${file.fileName}" /></div>
-                                    </div>
-                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
-                                        <i class="fas fa-download"></i>
-                                    </a>
-                                </div>
-                            </c:if>
-                        </c:forEach>
-
-                        <c:if test="${not hasPatientFiles}">
-                            <div class="no-files-message">
-                                <div class="no-files-content">
-                                    <i class="fas fa-info-circle"></i>
-                                    <p><spring:message code="appointment.details.patient.nofiles" /></p>
-                                </div>
-                            </div>
-                        </c:if>
-                    </div>
-                </div>
 
                 <!-- Doctor Files Section -->
                 <div class="files-section">
@@ -244,7 +245,7 @@
 
                     <div class="files-list">
                         <c:set var="hasDoctorFiles" value="false" />
-                        <c:forEach var="file" items="${patientFiles}">
+                        <c:forEach var="file" items="${doctorFiles}">
                             <c:if test="${file.uploader_role == 'doctor'}">
                                 <c:set var="hasDoctorFiles" value="true" />
                                 <div class="file-item">
@@ -271,6 +272,7 @@
                         </c:if>
                     </div>
                 </div>
+                </c:if>
 
                 <div class="back-button-container">
                     <a href="${pageContext.request.contextPath}/patient/dashboard" class="back-button">

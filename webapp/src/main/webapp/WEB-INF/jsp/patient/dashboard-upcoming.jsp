@@ -34,13 +34,16 @@
         <div class="modal-body">
             <p class="modal-message"><spring:message code="appointment.cancel.message" /></p>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
-                <spring:message code="logout.confirmation.cancel"/>
-            </button>
-            <button type="button" class="btn-modal btn-danger" id="cancelAppointmentBtn">
-                <spring:message code="appointment.action.cancel"/>
-            </button>
+        <div class="modal-footer" id="cancelModal">
+            <form id="cancelForm" action="${pageContext.request.contextPath}/patient/dashboard/appointment/cancel" method="post">
+                <input type="hidden" name="appointmentId" value="" />
+                <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
+                    <spring:message code="logout.confirmation.cancel"/>
+                </button>
+                <button type="submit" class="btn-modal btn-danger" id="cancelAppointmentBtn">
+                    <spring:message code="appointment.action.cancel"/>
+                </button>
+            </form>
         </div>
     </div>
 </div>
@@ -59,11 +62,11 @@
                 <div class="tab-actions">
                     <div class="date-filter">
                         <label for="date-range"><spring:message code="dashboard.filter.dateRange" />:</label>
-                        <select id="date-range" class="filter-select">
-                            <option value="today"><spring:message code="dashboard.filter.today" /></option>
-                            <option value="week" ><spring:message code="dashboard.filter.thisWeek" /></option>
-                            <option value="month"><spring:message code="dashboard.filter.thisMonth" /></option>
-                            <option value="all" selected><spring:message code="dashboard.filter.all" /></option>
+                        <select id="date-range" class="filter-select" onchange="applyDateFilter(this.value)">
+                            <option value="today" ${param.dateRange == 'today' ? 'selected' : ''}><spring:message code="dashboard.filter.today" /></option>
+                            <option value="week" ${param.dateRange == 'week' ? 'selected' : ''}><spring:message code="dashboard.filter.thisWeek" /></option>
+                            <option value="month" ${param.dateRange == 'month' ? 'selected' : ''}><spring:message code="dashboard.filter.thisMonth" /></option>
+                            <option value="all" ${param.dateRange == 'all' || empty param.dateRange ? 'selected' : ''}><spring:message code="dashboard.filter.all" /></option>
                         </select>
                     </div>
                 </div>
@@ -132,7 +135,7 @@
                                                 <spring:message code="dashboard.filter.all" />
                                             </c:set>
                                             <c:if test="${status eq pending|| status eq confirmed}">
-                                                <button class="btn btn-danger cancel-appointment" data-id="<c:out value="${appointment.id}"/>" id="cancel-appointment">
+                                                <button class="btn btn-danger cancel-appointment" data-id="<c:out value="${appointment.id}"/>" id="cancel-appointment" data-target="#cancelModal">
                                                     <i class="fas fa-times-circle"></i>
                                                     <span><spring:message code="appointment.action.cancel" /></span>
                                                 </button>
@@ -174,57 +177,10 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Status filter functionality for upcoming appointments
-
-
-        // Date filter functionality
-        const dateFilter = document.getElementById('date-range');
-        if (dateFilter) {
-            dateFilter.addEventListener('change', function() {
-                const selectedDateRange = this.value;
-                const appointmentCards = document.querySelectorAll('#upcoming-tab .appointment-card');
-                const today = new Date();
-                const startOfWeek = new Date();
-                startOfWeek.setDate(today.getDate() - today.getDay());
-                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-                const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-                const startOfAll = new Date(0);
-                const endOfAll = new Date(9999, 11, 31);
-                let startDate, endDate;
-                switch (selectedDateRange) {
-                    case 'today':
-                        startDate = startOfToday;
-                        endDate = endOfToday;
-                        break;
-                    case 'week':
-                        startDate = startOfWeek;
-                        endDate = new Date(startOfWeek);
-                        endDate.setDate(endDate.getDate() + 7);
-                        break;
-                    case 'month':
-                        startDate = startOfMonth;
-                        endDate = endOfMonth;
-                        break;
-                    case 'all':
-                        startDate = startOfAll;
-                        endDate = endOfAll;
-                        break;
-                    default:
-                        startDate = startOfAll;
-                        endDate = endOfAll;
-                }
-                appointmentCards.forEach(card => {
-                    const cardDate = new Date(card.getAttribute('data-date'));
-                    if (cardDate >= startDate && cardDate <= endDate) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        }
+        // Apply date filter function
+        window.applyDateFilter = function(value) {
+            window.location.href = '${pageContext.request.contextPath}/patient/dashboard/upcoming?dateRange=' + value;
+        };
 
         // Cancel appointment functionality
         let currentAppointmentId = null;
@@ -255,28 +211,15 @@
             });
         });
 
-        // Cancel button in modal
-        const cancelAppointmentBtn = document.getElementById('cancelAppointmentBtn');
-        if (cancelAppointmentBtn) {
-            cancelAppointmentBtn.addEventListener('click', function() {
-                if (currentAppointmentId) {
-                    fetch(`${pageContext.request.contextPath}/patient/dashboard/appointment/cancel`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({ appointmentId: currentAppointmentId })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.reload();
-                            }
-                        })
-                }
-                hideCancelModal();
+        document.querySelectorAll('.cancel-appointment').forEach(button => {
+            button.addEventListener('click', () => {
+                const apptId = button.getAttribute('data-id');
+                document
+                    .querySelector('#cancelForm input[name="appointmentId"]')
+                    .value = apptId;
             });
-        }
+        });
+
 
         const fixedHeader = document.querySelector(".main-header");
         const mainContent = document.querySelector(".dashboard-container");
@@ -325,57 +268,6 @@
                     });
                 }
             });
-
-            // Aplicar los filtros actuales a las nuevas citas
-
-
-            // Aplicar el filtro de fecha a las nuevas citas
-            if (dateFilter) {
-                const selectedDateRange = dateFilter.value;
-                const today = new Date();
-                const startOfWeek = new Date();
-                startOfWeek.setDate(today.getDate() - today.getDay());
-                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-                const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-                const startOfAll = new Date(0);
-                const endOfAll = new Date(9999, 11, 31);
-                let startDate, endDate;
-
-                switch (selectedDateRange) {
-                    case 'today':
-                        startDate = startOfToday;
-                        endDate = endOfToday;
-                        break;
-                    case 'week':
-                        startDate = startOfWeek;
-                        endDate = new Date(startOfWeek);
-                        endDate.setDate(endDate.getDate() + 7);
-                        break;
-                    case 'month':
-                        startDate = startOfMonth;
-                        endDate = endOfMonth;
-                        break;
-                    case 'all':
-                        startDate = startOfAll;
-                        endDate = endOfAll;
-                        break;
-                    default:
-                        startDate = startOfAll;
-                        endDate = endOfAll;
-                }
-
-                const newCards = document.querySelectorAll('#upcoming-tab .appointment-card:not([data-date-filtered])');
-
-                newCards.forEach(card => {
-                    card.setAttribute('data-date-filtered', 'true');
-                    const cardDate = new Date(card.getAttribute('data-date'));
-                    if (!(cardDate >= startDate && cardDate <= endDate)) {
-                        card.style.display = 'none';
-                    }
-                });
-            }
         }
 
         // Cargar más citas próximas
@@ -400,6 +292,7 @@
                 const url = new URL(`${pageContext.request.contextPath}/patient/dashboard/upcoming`, window.location.origin);
                 url.searchParams.append('page', nextPage);
                 url.searchParams.append('ajax', 'true'); // Añadir un parámetro para indicar que es una solicitud AJAX
+                url.searchParams.append('dateRange', '${param.dateRange != null ? param.dateRange : "all"}');
 
                 // Realizar la petición AJAX
                 fetch(url.toString(), {
@@ -409,91 +302,87 @@
                         'Accept': 'text/html' // Especificar que esperamos HTML
                     }
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error en la respuesta del servidor: ' + response.status);
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    // Crear un elemento temporal para parsear el HTML
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-
-                    // Extraer las nuevas citas
-                    const newAppointments = doc.querySelectorAll('.appointment-card');
-
-                    console.log(`Se encontraron ${newAppointments.length} citas en la respuesta`);
-
-                    if (newAppointments.length === 0) {
-                        console.log('No se encontraron citas en la respuesta');
-                        // Si no hay más citas, eliminar el botón
-                        this.parentNode.remove();
-                        return;
-                    }
-
-                    // Obtener los IDs de las citas actuales
-                    const currentAppointmentIds = Array.from(
-                        document.querySelectorAll('.appointment-card')
-                    ).map(card => card.getAttribute('data-id'));
-
-                    // Agregar las nuevas citas
-                    const appointmentsList = document.querySelector('.appointments-list');
-                    const loadMoreContainer = document.querySelector('.load-more-container');
-                    let addedCount = 0;
-
-                    newAppointments.forEach(appointment => {
-                        const appointmentId = appointment.getAttribute('data-id');
-
-                        // Verificar si la cita ya existe
-                        if (!currentAppointmentIds.includes(appointmentId)) {
-                            // Clonar el nodo para agregarlo a nuestro DOM
-                            const appointmentNode = document.importNode(appointment, true);
-                            appointmentsList.insertBefore(appointmentNode, loadMoreContainer);
-                            addedCount++;
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la respuesta del servidor: ' + response.status);
                         }
-                    });
+                        return response.text();
+                    })
+                    .then(html => {
+                        // Crear un elemento temporal para parsear el HTML
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
 
-                    console.log(`Se agregaron ${addedCount} citas nuevas`);
+                        // Extraer las nuevas citas
+                        const newAppointments = doc.querySelectorAll('.appointment-card');
 
-                    if (addedCount === 0) {
-                        // Si no se agregaron citas nuevas, podría ser que estemos en la última página
-                        if (nextPage >= totalPages) {
+                        if (newAppointments.length === 0) {
+                            // Si no hay más citas, eliminar el botón
                             this.parentNode.remove();
-                        } else {
-                            // O podría ser que todas las citas ya estaban cargadas
-                            // Intentar con la siguiente página
-                            this.setAttribute('data-current-page', nextPage);
-                            setTimeout(() => {
-                                this.click();
-                            }, 500);
+                            return;
                         }
-                        return;
-                    }
 
-                    // Actualizar el botón con la nueva página
-                    this.setAttribute('data-current-page', nextPage);
+                        // Obtener los IDs de las citas actuales
+                        const currentAppointmentIds = Array.from(
+                            document.querySelectorAll('.appointment-card')
+                        ).map(card => card.getAttribute('data-id'));
 
-                    // Verificar si hay más páginas
-                    if (nextPage >= totalPages) {
-                        this.parentNode.remove(); // Eliminar el botón si no hay más páginas
-                    } else {
-                        // Restaurar el botón
-                        this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore" /></span>';
-                        this.disabled = false;
-                    }
+                        // Agregar las nuevas citas
+                        const appointmentsList = document.querySelector('.appointments-list');
+                        const loadMoreContainer = document.querySelector('.load-more-container');
+                        let addedCount = 0;
 
-                    // Inicializar eventos para las nuevas citas
-                    initializeEvents();
-                })
-                .catch(error => {
-                    console.error('Error al cargar más citas:', error);
-                    this.innerHTML = '<i class="fas fa-exclamation-circle"></i> ';
-                    setTimeout(() => {
-                        this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore"  /></span>';
-                        this.disabled = false;
-                    }, 2000);
-                });
+                        newAppointments.forEach(appointment => {
+                            const appointmentId = appointment.getAttribute('data-id');
+
+                            // Verificar si la cita ya existe
+                            if (!currentAppointmentIds.includes(appointmentId)) {
+                                // Clonar el nodo para agregarlo a nuestro DOM
+                                const appointmentNode = document.importNode(appointment, true);
+                                appointmentsList.insertBefore(appointmentNode, loadMoreContainer);
+                                addedCount++;
+                            }
+                        });
+
+
+                        if (addedCount === 0) {
+                            // Si no se agregaron citas nuevas, podría ser que estemos en la última página
+                            if (nextPage >= totalPages) {
+                                this.parentNode.remove();
+                            } else {
+                                // O podría ser que todas las citas ya estaban cargadas
+                                // Intentar con la siguiente página
+                                this.setAttribute('data-current-page', nextPage);
+                                setTimeout(() => {
+                                    this.click();
+                                }, 500);
+                            }
+                            return;
+                        }
+
+                        // Actualizar el botón con la nueva página
+                        this.setAttribute('data-current-page', nextPage);
+
+                        // Verificar si hay más páginas
+                        if (nextPage >= totalPages) {
+                            this.parentNode.remove(); // Eliminar el botón si no hay más páginas
+                        } else {
+                            // Restaurar el botón
+                            this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore" /></span>';
+                            this.disabled = false;
+                        }
+
+                        // Inicializar eventos para las nuevas citas
+                        initializeEvents();
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar más citas:', error);
+                        this.innerHTML = '<i class="fas fa-exclamation-circle"></i> ';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore"  /></span>';
+                            this.disabled = false;
+                        }, 2000);
+                    });
             });
         }
     });
