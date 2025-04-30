@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RatingDao {
-    public Rating create(double rating, int doctorId, int patientId, int appointmentId, String comment, long id);
+    public Rating create(double rating, long doctorId, long patientId, long appointmentId, String comment, long id);
     public Optional<Rating> getRating(int id);
-    public Optional<Rating> getRatingByAppointmentId(int appointmentId);
-    public List<Rating> getRatingsByDoctorId(int doctorId);
-    public List<Rating> getRatingsByPatientId(int patientId);
+    public Optional<Rating> getRatingByAppointmentId(long appointmentId);
+    public List<Rating> getRatingsByDoctorId(long doctorId);
+    public List<Rating> getRatingsByPatientId(long patientId);
 }

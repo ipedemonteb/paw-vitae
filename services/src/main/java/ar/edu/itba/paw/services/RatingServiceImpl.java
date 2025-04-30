@@ -22,7 +22,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Rating create(double rating, int doctorId, int patientId, int appointmentId, String comment, long id) {
+    public Rating create(double rating, long doctorId, long patientId, long appointmentId, String comment, long id) {
         Rating rating_aux = ratingDao.create(rating, doctorId, patientId, appointmentId, comment, id);
         doctorService.UpdateDoctorRating(doctorId, rating_aux.getRating());
         return rating_aux;
@@ -34,17 +34,17 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Optional<Rating> getRatingByAppointmentId(int appointmentId) {
+    public Optional<Rating> getRatingByAppointmentId(long appointmentId) {
         return ratingDao.getRatingByAppointmentId(appointmentId);
     }
 
     @Override
-    public List<Rating> getRatingsByDoctorId(int doctorId) {
+    public List<Rating> getRatingsByDoctorId(long doctorId) {
         return ratingDao.getRatingsByDoctorId(doctorId);
     }
 
     @Override
-    public List<Rating> getRatingsByPatientId(int patientId) {
+    public List<Rating> getRatingsByPatientId(long patientId) {
         return ratingDao.getRatingsByPatientId(patientId);
     }
 
