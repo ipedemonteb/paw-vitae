@@ -179,7 +179,7 @@
 
                                             <button class="btn btn-primary" onclick="window.location.href='/doctor/dashboard/appointment-details/${appointment.id}'">
                                                 <i class="fas fa-eye"></i>
-                                                <span>View Appointment</span>
+                                                <span><spring:message code="appointment.details" /></span>
                                             </button>
                                         </div>
 

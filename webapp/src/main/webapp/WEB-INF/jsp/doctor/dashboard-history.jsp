@@ -163,7 +163,7 @@
                                         <div class="appointment-actions">
                                             <div class="appointment-actions">
                                                 <button class="btn btn-primary" onclick="window.location.href='/doctor/dashboard/appointment-details/${appointment.id}'">
-                                                    Ver Detalles
+                                                    <span><spring:message code="appointment.details" /></span>
                                                 </button>
                                             </div>
                                         </div>
