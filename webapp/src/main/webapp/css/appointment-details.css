@@ -597,7 +597,7 @@ textarea.form-control {
 
 .file-icon {
     font-size: 1.5rem;
-    color: #e74c3c;
+    color: var(--primary-color);
     width: 40px;
     height: 40px;
     display: flex;
