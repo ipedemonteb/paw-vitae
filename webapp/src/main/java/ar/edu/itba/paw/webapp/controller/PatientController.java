@@ -112,9 +112,9 @@ public class PatientController {
 
     @PostMapping(value = "/patient/dashboard/appointment/cancel", produces = "application/json")
     @ResponseBody
-    public String cancelAppointment(@RequestParam("appointmentId") Long appointmentId) {
+    public ModelAndView cancelAppointment(@RequestParam("appointmentId") Long appointmentId) {
         boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
-        return "{\"success\": " + result + "}";
+        return new ModelAndView("redirect:/patient/dashboard/upcoming");
     }
 
     @RequestMapping(value = "patient/dashboard/appointment-details/{id}", method = RequestMethod.GET)

@@ -74,10 +74,10 @@ public class AppointmentServiceImpl implements AppointmentService {
             return false;
         }
 
-        if (appt.get().getDoctor().getId() != userId && appt.get().getPatient().getId() != userId) {
-            LOGGER.debug("User {} is not authorized to cancel appointment {}", userId, appointmentId);
-            return false;
-        }
+//        if (appt.get().getDoctor().getId() != userId && appt.get().getPatient().getId() != userId) {
+//            LOGGER.debug("User {} is not authorized to cancel appointment {}", userId, appointmentId);
+//            return false;
+//        }
         appointmentDao.cancelAppointment(appointmentId);
         appt.get().setStatus(AppointmentStatus.CANCELADO.getValue());
         mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appt.get());
@@ -94,10 +94,10 @@ public class AppointmentServiceImpl implements AppointmentService {
             return false;
         }
 
-        if (appt.get().getDoctor().getId() != userId) {
-            LOGGER.debug("User {} is not authorized to accept appointment {}", userId, appointmentId);
-            return false;
-        }
+//        if (appt.get().getDoctor().getId() != userId) {
+//            LOGGER.debug("User {} is not authorized to accept appointment {}", userId, appointmentId);
+//            return false;
+//        }
         appointmentDao.acceptAppointment(appointmentId);
         appt.get().setStatus(AppointmentStatus.CONFIRMADO.getValue());
         mailService.sendAppointmentStatusEmail("email.acceptedAppointment", appt.get());
