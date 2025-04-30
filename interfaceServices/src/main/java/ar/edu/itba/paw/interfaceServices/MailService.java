@@ -8,8 +8,9 @@ public interface MailService {
 
     public void sendAppointmentStatusEmail(String subject, Appointment appointment);
 
-    @Async
     void sendReminderEmail(Appointment appointment);
 
     void sendRecoverPasswordEmail(User user, String token);
+
+    void sendVerificationRegisterEmail(User user, String verificationLink);
 }
