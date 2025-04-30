@@ -429,7 +429,6 @@
 </script>
 
 <!-- Include the external JavaScript file -->
-<script src="<c:url value='/js/date-time-picker.js'/>"></script>
 <script src="<c:url value='/js/file-upload.js'/>"></script>
 </body>
 </html>
