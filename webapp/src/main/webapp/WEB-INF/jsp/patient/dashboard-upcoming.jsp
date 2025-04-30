@@ -138,8 +138,7 @@
                                                 </button>
                                             </c:if>
                                             <div class="appointment-actions">
-                                                <button class="btn btn-primary view-appointment" onclick="window.location.href='/appointment/${appointment.id}'">
-                                                    <i class="fas fa-eye"></i>
+                                                <button class="btn btn-primary" onclick="window.location.href='/patient/dashboard/appointment-details/${appointment.id}'">                                                    <i class="fas fa-eye"></i>
                                                     <span>View Appointment</span>
                                                 </button>
                                             </div>

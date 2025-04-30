@@ -32,22 +32,31 @@
             </div>
 
             <div class="appointment-body">
+                <c:set var="doctor" value="${appointment.doctor}" />
                 <!-- Display doctor information if available -->
-                <c:if test="${not empty appointment.patient}">
+                <c:if test="${not empty doctor}">
                     <div class="doctor-info">
                         <div class="doctor-image">
                             <img src="<c:url value='/doctor/${doctor.id}/image'/>" alt="<c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/>" class="doctor-avatar">
                         </div>
                         <div class="doctor-details">
-                            <h3 class="doctor-name"><c:out value="${appointment.patient.name}"/> <c:out value="${appointment.patient.lastName}"/></h3>
+                            <h3 class="doctor-name"><c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/></h3>
+                            <div class="card-specialty-list">
+                                <c:forEach var="specialty" items="${doctor.specialtyList}" varStatus="status">
+                                    <p class="doctor-specialty"><spring:message code="${specialty.key}" /></p>
+                                    <c:if test="${!status.last}">
+                                        <span style="white-space: pre">, </span>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
                             <div class="doctor-contact">
                                 <div class="contact-item">
                                     <span class="contact-icon"><i class="fas fa-envelope"></i></span>
-                                    <span class="contact-text"><c:out value="${appointment.patient.email}"/></span>
+                                    <span class="contact-text"><c:out value="${doctor.email}"/></span>
                                 </div>
                                 <div class="contact-item">
                                     <span class="contact-icon"><i class="fas fa-phone"></i></span>
-                                    <span class="contact-text"><c:out value="${appointment.patient.phone}"/></span>
+                                    <span class="contact-text"><c:out value="${doctor.phone}"/></span>
                                 </div>
                             </div>
                         </div>
@@ -127,48 +136,8 @@
                         </c:if>
                     </c:forEach>
                 </div>
-
-                <!-- Form - Preserved as in original -->
-                <form:form modelAttribute="doctorFileForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/appointment-details/${appointment.id}" class="appointment-form" enctype="multipart/form-data">
-                    <!-- Report textarea -->
-                    <div class="form-group">
-                        <label for="report"><spring:message code="appointment.details.report"/></label>
-                        <form:textarea path="report" id="report" class="form-control" rows="4" />
-                        <form:errors path="report" cssClass="error-message" />
-                    </div>
-
-                    <!-- File Upload Section -->
-                    <div class="form-group">
-                        <label for="files">
-                            <spring:message code="appointment.details.files"  />
-                        </label>
-                        <div class="file-upload-container">
-                            <div class="file-upload-dropzone" id="dropZone">
-                                <div class="file-upload-icon">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                </div>
-                                <div class="file-upload-text">
-                                    <p class="file-upload-primary"><spring:message code="file.upload.dragHere"/></p>
-                                    <p class="file-upload-secondary"><spring:message code="file.upload.onlyPdf"/></p>
-                                </div>
-                                <form:input type="file" path="files" id="files" multiple="true" accept=".pdf" class="file-upload-input-hidden" />
-                            </div>
-                            <div id="filePreview" class="file-upload-preview"></div>
-                            <form:errors path="files" cssClass="error-message" />
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <span>
-                                <i class="fas fa-calendar-check"></i>
-                                <spring:message code="appointment.details.doctor.files.upload" />
-                            </span>
-                        </button>
-                    </div>
-                </form:form>
                 <div class="back-button-container">
-                    <a href="${pageContext.request.contextPath}/doctor/dashboard" class="back-button">
+                    <a href="${pageContext.request.contextPath}/patient/dashboard" class="back-button">
                         <i class="fas fa-arrow-left"></i>
                         <span><spring:message code="appointment.details.back" text="Back to My Appointments" /></span>
                     </a>

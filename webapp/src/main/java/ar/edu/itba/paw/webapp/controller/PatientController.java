@@ -1,13 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaceServices.AppointmentService;
-import ar.edu.itba.paw.interfaceServices.PatientService;
-import ar.edu.itba.paw.interfaceServices.CoverageService;
-import ar.edu.itba.paw.interfaceServices.DoctorService;
+import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.AppointmentStatus;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.webapp.exception.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.PatientRatingForm;
 import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +29,14 @@ public class PatientController {
     private final PatientService ps;
     private final AppointmentService as;
     private final CoverageService covs;
+    private final AppointmentFileService afs;
     @Autowired
-    public PatientController(PatientService ps, AppointmentService as, CoverageService covs) {
+    public PatientController(PatientService ps, AppointmentService as, CoverageService covs, AppointmentFileService afs) {
 
         this.ps = ps;
         this.as = as;
         this.covs = covs;
+        this.afs = afs;
     }
 
     @RequestMapping(value = "/patient/dashboard")
@@ -111,15 +112,15 @@ public class PatientController {
         return "{\"success\": " + result + "}";
     }
 
-//        @RequestMapping(value = "patient/dashboard/appointment/{id}", method = RequestMethod.GET)
-//    public ModelAndView patientAppointmentDetails(
-//            @ModelAttribute("patientRatingForm") final PatientRatingForm patientRatingForm,
-//            @PathVariable("id") Long id) {
-//        ModelAndView mav = new ModelAndView("patient/details");
-//        Appointment appointment = as.getById(id).orElseThrow(() ->
-//                new IllegalArgumentException("Invalid appointment Id:" + id));
-//        mav.addObject("appointment", appointment);
-//        mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
-//        return mav;
-//    }
+        @RequestMapping(value = "patient/dashboard/appointment-details/{id}", method = RequestMethod.GET)
+    public ModelAndView patientAppointmentDetails(
+            @ModelAttribute("patientRatingForm") final PatientRatingForm patientRatingForm,
+            @PathVariable("id") Long id) {
+        ModelAndView mav = new ModelAndView("patient/appointment-details");
+        Appointment appointment = as.getById(id).orElseThrow(() ->
+                new IllegalArgumentException("Invalid appointment Id:" + id));
+        mav.addObject("appointment", appointment);
+        mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
+        return mav;
+    }
 }
