@@ -41,7 +41,14 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public Optional<Patient> getById(long id) {
-        return jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id = ?", ROW_MAPPER, id).stream().findFirst();
+        return jdbcTemplate.query(
+                "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
+                        "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
+                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name " +
+                        "FROM Users u JOIN Clients c ON c.client_id = u.id " +
+                        "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id = ?",
+                ROW_MAPPER, id
+        ).stream().findFirst();
     }
 
     @Override
@@ -73,7 +80,14 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public Optional<Patient> getByEmail(String email) {
-        return jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.email = ?", ROW_MAPPER, email).stream().findFirst();
+        return jdbcTemplate.query(
+                "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
+                        "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
+                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name " +
+                        "FROM Users u JOIN Clients c ON c.client_id = u.id " +
+                        "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.email = ?",
+                ROW_MAPPER, email
+        ).stream().findFirst();
     }
 
     @Override
@@ -90,7 +104,15 @@ public class PatientDaoImpl implements PatientDao {
         if (ids.isEmpty()) {
             return Collections.emptyList();
         }
-        return jdbcTemplate.query("SELECT * FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) + ")", ROW_MAPPER, ids.toArray());
+        return jdbcTemplate.query(
+                "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
+                        "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
+                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name " +
+                        "FROM Users u JOIN Clients c ON c.client_id = u.id " +
+                        "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id IN (" +
+                        String.join(",", Collections.nCopies(ids.size(), "?")) + ")",
+                ROW_MAPPER, ids.toArray()
+        );
     }
 
     @Override
