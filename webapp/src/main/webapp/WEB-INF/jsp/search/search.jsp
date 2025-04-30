@@ -121,16 +121,6 @@
             </select>
           </div>
         </div>
-
-        <!-- View Toggle -->
-        <div class="view-toggle">
-          <button class="view-toggle-btn ${not empty param.view ?( param.view == "grid" ? "active" : "") : "active"}" data-view="grid">
-            <i class="fas fa-th-large"></i>
-          </button>
-          <button class="view-toggle-btn ${not empty param.view ? ( param.view == "list" ? "active" : "") : ""}" data-view="list">
-            <i class="fas fa-list"></i>
-          </button>
-        </div>
       </div>
 
       <!-- Interactive Filter Tags -->
@@ -244,17 +234,17 @@
       </div>
 
       <!-- Quick Filters -->
-      <div class="quick-filters">
-        <button class="quick-filter-btn active" data-filter="all">
-          <spring:message code="search.filter.all" />
-        </button>
-        <button class="quick-filter-btn" data-filter="top-rated">
-          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />
-        </button>
-        <button class="quick-filter-btn" data-filter="new">
-          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />
-        </button>
-      </div>
+<%--      <div class="quick-filters">--%>
+<%--        <button class="quick-filter-btn active" data-filter="all">--%>
+<%--          <spring:message code="search.filter.all" />--%>
+<%--        </button>--%>
+<%--        <button class="quick-filter-btn" data-filter="top-rated">--%>
+<%--          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />--%>
+<%--        </button>--%>
+<%--        <button class="quick-filter-btn" data-filter="new">--%>
+<%--          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />--%>
+<%--        </button>--%>
+<%--      </div>--%>
     </div>
 
     <!-- Results Section -->
@@ -263,12 +253,21 @@
         <div class="results-count">
           <c:choose>
             <c:when test="${not empty totalDoctors}">
-              <span><spring:message code="search.results.count" arguments="${totalDoctors}" /></span>
+              <span class="results-span"><spring:message code="search.results.count" arguments="${totalDoctors}" /></span>
             </c:when>
             <c:otherwise>
-              <span><spring:message code="search.results.none" /></span>
+              <span class="results-span"><spring:message code="search.results.none" /></span>
             </c:otherwise>
           </c:choose>
+          <!-- View Toggle -->
+          <div class="view-toggle">
+            <button class="view-toggle-btn ${not empty param.view ?( param.view == "grid" ? "active" : "") : "active"}" data-view="grid">
+              <i class="fas fa-th-large"></i>
+            </button>
+            <button class="view-toggle-btn ${not empty param.view ? ( param.view == "list" ? "active" : "") : ""}" data-view="list">
+              <i class="fas fa-list"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Active Filters -->
