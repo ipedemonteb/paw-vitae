@@ -448,7 +448,6 @@ textarea.form-control {
     padding: 1.5rem;
     border: 1px solid #e2e8f0;
     box-shadow: var(--shadow-sm);
-    margin-bottom: 20px; /* Added spacing */
     width: 100%; /* Ensure full width */
 }
 
