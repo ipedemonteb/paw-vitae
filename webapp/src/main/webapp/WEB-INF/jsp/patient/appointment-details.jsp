@@ -4,6 +4,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -20,11 +21,23 @@
 <!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
+<!-- Toast notification -->
+<div id="toast-notification" class="toast-notification">
+    <div class="toast-icon">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    <div class="toast-content">
+        <div class="toast-title"><spring:message code="appointment.rating.success" text="Success!" /></div>
+        <div class="toast-message"><spring:message code="appointment.rating.success" text="Your rating has been submitted successfully." /></div>
+    </div>
+    <button class="toast-close">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
 <!-- Main Content -->
 <main class="main-content">
     <div class="container">
-        <!-- Back button to My Appointments -->
-
         <div class="appointment-container">
             <div class="appointment-header">
                 <h1 class="appointment-title"><spring:message code="appointment.details.page.title" /></h1>
@@ -63,7 +76,7 @@
                     </div>
                 </c:if>
 
-                <!-- Status field - NEW -->
+                <!-- Status field -->
                 <div class="specialty-card-appointment status-card">
                     <div class="specialty-icon-appointment">
                         <i class="fas fa-clipboard-check"></i>
@@ -89,10 +102,12 @@
                             <div class="date-time-info">
                                 <div class="date-info">
                                     <i class="fas fa-calendar-alt"></i>
-                                    <c:out value="${appointment.date.toLocalDate()}"/>                                </div>
+                                    <c:out value="${appointment.date.toLocalDate()}"/>
+                                </div>
                                 <div class="time-info">
                                     <i class="fas fa-clock"></i>
-                                    <c:out value="${appointment.date.toLocalTime()}"/>                                </div>
+                                    <c:out value="${appointment.date.toLocalTime()}"/>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -118,24 +133,150 @@
                     </div>
                 </div>
 
-                <div class="files-list">
-                    <lable class="files-lable"><spring:message code="appointment.details.patient.files.title"/></lable>
-                    <c:forEach var="file" items="${patientFiles}">
-                        <c:if test="${file.uploader_role == 'patient'}">
-                            <div class="file-item">
-                                <div class="file-icon">
-                                    <i class="far fa-file-pdf"></i>
+                <!-- Check if appointment has passed -->
+                <c:set var="now" value="<%= new java.util.Date() %>" />
+                <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="appointmentDate" type="both" />
+                <c:if test="${appointmentDate.time < now.time}">
+                    <sec:authorize access="hasRole('PATIENT')">
+                        <div class="rating-section">
+                            <h2 class="rating-title">
+                                <i class="fas fa-star"></i>
+                                <spring:message code="appointment.details.review.title" />
+                            </h2>
+
+                            <c:choose>
+                                <c:when test="${not empty existingRating}">
+                                    <!-- Display existing rating -->
+                                    <div class="existing-review">
+                                        <div class="review-header">
+                                            <div class="review-stars">
+                                                <c:forEach begin="1" end="5" var="star">
+                                                    <i class="fa${star <= existingRating.rating ? 's' : 'r'} fa-star" aria-hidden="true"></i>
+                                                </c:forEach>
+                                                <span class="rating-value"><c:out value="${existingRating.rating}"/></span>
+                                            </div>
+                                        </div>
+                                        <div class="review-comment">
+                                            <c:out value="${existingRating.comment}" />
+                                        </div>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <!-- Review form -->
+                                    <form:form modelAttribute="patientRatingForm" method="post" action="${pageContext.request.contextPath}/patient/dashboard/appointment/rate" class="rating-form" id="ratingForm">
+                                        <form:hidden path="appointmentId" value="${appointment.id}" />
+
+                                        <div class="form-group">
+                                            <label class="required-field">
+                                                <spring:message code="appointment.details.review.rating" />
+                                            </label>
+                                            <div class="star-rating">
+                                                <div class="stars-container">
+                                                    <c:forEach begin="1" end="5" var="star">
+                                                        <form:radiobutton path="rating" id="star${star}" value="${star}" cssClass="star-input" />
+                                                        <label for="star${star}" class="star-label" data-value="${star}"><i class="fas fa-star"></i></label>
+                                                    </c:forEach>
+                                                </div>
+                                                <div class="rating-display">0.0</div>
+                                            </div>
+                                            <form:errors path="rating" cssClass="error-message" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="comment" class="required-field">
+                                                <spring:message code="appointment.details.review.comment" />
+                                            </label>
+                                            <form:textarea path="comment" id="comment" class="form-control" rows="4" />
+                                            <form:errors path="comment" cssClass="error-message" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-star"></i>
+                                                <spring:message code="appointment.details.review.submit" />
+                                            </button>
+                                        </div>
+                                    </form:form>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </sec:authorize>
+                </c:if>
+
+                <!-- Patient Files Section -->
+                <div class="files-section">
+                    <h2 class="files-title">
+                        <i class="fas fa-file-medical"></i>
+                        <spring:message code="appointment.details.patient.files.title"/>
+                    </h2>
+
+                    <div class="files-list">
+                        <c:set var="hasPatientFiles" value="false" />
+                        <c:forEach var="file" items="${patientFiles}">
+                            <c:if test="${file.uploader_role == 'patient'}">
+                                <c:set var="hasPatientFiles" value="true" />
+                                <div class="file-item">
+                                    <div class="file-icon">
+                                        <i class="far fa-file-pdf"></i>
+                                    </div>
+                                    <div class="file-info">
+                                        <div class="file-name"><c:out value="${file.fileName}" /></div>
+                                    </div>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
+                                        <i class="fas fa-download"></i>
+                                    </a>
                                 </div>
-                                <div class="file-info">
-                                    <div class="file-name"><c:out value="${file.fileName}" /></div>
+                            </c:if>
+                        </c:forEach>
+
+                        <c:if test="${not hasPatientFiles}">
+                            <div class="no-files-message">
+                                <div class="no-files-content">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p><spring:message code="appointment.details.patient.nofiles" /></p>
                                 </div>
-                                <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
-                                    <i class="fas fa-download"></i>
-                                </a>
                             </div>
                         </c:if>
-                    </c:forEach>
+                    </div>
                 </div>
+
+                <!-- Doctor Files Section -->
+                <div class="files-section">
+                    <h2 class="files-title">
+                        <i class="fas fa-file-medical-alt"></i>
+                        <spring:message code="appointment.details.doctor.files.title"/>
+                    </h2>
+
+                    <div class="files-list">
+                        <c:set var="hasDoctorFiles" value="false" />
+                        <c:forEach var="file" items="${patientFiles}">
+                            <c:if test="${file.uploader_role == 'doctor'}">
+                                <c:set var="hasDoctorFiles" value="true" />
+                                <div class="file-item">
+                                    <div class="file-icon">
+                                        <i class="far fa-file-pdf"></i>
+                                    </div>
+                                    <div class="file-info">
+                                        <div class="file-name"><c:out value="${file.fileName}" /></div>
+                                    </div>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+
+                        <c:if test="${not hasDoctorFiles}">
+                            <div class="no-files-message">
+                                <div class="no-files-content">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p><spring:message code="appointment.details.doctor.nofiles" /></p>
+                                </div>
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+
                 <div class="back-button-container">
                     <a href="${pageContext.request.contextPath}/patient/dashboard" class="back-button">
                         <i class="fas fa-arrow-left"></i>
@@ -147,122 +288,136 @@
     </div>
 </main>
 
-<!-- Add message translations for JavaScript -->
 <script>
-    // Create a messages object to be used by the JavaScript
-    window.appointmentMessages = {
-        months: [
-            '<spring:message code="calendar.month.january" />',
-            '<spring:message code="calendar.month.february" />',
-            '<spring:message code="calendar.month.march" />',
-            '<spring:message code="calendar.month.april" />',
-            '<spring:message code="calendar.month.may" />',
-            '<spring:message code="calendar.month.june" />',
-            '<spring:message code="calendar.month.july" />',
-            '<spring:message code="calendar.month.august" />',
-            '<spring:message code="calendar.month.september" />',
-            '<spring:message code="calendar.month.october" />',
-            '<spring:message code="calendar.month.november" />',
-            '<spring:message code="calendar.month.december" />'
-        ],
-        weekdays: [
-            '<spring:message code="calendar.day.sunday" />',
-            '<spring:message code="calendar.day.monday" />',
-            '<spring:message code="calendar.day.tuesday" />',
-            '<spring:message code="calendar.day.wednesday" />',
-            '<spring:message code="calendar.day.thursday" />',
-            '<spring:message code="calendar.day.friday" />',
-            '<spring:message code="calendar.day.saturday" />'
-        ],
-        weekdaysShort: [
-            '<spring:message code="calendar.day.short.sun" />',
-            '<spring:message code="calendar.day.short.mon" />',
-            '<spring:message code="calendar.day.short.tue" />',
-            '<spring:message code="calendar.day.short.wed" />',
-            '<spring:message code="calendar.day.short.thu" />',
-            '<spring:message code="calendar.day.short.fri" />',
-            '<spring:message code="calendar.day.short.sat" />'
-        ],
-        appointmentAt: '<spring:message code="appointment.at" />',
-        noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />',
-        fileUpload: {
-            dragHere: '<spring:message code="file.upload.dragHere"  />',
-            onlyPdf: '<spring:message code="file.upload.onlyPdf"  />',
-            tooManyFiles: '<spring:message code="file.upload.tooManyFiles"  />',
-            invalidType: '<spring:message code="file.upload.invalidType"  />',
-            fileAdded: '<spring:message code="file.upload.fileAdded"  />',
-            fileRemoved: '<spring:message code="file.upload.fileRemoved" />',
-            fileTooLarge: '<spring:message code="file.upload.fileTooLarge" />'
+    document.addEventListener('DOMContentLoaded', function() {
+        // Star rating functionality
+        const starInputs = document.querySelectorAll('.star-input');
+        const ratingDisplay = document.querySelector('.rating-display');
+        const starLabels = document.querySelectorAll('.star-label');
+
+        if (starInputs.length > 0 && ratingDisplay) {
+            // Initialize star rating
+            starInputs.forEach((input, index) => {
+                input.addEventListener('change', function() {
+                    const value = parseInt(this.value);
+                    ratingDisplay.textContent = value + '.0';
+
+                    // Update visual state of stars - left to right
+                    starLabels.forEach((label) => {
+                        const starValue = parseInt(label.getAttribute('data-value'));
+                        if (starValue <= value) {
+                            label.classList.add('selected');
+                        } else {
+                            label.classList.remove('selected');
+                        }
+                    });
+                });
+            });
+
+            // Add hover effects - left to right
+            starLabels.forEach((label) => {
+                label.addEventListener('mouseenter', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+
+                    // Preview stars on hover
+                    starLabels.forEach((l) => {
+                        const starValue = parseInt(l.getAttribute('data-value'));
+                        if (starValue <= value) {
+                            l.classList.add('hover');
+                        } else {
+                            l.classList.remove('hover');
+                        }
+                    });
+                });
+
+                label.addEventListener('mouseleave', function() {
+                    // Remove hover class from all stars
+                    starLabels.forEach(l => l.classList.remove('hover'));
+
+                    // Restore selected stars
+                    const selectedInput = document.querySelector('.star-input:checked');
+                    if (selectedInput) {
+                        const selectedValue = parseInt(selectedInput.value);
+                        starLabels.forEach((l) => {
+                            const starValue = parseInt(l.getAttribute('data-value'));
+                            if (starValue <= selectedValue) {
+                                l.classList.add('selected');
+                            } else {
+                                l.classList.remove('selected');
+                            }
+                        });
+                    }
+                });
+            });
         }
-    };
-    contextPath = "${pageContext.request.contextPath}";
 
+        // Handle form submission with AJAX
+        const ratingForm = document.getElementById('ratingForm');
+        if (ratingForm) {
+            ratingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
 
-    const availabilitySlots = [
-        <c:forEach var="slot" items="${doctor.availabilitySlots}" varStatus="status">
-        {
-            dayOfWeek: ${slot.dayOfWeek},
-            startTime: ${slot.startTime.hour},
-            endTime: ${slot.endTime.hour},
-            slots: ${slot.endTime.hour - slot.startTime.hour + 1}
-        }<c:if test="${!status.last}">,</c:if>
-        </c:forEach>
-    ];
+                // Get form data
+                const formData = new FormData(ratingForm);
+                const url = ratingForm.getAttribute('action');
 
+                // Send AJAX request
+                fetch(url, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // Show toast notification
+                            showToast();
 
-    const argDate = new Date().toLocaleString("en-US", {
-        timeZone: "America/Argentina/Buenos_Aires",
+                            // Reload the page after a short delay
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            console.error('Error submitting rating');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        }
+
+        // Toast notification functionality
+        const toast = document.getElementById('toast-notification');
+        const toastClose = document.querySelector('.toast-close');
+
+        function showToast() {
+            toast.classList.add('show');
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                hideToast();
+            }, 5000);
+        }
+
+        function hideToast() {
+            toast.classList.remove('show');
+        }
+
+        if (toastClose) {
+            toastClose.addEventListener('click', hideToast);
+        }
+
+        // Check if there's a URL parameter indicating a successful rating
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('rated') && urlParams.get('rated') === 'true') {
+            // Show toast notification
+            showToast();
+
+            // Remove the parameter from URL without refreshing
+            const url = new URL(window.location);
+            url.searchParams.delete('rated');
+            window.history.replaceState({}, '', url);
+        }
     });
-    const today = new Date(argDate);
-
-
-    const appointments = [
-        <c:forEach var="app" varStatus="status" items="${doctor.appointments}">
-        {
-            date: "${app.date}",
-            hour: ${app.date.hour},
-        }<c:if test="${!status.last}">,</c:if>
-        </c:forEach>
-    ].filter(app => {
-        const appointmentDate = new Date(app.date);
-        return appointmentDate > today || (appointmentDate === today && appointmentDate.getHours() > today.getHours()); // Filter out past appointments
-    })
-
-    const futureAppointments = Object.entries(
-        appointments.reduce((acc, appointment) => {
-            const date = new Date(appointment.date).toISOString().split('T')[0];  // Extract local date
-            const hour = appointment.hour; // Extract hour
-            if (!acc[date]) {
-                acc[date] = [];
-            } else if(acc[date].includes(hour)) {
-                return acc;
-            }
-            acc[date].push(hour);
-            return acc;
-        }, {})
-    );
-    const FutureAppointments = futureAppointments.map(([date, hours]) => {
-        return {
-            date: date,
-            hours: hours
-        };
-    });
-
-    const fixedHeader = document.querySelector(".main-header");
-    const mainContent = document.querySelector("main");
-
-    if (fixedHeader && mainContent) {
-        const adjustContentMargin = () => {
-            const headerHeight = fixedHeader.offsetHeight;
-            mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-        };
-
-        // Adjust on page load
-        adjustContentMargin();
-
-        // Adjust on window resize
-        window.addEventListener("resize", adjustContentMargin);
-    }
 </script>
 
 <!-- Include the external JavaScript file -->
