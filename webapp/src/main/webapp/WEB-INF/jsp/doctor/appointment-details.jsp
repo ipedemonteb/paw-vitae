@@ -135,10 +135,6 @@
                         <c:otherwise>
                             <!-- Styled No Reviews Message -->
                             <div class="review-card">
-                                <div class="review-card-title">
-                                    <i class="fas fa-star"></i>
-                                    <spring:message code="appointment.details.review.title" text="Patient Review" />
-                                </div>
                                 <div class="no-reviews-message" style="border: none; box-shadow: none; margin-bottom: 0;">
                                     <div class="no-reviews-icon">
                                         <i class="far fa-star"></i>
@@ -153,7 +149,9 @@
 
                 <div class="files-list">
                     <lable class="files-lable"><spring:message code="appointment.details.patient.files.title"/></lable>
-                    <c:forEach var="file" items="${patientFiles}">
+                        <c:choose>
+                        <c:when test="${not empty patientFiles}">
+                            <c:forEach var="file" items="${patientFiles}">
                         <c:if test="${file.uploader_role == 'patient'}">
                             <div class="file-item">
                                 <div class="file-icon">
@@ -168,6 +166,15 @@
                             </div>
                         </c:if>
                     </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="review-card">
+                                <div class="no-reviews-message" style="border: none; box-shadow: none; margin-bottom: 0;">
+                                    <h3 class="no-reviews-title"><spring:message code="appointment.details.files.none" /></h3>
+                                </div>
+                            </div>
+                        </c:otherwise>
+                        </c:choose>
                 </div>
 
                 <!-- Form - Preserved as in original -->
@@ -212,7 +219,7 @@
                 <div class="back-button-container">
                     <a href="${pageContext.request.contextPath}/doctor/dashboard" class="back-button">
                         <i class="fas fa-arrow-left"></i>
-                        <span><spring:message code="appointment.details.back" text="Back to My Appointments" /></span>
+                        <span><spring:message code="appointment.details.back"/></span>
                     </a>
                 </div>
             </div>
