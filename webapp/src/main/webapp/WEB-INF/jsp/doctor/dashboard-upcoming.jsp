@@ -15,12 +15,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><spring:message code="dashboard.upcoming.title" /></title>
     <link rel="stylesheet" href="<c:url value='/css/doctor-dashboard.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
+
+<div id="successToast" class="success-toast">
+    <div class="success-toast-icon">
+        <i class="fas fa-check"></i>
+    </div>
+    <div class="success-toast-content">
+        <div class="success-toast-title"><spring:message code="appointment.cancel.success.title"/></div>
+        <div class="success-toast-message"><spring:message code="appointment.cancel.success.message"/></div>
+    </div>
+    <button class="success-toast-close" onclick="hideSuccessToast()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
 
 <div class="dashboard-container">
     <!-- Doctor Profile Header -->
@@ -267,6 +281,15 @@
             document.getElementById('cancelAppointmentModal').classList.remove('show');
         }
 
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('cancelled') === 'true') {
+            showSuccessToast();
+
+            // Remove the query parameter without refreshing the page
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+
         // Confirm appointment functionality
         const confirmButtons = document.querySelectorAll('.confirm-appointment');
         confirmButtons.forEach(button => {
@@ -470,5 +493,7 @@
         }
     });
 </script>
+
+<script src="<c:url value="/js/toast-notification.js"/> "></script>
 </body>
 </html>

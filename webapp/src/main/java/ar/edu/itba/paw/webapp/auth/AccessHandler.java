@@ -23,7 +23,7 @@ public class AccessHandler {
      * @return true if the currently authenticated user is
      *         either the client or the doctor on that appointment
      */
-    public boolean canViewAppointment(Authentication auth, Long appointmentId) {
+    public boolean canViewAppointmentDetails(Authentication auth, Long appointmentId) {
         Object principal = auth.getPrincipal();
         if(!(principal instanceof AuthUserDetails)) {
             return false;
