@@ -2,6 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 
 <c:set var="specialtyName">
   <c:choose>
@@ -332,7 +334,7 @@
                         <i class="far fa-star"></i>
                       </c:forEach>
                     </div>
-                    <span class="rating-count">${doctor.rating}</span>
+                    <span class="rating-count"><fmt:formatNumber value="${doctor.rating}" type="number" maxFractionDigits="1" minFractionDigits="1" /></span>
                   </div>
                 </div>
 
