@@ -13,7 +13,7 @@
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/V-logo.svg/2048px-V-logo.svg.png" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><spring:message code="appointment.page.title" /></title>
+    <title><spring:message code="appointment.details.page.title" /></title>
     <link rel="stylesheet" href="<c:url value='/css/appointment-details.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -29,7 +29,7 @@
         <div class="appointment-container">
             <div class="appointment-header">
                 <h1 class="appointment-title"><spring:message code="appointment.details.page.title" /></h1>
-                <p class="appointment-subtitle"><spring:message code="appointment.subtitle" /></p>
+                <p class="appointment-subtitle"><spring:message code="appointment.details.subtitle" /></p>
             </div>
 
             <div class="appointment-body">
