@@ -48,11 +48,13 @@ public class PatientController {
     }
 
     @RequestMapping(value = "/patient/dashboard/upcoming")
-    public ModelAndView getUpcomingAppointments(@RequestParam(value = "page", defaultValue = "1") int page) {
+    public ModelAndView getUpcomingAppointments(@RequestParam(value = "page", defaultValue = "1") int page,
+                                                @RequestParam(defaultValue = "all", required = false) String dateRange){
+
         final ModelAndView mav = new ModelAndView("patient/dashboard-upcoming");
         Patient patient = loggedUser();
         mav.addObject("patient", patient);
-        var appointmentsPage = as.getFuturePatientAppointments(patient.getId(), page, 5);
+        var appointmentsPage = as.getFuturePatientAppointments(patient.getId(), page, 5,dateRange,null);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
         mav.addObject("activeTab", "upcoming");
         mav.addObject("currentPage", page);
@@ -63,11 +65,12 @@ public class PatientController {
     }
 
     @RequestMapping(value = "/patient/dashboard/history")
-    public ModelAndView getAppointmentHistory(@RequestParam(value = "page", defaultValue = "1") int page) {
+    public ModelAndView getAppointmentHistory(@RequestParam(value = "page", defaultValue = "1") int page,
+                                              @RequestParam( defaultValue = "all",required = false) String status){
         final ModelAndView mav = new ModelAndView("patient/dashboard-history");
         Patient patient = loggedUser();
         mav.addObject("patient", patient);
-        var appointmentsPage = as.getPastPatientAppointments(patient.getId(), page, 5);
+        var appointmentsPage = as.getPastPatientAppointments(patient.getId(), page, 5, null, status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         System.out.println("acaaaa" + appointmentsPage.getContent());
         mav.addObject("activeTab", "history");

@@ -202,41 +202,32 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
 
     @Override
-    public List<Appointment> getPastDoctorAppointments(long doctorId, int page, int size) {
-        String sql = BASE_SQL +
-                "WHERE a.doctor_id = ? AND (a.date < NOW() OR a.status = 'cancelado') " +
-                ORDER_BY_DATE_DESC +
-                "LIMIT ? OFFSET ?";
+    public List<Appointment> getPastDoctorAppointments(long doctorId, int page, int size, String dateRange, String status) {
+        String sql = BASE_SQL + BuildStatusCondition("a.doctor_id", status) +
+                ORDER_BY_DATE_DESC + "LIMIT ? OFFSET ?";
 
         return jdbcTemplate.query(sql, ROW_MAPPER, doctorId, size, (page - 1) * size);
     }
 
     @Override
-    public List<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size) {
-        String sql = BASE_SQL +
-                "WHERE a.doctor_id = ? AND a.date > NOW() AND a.status <> 'cancelado' " +
-                ORDER_BY_DATE_ASC +
-                "LIMIT ? OFFSET ?";
+    public List<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size, String dateRange, String status) {
+        String sql = BASE_SQL + buildDateRangeCondition("a.doctor_id", dateRange) +
+                ORDER_BY_DATE_ASC + "LIMIT ? OFFSET ?";
 
         return jdbcTemplate.query(sql, ROW_MAPPER, doctorId, size, (page - 1) * size);
     }
 
     @Override
-    public List<Appointment> getFuturePatientAppointments(long patientId, int page, int size) {
-        String sql = BASE_SQL +
-                "WHERE a.client_id = ? AND a.date > NOW() AND a.status <> 'cancelado' " +
-                ORDER_BY_DATE_ASC +
-                "LIMIT ? OFFSET ?";
-
+    public List<Appointment> getFuturePatientAppointments(long patientId, int page, int size, String dateRange, String status) {
+        String sql = BASE_SQL + buildDateRangeCondition("a.client_id", dateRange) +
+                ORDER_BY_DATE_ASC + "LIMIT ? OFFSET ?";
         return jdbcTemplate.query(sql, ROW_MAPPER, patientId, size, (page - 1) * size);
     }
 
     @Override
-    public List<Appointment> getPastPatientAppointments(long patientId, int page, int size) {
-        String sql = BASE_SQL +
-                "WHERE a.client_id = ? AND (a.date < NOW() OR a.status = 'cancelado') " +
-                ORDER_BY_DATE_DESC +
-                "LIMIT ? OFFSET ?";
+    public List<Appointment> getPastPatientAppointments(long patientId, int page, int size, String dateRange, String status) {
+        String sql = BASE_SQL + BuildStatusCondition("a.client_id", status) +
+                ORDER_BY_DATE_DESC + "LIMIT ? OFFSET ?";
 
         return jdbcTemplate.query(sql, ROW_MAPPER, patientId, size, (page - 1) * size);
     }
@@ -251,27 +242,52 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
     @Override
-    public int countFuturePatientAppointments(long patientId) {
-        String sql = "SELECT COUNT(*) FROM Appointments WHERE client_id = ? AND date > NOW() AND status <> 'cancelado'";
+    public int countFuturePatientAppointments(long patientId, String dateRange) {
+        String sql = "SELECT COUNT(*) FROM Appointments a ";
+        sql += buildDateRangeCondition("a.client_id", dateRange);
         return jdbcTemplate.queryForObject(sql, Integer.class, patientId);
     }
 
     @Override
-    public int countPastPatientAppointments(long patientId) {
-        String sql = "SELECT COUNT(*) FROM Appointments WHERE client_id = ? AND (date < NOW() OR status = 'cancelado')";
+    public int countPastPatientAppointments(long patientId,String status) {
+        String sql = "SELECT COUNT(*) FROM Appointments a ";
+        sql += BuildStatusCondition("a.client_id", status);
         return jdbcTemplate.queryForObject(sql, Integer.class, patientId);
     }
 
     @Override
-    public int countFutureDoctorAppointments(long doctorId) {
-        String sql = "SELECT COUNT(*) FROM Appointments WHERE doctor_id = ? AND date > NOW() AND status <> 'cancelado'";
+    public int countFutureDoctorAppointments(long doctorId,String dateRange) {
+        String sql = "SELECT COUNT(*) FROM Appointments a ";
+        sql += buildDateRangeCondition("a.doctor_id", dateRange);
         return jdbcTemplate.queryForObject(sql, Integer.class, doctorId);
     }
 
     @Override
-    public int countPastDoctorAppointments(long doctorId) {
-        String sql = "SELECT COUNT(*) FROM Appointments WHERE doctor_id = ? AND (date < NOW() OR status = 'cancelado')";
+    public int countPastDoctorAppointments(long doctorId,String status) {
+        String sql = "SELECT COUNT(*) FROM Appointments a ";
+        sql += BuildStatusCondition("a.doctor_id", status);
         return jdbcTemplate.queryForObject(sql, Integer.class, doctorId);
     }
+
+    private String buildDateRangeCondition(String idColumn, String dateRange) {
+        return switch (dateRange) {
+            case "today" -> "WHERE " + idColumn + " = ? AND DATE(a.date)  = CURRENT_DATE AND a.status <> 'cancelado' AND a.date > NOW() ";
+            case "week" -> "WHERE " + idColumn + " = ? AND a.date BETWEEN NOW() AND NOW() + INTERVAL '7 DAYS' AND a.status <> 'cancelado' ";
+            case "month" -> "WHERE " + idColumn + " = ? AND a.date BETWEEN NOW() AND NOW() + INTERVAL '1 MONTH' AND a.status <> 'cancelado' ";
+            default -> "WHERE " + idColumn + " = ? AND a.date > NOW() AND a.status <> 'cancelado' ";
+        };
+    }
+
+    private String BuildStatusCondition(String idColumn, String status) {
+        return switch (status) {
+            case "completed" -> "WHERE " + idColumn + " = ? AND a.status = 'confirmado' AND a.date < NOW() ";
+            case "cancelled" -> "WHERE " + idColumn + " = ? AND a.status = 'cancelado' ";
+            case "all" -> "WHERE " + idColumn + " = ? AND a.date < NOW() ";
+            default -> "";
+            case "confirmed" -> "WHERE " + idColumn + " = ? AND a.status = 'confirmado' AND a.date < NOW() ";
+        };
+    }
+
+
 
 }
