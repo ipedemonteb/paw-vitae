@@ -34,5 +34,38 @@ public class AccessHandler {
                         || a.getDoctor().getId() == userId)
                 .orElse(false);
     }
+
+    /**
+     * @return true if the currently logged user is a doctor and
+     * partaker of the appointment, thus can confirm it
+     */
+    public boolean canConfirmAppointment(Authentication auth, Long appointmentId) {
+        Object principal = auth.getPrincipal();
+        if (!(principal instanceof AuthUserDetails)) {
+            return false;
+        }
+        long userId = userSvc.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
+        return apptSvc.getById(appointmentId)
+                .map(a -> a.getDoctor().getId() == userId)
+                .orElse(false);
+    }
+
+    /**
+     * @return true if the current user is a partaker of
+     * the appointment, thus can cancel it
+     */
+
+    public boolean canCancelAppointment(Authentication auth, Long appointmentId) {
+        Object principal = auth.getPrincipal();
+        if (!(principal instanceof AuthUserDetails)) {
+            return false;
+        }
+        long userId = userSvc.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
+        return apptSvc.getById(appointmentId)
+                .map(a -> a.getPatient().getId() == userId
+                        || a.getDoctor().getId() == userId)
+                .orElse(false);
+    }
+
 }
 
