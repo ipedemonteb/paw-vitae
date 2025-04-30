@@ -10,25 +10,25 @@ import org.springframework.stereotype.Repository;
 public class DaoUtils {
 
     public static final RowMapper<Doctor> DOCTOR_ROW_MAPPER = (rs, rowNum) -> new Doctor(
-            rs.getString("name"),
-            rs.getLong("id"),
-            rs.getString("last_name"),
-            rs.getString("email"),
-            rs.getString("password"),
-            rs.getString("phone"),
-            rs.getString("language"),
+            rs.getString("doctor_name"),
+            rs.getLong("doctor_id"),
+            rs.getString("doctor_last_name"),
+            rs.getString("doctor_email"),
+            rs.getString("doctor_password"),
+            rs.getString("doctor_phone"),
+            rs.getString("doctor_language"),
             rs.getDouble("rating"),
             rs.getInt("rating_count")
     );
 
     public final static RowMapper<Patient> PATIENT_ROW_MAPPER = (rs, rowNum) -> new Patient(
-            rs.getString("name"),
-            rs.getLong("id"),
-            rs.getString("last_name"),
-            rs.getString("email"),
-            rs.getString("password"),
-            rs.getString("phone"),
-            rs.getString("language"),
+            rs.getString("patient_name"), // Use the alias patient_name
+            rs.getLong("patient_id"),    // Use the alias patient_id
+            rs.getString("patient_last_name"),
+            rs.getString("patient_email"),
+            rs.getString("patient_password"),
+            rs.getString("patient_phone"),
+            rs.getString("patient_language"),
             new Coverage(rs.getLong("coverage_id"), rs.getString("coverage_name"))
     );
 
