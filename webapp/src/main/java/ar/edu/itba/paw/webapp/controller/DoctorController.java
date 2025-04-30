@@ -127,9 +127,9 @@ public class DoctorController {
 
     @PostMapping(value = "/doctor/dashboard/appointment/cancel", produces = "application/json")
     @ResponseBody
-    public String cancelAppointment(@RequestParam("appointmentId") Long appointmentId){
+    public ModelAndView cancelAppointment(@RequestParam("appointmentId") Long appointmentId){
         boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
-        return "{\"success\": " + result + "}";
+        return new ModelAndView("redirect:/doctor/dashboard/upcoming");
     }
 
     @RequestMapping(value = "/doctor/dashboard/availability/update", method = RequestMethod.POST)
@@ -143,14 +143,6 @@ public class DoctorController {
         form.setAvailabilitySlots(form.getAvailabilitySlots());
         ds.updateDoctorAvailability(loggedUser().getId(), form.getAvailabilitySlots());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
-    }
-
-
-    @PostMapping(value = "/doctor/dashboard/appointment/accept", produces = "application/json")
-    @ResponseBody
-    public String acceptAppointment(@RequestParam("appointmentId") Long appointmentId){
-        boolean result = as.acceptAppointment(appointmentId, loggedUser().getId());
-        return "{\"success\": " + result + "}";
     }
 
     @RequestMapping(value = "doctor/dashboard/appointment-details/{id}", method = RequestMethod.GET)
