@@ -43,12 +43,13 @@ public class DoctorController {
         return new ModelAndView("redirect:/doctor/dashboard/upcoming");
     }
 
-    @RequestMapping(value = "/doctor/dashboard/upcoming")
-    public ModelAndView getUpcomingAppointments(@RequestParam(defaultValue = "1") int page) {
+    @RequestMapping(value = "/doctor/dashboard/upcoming",method = RequestMethod.GET)
+    public ModelAndView getUpcomingAppointments(@RequestParam(defaultValue = "1") int page,
+                                                @RequestParam(defaultValue = "all", required = false) String dateRange){
         final ModelAndView mav = new ModelAndView("doctor/dashboard-upcoming");
         Doctor doctor = loggedUser();
         mav.addObject("doctor", doctor);
-        Page<Appointment> appointmentsPage = as.getFutureDoctorAppointments(doctor.getId(), page, 5);
+        Page<Appointment> appointmentsPage = as.getFutureDoctorAppointments(doctor.getId(), page, 5,dateRange,null);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
@@ -61,11 +62,12 @@ public class DoctorController {
 
 
     @RequestMapping(value = "/doctor/dashboard/history")
-    public ModelAndView getAppointmentHistory(@RequestParam(defaultValue = "1") int page) {
+    public ModelAndView getAppointmentHistory(@RequestParam(defaultValue = "1") int page,
+                                              @RequestParam(defaultValue = "all", required = false) String status){
         final ModelAndView mav = new ModelAndView("doctor/dashboard-history");
         Doctor doctor = loggedUser();
         mav.addObject("doctor", doctor);
-        Page<Appointment> appointmentsPage = as.getPastDoctorAppointments(doctor.getId(), page, 5);
+        Page<Appointment> appointmentsPage = as.getPastDoctorAppointments(doctor.getId(), page, 5,null,status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
@@ -125,9 +127,9 @@ public class DoctorController {
 
     @PostMapping(value = "/doctor/dashboard/appointment/cancel", produces = "application/json")
     @ResponseBody
-    public String cancelAppointment(@RequestParam("appointmentId") Long appointmentId){
+    public ModelAndView cancelAppointment(@RequestParam("appointmentId") Long appointmentId){
         boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
-        return "{\"success\": " + result + "}";
+        return new ModelAndView("redirect:/doctor/dashboard/upcoming");
     }
 
     @RequestMapping(value = "/doctor/dashboard/availability/update", method = RequestMethod.POST)
@@ -143,14 +145,6 @@ public class DoctorController {
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
 
-
-    @PostMapping(value = "/doctor/dashboard/appointment/accept", produces = "application/json")
-    @ResponseBody
-    public String acceptAppointment(@RequestParam("appointmentId") Long appointmentId){
-        boolean result = as.acceptAppointment(appointmentId, loggedUser().getId());
-        return "{\"success\": " + result + "}";
-    }
-
     @RequestMapping(value = "doctor/dashboard/appointment-details/{id}", method = RequestMethod.GET)
     public ModelAndView doctorAppointmentDetails(
             @ModelAttribute("doctorFileForm") final DoctorFileForm doctorFileForm,
@@ -160,6 +154,7 @@ public class DoctorController {
                 new IllegalArgumentException("Invalid appointment Id:" + id));
         mav.addObject("appointment", appointment);
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
+        mav.addObject("doctorFiles", afs.getByAppointmentId(appointment.getId()));
         Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
         mav.addObject("existingRating", existingRating.orElse(null));
         return mav;

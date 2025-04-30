@@ -782,14 +782,6 @@ body {
     gap: 0.4rem;
 }
 
-.reason-label::before {
-    content: "\f075";
-    font-family: "Font Awesome 6 Free";
-    font-weight: 400;
-    color: var(--primary-color);
-    font-size: 0.75rem;
-}
-
 .reason-text {
     font-size: 0.9rem;
     color: var(--text-color);
@@ -820,13 +812,6 @@ body {
     align-items: center;
     gap: 0.4rem;
     transition: var(--transition);
-}
-
-.specialty-badge::before {
-    content: "\f0fa";
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    font-size: 0.7rem;
 }
 
 .specialty-badge:hover {

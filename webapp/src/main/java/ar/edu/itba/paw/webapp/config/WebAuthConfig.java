@@ -59,6 +59,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/portal", "/search", "/appointment/booked-times-by-date").access("isAnonymous() or hasRole('PATIENT')")
                     .antMatchers("/doctor/dashboard/appointment-details/{id}").access("@accessHandler.canViewAppointment(authentication, #id)")
                     .antMatchers("/patient/dashboard/appointment-details/{id}").access("@accessHandler.canViewAppointment(authentication, #id)")
+                    .antMatchers("doctor/dashboard/appointment/cancel", "patient/dashboard/appointment/cancel").access("@accessHandler.canCancelAppointment(authentication, request.getParameter('appointmentId'))")
                     .antMatchers("/appointment/**").hasRole("PATIENT")
                     .antMatchers("/doctor/**").hasRole("DOCTOR")
                     .antMatchers("/patient/**").hasRole("PATIENT")
