@@ -2,10 +2,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const fileInput = document.getElementById("files")
     const filePreview = document.getElementById("filePreview")
     const dropZone = document.getElementById("dropZone")
+    const appointmentForm = document.getElementById("appointmentForm");
     const MAX_FILES = 5
     const ALLOWED_TYPES = ["application/pdf"]
     const MAX_FILE_SIZE = 3 * 1024 * 1024 // 3MB en bytes
 
+    let selectedFiles = [];
 
 
     window.addEventListener("pageshow", () => {
@@ -14,13 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (fileInput) fileInput.value = ""
         if (filePreview) filePreview.innerHTML = ""
+        selectedFiles = [];
         if(!dropZone){
             return
         }
         dropZone.classList.remove("disabled")
     })
 
-    // Función para mostrar notificación
     const showNotification = (message, type = "info") => {
         const notification = document.createElement("div")
         notification.className = `file-notification ${type}`
@@ -28,12 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.body.appendChild(notification)
 
-        // Animación de entrada
         setTimeout(() => {
             notification.classList.add("show")
         }, 10)
 
-        // Eliminar después de 3 segundos
         setTimeout(() => {
             notification.classList.remove("show")
             setTimeout(() => {
@@ -42,10 +42,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 3000)
     }
 
-    // Función para validar archivos
+
     const validateFiles = (files) => {
-        // Verificar número máximo de archivos
-        if (filePreview.children.length + files.length > MAX_FILES) {
+
+        if (selectedFiles.length + files.length > MAX_FILES) {
             showNotification(window.appointmentMessages?.fileUpload?.tooManyFiles || "Máximo 5 archivos permitidos", "error")
             return false
         }
@@ -74,7 +74,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return true
     }
 
-    // Función para actualizar la vista previa
+    const updateFileInput = () => {
+        const formData = new FormData();
+
+        selectedFiles.forEach((file, index) => {
+            formData.append("files", file);
+        });
+
+        return formData;
+    };
+
     const updatePreview = (files) => {
         if (!validateFiles(files)){
             fileInput.value = ""
@@ -82,103 +91,98 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         Array.from(files).forEach((file) => {
+            selectedFiles.push(file);
+
             // Crear contenedor del archivo
-            const fileItem = document.createElement("div")
-            fileItem.className = "file-item"
+            const fileItem = document.createElement("div");
+            fileItem.className = "file-item";
+            fileItem.dataset.fileName = file.name;
 
-            // Icono del archivo
-            const fileIcon = document.createElement("div")
-            fileIcon.className = "file-icon"
-            fileIcon.innerHTML = '<i class="fas fa-file-pdf"></i>'
+            const fileIcon = document.createElement("div");
+            fileIcon.className = "file-icon";
+            fileIcon.innerHTML = '<i class="fas fa-file-pdf"></i>';
 
-            // Información del archivo
-            const fileInfo = document.createElement("div")
-            fileInfo.className = "file-info"
+            const fileInfo = document.createElement("div");
+            fileInfo.className = "file-info";
 
-            // Nombre del archivo
-            const fileName = document.createElement("div")
-            fileName.className = "file-name"
-            fileName.textContent = file.name
+            const fileName = document.createElement("div");
+            fileName.className = "file-name";
+            fileName.textContent = file.name;
 
-            // Tamaño del archivo
-            const fileSize = document.createElement("div")
-            fileSize.className = "file-size"
-            fileSize.textContent = formatFileSize(file.size)
+            const fileSize = document.createElement("div");
+            fileSize.className = "file-size";
+            fileSize.textContent = formatFileSize(file.size);
 
-            fileInfo.appendChild(fileName)
-            fileInfo.appendChild(fileSize)
+            fileInfo.appendChild(fileName);
+            fileInfo.appendChild(fileSize);
 
-            // Botón para eliminar
-            const fileRemove = document.createElement("button")
-            fileRemove.className = "file-remove"
-            fileRemove.type = "button"
-            fileRemove.innerHTML = '<i class="fas fa-times"></i>'
+            const fileRemove = document.createElement("button");
+            fileRemove.className = "file-remove";
+            fileRemove.type = "button";
+            fileRemove.innerHTML = '<i class="fas fa-times"></i>';
             fileRemove.addEventListener("click", (e) => {
-                e.preventDefault()
-                fileItem.classList.add("removing")
+                e.preventDefault();
+                fileItem.classList.add("removing");
+
+                const fileIndex = selectedFiles.findIndex(f => f.name === file.name);
+                if (fileIndex !== -1) {
+                    selectedFiles.splice(fileIndex, 1);
+                }
 
                 setTimeout(() => {
-                    fileItem.remove()
-                    showNotification(window.appointmentMessages?.fileUpload?.fileRemoved || "Archivo eliminado")
+                    fileItem.remove();
+                    showNotification(window.appointmentMessages?.fileUpload?.fileRemoved || "Archivo eliminado");
 
-                    // Actualizar estado del dropzone
-                    updateDropzoneState()
-                }, 300)
-            })
-
-            // Agregar elementos al contenedor
-            fileItem.appendChild(fileIcon)
-            fileItem.appendChild(fileInfo)
-            fileItem.appendChild(fileRemove)
+                    updateDropzoneState();
+                }, 300);
+            });
+            fileItem.appendChild(fileIcon);
+            fileItem.appendChild(fileInfo);
+            fileItem.appendChild(fileRemove);
 
             // Agregar a la vista previa con animación
-            fileItem.style.opacity = "0"
-            fileItem.style.transform = "translateY(10px)"
-            filePreview.appendChild(fileItem)
+            fileItem.style.opacity = "0";
+            fileItem.style.transform = "translateY(10px)";
+            filePreview.appendChild(fileItem);
 
             // Forzar un reflow para que la animación funcione
-            fileItem.offsetHeight
+            fileItem.offsetHeight;
 
             // Aplicar animación
-            fileItem.style.opacity = "1"
-            fileItem.style.transform = "translateY(0)"
+            fileItem.style.opacity = "1";
+            fileItem.style.transform = "translateY(0)";
 
-            showNotification(window.appointmentMessages?.fileUpload?.fileAdded || "Archivo añadido")
+            showNotification(window.appointmentMessages?.fileUpload?.fileAdded || "Archivo añadido");
         })
 
-        // Actualizar estado del dropzone
-        updateDropzoneState()
+        fileInput.value = "";
+        updateDropzoneState();
     }
 
-    // Función para formatear el tamaño del archivo
     const formatFileSize = (bytes) => {
         if (bytes < 1024) return bytes + " B"
         else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB"
         else return (bytes / 1048576).toFixed(1) + " MB"
     }
 
-    // Función para actualizar el estado del dropzone
     const updateDropzoneState = () => {
         if(!dropZone || !filePreview) {
             return
         }
-        if (filePreview.children.length >= MAX_FILES) {
+        if (selectedFiles.length >= MAX_FILES) {
             dropZone.classList.add("disabled")
         } else {
             dropZone.classList.remove("disabled")
         }
     }
 
-    // Evento de cambio en el input de archivos
     if (fileInput && filePreview) {
         fileInput.addEventListener("change", function () {
             updatePreview(this.files)
         })
     }
 
-    // Eventos de arrastrar y soltar
     if (dropZone) {
-        // Prevenir comportamiento por defecto
         ;["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
             dropZone.addEventListener(
                 eventName,
@@ -190,7 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         })
 
-        // Resaltar el dropzone cuando se arrastra un archivo sobre él
         ;["dragenter", "dragover"].forEach((eventName) => {
             dropZone.addEventListener(
                 eventName,
@@ -203,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         })
 
-        // Quitar resaltado cuando se deja de arrastrar
+
         ;["dragleave", "drop"].forEach((eventName) => {
             dropZone.addEventListener(
                 eventName,
@@ -214,21 +217,20 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         })
 
-        // Manejar la caída de archivos
+
         dropZone.addEventListener(
             "drop",
             (e) => {
                 if (!dropZone.classList.contains("disabled")) {
                     const dt = e.dataTransfer
                     const files = dt.files
-
                     updatePreview(files)
                 }
             },
             false,
         )
 
-        // Abrir el selector de archivos al hacer clic en el dropzone
+
         dropZone.addEventListener("click", () => {
             if (!dropZone.classList.contains("disabled")) {
                 fileInput.click()
@@ -236,6 +238,20 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     }
 
-    // Inicializar el estado del dropzone
+
+    if (appointmentForm) {
+        appointmentForm.addEventListener("submit", function(e) {
+
+            if (selectedFiles.length > 0) {
+                const dataTransfer = new DataTransfer();
+                selectedFiles.forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+
+                fileInput.files = dataTransfer.files;
+            }
+        });
+    }
+
     updateDropzoneState()
 })

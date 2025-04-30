@@ -211,31 +211,6 @@
     </div>
 </div>
 
-<!-- Modales comunes -->
-<div id="confirmAppointmentModal" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header">
-            <div class="modal-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
-                </svg>
-            </div>
-            <h3 class="modal-title"><spring:message code="appointment.confirm.title" /></h3>
-        </div>
-        <div class="modal-body">
-            <p class="modal-message"><spring:message code="appointment.confirm.message" /></p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-modal btn-cancel" onclick="hideConfirmModal();">
-                <spring:message code="logout.confirmation.cancel"/>
-            </button>
-            <button type="button" class="btn-modal btn-confirm" id="confirmAppointmentBtn">
-                <spring:message code="appointment.action.confirm"/>
-            </button>
-        </div>
-    </div>
-</div>
-
 <div id="cancelAppointmentModal" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
@@ -249,13 +224,16 @@
         <div class="modal-body">
             <p class="modal-message"><spring:message code="appointment.cancel.message" /></p>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
-                <spring:message code="logout.confirmation.cancel"/>
-            </button>
-            <button type="button" class="btn-modal btn-danger" id="cancelAppointmentBtn">
-                <spring:message code="appointment.action.cancel"/>
-            </button>
+        <div class="modal-footer" id="cancelModal">
+            <form id="cancelForm" action="${pageContext.request.contextPath}/doctor/dashboard/appointment/cancel" method="post">
+                <input type="hidden" name="appointmentId" value="" />
+                <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
+                    <spring:message code="logout.confirmation.cancel"/>
+                </button>
+                <button type="submit" class="btn-modal btn-primary" id="cancelAppointmentBtn">
+                    <spring:message code="appointment.action.cancel"/>
+                </button>
+            </form>
         </div>
     </div>
 </div>
@@ -299,28 +277,6 @@
             });
         });
 
-        // Confirm button in modal
-        const confirmAppointmentBtn = document.getElementById('confirmAppointmentBtn');
-        if (confirmAppointmentBtn) {
-            confirmAppointmentBtn.addEventListener('click', function() {
-                if (currentAppointmentId) {
-                    fetch(`${pageContext.request.contextPath}/doctor/dashboard/appointment/accept`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({ appointmentId: currentAppointmentId })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.reload();
-                            }
-                        });
-                }
-                hideConfirmModal();
-            });
-        }
 
         // Cancel appointment functionality
         const cancelButtons = document.querySelectorAll('.cancel-appointment');
@@ -332,28 +288,6 @@
             });
         });
 
-        // Cancel button in modal
-        const cancelAppointmentBtn = document.getElementById('cancelAppointmentBtn');
-        if (cancelAppointmentBtn) {
-            cancelAppointmentBtn.addEventListener('click', function() {
-                if (currentAppointmentId) {
-                    fetch(`${pageContext.request.contextPath}/doctor/dashboard/appointment/cancel`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({ appointmentId: currentAppointmentId })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.reload();
-                            }
-                        });
-                }
-                hideCancelModal();
-            });
-        }
 
         // Cerrar modales al hacer clic fuera
         document.querySelectorAll('.modal-overlay').forEach(modal => {
@@ -361,6 +295,15 @@
                 if (e.target === this) {
                     this.classList.remove('show');
                 }
+            });
+        });
+
+        document.querySelectorAll('.cancel-appointment').forEach(button => {
+            button.addEventListener('click', () => {
+                const apptId = button.getAttribute('data-id');
+                document
+                    .querySelector('#cancelForm input[name="appointmentId"]')
+                    .value = apptId;
             });
         });
 

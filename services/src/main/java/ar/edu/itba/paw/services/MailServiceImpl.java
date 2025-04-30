@@ -144,11 +144,6 @@ public class MailServiceImpl implements MailService {
         Locale userLocale =  Locale.forLanguageTag(user.getLanguage());
 
 
-
-        // Optionally, retrieve the user's locale if available
-        // You could inject UserService and do: userService.findByEmail(email) to get language
-        // For now, hardcoding EN
-
         Context context = new Context(userLocale);
         context.setVariable("resetUrl", resetLink);
         context.setVariable("userName", user.getName()+ " " + user.getLastName()); // Replace with actual name if available
@@ -168,6 +163,31 @@ public class MailServiceImpl implements MailService {
             LOGGER.debug("Recovery email sent to: {}", user.getEmail());
         } catch (MessagingException e) {
             LOGGER.error("Error sending password recovery email to {}", user.getEmail(), e);
+        }
+    }
+
+    @Async
+    @Override
+    public void sendVerificationRegisterEmail(User user, String verificationLink) {
+        Locale userLocale =  Locale.forLanguageTag(user.getLanguage());
+        Context context = new Context(userLocale);
+        context.setVariable("verificationUrl", verificationLink);
+        context.setVariable("userName", user.getName()+ " " + user.getLastName()); // Replace with actual name if available
+
+        String htmlContent = templateEngine.process("VerificationEmail", context);
+
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(user.getEmail());
+            helper.setSubject(messageSource.getMessage("verification.register.email.title", null, userLocale));
+            helper.setText(htmlContent, true);
+            helper.setFrom(from_mail);
+
+            mailSender.send(message);
+            LOGGER.debug("Verification email sent to: {}", user.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending verification email to {}", user.getEmail(), e);
         }
     }
 
