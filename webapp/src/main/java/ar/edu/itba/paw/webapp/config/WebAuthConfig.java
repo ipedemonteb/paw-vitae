@@ -54,12 +54,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .invalidSessionUrl("/")
                     .and()
                 .authorizeRequests()
-                    .antMatchers("/", "/login", "/register-patient", "/register","/recover-password", "/change-password").permitAll()
-                    .antMatchers( "/{id:\\d+}").anonymous()
+                    .antMatchers("/").permitAll()
+                    .antMatchers( "/login", "/register-patient", "/register","/recover-password", "/change-password").anonymous()
                     .antMatchers("/portal", "/search", "/appointment/booked-times-by-date").access("isAnonymous() or hasRole('PATIENT')")
+                    .antMatchers("/doctor/dashboard/appointment-details/{id}").access("@accessHandler.canViewAppointment(authentication, #id)")
+                    .antMatchers("/patient/dashboard/appointment-details/{id}").access("@accessHandler.canViewAppointment(authentication, #id)")
                     .antMatchers("/appointment/**").hasRole("PATIENT")
-                    .antMatchers(HttpMethod.GET, "/doctors").permitAll() // Permite solo solicitudes GET a /doctors
-                    .antMatchers("/doctors").denyAll() // Bloquea otros métodos HTTP en /doctors
                     .antMatchers("/doctor/**").hasRole("DOCTOR")
                     .antMatchers("/patient/**").hasRole("PATIENT")
                     .antMatchers("/**").authenticated()

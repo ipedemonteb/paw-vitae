@@ -7,13 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-@Component("appointmentSecurity")
-public class AppointmentSecurity {
+@Component("accessHandler")
+public class AccessHandler {
 
     private final AppointmentService apptSvc;
     private final UserService userSvc;
+
     @Autowired
-    public AppointmentSecurity(AppointmentService apptSvc, UserService userSvc) {
+    public AccessHandler(AppointmentService apptSvc, UserService userSvc) {
         this.apptSvc = apptSvc;
         this.userSvc = userSvc;
     }
@@ -22,7 +23,7 @@ public class AppointmentSecurity {
      * @return true if the currently authenticated user is
      *         either the client or the doctor on that appointment
      */
-    public boolean canView(Authentication auth, Long appointmentId) {
+    public boolean canViewAppointment(Authentication auth, Long appointmentId) {
         Object principal = auth.getPrincipal();
         if(!(principal instanceof AuthUserDetails)) {
             return false;

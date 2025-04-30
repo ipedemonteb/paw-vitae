@@ -11,7 +11,6 @@ import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -115,7 +114,6 @@ public class PatientController {
         return "{\"success\": " + result + "}";
     }
 
-    @PreAuthorize("@appointmentSecurity.canView(authentication, #id)")
     @RequestMapping(value = "patient/dashboard/appointment-details/{id}", method = RequestMethod.GET)
     public ModelAndView patientAppointmentDetails(
             @ModelAttribute("patientRatingForm") final PatientRatingForm patientRatingForm,
