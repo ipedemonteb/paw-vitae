@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS Images (
                         FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Reviews (
+CREATE TABLE IF NOT EXISTS Ratings (
                         id SERIAL PRIMARY KEY,
                         doctor_id INT NOT NULL,
                         client_id INT NOT NULL,
