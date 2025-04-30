@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
+import ar.edu.itba.paw.interfacePersistence.DoctorDao;
+import ar.edu.itba.paw.interfacePersistence.PatientDao;
 import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,55 +19,6 @@ import java.util.*;
 
 @Repository
 public class AppointmentDaoImpl implements AppointmentDao {
-
-    private JdbcTemplate jdbcTemplate;
-
-    private SimpleJdbcInsert jdbcInsert;
-
-//    private DoctorDaoImpl doctorDaoImpl;
-//    private PatientDaoImpl patientDaoImpl;
-
-    private final RowMapper<Appointment> ROW_MAPPER = (rs, rowNum) -> new Appointment(
-            rs.getTimestamp("date").toLocalDateTime(),
-            rs.getString("status"),
-            rs.getString("reason"),
-            rs.getLong("id"),
-            new Specialty(rs.getLong("specialty_id"), rs.getString("specialty_key")),
-            new Doctor(
-                    rs.getString("doctor_name"),
-                    rs.getLong("doctor_id"),
-                    rs.getString("doctor_last_name"),
-                    rs.getString("doctor_email"),
-                    rs.getString("doctor_password"),
-                    rs.getString("doctor_phone"),
-                    rs.getString("doctor_language"),
-                    rs.getDouble("rating"),
-                    rs.getInt("rating_count")
-            ),
-            new Patient(
-                    rs.getString("patient_name"),
-                    rs.getLong("patient_id"),
-                    rs.getString("patient_last_name"),
-                    rs.getString("patient_email"),
-                    rs.getString("patient_password"),
-                    rs.getString("patient_phone"),
-                    rs.getString("patient_language"),
-                    new Coverage(rs.getLong("coverage_id"), rs.getString("coverage_name"))
-            )
-    );
-
-    //todo: change signature
-    @Autowired
-    public AppointmentDaoImpl(final DataSource ds, final DoctorDaoImpl doctorDaoImpl,final PatientDaoImpl patientDaoImpl) {
-        jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("appointments")
-                .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id")
-                .usingGeneratedKeyColumns("id");
-//        this.doctorDaoImpl = doctorDaoImpl;
-//        this.patientDaoImpl = patientDaoImpl;
-    }
-
 
     private static final String BASE_SQL = "SELECT a.id, a.date, a.status, a.reason, " +
             "s.id AS specialty_id, s.key AS specialty_key, " +
@@ -84,9 +37,34 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     private static final String ORDER_BY_DATE_ASC = "ORDER BY a.date ASC ";
     private static final String ORDER_BY_DATE_DESC = "ORDER BY a.date DESC ";
+    private JdbcTemplate jdbcTemplate;
+    private SimpleJdbcInsert jdbcInsert;
+    private RowMapper<Doctor> DOCTOR_ROW_MAPPER;
+    private RowMapper<Patient> PATIENT_ROW_MAPPER;
+    private final RowMapper<Appointment> ROW_MAPPER = (rs, rowNum) -> new Appointment(
+            rs.getTimestamp("date").toLocalDateTime(),
+            rs.getString("status"),
+            rs.getString("reason"),
+            rs.getLong("id"),
+            new Specialty(rs.getLong("specialty_id"), rs.getString("specialty_key")),
+            DOCTOR_ROW_MAPPER.mapRow(rs, 1),
+            PATIENT_ROW_MAPPER.mapRow(rs, 1)
+    );
+    private DoctorDao doctorDao;
+    private PatientDao patientDao;
 
-
-
+    @Autowired
+    public AppointmentDaoImpl(final DataSource ds, DoctorDao doctorDao, PatientDao patientDao, DaoUtils daoUtils) {
+        this.doctorDao = doctorDao;
+        this.patientDao = patientDao;
+        DOCTOR_ROW_MAPPER = daoUtils.getDoctorRowMapper();
+        PATIENT_ROW_MAPPER = daoUtils.getPatientRowMapper();
+        jdbcTemplate = new JdbcTemplate(ds);
+        jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("appointments")
+                .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id")
+                .usingGeneratedKeyColumns("id");
+    }
 
     @Override
     public Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty) {
@@ -97,39 +75,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
         args.put("reason", reason);
         args.put("specialty_id", specialty.getId());
         final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
-
-        // Query for doctor details
-        String doctorSql = "SELECT u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
-                "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language,d.rating AS rating, d.rating_count AS rating_count " +
-                "FROM Doctors d JOIN Users u ON d.doctor_id = u.id WHERE d.doctor_id = ?";
-        Doctor doctor = jdbcTemplate.queryForObject(doctorSql, (rs, rowNum) -> new Doctor(
-                rs.getString("doctor_name"),
-                doctorId,
-                rs.getString("doctor_last_name"),
-                rs.getString("doctor_email"),
-                rs.getString("doctor_password"),
-                rs.getString("doctor_phone"),
-                rs.getString("doctor_language"),
-                rs.getDouble("rating"),
-                rs.getInt("rating_count")
-        ), doctorId);
-
-        // Query for patient details
-        String patientSql = "SELECT u.name AS patient_name, u.last_name AS patient_last_name, u.email AS patient_email, " +
-                "u.password AS patient_password, u.phone AS patient_phone, u.language AS patient_language, " +
-                "c.id AS coverage_id, c.coverage_name " +
-                "FROM Clients p JOIN Users u ON p.client_id = u.id " +
-                "LEFT JOIN Coverages c ON p.coverage_id = c.id WHERE p.client_id = ?";
-        Patient patient = jdbcTemplate.queryForObject(patientSql, (rs, rowNum) -> new Patient(
-                rs.getString("patient_name"),
-                patientId,
-                rs.getString("patient_last_name"),
-                rs.getString("patient_email"),
-                rs.getString("patient_password"),
-                rs.getString("patient_phone"),
-                rs.getString("patient_language"),
-                new Coverage(rs.getLong("coverage_id"), rs.getString("coverage_name"))
-        ), patientId);
+        Doctor doctor = doctorDao.getById(doctorId).orElse(null);
+        Patient patient = patientDao.getById(patientId).orElse(null);
 
         return new Appointment(
                 startDate,
@@ -142,13 +89,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
         );
     }
 
-//    @Override
-//    public Optional<List<Appointment>> getByPatientId(long patientId) {
-//        List<Appointment> appointments = jdbcTemplate.query(
-//                "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE client_id = ? ORDER BY Appointments.date", ROW_MAPPER, patientId);
-//        return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
-//    }
-
     @Override
     public List<Appointment> getByPatientId(long patientId) {
         String sql = BASE_SQL +
@@ -157,13 +97,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
         return jdbcTemplate.query(sql, ROW_MAPPER, patientId);
     }
-
-//    @Override
-//    public Optional<List<Appointment>> getByDoctorId(long doctorId) {
-//        List<Appointment> appointments = jdbcTemplate.query(
-//                "SELECT * FROM Appointments JOIN Specialties on Appointments.specialty_id = Specialties.id WHERE doctor_id = ? ORDER BY Appointments.date", ROW_MAPPER, doctorId);
-//        return appointments.isEmpty() ? Optional.empty() : Optional.of(appointments);
-//    }
 
     @Override
     public List<Appointment> getByDoctorId(long doctorId) {
@@ -197,8 +130,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
         return jdbcTemplate.query(sql, ROW_MAPPER, appointmentId).stream().findFirst();
     }
-
-
 
 
     @Override

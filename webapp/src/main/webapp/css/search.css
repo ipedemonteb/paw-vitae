@@ -355,6 +355,16 @@ body {
 .results-count {
     font-size: 0.875rem;
     color: var(--text-secondary);
+    justify-content: space-between;
+    align-content: end;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: 0.125rem;
+}
+
+.results-span {
+    align-content: end;
 }
 
 /* Doctors Grid */
@@ -849,7 +859,6 @@ body {
 
 /* Apply filters button */
 .apply-filters-btn {
-    margin-top: 1rem;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
 }

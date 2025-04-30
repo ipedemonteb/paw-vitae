@@ -20,21 +20,11 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
     private final SimpleJdbcInsert jdbcInsertDoctorAvailability;
-
-    public static final RowMapper<Doctor> ROW_MAPPER = (rs, rowNum) -> new Doctor(
-            rs.getString("name"),
-            rs.getLong("id"),
-            rs.getString("last_name"),
-            rs.getString("email"),
-            rs.getString("password"),
-            rs.getString("phone"),
-            rs.getString("language"),
-            rs.getDouble("rating"),
-            rs.getInt("rating_count")
-    );
+    public static RowMapper<Doctor> ROW_MAPPER;
 
     @Autowired
-    public DoctorDaoImpl(final DataSource ds) {
+    public DoctorDaoImpl(final DataSource ds, final DaoUtils daoUtils) {
+        ROW_MAPPER = daoUtils.getDoctorRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
@@ -138,7 +128,10 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public Optional<Doctor> getById(long id) {
         Optional<Doctor> doc = jdbcTemplate.query(
-                "SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE users.id = ?",
+                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
+                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.id = ?",
                 ROW_MAPPER, id
         ).stream().findFirst();
         doc.ifPresent(this::populateDoctorDetails);
@@ -148,7 +141,10 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public Optional<Doctor> getByEmail(String email) {
         Optional<Doctor> doc = jdbcTemplate.query(
-                "SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id WHERE users.email = ?",
+                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
+                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.email = ?",
                 ROW_MAPPER, email
         ).stream().findFirst();
 
@@ -159,7 +155,10 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public List<Doctor> getAll() {
         List<Doctor> doctors = jdbcTemplate.query(
-                "SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id",
+                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
+                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "FROM users u JOIN doctors d ON u.id = d.doctor_id",
                 ROW_MAPPER
         );
 
@@ -186,18 +185,26 @@ public class DoctorDaoImpl implements DoctorDao {
         if (ids.isEmpty()) {
             return Collections.emptyList();
         }
-        return jdbcTemplate.query("SELECT * FROM Users u JOIN Doctors d ON d.doctor_id = u.id  WHERE u.id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) + ")", ROW_MAPPER, ids.toArray());
+        return jdbcTemplate.query(
+                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
+                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.id IN (" +
+                        String.join(",", Collections.nCopies(ids.size(), "?")) + ")",
+                ROW_MAPPER, ids.toArray()
+        );
     }
 
     @Override
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
         List<Doctor> doctors = jdbcTemplate.query(
-                "SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id " +
-                        "JOIN doctor_specialties ON doctors.doctor_id = doctor_specialties.doctor_id " +
-                        "JOIN specialties ON doctor_specialties.specialty_id = specialties.id " +
-                        "WHERE doctor_specialties.specialty_id = ?"
-                        + " LIMIT ? OFFSET ?"
-                ,
+                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
+                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "FROM users u JOIN doctors d ON u.id = d.doctor_id " +
+                        "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
+                        "JOIN specialties s ON ds.specialty_id = s.id " +
+                        "WHERE ds.specialty_id = ? LIMIT ? OFFSET ?",
                 new Object[]{specialtyId, pageSize, (page - 1) * pageSize},
                 ROW_MAPPER
         );
@@ -341,7 +348,12 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
-        StringBuilder sql = new StringBuilder("SELECT * FROM users JOIN doctors ON users.id = doctors.doctor_id  WHERE 1=1");
+        StringBuilder sql = new StringBuilder(
+                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
+                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE 1=1"
+        );
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
 
         sql.append(" ORDER BY ").append(orderBy).append(" ").append(direction);

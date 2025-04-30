@@ -14,7 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (fileInput) fileInput.value = ""
         if (filePreview) filePreview.innerHTML = ""
-
+        if(!dropZone){
+            return
+        }
         dropZone.classList.remove("disabled")
     })
 
@@ -157,6 +159,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para actualizar el estado del dropzone
     const updateDropzoneState = () => {
+        if(!dropZone || !filePreview) {
+            return
+        }
         if (filePreview.children.length >= MAX_FILES) {
             dropZone.classList.add("disabled")
         } else {
