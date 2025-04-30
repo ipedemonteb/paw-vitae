@@ -1,3 +1,5 @@
+<%@ page import="java.util.TimeZone" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -177,7 +179,17 @@
                         </c:choose>
                 </div>
 
-                <!-- Form - Preserved as in original -->
+                <c:set var="now">
+                    <%
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                        sdf.setTimeZone(TimeZone.getTimeZone("America/Argentina/Buenos_Aires"));
+                        long nowTime = System.currentTimeMillis(); // Obtén el tiempo actual en milisegundos
+                        request.setAttribute("nowTime", nowTime); // Pasa el valor al contexto de la página
+                    %>
+                </c:set>
+                <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="appointmentDate" type="both" />
+                <c:if test="${appointmentDate.time < nowTime}">
+
                 <form:form modelAttribute="doctorFileForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/appointment-details/${appointment.id}" class="appointment-form" enctype="multipart/form-data">
                     <!-- Report textarea -->
                     <div class="form-group">
@@ -206,16 +218,16 @@
                             <form:errors path="files" cssClass="error-message" />
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-block">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">
                             <span>
                                 <i class="fas fa-calendar-check"></i>
                                 <spring:message code="appointment.details.doctor.files.upload" />
                             </span>
-                        </button>
-                    </div>
-                </form:form>
+                            </button>
+                        </div>
+                    </form:form>
+                </c:if>
                 <div class="back-button-container">
                     <a href="${pageContext.request.contextPath}/doctor/dashboard" class="back-button">
                         <i class="fas fa-arrow-left"></i>
@@ -346,7 +358,6 @@
 </script>
 
 <!-- Include the external JavaScript file -->
-<script src="<c:url value='/js/date-time-picker.js'/>"></script>
 <script src="<c:url value='/js/file-upload.js'/>"></script>
 </body>
 </html>
