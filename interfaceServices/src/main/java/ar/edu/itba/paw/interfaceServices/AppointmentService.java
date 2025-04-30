@@ -22,9 +22,9 @@ public interface AppointmentService {
     Boolean acceptAppointment(long appointmentId, long userId);
 
     Optional<Appointment> getById(long appointmentId);
-    Page<Appointment> getPastDoctorAppointments(long doctorId, int page, int size);
-    Page<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size);
-    Page<Appointment> getFuturePatientAppointments(long patientId,int page, int size);
-    Page<Appointment> getPastPatientAppointments(long patientId, int page, int size);
+    Page<Appointment> getPastDoctorAppointments(long doctorId, int page, int size,String dateRange,String status);
+    Page<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size,String dateRange,String status);
+    Page<Appointment> getFuturePatientAppointments(long patientId,int page, int size,String dateRange,String status);
+    Page<Appointment> getPastPatientAppointments(long patientId, int page, int size,String dateRange,String status);
 
 }

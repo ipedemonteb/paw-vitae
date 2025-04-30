@@ -93,11 +93,11 @@
                 <div class="tab-actions">
                     <div class="status-filter">
                         <label for="history-status-filter"><spring:message code="dashboard.filter.status" />:</label>
-                        <select id="history-status-filter" class="filter-select">
-                            <option value="<spring:message code="dashboard.filter.all" />" selected><spring:message code="dashboard.history.all" /></option>
-                            <option value="<spring:message code="appointment.status.completed" />"><spring:message code="appointment.status.completed" /></option>
-                            <option value="<spring:message code="appointment.status.cancelled" />"><spring:message code="appointment.status.cancelled" /></option>
-                            <option value="<spring:message code="appointment.status.noShow" />"><spring:message code="appointment.status.noShow" /></option>
+                        <select id="history-status-filter" class="filter-select" onchange="applyStatusFilter(this.value)">
+                            <option value="all" ${param.status == 'all' || empty param.status ? 'selected' : ''}><spring:message code="dashboard.history.all" /></option>
+                            <option value="completed" ${param.status == 'completed' ? 'selected' : ''}><spring:message code="appointment.status.completed" /></option>
+                            <option value="cancelled" ${param.status == 'cancelled' ? 'selected' : ''}><spring:message code="appointment.status.cancelled" /></option>
+                            <option value="noShow" ${param.status == 'noShow' ? 'selected' : ''}><spring:message code="appointment.status.noShow" /></option>
                         </select>
                     </div>
                     <div class="search-container">
@@ -246,24 +246,10 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Status filter functionality for history appointments
-        const historyStatusFilter = document.getElementById('history-status-filter');
-        if (historyStatusFilter) {
-            historyStatusFilter.addEventListener('change', function() {
-                const selectedStatus = this.value;
-                const appointmentCards = document.querySelectorAll('#history-tab .appointment-card');
-
-                appointmentCards.forEach(card => {
-                    const cardStatus = card.getAttribute('data-status').toLowerCase();
-
-                    if (selectedStatus === '<spring:message code="dashboard.filter.all" />' || cardStatus === selectedStatus) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        }
+        // Apply status filter function
+        window.applyStatusFilter = function(value) {
+            window.location.href = '${pageContext.request.contextPath}/doctor/dashboard/history?status=' + value;
+        };
 
         // Search functionality
         const searchInput = document.querySelector('.search-input');
@@ -344,23 +330,6 @@
 
         // Función para inicializar filtros y eventos en las citas cargadas
         function initializeFiltersAndEvents() {
-            // Aplicar el filtro actual a las nuevas citas
-            const historyStatusFilter = document.getElementById('history-status-filter');
-            if (historyStatusFilter) {
-                const selectedStatus = historyStatusFilter.value;
-                const appointmentCards = document.querySelectorAll('#history-tab .appointment-card');
-
-                appointmentCards.forEach(card => {
-                    const cardStatus = card.getAttribute('data-status').toLowerCase();
-
-                    if (selectedStatus === '<spring:message code="dashboard.filter.all" />' || cardStatus === selectedStatus) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            }
-
             // Aplicar la búsqueda actual a las nuevas citas
             const searchInput = document.querySelector('.search-input');
             if (searchInput && searchInput.value.trim() !== '') {
@@ -402,6 +371,7 @@
                 const url = new URL(`${pageContext.request.contextPath}/doctor/dashboard/history`, window.location.origin);
                 url.searchParams.append('page', nextPage);
                 url.searchParams.append('ajax', 'true'); // Añadir un parámetro para indicar que es una solicitud AJAX
+                url.searchParams.append('status', '${param.status != null ? param.status : "all"}');
 
                 // Realizar la petición AJAX
                 fetch(url.toString(), {
@@ -489,8 +459,8 @@
                         initializeFiltersAndEvents();
                     })
                     .catch(error => {
-                        console.error('Error al cargar más citas:', error);
-                        this.innerHTML = '<i class="fas fa-exclamation-circle"></i> <span>Error al cargar</span>';
+
+                        this.innerHTML = '<i class="fas fa-exclamation-circle"></i> ';
                         setTimeout(() => {
                             this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore"  /></span>';
                             this.disabled = false;

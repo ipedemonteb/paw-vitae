@@ -111,23 +111,23 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 
     @Override
-    public Page<Appointment> getPastDoctorAppointments(long doctorId, int page, int size) {
-        List<Appointment> appointments = appointmentDao.getPastDoctorAppointments(doctorId, page, size);
-        return new Page<>(appointments, page, size, appointmentDao.countPastDoctorAppointments(doctorId));
+    public Page<Appointment> getPastDoctorAppointments(long doctorId, int page, int size, String dateRange, String status) {
+        List<Appointment> appointments = appointmentDao.getPastDoctorAppointments(doctorId, page, size, dateRange, status);
+        return new Page<>(appointments, page, size, appointmentDao.countPastDoctorAppointments(doctorId,status));
     }
     @Override
-    public Page<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size) {
-        List<Appointment> appointments = appointmentDao.getFutureDoctorAppointments(doctorId, page, size);
-        return new Page<>(appointments, page, size, appointmentDao.countFutureDoctorAppointments(doctorId));
+    public Page<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size, String dateRange, String status) {
+        List<Appointment> appointments = appointmentDao.getFutureDoctorAppointments(doctorId, page, size, dateRange, status);
+        return new Page<>(appointments, page, size, appointmentDao.countFutureDoctorAppointments(doctorId,dateRange));
     }
     @Override
-    public Page<Appointment> getFuturePatientAppointments(long patientId, int page, int size) {
-        List<Appointment> appointments = appointmentDao.getFuturePatientAppointments(patientId, page, size);
-        return new Page<>(appointments, page, size, appointmentDao.countFuturePatientAppointments(patientId));
+    public Page<Appointment> getFuturePatientAppointments(long patientId, int page, int size, String dateRange, String status) {
+        List<Appointment> appointments = appointmentDao.getFuturePatientAppointments(patientId, page, size, dateRange, status);
+        return new Page<>(appointments, page, size, appointmentDao.countFuturePatientAppointments(patientId,dateRange));
     }
     @Override
-    public Page<Appointment> getPastPatientAppointments(long patientId, int page, int size) {
-        List<Appointment> appointments = appointmentDao.getPastPatientAppointments(patientId, page, size);
-        return new Page<>(appointments, page, size, appointmentDao.countPastPatientAppointments(patientId));
+    public Page<Appointment> getPastPatientAppointments(long patientId, int page, int size,String dateRange, String status) {
+        List<Appointment> appointments = appointmentDao.getPastPatientAppointments(patientId, page, size, dateRange, status);
+        return new Page<>(appointments, page, size, appointmentDao.countPastPatientAppointments(patientId,status));
     }
 }
