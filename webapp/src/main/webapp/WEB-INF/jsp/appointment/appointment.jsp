@@ -39,10 +39,25 @@
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/></h3>
                             <div class="card-specialty-list">
+                                <c:set var="maxLength" value="80" />
+                                <c:set var="currentLength" value="0" />
+                                <c:set var="stopLoop" value="false" />
+
                                 <c:forEach var="specialty" items="${doctor.specialtyList}" varStatus="status">
-                                    <p class="doctor-specialty"><spring:message code="${specialty.key}" /></p>
-                                    <c:if test="${!status.last}">
-                                        <span style="white-space: pre">, </span>
+                                    <c:if test="${!stopLoop}">
+                                        <c:if test="${currentLength le maxLength}">
+                                            <p class="doctor-specialty">
+                                                <spring:message code="${specialty.key}" />
+                                            </p>
+                                            <c:set var="currentLength" value="${currentLength + fn:length(specialty.key)}" />
+                                            <c:if test="${!status.last && currentLength le maxLength}">
+                                                <span style="white-space: pre">, </span>
+                                            </c:if>
+                                        </c:if>
+                                        <c:if test="${currentLength gt maxLength}">
+                                            <span>...</span>
+                                            <c:set var="stopLoop" value="true" />
+                                        </c:if>
                                     </c:if>
                                 </c:forEach>
                             </div>
