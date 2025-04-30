@@ -60,11 +60,13 @@
                         <i class="fas fa-clipboard-check"></i>
                     </div>
                     <div class="specialty-content">
-                        <span class="specialty-label-appointment"><spring:message code="appointment.details.info.status" text="Status" />:</span>
+                        <span class="specialty-label-appointment">
+                            <spring:message code="appointment.details.info.status" text="Status" />:
+                        </span>
                         <div class="status-display">
-                            <span class="specialty-value-appointment">
-                                <spring:message code="appointment.status.${appointment.status}" text="${appointment.status}" />
-                            </span>
+                        <span class="specialty-value-appointment status-${appointment.status}">
+                            <spring:message code="appointment.status.${appointment.status}" text="${appointment.status}" />
+                        </span>
                         </div>
                     </div>
                 </div>
