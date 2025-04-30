@@ -20,21 +20,11 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
     private final SimpleJdbcInsert jdbcInsertDoctorAvailability;
-
-    public static final RowMapper<Doctor> ROW_MAPPER = (rs, rowNum) -> new Doctor(
-            rs.getString("name"),
-            rs.getLong("id"),
-            rs.getString("last_name"),
-            rs.getString("email"),
-            rs.getString("password"),
-            rs.getString("phone"),
-            rs.getString("language"),
-            rs.getDouble("rating"),
-            rs.getInt("rating_count")
-    );
+    public static RowMapper<Doctor> ROW_MAPPER;
 
     @Autowired
-    public DoctorDaoImpl(final DataSource ds) {
+    public DoctorDaoImpl(final DataSource ds, final DaoUtils daoUtils) {
+        ROW_MAPPER = daoUtils.getDoctorRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
