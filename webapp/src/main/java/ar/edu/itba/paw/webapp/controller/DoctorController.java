@@ -44,12 +44,13 @@ public class DoctorController {
         return new ModelAndView("redirect:/doctor/dashboard/upcoming");
     }
 
-    @RequestMapping(value = "/doctor/dashboard/upcoming")
-    public ModelAndView getUpcomingAppointments(@RequestParam(defaultValue = "1") int page) {
+    @RequestMapping(value = "/doctor/dashboard/upcoming",method = RequestMethod.GET)
+    public ModelAndView getUpcomingAppointments(@RequestParam(defaultValue = "1") int page,
+                                                @RequestParam(defaultValue = "all", required = false) String dateRange){
         final ModelAndView mav = new ModelAndView("doctor/dashboard-upcoming");
         Doctor doctor = loggedUser();
         mav.addObject("doctor", doctor);
-        Page<Appointment> appointmentsPage = as.getFutureDoctorAppointments(doctor.getId(), page, 5);
+        Page<Appointment> appointmentsPage = as.getFutureDoctorAppointments(doctor.getId(), page, 5,dateRange,null);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
@@ -62,11 +63,12 @@ public class DoctorController {
 
 
     @RequestMapping(value = "/doctor/dashboard/history")
-    public ModelAndView getAppointmentHistory(@RequestParam(defaultValue = "1") int page) {
+    public ModelAndView getAppointmentHistory(@RequestParam(defaultValue = "1") int page,
+                                              @RequestParam(defaultValue = "all", required = false) String status){
         final ModelAndView mav = new ModelAndView("doctor/dashboard-history");
         Doctor doctor = loggedUser();
         mav.addObject("doctor", doctor);
-        Page<Appointment> appointmentsPage = as.getPastDoctorAppointments(doctor.getId(), page, 5);
+        Page<Appointment> appointmentsPage = as.getPastDoctorAppointments(doctor.getId(), page, 5,null,status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
