@@ -121,16 +121,6 @@
             </select>
           </div>
         </div>
-
-        <!-- View Toggle -->
-        <div class="view-toggle">
-          <button class="view-toggle-btn ${not empty param.view ?( param.view == "grid" ? "active" : "") : "active"}" data-view="grid">
-            <i class="fas fa-th-large"></i>
-          </button>
-          <button class="view-toggle-btn ${not empty param.view ? ( param.view == "list" ? "active" : "") : ""}" data-view="list">
-            <i class="fas fa-list"></i>
-          </button>
-        </div>
       </div>
 
       <!-- Interactive Filter Tags -->
@@ -263,12 +253,21 @@
         <div class="results-count">
           <c:choose>
             <c:when test="${not empty totalDoctors}">
-              <span><spring:message code="search.results.count" arguments="${totalDoctors}" /></span>
+              <span class="results-span"><spring:message code="search.results.count" arguments="${totalDoctors}" /></span>
             </c:when>
             <c:otherwise>
-              <span><spring:message code="search.results.none" /></span>
+              <span class="results-span"><spring:message code="search.results.none" /></span>
             </c:otherwise>
           </c:choose>
+          <!-- View Toggle -->
+          <div class="view-toggle">
+            <button class="view-toggle-btn ${not empty param.view ?( param.view == "grid" ? "active" : "") : "active"}" data-view="grid">
+              <i class="fas fa-th-large"></i>
+            </button>
+            <button class="view-toggle-btn ${not empty param.view ? ( param.view == "list" ? "active" : "") : ""}" data-view="list">
+              <i class="fas fa-list"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Active Filters -->
