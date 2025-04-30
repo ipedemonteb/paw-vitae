@@ -121,50 +121,6 @@
                     </div>
                 </div>
 
-                <div class="rating-section">
-                    <h2 class="rating-title">
-                        <i class="fas fa-star"></i>
-                        <spring:message code="appointment.details.review.title.doctor"/>
-                    </h2>
-                    <%-- Replace the existing review section with this updated version --%>
-                    <c:choose>
-                        <c:when test="${not empty existingRating}">
-                            <!-- Display existing rating with title -->
-                            <div class="review-card">
-                                <div class="review-card-content">
-                                    <div class="review-header">
-                                        <div class="review-stars">
-                                            <c:forEach begin="1" end="5" var="star">
-                                                <i class="fa${star <= existingRating.rating ? 's' : 'r'} fa-star"
-                                                   aria-hidden="true"></i>
-                                            </c:forEach>
-                                            <span class="rating-value"><c:out value="${existingRating.rating}"/></span>
-                                        </div>
-                                    </div>
-                                    <div class="review-comment">
-                                        <c:out value="${existingRating.comment}"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </c:when>
-                        <c:otherwise>
-                            <!-- Styled No Reviews Message -->
-                            <div class="review-card">
-                                <div class="no-reviews-message"
-                                     style="border: none; box-shadow: none; margin-bottom: 0;">
-                                    <div class="no-reviews-icon">
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                    <h3 class="no-reviews-title"><spring:message code="appointment.details.review.none"
-                                                                                 text="No Reviews Yet"/></h3>
-                                    <p class="no-reviews-text"><spring:message
-                                            code="appointment.details.review.none.message"
-                                            text="This doctor hasn't received any reviews for this appointment."/></p>
-                                </div>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
 
                 <div class="files-section">
                     <h2 class="files-title">
@@ -215,15 +171,54 @@
                                type="both"/>
                 <c:if test="${appointmentDate.time < nowTime}">
 
+                    <div class="rating-section">
+                        <h2 class="rating-title">
+                            <i class="fas fa-star"></i>
+                            <spring:message code="appointment.details.review.title.doctor"/>
+                        </h2>
+                            <%-- Replace the existing review section with this updated version --%>
+                        <c:choose>
+                            <c:when test="${not empty existingRating}">
+                                <!-- Display existing rating with title -->
+                                <div class="review-card">
+                                    <div class="review-card-content">
+                                        <div class="review-header">
+                                            <div class="review-stars">
+                                                <c:forEach begin="1" end="5" var="star">
+                                                    <i class="fa${star <= existingRating.rating ? 's' : 'r'} fa-star"
+                                                       aria-hidden="true"></i>
+                                                </c:forEach>
+                                                <span class="rating-value"><c:out value="${existingRating.rating}"/></span>
+                                            </div>
+                                        </div>
+                                        <div class="review-comment">
+                                            <c:out value="${existingRating.comment}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <!-- Styled No Reviews Message -->
+                                <div class="review-card">
+                                    <div class="no-reviews-message"
+                                         style="border: none; box-shadow: none; margin-bottom: 0;">
+                                        <div class="no-reviews-icon">
+                                            <i class="far fa-star"></i>
+                                        </div>
+                                        <h3 class="no-reviews-title"><spring:message code="appointment.details.review.none"
+                                                                                     text="No Reviews Yet"/></h3>
+                                        <p class="no-reviews-text"><spring:message
+                                                code="appointment.details.review.none.message"
+                                                text="This doctor hasn't received any reviews for this appointment."/></p>
+                                    </div>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
                     <form:form modelAttribute="doctorFileForm" method="post"
                                action="${pageContext.request.contextPath}/doctor/dashboard/appointment-details/${appointment.id}"
                                class="appointment-form" enctype="multipart/form-data">
-                        <!-- Report textarea -->
-                        <div class="form-group">
-                            <label for="report"><spring:message code="appointment.details.report"/></label>
-                            <form:textarea path="report" id="report" class="form-control" rows="4"/>
-                            <form:errors path="report" cssClass="error-message"/>
-                        </div>
 
                         <div class="files-section">
                             <h2 class="files-title">
@@ -261,6 +256,14 @@
                                 </c:if>
                             </div>
                         </div>
+
+                        <!-- Report textarea -->
+                        <div class="form-group">
+                            <label for="report"><spring:message code="appointment.details.report"/></label>
+                            <form:textarea path="report" id="report" class="form-control" rows="4"/>
+                            <form:errors path="report" cssClass="error-message"/>
+                        </div>
+
 
                         <!-- File Upload Section -->
                         <div class="form-group">
