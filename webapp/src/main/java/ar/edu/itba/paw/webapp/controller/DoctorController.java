@@ -162,6 +162,7 @@ public class DoctorController {
                 new IllegalArgumentException("Invalid appointment Id:" + id));
         mav.addObject("appointment", appointment);
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
+        mav.addObject("doctorFiles", afs.getByAppointmentId(appointment.getId()));
         Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
         mav.addObject("existingRating", existingRating.orElse(null));
         return mav;

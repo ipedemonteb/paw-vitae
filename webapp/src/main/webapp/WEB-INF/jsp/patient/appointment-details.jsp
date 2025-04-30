@@ -245,7 +245,7 @@
                     </h2>
 
                     <div class="files-list">
-                        <c:set var="hasDoctorFiles" value="false" />
+                        <c:set var="hasPatientFiles" value="false" />
                         <c:forEach var="file" items="${patientFiles}">
                             <c:if test="${file.uploader_role == 'doctor'}">
                                 <c:set var="hasDoctorFiles" value="true" />
@@ -263,7 +263,7 @@
                             </c:if>
                         </c:forEach>
 
-                        <c:if test="${not hasDoctorFiles}">
+                        <c:if test="${not hasPatientFiles}">
                             <div class="no-files-message">
                                 <div class="no-files-content">
                                     <i class="fas fa-info-circle"></i>
