@@ -47,7 +47,6 @@
       <spring:message code="error.500.contact.message" />
       <br>
       <strong><spring:message code="error.500.support.email" /></strong>
-      or call <strong><spring:message code="error.500.support.phone" /></strong>
     </div>
   </div>
 </div>
