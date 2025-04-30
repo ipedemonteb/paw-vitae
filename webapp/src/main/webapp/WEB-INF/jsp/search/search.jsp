@@ -234,17 +234,17 @@
       </div>
 
       <!-- Quick Filters -->
-      <div class="quick-filters">
-        <button class="quick-filter-btn active" data-filter="all">
-          <spring:message code="search.filter.all" />
-        </button>
-        <button class="quick-filter-btn" data-filter="top-rated">
-          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />
-        </button>
-        <button class="quick-filter-btn" data-filter="new">
-          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />
-        </button>
-      </div>
+<%--      <div class="quick-filters">--%>
+<%--        <button class="quick-filter-btn active" data-filter="all">--%>
+<%--          <spring:message code="search.filter.all" />--%>
+<%--        </button>--%>
+<%--        <button class="quick-filter-btn" data-filter="top-rated">--%>
+<%--          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />--%>
+<%--        </button>--%>
+<%--        <button class="quick-filter-btn" data-filter="new">--%>
+<%--          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />--%>
+<%--        </button>--%>
+<%--      </div>--%>
     </div>
 
     <!-- Results Section -->
