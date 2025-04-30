@@ -4,11 +4,8 @@ import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.*;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.AppointmentStatus;
-import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
-import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.webapp.form.PatientRatingForm;
 import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
 import org.slf4j.Logger;
@@ -22,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 public class PatientController {
@@ -32,13 +30,15 @@ public class PatientController {
     private final AppointmentService as;
     private final CoverageService covs;
     private final AppointmentFileService afs;
+    private final RatingService rs;
     @Autowired
-    public PatientController(PatientService ps, AppointmentService as, CoverageService covs, AppointmentFileService afs) {
+    public PatientController(PatientService ps, AppointmentService as, CoverageService covs, AppointmentFileService afs, RatingService rs) {
 
         this.ps = ps;
         this.as = as;
         this.covs = covs;
         this.afs = afs;
+        this.rs = rs;
     }
 
     @RequestMapping(value = "/patient/dashboard")
@@ -114,15 +114,59 @@ public class PatientController {
         return "{\"success\": " + result + "}";
     }
 
-        @RequestMapping(value = "patient/dashboard/appointment-details/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "patient/dashboard/appointment-details/{id}", method = RequestMethod.GET)
     public ModelAndView patientAppointmentDetails(
             @ModelAttribute("patientRatingForm") final PatientRatingForm patientRatingForm,
             @PathVariable("id") Long id) {
         ModelAndView mav = new ModelAndView("patient/appointment-details");
         Appointment appointment = as.getById(id).orElseThrow(() ->
                 new IllegalArgumentException("Invalid appointment Id:" + id));
+
+        // Check if this appointment already has a rating
+        Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
+
         mav.addObject("appointment", appointment);
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
+        mav.addObject("existingRating", existingRating.orElse(null));
+
+        System.out.println("existingRating: " + existingRating.orElse(null));
+
+        // Only create a new form if there's no existing rating
+        if (!existingRating.isPresent()) {
+            patientRatingForm.setAppointmentId(id);
+            mav.addObject("patientRatingForm", patientRatingForm);
+        }
+
         return mav;
+    }
+
+    @PostMapping("/patient/dashboard/appointment/rate")
+    public ModelAndView submitRating(@Valid @ModelAttribute("patientRatingForm") final PatientRatingForm form,
+                                     BindingResult errors) {
+        if (errors.hasErrors()) {
+            return patientAppointmentDetails(form, form.getAppointmentId());
+        }
+
+        Patient patient = loggedUser();
+        Appointment appointment = as.getById(form.getAppointmentId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid appointment Id:" + form.getAppointmentId()));
+
+        // Check if rating already exists
+        Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
+        if (existingRating.isPresent()) {
+            // Rating already exists, redirect back
+            return new ModelAndView("redirect:/patient/dashboard/appointment-details/" + form.getAppointmentId());
+        }
+
+        rs.create(
+                form.getRating(),
+                appointment.getDoctor().getId(),
+                patient.getId(),
+                appointment.getId(),
+                form.getComment(),
+                System.currentTimeMillis() // or a custom ID generator
+        );
+
+        return new ModelAndView("redirect:/patient/dashboard/appointment-details/" + form.getAppointmentId() + "?rated=true");
     }
 }

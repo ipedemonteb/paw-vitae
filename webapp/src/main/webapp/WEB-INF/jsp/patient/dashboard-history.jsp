@@ -102,9 +102,10 @@
                                         </div>
                                         <div class="appointment-actions">
                                             <div class="appointment-actions">
-                                                <button class="btn btn-primary" onclick="window.location.href='/patient/dashboard/appointment-details/${appointment.id}'">                                                    <i class="fas fa-eye"></i>
-                                                    <span>View Appointment</span>
-                                                </button>
+                                                <a class="btn btn-primary view-appointment" href="<c:url value='/patient/dashboard/appointment-details/${appointment.id}' />">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span><spring:message code="appointment.details" /></span>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

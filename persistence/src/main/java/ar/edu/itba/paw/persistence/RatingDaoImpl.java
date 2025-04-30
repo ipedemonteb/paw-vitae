@@ -22,24 +22,24 @@ public class RatingDaoImpl implements RatingDao
     public RatingDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("reviews")
-                .usingColumns("rating", "doctor_id", "patient_id", "appointment_id", "comment")
+                .withTableName("ratings")
+                .usingColumns("rating", "doctor_id", "client_id", "appointment_id", "comment")
                 .usingGeneratedKeyColumns("id");
     }
     private static final RowMapper<Rating> ROW_MAPPER = (rs, rowNum) -> new Rating(
         rs.getDouble("rating"),
         rs.getInt("doctor_id"),
-        rs.getInt("patient_id"),
+        rs.getInt("client_id"),
         rs.getInt("appointment_id"),
         rs.getString("comment"),
         rs.getInt("id")
     );
     @Override
-    public Rating create(double rating, int doctorId, int patientId, int appointmentId, String comment, long id) {
+    public Rating create(double rating, long doctorId, long patientId, long appointmentId, String comment, long id) {
         final Map<String,Object> args = new HashMap<>(Map.of(
                 "rating", rating,
                 "doctor_id", doctorId,
-                "patient_id", patientId,
+                "client_id", patientId,
                 "appointment_id", appointmentId,
                 "comment", comment
         ));
@@ -63,20 +63,20 @@ public class RatingDaoImpl implements RatingDao
     }
 
     @Override
-    public Optional<Rating> getRatingByAppointmentId(int appointmentId) {
+    public Optional<Rating> getRatingByAppointmentId(long appointmentId) {
         return jdbcTemplate.query("SELECT * FROM ratings WHERE appointment_id = ?", ROW_MAPPER, appointmentId)
                 .stream()
                 .findFirst();
     }
 
     @Override
-    public List<Rating> getRatingsByDoctorId(int doctorId) {
+    public List<Rating> getRatingsByDoctorId(long doctorId) {
         return jdbcTemplate.query("SELECT * FROM ratings WHERE doctor_id = ?", ROW_MAPPER, doctorId);
     }
 
     @Override
-    public List<Rating> getRatingsByPatientId(int patientId) {
-        return jdbcTemplate.query("SELECT * FROM ratings WHERE patient_id = ?", ROW_MAPPER, patientId);
+    public List<Rating> getRatingsByPatientId(long patientId) {
+        return jdbcTemplate.query("SELECT * FROM ratings WHERE client_id = ?", ROW_MAPPER, patientId);
     }
 
 }
