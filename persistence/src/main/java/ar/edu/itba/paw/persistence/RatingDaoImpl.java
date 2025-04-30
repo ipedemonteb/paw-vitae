@@ -35,7 +35,7 @@ public class RatingDaoImpl implements RatingDao
         rs.getInt("id")
     );
     @Override
-    public Rating create(double rating, int doctorId, int patientId, int appointmentId, String comment, long id) {
+    public Rating create(double rating, long doctorId, long patientId, long appointmentId, String comment, long id) {
         final Map<String,Object> args = new HashMap<>(Map.of(
                 "rating", rating,
                 "doctor_id", doctorId,
@@ -63,19 +63,19 @@ public class RatingDaoImpl implements RatingDao
     }
 
     @Override
-    public Optional<Rating> getRatingByAppointmentId(int appointmentId) {
+    public Optional<Rating> getRatingByAppointmentId(long appointmentId) {
         return jdbcTemplate.query("SELECT * FROM ratings WHERE appointment_id = ?", ROW_MAPPER, appointmentId)
                 .stream()
                 .findFirst();
     }
 
     @Override
-    public List<Rating> getRatingsByDoctorId(int doctorId) {
+    public List<Rating> getRatingsByDoctorId(long doctorId) {
         return jdbcTemplate.query("SELECT * FROM ratings WHERE doctor_id = ?", ROW_MAPPER, doctorId);
     }
 
     @Override
-    public List<Rating> getRatingsByPatientId(int patientId) {
+    public List<Rating> getRatingsByPatientId(long patientId) {
         return jdbcTemplate.query("SELECT * FROM ratings WHERE patient_id = ?", ROW_MAPPER, patientId);
     }
 
