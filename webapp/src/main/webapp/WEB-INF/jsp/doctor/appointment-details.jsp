@@ -151,34 +151,40 @@
                     </c:choose>
                 </div>
 
-                <div class="files-list">
-                    <lable class="files-lable"><spring:message code="appointment.details.patient.files.title"/></lable>
-                        <c:choose>
-                        <c:when test="${not empty patientFiles}">
-                            <c:forEach var="file" items="${patientFiles}">
-                        <c:if test="${file.uploader_role == 'patient'}">
-                            <div class="file-item">
-                                <div class="file-icon">
-                                    <i class="far fa-file-pdf"></i>
+                <div class="files-section">
+                    <h2 class="files-title">
+                        <i class="fas fa-file-medical-alt"></i>
+                        <spring:message code="appointment.details.patient.files.title"/>
+                    </h2>
+
+                    <div class="files-list">
+                        <c:set var="hasPatientFiles" value="false" />
+                        <c:forEach var="file" items="${patientFiles}">
+                            <c:if test="${file.uploader_role == 'patient'}">
+                                <c:set var="hasPatientFiles" value="true" />
+                                <div class="file-item">
+                                    <div class="file-icon">
+                                        <i class="far fa-file-pdf"></i>
+                                    </div>
+                                    <div class="file-info">
+                                        <div class="file-name"><c:out value="${file.fileName}" /></div>
+                                    </div>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
+                                        <i class="fas fa-download"></i>
+                                    </a>
                                 </div>
-                                <div class="file-info">
-                                    <div class="file-name"><c:out value="${file.fileName}" /></div>
+                            </c:if>
+                        </c:forEach>
+
+                        <c:if test="${not hasPatientFiles}">
+                            <div class="no-files-message">
+                                <div class="no-files-content">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p><spring:message code="appointment.details.patient.nofiles" /></p>
                                 </div>
-                                <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
-                                    <i class="fas fa-download"></i>
-                                </a>
                             </div>
                         </c:if>
-                    </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="review-card">
-                                <div class="no-reviews-message" style="border: none; box-shadow: none; margin-bottom: 0;">
-                                    <h3 class="no-reviews-title"><spring:message code="appointment.details.files.none" /></h3>
-                                </div>
-                            </div>
-                        </c:otherwise>
-                        </c:choose>
+                    </div>
                 </div>
 
                 <c:set var="now">
@@ -199,6 +205,42 @@
                         <form:textarea path="report" id="report" class="form-control" rows="4" />
                         <form:errors path="report" cssClass="error-message" />
                     </div>
+
+                <div class="files-section">
+                    <h2 class="files-title">
+                        <i class="fas fa-file-medical-alt"></i>
+                        <spring:message code="appointment.details.yours.files.title"/>
+                    </h2>
+
+                    <div class="files-list">
+                        <c:set var="hasDoctorFiles" value="false" />
+                        <c:forEach var="file" items="${doctorFiles}">
+                            <c:if test="${file.uploader_role == 'doctor'}">
+                                <c:set var="hasDoctorFiles" value="true" />
+                                <div class="file-item">
+                                    <div class="file-icon">
+                                        <i class="far fa-file-pdf"></i>
+                                    </div>
+                                    <div class="file-info">
+                                        <div class="file-name"><c:out value="${file.fileName}" /></div>
+                                    </div>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+
+                        <c:if test="${not hasPatientFiles}">
+                            <div class="no-files-message">
+                                <div class="no-files-content">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p><spring:message code="appointment.details.you.nofiles" /></p>
+                                </div>
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
 
                     <!-- File Upload Section -->
                     <div class="form-group">
