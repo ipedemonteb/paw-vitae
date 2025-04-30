@@ -67,9 +67,20 @@ public class AuthController {
             return doctorForm(form);
         }
         authService.registerDoctor(form);
-    LOGGER.debug("Registering doctor with email: {}", form.getEmail());
+        LOGGER.debug("Registering doctor with email: {}", form.getEmail());
+        Optional<User> userOpt = us.getByEmail(form.getEmail()).map(user -> (User) user);
+        if (userOpt.isEmpty()) {
+            return new ModelAndView("redirect:/register?register=sent");
+        }
 
-        return new ModelAndView("redirect:/doctor/dashboard");
+        User user = userOpt.get();
+
+        String token = "TOKEN"; //TODO: replace with actual token generation
+        String link = "https://yourapp.com/reset-password?token=" + token;
+
+        ms.sendVerificationRegisterEmail(user, link);
+
+        return new ModelAndView("redirect:/register?register=sent");
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -116,7 +127,15 @@ public class AuthController {
             return patientForm(patientForm);
         }
         authService.registerPatient(patientForm);
-        return new ModelAndView("redirect:/patient/dashboard");
+        Optional<User> userOpt = us.getByEmail(patientForm.getEmail()).map(user -> (User) user);
+        if (userOpt.isEmpty()) {
+            return new ModelAndView("redirect:/register-patient?register=sent");
+        }
+        User user = userOpt.get();
+        String token = "TOKEN"; //TODO: Replace with actual token generation
+        String link = "https://yourapp.com/?token=" + token;
+        ms.sendVerificationRegisterEmail(user, link);
+        return new ModelAndView("redirect:/register-patient?register=sent"); //TODO: redirect to a confirmation page
     }
 
     @RequestMapping("/login")
@@ -154,7 +173,6 @@ public class AuthController {
         }
         Optional<User> userOpt = us.getByEmail(form.getEmail()).map(user -> (User) user);
         if (userOpt.isEmpty()) {
-            // Optionally: show generic message like "If your email is registered, you’ll receive a recovery email"
             return new ModelAndView("redirect:/recover-password?recover=sent");
         }
 
