@@ -16,6 +16,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><spring:message code="appointment.details.page.title"/></title>
     <link rel="stylesheet" href="<c:url value='/css/appointment-details.css' />"/>
+    <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
@@ -23,6 +24,19 @@
 <body>
 <!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp"/>
+
+<div id="successToast" class="success-toast">
+    <div class="success-toast-icon">
+        <i class="fas fa-check"></i>
+    </div>
+    <div class="success-toast-content">
+        <div class="success-toast-title"><spring:message code="file.upload.fileAdded"/></div>
+        <div class="success-toast-message"><spring:message code="file.upload.message"/></div>
+    </div>
+    <button class="success-toast-close" onclick="hideSuccessToast()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
 
 <!-- Main Content -->
 <main class="main-content">
@@ -308,7 +322,8 @@
     </div>
 </main>
 
-<!-- Add message translations for JavaScript -->
+<script src="<c:url value="/js/toast-notification.js"/>"></script>
+
 <script>
     // Create a messages object to be used by the JavaScript
     window.appointmentMessages = {
@@ -424,6 +439,34 @@
         // Adjust on window resize
         window.addEventListener("resize", adjustContentMargin);
     }
+    document.addEventListener('DOMContentLoaded', function() {
+
+        const fileInput = document.getElementById('files');
+
+        fileInput.addEventListener('change', function(event) {
+            if (event.target.files.length > 0) {
+                showSuccessToast(); // Muestra la notificación de éxito
+            }
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('updated') === 'true') {
+            showSuccessToast();
+
+            // Remove the query parameter without refreshing the page
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.classList.remove('show');
+                });
+                hideSuccessToast();
+            }
+        });
+    });
+
 </script>
 
 <!-- Include the external JavaScript file -->
