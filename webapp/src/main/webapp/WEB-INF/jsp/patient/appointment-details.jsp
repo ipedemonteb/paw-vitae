@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.text.SimpleDateFormat, java.util.Date, java.util.TimeZone" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -69,11 +70,13 @@
                         <i class="fas fa-clipboard-check"></i>
                     </div>
                     <div class="specialty-content">
-                        <span class="specialty-label-appointment"><spring:message code="appointment.details.info.status" text="Status" />:</span>
+                        <span class="specialty-label-appointment">
+                            <spring:message code="appointment.details.info.status" text="Status" />:
+                        </span>
                         <div class="status-display">
-                            <span class="specialty-value-appointment">
-                                <spring:message code="appointment.status.${appointment.status}" text="${appointment.status}" />
-                            </span>
+                        <span class="specialty-value-appointment status-${appointment.status}">
+                            <spring:message code="appointment.status.${appointment.status}" text="${appointment.status}" />
+                        </span>
                         </div>
                     </div>
                 </div>
@@ -121,10 +124,17 @@
                 </div>
 
                 <!-- Check if appointment has passed -->
-                <c:set var="now" value="<%= new java.util.Date() %>" />
+                <c:set var="now">
+                    <%
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                        sdf.setTimeZone(TimeZone.getTimeZone("America/Argentina/Buenos_Aires"));
+                        long nowTime = System.currentTimeMillis(); // Obtén el tiempo actual en milisegundos
+                        request.setAttribute("nowTime", nowTime); // Pasa el valor al contexto de la página
+                    %>
+                </c:set>
                 <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="appointmentDate" type="both" />
-                <c:if test="${appointmentDate.time < now.time}">
-                    <sec:authorize access="hasRole('PATIENT')">
+                <c:if test="${appointmentDate.time < nowTime}">
+                <sec:authorize access="hasRole('PATIENT')">
                         <div class="rating-section">
                             <h2 class="rating-title">
                                 <i class="fas fa-star"></i>
@@ -421,7 +431,6 @@
 </script>
 
 <!-- Include the external JavaScript file -->
-<script src="<c:url value='/js/date-time-picker.js'/>"></script>
 <script src="<c:url value='/js/file-upload.js'/>"></script>
 </body>
 </html>

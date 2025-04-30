@@ -229,8 +229,38 @@ body {
 .status-card .specialty-value-appointment {
     display: inline-block;
     padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Estado cancelado: rojo */
+.status-cancelado {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #fdbfbf;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Estado confirmado: verde */
+.status-confirmado {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
     background-color: rgba(40, 167, 69, 0.1);
     color: var(--success-color);
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-weight: bold;
+}
+
+/* Estado completado: violeta */
+.status-completado { /* Violeta */
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #aacdff;
     border-radius: 1rem;
     font-size: 0.875rem;
     font-weight: 500;
@@ -603,7 +633,7 @@ textarea.form-control {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(231, 76, 60, 0.1);
+    background-color: rgb(219, 234, 254);
     border-radius: 50%;
 }
 
