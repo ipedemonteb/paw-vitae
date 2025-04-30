@@ -21,19 +21,6 @@
 <!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<!-- Toast notification -->
-<div id="toast-notification" class="toast-notification">
-    <div class="toast-icon">
-        <i class="fas fa-check-circle"></i>
-    </div>
-    <div class="toast-content">
-        <div class="toast-title"><spring:message code="appointment.rating.success" text="Success!" /></div>
-        <div class="toast-message"><spring:message code="appointment.rating.success" text="Your rating has been submitted successfully." /></div>
-    </div>
-    <button class="toast-close">
-        <i class="fas fa-times"></i>
-    </button>
-</div>
 
 <!-- Main Content -->
 <main class="main-content">
@@ -285,6 +272,19 @@
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Toast notification -->
+    <div id="toast-notification" class="toast-notification">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title"><spring:message code="appointment.rating.success" text="Success!" /></div>
+            <div class="toast-message"><spring:message code="appointment.rating.success" text="Your rating has been submitted successfully." /></div>
+        </div>
+        <button class="toast-close">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 </main>
 

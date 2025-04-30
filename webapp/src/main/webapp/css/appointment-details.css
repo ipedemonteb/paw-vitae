@@ -71,6 +71,7 @@ body {
     padding: 40px 30px;
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: 120px;
 }
 
 .appointment-title {
@@ -183,9 +184,10 @@ body {
     padding: 24px;
     background-color: var(--background-light);
     border-radius: var(--border-radius);
-    margin-bottom: 30px;
+    margin-bottom: 20px; /* Reduced spacing between cards */
     border: 1px solid #e2e8f0;
     transition: var(--transition);
+    width: 100%; /* Ensure full width */
 }
 
 .specialty-card-appointment:hover {
@@ -263,6 +265,7 @@ body {
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border: 1px solid #e2e8f0;
+    width: 100%; /* Ensure full width */
 }
 
 .rating-title {
@@ -280,7 +283,7 @@ body {
 }
 
 .rating-form {
-    max-width: 600px;
+    max-width: 100%; /* Ensure full width */
 }
 
 .form-group {
@@ -415,6 +418,24 @@ textarea.form-control {
     padding: 1.5rem;
     border: 1px solid #e2e8f0;
     box-shadow: var(--shadow-sm);
+    margin-bottom: 20px; /* Added spacing */
+    width: 100%; /* Ensure full width */
+}
+
+.review-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.75rem;
+}
+
+.review-title i {
+    color: var(--color-star);
 }
 
 .review-header {
@@ -450,9 +471,76 @@ textarea.form-control {
     font-size: 1rem;
 }
 
+/* No Reviews Message - Styled nicely */
+.no-reviews-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%; /* Ensure full width */
+}
+
+.no-reviews-icon {
+    font-size: 3rem;
+    color: var(--color-star);
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.no-reviews-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.no-reviews-text {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+/* Review Card - Full Width */
+.review-card {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+    width: 100%; /* Ensure full width */
+}
+
+.review-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.75rem;
+}
+
+.review-card-title i {
+    color: var(--color-star);
+}
+
+.review-card-content {
+    width: 100%;
+}
+
 /* Files Section */
 .files-section {
     margin-bottom: 2rem;
+    width: 100%; /* Ensure full width */
 }
 
 .files-title {
@@ -470,6 +558,18 @@ textarea.form-control {
     border-radius: var(--border-radius);
     padding: 1.5rem;
     border: 1px solid #e2e8f0;
+    margin-bottom: 20px; /* Added spacing */
+    width: 100%; /* Ensure full width */
+}
+
+.files-lable {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .file-item {
@@ -482,6 +582,7 @@ textarea.form-control {
     margin-bottom: 0.75rem;
     transition: var(--transition);
     border: 1px solid #e2e8f0;
+    width: 100%; /* Ensure full width */
 }
 
 .file-item:last-child {
@@ -542,12 +643,15 @@ textarea.form-control {
     background-color: var(--white);
     border-radius: var(--border-radius);
     border: 1px dashed #e2e8f0;
+    width: 100%; /* Ensure full width */
 }
 
 .no-files-content {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    width: 100%;
+    justify-content: center;
 }
 
 .no-files-message i {
@@ -564,6 +668,7 @@ textarea.form-control {
 .back-button-container {
     margin-top: 2rem;
     text-align: left;
+    width: 100%; /* Ensure full width */
 }
 
 .back-button {
@@ -658,6 +763,93 @@ textarea.form-control {
 .toast-close:hover {
     background-color: #f1f5f9;
     color: var(--text-color);
+}
+
+/* File Upload Styles - Enhanced Version for Doctor View */
+.file-upload-container {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    width: 100%; /* Ensure full width */
+}
+
+/* Dropzone Styles */
+.file-upload-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--border-radius);
+    background-color: #f8fafc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    width: 100%; /* Ensure full width */
+}
+
+.file-upload-dropzone:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(var(--color-primary-rgb), 0.05);
+}
+
+.file-upload-dropzone.active {
+    border-color: var(--primary-color);
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+    transform: scale(1.01);
+}
+
+.file-upload-dropzone.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
+    background-color: #f1f5f9;
+}
+
+.file-upload-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.file-upload-dropzone:hover .file-upload-icon {
+    transform: translateY(-5px);
+}
+
+.file-upload-text {
+    text-align: center;
+}
+
+.file-upload-primary {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+
+.file-upload-secondary {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.file-upload-input-hidden {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+/* File Preview Styles */
+.file-upload-preview {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%; /* Ensure full width */
 }
 
 /* Responsive Styles */
