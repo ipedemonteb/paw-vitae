@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.text.SimpleDateFormat, java.util.Date, java.util.TimeZone" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -121,10 +122,17 @@
                 </div>
 
                 <!-- Check if appointment has passed -->
-                <c:set var="now" value="<%= new java.util.Date() %>" />
+                <c:set var="now">
+                    <%
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                        sdf.setTimeZone(TimeZone.getTimeZone("America/Argentina/Buenos_Aires"));
+                        long nowTime = System.currentTimeMillis(); // Obtén el tiempo actual en milisegundos
+                        request.setAttribute("nowTime", nowTime); // Pasa el valor al contexto de la página
+                    %>
+                </c:set>
                 <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="appointmentDate" type="both" />
-                <c:if test="${appointmentDate.time < now.time}">
-                    <sec:authorize access="hasRole('PATIENT')">
+                <c:if test="${appointmentDate.time < nowTime}">
+                <sec:authorize access="hasRole('PATIENT')">
                         <div class="rating-section">
                             <h2 class="rating-title">
                                 <i class="fas fa-star"></i>
