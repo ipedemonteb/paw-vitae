@@ -129,7 +129,7 @@ public class DoctorController {
     @ResponseBody
     public ModelAndView cancelAppointment(@RequestParam("appointmentId") Long appointmentId){
         boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
-        return new ModelAndView("redirect:/doctor/dashboard/upcoming");
+        return new ModelAndView("redirect:/doctor/dashboard/upcoming?cancelled=true");
     }
 
     @RequestMapping(value = "/doctor/dashboard/availability/update", method = RequestMethod.POST)

@@ -114,7 +114,7 @@ public class PatientController {
     @ResponseBody
     public ModelAndView cancelAppointment(@RequestParam("appointmentId") Long appointmentId) {
         boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
-        return new ModelAndView("redirect:/patient/dashboard/upcoming");
+        return new ModelAndView("redirect:/patient/dashboard/upcoming?cancelled=true");
     }
 
     @RequestMapping(value = "patient/dashboard/appointment-details/{id}", method = RequestMethod.GET)
