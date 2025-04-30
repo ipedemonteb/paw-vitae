@@ -169,7 +169,7 @@
                 </c:set>
                 <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="appointmentDate"
                                type="both"/>
-                <c:if test="${appointmentDate.time < nowTime}">
+                <c:if test="${appointmentDate.time < nowTime && appointment.status == 'confirmado'}">
 
                     <div class="rating-section">
                         <h2 class="rating-title">
