@@ -34,13 +34,16 @@
         <div class="modal-body">
             <p class="modal-message"><spring:message code="appointment.cancel.message" /></p>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
-                <spring:message code="logout.confirmation.cancel"/>
-            </button>
-            <button type="button" class="btn-modal btn-danger" id="cancelAppointmentBtn">
-                <spring:message code="appointment.action.cancel"/>
-            </button>
+        <div class="modal-footer" id="cancelModal">
+            <form id="cancelForm" action="${pageContext.request.contextPath}/patient/dashboard/appointment/cancel" method="post">
+                <input type="hidden" name="appointmentId" value="" />
+                <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
+                    <spring:message code="logout.confirmation.cancel"/>
+                </button>
+                <button type="submit" class="btn-modal btn-danger" id="cancelAppointmentBtn">
+                    <spring:message code="appointment.action.cancel"/>
+                </button>
+            </form>
         </div>
     </div>
 </div>
@@ -132,7 +135,7 @@
                                                 <spring:message code="dashboard.filter.all" />
                                             </c:set>
                                             <c:if test="${status eq pending|| status eq confirmed}">
-                                                <button class="btn btn-danger cancel-appointment" data-id="<c:out value="${appointment.id}"/>" id="cancel-appointment">
+                                                <button class="btn btn-danger cancel-appointment" data-id="<c:out value="${appointment.id}"/>" id="cancel-appointment" data-target="#cancelModal">
                                                     <i class="fas fa-times-circle"></i>
                                                     <span><spring:message code="appointment.action.cancel" /></span>
                                                 </button>
@@ -208,28 +211,15 @@
             });
         });
 
-        // Cancel button in modal
-        const cancelAppointmentBtn = document.getElementById('cancelAppointmentBtn');
-        if (cancelAppointmentBtn) {
-            cancelAppointmentBtn.addEventListener('click', function() {
-                if (currentAppointmentId) {
-                    fetch(`${pageContext.request.contextPath}/patient/dashboard/appointment/cancel`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({ appointmentId: currentAppointmentId })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.reload();
-                            }
-                        })
-                }
-                hideCancelModal();
+        document.querySelectorAll('.cancel-appointment').forEach(button => {
+            button.addEventListener('click', () => {
+                const apptId = button.getAttribute('data-id');
+                document
+                    .querySelector('#cancelForm input[name="appointmentId"]')
+                    .value = apptId;
             });
-        }
+        });
+
 
         const fixedHeader = document.querySelector(".main-header");
         const mainContent = document.querySelector(".dashboard-container");
