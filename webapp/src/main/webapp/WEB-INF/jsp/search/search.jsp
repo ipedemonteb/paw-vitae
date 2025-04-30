@@ -124,10 +124,10 @@
 
         <!-- View Toggle -->
         <div class="view-toggle">
-          <button class="view-toggle-btn active" data-view="grid">
+          <button class="view-toggle-btn ${not empty param.view ?( param.view == "grid" ? "active" : "") : "active"}" data-view="grid">
             <i class="fas fa-th-large"></i>
           </button>
-          <button class="view-toggle-btn" data-view="list">
+          <button class="view-toggle-btn ${not empty param.view ? ( param.view == "list" ? "active" : "") : ""}" data-view="list">
             <i class="fas fa-list"></i>
           </button>
         </div>
@@ -306,7 +306,7 @@
           </div>
         </c:when>
         <c:otherwise>
-          <div class="doctors-grid">
+          <div class="doctors-grid ${not empty param.view ?( param.view == "grid" ? "" : "list-view") : ""}">
             <c:forEach var="doctor" items="${doctors}" varStatus="status">
               <div class="doctor-card">
                 <div class="doctor-card-header">
@@ -420,6 +420,9 @@
                   <c:if test="${not empty param.direction}">
                     <c:param name="direction" value="${param.direction}" />
                   </c:if>
+                  <c:if test="${not empty param.view}">
+                    <c:param name="view" value="${param.view}" />
+                  </c:if>
                 </c:url>
                 <a href="${prevUrl}" class="pagination-btn prev">
                   <i class="fas fa-chevron-left"></i>
@@ -451,6 +454,9 @@
                         <c:if test="${not empty param.direction}">
                           <c:param name="direction" value="${param.direction}" />
                         </c:if>
+                        <c:if test="${not empty param.view}">
+                          <c:param name="view" value="${param.view}" />
+                        </c:if>
                       </c:url>
                       <a href="${pageUrl}" class="pagination-number">${pageNum}</a>
                     </c:otherwise>
@@ -476,6 +482,9 @@
                   </c:if>
                   <c:if test="${not empty param.direction}">
                     <c:param name="direction" value="${param.direction}" />
+                  </c:if>
+                  <c:if test="${not empty param.view}">
+                    <c:param name="view" value="${param.view}" />
                   </c:if>
                 </c:url>
                 <a href="${nextUrl}" class="pagination-btn next">
