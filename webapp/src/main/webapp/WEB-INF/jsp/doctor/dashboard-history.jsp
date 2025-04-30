@@ -59,18 +59,6 @@
             </div>
         </div>
         <div class="dashboard-stats">
-            <c:if test="${not empty upcomingAppointments}">
-                <div class="stat-item">
-                    <div class="stat-value">${upcomingAppointments.size()}</div>
-                    <div class="stat-label"><spring:message code="dashboard.stats.upcoming" /></div>
-                </div>
-            </c:if>
-            <c:if test="${not empty pastAppointments}">
-                <div class="stat-item">
-                    <div class="stat-value">${pastAppointments.size()}</div>
-                    <div class="stat-label"><spring:message code="dashboard.stats.past" /></div>
-                </div>
-            </c:if>
             <div class="stat-item">
                 <div class="stat-value">${doctor.specialtyList.size()}</div>
                 <div class="stat-label"><spring:message code="dashboard.stats.specialties" /></div>
