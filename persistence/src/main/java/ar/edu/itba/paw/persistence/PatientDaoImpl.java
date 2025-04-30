@@ -23,24 +23,13 @@ public class PatientDaoImpl implements PatientDao {
 
     private final SimpleJdbcInsert jdbcInsertUser;
 
-    public final static RowMapper<Patient> ROW_MAPPER = new RowMapper<Patient>() {
-        @Override
-        public Patient mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Patient(
-                    rs.getString("name"),
-                    rs.getLong("id"),
-                    rs.getString("last_name"),
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getString("phone"),
-                    rs.getString("language"),
-                    new Coverage(rs.getLong("coverage_id"), rs.getString("coverage_name"))
-            );
-        }
-    };
+    public static RowMapper<Patient> ROW_MAPPER;
+
+
 
     @Autowired
-    public PatientDaoImpl(final DataSource ds) {
+    public PatientDaoImpl(final DataSource ds, final DaoUtils daoUtils) {
+        ROW_MAPPER = daoUtils.getPatientRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertPatient = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("clients")
