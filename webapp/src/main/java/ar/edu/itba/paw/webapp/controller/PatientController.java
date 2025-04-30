@@ -129,8 +129,6 @@ public class PatientController {
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
         mav.addObject("existingRating", existingRating.orElse(null));
 
-        System.out.println("existingRating: " + existingRating.orElse(null));
-
         // Only create a new form if there's no existing rating
         if (!existingRating.isPresent()) {
             patientRatingForm.setAppointmentId(id);

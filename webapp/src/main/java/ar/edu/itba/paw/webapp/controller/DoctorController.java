@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 public class DoctorController {
@@ -27,13 +28,15 @@ public class DoctorController {
     private final CoverageService cs;
     private final SpecialtyService ss;
     private final AppointmentFileService afs;
+    private final RatingService rs;
     @Autowired
-    public DoctorController(DoctorService ds, AppointmentService as, CoverageService cs, SpecialtyService ss, AppointmentFileService afs) {
+    public DoctorController(DoctorService ds, AppointmentService as, CoverageService cs, SpecialtyService ss, AppointmentFileService afs, RatingService rs) {
         this.ds = ds;
         this.as = as;
         this.cs = cs;
         this.ss = ss;
         this.afs = afs;
+        this.rs = rs;
     }
     @RequestMapping(value = "/doctor/dashboard")
     public ModelAndView getDoctorDashboard() {
@@ -157,6 +160,8 @@ public class DoctorController {
                 new IllegalArgumentException("Invalid appointment Id:" + id));
         mav.addObject("appointment", appointment);
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
+        Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
+        mav.addObject("existingRating", existingRating.orElse(null));
         return mav;
     }
 
@@ -176,6 +181,6 @@ public class DoctorController {
                 new IllegalArgumentException("Invalid appointment Id:" + id));
 
         afs.create(doctorFileForm.getFiles(),"doctor",appointment.getId());
-        return new ModelAndView("redirect:/patient/dashboard/appointment/" + id);
+        return new ModelAndView("redirect:/doctor/dashboard/appointment-details/" + id);
     }
 }
