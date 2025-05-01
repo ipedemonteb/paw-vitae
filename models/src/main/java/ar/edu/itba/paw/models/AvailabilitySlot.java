@@ -5,7 +5,9 @@ import java.time.LocalTime;
 public class AvailabilitySlot {
 
     private int dayOfWeek; // 0 = Monday, 6 = Sunday
+
     private LocalTime startTime;
+
     private LocalTime endTime;
 
     // Add a default constructor for Spring data binding
