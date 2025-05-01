@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.auth.AuthService;
 import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
@@ -37,10 +38,10 @@ public class AuthController {
     private final UserService us;
     private final MailService ms;
 
-    private final AuthUserDetailsService authService;
+    private final AuthService authService;
 
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, PatientService patientService, UserService us, AuthUserDetailsService authService, MailService ms) {
+    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, PatientService patientService, UserService us, AuthService authService, MailService ms) {
         this.ds = ds;
         this.cs = cs;
         this.is = is;
@@ -136,18 +137,31 @@ public class AuthController {
         return new ModelAndView("auth/email-sent");
     }
 
-    @RequestMapping(value = "/verify", method = RequestMethod.GET)
-    public ModelAndView verifyAccount(@RequestParam(value = "token", required = false) String token) {
+    @RequestMapping("/verify")
+    public ModelAndView verifyAccount(@RequestParam(value = "token",required = false) String token) {
         if (token == null) {
             return new ModelAndView("auth/verify");
         }
-
-        // Si hay token, verificarlo y redirigir según el resultado
-        boolean verificacionExitosa = us.verifyValidationToken(token);
-        if (verificacionExitosa) {
+        boolean success = authService.verifyAndLoginUser(token);
+        if (success) {
             return new ModelAndView("redirect:/verify?success=true");
         } else {
             return new ModelAndView("redirect:/verify?success=false");
         }
+    }
+    @RequestMapping("/verify-result")
+    public ModelAndView verifyResult() {
+        return new ModelAndView("auth/verify");
+    }
+
+
+    @RequestMapping("/verify-confirmation")
+    public ModelAndView verifyConfirmation(@RequestParam(value = "token", required = false) String token) {
+        if (token == null) {
+            return new ModelAndView("redirect:/");
+        }
+        ModelAndView mav = new ModelAndView("auth/verify-confirmation");
+        mav.addObject("token", token);
+        return mav;
     }
 }

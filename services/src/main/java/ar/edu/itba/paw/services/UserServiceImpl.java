@@ -102,19 +102,23 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public boolean verifyValidationToken(String token) {
+    public Optional<? extends User> verifyValidationToken(String token) {
         Optional<Patient> patient = patientDao.getByVerificationToken(token);
         if (patient.isPresent()) {
             setVerificationStatus(patient.get(), true);
-            return true;
+            return patient;
         } else{
             Optional<Doctor> doctor = doctorDao.getByVerificationToken(token);
             if (doctor.isPresent()) {
                 setVerificationStatus(doctor.get(), true);
-                return true;
-            } else {
-                return false;
+                return doctor;
             }
         }
+        return Optional.empty();
+    }
+    @Transactional
+    @Override
+    public void removeVerificationToken(String token) {
+        userDao.removeVerificationToken(token);
     }
 }

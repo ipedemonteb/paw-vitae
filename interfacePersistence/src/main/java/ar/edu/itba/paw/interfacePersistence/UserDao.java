@@ -8,6 +8,6 @@ public interface UserDao {
     void setVerificationToken(long id, String token);
     void setVerificationStatus(long id, boolean status);
     void setResetPasswordToken(long id, String token);
-
+    void removeVerificationToken(String token);
 
 }
