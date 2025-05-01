@@ -12,21 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.beans.PropertyEditorSupport;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,7 +90,7 @@ public class AuthController {
 
 
     @RequestMapping(value = "/register-patient", method = RequestMethod.GET)
-    public ModelAndView patientForm(@ModelAttribute("patientForm") final PatientForm pacientForm) {
+    public ModelAndView patientForm(@ModelAttribute("patientForm") final PatientForm patientForm) {
         List<Coverage> coverageList = cs.getAll();
         ModelAndView mav = new ModelAndView("auth/register-patient");
         mav.addObject("coverageList", coverageList);
