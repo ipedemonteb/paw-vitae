@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.interfacePersistence.ImageDao;
 import ar.edu.itba.paw.models.Images;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,35 +17,34 @@ import java.util.Optional;
 public class ImageDaoImpl implements ImageDao {
 
     private JdbcTemplate jdbcTemplate;
+    private DoctorDao doctorDao;
     private final SimpleJdbcInsert jdbcInsertImage;
     private final RowMapper<Images> ROW_MAPPER = (rs, rowNum) -> new Images(
-            rs.getLong("doctor_id"),
+            rs.getLong("id"),
             rs.getBytes("image")
     );
     @Autowired
-    public ImageDaoImpl(final DataSource ds) {
+    public ImageDaoImpl(final DataSource ds,
+                        final DoctorDao doctorDao) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertImage = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("images")
-                .usingColumns("doctor_id", "image");
+                .usingColumns( "image")
+                .usingGeneratedKeyColumns("id");
+        this.doctorDao = doctorDao;
     }
 
     @Override
-    public Images create(long doctor_id, byte[] image) {
+    public Images create( byte[] image) {
         final Map<String,Object> args = new HashMap<>();
-        args.put("doctor_id",doctor_id);
         args.put("image",image);
-        jdbcInsertImage.execute(args);
-        return new Images(doctor_id,image);
+        Number id = jdbcInsertImage.executeAndReturnKey(args);
+        return new Images(id.longValue(),image);
     }
 
     @Override
     public Optional<Images> findById(long id) {
-        return jdbcTemplate.query("SELECT * FROM images WHERE image_id = ?", ROW_MAPPER, id).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM images WHERE id = ?", ROW_MAPPER, id).stream().findFirst();
     }
 
-    @Override
-    public Optional<Images> findByDoctorId(long doctor_id) {
-        return jdbcTemplate.query("SELECT * FROM images WHERE doctor_id = ?", ROW_MAPPER, doctor_id).stream().findFirst();
-    }
 }

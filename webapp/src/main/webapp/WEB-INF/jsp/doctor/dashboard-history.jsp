@@ -26,7 +26,7 @@
     <div class="dashboard-header">
         <div class="doctor-info">
             <div class="doctor-avatar">
-                <img src="<c:url value="/doctor/${doctor.id}/image"/>" alt="<c:out value="${doctor.name} ${doctor.lastName}"/>"/>
+                <img src="<c:url value="/image/${doctor.imageId}"/>" alt="<c:out value="${doctor.name} ${doctor.lastName}"/>"/>
             </div>
             <div class="doctor-details">
                 <h1 class="doctor-name"><c:out value="${doctor.name}" /> <c:out value="${doctor.lastName}" /></h1>

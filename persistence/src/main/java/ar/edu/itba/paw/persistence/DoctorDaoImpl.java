@@ -28,7 +28,7 @@ public class DoctorDaoImpl implements DoctorDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
-                .usingColumns("doctor_id");
+                .usingColumns("doctor_id", "image_id");
         jdbcInsertUser = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
                 .usingGeneratedKeyColumns("id");
@@ -72,7 +72,7 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, String language,
+    public Doctor create(String name, String lastName, String email, String password, String phone, String language,long imageId,
                          List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList) {
         final Map<String, Object> argsUser = new HashMap<>();
         argsUser.put("name", name);
@@ -81,10 +81,11 @@ public class DoctorDaoImpl implements DoctorDao {
         argsUser.put("password", password);
         argsUser.put("phone", phone);
         argsUser.put("language", language);
-        final Number docId = jdbcInsertUser.executeAndReturnKey(argsUser);
 
+        final Number docId = jdbcInsertUser.executeAndReturnKey(argsUser);
         final Map<String, Object> argsDoctor = new HashMap<>();
         argsDoctor.put("doctor_id", docId);
+        argsDoctor.put("image_id", imageId);
         jdbcInsertDoctor.execute(argsDoctor);
 
         for (Specialty specialty : specialties) {
@@ -117,11 +118,13 @@ public class DoctorDaoImpl implements DoctorDao {
                 email,
                 password,
                 phone,
-                language
+                language,
+                imageId
         );
         doc.setCoverageList(coverages);
         doc.setSpecialtyList(specialties);
         doc.setAvailabilitySlots(availabilityList);
+
         return doc;
     }
 
@@ -130,7 +133,7 @@ public class DoctorDaoImpl implements DoctorDao {
         Optional<Doctor> doc = jdbcTemplate.query(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id  " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.id = ?",
                 ROW_MAPPER, id
         ).stream().findFirst();
@@ -143,7 +146,7 @@ public class DoctorDaoImpl implements DoctorDao {
         Optional<Doctor> doc = jdbcTemplate.query(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id  " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.email = ?",
                 ROW_MAPPER, email
         ).stream().findFirst();
@@ -157,7 +160,7 @@ public class DoctorDaoImpl implements DoctorDao {
         List<Doctor> doctors = jdbcTemplate.query(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id  " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id",
                 ROW_MAPPER
         );
@@ -188,7 +191,7 @@ public class DoctorDaoImpl implements DoctorDao {
         return jdbcTemplate.query(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id  " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.id IN (" +
                         String.join(",", Collections.nCopies(ids.size(), "?")) + ")",
                 ROW_MAPPER, ids.toArray()
@@ -200,7 +203,7 @@ public class DoctorDaoImpl implements DoctorDao {
         List<Doctor> doctors = jdbcTemplate.query(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id " +
                         "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
                         "JOIN specialties s ON ds.specialty_id = s.id " +
@@ -351,7 +354,7 @@ public class DoctorDaoImpl implements DoctorDao {
         StringBuilder sql = new StringBuilder(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count, d.image_id AS image_id " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE 1=1"
         );
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);

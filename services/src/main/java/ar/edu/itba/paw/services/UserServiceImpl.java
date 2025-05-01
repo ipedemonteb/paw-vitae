@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
         Optional<Patient> patient = patientDao.getByEmail(email);
         return patient.isPresent() ? patient : doctorDao.getByEmail(email);
     }
-
+    @Transactional
     @Override
     public void changePassword(Long id, String password) {
         Optional<Patient> patient = patientDao.getById(id);
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
             return doctorDao.getLanguage(id);
         }
     }
-
+    @Transactional
     public void changeLanguage(long id, String language) {
         Optional<Patient> patient = patientDao.getById(id);
         if (patient.isPresent()) {

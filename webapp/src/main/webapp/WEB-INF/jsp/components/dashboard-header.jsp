@@ -6,7 +6,7 @@
 <div class="dashboard-header">
   <div class="doctor-info">
     <div class="doctor-avatar">
-      <img src="<c:url value="/doctor/${patient.id}/image"/>" alt="<c:out value="${patient.name} ${patient.lastName}"/>">
+      <img src="<c:url value="/image/${-1}"/>" alt="<c:out value="${patient.name} ${patient.lastName}"/>">
     </div>
     <div class="doctor-details">
       <h1 class="doctor-name"><c:out value="${patient.name}" /> <c:out value="${patient.lastName}" /></h1>

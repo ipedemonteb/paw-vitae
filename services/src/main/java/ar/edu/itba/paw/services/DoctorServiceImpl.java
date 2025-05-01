@@ -1,11 +1,8 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
-import ar.edu.itba.paw.interfaceServices.AppointmentService;
-import ar.edu.itba.paw.interfaceServices.CoverageService;
-import ar.edu.itba.paw.interfaceServices.DoctorService;
+import ar.edu.itba.paw.interfaceServices.*;
 
-import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,27 +25,28 @@ public class DoctorServiceImpl implements DoctorService {
     private final SpecialtyService ss;
     private final CoverageService cs;
     private final AppointmentService as;
-
+    private final ImageService is;
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder, AppointmentService as) {
+    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder, AppointmentService as,ImageService is) {
         this.doctorDao = doctorDao;
         this.ss = ss;
         this.cs = cs;
         this.passwordEncoder = passwordEncoder;
         this.as = as;
+        this.is = is;
     }
 
     @Transactional
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, String language, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
         List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList()));
         List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList()));
-
+        Images img = is.create(image);
         Doctor doctor = this.doctorDao.create(
-                name, lastName, email, passwordEncoder.encode(password), phone, language, specialtyList, coverageList, availabilitySlots
+                name, lastName, email, passwordEncoder.encode(password), phone, language,(img == null ? -1 : img.getId()), specialtyList, coverageList, availabilitySlots
         );
 
         LOGGER.debug("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
@@ -114,6 +113,7 @@ public class DoctorServiceImpl implements DoctorService {
         int total = doctorDao.countWithFilters(specialtyId, coverageId, weekdays, orderBy, direction);
         return new Page<>(docs, page, pageSize, total);
     }
+    @Transactional
     @Override
     public void UpdateDoctorRating(long id, double rating) {
         doctorDao.UpdateDoctorRating(id, rating);

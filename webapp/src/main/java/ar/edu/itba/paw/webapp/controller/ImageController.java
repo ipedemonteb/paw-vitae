@@ -25,9 +25,9 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @RequestMapping(value = "/doctor/{doctorId}/image", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-    public void getDoctorImage(@PathVariable("doctorId") long doctorId, HttpServletResponse response) throws IOException {
-        Optional<Images> imageOpt = imageService.findByDoctorId(doctorId);
+    @RequestMapping(value = "/image/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+    public void getImage(@PathVariable("id") long id, HttpServletResponse response) throws IOException {
+        Optional<Images> imageOpt = imageService.findById(id);
         byte[] imageBytes;
         if (imageOpt.isPresent()) {
             imageBytes = imageOpt.get().getImage();
