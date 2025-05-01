@@ -23,14 +23,14 @@ public class RatingServiceImpl implements RatingService {
     }
     @Transactional
     @Override
-    public Rating create(double rating, long doctorId, long patientId, long appointmentId, String comment, long id) {
-        Rating rating_aux = ratingDao.create(rating, doctorId, patientId, appointmentId, comment, id);
+    public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
+        Rating rating_aux = ratingDao.create(rating, doctorId, patientId, appointmentId, comment);
         doctorService.UpdateDoctorRating(doctorId, rating_aux.getRating());
         return rating_aux;
     }
 
     @Override
-    public Optional<Rating> getRating(int id) {
+    public Optional<Rating> getRating(long id) {
         return ratingDao.getRating(id);
     }
 
