@@ -16,5 +16,4 @@ public class Patient extends User{
     public void setCoverage(Coverage coverage) {
         this.coverage = coverage;
     }
-
 }
