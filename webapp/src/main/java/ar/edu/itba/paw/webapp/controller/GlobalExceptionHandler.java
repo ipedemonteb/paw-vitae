@@ -16,50 +16,6 @@ import java.util.Objects;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 404 – no handler matched
-    @ExceptionHandler(NoHandlerFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ModelAndView handle404(NoHandlerFoundException ex) {
-        ModelAndView mav = new ModelAndView("error/404");
-        mav.addObject("path", ex.getRequestURL());
-        return mav;
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ModelAndView handle403(AccessDeniedException ex) {
-        ModelAndView mav = new ModelAndView("error/403");
-        mav.addObject("message", "You don’t have permission to do that.");
-        return mav;
-    }
-
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ModelAndView handle400(MissingServletRequestParameterException ex) {
-        ModelAndView mav = new ModelAndView("error/400");
-        mav.addObject("param", ex.getParameterName());
-        return mav;
-    }
-
-    // catch type‐mismatch (e.g. ?id=foo to Long)
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ModelAndView handle400(MethodArgumentTypeMismatchException ex) {
-        ModelAndView mav = new ModelAndView("error/400");
-        mav.addObject("value", ex.getValue());
-        mav.addObject("requiredType", Objects.requireNonNull(ex.getRequiredType()).getSimpleName());
-        return mav;
-    }
-
-    // catch JSON parse errors
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ModelAndView handle400(HttpMessageNotReadableException ex) {
-        ModelAndView mav = new ModelAndView("error/400");
-        mav.addObject("error", "Malformed request body");
-        return mav;
-    }
-
     // 500 – all other uncaught exceptions
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
