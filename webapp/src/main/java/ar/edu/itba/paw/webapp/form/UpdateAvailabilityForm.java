@@ -23,6 +23,6 @@ public class UpdateAvailabilityForm {
         this.availabilitySlots = availabilitySlots;
     }
     public void setForm(List<AvailabilitySlot> availabilitySlots) {
-        this.availabilitySlots = availabilitySlots.stream().filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null).collect(Collectors.toList());
+        this.availabilitySlots = availabilitySlots;
     }
 }

@@ -20,21 +20,16 @@ public class TimeSlotIntersectionValidator implements ConstraintValidator<TimeSl
         if (slots == null || slots.isEmpty()) return true;
 
         Map<Integer, List<AvailabilitySlot>> groupedByDay = slots.stream()
+                .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
                 .collect(Collectors.groupingBy(AvailabilitySlot::getDayOfWeek));
-
-        for (List<AvailabilitySlot> daySlots : groupedByDay.values()) {
+        for (Map.Entry<Integer, List<AvailabilitySlot>> entry : groupedByDay.entrySet()) {
+            List<AvailabilitySlot> daySlots = entry.getValue();
             daySlots.sort(Comparator.comparing(AvailabilitySlot::getStartTime));
-
             for (int i = 0; i < daySlots.size() - 1; i++) {
                 AvailabilitySlot current = daySlots.get(i);
                 AvailabilitySlot next = daySlots.get(i + 1);
 
-                LocalTime currentEnd = current.getEndTime();
-                LocalTime nextStart = next.getStartTime();
-
-                if (currentEnd == null || nextStart == null) continue;
-
-                if (!currentEnd.isBefore(nextStart)) {
+                if (!current.getEndTime().isBefore(next.getStartTime())) {
                     return false;
                 }
             }
