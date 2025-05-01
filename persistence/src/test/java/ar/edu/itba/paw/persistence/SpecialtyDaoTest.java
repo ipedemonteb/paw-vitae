@@ -9,11 +9,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -47,7 +45,6 @@ public class SpecialtyDaoTest {
         assertFalse(specialty.isPresent());
     }
 
-    //@TODO: revisar
     @Test
     public void testGetByIdExists() {
         //Preconditions
@@ -96,5 +93,30 @@ public class SpecialtyDaoTest {
         List<String> keys = specialties.stream().map(Specialty::getKey).collect(Collectors.toList());
         assertEquals(3, specialties.size());
         assertTrue(keys.containsAll(List.of("Cardiology", "Neurology", "Orthopedics")));
+    }
+
+    @Test
+    public void testGetByIds() {
+        //Preconditions
+        List<Long> ids = List.of(1L, 2L);
+
+        //Exercise
+        List<Specialty> specialties = specialtyDao.getByIds(ids);
+
+        //Postconditions
+        assertEquals(2, specialties.size());
+        assertTrue(specialties.stream().allMatch(s -> ids.contains(s.getId())));
+    }
+
+    @Test
+    public void testGetByIdsEmpty() {
+        //Preconditions
+        List<Long> ids = List.of(1000L);
+
+        //Exercise
+        List<Specialty> specialties = specialtyDao.getByIds(ids);
+
+        //Postconditions
+        assertTrue(specialties.isEmpty());
     }
 }
