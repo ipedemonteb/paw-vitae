@@ -135,12 +135,10 @@ public class DoctorController {
     @RequestMapping(value = "/doctor/dashboard/availability/update", method = RequestMethod.POST)
     public ModelAndView updateAvailability(
             @Valid @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm form,
-            BindingResult errors,
-            @RequestParam(value = "deletedSlots", required = false) String[] deletedSlots) {
+            BindingResult errors) {
         if (errors.hasErrors()) {
             return getAvailability(form);
         }
-        form.setAvailabilitySlots(form.getAvailabilitySlots());
         ds.updateDoctorAvailability(loggedUser().getId(), form.getAvailabilitySlots());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }

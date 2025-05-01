@@ -45,8 +45,11 @@ public class DoctorServiceImpl implements DoctorService {
         List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList()));
         List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList()));
         Images img = is.create(image);
+        List<AvailabilitySlot> filteredSlots = availabilitySlots.stream()
+                .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
+                .toList();
         Doctor doctor = this.doctorDao.create(
-                name, lastName, email, passwordEncoder.encode(password), phone, language,(img == null ? -1 : img.getId()), specialtyList, coverageList, availabilitySlots
+                name, lastName, email, passwordEncoder.encode(password), phone, language,(img == null ? -1 : img.getId()), specialtyList, coverageList, filteredSlots
         );
 
         LOGGER.debug("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
@@ -93,7 +96,10 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
-        doctorDao.updateDoctorAvailability(id, availabilitySlots);
+        List<AvailabilitySlot> filteredSlots = availabilitySlots.stream()
+                .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
+                .toList();
+        doctorDao.updateDoctorAvailability(id, filteredSlots);
         LOGGER.debug("Disponibilidad actualizada para el doctor con id={}, slots={}", id, availabilitySlots.size()); //Only log the new size, if the user has many, then it might be too heavy
     }
 
