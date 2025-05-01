@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page isErrorPage="true" %>
 <!DOCTYPE html>
@@ -29,9 +30,6 @@
   <div class="action-buttons">
     <a href="${pageContext.request.contextPath}/" class="btn">
       <spring:message code="common.return.home" />
-    </a>
-    <a href="${pageContext.request.contextPath}/login" class="btn btn-outline">
-      <spring:message code="common.sign.in" />
     </a>
   </div>
 
