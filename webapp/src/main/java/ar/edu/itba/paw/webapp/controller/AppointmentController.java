@@ -51,12 +51,6 @@ public class AppointmentController {
         return mav;
     }
 
-    @ModelAttribute
-    public Patient loggedUser() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return ps.getByEmail((String) auth.getName()).orElseThrow(UserNotFoundException::new);
-    }
-
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
     public ModelAndView appointment(
             @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
@@ -74,25 +68,27 @@ public class AppointmentController {
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
             final BindingResult errors,
             @RequestParam(required = true) Long doctorId,
-            RedirectAttributes redirectAttributes
+            @ModelAttribute("loggedUser") final Patient patient
     ) {
 
         if (errors.hasErrors()) {
             return appointment(appointmentForm, doctorId);
         }
 
-        Patient patient = loggedUser();
+//        Patient patient = loggedUser();
 
         Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
         afs.create( appointmentForm.getFiles(),"patient",appointment.getId());
-        redirectAttributes.addFlashAttribute("appointment", appointment);
 
-        return new ModelAndView("redirect:/appointment/confirmation");
+        return new ModelAndView("redirect:/appointment/confirmation/" + appointment.getId());
     }
 
-    @RequestMapping(value = "/appointment/confirmation")
-    public ModelAndView appointmentConfirmation(Model model) {
-        Appointment appointment = (Appointment) model.asMap().get("appointment");
+    @RequestMapping(value = "/appointment/confirmation/{id}", method = RequestMethod.GET)
+    public ModelAndView appointmentConfirmation(
+            @PathVariable("id") final long id
+    ) {
+
+        Appointment appointment = as.getById(id).orElseThrow(IllegalArgumentException::new);
 
         ModelAndView mav = new ModelAndView("appointment/confirmation");
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
