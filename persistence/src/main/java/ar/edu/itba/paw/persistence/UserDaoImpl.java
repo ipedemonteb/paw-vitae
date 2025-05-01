@@ -15,7 +15,6 @@ import java.util.Optional;
 public class UserDaoImpl implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
     @Autowired
     public UserDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
