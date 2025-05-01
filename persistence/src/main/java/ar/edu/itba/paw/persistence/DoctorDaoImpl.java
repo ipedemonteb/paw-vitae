@@ -221,15 +221,13 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList) {
+    public void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages) {
 
-        // Update basic doctor info
         jdbcTemplate.update(
                 "UPDATE users SET name = ?, last_name = ?, phone = ? WHERE id = ?",
                 name, lastName, phone, id
         );
 
-        // Update specialties
         jdbcTemplate.update("DELETE FROM doctor_specialties WHERE doctor_id = ?", id);
         for (Specialty specialty : specialties) {
             jdbcTemplate.update(
@@ -238,24 +236,12 @@ public class DoctorDaoImpl implements DoctorDao {
             );
         }
 
-        // Update coverages
         jdbcTemplate.update("DELETE FROM doctor_coverages WHERE doctor_id = ?", id);
         for (Coverage coverage : coverages) {
             jdbcTemplate.update(
                     "INSERT INTO doctor_coverages (doctor_id, coverage_id) VALUES (?, ?)",
                     id, coverage.getId()
             );
-        }
-
-        // Update availability
-        jdbcTemplate.update("DELETE FROM doctor_availability WHERE doctor_id = ?", id);
-        for (AvailabilitySlot slot : availabilityList) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("doctor_id", id);
-            params.put("day_of_week", slot.getDayOfWeek());
-            params.put("start_time", slot.getStartTime());
-            params.put("end_time", slot.getEndTime());
-            jdbcInsertDoctorAvailability.execute(params);
         }
     }
 
