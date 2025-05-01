@@ -119,8 +119,7 @@ public class DoctorController {
                 updateDoctorForm.getLastName(),
                 updateDoctorForm.getPhone(),
                 updateDoctorForm.getSpecialties(),
-                updateDoctorForm.getCoverages(),
-                null);
+                updateDoctorForm.getCoverages());
         return new ModelAndView("redirect:/doctor/dashboard/profile?updated=true");
     }
 
