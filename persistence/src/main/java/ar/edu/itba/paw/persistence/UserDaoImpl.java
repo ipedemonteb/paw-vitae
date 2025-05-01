@@ -36,5 +36,10 @@ public class UserDaoImpl implements UserDao {
         jdbcTemplate.update("UPDATE users SET reset_token = ? WHERE id = ?", token, id);
     }
 
+    @Override
+    public void removeVerificationToken(String token) {
+        jdbcTemplate.update("UPDATE users SET verification_token = NULL WHERE verification_token = ?", token);
+    }
+
 
 }

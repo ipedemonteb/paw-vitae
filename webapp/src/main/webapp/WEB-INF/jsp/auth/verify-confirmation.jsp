@@ -99,7 +99,9 @@
             margin-bottom: 2rem;
             display: inline-block;
         }
-
+        .card-header {
+           margin-top: 10rem;
+        }
         .token-label {
             font-weight: 500;
             color: var(--text-light);

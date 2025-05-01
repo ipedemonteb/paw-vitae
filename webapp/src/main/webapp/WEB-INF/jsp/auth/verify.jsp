@@ -71,7 +71,9 @@
             text-decoration: none;
             transition: var(--transition);
         }
-
+    .card-header {
+        margin-top: 10rem;
+    }
         .btn-primary:hover {
             background-color: var(--primary-dark);
             transform: translateY(-2px);
@@ -120,10 +122,6 @@
                         <p class="verification-message"><spring:message code="verification.success.message"/></p>
 
                         <div class="verification-actions">
-                            <a href="${pageContext.request.contextPath}/login" class="btn-primary">
-                                <i class="fas fa-sign-in-alt"></i>
-                                <spring:message code="verification.login.now"/>
-                            </a>
                             <a href="${pageContext.request.contextPath}/" class="btn-secondary">
                                 <i class="fas fa-home"></i>
                                 <spring:message code="verification.back.to.home"/>
