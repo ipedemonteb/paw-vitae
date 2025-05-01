@@ -22,6 +22,7 @@ public interface PatientDao {
     void changePassword(long id, String password);
 
     String getLanguage(long id);
+    Optional<Patient> getByVerificationToken(String token);
 
     void changeLanguage(long id, String language);
 }

@@ -26,7 +26,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
             "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
             "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
             "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +
-            "c.id AS coverage_id, c.coverage_name " +
+            "c.id AS coverage_id, c.coverage_name, pu.is_verified AS patient_verified, u.is_verified AS doctor_verified " +
             "FROM Appointments a " +
             "JOIN Specialties s ON a.specialty_id = s.id " +
             "JOIN Doctors d ON a.doctor_id = d.doctor_id " +

@@ -44,7 +44,7 @@ public class PatientDaoImpl implements PatientDao {
         return jdbcTemplate.query(
                 "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
                         "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
-                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name " +
+                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified " +
                         "FROM Users u JOIN Clients c ON c.client_id = u.id " +
                         "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id = ?",
                 ROW_MAPPER, id
@@ -60,6 +60,7 @@ public class PatientDaoImpl implements PatientDao {
         argsUser.put("phone", phone);
         argsUser.put("last_name", lastName);
         argsUser.put("language", language);
+        argsUser.put("is_verified", false);
         final Number patientId = jdbcInsertUser.executeAndReturnKey(argsUser);
         final Map<String, Object> argsPatient = new HashMap<>();
         argsPatient.put("client_id", patientId);
@@ -74,7 +75,8 @@ public class PatientDaoImpl implements PatientDao {
                 password,
                 phone,
                 language,
-                coverage
+                coverage,
+                false
         );
     }
 
@@ -83,7 +85,7 @@ public class PatientDaoImpl implements PatientDao {
         return jdbcTemplate.query(
                 "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
                         "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
-                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name " +
+                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name,u.is_verified AS patient_verified " +
                         "FROM Users u JOIN Clients c ON c.client_id = u.id " +
                         "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.email = ?",
                 ROW_MAPPER, email
@@ -107,7 +109,7 @@ public class PatientDaoImpl implements PatientDao {
         return jdbcTemplate.query(
                 "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
                         "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
-                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name " +
+                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified " +
                         "FROM Users u JOIN Clients c ON c.client_id = u.id " +
                         "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id IN (" +
                         String.join(",", Collections.nCopies(ids.size(), "?")) + ")",
@@ -122,6 +124,18 @@ public class PatientDaoImpl implements PatientDao {
     @Override
     public String getLanguage(long id) {
         return jdbcTemplate.query("SELECT language FROM Users WHERE id = ?", (rs, rowNum) -> rs.getString("language"), id).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public Optional<Patient> getByVerificationToken(String token) {
+        return jdbcTemplate.query(
+                "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
+                        "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
+                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name,u.is_verified AS patient_verified " +
+                        "FROM Users u JOIN Clients c ON c.client_id = u.id " +
+                        "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.verification_token = ?",
+                ROW_MAPPER, token
+        ).stream().findFirst();
     }
 
     @Override
