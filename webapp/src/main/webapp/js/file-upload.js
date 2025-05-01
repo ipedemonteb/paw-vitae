@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 setTimeout(() => {
                     fileItem.remove();
-                    showNotification(window.appointmentMessages?.fileUpload?.fileRemoved || "Archivo eliminado");
+                    // showNotification(window.appointmentMessages?.fileUpload?.fileRemoved || "Archivo eliminado");
 
                     updateDropzoneState();
                 }, 300);
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
             fileItem.style.opacity = "1";
             fileItem.style.transform = "translateY(0)";
 
-            showNotification(window.appointmentMessages?.fileUpload?.fileAdded || "Archivo añadido");
+            // showNotification(window.appointmentMessages?.fileUpload?.fileAdded || "Archivo añadido");
         })
 
         fileInput.value = "";
