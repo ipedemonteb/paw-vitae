@@ -1,22 +1,27 @@
 package ar.edu.itba.paw.models;
 
 public class Rating {
-    private Double rating;
+    private final long id;
+    private long rating;
     private long doctorId;
     private long patientId;
     private long appointmentId;
     private String comment;
-    private long id;
-    public Rating(Double rating, long doctorId, long patientId, long appointmentId, String comment, long id) {
+
+    public Rating(long id, long rating, long doctorId, long patientId, long appointmentId, String comment) {
+        this.id = id;
         this.rating = rating;
         this.doctorId = doctorId;
         this.patientId = patientId;
         this.appointmentId = appointmentId;
         this.comment = comment;
-        this.id = id;
     }
 
-    public void setRating(Double rating) {
+    public long getId() {
+        return id;
+    }
+
+    public void setRating(long rating) {
         this.rating = rating;
     }
 
@@ -36,11 +41,7 @@ public class Rating {
         this.comment = comment;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Double getRating() {
+    public long getRating() {
         return rating;
     }
 
@@ -58,9 +59,5 @@ public class Rating {
 
     public String getComment() {
         return comment;
-    }
-
-    public long getId() {
-        return id;
     }
 }
