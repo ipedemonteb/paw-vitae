@@ -368,6 +368,9 @@
         const coveragesSection = document.getElementById('coverages-section');
         const editProfileForm = document.getElementById('edit-profile-form');
 
+        updateSelectedCoverages();
+        updateSelectedSpecialties();
+
         if (editProfileBtn) {
             editProfileBtn.addEventListener('click', function() {
                 profileView.style.display = 'none';

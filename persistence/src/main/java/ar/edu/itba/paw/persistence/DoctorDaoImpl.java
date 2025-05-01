@@ -14,6 +14,12 @@ import java.util.*;
 @Repository
 public class DoctorDaoImpl implements DoctorDao {
 
+    private final static String BASE_SQL = "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
+            "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
+            "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id,u.is_verified AS doctor_verified " +
+            "FROM users u JOIN doctors d ";
+
+
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertUser;
     private final SimpleJdbcInsert jdbcInsertDoctor;
@@ -47,23 +53,23 @@ public class DoctorDaoImpl implements DoctorDao {
         List<Object> params = new ArrayList<>();
 
         if (specialtyId > 0) {
-            sql.append(" AND u.id IN (SELECT doctor_id FROM doctor_specialties where specialty_id = ?)");
+            sql.append("AND u.id IN (SELECT doctor_id FROM doctor_specialties where specialty_id = ?) ");
             params.add(specialtyId);
         }
 
         if (coverageId > 0) {
-            sql.append(" AND u.id IN (SELECT doctor_id FROM doctor_coverages where coverage_id = ?)");
+            sql.append("AND u.id IN (SELECT doctor_id FROM doctor_coverages where coverage_id = ?) ");
             params.add(coverageId);
         }
 
         if (!weekdays.isEmpty()) {
-            sql.append(" AND u.id IN (SELECT doctor_id FROM doctor_availability WHERE");
+            sql.append("AND u.id IN (SELECT doctor_id FROM doctor_availability WHERE ");
             for (int i = 0; i < weekdays.size(); i++) {
-                sql.append(" day_of_week = ?");
+                sql.append("day_of_week = ? ");
                 if (i < weekdays.size() - 1) {
-                    sql.append(" OR");
+                    sql.append("OR ");
                 } else {
-                    sql.append(")");
+                    sql.append(") ");
                 }
                 params.add(weekdays.get(i));
             }
@@ -131,11 +137,9 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public Optional<Doctor> getById(long id) {
+        StringBuilder sql = new StringBuilder(BASE_SQL);
         Optional<Doctor> doc = jdbcTemplate.query(
-                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
-                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.is_verified AS doctor_verified  " +
-                        "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.id = ?",
+                sql.append("ON u.id = d.doctor_id WHERE u.id = ?").toString(),
                 ROW_MAPPER, id
         ).stream().findFirst();
         doc.ifPresent(this::populateDoctorDetails);
@@ -144,11 +148,9 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public Optional<Doctor> getByEmail(String email) {
+        StringBuilder sql = new StringBuilder(BASE_SQL);
         Optional<Doctor> doc = jdbcTemplate.query(
-                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
-                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id,u.is_verified AS doctor_verified  " +
-                        "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.email = ?",
+                sql.append("ON u.id = d.doctor_id WHERE u.email = ?").toString(),
                 ROW_MAPPER, email
         ).stream().findFirst();
 
@@ -158,11 +160,9 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public List<Doctor> getAll() {
+        StringBuilder sql = new StringBuilder(BASE_SQL);
         List<Doctor> doctors = jdbcTemplate.query(
-                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
-                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id  " +
-                        "FROM users u JOIN doctors d ON u.id = d.doctor_id",
+                sql.append("ON u.id = d.doctor_id").toString(),
                 ROW_MAPPER
         );
 
@@ -189,27 +189,27 @@ public class DoctorDaoImpl implements DoctorDao {
         if (ids.isEmpty()) {
             return Collections.emptyList();
         }
+        StringBuilder sql = new StringBuilder(BASE_SQL);
         return jdbcTemplate.query(
-                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
-                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.is_verified AS doctor_verified " +
-                        "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.id IN (" +
-                        String.join(",", Collections.nCopies(ids.size(), "?")) + ")",
+                sql.append("ON u.id = d.doctor_id WHERE u.id IN (").append(String.join(",", Collections.nCopies(ids.size(), "?"))).append(")").toString(),
                 ROW_MAPPER, ids.toArray()
         );
     }
 
     @Override
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
+        StringBuilder sql = new StringBuilder(BASE_SQL);
         List<Doctor> doctors = jdbcTemplate.query(
-                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
-                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.is_verified AS doctor_verified " +
-                        "FROM users u JOIN doctors d ON u.id = d.doctor_id " +
-                        "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
-                        "JOIN specialties s ON ds.specialty_id = s.id " +
-                        "WHERE ds.specialty_id = ? LIMIT ? OFFSET ?",
+                sql.append("ON u.id = d.doctor_id ")
+                        .append("JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id ")
+                        .append("JOIN specialties s ON ds.specialty_id = s.id ")
+                        .append("WHERE ds.specialty_id = ? LIMIT ? OFFSET ?").toString(),
                 new Object[]{specialtyId, pageSize, (page - 1) * pageSize},
+                new int[]{
+                        java.sql.Types.BIGINT,
+                        java.sql.Types.INTEGER,
+                        java.sql.Types.INTEGER
+                },
                 ROW_MAPPER
         );
 
@@ -222,24 +222,16 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList) {
-        Doctor currentDoctor = getById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
-
-        String updatedName = (name != null) ? name : currentDoctor.getName();
-        String updatedLastName = (lastName != null) ? lastName : currentDoctor.getLastName();
-        String updatedPhone = (phone != null) ? phone : currentDoctor.getPhone();
-        List<Specialty> updatedSpecialties = (specialties != null) ? specialties : currentDoctor.getSpecialtyList();
-        List<Coverage> updatedCoverages = (coverages != null) ? coverages : currentDoctor.getCoverageList();
-        List<AvailabilitySlot> updatedAvailability = (availabilityList != null) ? availabilityList : currentDoctor.getAvailabilitySlots();
 
         // Update basic doctor info
         jdbcTemplate.update(
                 "UPDATE users SET name = ?, last_name = ?, phone = ? WHERE id = ?",
-                updatedName, updatedLastName, updatedPhone, id
+                name, lastName, phone, id
         );
 
         // Update specialties
         jdbcTemplate.update("DELETE FROM doctor_specialties WHERE doctor_id = ?", id);
-        for (Specialty specialty : updatedSpecialties) {
+        for (Specialty specialty : specialties) {
             jdbcTemplate.update(
                     "INSERT INTO doctor_specialties (doctor_id, specialty_id) VALUES (?, ?)",
                     id, specialty.getId()
@@ -248,7 +240,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
         // Update coverages
         jdbcTemplate.update("DELETE FROM doctor_coverages WHERE doctor_id = ?", id);
-        for (Coverage coverage : updatedCoverages) {
+        for (Coverage coverage : coverages) {
             jdbcTemplate.update(
                     "INSERT INTO doctor_coverages (doctor_id, coverage_id) VALUES (?, ?)",
                     id, coverage.getId()
@@ -257,7 +249,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
         // Update availability
         jdbcTemplate.update("DELETE FROM doctor_availability WHERE doctor_id = ?", id);
-        for (AvailabilitySlot slot : updatedAvailability) {
+        for (AvailabilitySlot slot : availabilityList) {
             Map<String, Object> params = new HashMap<>();
             params.put("doctor_id", id);
             params.put("day_of_week", slot.getDayOfWeek());
@@ -351,19 +343,14 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
-        StringBuilder sql = new StringBuilder(
-                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
-                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count, d.image_id AS image_id, u.is_verified AS doctor_verified " +
-                        "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE 1=1"
-        );
+        StringBuilder sql = new StringBuilder(BASE_SQL);
+        sql.append("ON u.id = d.doctor_id WHERE 1=1 ");
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
 
-        sql.append(" ORDER BY ").append(orderBy).append(" ").append(direction);
+        sql.append("ORDER BY ").append(orderBy).append(" ").append(direction);
         sql.append(" LIMIT ? OFFSET ?");
         params.add(pageSize);
         params.add((page - 1) * pageSize);
-
         List<Doctor> doctors = jdbcTemplate.query(sql.toString(), ROW_MAPPER, params.toArray());
 
         for (Doctor doctor : doctors) {
@@ -375,7 +362,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE 1=1 ");
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
 
         return jdbcTemplate.queryForObject(sql.toString(), Integer.class, params.toArray());
@@ -383,11 +370,9 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public Optional<Doctor> getByVerificationToken(String token) {
+        StringBuilder sql = new StringBuilder(BASE_SQL);
         return jdbcTemplate.query(
-                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
-                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.is_verified AS doctor_verified " +
-                        "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.verification_token = ?",
+                sql.append("ON u.id = d.doctor_id WHERE u.verification_token = ?").toString(),
                 ROW_MAPPER, token
         ).stream().findFirst();
     }
