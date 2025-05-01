@@ -37,10 +37,10 @@ function initializeViewToggle() {
 
                 const viewType = this.getAttribute("data-view")
                 if (viewType === "list") {
-                    doctorsGrid.classList.add("list-view")
+                    // doctorsGrid.classList.add("list-view")
                     currentUrl.searchParams.set('view', 'list')
                 } else {
-                    doctorsGrid.classList.remove("list-view")
+                    // doctorsGrid.classList.remove("list-view")
                     currentUrl.searchParams.set('view', 'grid')
                 }
                 window.location.href = currentUrl.toString()
