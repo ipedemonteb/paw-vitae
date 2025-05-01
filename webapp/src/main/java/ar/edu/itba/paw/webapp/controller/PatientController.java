@@ -48,10 +48,11 @@ public class PatientController {
 
     @RequestMapping(value = "/patient/dashboard/upcoming")
     public ModelAndView getUpcomingAppointments(@RequestParam(value = "page", defaultValue = "1") int page,
-                                                @RequestParam(defaultValue = "all", required = false) String dateRange){
+                                                @RequestParam(defaultValue = "all", required = false) String dateRange,
+                                                @ModelAttribute("loggedUser") final Patient patient
+    ){
 
         final ModelAndView mav = new ModelAndView("patient/dashboard-upcoming");
-        Patient patient = loggedUser();
         mav.addObject("patient", patient);
         var appointmentsPage = as.getFuturePatientAppointments(patient.getId(), page, 5,dateRange,null);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
@@ -65,9 +66,10 @@ public class PatientController {
 
     @RequestMapping(value = "/patient/dashboard/history")
     public ModelAndView getAppointmentHistory(@RequestParam(value = "page", defaultValue = "1") int page,
-                                              @RequestParam( defaultValue = "all",required = false) String status){
+                                              @RequestParam( defaultValue = "all",required = false) String status,
+                                                @ModelAttribute("loggedUser") final Patient patient
+    ){
         final ModelAndView mav = new ModelAndView("patient/dashboard-history");
-        Patient patient = loggedUser();
         mav.addObject("patient", patient);
         var appointmentsPage = as.getPastPatientAppointments(patient.getId(), page, 5, null, status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
@@ -80,9 +82,10 @@ public class PatientController {
     }
 
     @RequestMapping(value = "/patient/dashboard/profile")
-    public ModelAndView getProfile(@ModelAttribute("updatePatientForm") final UpdatePatientForm updatePatientForm) {
+    public ModelAndView getProfile(@ModelAttribute("updatePatientForm") final UpdatePatientForm updatePatientForm,
+                                      @ModelAttribute("loggedUser") final Patient patient
+    ) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-profile");
-        Patient patient = loggedUser();
         updatePatientForm.setForm(patient);
         mav.addObject("patient", patient);
         mav.addObject("coverageList", covs.getAll());
@@ -93,27 +96,25 @@ public class PatientController {
 
     @RequestMapping(value = "/patient/dashboard/update", method = RequestMethod.POST)
     public ModelAndView updatePatient(@Valid @ModelAttribute("updatePatientForm") final UpdatePatientForm updatePatientForm,
-                                      final BindingResult errors) {
+                                      final BindingResult errors,
+                                      @ModelAttribute("loggedUser") final Patient patient
+    ) {
         if (errors.hasErrors()) {
-            ModelAndView mav = getProfile(updatePatientForm);
+            ModelAndView mav = getProfile(updatePatientForm, patient);
             mav.addObject("display", "block");
             return mav;
         }
-        Patient patient = loggedUser();
         ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
         return new ModelAndView("redirect:/patient/dashboard/profile?updated=true");
     }
 
-    @ModelAttribute
-    public Patient loggedUser() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return ps.getByEmail((String) auth.getName()).orElseThrow(UserNotFoundException::new);
-    }
-
     @PostMapping(value = "/patient/dashboard/appointment/cancel", produces = "application/json")
     @ResponseBody
-    public ModelAndView cancelAppointment(@RequestParam("appointmentId") Long appointmentId) {
-        boolean result = as.cancelAppointment(appointmentId, loggedUser().getId());
+    public ModelAndView cancelAppointment(
+            @RequestParam("appointmentId") Long appointmentId,
+            @ModelAttribute("loggedUser") final User user
+    ) {
+        boolean result = as.cancelAppointment(appointmentId, user.getId());
         return new ModelAndView("redirect:/patient/dashboard/upcoming?cancelled=true");
     }
 
@@ -144,12 +145,13 @@ public class PatientController {
 
     @PostMapping("/patient/dashboard/appointment/rate")
     public ModelAndView submitRating(@Valid @ModelAttribute("patientRatingForm") final PatientRatingForm form,
-                                     BindingResult errors) {
+                                     BindingResult errors,
+                                     @ModelAttribute("loggedUser") final Patient patient
+    ) {
         if (errors.hasErrors()) {
             return patientAppointmentDetails(form, form.getAppointmentId());
         }
 
-        Patient patient = loggedUser();
         Appointment appointment = as.getById(form.getAppointmentId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid appointment Id:" + form.getAppointmentId()));
 
