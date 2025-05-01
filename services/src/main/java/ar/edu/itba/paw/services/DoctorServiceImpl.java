@@ -82,9 +82,20 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
+        Doctor currentDoctor = getById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
+
         List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList()));
         List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList()));
-        doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList, availabilitySlots);
+
+        String updatedName = (name != null) ? name : currentDoctor.getName();
+        String updatedLastName = (lastName != null) ? lastName : currentDoctor.getLastName();
+        String updatedPhone = (phone != null) ? phone : currentDoctor.getPhone();
+        List<Specialty> updatedSpecialties = (!specialtyList.isEmpty()) ? specialtyList : currentDoctor.getSpecialtyList();
+        List<Coverage> updatedCoverages = (!coverageList.isEmpty()) ? coverageList : currentDoctor.getCoverageList();
+        List<AvailabilitySlot> updatedAvailability = (availabilitySlots != null) ? availabilitySlots : currentDoctor.getAvailabilitySlots();
+
+
+        doctorDao.updateDoctor(id, updatedName, updatedLastName, updatedPhone, updatedSpecialties, updatedCoverages, updatedAvailability);
 
         LOGGER.debug("Doctor actualizado exitosamente: id={}, nombre={}, apellido={}", id, name, lastName);
 
