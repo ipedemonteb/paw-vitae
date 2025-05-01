@@ -100,7 +100,6 @@ public class CoverageDaoTest {
         assertEquals(COVERAGE_NAME_1, maybeCoverage.get().getName());
     }
 
-    //@TODO:ARREGLAR
     @Test
     public void testGetAll() {
         //Preconditions
@@ -112,5 +111,31 @@ public class CoverageDaoTest {
         List<String> names = coverages.stream().map(Coverage::getName).collect(Collectors.toList());
         assertEquals(2, coverages.size());
         assertTrue(names.containsAll(List.of(COVERAGE_NAME_1, COVERAGE_NAME_2)));
+    }
+
+    @Test
+    public void testFindByIds(){
+        //Preconditions
+        List<Long> ids = List.of(1L, 2L);
+
+        //Exercise
+        List<Coverage> coverages = coverageDao.findByIds(ids);
+
+        //Postconditions
+        //Postconditions
+        assertEquals(2, coverages.size());
+        assertTrue(coverages.stream().allMatch(s -> ids.contains(s.getId())));
+    }
+
+    @Test
+    public void testFindByIdsEmpty() {
+        //Preconditions
+        List<Long> ids = List.of(1000L);
+
+        //Exercise
+        List<Coverage> specialties = coverageDao.findByIds(ids);
+
+        //Postconditions
+        assertTrue(specialties.isEmpty());
     }
 }

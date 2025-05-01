@@ -165,8 +165,7 @@ public class PatientController {
                 appointment.getDoctor().getId(),
                 patient.getId(),
                 appointment.getId(),
-                form.getComment(),
-                System.currentTimeMillis() // or a custom ID generator
+                form.getComment()
         );
 
         return new ModelAndView("redirect:/patient/dashboard/appointment-details/" + form.getAppointmentId() + "?rated=true");

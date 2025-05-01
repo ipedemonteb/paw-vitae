@@ -27,15 +27,16 @@ public class RatingDaoImpl implements RatingDao
                 .usingGeneratedKeyColumns("id");
     }
     private static final RowMapper<Rating> ROW_MAPPER = (rs, rowNum) -> new Rating(
-        rs.getDouble("rating"),
+        rs.getLong("id"),
+        rs.getInt("rating"),
         rs.getInt("doctor_id"),
         rs.getInt("client_id"),
         rs.getInt("appointment_id"),
-        rs.getString("comment"),
-        rs.getInt("id")
+        rs.getString("comment")
     );
+
     @Override
-    public Rating create(double rating, long doctorId, long patientId, long appointmentId, String comment, long id) {
+    public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
         final Map<String,Object> args = new HashMap<>(Map.of(
                 "rating", rating,
                 "doctor_id", doctorId,
@@ -46,17 +47,17 @@ public class RatingDaoImpl implements RatingDao
         final Number ratingId = jdbcInsert.executeAndReturnKey(args);
         args.put("id", ratingId);
         return new Rating(
+                ratingId.longValue(),
                 rating,
                 doctorId,
                 patientId,
                 appointmentId,
-                comment,
-                ratingId.longValue()
+                comment
         );
     }
 
     @Override
-    public Optional<Rating> getRating(int ratingId) {
+    public Optional<Rating> getRating(long ratingId) {
         return jdbcTemplate.query("SELECT * FROM ratings WHERE id = ?", ROW_MAPPER, ratingId)
                 .stream()
                 .findFirst();
