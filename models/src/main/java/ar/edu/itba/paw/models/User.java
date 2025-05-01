@@ -11,8 +11,11 @@ public abstract class User {
     private String password;
     private String phone;
     private String language;
+    private String verificationToken;
+    private boolean verified;
+    private String resetPasswordToken;
     private List <Appointment> appointments = new ArrayList<>();
-    public User(String name, long id, String lastName, String email, String password, String phone, String language) {
+    public User(String name, long id, String lastName, String email, String password, String phone, String language,boolean verified) {
         this.name = name;
         this.id = id;
         this.lastName = lastName;
@@ -20,6 +23,7 @@ public abstract class User {
         this.password = password;
         this.phone = phone;
         this.language = language;
+        this.verified = verified;
     }
 
     public List<Appointment> getAppointments() {
@@ -71,4 +75,32 @@ public abstract class User {
     }
 
     public String getLanguage() { return language; }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
+    }
 }

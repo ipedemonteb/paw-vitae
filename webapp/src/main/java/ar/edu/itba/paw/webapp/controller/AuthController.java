@@ -1,9 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
-
-
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.auth.AuthService;
 import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
@@ -17,17 +16,20 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.beans.PropertyEditorSupport;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class AuthController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
-
 
     private final DoctorService ds;
     private final CoverageService cs;
@@ -37,10 +39,10 @@ public class AuthController {
     private final UserService us;
     private final MailService ms;
 
-    private final AuthUserDetailsService authService;
+    private final AuthService authService;
 
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, PatientService patientService, UserService us, AuthUserDetailsService authService, MailService ms) {
+    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, PatientService patientService, UserService us, AuthService authService, MailService ms) {
         this.ds = ds;
         this.cs = cs;
         this.is = is;
@@ -54,28 +56,19 @@ public class AuthController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(@Valid @ModelAttribute("registerForm") DoctorForm form, BindingResult errors) {
         if (errors.hasErrors()) {
-            LOGGER.debug("Errors found registering: {}", errors.getAllErrors());
             return doctorForm(form);
         }
-        Doctor doctor = ds.create(
+        ds.create(
                 form.getName(), form.getLastName(), form.getEmail(), form.getPassword(),
                 form.getPhone(), LocaleContextHolder.getLocale().getLanguage(),form.getImage(),form.getSpecialties(),
                 form.getCoverages(), form.getAvailabilitySlots()
         );
-        LOGGER.debug("Registering doctor with email: {}", form.getEmail());
         Optional<User> userOpt = us.getByEmail(form.getEmail()).map(user -> (User) user);
         if (userOpt.isEmpty()) {
-            return new ModelAndView("redirect:/register?register=sent");
+            return new ModelAndView("redirect:/email-sent");
         }
-
-        User user = userOpt.get();
-
-        String token = "TOKEN"; //TODO: replace with actual token generation
-        String link = "https://yourapp.com/reset-password?token=" + token;
-
-        ms.sendVerificationRegisterEmail(user, link);
-
-        return new ModelAndView("redirect:/register?register=sent");
+        us.setVerificationToken(userOpt.get());
+        return new ModelAndView("redirect:/email-sent");
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -88,7 +81,6 @@ public class AuthController {
         return mav;
     }
 
-
     @RequestMapping(value = "/register-patient", method = RequestMethod.GET)
     public ModelAndView patientForm(@ModelAttribute("patientForm") final PatientForm patientForm) {
         List<Coverage> coverageList = cs.getAll();
@@ -100,19 +92,16 @@ public class AuthController {
     @RequestMapping(value = "/register-patient", method = RequestMethod.POST)
     public ModelAndView registerPatient(@Valid @ModelAttribute("patientForm") final PatientForm patientForm, final BindingResult errors)  {
         if(errors.hasErrors()) {
-            LOGGER.debug("Errors found registering patient: {}", errors.getAllErrors());
             return patientForm(patientForm);
         }
-        authService.registerPatient(patientForm);
+        ps.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(),
+                patientForm.getPhone(), LocaleContextHolder.getLocale().getLanguage(),patientForm.getCoverage() );
         Optional<User> userOpt = us.getByEmail(patientForm.getEmail()).map(user -> (User) user);
         if (userOpt.isEmpty()) {
-            return new ModelAndView("redirect:/register-patient?register=sent");
+            return new ModelAndView("redirect:/email-sent");
         }
-        User user = userOpt.get();
-        String token = "TOKEN"; //TODO: Replace with actual token generation
-        String link = "https://yourapp.com/?token=" + token;
-        ms.sendVerificationRegisterEmail(user, link);
-        return new ModelAndView("redirect:/register-patient?register=sent"); //TODO: redirect to a confirmation page
+        us.setVerificationToken(userOpt.get());
+        return new ModelAndView("redirect:/email-sent");
     }
 
     @RequestMapping("/login")
@@ -133,7 +122,6 @@ public class AuthController {
     @RequestMapping(value = "/recover-password", method = RequestMethod.POST)
     public ModelAndView recoverPassword(@Valid @ModelAttribute("recoverPasswordForm") RecoverPasswordForm form, BindingResult errors) {
         if (errors.hasErrors()) {
-            LOGGER.debug("Errors found recovering password: {}", errors.getAllErrors());
             return new ModelAndView("auth/recover-password");
         }
         Optional<User> userOpt = us.getByEmail(form.getEmail()).map(user -> (User) user);
@@ -141,14 +129,40 @@ public class AuthController {
             return new ModelAndView("redirect:/recover-password?recover=sent");
         }
 
-        User user = userOpt.get();
-        String token = "TOKEN";
-        String link = "https://yourapp.com/reset-password?token=" + token;
-        ms.sendRecoverPasswordEmail(user, link);
+        us.setResetPasswordToken(userOpt.get());
         return new ModelAndView("redirect:/recover-password?recover=sent");
     }
 
+    @RequestMapping("/email-sent")
+    public ModelAndView emailSent() {
+        return new ModelAndView("auth/email-sent");
+    }
+
+    @RequestMapping("/verify")
+    public ModelAndView verifyAccount(@RequestParam(value = "token",required = false) String token) {
+        if (token == null) {
+            return new ModelAndView("auth/verify");
+        }
+        boolean success = authService.verifyAndLoginUser(token);
+        if (success) {
+            return new ModelAndView("redirect:/verify?success=true");
+        } else {
+            return new ModelAndView("redirect:/verify?success=false");
+        }
+    }
+    @RequestMapping("/verify-result")
+    public ModelAndView verifyResult() {
+        return new ModelAndView("auth/verify");
+    }
+
+
+    @RequestMapping("/verify-confirmation")
+    public ModelAndView verifyConfirmation(@RequestParam(value = "token", required = false) String token) {
+        if (token == null) {
+            return new ModelAndView("redirect:/");
+        }
+        ModelAndView mav = new ModelAndView("auth/verify-confirmation");
+        mav.addObject("token", token);
+        return mav;
+    }
 }
-
-
-
