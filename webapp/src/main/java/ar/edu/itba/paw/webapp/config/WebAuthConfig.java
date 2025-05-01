@@ -54,8 +54,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .invalidSessionUrl("/")
                     .and()
                 .authorizeRequests()
-                    .antMatchers("/", "/image/*").permitAll()
-                    .antMatchers( "/login", "/register-patient", "/register","/recover-password", "/change-password").anonymous()
+                .antMatchers("/","/verify","/verify-confirmation","/verify-result","/email-sent", "/image/*").permitAll()
+                    .antMatchers( "/login", "/register-patient", "/register","/recover-password", "/change-password","/recover-password","/email-sent").anonymous()
                     .antMatchers("/search").access("isAnonymous() or hasRole('PATIENT')")
                     .antMatchers("/doctor/dashboard/appointment-details/{id}", "/patient/dashboard/appointment-details/{id}", "/appointment/{id}/file/").access("@accessHandler.canHandleAppointment(authentication, #id)")
                     .antMatchers("doctor/dashboard/appointment/cancel", "patient/dashboard/appointment/cancel").access("@accessHandler.canHandleAppointment(authentication, request.getParameter('appointmentId'))")
@@ -74,7 +74,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe()
                     .rememberMeParameter("j_rememberme")
                     .userDetailsService(authUserDetailsService)
-                    .key(rememberMeSecretKey) //no deberia ser constante o harcodeado. usar ssl
+                    .key(rememberMeSecretKey)
                     .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
                     .and()
                 .logout()
@@ -82,7 +82,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .logoutSuccessUrl("/login")
                     .and()
                 .exceptionHandling()
-                    .accessDeniedPage("/error/403")
+//                    .accessDeniedPage("/error/403")
                     .and()
                 .csrf()
                     .disable();

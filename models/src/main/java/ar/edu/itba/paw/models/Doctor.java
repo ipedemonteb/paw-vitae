@@ -13,14 +13,14 @@ public class Doctor extends User {
     private Double rating = 5.0;
     private int ratingCount = 0;
     private long imageId;
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,long imageId,Double rating,int ratingCount) {
-        super(name, id, lastName, email, password, phone, language);
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,long imageId,Double rating,int ratingCount,boolean verified) {
+        super(name, id, lastName, email, password, phone, language,verified);
         this.rating = rating;
         this.ratingCount = ratingCount;
         this.imageId = imageId;
     }
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,long imageId) {
-        super(name, id, lastName, email, password, phone, language);
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,long imageId,boolean verified) {
+        super(name, id, lastName, email, password, phone, language, verified);
         this.imageId = imageId;
     }
 

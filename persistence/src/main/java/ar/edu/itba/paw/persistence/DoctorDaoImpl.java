@@ -81,7 +81,7 @@ public class DoctorDaoImpl implements DoctorDao {
         argsUser.put("password", password);
         argsUser.put("phone", phone);
         argsUser.put("language", language);
-
+        argsUser.put("is_verified", false);
         final Number docId = jdbcInsertUser.executeAndReturnKey(argsUser);
         final Map<String, Object> argsDoctor = new HashMap<>();
         argsDoctor.put("doctor_id", docId);
@@ -119,7 +119,8 @@ public class DoctorDaoImpl implements DoctorDao {
                 password,
                 phone,
                 language,
-                imageId
+                imageId,
+                false
         );
         doc.setCoverageList(coverages);
         doc.setSpecialtyList(specialties);
@@ -133,7 +134,7 @@ public class DoctorDaoImpl implements DoctorDao {
         Optional<Doctor> doc = jdbcTemplate.query(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id  " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.is_verified AS doctor_verified  " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.id = ?",
                 ROW_MAPPER, id
         ).stream().findFirst();
@@ -146,7 +147,7 @@ public class DoctorDaoImpl implements DoctorDao {
         Optional<Doctor> doc = jdbcTemplate.query(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id  " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id,u.is_verified AS doctor_verified  " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.email = ?",
                 ROW_MAPPER, email
         ).stream().findFirst();
@@ -191,7 +192,7 @@ public class DoctorDaoImpl implements DoctorDao {
         return jdbcTemplate.query(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id  " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.is_verified AS doctor_verified " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.id IN (" +
                         String.join(",", Collections.nCopies(ids.size(), "?")) + ")",
                 ROW_MAPPER, ids.toArray()
@@ -203,7 +204,7 @@ public class DoctorDaoImpl implements DoctorDao {
         List<Doctor> doctors = jdbcTemplate.query(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.is_verified AS doctor_verified " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id " +
                         "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
                         "JOIN specialties s ON ds.specialty_id = s.id " +
@@ -293,7 +294,6 @@ public class DoctorDaoImpl implements DoctorDao {
 
     private void populateDoctorDetails(Doctor doctor) {
         long id = doctor.getId();
-
         doctor.setCoverageList(jdbcTemplate.query(
                 "SELECT * FROM doctor_coverages JOIN coverages ON doctor_coverages.coverage_id = coverages.id WHERE doctor_coverages.doctor_id = ?",
                 (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name")),
@@ -354,7 +354,7 @@ public class DoctorDaoImpl implements DoctorDao {
         StringBuilder sql = new StringBuilder(
                 "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
                         "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count, d.image_id AS image_id " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count, d.image_id AS image_id, u.is_verified AS doctor_verified " +
                         "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE 1=1"
         );
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
@@ -379,5 +379,16 @@ public class DoctorDaoImpl implements DoctorDao {
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
 
         return jdbcTemplate.queryForObject(sql.toString(), Integer.class, params.toArray());
+    }
+
+    @Override
+    public Optional<Doctor> getByVerificationToken(String token) {
+        return jdbcTemplate.query(
+                "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
+                        "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
+                        "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.is_verified AS doctor_verified " +
+                        "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.verification_token = ?",
+                ROW_MAPPER, token
+        ).stream().findFirst();
     }
 }

@@ -6,15 +6,13 @@
 //import org.junit.runner.RunWith;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.jdbc.core.JdbcTemplate;
-//import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 //import org.springframework.test.context.ContextConfiguration;
 //import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-//import org.springframework.test.jdbc.JdbcTestUtils;
+//import org.springframework.transaction.annotation.Transactional;
 //
 //import javax.sql.DataSource;
 //
 //import java.util.List;
-//import java.util.Map;
 //import java.util.Optional;
 //import java.util.stream.Collectors;
 //
@@ -22,10 +20,15 @@
 //
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(classes = TestConfig.class)
+//@Transactional
 //public class CoverageDaoTest {
 //
 //    private CoverageDaoImpl coverageDao;
 //    private JdbcTemplate jdbcTemplate;
+//
+//    private static final long COVERAGE_ID_1 = 1;
+//    private static final String COVERAGE_NAME_1 = "Coverage A";
+//    private static final String COVERAGE_NAME_2 = "Coverage B";
 //
 //    @Autowired
 //    private DataSource ds;
@@ -39,14 +42,14 @@
 //    @Test
 //    public void testCreate() {
 //        //Preconditions
-//        String coverage = "TestCoverage";
+//        String testCoverageName = "TestCoverage";
 //
 //        //Exercise
-//        Coverage newCoverage = coverageDao.create(coverage);
+//        Coverage test_Coverage = coverageDao.create(testCoverageName);
 //
 //        //Postconditions
-//        assertNotNull(newCoverage);
-//        assertEquals(coverage, newCoverage.getName());
+//        assertNotNull(test_Coverage);
+//        assertEquals(testCoverageName, test_Coverage.getName());
 //    }
 //
 //    @Test
@@ -54,7 +57,7 @@
 //        //Preconditions
 //
 //        //Exercise
-//        Optional<Coverage> coverage = coverageDao.findById(1);
+//        Optional<Coverage> coverage = coverageDao.findById(1000L);
 //
 //        //Postconditions
 //        assertFalse(coverage.isPresent());
@@ -63,15 +66,14 @@
 //    @Test
 //    public void testFindByIdExists() {
 //        //Preconditions
-//        Number coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "TestCoverage"));
 //
 //        //Exercise
-//        Optional<Coverage> maybeCoverage = coverageDao.findById(coverageId.longValue());
+//        Optional<Coverage> maybeCoverage = coverageDao.findById(COVERAGE_ID_1);
 //
 //        //Postconditions
 //        assertTrue(maybeCoverage.isPresent());
-//        assertEquals(coverageId.longValue(), maybeCoverage.get().getId());
-//        assertEquals("TestCoverage", maybeCoverage.get().getName());
+//        assertEquals(COVERAGE_ID_1, maybeCoverage.get().getId());
+//        assertEquals(COVERAGE_NAME_1, maybeCoverage.get().getName());
 //    }
 //
 //    @Test
@@ -88,31 +90,27 @@
 //    @Test
 //    public void testFindByNameExists() {
 //        //Preconditions
-//        Number coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "TestCoverage"));
 //
 //        //Exercise
-//        Optional<Coverage> maybeCoverage = coverageDao.findByName("TestCoverage");
+//        Optional<Coverage> maybeCoverage = coverageDao.findByName(COVERAGE_NAME_1);
 //
 //        //Postconditions
 //        assertTrue(maybeCoverage.isPresent());
-//        assertEquals(coverageId.longValue(), maybeCoverage.get().getId());
-//        assertEquals("TestCoverage", maybeCoverage.get().getName());
+//        assertEquals(COVERAGE_ID_1, maybeCoverage.get().getId());
+//        assertEquals(COVERAGE_NAME_1, maybeCoverage.get().getName());
 //    }
 //
+//    //@TODO:ARREGLAR
 //    @Test
 //    public void testGetAll() {
 //        //Preconditions
-//        Number coverageId1 = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "TestCoverage1"));
-//        Number coverageId2 = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "TestCoverage2"));
 //
 //        //Exercise
-//        Optional<List<Coverage>> coverages = coverageDao.getAll();
+//        List<Coverage> coverages = coverageDao.getAll();
 //
 //        //Postconditions
-//        assertTrue(coverages.isPresent());
-//        List<String> names = coverages.get().stream().map(Coverage::getName).collect(Collectors.toList());
-//        assertEquals(2, coverages.get().size());
-//        assertTrue(names.containsAll(List.of("TestCoverage1", "TestCoverage2")));
+//        List<String> names = coverages.stream().map(Coverage::getName).collect(Collectors.toList());
+//        assertEquals(2, coverages.size());
+//        assertTrue(names.containsAll(List.of(COVERAGE_NAME_1, COVERAGE_NAME_2)));
 //    }
 //}
-//
