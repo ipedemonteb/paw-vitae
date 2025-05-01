@@ -140,10 +140,10 @@ public class DoctorController {
             BindingResult errors,
             @ModelAttribute("loggedUser") final Doctor doctor
     ) {
+
         if (errors.hasErrors()) {
             return getAvailability(form, doctor);
         }
-        form.setAvailabilitySlots(form.getAvailabilitySlots());
         ds.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
