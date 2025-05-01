@@ -121,6 +121,7 @@ public class PatientDaoImpl implements PatientDao {
     public void changePassword(long id, String password) {
         jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
     }
+
     @Override
     public String getLanguage(long id) {
         return jdbcTemplate.query("SELECT language FROM Users WHERE id = ?", (rs, rowNum) -> rs.getString("language"), id).stream().findFirst().orElse(null);

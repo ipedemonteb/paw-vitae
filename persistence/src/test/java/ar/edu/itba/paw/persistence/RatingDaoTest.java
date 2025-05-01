@@ -157,7 +157,7 @@ public class RatingDaoTest {
         //Postconditions
         assertFalse(maybeRatings.isEmpty());
         assertEquals(1, maybeRatings.size());
-        Rating result = maybeRatings.get(0);
+        Rating result = maybeRatings.getFirst();
         assertEquals(RAT_ID, result.getId());
         assertEquals(doctorId, result.getDoctorId());
         assertEquals(PAT_ID, result.getPatientId());
