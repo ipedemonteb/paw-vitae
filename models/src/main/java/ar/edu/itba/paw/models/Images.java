@@ -2,24 +2,23 @@ package ar.edu.itba.paw.models;
 
 public class Images {
 
-    private final  long doctor_id;
+    private final  long id;
     private byte[] image;
 
     public void setImage(byte[] image) {
         this.image = image;
     }
 
-
-    public long getDoctor_id() {
-        return doctor_id;
+    public long getId() {
+        return id;
     }
 
     public byte[] getImage() {
         return image;
     }
 
-    public Images( long doctor_id, byte[] image) {
-        this.doctor_id = doctor_id;
+    public Images( long id, byte[] image) {
+        this.id = id;
         this.image = image;
     }
 

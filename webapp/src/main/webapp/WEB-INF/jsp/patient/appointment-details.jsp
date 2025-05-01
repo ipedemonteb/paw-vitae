@@ -38,7 +38,7 @@
                 <c:if test="${not empty doctor}">
                     <div class="doctor-info">
                         <div class="doctor-image">
-                            <img src="<c:url value='/doctor/${doctor.id}/image'/>" alt="<c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/>" class="doctor-avatar">
+                            <img src="<c:url value='/image/${doctor.imageId}'/>" alt="<c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/>" class="doctor-avatar">
                         </div>
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/></h3>

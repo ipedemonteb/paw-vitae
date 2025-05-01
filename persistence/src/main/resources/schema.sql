@@ -1,12 +1,15 @@
 
 CREATE TABLE IF NOT EXISTS Users (
-                                    id SERIAL PRIMARY KEY,
-                                    name VARCHAR(50) NOT NULL,
-                                    last_name VARCHAR(50) NOT NULL,
-                                    email VARCHAR(100) NOT NULL UNIQUE,
-                                    password VARCHAR(255) NOT NULL,
-                                    phone VARCHAR(20),
-                                    language VARCHAR(10)
+                                     id SERIAL PRIMARY KEY,
+                                     name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    language VARCHAR(10),
+    verification_token VARCHAR(255),
+    reset_token VARCHAR(255),
+    is_verified BOOLEAN DEFAULT FALSE
     );
 
 CREATE TABLE IF NOT EXISTS Coverages (
@@ -24,8 +27,10 @@ CREATE TABLE IF NOT EXISTS Clients (
 CREATE TABLE IF NOT EXISTS Doctors (
                                        doctor_id INT PRIMARY KEY,
                                        rating FLOAT CHECK (rating >= 1 AND rating <= 5),
-                                       rating_count INT DEFAULT 0,
-                                       FOREIGN KEY (doctor_id) REFERENCES Users(id) ON DELETE CASCADE
+    rating_count INT DEFAULT 0,
+    image_id INT,
+    FOREIGN KEY (doctor_id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (image_id) REFERENCES Images(id) ON DELETE SET NULL
     );
 
 CREATE TABLE IF NOT EXISTS Doctor_Coverages (
@@ -73,9 +78,8 @@ CREATE TABLE IF NOT EXISTS Appointments (
     );
 
 CREATE TABLE IF NOT EXISTS Images (
-                        doctor_id INT PRIMARY KEY,
-                        image BYTEA NOT NULL,
-                        FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
+                                      id SERIAL PRIMARY KEY,
+                                      image BYTEA NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Ratings (

@@ -12,13 +12,16 @@ public class Doctor extends User {
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
     private Double rating = 5.0;
     private int ratingCount = 0;
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,Double rating,int ratingCount) {
+    private long imageId;
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,long imageId,Double rating,int ratingCount) {
         super(name, id, lastName, email, password, phone, language);
         this.rating = rating;
         this.ratingCount = ratingCount;
+        this.imageId = imageId;
     }
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language) {
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,long imageId) {
         super(name, id, lastName, email, password, phone, language);
+        this.imageId = imageId;
     }
 
     public List<Specialty> getSpecialtyList() {
@@ -27,6 +30,14 @@ public class Doctor extends User {
 
     public Double getRating() {
         return rating;
+    }
+
+    public long getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(long imageId) {
+        this.imageId = imageId;
     }
 
     public void setRating(Double rating) {

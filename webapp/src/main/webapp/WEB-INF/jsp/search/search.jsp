@@ -310,7 +310,7 @@
               <div class="doctor-card">
                 <div class="doctor-card-header">
                   <div class="doctor-avatar">
-                    <img src="<c:url value='/doctor/${doctor.id}/image'/>" alt="<c:out value='${doctor.name} ${doctor.lastName}'/>" class="avatar-img">
+                    <img src="<c:url value='/image/${doctor.imageId}'/>" alt="<c:out value='${doctor.name} ${doctor.lastName}'/>" class="avatar-img">
                   </div>
                   <div class="doctor-rating">
                     <div class="stars">

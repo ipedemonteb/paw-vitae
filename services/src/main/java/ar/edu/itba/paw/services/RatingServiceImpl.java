@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaceServices.RatingService;
 import ar.edu.itba.paw.models.Rating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,7 @@ public class RatingServiceImpl implements RatingService {
         this.ratingDao = ratingDao;
         this.doctorService = doctorService;
     }
-
+    @Transactional
     @Override
     public Rating create(double rating, long doctorId, long patientId, long appointmentId, String comment, long id) {
         Rating rating_aux = ratingDao.create(rating, doctorId, patientId, appointmentId, comment, id);

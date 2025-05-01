@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public interface ImageService {
-    Images create(long doctor_id, MultipartFile image);
+    Images create(MultipartFile image);
     Optional<Images> findById(final long id);
-    Optional<Images> findByDoctorId(final long doctor_id);
+
 }

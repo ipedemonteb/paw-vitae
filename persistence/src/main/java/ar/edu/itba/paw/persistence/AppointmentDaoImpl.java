@@ -22,7 +22,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     private static final String BASE_SQL = "SELECT a.id, a.date, a.status, a.reason, " +
             "s.id AS specialty_id, s.key AS specialty_key, " +
-            "d.doctor_id, d.rating AS rating, d.rating_count AS rating_count, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
+            "d.doctor_id, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
             "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
             "p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, " +
             "pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, " +

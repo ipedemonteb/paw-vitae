@@ -82,18 +82,18 @@ public class AuthUserDetailsService implements UserDetailsService {
 //        return new AuthUserDetails(email, user.getPassword(), authorities);
     }
 
-    public void registerDoctor(DoctorForm form)  {
-        Locale locale = LocaleContextHolder.getLocale();
-        Doctor doctor = doctorService.create(
-                form.getName(), form.getLastName(), form.getEmail(), form.getPassword(),
-                form.getPhone(), locale.getLanguage(), form.getSpecialties(),
-                form.getCoverages(), form.getAvailabilitySlots()
-        );
-        imageService.create(doctor.getId(), form.getImage());
-        Authentication authToken = new UsernamePasswordAuthenticationToken(doctor.getEmail(), form.getPassword());
-        Authentication auth = authenticationManager.authenticate(authToken);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-    }
+//    public void registerDoctor(DoctorForm form)  {
+//        Locale locale = LocaleContextHolder.getLocale();
+//        Doctor doctor = doctorService.create(
+//                form.getName(), form.getLastName(), form.getEmail(), form.getPassword(),
+//                form.getPhone(), locale.getLanguage(), form.getSpecialties(),
+//                form.getCoverages(), form.getAvailabilitySlots()
+//        );
+//        imageService.create(doctor.getId(), form.getImage());
+//        Authentication authToken = new UsernamePasswordAuthenticationToken(doctor.getEmail(), form.getPassword());
+//        Authentication auth = authenticationManager.authenticate(authToken);
+//        SecurityContextHolder.getContext().setAuthentication(auth);
+//    }
     public void registerPatient(PatientForm form){
         Locale locale = LocaleContextHolder.getLocale();
         Patient patient = patientService.create(form.getName(), form.getLastName(), form.getEmail(), form.getPassword(), form.getPhone(), locale.getLanguage(), form.getCoverage());

@@ -17,6 +17,7 @@ public class DaoUtils {
             rs.getString("doctor_password"),
             rs.getString("doctor_phone"),
             rs.getString("doctor_language"),
+            rs.getLong("image_id"),
             rs.getDouble("rating"),
             rs.getInt("rating_count")
     );

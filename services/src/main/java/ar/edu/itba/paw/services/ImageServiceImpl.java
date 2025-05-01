@@ -22,13 +22,13 @@ public class ImageServiceImpl implements ImageService{
 
     @Transactional
     @Override
-    public Images create(long doctor_id, MultipartFile image) {
+    public Images create(MultipartFile image) {
         if (image.isEmpty()) {
             return null;
         }
         Images toReturnImage = null;
         try {
-            toReturnImage = imageDao.create(doctor_id, image.getBytes());
+            toReturnImage = imageDao.create(image.getBytes());
         } catch (IOException e) {
             LOGGER.error("Error while creating image", e);
             return null;
@@ -39,11 +39,11 @@ public class ImageServiceImpl implements ImageService{
 
     @Override
     public Optional<Images> findById(long id) {
+        if (id == -1) {
+            return Optional.empty();
+        }
         return imageDao.findById(id);
     }
 
-    @Override
-    public Optional<Images> findByDoctorId(long doctor_id) {
-        return imageDao.findByDoctorId(doctor_id);
-    }
+
 }
