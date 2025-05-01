@@ -106,11 +106,13 @@ public class UserServiceImpl implements UserService {
         Optional<Patient> patient = patientDao.getByVerificationToken(token);
         if (patient.isPresent()) {
             setVerificationStatus(patient.get(), true);
+            userDao.removeVerificationToken(token);
             return patient;
         } else{
             Optional<Doctor> doctor = doctorDao.getByVerificationToken(token);
             if (doctor.isPresent()) {
                 setVerificationStatus(doctor.get(), true);
+                userDao.removeVerificationToken(token);
                 return doctor;
             }
         }
