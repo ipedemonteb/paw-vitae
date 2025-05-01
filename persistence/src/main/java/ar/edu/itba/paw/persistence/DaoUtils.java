@@ -19,7 +19,8 @@ public class DaoUtils {
             rs.getString("doctor_language"),
             rs.getLong("image_id"),
             rs.getDouble("rating"),
-            rs.getInt("rating_count")
+            rs.getInt("rating_count"),
+            rs.getBoolean("doctor_verified")
     );
 
     public final static RowMapper<Patient> PATIENT_ROW_MAPPER = (rs, rowNum) -> new Patient(
@@ -30,7 +31,8 @@ public class DaoUtils {
             rs.getString("patient_password"),
             rs.getString("patient_phone"),
             rs.getString("patient_language"),
-            new Coverage(rs.getLong("coverage_id"), rs.getString("coverage_name"))
+            new Coverage(rs.getLong("coverage_id"), rs.getString("coverage_name")),
+            rs.getBoolean("patient_verified")
     );
 
     public RowMapper<Patient> getPatientRowMapper() {

@@ -43,4 +43,5 @@ public interface DoctorDao {
     List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);
 
     int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction);
+    Optional<Doctor> getByVerificationToken(String token);
 }
