@@ -2,7 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const fileInput = document.getElementById("files")
     const filePreview = document.getElementById("filePreview")
     const dropZone = document.getElementById("dropZone")
-    const appointmentForm = document.getElementById("appointmentForm");
+    let appointmentForm = document.getElementById("appointmentForm")
+    if (!appointmentForm){
+        appointmentForm = document.getElementById("doctorFileForm");
+    }
     const MAX_FILES = 5
     const ALLOWED_TYPES = ["application/pdf"]
     const MAX_FILE_SIZE = 3 * 1024 * 1024 // 3MB en bytes

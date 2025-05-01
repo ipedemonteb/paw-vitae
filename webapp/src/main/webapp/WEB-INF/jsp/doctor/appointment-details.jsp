@@ -6,6 +6,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<script src="<c:url value='/js/file-upload.js'/>"></script>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -282,7 +283,7 @@
                         <!-- File Upload Section -->
                         <div class="form-group">
                             <label for="files">
-                                <spring:message code="appointment.details.files"/>
+                                <spring:message code="appointment.form.files"  />
                             </label>
                             <div class="file-upload-container">
                                 <div class="file-upload-dropzone" id="dropZone">
@@ -291,14 +292,12 @@
                                     </div>
                                     <div class="file-upload-text">
                                         <p class="file-upload-primary"><spring:message code="file.upload.dragHere"/></p>
-                                        <p class="file-upload-secondary"><spring:message
-                                                code="file.upload.onlyPdf"/></p>
+                                        <p class="file-upload-secondary"><spring:message code="file.upload.onlyPdf"/></p>
                                     </div>
-                                    <form:input type="file" path="files" id="files" multiple="true" accept=".pdf"
-                                                class="file-upload-input-hidden"/>
+                                    <form:input type="file" path="files" id="files" multiple="true" accept=".pdf" class="file-upload-input-hidden" />
                                 </div>
                                 <div id="filePreview" class="file-upload-preview"></div>
-                                <form:errors path="files" cssClass="error-message"/>
+                                <form:errors path="files" cssClass="error-message" />
                             </div>
                         </div>
                         <div class="form-group">
@@ -469,7 +468,5 @@
 
 </script>
 
-<!-- Include the external JavaScript file -->
-<script src="<c:url value='/js/file-upload.js'/>"></script>
 </body>
 </html>
