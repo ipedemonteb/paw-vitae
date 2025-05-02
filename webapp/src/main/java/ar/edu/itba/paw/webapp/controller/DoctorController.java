@@ -50,12 +50,11 @@ public class DoctorController {
     ){
         final ModelAndView mav = new ModelAndView("doctor/dashboard-upcoming");
         mav.addObject("doctor", doctor);
-        Page<Appointment> appointmentsPage = as.getFutureDoctorAppointments(doctor.getId(), page, 5,dateRange,null);
+        Page<Appointment> appointmentsPage = as.getAppointments(doctor.getId(),true, page, 5,dateRange);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
         mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
-        mav.addObject("activeTab", "upcoming");
         LOGGER.debug("Loading dashboard and upcoming appointments for doctor ID: {}", doctor.getId());
         return mav;
     }
@@ -69,12 +68,11 @@ public class DoctorController {
     ){
         final ModelAndView mav = new ModelAndView("doctor/dashboard-history");
         mav.addObject("doctor", doctor);
-        Page<Appointment> appointmentsPage = as.getPastDoctorAppointments(doctor.getId(), page, 5,null,status);
+        Page<Appointment> appointmentsPage = as.getAppointments(doctor.getId(),false, page, 5,status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
         mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
-        mav.addObject("activeTab", "history");
         return mav;
     }
 
@@ -88,7 +86,6 @@ public class DoctorController {
         mav.addObject("doctor", doctor);
         mav.addObject("coverageList", cs.getAll());
         mav.addObject("specialtyList", ss.getAll());
-        mav.addObject("activeTab", "profile");
         mav.addObject("display","none");
         return mav;
     }
@@ -100,7 +97,6 @@ public class DoctorController {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-availability");
         updateAvailabilityForm.setForm(doctor.getAvailabilitySlots());
         mav.addObject("doctor", doctor);
-        mav.addObject("activeTab", "availability");
         return mav;
     }
 

@@ -11,8 +11,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -117,11 +115,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
         jdbcTemplate.update("UPDATE Appointments SET status = ? WHERE id = ?", AppointmentStatus.CANCELADO.getValue(), appointmentId);
     }
 
-    @Override
-    public void acceptAppointment(long appointmentId) {
-        jdbcTemplate.update("UPDATE Appointments SET status = ? WHERE id = ?", AppointmentStatus.CONFIRMADO.getValue(), appointmentId);
-    }
-
 
     @Override
     public Optional<Appointment> getById(long appointmentId) {
@@ -129,93 +122,49 @@ public class AppointmentDaoImpl implements AppointmentDao {
         return jdbcTemplate.query(sql.toString(), ROW_MAPPER, appointmentId).stream().findFirst();
     }
 
-
     @Override
-    public List<Appointment> getPastDoctorAppointments(long doctorId, int page, int size, String dateRange, String status) {
-        String sql = BASE_SQL + BuildStatusCondition("a.doctor_id", status) +
-                ORDER_BY_DATE_DESC + "LIMIT ? OFFSET ?";
-
-        return jdbcTemplate.query(sql, ROW_MAPPER, doctorId, size, (page - 1) * size);
+    public List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter) {
+        String condition = isFuture ? buildDateRangeCondition(filter) : buildStatusCondition(filter);
+        String order = isFuture ? ORDER_BY_DATE_ASC : ORDER_BY_DATE_DESC;
+        String sql = BASE_SQL + condition + order + "LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(sql, ROW_MAPPER, userId,userId, size, (page - 1) * size);
     }
 
-    @Override
-    public List<Appointment> getFutureDoctorAppointments(long doctorId, int page, int size, String dateRange, String status) {
-        String sql = BASE_SQL + buildDateRangeCondition("a.doctor_id", dateRange) +
-                ORDER_BY_DATE_ASC + "LIMIT ? OFFSET ?";
-
-        return jdbcTemplate.query(sql, ROW_MAPPER, doctorId, size, (page - 1) * size);
-    }
-
-    @Override
-    public List<Appointment> getFuturePatientAppointments(long patientId, int page, int size, String dateRange, String status) {
-        String sql = BASE_SQL + buildDateRangeCondition("a.client_id", dateRange) +
-                ORDER_BY_DATE_ASC + "LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, ROW_MAPPER, patientId, size, (page - 1) * size);
-    }
-
-    @Override
-    public List<Appointment> getPastPatientAppointments(long patientId, int page, int size, String dateRange, String status) {
-        String sql = BASE_SQL + BuildStatusCondition("a.client_id", status) +
-                ORDER_BY_DATE_DESC + "LIMIT ? OFFSET ?";
-
-        return jdbcTemplate.query(sql, ROW_MAPPER, patientId, size, (page - 1) * size);
-    }
 
     @Override
     public List<Appointment> getAppointmentsByDate(LocalDate today) {
         StringBuilder sql = new StringBuilder(BASE_SQL).append("WHERE DATE(a.date) = ? ").append(ORDER_BY_DATE_ASC);
-
         return jdbcTemplate.query(sql.toString(), ROW_MAPPER, today);
     }
-
     @Override
-    public int countFuturePatientAppointments(long patientId, String dateRange) {
+    public int countAppointments(long userId, boolean isFuture, String filter) {
         String sql = "SELECT COUNT(*) FROM Appointments a ";
-        sql += buildDateRangeCondition("a.client_id", dateRange);
-        return jdbcTemplate.queryForObject(sql, Integer.class, patientId);
+        sql += isFuture ? buildDateRangeCondition(filter) : buildStatusCondition(filter);
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId,userId);
     }
 
-    @Override
-    public int countPastPatientAppointments(long patientId,String status) {
-        String sql = "SELECT COUNT(*) FROM Appointments a ";
-        sql += BuildStatusCondition("a.client_id", status);
-        return jdbcTemplate.queryForObject(sql, Integer.class, patientId);
-    }
-
-    @Override
-    public int countFutureDoctorAppointments(long doctorId,String dateRange) {
-        String sql = "SELECT COUNT(*) FROM Appointments a ";
-        sql += buildDateRangeCondition("a.doctor_id", dateRange);
-        return jdbcTemplate.queryForObject(sql, Integer.class, doctorId);
-    }
-
-    @Override
-    public int countPastDoctorAppointments(long doctorId,String status) {
-        String sql = "SELECT COUNT(*) FROM Appointments a ";
-        sql += BuildStatusCondition("a.doctor_id", status);
-        return jdbcTemplate.queryForObject(sql, Integer.class, doctorId);
-    }
-
-    private String buildDateRangeCondition(String idColumn, String dateRange) {
+    private String buildDateRangeCondition(String dateRange) {
         StringBuilder sql = new StringBuilder();
         return switch (dateRange) {
-            case "today" -> sql.append("WHERE ").append(idColumn).append(" = ? AND DATE(a.date)  = CURRENT_DATE AND a.status <> 'cancelado' AND a.date > NOW() ").toString();
-            case "week" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.date BETWEEN NOW() AND NOW() + INTERVAL '7 DAYS' AND a.status <> 'cancelado' ").toString();
-            case "month" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.date BETWEEN NOW() AND NOW() + INTERVAL '1 MONTH' AND a.status <> 'cancelado' ").toString();
-            default -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.date > NOW() AND a.status <> 'cancelado' ").toString();
+            case "today" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND DATE(a.date) = CURRENT_DATE AND a.status <> 'cancelado' AND a.date > NOW() ").toString();
+            case "week" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date BETWEEN NOW() AND NOW() + INTERVAL '7 DAYS' AND a.status <> 'cancelado' ").toString();
+            case "month" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date BETWEEN NOW() AND NOW() + INTERVAL '1 MONTH' AND a.status <> 'cancelado' ").toString();
+            default -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date > NOW() AND a.status <> 'cancelado' ").toString();
         };
     }
 
-    private String BuildStatusCondition(String idColumn, String status) {
+
+    private String buildStatusCondition(String status) {
         StringBuilder sql = new StringBuilder();
         return switch (status) {
-            case "completed" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.status = 'confirmado' AND a.date < NOW() ").toString();
-            case "cancelled" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.status = 'cancelado' ").toString();
-            case "all" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.date < NOW() ").toString();
-            case "confirmed" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.status = 'confirmado' AND a.date > NOW() ").toString();
+            case "completed" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'confirmado' AND a.date < NOW() ").toString();
+            case "cancelled" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'cancelado' ").toString();
+            case "all" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date < NOW() ").toString();
+            case "confirmed" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'confirmado' AND a.date > NOW() ").toString();
             default -> "";
         };
     }
+
 
 
 
