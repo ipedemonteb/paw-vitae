@@ -118,7 +118,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public void completeAppointments() {
         LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
-        String sql = "UPDATE Appointments SET status = ? WHERE Appointments.date < ? AND status = ?";
+        String sql = "UPDATE Appointments SET status = ? WHERE Appointments.date <= ? AND status = ?";
         jdbcTemplate.update(sql, AppointmentStatus.COMPLETO.getValue(), now, AppointmentStatus.CONFIRMADO.getValue());
     }
 
