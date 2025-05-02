@@ -52,9 +52,9 @@ public class PatientController {
 
         final ModelAndView mav = new ModelAndView("patient/dashboard-upcoming");
         mav.addObject("patient", patient);
-        var appointmentsPage = as.getFuturePatientAppointments(patient.getId(), page, 5,dateRange,null);
+        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(),true,page, 5,dateRange);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
-        mav.addObject("activeTab", "upcoming");
+
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
         mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
@@ -69,10 +69,8 @@ public class PatientController {
     ){
         final ModelAndView mav = new ModelAndView("patient/dashboard-history");
         mav.addObject("patient", patient);
-        var appointmentsPage = as.getPastPatientAppointments(patient.getId(), page, 5, null, status);
+        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(),false,page, 5, status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
-        System.out.println("acaaaa" + appointmentsPage.getContent());
-        mav.addObject("activeTab", "history");
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
         mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
@@ -87,7 +85,7 @@ public class PatientController {
         updatePatientForm.setForm(patient);
         mav.addObject("patient", patient);
         mav.addObject("coverageList", covs.getAll());
-        mav.addObject("activeTab", "profile");
+
         mav.addObject("display", "none");
         return mav;
     }
