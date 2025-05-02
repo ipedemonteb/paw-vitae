@@ -18,7 +18,7 @@ import java.util.*;
 @Repository
 public class AppointmentDaoImpl implements AppointmentDao {
 
-    private static final String BASE_SQL = "SELECT a.id, a.date, a.status, a.reason, " +
+    private static final String BASE_SQL = "SELECT a.id, a.date, a.status, a.reason, a.report, " +
             "s.id AS specialty_id, s.key AS specialty_key, " +
             "d.doctor_id, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, " +
             "u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, " +
@@ -46,7 +46,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
             rs.getLong("id"),
             new Specialty(rs.getLong("specialty_id"), rs.getString("specialty_key")),
             DOCTOR_ROW_MAPPER.mapRow(rs, 1),
-            PATIENT_ROW_MAPPER.mapRow(rs, 1)
+            PATIENT_ROW_MAPPER.mapRow(rs, 1),
+            rs.getString("report")
     );
     private DoctorDao doctorDao;
     private PatientDao patientDao;
@@ -60,7 +61,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
-                .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id")
+                .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id","report")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -72,6 +73,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         args.put("date", java.sql.Timestamp.valueOf(startDate));
         args.put("reason", reason);
         args.put("specialty_id", specialty.getId());
+        args.put("report", "");
         final Number appointmentId = jdbcInsert.executeAndReturnKey(args);
         Doctor doctor = doctorDao.getById(doctorId).orElse(null);
         Patient patient = patientDao.getById(patientId).orElse(null);
@@ -83,7 +85,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 appointmentId.longValue(),
                 specialty,
                 doctor,
-                patient
+                patient,
+                ""
         );
     }
 
@@ -145,7 +148,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     @Override
     public void updateReport(long appointmentId, String report) {
-        //todo:change rm and db
+        jdbcTemplate.update("UPDATE Appointments SET report = ? WHERE id = ?", report, appointmentId);
     }
 
     private String buildDateRangeCondition(String dateRange) {

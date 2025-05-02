@@ -11,7 +11,9 @@ public class Appointment {
     private Specialty specialty;
     private Doctor doctor;
     private Patient patient;
-    public Appointment(LocalDateTime date, String status, String reason, long id, Specialty specialty, Doctor doctor, Patient patient) {
+    private String report;
+
+    public Appointment(LocalDateTime date, String status, String reason, long id, Specialty specialty, Doctor doctor, Patient patient, String report) {
         this.date = date;
         this.status = status;
         this.reason = reason;
@@ -19,6 +21,7 @@ public class Appointment {
         this.specialty = specialty;
         this.doctor = doctor;
         this.patient = patient;
+        this.report = report;
     }
 
     public Specialty getSpecialty() {
@@ -61,13 +64,20 @@ public class Appointment {
     public Doctor getDoctor() {
         return doctor;
     }
-    public Patient getPatient() {
-        return patient;
-    }
+
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
     }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
     public void setPatient(Patient patient) {
         this.patient = patient;
     }
+
+    public String getReport() { return report; }
+
+    public void setReport(String report) { this.report = report; }
 }

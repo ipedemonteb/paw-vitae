@@ -236,6 +236,7 @@
                         </div>
                     </sec:authorize>
 
+
                 <!-- Doctor Files Section -->
                 <div class="files-section">
                     <h2 class="files-title">
@@ -243,7 +244,29 @@
                         <spring:message code="appointment.details.doctor.files.title"/>
                     </h2>
 
+                    <c:choose>
+                    <c:when test="${empty appointment.report}">
+                        <div class="specialty-card-appointment">
+                            <div class="no-files-content">
+                                <i class="fas fa-info-circle"></i>
+                                <p><spring:message code="appointment.details.doctor.noreport" /></p>
+                            </div>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="specialty-card-appointment">
+                            <div class="specialty-icon-appointment">
+                                <i class="fas fa-asterisk"></i>
+                            </div>
+                            <div class="specialty-content">
+                                <span class="specialty-value-appointment"><c:out value="${appointment.report}"/> </span>
+                            </div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+
                     <div class="files-list">
+
                         <c:set var="hasDoctorFiles" value="false" />
                         <c:forEach var="file" items="${doctorFiles}">
                             <c:if test="${file.uploader_role == 'doctor'}">
