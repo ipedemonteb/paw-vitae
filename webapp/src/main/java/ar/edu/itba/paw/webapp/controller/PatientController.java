@@ -95,7 +95,7 @@ public class PatientController {
     @RequestMapping(value = "/patient/dashboard/update", method = RequestMethod.POST)
     public ModelAndView updatePatient(@Valid @ModelAttribute("updatePatientForm") final UpdatePatientForm updatePatientForm,
                                       final BindingResult errors,
-                                      @ModelAttribute(value = "loggedUser", binding = false) final Patient patient
+                                      @ModelAttribute("loggedUser") final Patient patient
     ) {
         if (errors.hasErrors()) {
             ModelAndView mav = getProfile(updatePatientForm, patient);
