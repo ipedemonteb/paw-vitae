@@ -15,13 +15,14 @@ public interface AppointmentService {
     List<Appointment> getByPatientId(long patientId);
 
     List<Appointment> getByDoctorId(long doctorId);
+     void sendDailyReminders();
 
-
-
+    void completeAppointments();
     Boolean cancelAppointment(long appointmentId,long userId);
 
     Optional<Appointment> getById(long appointmentId);
     Page<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter);
 
 
+    void updateAppointmentReport(long appointmentId, String report);
 }

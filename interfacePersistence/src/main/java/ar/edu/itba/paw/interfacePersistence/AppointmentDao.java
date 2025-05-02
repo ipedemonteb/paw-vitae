@@ -22,7 +22,7 @@ import java.util.Optional;
 
         void cancelAppointment(long appointmentId);
 
-
+        void completeAppointments();
         Optional<Appointment> getById(long appointmentId);
 
 
@@ -32,4 +32,6 @@ import java.util.Optional;
         List<Appointment> getAppointmentsByDate(LocalDate today);
 
         int countAppointments(long userId, boolean isFuture, String filter);
+
+        void updateReport(long appointmentId, String report);
     }
