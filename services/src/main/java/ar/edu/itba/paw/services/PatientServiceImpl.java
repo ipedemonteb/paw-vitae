@@ -77,4 +77,13 @@ public class PatientServiceImpl implements PatientService {
         patient.ifPresent(c -> c.setAppointments(as.getByPatientId(id)));
         return patient;
     }
+    @Override
+    public Optional<Patient> getByResetToken(String token) {
+        return patientDao.getByResetToken(token);
+    }
+
+    @Override
+    public Optional<Patient> getByVerificationToken(String token) {
+        return patientDao.getByVerificationToken(token);
+    }
 }

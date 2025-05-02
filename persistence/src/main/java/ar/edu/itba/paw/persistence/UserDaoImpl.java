@@ -40,5 +40,19 @@ public class UserDaoImpl implements UserDao {
         jdbcTemplate.update("UPDATE users SET verification_token = NULL WHERE verification_token = ?", token);
     }
 
+    @Override
+    public void changePassword(long id, String password){
+        jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
+    }
+
+    @Override
+    public String getLanguageById(long id) {
+        return jdbcTemplate.queryForObject("SELECT language FROM users WHERE id = ?", new Object[]{id}, String.class);
+    }
+    @Override
+    public void changeLanguage(long id, String language) {
+        jdbcTemplate.update("UPDATE users SET language = ? WHERE id = ?", language, id);
+    }
+
 
 }

@@ -3,11 +3,14 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.PatientDao;
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.interfacePersistence.UserDao;
+import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.MailService;
+import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,59 +28,37 @@ public class UserServiceImpl implements UserService {
     Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     @Value("${app.base-url}")
     private String BASE_URL;
-    private PatientDao patientDao;
-    private DoctorDao doctorDao;
     private PasswordEncoder passwordEncoder;
     private UserDao userDao;
     private MailService ms;
+    private PatientService ps;
+    private DoctorService ds;
+
     @Autowired
-    public UserServiceImpl(PatientDao patientDao, DoctorDao doctorDao, PasswordEncoder passwordEncoder, UserDao userDao,
-                           MailService ms) {
-        this.patientDao = patientDao;
-        this.doctorDao = doctorDao;
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserDao userDao, MailService ms, PatientService ps, DoctorService ds) {
         this.passwordEncoder = passwordEncoder;
         this.userDao = userDao;
         this.ms = ms;
+        this.ps = ps;
+        this.ds = ds;
     }
 
     @Override
     public Optional<? extends User> getByEmail(String email) {
-        Optional<Patient> patient = patientDao.getByEmail(email);
-        return patient.isPresent() ? patient : doctorDao.getByEmail(email);
-    }
-    @Transactional
-    @Override
-    public void changePassword(Long id, String password) {
-        Optional<Patient> patient = patientDao.getById(id);
-        String newPassword = passwordEncoder.encode(password);
-        if (patient.isPresent()) {
-            patientDao.changePassword(id, newPassword);
-            LOGGER.debug("Password changed successfully for patient with id: {}", id);
-        } else {
-            doctorDao.changePassword(id, newPassword);
-            LOGGER.debug("Password changed successfully for doctor with id: {}", id);
-        }
+        Optional<Patient> patient = ps.getByEmail(email);
+        return patient.isPresent() ? patient : ds.getByEmail(email);
     }
 
     public String getLanguageById(long id) {
-        Optional<Patient> patient = patientDao.getById(id);
-        if (patient.isPresent()) {
-            return patientDao.getLanguage(id);
-        } else {
-            return doctorDao.getLanguage(id);
-        }
+        return userDao.getLanguageById(id);
     }
+
     @Transactional
     public void changeLanguage(long id, String language) {
-        Optional<Patient> patient = patientDao.getById(id);
-        if (patient.isPresent()) {
-            patientDao.changeLanguage(id, language);
-            LOGGER.debug("Language changed successfully for patient with id: {}", id);
-        } else {
-            doctorDao.changeLanguage(id, language);
-            LOGGER.debug("Language changed successfully for doctor with id: {}", id);
-        }
+        userDao.changeLanguage(id, language);
+        LOGGER.info("Language changed successfully for user with id: {}", id);
     }
+
     @Transactional
     @Override
     public void setVerificationToken(User user) {
@@ -86,30 +67,43 @@ public class UserServiceImpl implements UserService {
         ms.sendVerificationRegisterEmail(user, verificationLink);
         userDao.setVerificationToken(user.getId(), token);
     }
+
     @Transactional
     @Override
-    public void setVerificationStatus(User user,boolean status) {
+    public void setVerificationStatus(User user, boolean status) {
         userDao.setVerificationStatus(user.getId(), status);
     }
+
     @Transactional
     @Override
     public void setResetPasswordToken(User user) {
         String token = UUID.randomUUID().toString();
-        String resetPasswordLink = BASE_URL + "/reset-password?token=" + token;
+        String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
         ms.sendRecoverPasswordEmail(user, resetPasswordLink);
         userDao.setResetPasswordToken(user.getId(), token);
     }
 
     @Transactional
     @Override
+    public Optional<? extends User> getByResetToken(String token) {
+        Optional<Patient> patient = ps.getByResetToken(token);
+        if (patient.isPresent()) {
+            return patient;
+        } else {
+            return ds.getByResetToken(token);
+        }
+    }
+
+    @Transactional
+    @Override
     public Optional<? extends User> verifyValidationToken(String token) {
-        Optional<Patient> patient = patientDao.getByVerificationToken(token);
+        Optional<Patient> patient = ps.getByVerificationToken(token);
         if (patient.isPresent()) {
             setVerificationStatus(patient.get(), true);
             userDao.removeVerificationToken(token);
             return patient;
-        } else{
-            Optional<Doctor> doctor = doctorDao.getByVerificationToken(token);
+        } else {
+            Optional<Doctor> doctor = ds.getByVerificationToken(token);
             if (doctor.isPresent()) {
                 setVerificationStatus(doctor.get(), true);
                 userDao.removeVerificationToken(token);
@@ -118,9 +112,35 @@ public class UserServiceImpl implements UserService {
         }
         return Optional.empty();
     }
-//    @Transactional
-//    @Override
-//    public void removeVerificationToken(String token) {
-//        userDao.removeVerificationToken(token);
-//    }
+
+    @Transactional
+    @Override
+    public boolean verifyRecoveryToken(String token) {
+        Optional<Patient> patient = ps.getByResetToken(token);
+        if (patient.isPresent()) {
+            return true;
+        } else {
+            Optional<Doctor> doctor = ds.getByResetToken(token);
+            return doctor.isPresent();
+        }
+    }
+
+    @Transactional
+    @Override
+    public boolean changePassword(String token, String password) {
+        if(verifyRecoveryToken(token)){
+            Optional<? extends User> user = getByResetToken(token);
+            if (user.isPresent()) {
+                String newPassword = passwordEncoder.encode(password);
+                userDao.changePassword(user.get().getId(), newPassword);
+                return true;
+            }
+            System.out.println("No encontro al user");
+            return false;
+        }
+        System.out.println("No es valida la token");
+
+        return false;
+    }
+
 }

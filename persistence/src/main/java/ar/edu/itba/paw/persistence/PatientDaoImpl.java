@@ -115,10 +115,6 @@ public class PatientDaoImpl implements PatientDao {
         );
     }
 
-    @Override
-    public void changePassword(long id, String password) {
-        jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
-    }
 
     @Override
     public String getLanguage(long id) {
@@ -137,5 +133,14 @@ public class PatientDaoImpl implements PatientDao {
     @Override
     public void changeLanguage(long id, String language) {
         jdbcTemplate.update("UPDATE users SET language = ? WHERE id = ?", language, id);
+    }
+
+    @Override
+    public Optional<Patient> getByResetToken(String token) {
+        StringBuilder sql = new StringBuilder(BASE_SQL);
+        return jdbcTemplate.query(
+                sql.append("WHERE u.reset_token = ?").toString(),
+                ROW_MAPPER, token
+        ).stream().findFirst();
     }
 }

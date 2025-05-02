@@ -134,4 +134,13 @@ public class DoctorServiceImpl implements DoctorService {
         doctorDao.UpdateDoctorRating(id, rating);
         LOGGER.debug("Rating actualizado para el doctor con id={}, rating={}", id, rating);
     }
+
+    public Optional<Doctor> getByResetToken(String token){
+        return doctorDao.getByResetToken(token);
+    }
+
+    public Optional<Doctor> getByVerificationToken(String token){
+        return doctorDao.getByVerificationToken(token);
+    }
+
 }

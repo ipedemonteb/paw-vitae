@@ -16,4 +16,6 @@ public interface PatientService {
      void updatePatient(Patient patient, String name, String lastName, String phone, Coverage coverage);
 
      Optional<Patient> getByIdWithAppointments(long id);
+     Optional<Patient> getByResetToken(String token);
+     Optional<Patient> getByVerificationToken(String token);
 }
