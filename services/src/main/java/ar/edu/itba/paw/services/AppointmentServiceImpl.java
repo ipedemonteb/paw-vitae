@@ -105,8 +105,12 @@ public class AppointmentServiceImpl implements AppointmentService {
         return new Page<>(appointments, page, size, appointmentDao.countAppointments(userId, isFuture, filter));
     }
 
+    @Transactional
     @Override
     public void updateAppointmentReport(long appointmentId, String report) {
+        if(report==null) {
+            return;
+        }
         Optional<Appointment> appointment = getById(appointmentId);
         if (appointment.isPresent()) {
             appointmentDao.updateReport(appointmentId, report);
