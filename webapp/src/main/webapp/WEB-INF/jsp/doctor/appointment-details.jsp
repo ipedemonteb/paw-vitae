@@ -53,7 +53,7 @@
                 <c:if test="${not empty appointment.patient}">
                     <div class="doctor-info">
                         <div class="doctor-image">
-                            <img src="<c:url value='/image/${doctor.imageId}'/>"
+                            <img src="<c:url value='/image/-1'/>"
                                  alt="<c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/>"
                                  class="doctor-avatar">
                         </div>
