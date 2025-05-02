@@ -8,7 +8,7 @@ public interface UserService {
 
     Optional<? extends User> getByEmail(String email);
 
-    void changePassword(Long id, String password);
+    boolean changePassword(String token, String password);
     String getLanguageById(long id);
 
     void changeLanguage(long id, String language);
@@ -17,4 +17,6 @@ public interface UserService {
     void setVerificationStatus(User user, boolean status);
     void setResetPasswordToken(User user);
     Optional<? extends User> verifyValidationToken(String token);
+    Optional<? extends User> getByResetToken(String token);
+    boolean verifyRecoveryToken(String token);
 }

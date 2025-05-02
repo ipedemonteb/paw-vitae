@@ -32,8 +32,6 @@ public interface DoctorDao {
 
     void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 
-    void changePassword(long id, String password);
-
     String getLanguage(long id);
 
     void changeLanguage(long id, String language);
@@ -42,4 +40,5 @@ public interface DoctorDao {
 
     int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction);
     Optional<Doctor> getByVerificationToken(String token);
+    Optional<Doctor> getByResetToken(String token);
 }
