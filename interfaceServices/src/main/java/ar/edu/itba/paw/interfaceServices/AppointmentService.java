@@ -15,9 +15,9 @@ public interface AppointmentService {
     List<Appointment> getByPatientId(long patientId);
 
     List<Appointment> getByDoctorId(long doctorId);
+     void sendDailyReminders();
 
-
-
+    void completeAppointments();
     Boolean cancelAppointment(long appointmentId,long userId);
 
     Optional<Appointment> getById(long appointmentId);

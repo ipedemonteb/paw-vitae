@@ -19,10 +19,9 @@ public interface PatientDao {
 
     List<Patient> getByIds(Set<Long> ids);
 
-    void changePassword(long id, String password);
-
     String getLanguage(long id);
     Optional<Patient> getByVerificationToken(String token);
 
     void changeLanguage(long id, String language);
+    Optional<Patient> getByResetToken(String token);
 }

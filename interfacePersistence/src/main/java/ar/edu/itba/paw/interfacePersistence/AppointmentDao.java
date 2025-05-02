@@ -22,7 +22,7 @@ import java.util.Optional;
 
         void cancelAppointment(long appointmentId);
 
-
+        void completeAppointments();
         Optional<Appointment> getById(long appointmentId);
 
 

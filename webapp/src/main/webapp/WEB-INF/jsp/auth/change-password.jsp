@@ -31,26 +31,7 @@
                 </div>
 
                 <div class="card-body">
-                    <!-- Success Message -->
-                    <c:if test="${not empty successMessage}">
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle"></i>
-                            <span><c:out value="${successMessage}" /></span>
-                        </div>
-                    </c:if>
-
-                    <!-- Error Message -->
-                    <c:if test="${not empty errorMessage}">
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <span><c:out value="${errorMessage}" /></span>
-                        </div>
-                    </c:if>
-
-                    <form:form modelAttribute="changePasswordForm" method="post" action="${pageContext.request.contextPath}/change-password" class="change-password-form">
-                        <!-- Hidden token field -->
-                        <form:hidden path="token" />
-
+                    <form:form modelAttribute="ChangePasswordForm" method="post" action="${pageContext.request.contextPath}/change-password?token=${token}" class="change-password-form">
                         <!-- Password Field -->
                         <div class="form-group">
                             <label for="password" class="form-label"><spring:message code="change.password.new.password" /></label>
@@ -128,6 +109,17 @@
             // Adjust on window resize
             window.addEventListener("resize", adjustContentMargin);
         }
+
+        // Set up messages object for internationalization
+        window.messages = {
+            passwordWeak: '<spring:message code="password.weak" javaScriptEscape="true" />',
+            passwordMedium: '<spring:message code="password.medium" javaScriptEscape="true" />',
+            passwordStrong: '<spring:message code="password.strong" javaScriptEscape="true" />',
+            passwordVeryStrong: '<spring:message code="password.very.strong" javaScriptEscape="true" />',
+            passwordInvalid: '<spring:message code="password.invalid" javaScriptEscape="true" />',
+            passwordsDoNotMatch: '<spring:message code="passwords.do.not.match" javaScriptEscape="true" />',
+            fieldRequired: '<spring:message code="field.required" javaScriptEscape="true" />'
+        };
 
         // Password toggle visibility
         const togglePasswordButtons = document.querySelectorAll('.toggle-password');
@@ -211,22 +203,22 @@
             if (strength < 3) {
                 strengthClass = "strength-weak";
                 strengthLabel = window.messages?.passwordWeak || "Weak";
-                strengthIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><circle cx="12" cy="12" r="10"></circle></svg>';
+                strengthIcon = '<i class="fas fa-exclamation-circle"></i>';
                 strengthPercentage = 25;
             } else if (strength < 4) {
                 strengthClass = "strength-medium";
                 strengthLabel = window.messages?.passwordMedium || "Medium";
-                strengthIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><circle cx="12" cy="12" r="10"></circle></svg>';
+                strengthIcon = '<i class="fas fa-info-circle"></i>';
                 strengthPercentage = 50;
             } else if (strength < 6) {
                 strengthClass = "strength-strong";
                 strengthLabel = window.messages?.passwordStrong || "Strong";
-                strengthIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>';
+                strengthIcon = '<i class="fas fa-check-circle"></i>';
                 strengthPercentage = 75;
             } else {
                 strengthClass = "strength-very-strong";
                 strengthLabel = window.messages?.passwordVeryStrong || "Very Strong";
-                strengthIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>';
+                strengthIcon = '<i class="fas fa-shield-alt"></i>';
                 strengthPercentage = 100;
             }
 
@@ -236,176 +228,122 @@
         }
 
         function validatePasswordRequirements(password) {
-            // Get or create requirements list
-            let requirementsList = document.getElementById("password-requirements");
-            if (!requirementsList) {
-                const passwordContainer = document.getElementById("pass-validations");
-                if (!passwordContainer) return false;
-
-                requirementsList = document.createElement("ul");
-                requirementsList.id = "password-requirements";
-                requirementsList.className = "requirements-list";
-
-                // Add after password strength meter
-                const strengthMeter = passwordContainer.querySelector(".password-strength");
-                if (strengthMeter) {
-                    passwordContainer.insertBefore(requirementsList, strengthMeter.nextSibling);
-                } else {
-                    passwordContainer.appendChild(requirementsList);
-                }
-
-                // Create requirement items
-                const requirements = [
-                    { id: "length", text: window.messages?.passwordReqLength || "At least 8 characters" },
-                    { id: "uppercase", text: window.messages?.passwordReqUppercase || "At least one uppercase letter" },
-                    { id: "lowercase", text: window.messages?.passwordReqLowercase || "At least one lowercase letter" },
-                    { id: "number", text: window.messages?.passwordReqNumber || "At least one number" },
-                    { id: "special", text: window.messages?.passwordReqSpecial || "At least one special character" },
-                ];
-
-                requirements.forEach((req) => {
-                    const item = document.createElement("li");
-                    item.id = `req-${req.id}`;
-                    item.className = "requirement-item";
-                    item.textContent = req.text;
-                    requirementsList.appendChild(item);
-                });
-            }
-
-            // Validate each requirement
-            const lengthReq = document.getElementById("req-length");
-            const uppercaseReq = document.getElementById("req-uppercase");
-            const lowercaseReq = document.getElementById("req-lowercase");
-            const numberReq = document.getElementById("req-number");
-            const specialReq = document.getElementById("req-special");
-
-            // Check requirements
+            // Verifica si la contraseña tiene al menos 8 caracteres
             const hasLength = password && password.length >= 8;
-            const hasUppercase = password && /[A-Z]/.test(password);
-            const hasLowercase = password && /[a-z]/.test(password);
-            const hasNumber = password && /[0-9]/.test(password);
-            const hasSpecial = password && /[^A-Za-z0-9]/.test(password);
-
-            // Update UI - with null checks
-            if (lengthReq) updateRequirement(lengthReq, hasLength);
-            if (uppercaseReq) updateRequirement(uppercaseReq, hasUppercase);
-            if (lowercaseReq) updateRequirement(lowercaseReq, hasLowercase);
-            if (numberReq) updateRequirement(numberReq, hasNumber);
-            if (specialReq) updateRequirement(specialReq, hasSpecial);
 
             if (password) {
-                if (hasLength && hasUppercase && hasLowercase && hasNumber && hasSpecial) {
-                        setFieldValid(passwordField, passwordLengthMessage);
-                        return true;
-                    } else {
-                        setFieldError(
-                            passwordField,
-                            passwordLengthMessage,
-                            window.messages?.passwordInvalid || "Password does not meet requirements"
-                        );
-                        return false;
-                    }
-                } else {
-                    clearFieldValidation(passwordField, passwordLengthMessage);
+                if (hasLength) {
+                    setFieldValid(passwordField, passwordLengthMessage);
                     return true;
-                }
-            }
-
-            function updateRequirement(element, isValid) {
-                if (!element) return;
-
-                element.classList.remove("valid", "invalid");
-                if (isValid) {
-                    element.classList.add("valid");
                 } else {
-                    element.classList.add("invalid");
-                }
-            }
-
-            function checkPasswordMatch() {
-                const password = passwordField?.value || "";
-                const repeatPassword = repeatPasswordField?.value || "";
-
-                if (!repeatPasswordField) return false;
-
-                if (!repeatPassword && repeatPasswordField.hasAttribute("required")) {
-                    setFieldError(repeatPasswordField, passwordMatchMessage, window.messages?.fieldRequired || "Confirm password is required");
+                    setFieldError(
+                        passwordField,
+                        passwordLengthMessage,
+                        window.messages?.passwordInvalid || "La contraseña debe tener al menos 8 caracteres"
+                    );
                     return false;
-                } else if (password && repeatPassword) {
-                    if (password !== repeatPassword) {
-                        setFieldError(repeatPasswordField, passwordMatchMessage, window.messages?.passwordsDoNotMatch || "Passwords do not match");
-                        return false;
-                    } else {
-                        setFieldValid(repeatPasswordField, passwordMatchMessage);
-                        return true;
-                    }
+                }
+            } else {
+                clearFieldValidation(passwordField, passwordLengthMessage);
+                return true;
+            }
+        }
+
+        function updateRequirement(reqId, isValid) {
+            const reqElement = document.getElementById(reqId);
+            if (!reqElement) return;
+
+            if (isValid) {
+                reqElement.classList.add("valid");
+            } else {
+                reqElement.classList.remove("valid");
+            }
+        }
+
+        function checkPasswordMatch() {
+            const password = passwordField?.value || "";
+            const repeatPassword = repeatPasswordField?.value || "";
+
+            if (!repeatPasswordField) return false;
+
+            if (!repeatPassword && repeatPasswordField.hasAttribute("required")) {
+                setFieldError(repeatPasswordField, passwordMatchMessage, window.messages?.fieldRequired || "Confirm password is required");
+                return false;
+            } else if (password && repeatPassword) {
+                if (password !== repeatPassword) {
+                    setFieldError(repeatPasswordField, passwordMatchMessage, window.messages?.passwordsDoNotMatch || "Passwords do not match");
+                    return false;
                 } else {
-                    clearFieldValidation(repeatPasswordField, passwordMatchMessage);
+                    setFieldValid(repeatPasswordField, passwordMatchMessage);
                     return true;
                 }
+            } else {
+                clearFieldValidation(repeatPasswordField, passwordMatchMessage);
+                return true;
             }
+        }
 
-            function setFieldError(field, errorElement, message) {
-                if (!field) return;
+        function setFieldError(field, errorElement, message) {
+            if (!field) return;
 
-                field.classList.add("error");
-                field.classList.remove("valid");
+            field.classList.add("error");
+            field.classList.remove("valid");
 
-                if (errorElement) {
-                    errorElement.textContent = message;
-                    errorElement.classList.add("visible");
-                }
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.classList.add("visible");
             }
+        }
 
-            function setFieldValid(field, errorElement) {
-                if (!field) return;
+        function setFieldValid(field, errorElement) {
+            if (!field) return;
 
-                field.classList.remove("error");
-                field.classList.add("valid");
+            field.classList.remove("error");
+            field.classList.add("valid");
 
-                if (errorElement) {
-                    errorElement.classList.remove("visible");
-                }
+            if (errorElement) {
+                errorElement.classList.remove("visible");
             }
+        }
 
-            function clearFieldValidation(field, errorElement) {
-                if (!field) return;
+        function clearFieldValidation(field, errorElement) {
+            if (!field) return;
 
-                field.classList.remove("error");
-                field.classList.remove("valid");
+            field.classList.remove("error");
+            field.classList.remove("valid");
 
-                if (errorElement) {
-                    errorElement.classList.remove("visible");
-                }
+            if (errorElement) {
+                errorElement.classList.remove("visible");
             }
+        }
 
-            function updateButtonState() {
-                if (!changePasswordButton) return;
+        function updateButtonState() {
+            if (!changePasswordButton) return;
 
-                const isPasswordValid = passwordField && validatePasswordRequirements(passwordField.value);
-                const isPasswordMatch = checkPasswordMatch();
+            const isPasswordValid = passwordField && validatePasswordRequirements(passwordField.value);
+            const isPasswordMatch = checkPasswordMatch();
 
-                changePasswordButton.disabled = !isPasswordValid || !isPasswordMatch;
+            changePasswordButton.disabled = !isPasswordValid || !isPasswordMatch;
 
-                if (changePasswordButton.disabled) {
-                    changePasswordButton.classList.add("disabled");
-                } else {
-                    changePasswordButton.classList.remove("disabled");
-                }
+            if (changePasswordButton.disabled) {
+                changePasswordButton.classList.add("disabled");
+            } else {
+                changePasswordButton.classList.remove("disabled");
             }
+        }
 
-            // Initial validation
-            if (passwordField) {
-                checkPasswordStrength();
-                validatePasswordRequirements(passwordField.value);
-            }
+        // Initial validation
+        if (passwordField) {
+            checkPasswordStrength();
+            validatePasswordRequirements(passwordField.value);
+        }
 
-            if (repeatPasswordField) {
-                checkPasswordMatch();
-            }
+        if (repeatPasswordField) {
+            checkPasswordMatch();
+        }
 
-            updateButtonState();
-        });
+        updateButtonState();
+    });
 </script>
 </body>
 </html>

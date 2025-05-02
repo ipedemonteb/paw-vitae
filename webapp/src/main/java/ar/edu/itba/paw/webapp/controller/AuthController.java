@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.AuthService;
 import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
+import ar.edu.itba.paw.webapp.form.ChangePasswordForm;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
@@ -131,6 +132,35 @@ public class AuthController {
 
         us.setResetPasswordToken(userOpt.get());
         return new ModelAndView("redirect:/recover-password?recover=sent");
+    }
+
+    @RequestMapping(value = "/change-password", method = RequestMethod.GET)
+    public ModelAndView changePassword(@RequestParam(value = "token", required = false) String token, @ModelAttribute("ChangePasswordForm") ChangePasswordForm ChangePasswordForm) {
+        if (token == null) {
+            return new ModelAndView("redirect:/");
+        }
+        return new ModelAndView("auth/change-password").addObject("token", token);
+    }
+
+    @RequestMapping(value = "/change-password", method = RequestMethod.POST)
+    public ModelAndView changePassword(@RequestParam(value = "token", required = false) String token,
+                                       @Valid @ModelAttribute("ChangePasswordForm") ChangePasswordForm form, BindingResult errors) {
+        if (errors.hasErrors()) {
+            return new ModelAndView("auth/change-password").addObject("token", token);
+        }
+
+        boolean success = us.changePassword(token, form.getPassword());
+
+        if (success) {
+            return new ModelAndView("redirect:/change-password-result?success=true");
+        } else {
+            return new ModelAndView("redirect:/change-password-result?success=false");
+        }
+    }
+
+    @RequestMapping(value = "/change-password-result", method = RequestMethod.GET)
+    public ModelAndView changePasswordResult() {
+        return new ModelAndView("auth/change-password-result");
     }
 
     @RequestMapping("/email-sent")

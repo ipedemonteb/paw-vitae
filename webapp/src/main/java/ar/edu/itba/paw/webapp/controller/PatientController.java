@@ -85,7 +85,6 @@ public class PatientController {
         updatePatientForm.setForm(patient);
         mav.addObject("patient", patient);
         mav.addObject("coverageList", covs.getAll());
-
         mav.addObject("display", "none");
         return mav;
     }
