@@ -78,7 +78,7 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, String language,long imageId,
+    public Doctor create(String name, String lastName, String email, String password, String phone, String language,Long imageId,
                          List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList) {
         final Map<String, Object> argsUser = new HashMap<>();
         argsUser.put("name", name);
@@ -92,6 +92,7 @@ public class DoctorDaoImpl implements DoctorDao {
         final Map<String, Object> argsDoctor = new HashMap<>();
         argsDoctor.put("doctor_id", docId);
         argsDoctor.put("image_id", imageId);
+
         jdbcInsertDoctor.execute(argsDoctor);
 
         for (Specialty specialty : specialties) {

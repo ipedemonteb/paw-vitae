@@ -115,6 +115,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
         jdbcTemplate.update("UPDATE Appointments SET status = ? WHERE id = ?", AppointmentStatus.CANCELADO.getValue(), appointmentId);
     }
 
+    @Override
+    public void completeAppointments() {
+        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+        String sql = "UPDATE Appointments SET status = ? WHERE Appointments.date > ? AND status = ?";
+        jdbcTemplate.update(sql, AppointmentStatus.COMPLETO.getValue(), now, AppointmentStatus.CONFIRMADO.getValue());
+    }
+
 
     @Override
     public Optional<Appointment> getById(long appointmentId) {
@@ -141,6 +148,11 @@ public class AppointmentDaoImpl implements AppointmentDao {
         String sql = "SELECT COUNT(*) FROM Appointments a ";
         sql += isFuture ? buildDateRangeCondition(filter) : buildStatusCondition(filter);
         return jdbcTemplate.queryForObject(sql, Integer.class, userId,userId);
+    }
+
+    @Override
+    public void updateReport(long appointmentId, String report) {
+        //todo:change rm and db
     }
 
     private String buildDateRangeCondition(String dateRange) {
