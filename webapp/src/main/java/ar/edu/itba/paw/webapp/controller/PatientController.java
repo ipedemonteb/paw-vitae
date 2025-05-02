@@ -10,6 +10,7 @@ import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -94,14 +95,14 @@ public class PatientController {
     @RequestMapping(value = "/patient/dashboard/update", method = RequestMethod.POST)
     public ModelAndView updatePatient(@Valid @ModelAttribute("updatePatientForm") final UpdatePatientForm updatePatientForm,
                                       final BindingResult errors,
-                                      @ModelAttribute("loggedUser") final Patient patient
+                                      @ModelAttribute(value = "loggedUser", binding = false) final Patient patient
     ) {
         if (errors.hasErrors()) {
             ModelAndView mav = getProfile(updatePatientForm, patient);
             mav.addObject("display", "block");
             return mav;
         }
-        ps.updatePatient(patient.getId(), updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
+        ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
         return new ModelAndView("redirect:/patient/dashboard/profile?updated=true");
     }
 

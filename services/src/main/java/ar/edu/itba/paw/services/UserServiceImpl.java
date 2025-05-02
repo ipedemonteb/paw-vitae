@@ -118,9 +118,9 @@ public class UserServiceImpl implements UserService {
         }
         return Optional.empty();
     }
-    @Transactional
-    @Override
-    public void removeVerificationToken(String token) {
-        userDao.removeVerificationToken(token);
-    }
+//    @Transactional
+//    @Override
+//    public void removeVerificationToken(String token) {
+//        userDao.removeVerificationToken(token);
+//    }
 }
