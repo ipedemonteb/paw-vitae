@@ -24,4 +24,5 @@ public interface AppointmentService {
     Page<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter);
 
 
+    void updateAppointmentReport(long appointmentId, String report);
 }
