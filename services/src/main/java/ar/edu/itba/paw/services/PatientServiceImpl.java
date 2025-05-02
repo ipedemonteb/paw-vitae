@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Coverage;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -59,14 +59,15 @@ public class PatientServiceImpl implements PatientService {
 
     @Transactional
     @Override
-    public void updatePatient(Patient currentPatient, String name, String lastName, String phone, Coverage coverage) {
-        boolean hasChanged = !currentPatient.getName().equals(name)
-                || !currentPatient.getLastName().equals(lastName)
-                || !currentPatient.getPhone().equals(phone)
-                || !currentPatient.getCoverage().getName().equals(coverage.getName());
+    public void updatePatient(long id, String name, String lastName, String phone, Coverage coverage) {
+        Patient patient = getById(id).orElseThrow(UserNotFoundException::new);
+        boolean hasChanged = !patient.getName().equals(name)
+                || !patient.getLastName().equals(lastName)
+                || !patient.getPhone().equals(phone)
+                || !patient.getCoverage().getName().equals(coverage.getName());
         if (hasChanged) {
-            patientDao.updatePatient(currentPatient.getId(), name, lastName, phone, coverage);
-            LOGGER.debug("Patient updated successfully: id={}, email={}", currentPatient.getId(), currentPatient.getEmail());
+            patientDao.updatePatient(id, name, lastName, phone, coverage);
+            LOGGER.debug("Patient updated successfully: id={}, email={}", patient.getId(), patient.getEmail());
         }
 
     }

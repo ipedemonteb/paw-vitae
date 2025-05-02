@@ -5,14 +5,11 @@ import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.PatientRatingForm;
 import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -104,7 +101,7 @@ public class PatientController {
             mav.addObject("display", "block");
             return mav;
         }
-        ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
+        ps.updatePatient(patient.getId(), updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
         return new ModelAndView("redirect:/patient/dashboard/profile?updated=true");
     }
 

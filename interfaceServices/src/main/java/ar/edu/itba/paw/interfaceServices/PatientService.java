@@ -13,7 +13,7 @@ public interface PatientService {
 
     Optional<Patient> getByEmail(String email);
 
-     void updatePatient(Patient currentPatient, String name, String lastName, String phone, Coverage coverage);
+     void updatePatient(long id, String name, String lastName, String phone, Coverage coverage);
 
      Optional<Patient> getByIdWithAppointments(long id);
 }

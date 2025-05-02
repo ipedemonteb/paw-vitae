@@ -17,7 +17,7 @@ public class DoctorDaoImpl implements DoctorDao {
     private final static String BASE_SQL = "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
             "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
             "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id,u.is_verified AS doctor_verified " +
-            "FROM users u JOIN doctors d ";
+            "FROM users u JOIN doctors d ON u.id = d.doctor_id ";
 
 
     private final JdbcTemplate jdbcTemplate;
@@ -139,7 +139,7 @@ public class DoctorDaoImpl implements DoctorDao {
     public Optional<Doctor> getById(long id) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
         Optional<Doctor> doc = jdbcTemplate.query(
-                sql.append("ON u.id = d.doctor_id WHERE u.id = ?").toString(),
+                sql.append("WHERE u.id = ?").toString(),
                 ROW_MAPPER, id
         ).stream().findFirst();
         doc.ifPresent(this::populateDoctorDetails);
@@ -150,27 +150,12 @@ public class DoctorDaoImpl implements DoctorDao {
     public Optional<Doctor> getByEmail(String email) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
         Optional<Doctor> doc = jdbcTemplate.query(
-                sql.append("ON u.id = d.doctor_id WHERE u.email = ?").toString(),
+                sql.append("WHERE u.email = ?").toString(),
                 ROW_MAPPER, email
         ).stream().findFirst();
 
         doc.ifPresent(this::populateDoctorDetails);
         return doc;
-    }
-
-    @Override
-    public List<Doctor> getAll() {
-        StringBuilder sql = new StringBuilder(BASE_SQL);
-        List<Doctor> doctors = jdbcTemplate.query(
-                sql.append("ON u.id = d.doctor_id").toString(),
-                ROW_MAPPER
-        );
-
-        for (Doctor doctor : doctors) {
-            populateDoctorDetails(doctor);
-        }
-
-        return doctors;
     }
 
     @Override
@@ -191,7 +176,7 @@ public class DoctorDaoImpl implements DoctorDao {
         }
         StringBuilder sql = new StringBuilder(BASE_SQL);
         return jdbcTemplate.query(
-                sql.append("ON u.id = d.doctor_id WHERE u.id IN (").append(String.join(",", Collections.nCopies(ids.size(), "?"))).append(")").toString(),
+                sql.append("WHERE u.id IN (").append(String.join(",", Collections.nCopies(ids.size(), "?"))).append(")").toString(),
                 ROW_MAPPER, ids.toArray()
         );
     }
@@ -200,8 +185,7 @@ public class DoctorDaoImpl implements DoctorDao {
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
         List<Doctor> doctors = jdbcTemplate.query(
-                sql.append("ON u.id = d.doctor_id ")
-                        .append("JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id ")
+                sql.append("JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id ")
                         .append("JOIN specialties s ON ds.specialty_id = s.id ")
                         .append("WHERE ds.specialty_id = ? LIMIT ? OFFSET ?").toString(),
                 new Object[]{specialtyId, pageSize, (page - 1) * pageSize},
@@ -330,7 +314,7 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        sql.append("ON u.id = d.doctor_id WHERE 1=1 ");
+        sql.append("WHERE 1=1 ");
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
 
         sql.append("ORDER BY ").append(orderBy).append(" ").append(direction);
@@ -358,7 +342,7 @@ public class DoctorDaoImpl implements DoctorDao {
     public Optional<Doctor> getByVerificationToken(String token) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
         return jdbcTemplate.query(
-                sql.append("ON u.id = d.doctor_id WHERE u.verification_token = ?").toString(),
+                sql.append("WHERE u.verification_token = ?").toString(),
                 ROW_MAPPER, token
         ).stream().findFirst();
     }

@@ -90,10 +90,16 @@ public class DoctorServiceImpl implements DoctorService {
         List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList()));
         List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList()));
 
-        doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList);
+        boolean hasChanged = !currentDoctor.getName().equals(name)
+                || !currentDoctor.getLastName().equals(lastName)
+                || !currentDoctor.getPhone().equals(phone)
+                || !currentDoctor.getSpecialtyList().equals(specialtyList)
+                || !currentDoctor.getCoverageList().equals(coverageList);
 
-        LOGGER.debug("Doctor actualizado exitosamente: id={}, nombre={}, apellido={}", id, name, lastName);
-
+        if (hasChanged) {
+            doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList);
+            LOGGER.debug("Doctor actualizado exitosamente: id={}, nombre={}, apellido={}", id, name, lastName);
+        }
     }
 
     @Transactional
