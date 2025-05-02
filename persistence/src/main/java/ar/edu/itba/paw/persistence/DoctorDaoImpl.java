@@ -161,11 +161,11 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public void UpdateDoctorRating(long id, double newRating) {
         jdbcTemplate.update(
-                "UPDATE doctors " +
-                        "SET rating = ((rating * rating_count + ?) / (rating_count + 1)), " +
-                        "    rating_count = rating_count + 1 " +
-                        "WHERE doctor_id = ?",
-                newRating, id
+      "UPDATE doctors " +
+        "SET rating = ((COALESCE(rating, 0) * rating_count + ?) / (rating_count + 1)), " +
+        "    rating_count = rating_count + 1 " +
+        "WHERE doctor_id = ?",
+newRating, id
         );
     }
 
@@ -273,10 +273,8 @@ public class DoctorDaoImpl implements DoctorDao {
     // Add this method to the DoctorDaoImpl class
     @Override
     public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
-        // Delete existing availability slots
         jdbcTemplate.update("DELETE FROM doctor_availability WHERE doctor_id = ?", id);
 
-        // Add new availability slots
         for (AvailabilitySlot slot : availabilitySlots) {
             Map<String, Object> params = new HashMap<>();
             params.put("doctor_id", id);
