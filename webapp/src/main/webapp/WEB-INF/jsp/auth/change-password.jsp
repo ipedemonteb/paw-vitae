@@ -112,18 +112,13 @@
 
         // Set up messages object for internationalization
         window.messages = {
-            passwordWeak: '<spring:message code="password.weak" />',
-            passwordMedium: '<spring:message code="password.medium" />',
-            passwordStrong: '<spring:message code="password.strong" />',
-            passwordVeryStrong: '<spring:message code="password.very.strong" />',
-            passwordReqLength: '<spring:message code="password.req.length" />',
-            passwordReqUppercase: '<spring:message code="password.req.uppercase" />',
-            passwordReqLowercase: '<spring:message code="password.req.lowercase" />',
-            passwordReqNumber: '<spring:message code="password.req.number" />',
-            passwordReqSpecial: '<spring:message code="password.req.special" />',
-            passwordInvalid: '<spring:message code="password.invalid" />',
-            passwordsDoNotMatch: '<spring:message code="passwords.do.not.match" />',
-            fieldRequired: '<spring:message code="field.required" />'
+            passwordWeak: '<spring:message code="password.weak" javaScriptEscape="true" />',
+            passwordMedium: '<spring:message code="password.medium" javaScriptEscape="true" />',
+            passwordStrong: '<spring:message code="password.strong" javaScriptEscape="true" />',
+            passwordVeryStrong: '<spring:message code="password.very.strong" javaScriptEscape="true" />',
+            passwordInvalid: '<spring:message code="password.invalid" javaScriptEscape="true" />',
+            passwordsDoNotMatch: '<spring:message code="passwords.do.not.match" javaScriptEscape="true" />',
+            fieldRequired: '<spring:message code="field.required" javaScriptEscape="true" />'
         };
 
         // Password toggle visibility
@@ -152,9 +147,6 @@
         const passwordMatchMessage = document.getElementById("password-match-message");
         const changePasswordButton = document.getElementById("changePasswordButton");
 
-        // Create requirements list on page load
-        createRequirementsList();
-
         if (passwordField) {
             passwordField.addEventListener("input", function() {
                 checkPasswordStrength();
@@ -168,54 +160,6 @@
             repeatPasswordField.addEventListener("input", function() {
                 checkPasswordMatch();
                 updateButtonState();
-            });
-        }
-
-        function createRequirementsList() {
-            const passwordContainer = document.getElementById("pass-validations");
-            if (!passwordContainer) return;
-
-            const requirementsList = document.createElement("ul");
-            requirementsList.id = "password-requirements";
-            requirementsList.className = "requirements-list";
-
-            // Add after password strength meter
-            const strengthMeter = passwordContainer.querySelector(".password-strength");
-            if (strengthMeter) {
-                passwordContainer.insertBefore(requirementsList, strengthMeter.nextSibling);
-            } else {
-                passwordContainer.appendChild(requirementsList);
-            }
-
-            // Create requirement items
-            const requirements = [
-                { id: "length", text: window.messages?.passwordReqLength || "At least 8 characters" },
-                { id: "uppercase", text: window.messages?.passwordReqUppercase || "At least one uppercase letter" },
-                { id: "lowercase", text: window.messages?.passwordReqLowercase || "At least one lowercase letter" },
-                { id: "number", text: window.messages?.passwordReqNumber || "At least one number" },
-                { id: "special", text: window.messages?.passwordReqSpecial || "At least one special character" },
-            ];
-
-            requirements.forEach((req) => {
-                const item = document.createElement("li");
-                item.id = `req-${req.id}`;
-                item.className = "requirement-item";
-
-                // Create a span for the check icon
-                const checkIcon = document.createElement("span");
-                checkIcon.className = "req-icon";
-                checkIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
-
-                // Create a span for the text
-                const textSpan = document.createElement("span");
-                textSpan.className = "req-text";
-                textSpan.textContent = req.text;
-
-                // Append both to the list item
-                item.appendChild(checkIcon);
-                item.appendChild(textSpan);
-
-                requirementsList.appendChild(item);
             });
         }
 
@@ -284,36 +228,18 @@
         }
 
         function validatePasswordRequirements(password) {
-            // Validate each requirement
-            const lengthReq = document.getElementById("req-length");
-            const uppercaseReq = document.getElementById("req-uppercase");
-            const lowercaseReq = document.getElementById("req-lowercase");
-            const numberReq = document.getElementById("req-number");
-            const specialReq = document.getElementById("req-special");
-
-            // Check requirements
+            // Verifica si la contraseña tiene al menos 8 caracteres
             const hasLength = password && password.length >= 8;
-            const hasUppercase = password && /[A-Z]/.test(password);
-            const hasLowercase = password && /[a-z]/.test(password);
-            const hasNumber = password && /[0-9]/.test(password);
-            const hasSpecial = password && /[^A-Za-z0-9]/.test(password);
-
-            // Update UI - with null checks
-            if (lengthReq) updateRequirement(lengthReq, hasLength);
-            if (uppercaseReq) updateRequirement(uppercaseReq, hasUppercase);
-            if (lowercaseReq) updateRequirement(lowercaseReq, hasLowercase);
-            if (numberReq) updateRequirement(numberReq, hasNumber);
-            if (specialReq) updateRequirement(specialReq, hasSpecial);
 
             if (password) {
-                if (hasLength && hasUppercase && hasLowercase && hasNumber && hasSpecial) {
+                if (hasLength) {
                     setFieldValid(passwordField, passwordLengthMessage);
                     return true;
                 } else {
                     setFieldError(
                         passwordField,
                         passwordLengthMessage,
-                        window.messages?.passwordInvalid || "Password does not meet requirements"
+                        window.messages?.passwordInvalid || "La contraseña debe tener al menos 8 caracteres"
                     );
                     return false;
                 }
@@ -323,15 +249,14 @@
             }
         }
 
-        function updateRequirement(element, isValid) {
-            if (!element) return;
+        function updateRequirement(reqId, isValid) {
+            const reqElement = document.getElementById(reqId);
+            if (!reqElement) return;
 
             if (isValid) {
-                element.classList.add("valid");
-                element.classList.remove("invalid");
+                reqElement.classList.add("valid");
             } else {
-                element.classList.add("invalid");
-                element.classList.remove("valid");
+                reqElement.classList.remove("valid");
             }
         }
 

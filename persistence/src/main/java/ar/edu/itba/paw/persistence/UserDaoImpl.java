@@ -54,5 +54,10 @@ public class UserDaoImpl implements UserDao {
         jdbcTemplate.update("UPDATE users SET language = ? WHERE id = ?", language, id);
     }
 
+    @Override
+    public void removeResetToken(String token){
+        jdbcTemplate.update("UPDATE users SET remove_token = NULL WHERE remove_token = ?", token);
+
+    }
 
 }

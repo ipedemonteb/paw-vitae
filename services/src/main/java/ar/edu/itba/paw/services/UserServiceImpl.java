@@ -133,12 +133,11 @@ public class UserServiceImpl implements UserService {
             if (user.isPresent()) {
                 String newPassword = passwordEncoder.encode(password);
                 userDao.changePassword(user.get().getId(), newPassword);
+                userDao.removeResetToken(token);
                 return true;
             }
-            System.out.println("No encontro al user");
             return false;
         }
-        System.out.println("No es valida la token");
 
         return false;
     }
