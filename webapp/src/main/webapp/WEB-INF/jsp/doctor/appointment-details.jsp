@@ -238,8 +238,29 @@
                         <div class="files-section">
                             <h2 class="files-title">
                                 <i class="fas fa-file-medical-alt"></i>
-                                <spring:message code="appointment.details.yours.files.title"/>
+                                <spring:message code="appointment.details.doctor.files.title"/>
                             </h2>
+
+                            <!-- Report textarea -->
+                            <c:choose>
+                                <c:when test="${empty appointment.report}">
+                                    <div class="form-group">
+                                        <label for="report"><spring:message code="appointment.details.report"/></label>
+                                        <form:textarea path="report" id="report" class="form-control" rows="4"/>
+                                        <form:errors path="report" cssClass="error-message"/>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="specialty-card-appointment">
+                                        <div class="specialty-icon-appointment">
+                                            <i class="fas fa-asterisk"></i>
+                                        </div>
+                                        <div class="specialty-content">
+                                            <span class="specialty-value-appointment"><c:out value="${appointment.report}"/> </span>
+                                        </div>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
 
                             <div class="files-list">
                                 <c:set var="hasDoctorFiles" value="false"/>
@@ -272,14 +293,6 @@
                             </div>
                         </div>
 
-                        <!-- Report textarea -->
-                        <div class="form-group">
-                            <label for="report"><spring:message code="appointment.details.report"/></label>
-                            <form:textarea path="report" id="report" class="form-control" rows="4"/>
-                            <form:errors path="report" cssClass="error-message"/>
-                        </div>
-
-
                         <!-- File Upload Section -->
                         <div class="form-group">
                             <label for="files">
@@ -303,8 +316,7 @@
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary btn-block">
                             <span>
-                                <i class="fas fa-calendar-check"></i>
-                                <spring:message code="appointment.details.doctor.files.upload"/>
+                                <spring:message code="appointment.details.doctor.submit"/>
                             </span>
                             </button>
                         </div>

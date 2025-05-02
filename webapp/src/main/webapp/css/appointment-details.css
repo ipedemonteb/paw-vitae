@@ -293,7 +293,7 @@ body {
     background-color: var(--background-light);
     border-radius: var(--border-radius);
     padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     border: 1px solid #e2e8f0;
     width: 100%; /* Ensure full width */
 }
@@ -318,6 +318,12 @@ body {
 
 .form-group {
     margin-bottom: 1.5rem;
+}
+
+.your-files {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
 }
 
 .form-group label {
@@ -587,7 +593,8 @@ textarea.form-control {
     border-radius: var(--border-radius);
     padding: 1.5rem;
     border: 1px solid #e2e8f0;
-    margin-bottom: 20px; /* Added spacing */
+    margin-bottom: 20px;
+    margin-top: 15px;/* Added spacing */
     width: 100%; /* Ensure full width */
 }
 
@@ -673,6 +680,7 @@ textarea.form-control {
     border-radius: var(--border-radius);
     border: 1px dashed #e2e8f0;
     width: 100%; /* Ensure full width */
+    margin-bottom: 10px;
 }
 
 .no-files-content {
