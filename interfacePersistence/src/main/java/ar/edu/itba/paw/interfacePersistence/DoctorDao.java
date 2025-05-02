@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface DoctorDao {
 
-    Doctor create(String name, String lastName, String email, String password, String phone, String language,long imageId,
+    Doctor create(String name, String lastName, String email, String password, String phone, String language,Long imageId,
                   List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList);
 
     Optional<Doctor> getById(final long id);

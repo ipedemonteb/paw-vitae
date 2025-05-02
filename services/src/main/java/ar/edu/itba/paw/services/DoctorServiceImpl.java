@@ -49,7 +49,7 @@ public class DoctorServiceImpl implements DoctorService {
                 .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
                 .toList();
         Doctor doctor = this.doctorDao.create(
-                name, lastName, email, passwordEncoder.encode(password), phone, language,(img == null ? -1 : img.getId()), specialtyList, coverageList, filteredSlots
+                name, lastName, email, passwordEncoder.encode(password), phone, language,(img == null ? null : img.getId()), specialtyList, coverageList, filteredSlots
         );
 
         LOGGER.debug("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
