@@ -6,6 +6,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,6 +16,11 @@ import java.util.Objects;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @RequestMapping("/error/403")
+    public ModelAndView error403() {
+        return new ModelAndView("error/403");
+    }
 
     // 500 – all other uncaught exceptions
     @ExceptionHandler(Exception.class)
