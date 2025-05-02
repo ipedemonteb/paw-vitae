@@ -48,15 +48,19 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         return appointmentFiles;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<AppointmentFile> getById(long id) {
         return appointmentFileDao.getById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<AppointmentFile> getByAppointmentId(long appointment_id) {
         return appointmentFileDao.getByAppointmentId(appointment_id);
     }
+
+    @Transactional(readOnly = true)
     public Optional<AppointmentFile> getAuthorizedFile(long fileId, long appointmentId, String username) {
         Optional<AppointmentFile> fileOpt = appointmentFileDao.getById(fileId);
         if (fileOpt.isEmpty()) return Optional.empty();

@@ -24,6 +24,7 @@ public class CoverageServiceImpl implements CoverageService {
          this.coverageDao = coverageDao;
      }
 
+    @Transactional(readOnly = true)
     @Cacheable
     @Override
     public Optional<Coverage> findById(long id) {
@@ -36,18 +37,21 @@ public class CoverageServiceImpl implements CoverageService {
         return coverageDao.create(name);
     }
 
+    @Transactional(readOnly = true)
     @Cacheable
     @Override
     public Optional<Coverage> findByName(String name) {
         return coverageDao.findByName(name);
     }
 
+    @Transactional(readOnly = true)
     @Cacheable
     @Override
     public List<Coverage> getAll() {
         return coverageDao.getAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Coverage> findByIds(List<Long> ids) {
         return coverageDao.findByIds(ids);
