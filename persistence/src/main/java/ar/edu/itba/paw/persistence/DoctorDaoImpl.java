@@ -287,11 +287,6 @@ newRating, id
     }
 
     @Override
-    public void changePassword(long id, String password) {
-        jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
-    }
-
-    @Override
     public String getLanguage(long id) {
         return jdbcTemplate.query("SELECT language FROM Users WHERE id = ?", (rs, rowNum) -> rs.getString("language"), id).stream().findFirst().orElse(null);
     }
@@ -342,6 +337,15 @@ newRating, id
         StringBuilder sql = new StringBuilder(BASE_SQL);
         return jdbcTemplate.query(
                 sql.append("WHERE u.verification_token = ?").toString(),
+                ROW_MAPPER, token
+        ).stream().findFirst();
+    }
+
+    @Override
+    public Optional<Doctor> getByResetToken(String token) {
+        StringBuilder sql = new StringBuilder(BASE_SQL);
+        return jdbcTemplate.query(
+                sql.append("WHERE u.reset_token = ?").toString(),
                 ROW_MAPPER, token
         ).stream().findFirst();
     }
