@@ -90,4 +90,15 @@ public class AppointmentServiceImpl implements AppointmentService {
         List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, filter);
         return new Page<>(appointments, page, size, appointmentDao.countAppointments(userId, isFuture, filter));
     }
+
+    @Override
+    public void updateAppointmentReport(long appointmentId, String report) {
+        Optional<Appointment> appointment = getById(appointmentId);
+        if (appointment.isPresent()) {
+            appointmentDao.updateReport(appointmentId, report);
+            LOGGER.debug("Report added to appointment: {}", appointment.get());
+        } else {
+            LOGGER.debug("Appointment not found: {}", appointmentId);
+        }
+    }
 }
