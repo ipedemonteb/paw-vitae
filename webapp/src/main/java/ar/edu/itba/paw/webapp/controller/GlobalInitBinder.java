@@ -47,19 +47,4 @@ public class GlobalInitBinder {
             }
         });
     }
-
-    @InitBinder
-    public void coverageBinder(WebDataBinder binder) {
-        // For any target property of type Coverage, convert from its String ID
-        binder.registerCustomEditor(Coverage.class, new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                long id = Long.parseLong(text);
-                Coverage cov = coverageService
-                        .findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid coverage id: " + id));
-                setValue(cov);
-            }
-        });
-    }
 }

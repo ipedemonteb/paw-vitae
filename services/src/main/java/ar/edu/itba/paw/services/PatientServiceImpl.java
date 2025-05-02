@@ -59,14 +59,13 @@ public class PatientServiceImpl implements PatientService {
 
     @Transactional
     @Override
-    public void updatePatient(long id, String name, String lastName, String phone, Coverage coverage) {
-        Patient patient = getById(id).orElseThrow(UserNotFoundException::new);
+    public void updatePatient(Patient patient, String name, String lastName, String phone, Coverage coverage) {
         boolean hasChanged = !patient.getName().equals(name)
                 || !patient.getLastName().equals(lastName)
                 || !patient.getPhone().equals(phone)
                 || !patient.getCoverage().getName().equals(coverage.getName());
         if (hasChanged) {
-            patientDao.updatePatient(id, name, lastName, phone, coverage);
+            patientDao.updatePatient(patient.getId(), name, lastName, phone, coverage);
             LOGGER.debug("Patient updated successfully: id={}, email={}", patient.getId(), patient.getEmail());
         }
 
