@@ -91,24 +91,24 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     @Override
     public List<Appointment> getByPatientId(long patientId) {
-        String sql = BASE_SQL +
-                "WHERE a.client_id = ? " +
-                ORDER_BY_DATE_ASC;
+        StringBuilder sql = new StringBuilder(BASE_SQL)
+                .append("WHERE a.client_id = ? " )
+                .append(ORDER_BY_DATE_ASC);
 
-        return jdbcTemplate.query(sql, ROW_MAPPER, patientId);
+        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, patientId);
     }
 
     @Override
     public List<Appointment> getByDoctorId(long doctorId) {
         LocalDate today = LocalDate.now();
         LocalDate endOfNextMonth = today.plusMonths(1).withDayOfMonth(today.plusMonths(1).lengthOfMonth()).plusDays(1);
-        String sql = BASE_SQL +
-                "WHERE a.doctor_id = ? " +
-                "AND a.status != 'cancelado' " +
-                "AND a.date BETWEEN ? AND ? " +
-                ORDER_BY_DATE_ASC;
+        StringBuilder sql = new StringBuilder(BASE_SQL)
+                .append("WHERE a.doctor_id = ? ")
+                .append("AND a.status != 'cancelado' ")
+                .append("AND a.date BETWEEN ? AND ? ")
+                .append(ORDER_BY_DATE_ASC);
 
-        return jdbcTemplate.query(sql, ROW_MAPPER, doctorId, today, endOfNextMonth);
+        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, doctorId, today, endOfNextMonth);
     }
 
 
@@ -125,10 +125,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     @Override
     public Optional<Appointment> getById(long appointmentId) {
-        String sql = BASE_SQL +
-                "WHERE a.id = ?";
-
-        return jdbcTemplate.query(sql, ROW_MAPPER, appointmentId).stream().findFirst();
+        StringBuilder sql = new StringBuilder(BASE_SQL).append("WHERE a.id = ?");
+        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, appointmentId).stream().findFirst();
     }
 
 
@@ -165,11 +163,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     @Override
     public List<Appointment> getAppointmentsByDate(LocalDate today) {
-        String sql = BASE_SQL +
-                "WHERE DATE(a.date) = ? " +
-                ORDER_BY_DATE_ASC;
+        StringBuilder sql = new StringBuilder(BASE_SQL).append("WHERE DATE(a.date) = ? ").append(ORDER_BY_DATE_ASC);
 
-        return jdbcTemplate.query(sql, ROW_MAPPER, today);
+        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, today);
     }
 
     @Override
@@ -201,21 +197,23 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
     private String buildDateRangeCondition(String idColumn, String dateRange) {
+        StringBuilder sql = new StringBuilder();
         return switch (dateRange) {
-            case "today" -> "WHERE " + idColumn + " = ? AND DATE(a.date)  = CURRENT_DATE AND a.status <> 'cancelado' AND a.date > NOW() ";
-            case "week" -> "WHERE " + idColumn + " = ? AND a.date BETWEEN NOW() AND NOW() + INTERVAL '7 DAYS' AND a.status <> 'cancelado' ";
-            case "month" -> "WHERE " + idColumn + " = ? AND a.date BETWEEN NOW() AND NOW() + INTERVAL '1 MONTH' AND a.status <> 'cancelado' ";
-            default -> "WHERE " + idColumn + " = ? AND a.date > NOW() AND a.status <> 'cancelado' ";
+            case "today" -> sql.append("WHERE ").append(idColumn).append(" = ? AND DATE(a.date)  = CURRENT_DATE AND a.status <> 'cancelado' AND a.date > NOW() ").toString();
+            case "week" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.date BETWEEN NOW() AND NOW() + INTERVAL '7 DAYS' AND a.status <> 'cancelado' ").toString();
+            case "month" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.date BETWEEN NOW() AND NOW() + INTERVAL '1 MONTH' AND a.status <> 'cancelado' ").toString();
+            default -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.date > NOW() AND a.status <> 'cancelado' ").toString();
         };
     }
 
     private String BuildStatusCondition(String idColumn, String status) {
+        StringBuilder sql = new StringBuilder();
         return switch (status) {
-            case "completed" -> "WHERE " + idColumn + " = ? AND a.status = 'confirmado' AND a.date < NOW() ";
-            case "cancelled" -> "WHERE " + idColumn + " = ? AND a.status = 'cancelado' ";
-            case "all" -> "WHERE " + idColumn + " = ? AND a.date < NOW() ";
+            case "completed" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.status = 'confirmado' AND a.date < NOW() ").toString();
+            case "cancelled" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.status = 'cancelado' ").toString();
+            case "all" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.date < NOW() ").toString();
+            case "confirmed" -> sql.append("WHERE ").append(idColumn).append(" = ? AND a.status = 'confirmado' AND a.date > NOW() ").toString();
             default -> "";
-            case "confirmed" -> "WHERE " + idColumn + " = ? AND a.status = 'confirmado' AND a.date < NOW() ";
         };
     }
 

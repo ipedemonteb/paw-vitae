@@ -17,6 +17,12 @@ import java.util.*;
 @Repository
 public class PatientDaoImpl implements PatientDao {
 
+    private static final String BASE_SQL = "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
+            "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
+            "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified " +
+            "FROM Users u JOIN Clients c ON c.client_id = u.id " +
+            "JOIN Coverages cov ON cov.id = c.coverage_id ";
+
     private JdbcTemplate jdbcTemplate;
 
     private final SimpleJdbcInsert jdbcInsertPatient;
@@ -41,12 +47,9 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public Optional<Patient> getById(long id) {
+        StringBuilder sql = new StringBuilder(BASE_SQL);
         return jdbcTemplate.query(
-                "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
-                        "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
-                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified " +
-                        "FROM Users u JOIN Clients c ON c.client_id = u.id " +
-                        "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id = ?",
+                sql.append("WHERE u.id = ?").toString(),
                 ROW_MAPPER, id
         ).stream().findFirst();
     }
@@ -82,12 +85,9 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public Optional<Patient> getByEmail(String email) {
+        StringBuilder sql = new StringBuilder(BASE_SQL);
         return jdbcTemplate.query(
-                "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
-                        "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
-                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name,u.is_verified AS patient_verified " +
-                        "FROM Users u JOIN Clients c ON c.client_id = u.id " +
-                        "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.email = ?",
+                sql.append("WHERE u.email = ?").toString(),
                 ROW_MAPPER, email
         ).stream().findFirst();
     }
@@ -106,13 +106,11 @@ public class PatientDaoImpl implements PatientDao {
         if (ids.isEmpty()) {
             return Collections.emptyList();
         }
+        StringBuilder sql = new StringBuilder(BASE_SQL);
         return jdbcTemplate.query(
-                "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
-                        "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
-                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified " +
-                        "FROM Users u JOIN Clients c ON c.client_id = u.id " +
-                        "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id IN (" +
-                        String.join(",", Collections.nCopies(ids.size(), "?")) + ")",
+                sql.append("WHERE u.id IN (")
+                        .append(String.join(",", Collections.nCopies(ids.size(), "?")))
+                        .append(")").toString(),
                 ROW_MAPPER, ids.toArray()
         );
     }
@@ -128,12 +126,9 @@ public class PatientDaoImpl implements PatientDao {
 
     @Override
     public Optional<Patient> getByVerificationToken(String token) {
+        StringBuilder sql = new StringBuilder(BASE_SQL);
         return jdbcTemplate.query(
-                "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
-                        "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
-                        "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name,u.is_verified AS patient_verified " +
-                        "FROM Users u JOIN Clients c ON c.client_id = u.id " +
-                        "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.verification_token = ?",
+                sql.append("WHERE u.verification_token = ?").toString(),
                 ROW_MAPPER, token
         ).stream().findFirst();
     }
