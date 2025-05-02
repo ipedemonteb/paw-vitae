@@ -36,9 +36,9 @@
     --status-cancelled-text: #b91c1c;
     --status-cancelled-border: #fca5a5;
 
-    --status-completed-bg: #eff6ff;
-    --status-completed-text: #1e40af;
-    --status-completed-border: #93c5fd;
+    --status-completed-bg: #93c5fd;
+    --status-completed-text: #1d4ed8;
+    --status-completed-border: #1e40af;
 
     --status-noShow-bg: #f3f4f6;
     --status-noShow-text: #4b5563;

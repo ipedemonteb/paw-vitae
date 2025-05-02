@@ -174,17 +174,7 @@
                     </div>
                 </div>
 
-                <c:set var="now">
-                    <%
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                        sdf.setTimeZone(TimeZone.getTimeZone("America/Argentina/Buenos_Aires"));
-                        long nowTime = System.currentTimeMillis(); // Obtén el tiempo actual en milisegundos
-                        request.setAttribute("nowTime", nowTime); // Pasa el valor al contexto de la página
-                    %>
-                </c:set>
-                <fmt:parseDate value="${appointment.date}" pattern="yyyy-MM-dd'T'HH:mm" var="appointmentDate"
-                               type="both"/>
-                <c:if test="${appointmentDate.time < nowTime && appointment.status == 'confirmado'}">
+                <c:if test="${appointment.status == 'completo'}">
 
                     <div class="rating-section">
                         <h2 class="rating-title">
