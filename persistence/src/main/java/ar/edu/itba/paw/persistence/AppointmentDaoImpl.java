@@ -115,6 +115,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
         jdbcTemplate.update("UPDATE Appointments SET status = ? WHERE id = ?", AppointmentStatus.CANCELADO.getValue(), appointmentId);
     }
 
+    @Override
+    public void completeAppointments() {
+        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+        String sql = "UPDATE Appointments SET status = ? WHERE Appointments.date > ? AND status = ?";
+        jdbcTemplate.update(sql, AppointmentStatus.COMPLETO.getValue(), now, AppointmentStatus.CONFIRMADO.getValue());
+    }
+
 
     @Override
     public Optional<Appointment> getById(long appointmentId) {
