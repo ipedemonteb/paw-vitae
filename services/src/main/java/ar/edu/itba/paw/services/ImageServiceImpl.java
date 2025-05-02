@@ -37,6 +37,7 @@ public class ImageServiceImpl implements ImageService{
         return toReturnImage;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Images> findById(long id) {
         if (id == -1) {

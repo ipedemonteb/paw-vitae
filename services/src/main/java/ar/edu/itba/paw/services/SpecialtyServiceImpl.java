@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,24 +23,28 @@ private final SpecialtyDao specialtyDao;
         this.specialtyDao = specialtyDao;
     }
 
+    @Transactional(readOnly = true)
     @Cacheable
     @Override
     public Optional<Specialty> getById(long id) {
         return specialtyDao.getById(id);
     }
 
+    @Transactional(readOnly = true)
     @Cacheable
     @Override
     public Optional<Specialty> getByName(String name) {
         return specialtyDao.getByName(name);
     }
 
+    @Transactional(readOnly = true)
     @Cacheable
     @Override
     public List<Specialty> getAll() {
         return specialtyDao.getAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Specialty> getByIds(List<Long> ids) {
         return specialtyDao.getByIds(ids);

@@ -30,6 +30,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         this.mailService = mailService;
     }
 
+    @Transactional(readOnly = true)
     @Scheduled(cron = "0 0 0 * * ?") // Todos los días a las 00:00
     public void sendDailyReminders() {
         LocalDate today = LocalDate.now();
@@ -53,17 +54,17 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointment;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Appointment> getByPatientId(long patientId) {
         return  appointmentDao.getByPatientId(patientId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Appointment> getByDoctorId(long doctorId) {
         return appointmentDao.getByDoctorId(doctorId);
     }
-
-
 
     @Transactional
     @Override
@@ -80,11 +81,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         LOGGER.debug("Appointment cancelled: {}", appt.get());
         return true;
     }
+
+    @Transactional(readOnly = true)
     @Override
     public Optional<Appointment> getById(long appointmentId) {
         return appointmentDao.getById(appointmentId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter) {
         List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, filter);
