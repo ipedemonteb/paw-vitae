@@ -257,10 +257,11 @@ body {
 }
 
 /* Estado completado: violeta */
-.status-completado { /* Violeta */
+.status-completo { /* Violeta */
     display: inline-block;
     padding: 0.25rem 0.75rem;
-    background-color: #aacdff;
+    background-color: #93c5fd;
+    color: #1d4ed8;
     border-radius: 1rem;
     font-size: 0.875rem;
     font-weight: 500;
