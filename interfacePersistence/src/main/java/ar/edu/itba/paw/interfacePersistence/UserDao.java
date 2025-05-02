@@ -12,5 +12,6 @@ public interface UserDao {
     void changePassword(long id, String token);
     String getLanguageById(long id);
     void changeLanguage(long id, String language);
+    void removeResetToken(String token);
 
 }
