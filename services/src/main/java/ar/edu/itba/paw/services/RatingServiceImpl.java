@@ -29,21 +29,25 @@ public class RatingServiceImpl implements RatingService {
         return rating_aux;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Rating> getRating(long id) {
         return ratingDao.getRating(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Rating> getRatingByAppointmentId(long appointmentId) {
         return ratingDao.getRatingByAppointmentId(appointmentId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Rating> getRatingsByDoctorId(long doctorId) {
         return ratingDao.getRatingsByDoctorId(doctorId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Rating> getRatingsByPatientId(long patientId) {
         return ratingDao.getRatingsByPatientId(patientId);

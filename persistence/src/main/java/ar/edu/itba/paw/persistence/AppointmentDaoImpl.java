@@ -150,6 +150,11 @@ public class AppointmentDaoImpl implements AppointmentDao {
         return jdbcTemplate.queryForObject(sql, Integer.class, userId,userId);
     }
 
+    @Override
+    public void updateReport(long appointmentId, String report) {
+        //todo:change rm and db
+    }
+
     private String buildDateRangeCondition(String dateRange) {
         StringBuilder sql = new StringBuilder();
         return switch (dateRange) {

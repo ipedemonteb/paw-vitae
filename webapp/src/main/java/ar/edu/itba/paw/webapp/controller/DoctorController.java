@@ -173,6 +173,7 @@ public class DoctorController {
                 new IllegalArgumentException("Invalid appointment Id:" + id));
 
         afs.create(doctorFileForm.getFiles(),"doctor",appointment.getId());
+        as.updateAppointmentReport(appointment.getId(), doctorFileForm.getReport());
         return new ModelAndView("redirect:/doctor/dashboard/appointment-details/" + id);
     }
 }
