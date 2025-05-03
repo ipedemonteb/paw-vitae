@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 
 public class AppointmentValidDateValidator implements ConstraintValidator<AppointmentValidDate, Object> {
 
@@ -37,7 +38,7 @@ public class AppointmentValidDateValidator implements ConstraintValidator<Appoin
             }
 
             LocalDateTime appointmentDateTime = LocalDateTime.of(date, LocalTime.of(hour, 0));
-            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
 
             return appointmentDateTime.isAfter(now);
 
