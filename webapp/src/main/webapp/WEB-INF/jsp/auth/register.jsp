@@ -4,6 +4,11 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<spring:message code="placeholder.name" var="namePlaceholder"/>
+<spring:message code="placeholder.lastname" var="lastNamePlaceholder"/>
+<spring:message code="placeholder.email" var="emailPlaceholder"/>
+<spring:message code="placeholder.password" var="passwordPlaceholder"/>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,7 +90,9 @@
                                             code="register.firstName"/></label>
                                     <div class="input-wrapper">
                                         <form:input required="true" path="name" id="name"
-                                                    cssClass="form-control ${status.error ? 'error' : ''}"/>
+                                                    cssClass="form-control ${status.error ? 'error' : ''}"
+                                                    placeholder="${namePlaceholder}"
+                                        />
                                         <div class="validation-icon valid">
                                             <i class="fas fa-check-circle"></i>
                                         </div>
@@ -103,7 +110,9 @@
                                             code="register.lastName"/></label>
                                     <div class="input-wrapper">
                                         <form:input required="true" path="lastName" id="lastName"
-                                                    cssClass="form-control ${status.error ? 'error' : ''}"/>
+                                                    cssClass="form-control ${status.error ? 'error' : ''}"
+                                                    placeholder="${lastNamePlaceholder}"
+                                        />
                                         <div class="validation-icon valid">
                                             <i class="fas fa-check-circle"></i>
                                         </div>
@@ -124,7 +133,7 @@
                                     <div class="input-wrapper">
                                         <form:input required="true" path="email" id="email"
                                                     cssClass="form-control ${status.error ? 'error' : ''}"
-                                                    placeholder="email@example.com"/>
+                                                    placeholder="${emailPlaceholder}"/>
                                         <div class="validation-icon valid">
                                             <i class="fas fa-check-circle"></i>
                                         </div>
@@ -143,7 +152,8 @@
                                     <div class="input-wrapper">
                                         <form:input required="true" path="phone" id="phone"
                                                     cssClass="form-control ${status.error ? 'error' : ''}"
-                                                    placeholder="+1 (123) 456-7890"/>
+                                                    placeholder="+1 (123) 456-7890"
+                                        />
                                         <div class="validation-icon valid">
                                             <i class="fas fa-check-circle"></i>
                                         </div>
@@ -169,7 +179,9 @@
                                     </label>
                                     <div class="input-wrapper">
                                         <form:password required="true" path="password" id="password"
-                                                       cssClass="form-control ${status.error ? 'error' : ''}"/>
+                                                       cssClass="form-control ${status.error ? 'error' : ''}"
+                                                       placeholder="${passwordPlaceholder}"
+                                        />
                                         <div class="validation-icon valid">
                                             <i class="fas fa-check-circle"></i>
                                         </div>
@@ -196,7 +208,9 @@
                                             code="register.confirmPassword"/></label>
                                     <div class="input-wrapper">
                                         <form:password required="true" path="repeatPassword" id="repeatPassword"
-                                                       cssClass="form-control ${status.error ? 'error' : ''}"/>
+                                                       cssClass="form-control ${status.error ? 'error' : ''}"
+                                                       placeholder="${passwordPlaceholder}"
+                                        />
                                         <div class="validation-icon valid">
                                             <i class="fas fa-check-circle"></i>
                                         </div>

@@ -74,7 +74,7 @@ body {
 
 /* ===== HEADER STYLES ===== */
 .card-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
     color: var(--white);
     padding: 2rem;
     text-align: center;
