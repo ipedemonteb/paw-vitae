@@ -668,13 +668,13 @@ body {
     font-size: 0.7rem;
 }
 
-.status-badge.completado {
+.status-badge.completo {
     background-color: var(--status-completed-bg);
     color: var(--status-completed-text);
     border: 1px solid var(--status-completed-border);
 }
 
-.status-badge.completado::before {
+.status-badge.completo::before {
     content: "\f00c";
     font-family: "Font Awesome 6 Free";
     font-weight: 900;

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -34,7 +35,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     @Scheduled(cron = "0 0 0 * * ?") // Todos los días a las 00:00
     public void sendDailyReminders() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"));
         List<Appointment> appointments = appointmentDao.getAppointmentsByDate(today);
         for (Appointment appointment : appointments) {
             mailService.sendReminderEmail(appointment);

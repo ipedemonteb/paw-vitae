@@ -8,11 +8,24 @@
     box-sizing: border-box;
 }
 
+html {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+/* create a “background” layer under all content */
+html::before {
+    content: "";
+    position: fixed;
+    top: 0;    right: 0;
+    bottom: 0; left: 0;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    z-index: -1;
+}
+
 body {
     font-family: "Poppins", sans-serif;
     color: var(--text-color);
     line-height: 1.6;
-    background-color: var(--white);
 }
 
 
@@ -74,7 +87,7 @@ body {
 
 /* ===== HEADER STYLES ===== */
 .card-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
     color: var(--white);
     padding: 2rem;
     text-align: center;

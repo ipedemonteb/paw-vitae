@@ -4,6 +4,12 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<spring:message code="placeholder.name" var="namePlaceholder"/>
+<spring:message code="placeholder.lastname" var="lastNamePlaceholder"/>
+<spring:message code="placeholder.email" var="emailPlaceholder"/>
+<spring:message code="placeholder.password" var="passwordPlaceholder"/>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,7 +78,9 @@
                             <div class="input-container">
                                 <i class="fas fa-user input-icon"></i>
                                 <form:input path="name" id="name" required="true"
-                                            class="input-field ${status.error ? 'input-error' : ''}"/>
+                                            class="input-field ${status.error ? 'input-error' : ''}"
+                                            placeholder="${namePlaceholder}"
+                                />
                             </div>
                             <form:errors path="name" class="error-text"/>
                         </div>
@@ -85,7 +93,9 @@
                             <div class="input-container">
                                 <i class="fas fa-user input-icon"></i>
                                 <form:input path="lastName" id="lastName" required="true"
-                                            class="input-field ${status.error ? 'input-error' : ''}"/>
+                                            class="input-field ${status.error ? 'input-error' : ''}"
+                                            placeholder="${lastNamePlaceholder}"
+                                />
                             </div>
                             <form:errors path="lastName" class="error-text"/>
                         </div>
@@ -99,7 +109,8 @@
                                 <i class="fas fa-envelope input-icon"></i>
                                 <form:input path="email" id="email" required="true"
                                             class="input-field ${status.error ? 'input-error' : ''}"
-                                            placeholder="email@vitae.com"/>
+                                            placeholder="${emailPlaceholder}"
+                                />
                             </div>
                             <div id="email-validation-message" class="error-text" style="display: none;"></div>
                             <form:errors path="email" class="error-text"/>
@@ -114,7 +125,8 @@
                                 <i class="fas fa-phone input-icon"></i>
                                 <form:input path="phone" id="phone" required="true"
                                             class="input-field ${status.error ? 'input-error' : ''}"
-                                            placeholder="+1 (123) 456-7890"/>
+                                            placeholder="+1 (123) 456-7890"
+                                />
                             </div>
                             <div id="phone-validation-message" class="error-text" style="display: none;"></div>
                             <form:errors path="phone" class="error-text"/>
@@ -143,7 +155,9 @@
                             <div class="input-container">
                                 <i class="fas fa-lock input-icon"></i>
                                 <form:password path="password" id="password" required="true"
-                                               class="input-field ${status.error ? 'input-error' : ''}"/>
+                                               class="input-field ${status.error ? 'input-error' : ''}"
+                                               placeholder="${passwordPlaceholder}"
+                                />
                             </div>
                             <div class="password-strength">
                                 <div class="strength-bar">
@@ -163,7 +177,9 @@
                             <div class="input-container">
                                 <i class="fas fa-lock input-icon"></i>
                                 <form:password path="repeatPassword" id="repeatPassword" required="true"
-                                               class="input-field ${status.error ? 'input-error' : ''}"/>
+                                               class="input-field ${status.error ? 'input-error' : ''}"
+                                               placeholder="${passwordPlaceholder}"
+                                />
                             </div>
                             <div id="password-match-message" class="error-text" style="display: none;"></div>
                             <form:errors path="repeatPassword" class="error-text"/>
