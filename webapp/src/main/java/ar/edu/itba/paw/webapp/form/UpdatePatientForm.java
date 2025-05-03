@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.form;
 
 
 import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.webapp.validation.Coverage;
 
 import javax.validation.constraints.*;
 
@@ -18,7 +19,7 @@ public class UpdatePatientForm {
     @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")
     private String phone;
-
+    @Coverage(message = "{coverage.invalid}")
     @NotEmpty
     private String coverage;
 

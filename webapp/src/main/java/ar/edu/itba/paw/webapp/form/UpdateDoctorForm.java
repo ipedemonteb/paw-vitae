@@ -2,8 +2,10 @@ package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.webapp.validation.CoverageList;
 import ar.edu.itba.paw.webapp.validation.EmailExistance;
 import ar.edu.itba.paw.webapp.validation.FileSize;
+import ar.edu.itba.paw.webapp.validation.SpecialtyList;
 import org.springframework.web.multipart.MultipartFile;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Specialty;
@@ -21,10 +23,10 @@ public class UpdateDoctorForm {
     @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")
     private String phone;
-
+    @CoverageList(message = "{coverages.invalids}")
     @NotEmpty
     private List<String> coverages;
-
+    @SpecialtyList(message = "{specialties.invalids}")
     @NotEmpty
     private List<String> specialties;
 
