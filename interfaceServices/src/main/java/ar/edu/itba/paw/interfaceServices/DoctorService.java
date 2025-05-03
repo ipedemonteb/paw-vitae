@@ -21,13 +21,13 @@ public interface DoctorService {
 
     void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 
-    void UpdateDoctorRating(long id, double rating);
+    void UpdateDoctorRating(long id, long rating);
 
     Optional<Doctor> getByIdWithAppointments(long id);
 
     Page<Doctor> getWithFilters(Long specialtyId, Long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);
 
     Optional<Doctor> getByResetToken(String token);
-    Optional<Doctor> getByVerificationToken(String token);
 
+    Optional<Doctor> getByVerificationToken(String token);
 }
