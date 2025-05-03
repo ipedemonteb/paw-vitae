@@ -120,7 +120,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     @Override
     public void completeAppointments() {
-        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime now = LocalDateTime.now().withMinute(10).withSecond(0).withNano(0);
         String sql = "UPDATE Appointments SET status = ? WHERE Appointments.date <= ? AND status = ?";
         jdbcTemplate.update(sql, AppointmentStatus.COMPLETO.getValue(), now, AppointmentStatus.CONFIRMADO.getValue());
     }
@@ -172,11 +172,11 @@ public class AppointmentDaoImpl implements AppointmentDao {
     private String buildStatusCondition(String status) {
         StringBuilder sql = new StringBuilder();
         return switch (status) {
-            case "completed" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'confirmado' AND a.date < NOW() ").toString();
+            case "completed" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'completo' AND a.date < NOW() ").toString();
             case "cancelled" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'cancelado' ").toString();
             case "all" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date < NOW() ").toString();
             case "confirmed" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'confirmado' AND a.date > NOW() ").toString();
-            default -> "";
+            default -> sql.append(" ").toString();
         };
     }
 

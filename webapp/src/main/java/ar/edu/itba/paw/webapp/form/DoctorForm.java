@@ -3,10 +3,7 @@ package ar.edu.itba.paw.webapp.form;
 
 
 import ar.edu.itba.paw.models.AvailabilitySlot;
-import ar.edu.itba.paw.webapp.validation.EmailExistance;
-import ar.edu.itba.paw.webapp.validation.FileSize;
-import ar.edu.itba.paw.webapp.validation.FileType;
-import ar.edu.itba.paw.webapp.validation.TimeSlotIntersection;
+import ar.edu.itba.paw.webapp.validation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
@@ -40,10 +37,10 @@ public class DoctorForm {
     @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")
     private String phone;
-
+    @CoverageList(message = "{specialties.invalids}")
     @NotEmpty
     private List<String> specialties;
-
+    @CoverageList(message = "{coverages.invalids}")
     @NotEmpty
     private List<String> coverages;
     @FileType(types = {"image/jpeg", "image/png", "image/jpg"},message = "{fileType.invalid}")

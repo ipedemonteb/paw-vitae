@@ -57,7 +57,6 @@ public class AppointmentController {
             @RequestParam(required = true) Long doctorId
     ) {
         ModelAndView mav = new ModelAndView("appointment/appointment");
-
         Optional<Doctor> doctor = ds.getByIdWithAppointments(doctorId);
         doctor.ifPresent(d -> mav.addObject("doctor", d));
         return mav;
@@ -74,8 +73,6 @@ public class AppointmentController {
         if (errors.hasErrors()) {
             return appointment(appointmentForm, doctorId);
         }
-
-//        Patient patient = loggedUser();
 
         Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
         afs.create( appointmentForm.getFiles(),"patient",appointment.getId());

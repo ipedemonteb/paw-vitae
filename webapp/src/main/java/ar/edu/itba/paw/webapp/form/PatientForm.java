@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.form;
 
 
 
+import ar.edu.itba.paw.webapp.validation.Coverage;
 import ar.edu.itba.paw.webapp.validation.EmailExistance;
 import ar.edu.itba.paw.webapp.validation.FileSize;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +37,7 @@ public class PatientForm {
     @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")
     private String phone;
-
+    @Coverage(message = "{coverage.invalid}")
     @NotEmpty
     private String coverage;
 
