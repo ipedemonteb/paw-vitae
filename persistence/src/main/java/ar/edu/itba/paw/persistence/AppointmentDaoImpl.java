@@ -181,7 +181,4 @@ public class AppointmentDaoImpl implements AppointmentDao {
         };
     }
 
-
-
-
 }
