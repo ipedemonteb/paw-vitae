@@ -106,6 +106,7 @@
                                     </c:forEach>
                                 </form:select>
                             </div>
+                            <form:errors path="specialtyId" cssClass="error-message" />
                         </div>
                     </div>
 
