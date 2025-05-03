@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
             dayElement.className = "date-picker-day";
             dayElement.textContent = day;
 
-            let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7));
+            let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() + 6) % 7));
             let flag = true;
 
             if (available !== undefined && available.length > 0) {
@@ -335,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const allSlots = Array.from({ length: 13 }, (_, i) => `${8 + i}`);
 
-        let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() - 1) % 7)); //js getDate works in mysterious ways, 0 is Sunday and 1 is Mondays. I have saved you all from debugging hell
+        let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() + 6) % 7)); //js getDate works in mysterious ways, 0 is Sunday and 1 is Mondays. I have saved you all from debugging hell
 
         // Find the fully booked hours for the selected date
         const formattedDate = formatDateForSubmission(date);
