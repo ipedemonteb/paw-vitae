@@ -308,30 +308,6 @@
     </div>
 </div>
 
-<div id="confirmAppointmentModal" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header">
-            <div class="modal-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
-                </svg>
-            </div>
-            <h3 class="modal-title"><spring:message code="appointment.confirm.title" /></h3>
-        </div>
-        <div class="modal-body">
-            <p class="modal-message"><spring:message code="appointment.confirm.message" /></p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-modal btn-cancel" onclick="hideConfirmModal();">
-                <spring:message code="logout.confirmation.cancel"/>
-            </button>
-            <button type="button" class="btn-modal btn-confirm" id="confirmAppointmentBtn">
-                <spring:message code="appointment.action.confirm"/>
-            </button>
-        </div>
-    </div>
-</div>
-
 <div id="cancelAppointmentModal" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
@@ -410,16 +386,6 @@
         // Modal functionality
         let currentAppointmentId = null;
 
-        // Funciones para mostrar/ocultar modales
-        window.showConfirmModal = function(appointmentId) {
-            currentAppointmentId = appointmentId;
-            document.getElementById('confirmAppointmentModal').classList.add('show');
-        }
-
-        window.hideConfirmModal = function() {
-            document.getElementById('confirmAppointmentModal').classList.remove('show');
-        }
-
         window.showCancelModal = function(appointmentId) {
             currentAppointmentId = appointmentId;
             document.getElementById('cancelAppointmentModal').classList.add('show');
@@ -427,39 +393,6 @@
 
         window.hideCancelModal = function() {
             document.getElementById('cancelAppointmentModal').classList.remove('show');
-        }
-
-        // Confirm appointment functionality
-        const confirmButtons = document.querySelectorAll('.confirm-appointment');
-        confirmButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const appointmentId = this.getAttribute('data-id');
-                showConfirmModal(appointmentId);
-            });
-        });
-
-        // Confirm button in modal
-        const confirmAppointmentBtn = document.getElementById('confirmAppointmentBtn');
-        if (confirmAppointmentBtn) {
-            confirmAppointmentBtn.addEventListener('click', function() {
-                if (currentAppointmentId) {
-                    fetch(`${pageContext.request.contextPath}/doctor/dashboard/appointment/accept`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({ appointmentId: currentAppointmentId })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.reload();
-                            }
-                        });
-                }
-                hideConfirmModal();
-            });
         }
 
         // Cancel appointment functionality
