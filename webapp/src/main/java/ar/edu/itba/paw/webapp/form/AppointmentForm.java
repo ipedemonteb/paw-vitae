@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.form;
 import ar.edu.itba.paw.webapp.validation.AppointmentFileValid;
 import ar.edu.itba.paw.webapp.validation.AppointmentValidDate;
 import ar.edu.itba.paw.webapp.validation.FileSize;
+import ar.edu.itba.paw.webapp.validation.Specialty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +30,8 @@ public class AppointmentForm {
     private MultipartFile[] patientFiles;
 
     @NotNull
-    private Long specialtyId;
+    @Specialty(message = "{specialty.invalid}")
+    private long specialtyId;
 
     public MultipartFile[] getPatientFiles() {
         return patientFiles;
@@ -39,11 +41,11 @@ public class AppointmentForm {
         this.patientFiles = patientFiles;
     }
 
-    public Long getSpecialtyId() {
+    public long getSpecialtyId() {
         return specialtyId;
     }
 
-    public void setSpecialtyId(Long specialtyId) {
+    public void setSpecialtyId(long specialtyId) {
         this.specialtyId = specialtyId;
     }
 

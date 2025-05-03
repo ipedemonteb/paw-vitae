@@ -142,7 +142,6 @@
                                         </div>
                                     </c:forEach>
                                 </div>
-                                <!-- Asegurarse de que el campo oculto tenga el ID (no el nombre) -->
                                 <form:input path="coverage" id="coverage-input"
                                             value="${not empty patient.coverage ? patient.coverage.id : ''}"
                                             cssClass="form-control" style="display: none;" />
