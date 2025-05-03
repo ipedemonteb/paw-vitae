@@ -188,7 +188,7 @@ newRating, id
         List<Doctor> doctors = jdbcTemplate.query(
                 sql.append("JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id ")
                         .append("JOIN specialties s ON ds.specialty_id = s.id ")
-                        .append("WHERE ds.specialty_id = ? LIMIT ? OFFSET ?").toString(),
+                        .append("WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?").toString(),
                 new Object[]{specialtyId, pageSize, (page - 1) * pageSize},
                 new int[]{
                         java.sql.Types.BIGINT,
@@ -299,7 +299,7 @@ newRating, id
     @Override
     public int countBySpecialty(long specialtyId) {
         return jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM doctor_specialties WHERE specialty_id = ?",
+                "SELECT COUNT(*) FROM doctor_specialties join users on users.id = doctor_specialties.doctor_id WHERE specialty_id = ? AND u.is_verified = true",
                 Integer.class,
                 specialtyId
         );
@@ -308,7 +308,7 @@ newRating, id
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        sql.append("WHERE 1=1 ");
+        sql.append("WHERE 1=1 AND u.is_verified = true ");
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
 
         sql.append("ORDER BY ").append(orderBy).append(" ").append(direction);
@@ -326,7 +326,7 @@ newRating, id
 
     @Override
     public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE 1=1 ");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE 1=1 AND u.is_verified = true ");
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
 
         return jdbcTemplate.queryForObject(sql.toString(), Integer.class, params.toArray());
