@@ -160,7 +160,7 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public void UpdateDoctorRating(long id, double newRating) {
+    public void UpdateDoctorRating(long id, long newRating) {
         jdbcTemplate.update(
       "UPDATE doctors " +
         "SET rating = ((COALESCE(rating, 0) * rating_count + ?) / (rating_count + 1)), " +

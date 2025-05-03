@@ -1,243 +1,478 @@
-//package ar.edu.itba.paw.persistence;
-//
-//import ar.edu.itba.paw.models.AvailabilitySlot;
-//import ar.edu.itba.paw.models.Coverage;
-//import ar.edu.itba.paw.models.Specialty;
-//import ar.edu.itba.paw.models.Doctor;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.jdbc.core.JdbcTemplate;
-//import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-//import org.springframework.test.context.ContextConfiguration;
-//import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-//import org.springframework.test.jdbc.JdbcTestUtils;
-//
-//import javax.sql.DataSource;
-//import java.sql.Time;
-//import java.time.LocalDateTime;
-//import java.time.LocalTime;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.Optional;
-//
-//import static org.junit.Assert.*;
-//
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(classes = TestConfig.class)
-//public class DoctorDaoTest {
-//
-//    private static final String USERS_TABLE = "users";
-//    private static final String DOCTORS_TABLE = "doctors";
-//    private static final String COVERAGES_TABLE = "coverages";
-//    private static final String SPECIALTIES_TABLE = "specialties";
-//    private static final String DOCTOR_COVERAGES_TABLE = "doctor_coverages";
-//    private static final String DOCTOR_SPECIALTIES_TABLE = "doctor_specialties";
-//
-//    private static final String NAME = "Carlos Salvador";
-//    private static final String LASTNAME = "Bilardo";
-//    private static final String EMAIL = "carlos.s.bilardo@test.com";
-//    private static final String PASSWORD = "password";
-//    private static final String PHONE = "1119681969";
-//
-//    private DoctorDaoImpl doctorDao;
-//    private JdbcTemplate jdbcTemplate;
-//    private SimpleJdbcInsert jdbcInsertCoverage;
-//    private SimpleJdbcInsert jdbcInsertSpecialty;
-//
-//    @Autowired
-//    private DataSource ds;
-//
-//    @Before
-//    public void setUp() {
-//        jdbcTemplate = new JdbcTemplate(ds);
-//        doctorDao = new DoctorDaoImpl(ds);
-//
-//        jdbcInsertCoverage = new SimpleJdbcInsert(jdbcTemplate)
-//                .withTableName(COVERAGES_TABLE)
-//                .usingGeneratedKeyColumns("id");
-//
-//        jdbcInsertSpecialty = new SimpleJdbcInsert(jdbcTemplate)
-//                .withTableName(SPECIALTIES_TABLE)
-//                .usingGeneratedKeyColumns("id");
-//
-//        JdbcTestUtils.deleteFromTables(jdbcTemplate, DOCTOR_SPECIALTIES_TABLE, DOCTOR_COVERAGES_TABLE,
-//                DOCTORS_TABLE, USERS_TABLE, COVERAGES_TABLE, SPECIALTIES_TABLE);
-//    }
-//
-//    @Test
-//    public void testCreateDoctor() {
-//        //Preconditions
-//        long coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "OSDE")).longValue();
-//        long specialtyId = jdbcInsertSpecialty.executeAndReturnKey(Map.of("key", "Cardiology")).longValue();
-//        Coverage coverage = new Coverage(coverageId, "OSDE");
-//        Specialty specialty = new Specialty(specialtyId, "Cardiology");
-//        List<Coverage> coverages = List.of(coverage);
-//        List<Specialty> specialties = List.of(specialty);
-//        List<AvailabilitySlot> availability = List.of(new AvailabilitySlot(1,
-//                LocalTime.of(8, 0),
-//                LocalTime.of(16, 0)));
-//
-//        //Exercise
-//        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, "es", specialties, coverages, availability);
-//
-//        //Postconditions
-//        assertNotNull(doctor);
-//        assertEquals(EMAIL, doctor.getEmail());
-//        assertEquals(NAME, doctor.getName());
-//        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
-//        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, DOCTORS_TABLE));
-//        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, DOCTOR_COVERAGES_TABLE));
-//        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, DOCTOR_SPECIALTIES_TABLE));
-//    }
-//
-//    @Test
-//    public void testGetByIdDoesNotExist() {
-//        //Preconditions
-//
-//        //Exercise
-//        Optional<Doctor> maybeDoctor = doctorDao.getById(1000L);
-//
-//        //Postconditions
-//        assertFalse(maybeDoctor.isPresent());
-//    }
-//
-//    @Test
-//    public void testGetByIdExists() {
-//        //Preconditions
-//        long coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "OSDE")).longValue();
-//        long specialtyId = jdbcInsertSpecialty.executeAndReturnKey(Map.of("key", "Cardiology")).longValue();
-//        Coverage coverage = new Coverage(coverageId, "OSDE");
-//        Specialty specialty = new Specialty(specialtyId, "Cardiology");
-//        List<AvailabilitySlot> availability = List.of(new AvailabilitySlot(1,
-//                LocalTime.of(8, 0),
-//                LocalTime.of(16, 0))
-//        );
-//        Doctor created = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, "es", List.of(specialty), List.of(coverage), availability);
-//
-//        //Exercise
-//        Optional<Doctor> maybeDoctor = doctorDao.getById(created.getId());
-//
-//        //Postconditions
-//        assertTrue(maybeDoctor.isPresent());
-//        Doctor doctor = maybeDoctor.get();
-//        assertEquals(created.getId(), doctor.getId());
-//        assertEquals(NAME, doctor.getName());
-//        assertEquals(1, doctor.getCoverageList().size());
-//        assertEquals(1, doctor.getSpecialtyList().size());
-//    }
-//
-//    @Test
-//    public void testGetByEmailDoesNotExist() {
-//        //Preconditions
-//
-//        //Excercise
-//        Optional<Doctor> maybeDoctor = doctorDao.getByEmail("notexists@gmail.com");
-//
-//        //Postconditions
-//        assertFalse(maybeDoctor.isPresent());
-//    }
-//
-//    @Test
-//    public void testGetByEmailExists() {
-//        //Preconditions
-//        long coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "OSDE")).longValue();
-//        long specialtyId = jdbcInsertSpecialty.executeAndReturnKey(Map.of("key", "Cardiology")).longValue();
-//        Coverage coverage = new Coverage(coverageId, "OSDE");
-//        Specialty specialty = new Specialty(specialtyId, "Cardiology");
-//        List<AvailabilitySlot> availability = List.of(new AvailabilitySlot(1,
-//                LocalTime.of(8, 0),
-//                LocalTime.of(16, 0)));
-//        Doctor created = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, "es", List.of(specialty), List.of(coverage), availability);
-//
-//        //Excercise
-//        Optional<Doctor> maybeDoctor = doctorDao.getByEmail(EMAIL);
-//
-//        //Postconditions
-//        assertTrue(maybeDoctor.isPresent());
-//        Doctor doc = maybeDoctor.get();
-//        assertEquals(created.getId(), doc.getId());
-//        assertEquals(EMAIL, doc.getEmail());
-//        assertEquals(1, doc.getCoverageList().size());
-//        assertEquals(1, doc.getSpecialtyList().size());
-//    }
-//
-//    @Test
-//    public void testGetAll() {
-//        //Preconditions
-//        long coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "OSDE")).longValue();
-//        long specialtyId = jdbcInsertSpecialty.executeAndReturnKey(Map.of("key", "Cardiology")).longValue();
-//        Coverage coverage = new Coverage(coverageId, "OSDE");
-//        Specialty specialty = new Specialty(specialtyId, "Cardiology");
-//        List<AvailabilitySlot> availability = List.of(new AvailabilitySlot(1,
-//                LocalTime.of(8, 0),
-//                LocalTime.of(16, 0)));
-//        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, "es", List.of(specialty), List.of(coverage), availability);
-//
-//        //Exercise
-//        List<Doctor> doctors = doctorDao.getAll();
-//
-//        //Postconditions
-//        assertNotNull(doctors);
-//        assertEquals(1, doctors.size());
-//        Doctor foundDoctor = doctors.get(0);
-//        assertEquals(doctor.getId(), foundDoctor.getId());
-//        assertEquals(NAME, foundDoctor.getName());
-//        assertEquals(1, foundDoctor.getCoverageList().size());
-//        assertEquals(1, foundDoctor.getSpecialtyList().size());
-//        assertEquals("OSDE", foundDoctor.getCoverageList().get(0).getName());
-//        assertEquals("Cardiology", foundDoctor.getSpecialtyList().get(0).getKey());
-//    }
-//
-//    @Test
-//    public void testGetAllEmpty() {
-//        //Preconditions
-//
-//        //Exercise
-//        List<Doctor> doctors = doctorDao.getAll();
-//
-//        //Postconditions
-//        assertNotNull(doctors);
-//        assertTrue(doctors.isEmpty());
-//    }
-//
-//    @Test
-//    public void testGetBySpecialty() {
-//        //Preconditions
-//        long coverageId = jdbcInsertCoverage.executeAndReturnKey(Map.of("coverage_name", "OSDE")).longValue();
-//        long specialtyId = jdbcInsertSpecialty.executeAndReturnKey(Map.of("key", "Cardiology")).longValue();
-//        Coverage coverage = new Coverage(coverageId, "OSDE");
-//        Specialty specialty = new Specialty(specialtyId, "Cardiology");
-//        List<AvailabilitySlot> availability = List.of(new AvailabilitySlot(1,
-//                LocalTime.of(8, 0),
-//                LocalTime.of(16, 0)));
-//        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, "es", List.of(specialty), List.of(coverage), availability);
-//
-//        //Exercise
-//        List<Doctor> doctors = doctorDao.getBySpecialty("Cardiology");
-//
-//        //Postconditions
-//        assertNotNull(doctors);
-//        assertEquals(1, doctors.size());
-//        Doctor foundDoctor = doctors.get(0);
-//        assertEquals(doctor.getId(), foundDoctor.getId());
-//        assertEquals("OSDE", foundDoctor.getCoverageList().get(0).getName());
-//        assertEquals("Cardiology", foundDoctor.getSpecialtyList().get(0).getKey());
-//    }
-//
-//    @Test
-//    public void testGetBySpecialtyEmpty() {
-//        //Preconditions
-//
-//        //Exercise
-//        List<Doctor> doctors = doctorDao.getBySpecialty("Pediatrics");
-//
-//        //Postconditions
-//        assertNotNull(doctors);
-//        assertTrue(doctors.isEmpty());
-//    }
-//
-//    //@TODO: Implement update test
-//}
-//
+package ar.edu.itba.paw.persistence;
+
+import ar.edu.itba.paw.models.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.sql.DataSource;
+import java.sql.Time;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
+@Transactional
+public class DoctorDaoTest {
+
+    private final static String SQL_QUERY = "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
+            "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
+            "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id,u.is_verified AS doctor_verified " +
+            "FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.id = ?";
+    private final static String SQL_QUERY_AVAILABILITY = "SELECT * FROM doctor_availability WHERE doctor_id = ?";
+    private final static String SQL_QUERY_SPECIALTY = "SELECT s.id, s.key FROM Doctor_Specialties ds JOIN Specialties s ON ds.specialty_id = s.id WHERE ds.doctor_id = ?";
+    private final static String SQL_QUERY_COVERAGE = "SELECT c.id, c.coverage_name FROM Doctor_Coverages dc JOIN Coverages c ON dc.coverage_id = c.id WHERE dc.doctor_id = ?";
+
+    private static final String NAME = "Carlos Salvador";
+    private static final String LASTNAME = "Bilardo";
+    private static final String EMAIL = "csbilardo@edelp.com";
+    private static final String PASSWORD = "password";
+    private static final String PHONE = "1177777777";
+    private static final String LANGUAGE = "es";
+    private static final long SPEC_ID = 1L;
+    private static final String SPEC_NAME = "Cardiology";
+    private static final long COV_ID = 1L;
+    private static final String COV_NAME = "OSDE";
+    private static final long IMAGE_ID = 1L;
+
+    private static final long TEST_ID = 2L;
+    private static final String TEST_EMAIL = "jane@example.com";
+    private static final double TEST_RATING = 4.5;
+    private static final long TEST_RATING_COUNT = 10L;
+
+    private DoctorDaoImpl doctorDao;
+    private JdbcTemplate jdbcTemplate;
+    private SimpleJdbcInsert jdbcInsertTimeAvailability;
+    private SimpleJdbcInsert jdbcInsertUser;
+    private SimpleJdbcInsert jdbcInsertDoctor;
+
+    @Autowired
+    private DataSource ds;
+    private DaoUtils daoUtils;
+
+    @Before
+    public void setUp() {
+        this.jdbcTemplate = new JdbcTemplate(ds);
+        this.daoUtils = new DaoUtils();
+        this.doctorDao = new DoctorDaoImpl(ds, daoUtils);
+        this.jdbcInsertTimeAvailability = new SimpleJdbcInsert(ds)
+                .withTableName("Doctor_Availability");
+        this.jdbcInsertUser = new SimpleJdbcInsert(ds)
+                .withTableName("Users")
+                .usingGeneratedKeyColumns("id");
+        this.jdbcInsertDoctor = new SimpleJdbcInsert(ds)
+                .withTableName("Doctors");
+    }
+
+    @Test
+    public void testCreateDoctor() {
+        //Preconditions
+        List<Specialty> specialties = List.of(new Specialty(SPEC_ID, SPEC_NAME));
+        List<Coverage> coverages = List.of(new Coverage(COV_ID, COV_NAME));
+        List<AvailabilitySlot> availability = List.of(
+                new AvailabilitySlot(1,
+                    LocalTime.of(8, 0),
+                    LocalTime.of(16, 0)),
+                new AvailabilitySlot(2,
+                    LocalTime.of(8, 0),
+                    LocalTime.of(16, 0))
+        );
+
+        //Exercise
+        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, IMAGE_ID, specialties, coverages, availability);
+
+        //Postconditions
+        assertNotNull(doctor);
+        assertEquals(NAME, doctor.getName());
+        assertEquals(LASTNAME, doctor.getLastName());
+        assertEquals(EMAIL, doctor.getEmail());
+        assertEquals(PASSWORD, doctor.getPassword());
+        assertEquals(PHONE, doctor.getPhone());
+        assertEquals(LANGUAGE, doctor.getLanguage());
+        assertEquals(IMAGE_ID, doctor.getImageId());
+        assertEquals(specialties.size(), doctor.getSpecialtyList().size());
+        assertEquals(coverages.size(), doctor.getCoverageList().size());
+        assertEquals(availability.size(), doctor.getAvailabilitySlots().size());
+    }
+
+    @Test
+    public void testGetByIdDoesNotExist() {
+        //Preconditions
+
+        //Exercise
+        Optional<Doctor> maybeDoctor = doctorDao.getById(1000L);
+
+        //Postconditions
+        assertFalse(maybeDoctor.isPresent());
+    }
+
+    @Test
+    public void testGetByIdExists() {
+        //Preconditions
+
+        //Exercise
+        Optional<Doctor> maybeDoctor = doctorDao.getById(TEST_ID);
+
+        //Postconditions
+        assertTrue(maybeDoctor.isPresent());
+        Doctor doctor = maybeDoctor.get();
+        assertEquals(TEST_ID, doctor.getId());
+    }
+
+    @Test
+    public void testGetByEmailDoesNotExist() {
+        //Preconditions
+
+        //Excercise
+        Optional<Doctor> maybeDoctor = doctorDao.getByEmail("notexists@gmail.com");
+
+        //Postconditions
+        assertFalse(maybeDoctor.isPresent());
+    }
+
+    @Test
+    public void testGetByEmailExists() {
+        //Preconditions
+
+        //Exercise
+        Optional<Doctor> maybeDoctor = doctorDao.getByEmail(TEST_EMAIL);
+
+        //Postconditions
+        assertTrue(maybeDoctor.isPresent());
+        Doctor doctor = maybeDoctor.get();
+        assertEquals(TEST_EMAIL, doctor.getEmail());
+    }
+
+    @Test
+    public void testUpdateDoctorRating() {
+        //Preconditions
+        long newRating = 5L;
+        double finalRating = (TEST_RATING * TEST_RATING_COUNT + newRating) / (TEST_RATING_COUNT + 1);
+
+        //Exercise
+        doctorDao.UpdateDoctorRating(TEST_ID, newRating);
+
+        //Postconditions
+        Optional<Doctor> updatedDoctor = jdbcTemplate.query(SQL_QUERY,
+                new Object[]{TEST_ID},
+                daoUtils.getDoctorRowMapper()
+        ).stream().findFirst();
+        assertTrue(updatedDoctor.isPresent());
+        assertEquals(finalRating, updatedDoctor.get().getRating(), 0.01);
+    }
+
+    @Test
+    public void testGetByIdsDoNotExist() {
+        //Preconditions
+        long nonExistId = 1000L;
+
+        //Exercise
+        List<Doctor> doctors = doctorDao.getByIds(Set.of(nonExistId));
+
+        //Postconditions
+        assertTrue(doctors.isEmpty());
+    }
+
+    //@TODO: CHECK, SHOULD I ASK FOR MORE DOCTORS?
+    @Test
+    public void testGetByIdsExists() {
+        //Preconditions
+        Set<Long> ids = Set.of(TEST_ID);
+
+        //Exercise
+        List<Doctor> doctors = doctorDao.getByIds(ids);
+
+        //Postconditions
+        assertFalse(doctors.isEmpty());
+        Doctor doctor = doctors.getFirst();
+        assertEquals(1, doctors.size());
+        assertEquals(TEST_ID, doctor.getId());
+    }
+
+    @Test
+    public void testGetBySpecialtyEmpty() {
+        //Preconditions
+        long specialtyId = 3L;
+
+        //Exercise
+        List<Doctor> doctors = doctorDao.getBySpecialty(specialtyId, 1, 1);
+
+        //Postconditions
+        assertTrue(doctors.isEmpty());
+    }
+
+    @Test
+    public void testGetBySpecialtyExists() {
+        //Preconditions
+
+        //Exercise
+        List<Doctor> doctors = doctorDao.getBySpecialty(SPEC_ID, 1, 1);
+
+        //Postconditions
+        assertFalse(doctors.isEmpty());
+        assertEquals(1, doctors.size());
+        assertEquals(TEST_ID, doctors.getFirst().getId());
+
+    }
+
+    @Test
+    public void testUpdateDoctor() {
+        //Preconditions
+        String updatedName = "Osvaldo";
+        String updatedLastName = "Zubeldía";
+        String updatedPhone = "1122222222";
+        long updatedSpecialtyId = 2L;
+        String updatedSpecialtyName = "Neurology";
+        long updatedCoverageId = 2L;
+        String updatedCoverageName = "Coverage B";
+        List<Specialty> updatedSpecialties = List.of(new Specialty(updatedSpecialtyId, updatedSpecialtyName));
+        List<Coverage> updatedCoverages = List.of(new Coverage(updatedCoverageId, updatedCoverageName));
+
+        //Exercise
+        doctorDao.updateDoctor(TEST_ID, updatedName, updatedLastName, updatedPhone, updatedSpecialties, updatedCoverages);
+
+        //Postconditions
+        Optional<Doctor> updatedDoctor = jdbcTemplate.query(SQL_QUERY,
+                new Object[]{TEST_ID},
+                daoUtils.getDoctorRowMapper()
+        ).stream().findFirst();
+        assertTrue(updatedDoctor.isPresent());
+        assertEquals(TEST_ID, updatedDoctor.get().getId());
+        assertEquals(updatedName, updatedDoctor.get().getName());
+        assertEquals(updatedLastName, updatedDoctor.get().getLastName());
+        assertEquals(updatedPhone, updatedDoctor.get().getPhone());
+        List<Specialty> finalSpecialties = jdbcTemplate.query(SQL_QUERY_SPECIALTY,
+                (rs, rowNum) -> new Specialty(
+                        rs.getLong("id"),
+                        rs.getString("key")
+                ),
+                TEST_ID
+        );
+        assertFalse(finalSpecialties.isEmpty());
+        assertEquals(updatedSpecialtyId, finalSpecialties.getFirst().getId());
+        assertEquals(updatedSpecialtyName, finalSpecialties.getFirst().getKey());
+        List<Coverage> finalCoverages = jdbcTemplate.query(SQL_QUERY_COVERAGE,
+                (rs, rowNum) -> new Coverage(
+                        rs.getLong("id"),
+                        rs.getString("coverage_name")
+                ),
+                TEST_ID
+        );
+        assertFalse(finalCoverages.isEmpty());
+        assertEquals(updatedCoverageId, finalCoverages.getFirst().getId());
+        assertEquals(updatedCoverageName, finalCoverages.getFirst().getName());
+    }
+
+    @Test
+    public void testAddAvailability() {
+        //Preconditions
+        List<AvailabilitySlot> availability = List.of(
+                new AvailabilitySlot(3,
+                        LocalTime.of(8, 0),
+                        LocalTime.of(16, 0)),
+                new AvailabilitySlot(4,
+                        LocalTime.of(8, 0),
+                        LocalTime.of(16, 0))
+        );
+
+        //Exercise
+        doctorDao.addAvailability(TEST_ID, availability);
+
+        //Postconditions
+        List<AvailabilitySlot> finalAvailability = jdbcTemplate.query(SQL_QUERY_AVAILABILITY,
+                (rs, rowNum) -> new AvailabilitySlot(
+                        rs.getInt("day_of_week"),
+                        rs.getTime("start_time").toLocalTime(),
+                        rs.getTime("end_time").toLocalTime()
+                ),
+                TEST_ID
+        );
+        assertFalse(finalAvailability.isEmpty());
+        assertEquals(3, finalAvailability.size());
+    }
+
+    //@TODO: SHOULD I CHEK FOR EMPTY LIST?
+    @Test
+    public void getAvailabilityByDoctorId() {
+        //Preconditions
+        jdbcInsertTimeAvailability.execute(Map.of(
+                "doctor_id", TEST_ID,
+                "day_of_week", 2,
+                "start_time", Time.valueOf(LocalTime.of(8, 0)),
+                "end_time", Time.valueOf(LocalTime.of(16, 0))
+        ));
+
+        //Exercise
+        List<AvailabilitySlot> availabilitySlots = doctorDao.getAvailabilityByDoctorId(TEST_ID);
+
+        //Postconditions
+        assertFalse(availabilitySlots.isEmpty());
+        assertEquals(2, availabilitySlots.size());
+    }
+
+    @Test
+    public void testUpdateDoctorAvailability() {
+        //Preconditions
+        List<AvailabilitySlot> availability = List.of(
+                new AvailabilitySlot(3,
+                        LocalTime.of(8, 0),
+                        LocalTime.of(16, 0)),
+                new AvailabilitySlot(4,
+                        LocalTime.of(8, 0),
+                        LocalTime.of(16, 0))
+        );
+
+        //Exercise
+        doctorDao.updateDoctorAvailability(TEST_ID, availability);
+
+        //Postconditions
+        List<AvailabilitySlot> finalAvailability = jdbcTemplate.query(SQL_QUERY_AVAILABILITY,
+                (rs, rowNum) -> new AvailabilitySlot(
+                        rs.getInt("day_of_week"),
+                        rs.getTime("start_time").toLocalTime(),
+                        rs.getTime("end_time").toLocalTime()
+                ),
+                TEST_ID
+        );
+        assertFalse(finalAvailability.isEmpty());
+        assertEquals(2, finalAvailability.size());
+    }
+
+    //@TODO: SHOULDN'T FUNCTION RETURN OPTIONAL?
+    @Test
+    public void testGetLanguage() {
+        //Preconditions
+
+        //Exercise
+        String language = doctorDao.getLanguage(TEST_ID);
+
+        //Postconditions
+        assertEquals(LANGUAGE, language);
+    }
+
+    @Test
+    public void testChangeLanguage() {
+        //Preconditions
+        String newLanguage = "en";
+
+        //Exercise
+        doctorDao.changeLanguage(TEST_ID, newLanguage);
+
+        //Postconditions
+        Optional<Doctor> updatedDoctor = jdbcTemplate.query(SQL_QUERY,
+                new Object[]{TEST_ID},
+                daoUtils.getDoctorRowMapper()
+        ).stream().findFirst();
+        assertTrue(updatedDoctor.isPresent());
+        assertEquals(newLanguage, updatedDoctor.get().getLanguage());
+    }
+
+    //@TODO: SHOULD I ADD MORE
+    @Test
+    public void testCountBySpecialty() {
+        //Preconditions
+
+
+        //Exercise
+        int count = doctorDao.countBySpecialty(SPEC_ID);
+
+        //Postconditions
+        assertEquals(1, count);
+    }
+
+    //@TODO: FINISH
+    @Test
+    public void testGetWithFilters() {
+        //Preconditions
+
+        //Exercise
+
+        //Postconditions
+    }
+
+    //@TODO: FINISH
+    @Test
+    public void testCountWithFilters() {
+
+    }
+
+    @Test
+    public void testGetByVerificationToken() {
+        //Preconditions
+        String verification_token = "VERIFICATIONTOKEN";
+        long id = jdbcInsertUser.executeAndReturnKey(Map.of(
+                "name", NAME,
+                "last_name", LASTNAME,
+                "email", EMAIL,
+                "password", PASSWORD,
+                "phone", PHONE,
+                "language", LANGUAGE,
+                "verification_token", verification_token
+        )).longValue();
+        jdbcInsertDoctor.execute(Map.of(
+                "doctor_id", id,
+                "rating", TEST_RATING,
+                "rating_count", TEST_RATING_COUNT,
+                "image_id", IMAGE_ID
+        ));
+
+        //Exercise
+        Optional<Doctor> maybeDoctor = doctorDao.getByVerificationToken(verification_token);
+
+        //Postconditions
+        assertTrue(maybeDoctor.isPresent());
+        assertEquals(id, maybeDoctor.get().getId());
+        assertEquals(NAME, maybeDoctor.get().getName());
+        assertEquals(LASTNAME, maybeDoctor.get().getLastName());
+        assertEquals(EMAIL, maybeDoctor.get().getEmail());
+        assertEquals(PASSWORD, maybeDoctor.get().getPassword());
+        assertEquals(PHONE, maybeDoctor.get().getPhone());
+        assertEquals(LANGUAGE, maybeDoctor.get().getLanguage());
+    }
+
+    @Test
+    public void testGetByResetToken() {
+        //Preconditions
+        String reset_token = "RESETTOKEN";
+        long id = jdbcInsertUser.executeAndReturnKey(Map.of(
+                "name", NAME,
+                "last_name", LASTNAME,
+                "email", EMAIL,
+                "password", PASSWORD,
+                "phone", PHONE,
+                "language", LANGUAGE,
+                "reset_token", reset_token
+        )).longValue();
+        jdbcInsertDoctor.execute(Map.of(
+                "doctor_id", id,
+                "rating", TEST_RATING,
+                "rating_count", TEST_RATING_COUNT,
+                "image_id", IMAGE_ID
+        ));
+
+        //Exercise
+        Optional<Doctor> maybeDoctor = doctorDao.getByResetToken(reset_token);
+
+        //Postconditions
+        assertTrue(maybeDoctor.isPresent());
+        assertEquals(id, maybeDoctor.get().getId());
+        assertEquals(NAME, maybeDoctor.get().getName());
+        assertEquals(LASTNAME, maybeDoctor.get().getLastName());
+        assertEquals(EMAIL, maybeDoctor.get().getEmail());
+        assertEquals(PASSWORD, maybeDoctor.get().getPassword());
+        assertEquals(PHONE, maybeDoctor.get().getPhone());
+        assertEquals(LANGUAGE, maybeDoctor.get().getLanguage());
+    }
+}
+

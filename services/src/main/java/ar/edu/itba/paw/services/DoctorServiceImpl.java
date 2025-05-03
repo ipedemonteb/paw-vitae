@@ -128,9 +128,10 @@ public class DoctorServiceImpl implements DoctorService {
         int total = doctorDao.countWithFilters(specialtyId, coverageId, weekdays, orderBy, direction);
         return new Page<>(docs, page, pageSize, total);
     }
+
     @Transactional
     @Override
-    public void UpdateDoctorRating(long id, double rating) {
+    public void UpdateDoctorRating(long id, long rating) {
         doctorDao.UpdateDoctorRating(id, rating);
         LOGGER.debug("Rating actualizado para el doctor con id={}, rating={}", id, rating);
     }
