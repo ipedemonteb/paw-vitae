@@ -65,7 +65,6 @@
                 <!-- Personal Information Section -->
                 <div class="form-section">
                     <div class="section-header">
-                        <i class="fas fa-user-circle section-icon"></i>
                         <h2 class="section-title"><spring:message code="register.personalInfo"/></h2>
                     </div>
 
@@ -76,7 +75,6 @@
                                 <span class="required-mark">*</span>
                             </label>
                             <div class="input-container">
-                                <i class="fas fa-user input-icon"></i>
                                 <form:input path="name" id="name" required="true"
                                             class="input-field ${status.error ? 'input-error' : ''}"
                                             placeholder="${namePlaceholder}"
@@ -91,7 +89,6 @@
                                 <span class="required-mark">*</span>
                             </label>
                             <div class="input-container">
-                                <i class="fas fa-user input-icon"></i>
                                 <form:input path="lastName" id="lastName" required="true"
                                             class="input-field ${status.error ? 'input-error' : ''}"
                                             placeholder="${lastNamePlaceholder}"
@@ -106,7 +103,6 @@
                                 <span class="required-mark">*</span>
                             </label>
                             <div class="input-container">
-                                <i class="fas fa-envelope input-icon"></i>
                                 <form:input path="email" id="email" required="true"
                                             class="input-field ${status.error ? 'input-error' : ''}"
                                             placeholder="${emailPlaceholder}"
@@ -122,7 +118,6 @@
                                 <span class="required-mark">*</span>
                             </label>
                             <div class="input-container">
-                                <i class="fas fa-phone input-icon"></i>
                                 <form:input path="phone" id="phone" required="true"
                                             class="input-field ${status.error ? 'input-error' : ''}"
                                             placeholder="+1 (123) 456-7890"
@@ -137,7 +132,6 @@
                 <!-- Security Section -->
                 <div class="form-section">
                     <div class="section-header">
-                        <i class="fas fa-lock section-icon"></i>
                         <h2 class="section-title"><spring:message code="register.security"/></h2>
                     </div>
 
@@ -153,7 +147,6 @@
                                 </div>
                             </label>
                             <div class="input-container">
-                                <i class="fas fa-lock input-icon"></i>
                                 <form:password path="password" id="password" required="true"
                                                class="input-field ${status.error ? 'input-error' : ''}"
                                                placeholder="${passwordPlaceholder}"
@@ -175,7 +168,6 @@
                                 <span class="required-mark">*</span>
                             </label>
                             <div class="input-container">
-                                <i class="fas fa-lock input-icon"></i>
                                 <form:password path="repeatPassword" id="repeatPassword" required="true"
                                                class="input-field ${status.error ? 'input-error' : ''}"
                                                placeholder="${passwordPlaceholder}"
@@ -190,7 +182,6 @@
                 <!-- Coverage Section -->
                 <div class="form-section">
                     <div class="section-header">
-                        <i class="fas fa-shield-alt section-icon"></i>
                         <h2 class="section-title"><spring:message code="register.coverage"/></h2>
                     </div>
 

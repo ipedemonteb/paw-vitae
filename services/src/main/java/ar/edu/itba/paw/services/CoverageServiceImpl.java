@@ -56,4 +56,9 @@ public class CoverageServiceImpl implements CoverageService {
     public List<Coverage> findByIds(List<Long> ids) {
         return coverageDao.findByIds(ids);
     }
+
+    @Override
+    public List<Coverage> findByDoctorId(long id) {
+        return coverageDao.findByDoctorId(id);
+    }
 }

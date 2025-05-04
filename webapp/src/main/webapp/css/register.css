@@ -214,7 +214,7 @@ body {
 .form-section h2 {
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
-    color: var(--primary-dark);
+    color: var(--primary-color);
     position: relative;
     padding-bottom: 0.5rem;
 }
