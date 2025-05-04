@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.interfacePersistence.AvailabilitySlotsDao;
 import ar.edu.itba.paw.models.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -52,6 +54,7 @@ public class DoctorDaoTest {
     private static final long TEST_RATING_COUNT = 10L;
 
     private DoctorDaoImpl doctorDao;
+    private AvailabilitySlotsDao mockAvailability;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsertTimeAvailability;
     private SimpleJdbcInsert jdbcInsertUser;
@@ -65,7 +68,8 @@ public class DoctorDaoTest {
     public void setUp() {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.daoUtils = new DaoUtils();
-        this.doctorDao = new DoctorDaoImpl(ds, daoUtils);
+        this.mockAvailability = mock(AvailabilitySlotsDao.class);
+        this.doctorDao = new DoctorDaoImpl(ds, daoUtils, mockAvailability);
         this.jdbcInsertTimeAvailability = new SimpleJdbcInsert(ds)
                 .withTableName("Doctor_Availability");
         this.jdbcInsertUser = new SimpleJdbcInsert(ds)
@@ -80,17 +84,9 @@ public class DoctorDaoTest {
         //Preconditions
         List<Specialty> specialties = List.of(new Specialty(SPEC_ID, SPEC_NAME));
         List<Coverage> coverages = List.of(new Coverage(COV_ID, COV_NAME));
-        List<AvailabilitySlot> availability = List.of(
-                new AvailabilitySlot(1,
-                    LocalTime.of(8, 0),
-                    LocalTime.of(16, 0)),
-                new AvailabilitySlot(2,
-                    LocalTime.of(8, 0),
-                    LocalTime.of(16, 0))
-        );
 
         //Exercise
-        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, IMAGE_ID, specialties, coverages, availability);
+        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, IMAGE_ID, specialties, coverages);
 
         //Postconditions
         assertNotNull(doctor);
@@ -101,9 +97,24 @@ public class DoctorDaoTest {
         assertEquals(PHONE, doctor.getPhone());
         assertEquals(LANGUAGE, doctor.getLanguage());
         assertEquals(IMAGE_ID, doctor.getImageId());
-        assertEquals(specialties.size(), doctor.getSpecialtyList().size());
-        assertEquals(coverages.size(), doctor.getCoverageList().size());
-        assertEquals(availability.size(), doctor.getAvailabilitySlots().size());
+        List<Specialty> querySpecialties = jdbcTemplate.query(SQL_QUERY_SPECIALTY,
+                (rs, rowNum) -> new Specialty(
+                        rs.getLong("id"),
+                        rs.getString("key")
+                ),
+                TEST_ID
+        );
+        assertFalse(querySpecialties.isEmpty());
+        assertEquals(querySpecialties.size(), specialties.size());
+        List<Coverage> queryCoverages = jdbcTemplate.query(SQL_QUERY_COVERAGE,
+                (rs, rowNum) -> new Coverage(
+                        rs.getLong("id"),
+                        rs.getString("coverage_name")
+                ),
+                TEST_ID
+        );
+        assertFalse(queryCoverages.isEmpty());
+        assertEquals(coverages.size(), queryCoverages.size());
     }
 
     @Test
@@ -274,81 +285,6 @@ public class DoctorDaoTest {
         assertEquals(updatedCoverageName, finalCoverages.getFirst().getName());
     }
 
-    @Test
-    public void testAddAvailability() {
-        //Preconditions
-        List<AvailabilitySlot> availability = List.of(
-                new AvailabilitySlot(3,
-                        LocalTime.of(8, 0),
-                        LocalTime.of(16, 0)),
-                new AvailabilitySlot(4,
-                        LocalTime.of(8, 0),
-                        LocalTime.of(16, 0))
-        );
-
-        //Exercise
-        doctorDao.addAvailability(TEST_ID, availability);
-
-        //Postconditions
-        List<AvailabilitySlot> finalAvailability = jdbcTemplate.query(SQL_QUERY_AVAILABILITY,
-                (rs, rowNum) -> new AvailabilitySlot(
-                        rs.getInt("day_of_week"),
-                        rs.getTime("start_time").toLocalTime(),
-                        rs.getTime("end_time").toLocalTime()
-                ),
-                TEST_ID
-        );
-        assertFalse(finalAvailability.isEmpty());
-        assertEquals(3, finalAvailability.size());
-    }
-
-    //@TODO: SHOULD I CHEK FOR EMPTY LIST?
-    @Test
-    public void getAvailabilityByDoctorId() {
-        //Preconditions
-        jdbcInsertTimeAvailability.execute(Map.of(
-                "doctor_id", TEST_ID,
-                "day_of_week", 2,
-                "start_time", Time.valueOf(LocalTime.of(8, 0)),
-                "end_time", Time.valueOf(LocalTime.of(16, 0))
-        ));
-
-        //Exercise
-        List<AvailabilitySlot> availabilitySlots = doctorDao.getAvailabilityByDoctorId(TEST_ID);
-
-        //Postconditions
-        assertFalse(availabilitySlots.isEmpty());
-        assertEquals(2, availabilitySlots.size());
-    }
-
-    @Test
-    public void testUpdateDoctorAvailability() {
-        //Preconditions
-        List<AvailabilitySlot> availability = List.of(
-                new AvailabilitySlot(3,
-                        LocalTime.of(8, 0),
-                        LocalTime.of(16, 0)),
-                new AvailabilitySlot(4,
-                        LocalTime.of(8, 0),
-                        LocalTime.of(16, 0))
-        );
-
-        //Exercise
-        doctorDao.updateDoctorAvailability(TEST_ID, availability);
-
-        //Postconditions
-        List<AvailabilitySlot> finalAvailability = jdbcTemplate.query(SQL_QUERY_AVAILABILITY,
-                (rs, rowNum) -> new AvailabilitySlot(
-                        rs.getInt("day_of_week"),
-                        rs.getTime("start_time").toLocalTime(),
-                        rs.getTime("end_time").toLocalTime()
-                ),
-                TEST_ID
-        );
-        assertFalse(finalAvailability.isEmpty());
-        assertEquals(2, finalAvailability.size());
-    }
-
     //@TODO: SHOULDN'T FUNCTION RETURN OPTIONAL?
     @Test
     public void testGetLanguage() {
@@ -382,7 +318,6 @@ public class DoctorDaoTest {
     @Test
     public void testCountBySpecialty() {
         //Preconditions
-
 
         //Exercise
         int count = doctorDao.countBySpecialty(SPEC_ID);

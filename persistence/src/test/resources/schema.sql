@@ -76,9 +76,11 @@ CREATE TABLE IF NOT EXISTS Appointments (
     date TIMESTAMP NOT NULL,
     status VARCHAR(20) NOT NULL,
     reason VARCHAR(10000),
+    report VARCHAR(10000),
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
     FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE,
     FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id, specialty_id) REFERENCES Doctor_Specialties(doctor_id, specialty_id) ON DELETE CASCADE,
     CHECK (status IN ('confirmado','cancelado'))
 );
 
