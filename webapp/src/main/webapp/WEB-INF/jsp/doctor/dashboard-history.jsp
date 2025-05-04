@@ -396,10 +396,7 @@
                         // Extraer las nuevas citas
                         const newAppointments = doc.querySelectorAll('.appointment-card');
 
-                        console.log(`Se encontraron ${newAppointments.length} citas en la respuesta`);
-
                         if (newAppointments.length === 0) {
-                            console.log('No se encontraron citas en la respuesta');
                             // Si no hay más citas, eliminar el botón
                             this.parentNode.remove();
                             return;
@@ -426,9 +423,7 @@
                                 addedCount++;
                             }
                         });
-
-                        console.log(`Se agregaron ${addedCount} citas nuevas`);
-
+                        
                         if (addedCount === 0) {
                             // Si no se agregaron citas nuevas, podría ser que estemos en la última página
                             if (nextPage >= totalPages) {
