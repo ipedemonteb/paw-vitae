@@ -78,7 +78,7 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, String language,Long imageId,
-                         List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilityList) {
+                         List<Specialty> specialties, List<Coverage> coverages) {
         final Map<String, Object> argsUser = new HashMap<>();
         argsUser.put("name", name);
         argsUser.put("last_name", lastName);
@@ -215,7 +215,6 @@ newRating, id
         }
     }
 
-
     private void populateDoctorDetails(Doctor doctor) {
         long id = doctor.getId();
         doctor.setCoverageList(jdbcTemplate.query(
@@ -232,7 +231,6 @@ newRating, id
         doctor.setAvailabilitySlots(availabilitySlotsDao.getAvailabilityByDoctorId(id));
     }
 
-
     @Override
     public String getLanguage(long id) {
         return jdbcTemplate.query("SELECT language FROM Users WHERE id = ?", (rs, rowNum) -> rs.getString("language"), id).stream().findFirst().orElse(null);
@@ -246,7 +244,7 @@ newRating, id
     @Override
     public int countBySpecialty(long specialtyId) {
         return jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM doctor_specialties join users on users.id = doctor_specialties.doctor_id WHERE specialty_id = ? AND u.is_verified = true",
+                "SELECT COUNT(*) FROM doctor_specialties join users u on u.id = doctor_specialties.doctor_id WHERE specialty_id = ? AND u.is_verified = true",
                 Integer.class,
                 specialtyId
         );

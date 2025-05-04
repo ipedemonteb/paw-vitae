@@ -17,6 +17,7 @@ import java.util.Map;
 public class AvailabilitySlotDaoImpl implements AvailabilitySlotsDao {
     private  final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert simpleJdbcInsert;
+
     @Autowired
     public AvailabilitySlotDaoImpl(final DataSource ds) {
           this.jdbcTemplate = new JdbcTemplate(ds);
@@ -54,7 +55,6 @@ public class AvailabilitySlotDaoImpl implements AvailabilitySlotsDao {
             simpleJdbcInsert.execute(params);
         }
     }
-
 
     @Override
     public List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId) {
