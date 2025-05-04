@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class DoctorServiceImpl implements DoctorService {
 
-    Logger LOGGER = LoggerFactory.getLogger(DoctorServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DoctorServiceImpl.class);
 
     private final DoctorDao doctorDao;
 
@@ -57,12 +57,16 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setCoverageList(coverageList);
         doctor.setSpecialtyList(specialtyList);
         doctor.setAvailabilitySlots(filteredSlots);
-        LOGGER.debug("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
+        LOGGER.info("Doctor created succesfully: id={}, email={}", doctor.getId(), doctor.getEmail());
         return doctor;
     }
 
     @Override
     public Optional<Doctor> getById(long id) {
+        Optional<Doctor> doctor = doctorDao.getById(id);
+        if(doctor.isEmpty()){
+            LOGGER.warn("No doctor found with id {}", id);
+        }
         return this.doctorDao.getById(id);
     }
 
@@ -89,8 +93,11 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages) {
-        Doctor currentDoctor = getById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
-
+        Doctor currentDoctor = getById(id)
+                .orElseThrow(() -> {
+                    LOGGER.warn("Attempted to update non-existent doctor with id={}", id);
+                    return new IllegalArgumentException("Doctor not found");
+                });
         List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList()));
         List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList()));
 
@@ -102,7 +109,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         if (hasChanged) {
             doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList);
-            LOGGER.debug("Doctor actualizado exitosamente: id={}, nombre={}, apellido={}", id, name, lastName);
+            LOGGER.info("Doctor updated successfully: id={}", id);
         }
     }
 
@@ -129,7 +136,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public void UpdateDoctorRating(long id, long rating) {
         doctorDao.UpdateDoctorRating(id, rating);
-        LOGGER.debug("Rating actualizado para el doctor con id={}, rating={}", id, rating);
+        LOGGER.info("Rating updated for doctor with id={}, rating={}", id, rating);
     }
 
     public Optional<Doctor> getByResetToken(String token){
