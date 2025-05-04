@@ -400,8 +400,8 @@
                         // Inicializar eventos para las nuevas citas
                         initializeEvents();
                     })
+
                     .catch(error => {
-                        console.error('Error al cargar más citas:', error);
                         this.innerHTML = '<i class="fas fa-exclamation-circle"></i> ';
                         setTimeout(() => {
                             this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore"  /></span>';
