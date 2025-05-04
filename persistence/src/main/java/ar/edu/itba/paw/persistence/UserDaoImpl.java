@@ -56,7 +56,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void removeResetToken(String token){
-        jdbcTemplate.update("UPDATE users SET remove_token = NULL WHERE remove_token = ?", token);
+        jdbcTemplate.update("UPDATE users SET reset_token = NULL WHERE reset_token = ?", token);
 
     }
 
