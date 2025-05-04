@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
     initPasswordStrength()
     // Check if there are form errors and show the appropriate section
     checkFormErrors()
+    // Add validation icons to input fields
+    addValidationIcons()
 
     const form = document.querySelector(".register-form")
     const submitButton = document.getElementById("registerButton")
@@ -24,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add event listeners
     document.getElementById("password").addEventListener("input", () => {
         checkPasswordStrength()
+        validatePassword()
         updateSubmitButtonState()
     })
 
@@ -47,11 +50,13 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     // Add listeners for name and lastName
-    document.getElementById("name").addEventListener("input", () => {
+    document.getElementById("name").addEventListener("input", function () {
+        validateName(this)
         updateSubmitButtonState()
     })
 
-    document.getElementById("lastName").addEventListener("input", () => {
+    document.getElementById("lastName").addEventListener("input", function () {
+        validateName(this)
         updateSubmitButtonState()
     })
 
@@ -73,6 +78,58 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSubmitButtonState()
 })
 
+// Add validation icons to input fields
+function addValidationIcons() {
+    const inputFields = document.querySelectorAll(".input-field")
+
+    inputFields.forEach((field) => {
+        const container = field.parentElement
+        if (!container || !container.classList.contains("input-container")) return
+
+        // Create valid icon
+        const validIcon = document.createElement("i")
+        validIcon.className = "fas fa-check-circle validation-icon valid"
+
+        // Create error icon
+        const errorIcon = document.createElement("i")
+        errorIcon.className = "fas fa-exclamation-circle validation-icon error"
+
+        // Add icons after the input field
+        container.appendChild(validIcon)
+        container.appendChild(errorIcon)
+    })
+}
+
+// Validate name fields
+function validateName(field) {
+    if (!field) return false
+
+    const value = field.value.trim()
+
+    if (!value) {
+        setFieldError(field)
+        return false
+    } else if (value.length < 2) {
+        setFieldError(field)
+        return false
+    } else {
+        setFieldValid(field)
+        return true
+    }
+}
+
+// Set field to error state
+function setFieldError(field) {
+    field.classList.add("input-error")
+    field.classList.remove("valid")
+}
+
+// Set field to valid state
+function setFieldValid(field) {
+    field.classList.remove("input-error")
+    field.classList.add("valid")
+}
+
 function restorePasswordValues() {
     const passwordValue = document.getElementById("passwordValue")
     const repeatPasswordValue = document.getElementById("repeatPasswordValue")
@@ -82,6 +139,7 @@ function restorePasswordValues() {
     if (passwordValue && passwordValue.value) {
         passwordField.value = passwordValue.value
         checkPasswordStrength()
+        validatePassword()
     }
 
     if (repeatPasswordValue && repeatPasswordValue.value) {
@@ -132,8 +190,8 @@ function validateAllFields() {
         return false
     }
 
-    // Validate password length
-    if (password.length < 8) {
+    // Validate password with simplified requirements
+    if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
         return false
     }
 
@@ -161,6 +219,7 @@ function initPasswordStrength() {
     const password = document.getElementById("password")
     if (password && password.value) {
         checkPasswordStrength()
+        validatePassword()
     }
 }
 
@@ -171,10 +230,49 @@ function checkFormErrors() {
     }
 }
 
+// Validate password
+function validatePassword() {
+    const password = document.getElementById("password").value
+    const passwordField = document.getElementById("password")
+    const lengthMessage = document.getElementById("password-length-message")
+
+    // Check simplified requirements
+    const hasLength = password.length >= 8
+    const hasUppercase = /[A-Z]/.test(password)
+    const hasNumber = /[0-9]/.test(password)
+
+    if (password && (!hasLength || !hasUppercase || !hasNumber)) {
+        // Password doesn't meet requirements
+        setFieldError(passwordField)
+        if (lengthMessage) {
+            lengthMessage.textContent =
+                window.messages?.passwordInvalid ||
+                "Password must be at least 8 characters with one uppercase letter and one number"
+            lengthMessage.style.display = "block"
+        }
+        return false
+    } else if (password) {
+        // Password meets requirements
+        setFieldValid(passwordField)
+        if (lengthMessage) {
+            lengthMessage.style.display = "none"
+        }
+        return true
+    } else {
+        // No password entered
+        passwordField.classList.remove("input-error")
+        passwordField.classList.remove("valid")
+        if (lengthMessage) {
+            lengthMessage.style.display = "none"
+        }
+        return true
+    }
+}
+
 // Password strength checker
 function checkPasswordStrength() {
     const password = document.getElementById("password").value
-    const strengthMeterFill = document.querySelector(".strength-meter-fill")
+    const strengthMeterFill = document.querySelector(".strength-fill")
     const strengthText = document.querySelector(".strength-text")
 
     // Remove all classes
@@ -186,35 +284,29 @@ function checkPasswordStrength() {
         return
     }
 
-    // Calculate strength
+    // Calculate strength based on simplified requirements
     let strength = 0
 
     // Length check
     if (password.length >= 8) strength += 1
-    if (password.length >= 12) strength += 1
 
     // Character variety check
     if (/[A-Z]/.test(password)) strength += 1
-    if (/[a-z]/.test(password)) strength += 1
     if (/[0-9]/.test(password)) strength += 1
-    if (/[^A-Za-z0-9]/.test(password)) strength += 1
 
     // Set strength level
     let strengthClass = ""
     let strengthLabel = ""
 
-    if (strength < 3) {
+    if (strength < 1) {
         strengthClass = "strength-weak"
         strengthLabel = window.messages.passwordWeak
-    } else if (strength < 4) {
+    } else if (strength < 3) {
         strengthClass = "strength-medium"
         strengthLabel = window.messages.passwordMedium
-    } else if (strength < 6) {
+    } else {
         strengthClass = "strength-strong"
         strengthLabel = window.messages.passwordStrong
-    } else {
-        strengthClass = "strength-very-strong"
-        strengthLabel = window.messages.passwordVeryStrong
     }
 
     document.querySelector(".password-strength").classList.add(strengthClass)
@@ -227,12 +319,16 @@ function validateEmail(field) {
     const emailValidMessage = document.getElementById("email-validation-message")
 
     if (email && !emailPattern.test(email)) {
-        field.classList.add("error")
+        setFieldError(field)
         emailValidMessage.style.display = "block"
         emailValidMessage.textContent = window.messages.emailInvalid
-    } else {
+    } else if (email) {
+        setFieldValid(field)
         emailValidMessage.style.display = "none"
-        field.classList.remove("error")
+    } else {
+        field.classList.remove("input-error")
+        field.classList.remove("valid")
+        emailValidMessage.style.display = "none"
     }
 }
 
@@ -242,12 +338,16 @@ function validatePhone(field) {
     const phoneValidMessage = document.getElementById("phone-validation-message")
 
     if (phone && !phonePattern.test(phone)) {
-        field.classList.add("error")
+        setFieldError(field)
         phoneValidMessage.style.display = "block"
         phoneValidMessage.textContent = window.messages.phoneInvalid
-    } else {
+    } else if (phone) {
+        setFieldValid(field)
         phoneValidMessage.style.display = "none"
-        field.classList.remove("error")
+    } else {
+        field.classList.remove("input-error")
+        field.classList.remove("valid")
+        phoneValidMessage.style.display = "none"
     }
 }
 
@@ -255,39 +355,35 @@ function validatePhone(field) {
 function checkPasswordMatch() {
     const password = document.getElementById("password").value
     const repeatPassword = document.getElementById("repeatPassword").value
+    const repeatPasswordField = document.getElementById("repeatPassword")
     const matchMessage = document.getElementById("password-match-message")
-    const lengthMessage = document.getElementById("password-length-message")
 
     if (password && repeatPassword) {
         if (password !== repeatPassword) {
+            setFieldError(repeatPasswordField)
             matchMessage.textContent = window.messages.passwordsDoNotMatch
             matchMessage.style.display = "block"
-            document.getElementById("repeatPassword").classList.add("error")
         } else {
+            setFieldValid(repeatPasswordField)
             matchMessage.style.display = "none"
-            document.getElementById("repeatPassword").classList.remove("error")
         }
     } else if (!password && !repeatPassword) {
+        repeatPasswordField.classList.remove("input-error")
+        repeatPasswordField.classList.remove("valid")
         matchMessage.style.display = "none"
-        document.getElementById("repeatPassword").classList.remove("error")
-    }
-    if (password) {
-        if (password.length > 0 && password.length < 8) {
-            lengthMessage.textContent = window.messages.passwordLength
-            lengthMessage.style.display = "block"
-            document.getElementById("password").classList.add("error")
-        } else {
-            lengthMessage.style.display = "none"
-            document.getElementById("password").classList.remove("error")
-        }
-    } else {
-        lengthMessage.style.display = "none"
-        document.getElementById("password").classList.remove("error")
     }
 }
 
 // Form validation
 function validateForm() {
+    // Validate all fields
+    validateName(document.getElementById("name"))
+    validateName(document.getElementById("lastName"))
+    validateEmail(document.getElementById("email"))
+    validatePhone(document.getElementById("phone"))
+    validatePassword()
+    checkPasswordMatch()
+
     // Store password values in hidden fields before submission
     const passwordField = document.getElementById("password")
     const repeatPasswordField = document.getElementById("repeatPassword")

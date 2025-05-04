@@ -169,13 +169,14 @@
 
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="password" class="form-label required-field">
+                                    <label for="password" class="form-label">
                                         <spring:message code="register.password"/>
-                                        <span class="tooltip">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-text"><spring:message
-                                                code="register.passwordTooltip"/></span>
-                                    </span>
+                                        <span class="required-mark">*</span>
+                                        <div class="tooltip">
+                                            <i class="fas fa-info-circle tooltip-icon"></i>
+                                            <span class="tooltip-content"><spring:message
+                                                    code="register.passwordTooltip"/></span>
+                                        </div>
                                     </label>
                                     <div class="input-wrapper">
                                         <form:password required="true" path="password" id="password"
