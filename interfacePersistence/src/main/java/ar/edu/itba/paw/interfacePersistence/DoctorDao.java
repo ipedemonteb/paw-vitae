@@ -26,11 +26,6 @@ public interface DoctorDao {
 
     void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages);
 
-    void addAvailability(long doctorId, List<AvailabilitySlot> availabilityList);
-
-    List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId);
-
-    void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 
     String getLanguage(long id);
 

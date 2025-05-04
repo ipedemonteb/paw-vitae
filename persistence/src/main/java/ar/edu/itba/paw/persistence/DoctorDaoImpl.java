@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.interfacePersistence.AvailabilitySlotsDao;
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,11 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctor;
     private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
-    private final SimpleJdbcInsert jdbcInsertDoctorAvailability;
+    private final AvailabilitySlotsDao availabilitySlotsDao;
     public static RowMapper<Doctor> ROW_MAPPER;
 
     @Autowired
-    public DoctorDaoImpl(final DataSource ds, final DaoUtils daoUtils) {
+    public DoctorDaoImpl(final DataSource ds, final DaoUtils daoUtils,final AvailabilitySlotsDao availabilitySlotsDao) {
         ROW_MAPPER = daoUtils.getDoctorRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
@@ -44,9 +45,7 @@ public class DoctorDaoImpl implements DoctorDao {
         jdbcInsertDoctorSpecialty = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctor_specialties")
                 .usingColumns("doctor_id", "specialty_id");
-        jdbcInsertDoctorAvailability = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("doctor_availability")
-                .usingColumns("doctor_id", "day_of_week", "start_time", "end_time");
+        this.availabilitySlotsDao = availabilitySlotsDao;
     }
 
     private static List<Object> getObjects(long specialtyId, long coverageId, List<Integer> weekdays, StringBuilder sql) {
@@ -109,16 +108,7 @@ public class DoctorDaoImpl implements DoctorDao {
             jdbcInsertDoctorCoverage.execute(args);
         }
 
-        for (AvailabilitySlot slot : availabilityList) {
-            final Map<String, Object> args = new HashMap<>();
-            args.put("doctor_id", docId);
-            args.put("day_of_week", slot.getDayOfWeek());
-            args.put("start_time", slot.getStartTime());
-            args.put("end_time", slot.getEndTime());
-            jdbcInsertDoctorAvailability.execute(args);
-        }
-
-        Doctor doc = new Doctor(
+        return new Doctor(
                 name,
                 docId.longValue(),
                 lastName,
@@ -129,11 +119,6 @@ public class DoctorDaoImpl implements DoctorDao {
                 imageId,
                 false
         );
-        doc.setCoverageList(coverages);
-        doc.setSpecialtyList(specialties);
-        doc.setAvailabilitySlots(availabilityList);
-
-        return doc;
     }
 
     @Override
@@ -230,30 +215,6 @@ newRating, id
         }
     }
 
-    @Override
-    public void addAvailability(long doctorId, List<AvailabilitySlot> availabilityList) {
-        for (AvailabilitySlot slot : availabilityList) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("doctor_id", doctorId);
-            params.put("day_of_week", slot.getDayOfWeek());
-            params.put("start_time", slot.getStartTime());
-            params.put("end_time", slot.getEndTime());
-            jdbcInsertDoctorAvailability.execute(params);
-        }
-    }
-
-    @Override
-    public List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId) {
-        return jdbcTemplate.query(
-                "SELECT * FROM doctor_availability WHERE doctor_id = ?",
-                (rs, rowNum) -> new AvailabilitySlot(
-                        rs.getInt("day_of_week"),
-                        rs.getTime("start_time").toLocalTime(),
-                        rs.getTime("end_time").toLocalTime()
-                ),
-                doctorId
-        );
-    }
 
     private void populateDoctorDetails(Doctor doctor) {
         long id = doctor.getId();
@@ -268,23 +229,9 @@ newRating, id
                 (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key")),
                 id
         ));
-        doctor.setAvailabilitySlots(getAvailabilityByDoctorId(id));
+        doctor.setAvailabilitySlots(availabilitySlotsDao.getAvailabilityByDoctorId(id));
     }
 
-    // Add this method to the DoctorDaoImpl class
-    @Override
-    public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
-        jdbcTemplate.update("DELETE FROM doctor_availability WHERE doctor_id = ?", id);
-
-        for (AvailabilitySlot slot : availabilitySlots) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("doctor_id", id);
-            params.put("day_of_week", slot.getDayOfWeek());
-            params.put("start_time", slot.getStartTime());
-            params.put("end_time", slot.getEndTime());
-            jdbcInsertDoctorAvailability.execute(params);
-        }
-    }
 
     @Override
     public String getLanguage(long id) {

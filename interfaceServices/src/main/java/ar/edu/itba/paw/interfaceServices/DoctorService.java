@@ -19,7 +19,6 @@ public interface DoctorService {
 
     void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages);
 
-    void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 
     void UpdateDoctorRating(long id, long rating);
 
