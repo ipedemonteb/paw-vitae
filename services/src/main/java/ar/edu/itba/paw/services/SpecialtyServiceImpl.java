@@ -49,5 +49,10 @@ private final SpecialtyDao specialtyDao;
     public List<Specialty> getByIds(List<Long> ids) {
         return specialtyDao.getByIds(ids);
     }
+
+    @Override
+    public List<Specialty> getByDoctorId(long id) {
+        return specialtyDao.getByDoctorId(id);
+    }
 }
 
