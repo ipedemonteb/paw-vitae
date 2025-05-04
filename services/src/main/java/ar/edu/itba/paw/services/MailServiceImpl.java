@@ -89,13 +89,13 @@ public class MailServiceImpl implements MailService {
             doctorHelper.setFrom(from_mail);
             patientHelper.setFrom(from_mail);
         } catch (MessagingException e) {
-            LOGGER.debug("Error creating email message", e);
+            LOGGER.error("Error creating email message", e);
         }
 
         mailSender.send(doctorMessage);
         mailSender.send(patientMessage);
-        LOGGER.debug("Email sent to doctor: {}", doctor.getEmail());
-        LOGGER.debug("Email sent to patient: {}", patient.getEmail());
+        LOGGER.info("Email sent to doctor: {}", doctor.getEmail());
+        LOGGER.info("Email sent to patient: {}", patient.getEmail());
     }
 
     @Async
@@ -131,10 +131,10 @@ public class MailServiceImpl implements MailService {
             patientHelper.setText(htmlContentPatient, true);
             patientHelper.setFrom(from_mail);
         } catch (MessagingException e) {
-            LOGGER.debug("Error creating email message", e);
+            LOGGER.error("Error creating email message", e);
         }
         mailSender.send(patientMessage);
-        LOGGER.debug("Email sent to patient: {}", patient.getEmail());
+        LOGGER.info("Email sent to patient: {}", patient.getEmail());
     }
 
     @Async
@@ -160,7 +160,7 @@ public class MailServiceImpl implements MailService {
             helper.setFrom(from_mail);
 
             mailSender.send(message);
-            LOGGER.debug("Recovery email sent to: {}", user.getEmail());
+            LOGGER.info("Recovery email sent to: {}", user.getEmail());
         } catch (MessagingException e) {
             LOGGER.error("Error sending password recovery email to {}", user.getEmail(), e);
         }
@@ -185,7 +185,7 @@ public class MailServiceImpl implements MailService {
             helper.setFrom(from_mail);
 
             mailSender.send(message);
-            LOGGER.debug("Verification email sent to: {}", user.getEmail());
+            LOGGER.info("Verification email sent to: {}", user.getEmail());
         } catch (MessagingException e) {
             LOGGER.error("Error sending verification email to {}", user.getEmail(), e);
         }

@@ -33,7 +33,7 @@ public class ImageServiceImpl implements ImageService{
             LOGGER.error("Error while creating image", e);
             return null;
         }
-        LOGGER.debug("Image created: {}", toReturnImage);
+        LOGGER.info("Image created: {} with id: {}", toReturnImage, toReturnImage.getId());
         return toReturnImage;
     }
 
