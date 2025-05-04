@@ -39,7 +39,11 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public Optional<Patient> getById(long id) {
-        return patientDao.getById(id);
+        Optional<Patient> patient = patientDao.getById(id);
+        if(patient.isEmpty()){
+            LOGGER.warn("No patient found with id {}", id);
+        }
+        return patient;
     }
 
     @Transactional
@@ -47,7 +51,7 @@ public class PatientServiceImpl implements PatientService {
     public Patient create(String name, String lastName, String email, String password, String phone, String language, String coverage) {
         Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);
         Patient patient = this.patientDao.create(name, lastName, email, passwordEncoder.encode(password), phone, language, cov);
-        LOGGER.debug("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
+        LOGGER.info("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
         return patient;
 
     }
@@ -66,7 +70,7 @@ public class PatientServiceImpl implements PatientService {
                 || !patient.getCoverage().getName().equals(coverage.getName());
         if (hasChanged) {
             patientDao.updatePatient(patient.getId(), name, lastName, phone, coverage);
-            LOGGER.debug("Patient updated successfully: id={}, email={}", patient.getId(), patient.getEmail());
+            LOGGER.info("Patient updated successfully: id={}, email={}", patient.getId(), patient.getEmail());
         }
 
     }

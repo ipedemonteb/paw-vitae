@@ -25,14 +25,16 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
 
-    Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Value("${app.base-url}")
     private String BASE_URL;
-    private PasswordEncoder passwordEncoder;
-    private UserDao userDao;
-    private MailService ms;
-    private PatientService ps;
-    private DoctorService ds;
+
+    private final PasswordEncoder passwordEncoder;
+    private final UserDao userDao;
+    private final MailService ms;
+    private final PatientService ps;
+    private final DoctorService ds;
 
     @Autowired
     public UserServiceImpl(PasswordEncoder passwordEncoder, UserDao userDao, MailService ms, PatientService ps, DoctorService ds) {
@@ -45,6 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<? extends User> getByEmail(String email) {
+        LOGGER.debug("Fetching user by email: {}", email);
         Optional<Patient> patient = ps.getByEmail(email);
         return patient.isPresent() ? patient : ds.getByEmail(email);
     }
@@ -56,7 +59,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void changeLanguage(long id, String language) {
         userDao.changeLanguage(id, language);
-        LOGGER.info("Language changed successfully for user with id: {}", id);
+        LOGGER.info("Language changed to '{}' for user with id={}", language, id);
     }
 
     @Transactional
@@ -66,12 +69,14 @@ public class UserServiceImpl implements UserService {
         String verificationLink = BASE_URL + "/verify-confirmation?token=" + token;
         ms.sendVerificationRegisterEmail(user, verificationLink);
         userDao.setVerificationToken(user.getId(), token);
+        LOGGER.info("Verification token set and email sent for user id={}", user.getId());
     }
 
     @Transactional
     @Override
     public void setVerificationStatus(User user, boolean status) {
         userDao.setVerificationStatus(user.getId(), status);
+        LOGGER.info("Verification status updated to {} for user id={}", status, user.getId());
     }
 
     @Transactional
@@ -81,17 +86,15 @@ public class UserServiceImpl implements UserService {
         String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
         ms.sendRecoverPasswordEmail(user, resetPasswordLink);
         userDao.setResetPasswordToken(user.getId(), token);
+        LOGGER.info("Password reset token set and email sent for user id={}", user.getId());
     }
 
     @Transactional
     @Override
     public Optional<? extends User> getByResetToken(String token) {
+        LOGGER.debug("Retrieving user by reset token");
         Optional<Patient> patient = ps.getByResetToken(token);
-        if (patient.isPresent()) {
-            return patient;
-        } else {
-            return ds.getByResetToken(token);
-        }
+        return patient.isPresent() ? patient : ds.getByResetToken(token);
     }
 
     @Transactional
@@ -101,45 +104,49 @@ public class UserServiceImpl implements UserService {
         if (patient.isPresent()) {
             setVerificationStatus(patient.get(), true);
             userDao.removeVerificationToken(token);
+            LOGGER.info("Verification token valid for patient id={}", patient.get().getId());
             return patient;
-        } else {
-            Optional<Doctor> doctor = ds.getByVerificationToken(token);
-            if (doctor.isPresent()) {
-                setVerificationStatus(doctor.get(), true);
-                userDao.removeVerificationToken(token);
-                return doctor;
-            }
         }
+
+        Optional<Doctor> doctor = ds.getByVerificationToken(token);
+        if (doctor.isPresent()) {
+            setVerificationStatus(doctor.get(), true);
+            userDao.removeVerificationToken(token);
+            LOGGER.info("Verification token valid for doctor id={}", doctor.get().getId());
+            return doctor;
+        }
+
+        LOGGER.warn("Invalid verification token: {}", token);
         return Optional.empty();
     }
 
     @Transactional
     @Override
     public boolean verifyRecoveryToken(String token) {
-        Optional<Patient> patient = ps.getByResetToken(token);
-        if (patient.isPresent()) {
-            return true;
-        } else {
-            Optional<Doctor> doctor = ds.getByResetToken(token);
-            return doctor.isPresent();
+        boolean valid = ps.getByResetToken(token).isPresent() || ds.getByResetToken(token).isPresent();
+        if (!valid) {
+            LOGGER.warn("Invalid recovery token: {}", token);
         }
+        return valid;
     }
 
     @Transactional
     @Override
     public boolean changePassword(String token, String password) {
-        if(verifyRecoveryToken(token)){
+        if (verifyRecoveryToken(token)) {
             Optional<? extends User> user = getByResetToken(token);
             if (user.isPresent()) {
                 String newPassword = passwordEncoder.encode(password);
                 userDao.changePassword(user.get().getId(), newPassword);
                 userDao.removeResetToken(token);
+                LOGGER.info("Password changed successfully for user id={}", user.get().getId());
                 return true;
             }
+            LOGGER.warn("User not found for valid token");
             return false;
         }
-
+        LOGGER.warn("Password change failed due to invalid token");
         return false;
     }
-
 }
+

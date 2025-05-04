@@ -51,7 +51,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
-        LOGGER.debug("New appointment created: {}", appointment);
+        LOGGER.info("New appointment created: {}", appointment);
 
         return appointment;
     }
@@ -82,14 +82,14 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Boolean cancelAppointment(long appointmentId,long userId) {
         Optional<Appointment> appt = getById(appointmentId);
         if (appt.isEmpty()) {
-            LOGGER.debug("Appointment not found: {}", appointmentId);
+            LOGGER.warn("Appointment not found: {}", appointmentId);
             return false;
         }
 
         appointmentDao.cancelAppointment(appointmentId);
         appt.get().setStatus(AppointmentStatus.CANCELADO.getValue());
         mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appt.get());
-        LOGGER.debug("Appointment cancelled: {}", appt.get());
+        LOGGER.info("Appointment cancelled: {}", appt.get());
         return true;
     }
 
@@ -115,9 +115,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         Optional<Appointment> appointment = getById(appointmentId);
         if (appointment.isPresent()) {
             appointmentDao.updateReport(appointmentId, report);
-            LOGGER.debug("Report added to appointment: {}", appointment.get());
+            LOGGER.info("Report added to appointment: {}", appointment.get());
         } else {
-            LOGGER.debug("Appointment not found: {}", appointmentId);
+            LOGGER.info("Appointment not found: {}", appointmentId);
         }
     }
 }

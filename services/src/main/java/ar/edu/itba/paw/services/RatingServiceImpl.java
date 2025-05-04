@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfacePersistence.RatingDao;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.RatingService;
 import ar.edu.itba.paw.models.Rating;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import java.util.Optional;
 @Service
 public class RatingServiceImpl implements RatingService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RatingServiceImpl.class);
     private final RatingDao ratingDao;
     private final DoctorService doctorService;
     @Autowired
@@ -26,6 +29,7 @@ public class RatingServiceImpl implements RatingService {
     public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
         Rating rating_aux = ratingDao.create(rating, doctorId, patientId, appointmentId, comment);
         doctorService.UpdateDoctorRating(doctorId, rating_aux.getRating());
+        LOGGER.info("Rating created: {} with id: {} for doctor with id {} by patient with id {}", rating_aux, rating_aux.getId(), doctorId, patientId);
         return rating_aux;
     }
 
