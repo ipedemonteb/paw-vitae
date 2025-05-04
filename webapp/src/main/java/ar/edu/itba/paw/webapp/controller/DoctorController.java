@@ -29,14 +29,16 @@ public class DoctorController {
     private final SpecialtyService ss;
     private final AppointmentFileService afs;
     private final RatingService rs;
+    private final AvailabilitySlotsService ass;
     @Autowired
-    public DoctorController(DoctorService ds, AppointmentService as, CoverageService cs, SpecialtyService ss, AppointmentFileService afs, RatingService rs) {
+    public DoctorController(DoctorService ds, AppointmentService as, CoverageService cs, SpecialtyService ss, AppointmentFileService afs, RatingService rs,AvailabilitySlotsService ass) {
         this.ds = ds;
         this.as = as;
         this.cs = cs;
         this.ss = ss;
         this.afs = afs;
         this.rs = rs;
+        this.ass=ass;
     }
     @RequestMapping(value = "/doctor/dashboard")
     public ModelAndView getDoctorDashboard() {
@@ -139,7 +141,7 @@ public class DoctorController {
         if (errors.hasErrors()) {
             return getAvailability(form, doctor);
         }
-        ds.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());
+        ass.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
 

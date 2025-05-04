@@ -26,17 +26,19 @@ public class DoctorServiceImpl implements DoctorService {
     private final CoverageService cs;
     private final AppointmentService as;
     private final ImageService is;
-
+    private final AvailabilitySlotsService ass;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder, AppointmentService as,ImageService is) {
+    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder, AppointmentService as,ImageService is,
+                             AvailabilitySlotsService ass) {
         this.doctorDao = doctorDao;
         this.ss = ss;
         this.cs = cs;
         this.passwordEncoder = passwordEncoder;
         this.as = as;
         this.is = is;
+        this.ass = ass;
     }
 
     @Transactional
@@ -51,9 +53,11 @@ public class DoctorServiceImpl implements DoctorService {
         Doctor doctor = this.doctorDao.create(
                 name, lastName, email, passwordEncoder.encode(password), phone, language,(img == null ? null : img.getId()), specialtyList, coverageList, filteredSlots
         );
-
+        ass.create(doctor.getId(),filteredSlots);
+        doctor.setCoverageList(coverageList);
+        doctor.setSpecialtyList(specialtyList);
+        doctor.setAvailabilitySlots(filteredSlots);
         LOGGER.debug("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
-
         return doctor;
     }
 
@@ -102,15 +106,7 @@ public class DoctorServiceImpl implements DoctorService {
         }
     }
 
-    @Transactional
-    @Override
-    public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
-        List<AvailabilitySlot> filteredSlots = availabilitySlots.stream()
-                .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
-                .toList();
-        doctorDao.updateDoctorAvailability(id, filteredSlots);
-        LOGGER.debug("Disponibilidad actualizada para el doctor con id={}, slots={}", id, availabilitySlots.size()); //Only log the new size, if the user has many, then it might be too heavy
-    }
+
 
     @Override
     public Optional<Doctor> getByIdWithAppointments(long id) {
