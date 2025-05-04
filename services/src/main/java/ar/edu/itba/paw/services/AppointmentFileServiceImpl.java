@@ -42,9 +42,10 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
                 appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment_id));
             }
             catch (IOException e) {
-                LOGGER.error("Error while creating image", e);
+                LOGGER.error("Error while adding files {} ", files,  e);
             }
         }
+        LOGGER.info("Appointment files created successfully: {} for appointment with id {}", appointmentFiles, appointment_id);
         return appointmentFiles;
     }
 
@@ -76,7 +77,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
                 !appointment.getPatient().getEmail().equals(username)) {
             return Optional.empty();
         }
-
+        LOGGER.info("File {} authorized for appointment {} and user {}", file, appointment, username);
         return Optional.of(file);
     }
 
