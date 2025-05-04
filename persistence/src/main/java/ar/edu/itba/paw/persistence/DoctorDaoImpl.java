@@ -124,24 +124,19 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public Optional<Doctor> getById(long id) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        Optional<Doctor> doc = jdbcTemplate.query(
+        return jdbcTemplate.query(
                 sql.append("WHERE u.id = ?").toString(),
                 ROW_MAPPER, id
         ).stream().findFirst();
-        doc.ifPresent(this::populateDoctorDetails);
-        return doc;
     }
 
     @Override
     public Optional<Doctor> getByEmail(String email) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        Optional<Doctor> doc = jdbcTemplate.query(
+        return jdbcTemplate.query(
                 sql.append("WHERE u.email = ?").toString(),
                 ROW_MAPPER, email
         ).stream().findFirst();
-
-        doc.ifPresent(this::populateDoctorDetails);
-        return doc;
     }
 
     @Override
@@ -170,7 +165,7 @@ newRating, id
     @Override
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        List<Doctor> doctors = jdbcTemplate.query(
+        return jdbcTemplate.query(
                 sql.append("JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id ")
                         .append("JOIN specialties s ON ds.specialty_id = s.id ")
                         .append("WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?").toString(),
@@ -182,12 +177,6 @@ newRating, id
                 },
                 ROW_MAPPER
         );
-
-        for (Doctor doctor : doctors) {
-            populateDoctorDetails(doctor);
-        }
-
-        return doctors;
     }
 
     @Override
@@ -213,22 +202,6 @@ newRating, id
                     id, coverage.getId()
             );
         }
-    }
-
-    private void populateDoctorDetails(Doctor doctor) {
-        long id = doctor.getId();
-        doctor.setCoverageList(jdbcTemplate.query(
-                "SELECT * FROM doctor_coverages JOIN coverages ON doctor_coverages.coverage_id = coverages.id WHERE doctor_coverages.doctor_id = ?",
-                (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name")),
-                id
-        ));
-
-        doctor.setSpecialtyList(jdbcTemplate.query(
-                "SELECT * FROM doctor_specialties JOIN specialties ON doctor_specialties.specialty_id = specialties.id WHERE doctor_specialties.doctor_id = ?",
-                (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key")),
-                id
-        ));
-        doctor.setAvailabilitySlots(availabilitySlotsDao.getAvailabilityByDoctorId(id));
     }
 
     @Override
@@ -260,13 +233,7 @@ newRating, id
         sql.append(" LIMIT ? OFFSET ?");
         params.add(pageSize);
         params.add((page - 1) * pageSize);
-        List<Doctor> doctors = jdbcTemplate.query(sql.toString(), ROW_MAPPER, params.toArray());
-
-        for (Doctor doctor : doctors) {
-            populateDoctorDetails(doctor);
-        }
-
-        return doctors;
+        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, params.toArray());
     }
 
     @Override

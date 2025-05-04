@@ -10,6 +10,8 @@ public interface SpecialtyDao {
     Optional<Specialty> getById(long id);
     List<Specialty> getByIds(List<Long> ids);
 
+    List<Specialty> getByDoctorId(long id);
+
     Optional<Specialty> getByName(String name);
 
     List<Specialty> getAll();
