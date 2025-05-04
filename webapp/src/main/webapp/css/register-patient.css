@@ -1,30 +1,12 @@
-/* Register Patient CSS - Complete redesign */
+/* Replace the entire file with this updated CSS that matches the doctor registration design */
 
-/* Base Styles */
-:root {
-    --primary-color: #2563eb;
-    --primary-dark: #1e40af;
-    --primary-light: #93c5fd;
-    --secondary-color: #0284c7;
-    --accent-color: #7c3aed;
-    --text-color: #1e293b;
-    --text-light: #64748b;
-    --background-light: #f8fafc;
-    --background-dark: #1a202c;
-    --white: #ffffff;
-    --error-color: #ef4444;
-    --success-color: #10b981;
-    --warning-color: #f59e0b;
-    --border-color: #e2e8f0;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --border-radius: 8px;
-    --border-radius-lg: 12px;
-    --transition: all 0.3s ease;
-}
+/* ===== REGISTER-PATIENT.CSS ===== */
+/* Modern, responsive CSS for patient registration form */
 
-* {
+/* ===== CSS RESET ===== */
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -34,12 +16,14 @@ html {
     background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
 }
 
-/* create a “background” layer under all content */
+/* create a "background" layer under all content */
 html::before {
     content: "";
     position: fixed;
-    top: 0;    right: 0;
-    bottom: 0; left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
     z-index: -1;
 }
@@ -48,15 +32,52 @@ body {
     font-family: "Poppins", sans-serif;
     color: var(--text-color);
     line-height: 1.6;
-    min-height: 100%;
 }
 
-/* Page Container */
+/* ===== VARIABLES ===== */
+:root {
+    /* Colors */
+    --primary-color: #3b82f6;
+    --primary-dark: #1d4ed8;
+    --primary-light: #93c5fd;
+    --secondary-color: #0ea5e9;
+    --accent-color: #8b5cf6;
+    --text-color: #1e293b;
+    --text-light: #64748b;
+    --background-light: #f8fafc;
+    --background-dark: #1a202c;
+    --white: #ffffff;
+    --danger: #ef4444;
+    --danger-dark: #b91c1c;
+    --success: #10b981;
+    --success-dark: #059669;
+    --warning: #f59e0b;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    /* Border Radius */
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+
+    /* Transitions */
+    --transition: all 0.3s ease;
+}
+
+/* ===== PAGE CONTAINER ===== */
 .page-container {
     padding: 0 20px;
 }
 
-/* Register Container */
+/* ===== REGISTER CONTAINER ===== */
 .register-container {
     max-width: 900px;
     background-color: var(--white);
@@ -78,12 +99,24 @@ body {
     }
 }
 
-/* Register Header */
+/* ===== REGISTER HEADER ===== */
 .register-header {
     background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
     padding: 40px;
     text-align: center;
     color: var(--white);
+    position: relative;
+}
+
+.register-header::after {
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background-color: var(--white);
+    border-radius: 50% 50% 0 0;
 }
 
 .register-title {
@@ -98,12 +131,12 @@ body {
     opacity: 0.9;
 }
 
-/* Register Content */
+/* ===== REGISTER CONTENT ===== */
 .register-content {
     padding: 40px;
 }
 
-/* Form Sections */
+/* ===== FORM SECTIONS ===== */
 .form-section {
     margin-bottom: 40px;
     animation: slideUp 0.5s ease-out forwards;
@@ -134,6 +167,19 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.section-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 3px;
 }
 
 .section-icon {
@@ -148,14 +194,14 @@ body {
     color: var(--primary-color);
 }
 
-/* Form Grid */
+/* ===== FORM GRID ===== */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 25px;
 }
 
-/* Form Fields */
+/* ===== FORM FIELDS ===== */
 .form-field {
     margin-bottom: 20px;
 }
@@ -165,40 +211,39 @@ body {
     align-items: center;
     font-weight: 500;
     margin-bottom: 10px;
+    color: var(--text-color);
+    font-size: 0.95rem;
 }
 
 .required-mark {
-    color: var(--error-color);
+    color: var(--danger);
     margin-left: 4px;
 }
 
 .input-container {
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.input-icon {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-light);
-    transition: var(--transition);
-}
+/* Removed input-icon class as we're removing the icons */
 
 .input-field {
     width: 100%;
-    padding: 14px 15px 14px 45px;
-    border: 1px solid var(--border-color);
+    padding: 14px 15px;
+    border: 1px solid var(--gray-300);
     border-radius: var(--border-radius);
     font-size: 16px;
     font-family: "Poppins", sans-serif;
     transition: var(--transition);
+    color: var(--text-color);
+    box-shadow: var(--shadow-sm);
 }
 
 .input-field:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .input-field:focus + .input-icon {
@@ -206,16 +251,16 @@ body {
 }
 
 .input-error {
-    border-color: var(--error-color);
+    border-color: var(--danger);
 }
 
 .error-text {
-    color: var(--error-color);
+    color: var(--danger);
     font-size: 14px;
     margin-top: 6px;
 }
 
-/* Tooltip */
+/* ===== TOOLTIP ===== */
 .tooltip {
     position: relative;
     display: inline-flex;
@@ -263,39 +308,43 @@ body {
     visibility: visible;
 }
 
-/* Password Strength */
+/* ===== PASSWORD STRENGTH ===== */
 .password-strength {
     margin-top: 10px;
 }
 
 .strength-bar {
-    height: 6px;
-    background-color: #e2e8f0;
-    border-radius: 3px;
-    overflow: hidden;
+    height: 4px;
+    background-color: var(--gray-200);
+    border-radius: 2px;
     margin-bottom: 6px;
+    overflow: hidden;
 }
 
 .strength-fill {
     height: 100%;
     width: 0;
+    border-radius: 2px;
     transition: width 0.3s ease, background-color 0.3s ease;
 }
 
 .strength-text {
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
     color: var(--text-light);
 }
 
 /* Strength Classes - Added via JavaScript */
 .strength-weak .strength-fill {
     width: 25%;
-    background-color: var(--error-color);
+    background-color: var(--danger);
 }
 
 .strength-medium .strength-fill {
     width: 50%;
-    background-color: var(--warning-color);
+    background-color: var(--warning);
 }
 
 .strength-strong .strength-fill {
@@ -305,10 +354,23 @@ body {
 
 .strength-very-strong .strength-fill {
     width: 100%;
-    background-color: var(--success-color);
+    background-color: var(--success);
 }
 
-/* Coverage Grid */
+.strength-weak .strength-text {
+    color: var(--danger);
+}
+
+.strength-medium .strength-text {
+    color: var(--warning);
+}
+
+.strength-strong .strength-text,
+.strength-very-strong .strength-text {
+    color: var(--success);
+}
+
+/* ===== COVERAGE GRID ===== */
 .coverage-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -330,20 +392,20 @@ body {
     display: flex;
     align-items: center;
     padding: 15px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--gray-300);
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: var(--transition);
 }
 
 .coverage-label:hover {
-    background-color: rgba(37, 99, 235, 0.05);
+    background-color: rgba(59, 130, 246, 0.05);
 }
 
 .radio-indicator {
     width: 22px;
     height: 22px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--gray-300);
     border-radius: 50%;
     margin-right: 12px;
     position: relative;
@@ -352,7 +414,7 @@ body {
 
 .coverage-input:checked + .coverage-label {
     border-color: var(--primary-color);
-    background-color: rgba(37, 99, 235, 0.1);
+    background-color: rgba(59, 130, 246, 0.1);
 }
 
 .coverage-input:checked + .coverage-label .radio-indicator {
@@ -375,7 +437,7 @@ body {
     font-weight: 500;
 }
 
-/* Terms Section */
+/* ===== TERMS SECTION ===== */
 .terms-section {
     margin: 30px 0;
     animation: slideUp 0.5s ease-out 0.4s forwards;
@@ -403,7 +465,7 @@ body {
 .checkbox-indicator {
     width: 22px;
     height: 22px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--gray-300);
     border-radius: 4px;
     margin-right: 12px;
     margin-top: 2px;
@@ -441,7 +503,7 @@ body {
     color: var(--primary-dark);
 }
 
-/* Form Actions */
+/* ===== FORM ACTIONS ===== */
 .form-actions {
     display: flex;
     flex-direction: column;
@@ -478,7 +540,7 @@ body {
 }
 
 .submit-button:disabled {
-    background-color: #94a3b8;
+    background-color: var(--gray-400);
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -505,7 +567,61 @@ body {
     text-decoration: underline;
 }
 
-/* Responsive Styles */
+/* ===== STATUS MESSAGE ===== */
+.status-message {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+}
+
+.success-message {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-left: 4px solid var(--success);
+}
+
+.status-icon {
+    font-size: 24px;
+    margin-right: 15px;
+    color: var(--success);
+}
+
+.status-content h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: var(--success-dark);
+}
+
+.status-content p {
+    color: var(--text-color);
+}
+
+.form-links {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.link i {
+    margin-right: 8px;
+}
+
+.link:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
     .page-container {
         padding: 40px 15px;
@@ -542,7 +658,7 @@ body {
     }
 }
 
-/* Animations for interactive elements */
+/* ===== ANIMATIONS FOR INTERACTIVE ELEMENTS ===== */
 .input-field,
 .coverage-label,
 .checkbox-indicator,
@@ -556,7 +672,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* Custom scrollbar */
+/* ===== CUSTOM SCROLLBAR ===== */
 ::-webkit-scrollbar {
     width: 10px;
 }

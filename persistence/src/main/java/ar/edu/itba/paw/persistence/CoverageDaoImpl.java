@@ -58,4 +58,12 @@ public class CoverageDaoImpl implements CoverageDao {
     public List<Coverage> findByIds(List<Long> ids) {
         return jdbcTemplate.query("SELECT * FROM coverages WHERE id IN (" + String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new)) + ")", COVERAGE_MAPPER);
     }
+
+    @Override
+    public List<Coverage> findByDoctorId(long id) {
+        return jdbcTemplate.query("SELECT * FROM coverages c " +
+                        "JOIN doctor_coverages dc ON c.id = dc.coverage_id " +
+                        "WHERE dc.doctor_id = ?",
+                COVERAGE_MAPPER, id);
+    }
 }

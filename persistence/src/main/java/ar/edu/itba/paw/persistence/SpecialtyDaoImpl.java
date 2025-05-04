@@ -48,4 +48,11 @@ public class SpecialtyDaoImpl implements SpecialtyDao {
     public List<Specialty> getByIds(List<Long> ids) {
         return jdbcTemplate.query("SELECT * FROM specialties WHERE id IN (" + String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new)) + ")", SPECIALTY_MAPPER);
     }
+
+    @Override
+    public List<Specialty> getByDoctorId(long id) {
+        return jdbcTemplate.query("SELECT * FROM specialties s " +
+                "JOIN doctor_specialties ds ON s.id = ds.specialty_id " +
+                "WHERE ds.doctor_id = ?", SPECIALTY_MAPPER, id);
+    }
 }
