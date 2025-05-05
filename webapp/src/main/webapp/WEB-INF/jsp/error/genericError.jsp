@@ -25,7 +25,7 @@
     <p class="error-message">
         <c:choose>
             <c:when test="${not empty message}">
-                ${message}
+                <spring:message code="${message}"/>
             </c:when>
             <c:otherwise>
                 <spring:message code="error.500.message" />
