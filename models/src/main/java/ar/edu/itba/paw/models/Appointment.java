@@ -60,7 +60,6 @@ public class Appointment {
         this.reason = reason;
     }
 
-
     public Doctor getDoctor() {
         return doctor;
     }
