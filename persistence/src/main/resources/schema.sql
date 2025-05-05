@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS Appointments (
                                             doctor_id INT NOT NULL,
                                             client_id INT NOT NULL,
                                             specialty_id INT NOT NULL,
-                                            date TIMESTAMP NOT NULL ,
+                                            date TIMESTAMP NOT NULL CHECK ("date" > current_timestamp),
                                             status VARCHAR(20) NOT NULL DEFAULT 'confirmado' CHECK (status IN ('confirmado','cancelado','completo')),
     reason TEXT,
     report TEXT,
@@ -78,6 +78,10 @@ CREATE TABLE IF NOT EXISTS Appointments (
     FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE,
     FOREIGN KEY (doctor_id, specialty_id) REFERENCES Doctor_Specialties(doctor_id, specialty_id) ON DELETE CASCADE
     );
+
+CREATE UNIQUE INDEX IF NOT EXISTS ux_appointments_doctor_date_not_cancelled
+    ON appointments(doctor_id, "date")
+    WHERE status <> 'cancelado';
 
 CREATE TABLE IF NOT EXISTS Images (
                                       id SERIAL PRIMARY KEY,

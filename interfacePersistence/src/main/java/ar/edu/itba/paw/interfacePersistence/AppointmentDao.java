@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.interfacePersistence;
 
 import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Specialty;
 
 import java.time.LocalDate;
@@ -24,6 +23,8 @@ import java.util.Optional;
         Optional<Appointment> getById(long appointmentId);
 
         List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter);
+
+        List<Appointment> getAppointmentByDoctorAndDate(long doctorId, LocalDate date, Integer time);
 
         List<Appointment> getAppointmentsByDate(LocalDate today);
 

@@ -178,4 +178,14 @@ public class AppointmentDaoImpl implements AppointmentDao {
         };
     }
 
+    @Override
+    public List<Appointment> getAppointmentByDoctorAndDate(long doctorId, LocalDate date, Integer time) {
+        StringBuilder sql = new StringBuilder(BASE_SQL)
+                .append("WHERE a.doctor_id = ? ")
+                .append("AND DATE(a.date) = ? ")
+                .append("AND TIME(a.date) = ? ")
+                .append(ORDER_BY_DATE_ASC);
+
+        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, doctorId, date, time);
+    }
 }

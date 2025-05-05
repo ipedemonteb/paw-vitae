@@ -53,10 +53,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     private void populateDoctorDetails(List<Doctor> doctors) {
-        doctors.forEach(doctor -> {
-            long id = doctor.getId();
-            populateDoctorDetails(doctor);
-        });
+        doctors.forEach(this::populateDoctorDetails);
     }
 
     @Transactional
