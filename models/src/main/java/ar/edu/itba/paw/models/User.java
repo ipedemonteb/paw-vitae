@@ -10,6 +10,8 @@ public abstract class User {
     private final String email;
     private String password;
     private String phone;
+    private long imageId=-1L;
+
     private String language;
     private String verificationToken;
     private boolean verified;
@@ -25,7 +27,17 @@ public abstract class User {
         this.language = language;
         this.verified = verified;
     }
-
+    public User(String name, long id, String lastName, String email, String password, String phone, String language,boolean verified,long imageId){
+        this.name = name;
+        this.id = id;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.language = language;
+        this.verified = verified;
+        this.imageId=imageId;
+    }
     public List<Appointment> getAppointments() {
         return appointments;
     }
@@ -102,5 +114,13 @@ public abstract class User {
 
     public void setResetPasswordToken(String resetPasswordToken) {
         this.resetPasswordToken = resetPasswordToken;
+    }
+
+    public long getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(long imageId) {
+        this.imageId = imageId;
     }
 }

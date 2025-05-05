@@ -24,7 +24,9 @@
 </head>
 <body>
 <!-- Include the header -->
-<jsp:include page="/WEB-INF/jsp/components/header.jsp"/>
+<jsp:include page="/WEB-INF/jsp/components/header.jsp">
+    <jsp:param name="id" value="${doctor.imageId}" />
+</jsp:include>
 
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
