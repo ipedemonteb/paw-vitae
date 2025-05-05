@@ -49,6 +49,7 @@ public class UserDaoImpl implements UserDao {
     public String getLanguageById(long id) {
         return jdbcTemplate.queryForObject("SELECT language FROM users WHERE id = ?", new Object[]{id}, String.class);
     }
+
     @Override
     public void changeLanguage(long id, String language) {
         jdbcTemplate.update("UPDATE users SET language = ? WHERE id = ?", language, id);
