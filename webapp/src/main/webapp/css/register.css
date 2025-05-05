@@ -292,8 +292,20 @@ body {
     border-color: var(--danger);
 }
 
+.form-control.error:focus {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+    outline: none;
+}
+
 .form-control.valid {
     border-color: var(--success);
+}
+
+.form-control.valid:focus {
+    border-color: var(--success);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    outline: none;
 }
 
 .validation-icon {
