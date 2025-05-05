@@ -40,7 +40,16 @@ public class AppointmentValidDateValidator implements ConstraintValidator<Appoin
             LocalDateTime appointmentDateTime = LocalDateTime.of(date, LocalTime.of(hour, 0));
             LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
 
-            return appointmentDateTime.isAfter(now);
+
+            if (!appointmentDateTime.isAfter(now)) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("{appointment.date.invalid}")
+                        .addPropertyNode(dateFieldName)
+                        .addConstraintViolation();
+                return false;
+            }
+
+            return true;
 
         } catch (Exception e) {
             return false;

@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-@AppointmentExistence(doctorId = "doctorId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existance}")
+@AppointmentExistence(doctorId = "doctorId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existence}")
 @AppointmentValidDate(date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.valid}")
 public class AppointmentForm {
 
