@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models.exception;
 
-public class SpecialtyNotFoundException extends RuntimeException{
+public class SpecialtyNotFoundException extends RuntimeException {
+
     public SpecialtyNotFoundException() {
     }
 

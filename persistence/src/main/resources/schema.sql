@@ -102,3 +102,4 @@ CREATE TABLE IF NOT EXISTS appointment_files (
     file_data BYTEA NOT NULL,
     FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
     );
+

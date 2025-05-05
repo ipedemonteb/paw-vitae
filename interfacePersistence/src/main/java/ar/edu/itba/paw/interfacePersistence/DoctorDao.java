@@ -9,8 +9,7 @@ import java.util.Set;
 
 public interface DoctorDao {
 
-    Doctor create(String name, String lastName, String email, String password, String phone, String language,Long imageId,
-                  List<Specialty> specialties, List<Coverage> coverages);
+    Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Specialty> specialties, List<Coverage> coverages);
 
     Optional<Doctor> getById(final long id);
 
@@ -26,7 +25,6 @@ public interface DoctorDao {
 
     void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages);
 
-
     String getLanguage(long id);
 
     void changeLanguage(long id, String language);
@@ -34,6 +32,8 @@ public interface DoctorDao {
     List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);
 
     int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction);
+
     Optional<Doctor> getByVerificationToken(String token);
+
     Optional<Doctor> getByResetToken(String token);
 }

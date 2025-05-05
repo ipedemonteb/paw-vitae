@@ -4,18 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class User {
-    private String name;
+
     private final long id;
-    private String lastName;
     private final String email;
+    private String name;
+    private String lastName;
     private String password;
     private String phone;
     private String language;
     private String verificationToken;
     private boolean verified;
     private String resetPasswordToken;
-    private List <Appointment> appointments = new ArrayList<>();
-    public User(String name, long id, String lastName, String email, String password, String phone, String language,boolean verified) {
+    private List<Appointment> appointments = new ArrayList<>();
+
+    public User(String name, long id, String lastName, String email, String password, String phone, String language, boolean verified) {
         this.name = name;
         this.id = id;
         this.lastName = lastName;
@@ -88,9 +90,7 @@ public abstract class User {
         this.verificationToken = verificationToken;
     }
 
-    public boolean isVerified() {
-        return verified;
-    }
+    public boolean isVerified() { return verified; }
 
     public void setVerified(boolean verified) {
         this.verified = verified;
@@ -103,5 +103,4 @@ public abstract class User {
     public void setResetPasswordToken(String resetPasswordToken) {
         this.resetPasswordToken = resetPasswordToken;
     }
-
 }

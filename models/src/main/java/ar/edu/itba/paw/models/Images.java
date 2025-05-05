@@ -2,10 +2,11 @@ package ar.edu.itba.paw.models;
 
 public class Images {
 
-    private final  long id;
+    private final long id;
     private byte[] image;
 
-    public void setImage(byte[] image) {
+    public Images(long id, byte[] image) {
+        this.id = id;
         this.image = image;
     }
 
@@ -17,8 +18,7 @@ public class Images {
         return image;
     }
 
-    public Images( long id, byte[] image) {
-        this.id = id;
+    public void setImage(byte[] image) {
         this.image = image;
     }
 

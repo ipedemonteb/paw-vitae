@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.models;
 
-public class Patient extends User{
+public class Patient extends User {
 
     private Coverage coverage;
 
