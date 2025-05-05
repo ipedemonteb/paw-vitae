@@ -18,7 +18,7 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/header.jsp">
-    <jsp:param name="id" value="${user.imageId}" />
+    <jsp:param name="id" value="${imageId}" />
 </jsp:include>
 
 <main>

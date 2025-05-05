@@ -57,6 +57,7 @@ public class CoverageServiceImpl implements CoverageService {
         return coverageDao.findByIds(ids);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Coverage> findByDoctorId(long id) {
         return coverageDao.findByDoctorId(id);

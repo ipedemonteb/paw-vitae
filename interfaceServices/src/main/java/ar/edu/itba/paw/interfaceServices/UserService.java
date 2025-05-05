@@ -19,4 +19,5 @@ public interface UserService {
     Optional<? extends User> verifyValidationToken(String token);
     Optional<? extends User> getByResetToken(String token);
     boolean verifyRecoveryToken(String token);
+    Long getImageId(User user);
 }
