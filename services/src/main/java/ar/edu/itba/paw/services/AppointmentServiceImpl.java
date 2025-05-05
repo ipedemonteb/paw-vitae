@@ -120,6 +120,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Appointment> getAppointmentByUserAndDate(long userId, LocalDate date, Integer time) {
         if (date == null || time == null) {

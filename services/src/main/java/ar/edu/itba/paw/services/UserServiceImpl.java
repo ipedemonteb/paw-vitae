@@ -148,5 +148,13 @@ public class UserServiceImpl implements UserService {
         LOGGER.warn("Password change failed due to invalid token");
         return false;
     }
+
+    @Override
+    public Long getImageId(User user) {
+        if (user == null || user instanceof Patient) {
+            return -1L;
+        }
+        return ((Doctor) user).getImageId();
+    }
 }
 
