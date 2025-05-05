@@ -120,4 +120,12 @@ public class AppointmentServiceImpl implements AppointmentService {
             LOGGER.info("Appointment not found: {}", appointmentId);
         }
     }
+
+    @Override
+    public List<Appointment> getAppointmentByDoctorAndDate(long doctorId, LocalDate date, Integer time) {
+        if (date == null || time == null) {
+            return Collections.emptyList(); // Return an empty list if date or time is null
+        }
+        return appointmentDao.getAppointmentByDoctorAndDate(doctorId, date, time);
+    }
 }

@@ -1,14 +1,12 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.webapp.validation.AppointmentFileValid;
-import ar.edu.itba.paw.webapp.validation.AppointmentValidDate;
-import ar.edu.itba.paw.webapp.validation.FileSize;
-import ar.edu.itba.paw.webapp.validation.Specialty;
+import ar.edu.itba.paw.webapp.validation.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+@AppointmentExistence(doctorId = "doctorId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existance}")
 @AppointmentValidDate(date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.valid}")
 public class AppointmentForm {
 
@@ -32,6 +30,17 @@ public class AppointmentForm {
     @NotNull
     @Specialty(message = "{specialty.invalid}")
     private long specialtyId;
+
+    @NotNull
+    private final long doctorId;
+
+    public AppointmentForm(long doctorId) {
+        this.doctorId = doctorId;
+    }
+
+    public long getDoctorId() {
+        return doctorId;
+    }
 
     public MultipartFile[] getPatientFiles() {
         return patientFiles;
