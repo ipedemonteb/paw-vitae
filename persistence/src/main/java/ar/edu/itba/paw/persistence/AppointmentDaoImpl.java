@@ -113,7 +113,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
         return jdbcTemplate.query(sql.toString(), ROW_MAPPER, doctorId, today, endOfNextMonth);
     }
 
-
     @Override
     public void cancelAppointment(long appointmentId) {
         jdbcTemplate.update("UPDATE Appointments SET status = ? WHERE id = ?", AppointmentStatus.CANCELADO.getValue(), appointmentId);
@@ -125,7 +124,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
         String sql = "UPDATE Appointments SET status = ? WHERE Appointments.date <= ? AND status = ?";
         jdbcTemplate.update(sql, AppointmentStatus.COMPLETO.getValue(), now, AppointmentStatus.CONFIRMADO.getValue());
     }
-
 
     @Override
     public Optional<Appointment> getById(long appointmentId) {
@@ -141,17 +139,17 @@ public class AppointmentDaoImpl implements AppointmentDao {
         return jdbcTemplate.query(sql, ROW_MAPPER, userId,userId, size, (page - 1) * size);
     }
 
-
     @Override
     public List<Appointment> getAppointmentsByDate(LocalDate today) {
         StringBuilder sql = new StringBuilder(BASE_SQL).append("WHERE DATE(a.date) = ? ").append(ORDER_BY_DATE_ASC);
         return jdbcTemplate.query(sql.toString(), ROW_MAPPER, today);
     }
+
     @Override
     public int countAppointments(long userId, boolean isFuture, String filter) {
         String sql = "SELECT COUNT(*) FROM Appointments a ";
         sql += isFuture ? buildDateRangeCondition(filter) : buildStatusCondition(filter);
-        return jdbcTemplate.queryForObject(sql, Integer.class, userId,userId);
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId, userId);
     }
 
     @Override
@@ -168,7 +166,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
             default -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date > NOW() AND a.status <> 'cancelado' ").toString();
         };
     }
-
 
     private String buildStatusCondition(String status) {
         StringBuilder sql = new StringBuilder();

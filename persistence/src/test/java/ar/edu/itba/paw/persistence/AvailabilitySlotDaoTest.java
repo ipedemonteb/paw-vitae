@@ -48,10 +48,10 @@ public class AvailabilitySlotDaoTest {
     @Test
     public void testCreate() {
         //Preconditions
-        int dayOfWeek = 1;
-        int startTimeHour = 8;
-        int startTimeMinute = 0;
-        int endTimeHour = 16;
+        int dayOfWeek = 1,
+                startTimeHour = 8,
+                startTimeMinute = 0,
+                endTimeHour = 16;
         AvailabilitySlot slot = new AvailabilitySlot(dayOfWeek,
                 LocalTime.of(startTimeHour, startTimeMinute),
                 LocalTime.of(endTimeHour, startTimeMinute)
