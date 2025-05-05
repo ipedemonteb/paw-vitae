@@ -8,27 +8,27 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-    public interface AppointmentDao {
+public interface AppointmentDao {
 
-        Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty);
+    Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty);
 
-        List<Appointment> getByPatientId(long patientId);
+    List<Appointment> getByPatientId(long patientId);
 
-        List<Appointment> getByDoctorId(long doctorId);
+    List<Appointment> getByDoctorId(long doctorId);
 
-        void cancelAppointment(long appointmentId);
+    void cancelAppointment(long appointmentId);
 
-        void completeAppointments();
+    void completeAppointments();
 
-        Optional<Appointment> getById(long appointmentId);
+    Optional<Appointment> getById(long appointmentId);
 
-        List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter);
+    List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter);
 
-        List<Appointment> getAppointmentsByUserAndDate(long userId, LocalDate date, Integer time);
+    List<Appointment> getAppointmentsByUserAndDate(long userId, LocalDate date, Integer time);
 
-        List<Appointment> getAppointmentsByDate(LocalDate today);
+    List<Appointment> getAppointmentsByDate(LocalDate today);
 
-        int countAppointments(long userId, boolean isFuture, String filter);
+    int countAppointments(long userId, boolean isFuture, String filter);
 
-        void updateReport(long appointmentId, String report);
-    }
+    void updateReport(long appointmentId, String report);
+}
