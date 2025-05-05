@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class SearchController {
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestParam(value = "view", required = false, defaultValue = "grid") String view
     ) {
-        Optional<Specialty> specialtyObj = specialtyService.getById(specialtyId);
+        Specialty specialtyObj = specialtyService.getById(specialtyId).orElseThrow(SpecialtyNotFoundException::new);
         List<Coverage> coverages = coverageService.getAll();
         Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, 9);
         List<Specialty> allSpecialties = specialtyService.getAll();
@@ -52,7 +53,7 @@ public class SearchController {
         mav.addObject("coverages", coverages);
         mav.addObject("doctors", doctorPage.getContent());
         mav.addObject("totalDoctors", doctorPage.getTotalElements());
-        mav.addObject("specialty", specialtyObj.orElse(null));
+        mav.addObject("specialty", specialtyObj);
         mav.addObject("allSpecialties", allSpecialties);
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", doctorPage.getTotalPages());

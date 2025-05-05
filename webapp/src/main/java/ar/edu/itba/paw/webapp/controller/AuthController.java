@@ -148,9 +148,7 @@ public class AuthController {
         if (errors.hasErrors()) {
             return new ModelAndView("auth/change-password").addObject("token", token);
         }
-
         boolean success = us.changePassword(token, form.getPassword());
-
         if (success) {
             return new ModelAndView("redirect:/change-password-result?success=true");
         } else {
