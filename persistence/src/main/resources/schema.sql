@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS Users (
                                      id SERIAL PRIMARY KEY,
                                      name VARCHAR(50) NOT NULL,
@@ -13,8 +12,8 @@ CREATE TABLE IF NOT EXISTS Users (
     );
 
 CREATE TABLE IF NOT EXISTS Coverages (
-                                        id SERIAL PRIMARY KEY,
-                                        coverage_name VARCHAR(100) NOT NULL
+                                         id SERIAL PRIMARY KEY,
+                                         coverage_name VARCHAR(100) NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS Clients (
@@ -23,6 +22,11 @@ CREATE TABLE IF NOT EXISTS Clients (
                                        FOREIGN KEY (client_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (coverage_id) REFERENCES Coverages(id)
     );
+
+CREATE TABLE IF NOT EXISTS Images (
+                                      id SERIAL PRIMARY KEY,
+                                      image BYTEA NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS Doctors (
                                        doctor_id INT PRIMARY KEY,
@@ -56,20 +60,19 @@ CREATE TABLE IF NOT EXISTS Doctor_Specialties (
 
 CREATE TABLE IF NOT EXISTS Doctor_Availability (
                                                    doctor_id INT NOT NULL,
-                                                   day_of_week INT NOT NULL, -- 0 = Monday, 6 = Sunday
+                                                   day_of_week INT NOT NULL,
                                                    start_time TIME NOT NULL,
                                                    end_time TIME NOT NULL,
                                                    PRIMARY KEY (doctor_id, day_of_week, start_time),
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
     );
 
-
 CREATE TABLE IF NOT EXISTS Appointments (
                                             id SERIAL PRIMARY KEY,
                                             doctor_id INT NOT NULL,
                                             client_id INT NOT NULL,
                                             specialty_id INT NOT NULL,
-                                            date TIMESTAMP NOT NULL CHECK ("date" > current_timestamp),
+                                            date TIMESTAMP NOT NULL,
                                             status VARCHAR(20) NOT NULL DEFAULT 'confirmado' CHECK (status IN ('confirmado','cancelado','completo')),
     reason TEXT,
     report TEXT,
@@ -87,28 +90,49 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_appointments_client_date_not_cancelled
     ON appointments(client_id, "date")
     WHERE status <> 'cancelado';
 
-CREATE TABLE IF NOT EXISTS Images (
-                                      id SERIAL PRIMARY KEY,
-                                      image BYTEA NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS Ratings (
-                        id SERIAL PRIMARY KEY,
-                        doctor_id INT NOT NULL,
-                        client_id INT NOT NULL,
-                        appointment_id INT NOT NULL UNIQUE,
-                        rating INT CHECK (rating >= 1 AND rating <= 5),
-                        comment TEXT,
-                        FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
-                        FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE,
-                        FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
-);
+                                       id SERIAL PRIMARY KEY,
+                                       doctor_id INT NOT NULL,
+                                       client_id INT NOT NULL,
+                                       appointment_id INT NOT NULL UNIQUE,
+                                       rating INT CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
+    FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE,
+    FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
+    );
 
 CREATE TABLE IF NOT EXISTS appointment_files (
-                                   id SERIAL PRIMARY KEY,
-                                   appointment_id INTEGER NOT NULL,
-                                   uploader_role VARCHAR(20) NOT NULL,
-                                   file_name VARCHAR(255) NOT NULL,
-                                   file_data BYTEA NOT NULL,
-                                   FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
-);
+                                                 id SERIAL PRIMARY KEY,
+                                                 appointment_id INTEGER NOT NULL,
+                                                 uploader_role VARCHAR(20) NOT NULL,
+    file_name VARCHAR(255) NOT NULL,
+    file_data BYTEA NOT NULL,
+    FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
+    );
+
+-- Trigger Function
+CREATE OR REPLACE FUNCTION enforce_future_date()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF TG_OP = 'INSERT' AND NEW.date <= current_timestamp THEN
+    RAISE EXCEPTION 'Appointment date must be in the future';
+END IF;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger
+    WHERE tgname = 'trg_future_date'
+  ) THEN
+CREATE TRIGGER trg_future_date
+    BEFORE INSERT ON appointments
+    FOR EACH ROW
+    EXECUTE FUNCTION enforce_future_date();
+END IF;
+END
+$$;
