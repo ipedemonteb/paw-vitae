@@ -168,14 +168,8 @@ newRating, id
         return jdbcTemplate.query(
                 sql.append("JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id ")
                         .append("JOIN specialties s ON ds.specialty_id = s.id ")
-                        .append("WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?").toString(),
-                new Object[]{specialtyId, pageSize, (page - 1) * pageSize},
-                new int[]{
-                        java.sql.Types.BIGINT,
-                        java.sql.Types.INTEGER,
-                        java.sql.Types.INTEGER
-                },
-                ROW_MAPPER
+                        .append("WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?").toString(),ROW_MAPPER,
+                specialtyId, pageSize, (page - 1) * pageSize
         );
     }
 
