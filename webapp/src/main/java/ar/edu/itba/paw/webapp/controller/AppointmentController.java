@@ -7,40 +7,23 @@ import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.mail.MessagingException;
 import javax.validation.Valid;
-import java.util.*;
 
 @Controller
 public class AppointmentController {
 
     private AppointmentService as;
-    private PatientService ps;
     private DoctorService ds;
-    private CoverageService cs;
-    private MailService ms;
-    private MessageSource messageSource;
-    private SpecialtyService ss;
     private AppointmentFileService afs;
     @Autowired
-    public AppointmentController(AppointmentService as, PatientService ps, DoctorService ds, CoverageService cs, MailService ms, MessageSource messageSource, SpecialtyService ss,AppointmentFileService afs) {
+    public AppointmentController(AppointmentService as, DoctorService ds, AppointmentFileService afs) {
         this.as = as;
-        this.ps = ps;
         this.ds = ds;
-        this.cs = cs;
-        this.ms = ms;
-        this.messageSource = messageSource;
-        this.ss = ss;
         this.afs = afs;
     }
 
