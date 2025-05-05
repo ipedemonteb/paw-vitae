@@ -25,6 +25,7 @@ public class AppointmentFileDaoImpl implements AppointmentFileDao {
             rs.getString("uploader_role"),
             rs.getLong("appointment_id")
     );
+
     @Autowired
     public AppointmentFileDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -33,6 +34,7 @@ public class AppointmentFileDaoImpl implements AppointmentFileDao {
                 .usingColumns("file_name", "file_data", "uploader_role", "appointment_id")
                 .usingGeneratedKeyColumns("id");
     }
+
     @Override
     public AppointmentFile create(String fileName, byte[] fileData, String uploader_role, long appointment_id) {
         HashMap<String, Object> values = new HashMap<>();
