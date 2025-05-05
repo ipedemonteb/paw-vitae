@@ -52,8 +52,17 @@ public class AppointmentExistenceValidator implements ConstraintValidator<Appoin
             }
 
 
-            return appointments.size() == 1 && !appointments.stream().findFirst().get().getStatus().equals(AppointmentStatus.CONFIRMADO.getValue());
+            boolean isValid = appointments.size() == 1 &&
+                    !appointments.get(0).getStatus().equals(AppointmentStatus.CONFIRMADO.getValue());
 
+            if (!isValid) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("{appointment.date.existence}")
+                        .addPropertyNode(dateFieldName)
+                        .addConstraintViolation();
+            }
+
+            return isValid;
         } catch (Exception e) {
             return false;
         }
