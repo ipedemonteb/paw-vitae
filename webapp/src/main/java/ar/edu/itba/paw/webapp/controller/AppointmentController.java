@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 
@@ -43,13 +44,6 @@ public class AppointmentController {
         this.afs = afs;
     }
 
-    // Add the following method to handle MessagingException
-    @ExceptionHandler(MessagingException.class)
-    public ModelAndView handleMessagingException(MessagingException e) {
-        ModelAndView mav = new ModelAndView("error");
-        mav.addObject("message", "There was an error sending the confirmation email. Please try again later.");
-        return mav;
-    }
 
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
     public ModelAndView appointment(
@@ -57,8 +51,8 @@ public class AppointmentController {
             @RequestParam(required = true) Long doctorId
     ) {
         ModelAndView mav = new ModelAndView("appointment/appointment");
-        Optional<Doctor> doctor = ds.getByIdWithAppointments(doctorId);
-        doctor.ifPresent(d -> mav.addObject("doctor", d));
+        Doctor doctor = ds.getByIdWithAppointments(doctorId).orElseThrow(UserNotFoundException::new);
+        mav.addObject("doctor", doctor);
         return mav;
     }
 
@@ -84,9 +78,7 @@ public class AppointmentController {
     public ModelAndView appointmentConfirmation(
             @PathVariable("id") final long id
     ) {
-
-        Appointment appointment = as.getById(id).orElseThrow(IllegalArgumentException::new);
-
+        Appointment appointment = as.getById(id).orElseThrow(AppointmentNotFoundException::new);
         ModelAndView mav = new ModelAndView("appointment/confirmation");
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
         mav.addObject("appointment", appointment);

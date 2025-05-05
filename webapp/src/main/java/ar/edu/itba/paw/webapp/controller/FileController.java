@@ -27,7 +27,7 @@ public class FileController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<AppointmentFile> fileOpt = fileService.getAuthorizedFile(fileId, appointmentId, username);
         if (fileOpt.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         AppointmentFile file = fileOpt.get();
