@@ -145,7 +145,8 @@ public class DoctorDaoImpl implements DoctorDao {
       "UPDATE doctors " +
         "SET rating = ((COALESCE(rating, 0) * rating_count + ?) / (rating_count + 1)), " +
         "    rating_count = rating_count + 1 " +
-        "WHERE doctor_id = ?",
+        "add ." +
+              "WHERE doctor_id = ?",
 newRating, id
         );
     }
