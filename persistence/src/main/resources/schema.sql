@@ -83,6 +83,10 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_appointments_doctor_date_not_cancelled
     ON appointments(doctor_id, "date")
     WHERE status <> 'cancelado';
 
+CREATE UNIQUE INDEX IF NOT EXISTS ux_appointments_client_date_not_cancelled
+    ON appointments(client_id, "date")
+    WHERE status <> 'cancelado';
+
 CREATE TABLE IF NOT EXISTS Images (
                                       id SERIAL PRIMARY KEY,
                                       image BYTEA NOT NULL
