@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,6 +18,7 @@ import java.util.Objects;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @RequestMapping("/error/403")
     public ModelAndView error403() {
@@ -26,8 +29,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handle500(Exception ex) {
+        LOGGER.error("Unhandled exception occurred", ex);
         ModelAndView mav = new ModelAndView("error/500");
         mav.addObject("exception", ex.getMessage());
         return mav;
     }
+
 }

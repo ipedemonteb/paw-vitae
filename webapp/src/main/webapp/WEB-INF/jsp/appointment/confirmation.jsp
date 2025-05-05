@@ -135,7 +135,7 @@
                 <a href="<c:url value="/patient/dashboard"/>" class="btn btn-primary">
                     <i class="fas fa-home"></i> <spring:message code="appointment.confirmation.backToHome"/>
                 </a>
-                <a href="<c:url value='/appointment/${appointment.id}'/>" class="btn btn-outline">
+                <a href="<c:url value='/patient/dashboard/appointment-details/${appointment.id}'/>" class="btn btn-outline">
                     <i class="fas fa-calendar-alt"></i> <spring:message code="appointment.confirmation.viewAppointments"/>
                 </a>
             </div>
