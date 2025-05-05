@@ -90,7 +90,7 @@
                     </div>
                 </c:if>
 
-                <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment" id="appointmentForm" class="appointment-form" enctype="multipart/form-data">
+                <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment" id="appointmentForm" class="appointment-form" enctype="multipart/form-data" onsubmit="return submitOnce(this);">>
                     <div class="specialty-card-appointment">
                         <div class="specialty-icon-appointment">
                             <i class="fas fa-stethoscope"></i>
@@ -182,7 +182,7 @@
                     </div>
 
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-block">
+                        <button type="submit" class="btn btn-primary btn-block" >
                             <span>
                                 <i class="fas fa-calendar-check"></i>
                                 <spring:message code="appointment.form.submit" />
@@ -369,6 +369,23 @@
             hideSuccessToast();
         }
     });
+
+        function submitOnce(form) {
+        if (form.getAttribute('data-submitting') === 'true') {
+            return false;
+        }
+        form.setAttribute('data-submitting', 'true');
+
+
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton) {
+            setTimeout(function() {
+                submitButton.disabled = true;
+            }, 10);
+        }
+            return true;
+    }
+
 </script>
 
 <!-- Include the external JavaScript file -->
