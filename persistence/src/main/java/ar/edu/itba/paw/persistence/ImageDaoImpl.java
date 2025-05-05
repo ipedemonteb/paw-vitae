@@ -35,16 +35,15 @@ public class ImageDaoImpl implements ImageDao {
     }
 
     @Override
-    public Images create( byte[] image) {
+    public Images create(byte[] image) {
         final Map<String,Object> args = new HashMap<>();
-        args.put("image",image);
+        args.put("image", image);
         Number id = jdbcInsertImage.executeAndReturnKey(args);
-        return new Images(id.longValue(),image);
+        return new Images(id.longValue(), image);
     }
 
     @Override
     public Optional<Images> findById(long id) {
         return jdbcTemplate.query("SELECT * FROM images WHERE id = ?", ROW_MAPPER, id).stream().findFirst();
     }
-
 }
