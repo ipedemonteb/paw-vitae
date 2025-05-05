@@ -42,28 +42,28 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleMessagingException(MessagingException e) {
         ModelAndView mav = new ModelAndView("/error/genericError");
-        mav.addObject("message", "There was an error sending the confirmation email. Please try again later.");
+        mav.addObject("message", "mail.error");
         return mav;
     }
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView handleUserNotFoundException(UserNotFoundException e) {
         ModelAndView mav = new ModelAndView("/error/genericError");
-        mav.addObject("message", "User not found");
+        mav.addObject("message","user.notfound");
         return mav;
     }
     @ExceptionHandler(AppointmentNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView handleAppointmentNotFoundException(AppointmentNotFoundException e) {
         ModelAndView mav = new ModelAndView("/error/genericError");
-        mav.addObject("message", "Appointment not found");
+        mav.addObject("message", "appointment.notfound");
         return mav;
     }
     @ExceptionHandler(SpecialtyNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView handleSpecialtyNotFoundException(SpecialtyNotFoundException e) {
         ModelAndView mav = new ModelAndView("/error/genericError");
-        mav.addObject("message", "Specialty not found");
+        mav.addObject("message", "specialty.notfound");
         return mav;
     }
 }
