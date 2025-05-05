@@ -73,8 +73,7 @@ public class ImageDaoTest {
 
         // Postconditions
         assertTrue(maybeImage.isPresent());
-        Images image = maybeImage.get();
-        assertEquals(IMAGE_ID, image.getId());
-        assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, image.getImage());
+        assertEquals(IMAGE_ID, maybeImage.get().getId());
+        assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, maybeImage.get().getImage());
     }
 }
