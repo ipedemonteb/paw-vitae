@@ -9,15 +9,22 @@ public interface UserService {
     Optional<? extends User> getByEmail(String email);
 
     boolean changePassword(String token, String password);
+
     String getLanguageById(long id);
 
     void changeLanguage(long id, String language);
 
     void setVerificationToken(User user);
+
     void setVerificationStatus(User user, boolean status);
+
     void setResetPasswordToken(User user);
+
     Optional<? extends User> verifyValidationToken(String token);
+
     Optional<? extends User> getByResetToken(String token);
+
     boolean verifyRecoveryToken(String token);
+
     Long getImageId(User user);
 }

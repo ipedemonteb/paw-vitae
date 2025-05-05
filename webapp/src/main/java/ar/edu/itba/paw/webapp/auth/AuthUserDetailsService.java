@@ -31,17 +31,8 @@ import java.util.regex.Pattern;
 
 @Component
 public class AuthUserDetailsService implements UserDetailsService {
-    @Autowired
-    private DoctorService doctorService;
-    @Autowired
-    private PatientService patientService;
-    @Autowired
-    private ImageService imageService;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
     private UserService us;
-
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthUserDetailsService.class);
     private final Pattern BCRYPT_PATTERN = Pattern
@@ -76,14 +67,6 @@ public class AuthUserDetailsService implements UserDetailsService {
                 true,
                 List.of(new SimpleGrantedAuthority("ROLE_PATIENT"))
         );
-
-
-
-//        final Collection<? extends GrantedAuthority> authorities = Arrays.asList(
-//                new SimpleGrantedAuthority("ROLE_DOCTOR"),
-//                new SimpleGrantedAuthority("ROLE_PATIENT")
-//        );
-//        return new AuthUserDetails(email, user.getPassword(), authorities);
     }
 
 

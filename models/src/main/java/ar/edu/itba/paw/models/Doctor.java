@@ -13,14 +13,15 @@ public class Doctor extends User {
     private Double rating = 5.0;
     private int ratingCount = 0;
     private long imageId;
+
     public Doctor(String name, long id, String lastName, String email, String password, String phone, String language, Long imageId, Double rating, int ratingCount, boolean verified) {
-        super(name, id, lastName, email, password, phone, language,verified);
+        super(name, id, lastName, email, password, phone, language, verified);
         this.rating = rating;
         this.ratingCount = ratingCount;
         this.imageId = imageId;
-
     }
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language,Long imageId,boolean verified) {
+
+    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified) {
         super(name, id, lastName, email, password, phone, language, verified);
         this.imageId = imageId;
     }
@@ -29,9 +30,14 @@ public class Doctor extends User {
         return specialtyList;
     }
 
+    public void setSpecialtyList(List<Specialty> specialtyList) {
+        this.specialtyList = specialtyList;
+    }
+
     public Double getRating() {
         return rating;
     }
+
     public void setRating(Double rating) {
         this.rating = rating;
     }
@@ -42,10 +48,6 @@ public class Doctor extends User {
 
     public void setRatingCount(int ratingCount) {
         this.ratingCount = ratingCount;
-    }
-
-    public void setSpecialtyList(List<Specialty> specialtyList) {
-        this.specialtyList = specialtyList;
     }
 
     public List<Coverage> getCoverageList() {
@@ -59,6 +61,7 @@ public class Doctor extends User {
     public List<AvailabilitySlot> getAvailabilitySlots() {
         return availabilitySlots;
     }
+
     public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) {
         this.availabilitySlots = availabilitySlots;
     }

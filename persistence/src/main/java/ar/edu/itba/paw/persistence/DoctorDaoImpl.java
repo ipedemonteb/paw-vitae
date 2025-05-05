@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfacePersistence.AvailabilitySlotsDao;
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +14,16 @@ import java.util.*;
 @Repository
 public class DoctorDaoImpl implements DoctorDao {
 
-    private final static String BASE_SQL = "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, " +
-            "u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, " +
-            "u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id,u.is_verified AS doctor_verified " +
-            "FROM users u JOIN doctors d ON u.id = d.doctor_id ";
-
-
+    private final static String BASE_SQL = "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id,u.is_verified AS doctor_verified FROM users u JOIN doctors d ON u.id = d.doctor_id ";
+    public static RowMapper<Doctor> ROW_MAPPER;
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertUser;
     private final SimpleJdbcInsert jdbcInsertDoctor;
     private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
-    private final AvailabilitySlotsDao availabilitySlotsDao;
-    public static RowMapper<Doctor> ROW_MAPPER;
 
     @Autowired
-    public DoctorDaoImpl(final DataSource ds, final DaoUtils daoUtils,final AvailabilitySlotsDao availabilitySlotsDao) {
+    public DoctorDaoImpl(final DataSource ds, final DaoUtils daoUtils) {
         ROW_MAPPER = daoUtils.getDoctorRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
@@ -45,7 +38,6 @@ public class DoctorDaoImpl implements DoctorDao {
         jdbcInsertDoctorSpecialty = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctor_specialties")
                 .usingColumns("doctor_id", "specialty_id");
-        this.availabilitySlotsDao = availabilitySlotsDao;
     }
 
     private static List<Object> getObjects(long specialtyId, long coverageId, List<Integer> weekdays, StringBuilder sql) {
@@ -77,7 +69,7 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, String language,Long imageId,
+    public Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId,
                          List<Specialty> specialties, List<Coverage> coverages) {
         final Map<String, Object> argsUser = new HashMap<>();
         argsUser.put("name", name);
@@ -141,13 +133,13 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public void UpdateDoctorRating(long id, long newRating) {
-        jdbcTemplate.update(
-      "UPDATE doctors " +
-        "SET rating = ((COALESCE(rating, 0) * rating_count + ?) / (rating_count + 1)), " +
-        "    rating_count = rating_count + 1 " +
-        "WHERE doctor_id = ?",
-newRating, id
-        );
+        StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE doctors ")
+                .append("SET rating = ((COALESCE(rating, 0) * rating_count + ?) / (rating_count + 1)), ")
+                .append("    rating_count = rating_count + 1 ")
+                .append("WHERE doctor_id = ?");
+
+        jdbcTemplate.update(sql.toString(), newRating, id);
     }
 
     @Override
@@ -168,7 +160,7 @@ newRating, id
         return jdbcTemplate.query(
                 sql.append("JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id ")
                         .append("JOIN specialties s ON ds.specialty_id = s.id ")
-                        .append("WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?").toString(),ROW_MAPPER,
+                        .append("WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?").toString(), ROW_MAPPER,
                 specialtyId, pageSize, (page - 1) * pageSize
         );
     }

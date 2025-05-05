@@ -3,13 +3,10 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.AuthService;
-import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
 import ar.edu.itba.paw.webapp.form.ChangePasswordForm;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,41 +14,32 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.beans.PropertyEditorSupport;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Controller
 public class AuthController {
 
     private final DoctorService ds;
     private final CoverageService cs;
-    private final ImageService is;
     private final SpecialtyService ss;
     private final PatientService ps;
     private final UserService us;
-    private final MailService ms;
 
-    private final AuthService authService;
+    private final AuthService as;
 
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, ImageService is, SpecialtyService ss, PatientService patientService, UserService us, AuthService authService, MailService ms) {
+    public AuthController(DoctorService ds, CoverageService cs, SpecialtyService ss, PatientService ps, UserService us, AuthService as) {
         this.ds = ds;
         this.cs = cs;
-        this.is = is;
         this.ss = ss;
-        this.ps = patientService;
+        this.ps = ps;
         this.us = us;
-        this.authService = authService;
-        this.ms = ms;
+        this.as = as;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -171,7 +159,7 @@ public class AuthController {
         if (token == null) {
             return new ModelAndView("auth/verify");
         }
-        boolean success = authService.verifyAndLoginUser(token);
+        boolean success = as.verifyAndLoginUser(token);
         if (success) {
             return new ModelAndView("redirect:/verify?success=true");
         } else {
