@@ -205,10 +205,7 @@ function validateName(field) {
     const errorElement = document.getElementById(field.id + "-validation-message")
     const parent = field.closest(".input-wrapper")
 
-    if (!value && field.hasAttribute("required")) {
-        setFieldError(field, errorElement, window.messages?.fieldRequired || "This field is required")
-        return false
-    } else if (value && value.length < 2) {
+    if (value && value.length < 2) {
         setFieldError(field, errorElement, window.messages?.nameTooShort || "Name must be at least 2 characters")
         return false
     } else if (value && !/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/.test(value)) {
@@ -1056,10 +1053,7 @@ function validateEmail(field) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const errorElement = document.getElementById("email-validation-message")
 
-    if (!email && field.hasAttribute("required")) {
-        setFieldError(field, errorElement, window.messages?.fieldRequired || "Email is required")
-        return false
-    } else if (email && !emailPattern.test(email)) {
+    if (email && !emailPattern.test(email)) {
         setFieldError(field, errorElement, window.messages?.emailInvalid || "Please enter a valid email address")
         return false
     } else if (email) {
@@ -1079,10 +1073,7 @@ function validatePhone(field) {
     const phonePattern = /^\+?[0-9. ()-]{7,25}$/
     const errorElement = document.getElementById("phone-validation-message")
 
-    if (!phone && field.hasAttribute("required")) {
-        setFieldError(field, errorElement, window.messages?.fieldRequired || "Phone is required")
-        return false
-    } else if (phone && !phonePattern.test(phone)) {
+    if (phone && !phonePattern.test(phone)) {
         setFieldError(field, errorElement, window.messages?.phoneInvalid || "Please enter a valid phone number")
         return false
     } else if (phone) {
@@ -1103,10 +1094,7 @@ function checkPasswordMatch() {
 
     if (!repeatPasswordField) return false
 
-    if (!repeatPassword && repeatPasswordField.hasAttribute("required")) {
-        setFieldError(repeatPasswordField, matchMessage, window.messages?.fieldRequired || "Confirm password is required")
-        return false
-    } else if (password && repeatPassword) {
+    if (password && repeatPassword) {
         if (password !== repeatPassword) {
             setFieldError(repeatPasswordField, matchMessage, window.messages?.passwordsDoNotMatch || "Passwords do not match")
             return false

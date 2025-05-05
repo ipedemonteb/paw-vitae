@@ -1,11 +1,13 @@
 package ar.edu.itba.paw.models;
 
 public class AppointmentFile {
+
     private String fileName;
     private byte[] fileData;
     private long id;
     private String uploader_role;
     private long appointment_id;
+
     public AppointmentFile(String fileName, byte[] fileData, long id, String uploader_role, long appointment_id) {
         this.fileName = fileName;
         this.fileData = fileData;
@@ -13,6 +15,7 @@ public class AppointmentFile {
         this.uploader_role = uploader_role;
         this.appointment_id = appointment_id;
     }
+
     public String getFileName() {
         return fileName;
     }

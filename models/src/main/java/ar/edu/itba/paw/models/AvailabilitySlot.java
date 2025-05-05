@@ -10,7 +10,6 @@ public class AvailabilitySlot {
 
     private LocalTime endTime;
 
-    // Add a default constructor for Spring data binding
     public AvailabilitySlot() {
         // Default constructor required for Spring data binding
     }

@@ -3,6 +3,7 @@ package ar.edu.itba.paw.models;
 import java.util.List;
 
 public class Page<T> {
+
     private final List<T> content;
     private final int pageNumber;
     private final int pageSize;
