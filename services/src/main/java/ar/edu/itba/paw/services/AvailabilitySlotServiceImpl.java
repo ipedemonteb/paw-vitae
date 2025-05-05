@@ -27,7 +27,6 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
     public AvailabilitySlot create(long docId, AvailabilitySlot slot) {
         AvailabilitySlot toReturn = availabilitySlotsDao.create(docId, slot);
         LOGGER.info("AvailabilitySlot created: {}", toReturn);
-
       return  toReturn;
     }
     @Transactional
