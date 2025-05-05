@@ -44,7 +44,8 @@ public class AppointmentExistenceValidator implements ConstraintValidator<Appoin
                 return true; // If date or start time is null, skip validation
             }
 
-            List<Appointment> appointments = as.getAppointmentByDoctorAndDate(doctorId, date, startTime);
+            List<Appointment> appointments = as.getAppointmentByUserAndDate(doctorId, date, startTime);
+
 
             if (appointments.isEmpty()) {
                 return true;

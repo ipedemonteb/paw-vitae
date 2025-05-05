@@ -34,8 +34,19 @@ public class AppointmentForm {
     @NotNull
     private final long doctorId;
 
+    @NotNull
+    private long patientId;
+
     public AppointmentForm(long doctorId) {
         this.doctorId = doctorId;
+    }
+
+    public long getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(long patientId) {
+        this.patientId = patientId;
     }
 
     public long getDoctorId() {

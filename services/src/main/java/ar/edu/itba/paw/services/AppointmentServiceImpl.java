@@ -76,7 +76,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentDao.completeAppointments();
     }
 
-
     @Transactional
     @Override
     public Boolean cancelAppointment(long appointmentId,long userId) {
@@ -122,10 +121,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public List<Appointment> getAppointmentByDoctorAndDate(long doctorId, LocalDate date, Integer time) {
+    public List<Appointment> getAppointmentByUserAndDate(long userId, LocalDate date, Integer time) {
         if (date == null || time == null) {
-            return Collections.emptyList(); // Return an empty list if date or time is null
+            return Collections.emptyList();
         }
-        return appointmentDao.getAppointmentByDoctorAndDate(doctorId, date, time);
+        return appointmentDao.getAppointmentsByUserAndDate(userId, date, time);
     }
 }

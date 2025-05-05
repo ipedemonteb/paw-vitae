@@ -70,11 +70,13 @@ public class AppointmentController {
             @ModelAttribute("loggedUser") final Patient patient
     ) {
 
+        appointmentForm.setPatientId(patient.getId()); //TODO find a way to bind instead of set
+
         if (errors.hasErrors()) {
             return appointment(appointmentForm, doctorId);
         }
 
-        Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
+        Appointment appointment = as.create(appointmentForm.getPatientId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
         afs.create( appointmentForm.getFiles(),"patient",appointment.getId());
 
         return new ModelAndView("redirect:/appointment/confirmation/" + appointment.getId());

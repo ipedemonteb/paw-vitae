@@ -4,9 +4,7 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Page;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface AppointmentService {
@@ -24,8 +22,7 @@ public interface AppointmentService {
     Optional<Appointment> getById(long appointmentId);
     Page<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter);
 
-    List<Appointment> getAppointmentByDoctorAndDate(long doctorId, LocalDate date, Integer time);
-
+    List<Appointment> getAppointmentByUserAndDate(long userId, LocalDate date, Integer time);
 
     void updateAppointmentReport(long appointmentId, String report);
 }
