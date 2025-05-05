@@ -82,14 +82,6 @@ CREATE TABLE IF NOT EXISTS Appointments (
     FOREIGN KEY (doctor_id, specialty_id) REFERENCES Doctor_Specialties(doctor_id, specialty_id) ON DELETE CASCADE
     );
 
-CREATE UNIQUE INDEX IF NOT EXISTS ux_appointments_doctor_date_not_cancelled
-    ON appointments(doctor_id, "date")
-    WHERE status <> 'cancelado';
-
-CREATE UNIQUE INDEX IF NOT EXISTS ux_appointments_client_date_not_cancelled
-    ON appointments(client_id, "date")
-    WHERE status <> 'cancelado';
-
 CREATE TABLE IF NOT EXISTS Ratings (
                                        id SERIAL PRIMARY KEY,
                                        doctor_id INT NOT NULL,
@@ -110,29 +102,3 @@ CREATE TABLE IF NOT EXISTS appointment_files (
     file_data BYTEA NOT NULL,
     FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
     );
-
--- Trigger Function
-CREATE OR REPLACE FUNCTION enforce_future_date()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF TG_OP = 'INSERT' AND NEW.date <= current_timestamp THEN
-    RAISE EXCEPTION 'Appointment date must be in the future';
-END IF;
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_trigger
-    WHERE tgname = 'trg_future_date'
-  ) THEN
-CREATE TRIGGER trg_future_date
-    BEFORE INSERT ON appointments
-    FOR EACH ROW
-    EXECUTE FUNCTION enforce_future_date();
-END IF;
-END
-$$;
