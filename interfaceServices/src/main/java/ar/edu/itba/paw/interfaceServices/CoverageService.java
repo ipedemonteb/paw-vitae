@@ -10,12 +10,14 @@ import java.util.Optional;
 public interface CoverageService {
 
     Optional<Coverage> findById(long id);
-   List<Coverage> findByIds(List<Long> ids);
 
-   List<Coverage> findByDoctorId(long id);
+    List<Coverage> findByIds(List<Long> ids);
+
+    List<Coverage> findByDoctorId(long id);
 
     Coverage create(String name);
 
     Optional<Coverage> findByName(String name);
+
     List<Coverage> getAll();
 }

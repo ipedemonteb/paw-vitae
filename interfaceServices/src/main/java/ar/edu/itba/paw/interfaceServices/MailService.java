@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.Async;
 
 public interface MailService {
 
-    public void sendAppointmentStatusEmail(String subject, Appointment appointment);
+    void sendAppointmentStatusEmail(String subject, Appointment appointment);
 
     void sendReminderEmail(Appointment appointment);
 

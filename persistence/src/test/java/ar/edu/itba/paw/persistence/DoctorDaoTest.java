@@ -66,7 +66,7 @@ public class DoctorDaoTest {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.daoUtils = new DaoUtils();
         this.mockAvailability = mock(AvailabilitySlotsDao.class);
-        this.doctorDao = new DoctorDaoImpl(ds, daoUtils, mockAvailability);
+        this.doctorDao = new DoctorDaoImpl(ds, daoUtils);
         this.jdbcInsertUser = new SimpleJdbcInsert(ds)
                 .withTableName("Users")
                 .usingGeneratedKeyColumns("id");
