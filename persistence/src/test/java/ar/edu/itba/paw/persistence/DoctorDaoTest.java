@@ -13,8 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.sql.Time;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +54,6 @@ public class DoctorDaoTest {
     private DoctorDaoImpl doctorDao;
     private AvailabilitySlotsDao mockAvailability;
     private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsertTimeAvailability;
     private SimpleJdbcInsert jdbcInsertUser;
     private SimpleJdbcInsert jdbcInsertDoctor;
 
@@ -70,8 +67,6 @@ public class DoctorDaoTest {
         this.daoUtils = new DaoUtils();
         this.mockAvailability = mock(AvailabilitySlotsDao.class);
         this.doctorDao = new DoctorDaoImpl(ds, daoUtils, mockAvailability);
-        this.jdbcInsertTimeAvailability = new SimpleJdbcInsert(ds)
-                .withTableName("Doctor_Availability");
         this.jdbcInsertUser = new SimpleJdbcInsert(ds)
                 .withTableName("Users")
                 .usingGeneratedKeyColumns("id");
