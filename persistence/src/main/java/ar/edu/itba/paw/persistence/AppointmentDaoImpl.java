@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -179,13 +180,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
     @Override
-    public List<Appointment> getAppointmentByDoctorAndDate(long doctorId, LocalDate date, Integer time) {
+    public List<Appointment> getAppointmentsByUserAndDate(long userId, LocalDate date, Integer time) {
         StringBuilder sql = new StringBuilder(BASE_SQL)
-                .append("WHERE a.doctor_id = ? ")
-                .append("AND DATE(a.date) = ? ")
-                .append("AND TIME(a.date) = ? ")
+                .append("WHERE (a.doctor_id = ? OR a.client_id = ?) ")
+                .append("AND a.date::date = ? ")
+                .append("AND a.date::time = ? ")
                 .append(ORDER_BY_DATE_ASC);
 
-        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, doctorId, date, time);
+        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, userId, userId, java.sql.Date.valueOf(date), java.sql.Time.valueOf(LocalTime.of(time, 0)));
     }
 }

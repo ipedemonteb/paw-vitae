@@ -24,7 +24,7 @@ import java.util.Optional;
 
         List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter);
 
-        List<Appointment> getAppointmentByDoctorAndDate(long doctorId, LocalDate date, Integer time);
+        List<Appointment> getAppointmentsByUserAndDate(long userId, LocalDate date, Integer time);
 
         List<Appointment> getAppointmentsByDate(LocalDate today);
 
