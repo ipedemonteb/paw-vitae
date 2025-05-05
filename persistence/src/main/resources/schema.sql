@@ -111,28 +111,3 @@ CREATE TABLE IF NOT EXISTS appointment_files (
     FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
     );
 
--- Trigger Function
-CREATE OR REPLACE FUNCTION enforce_future_date()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF TG_OP = 'INSERT' AND NEW.date <= current_timestamp THEN
-    RAISE EXCEPTION 'Appointment date must be in the future';
-END IF;
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_trigger
-    WHERE tgname = 'trg_future_date'
-  ) THEN
-CREATE TRIGGER trg_future_date
-    BEFORE INSERT ON appointments
-    FOR EACH ROW
-    EXECUTE FUNCTION enforce_future_date();
-END IF;
-END
-$$;
