@@ -16,12 +16,7 @@ import java.time.format.DateTimeParseException;
 @ControllerAdvice
 public class GlobalInitBinder {
 
-    private final CoverageService coverageService;
-
-    @Autowired
-    public GlobalInitBinder(CoverageService coverageService) {
-        this.coverageService = coverageService;
-    }
+    public GlobalInitBinder() {}
 
     @InitBinder
     public void bindLocalTime(WebDataBinder binder) {

@@ -1,12 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -22,14 +18,12 @@ public class SearchController {
 
     private final DoctorService doctorService;
     private final SpecialtyService specialtyService;
-    private final AppointmentService appointmentService;
     private final CoverageService coverageService;
 
     @Autowired
-    public SearchController(DoctorService doctorService, SpecialtyService specialtyService, AppointmentService appointmentService, CoverageService coverageService) {
+    public SearchController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
-        this.appointmentService = appointmentService;
         this.coverageService = coverageService;
     }
 
