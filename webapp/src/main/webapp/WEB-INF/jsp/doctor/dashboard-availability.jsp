@@ -92,19 +92,19 @@
 
     <!-- Dashboard Navigation Tabs -->
     <div class="dashboard-nav">
-        <a href="<c:url value='/doctor/dashboard/upcoming'/>" class="nav-tab ${activeTab == 'upcoming' ? 'active' : ''}">
+        <a href="<c:url value='/doctor/dashboard/upcoming'/>" class="nav-tab ">
             <i class="fas fa-calendar-alt"></i>
             <span><spring:message code="dashboard.tab.upcoming" /></span>
         </a>
-        <a href="<c:url value='/doctor/dashboard/history'/>" class="nav-tab ${activeTab == 'history' ? 'active' : ''}">
+        <a href="<c:url value='/doctor/dashboard/history'/>" class="nav-tab ">
             <i class="fas fa-history"></i>
             <span><spring:message code="dashboard.tab.history" /></span>
         </a>
-        <a href="<c:url value='/doctor/dashboard/profile'/>" class="nav-tab ${activeTab == 'profile' ? 'active' : ''}">
+        <a href="<c:url value='/doctor/dashboard/profile'/>" class="nav-tab ">
             <i class="fas fa-user-md"></i>
             <span><spring:message code="dashboard.tab.profile" /></span>
         </a>
-        <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab ${activeTab == 'availability' ? 'active' : ''}">
+        <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab active >
             <i class="fas fa-calendar-check"></i>
             <span><spring:message code="dashboard.tab.availability" /></span>
         </a>

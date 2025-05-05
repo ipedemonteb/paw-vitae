@@ -39,7 +39,6 @@
                             <option value="all" ${param.status == 'all' || empty param.status ? 'selected' : ''}><spring:message code="dashboard.history.all" /></option>
                             <option value="completed" ${param.status == 'completed' ? 'selected' : ''}><spring:message code="appointment.status.completed" /></option>
                             <option value="cancelled" ${param.status == 'cancelled' ? 'selected' : ''}><spring:message code="appointment.status.cancelled" /></option>
-                            <option value="noShow" ${param.status == 'noShow' ? 'selected' : ''}><spring:message code="appointment.status.noShow" /></option>
                         </select>
                     </div>
                     <div class="search-container">

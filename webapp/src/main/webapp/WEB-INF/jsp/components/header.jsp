@@ -107,11 +107,20 @@
       <sec:authorize access="isAuthenticated()">
         <div class="user-dropdown">
           <button class="user-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
-            <span class="user-avatar">
-              <sec:authentication property="principal.username" var="username" />
-              <span>${username.charAt(0)}</span>
+
+        <sec:authorize access="hasRole('ROLE_PATIENT')">
+          <span class="user-avatar">
+          <sec:authentication property="principal.username" var="username" />
+          <span>${username.charAt(0)}</span>
             </span>
-            <span class="user-name">${username}</span>
+        </sec:authorize>
+        <sec:authorize access="hasRole('ROLE_DOCTOR')">
+          <img src="<c:url value='/image/${doctor != null ? doctor.getId() : user.getId()}' />" alt="Doctor Avatar" class="doctor-avatar-small" />
+        </sec:authorize>
+            <span class="user-name">
+        <sec:authentication property="principal.username" var="username" />
+        ${username}
+      </span>
             <i class="fas fa-chevron-down"></i>
           </button>
           <div class="user-dropdown-menu">
@@ -309,3 +318,15 @@
     handleResize();
   });
 </script>
+<style>
+  .doctor-avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--primary-light);
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+    transition: var(--transition);
+  }
+</style>

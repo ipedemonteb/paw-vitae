@@ -304,7 +304,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary btn-block">
+                            <button id="submitButton" type="submit" class="btn btn-primary btn-block">
                             <span>
                                 <spring:message code="appointment.details.doctor.submit"/>
                             </span>
@@ -374,7 +374,6 @@
     };
     contextPath = "${pageContext.request.contextPath}";
 
-
     const availabilitySlots = [
         <c:forEach var="slot" items="${doctor.availabilitySlots}" varStatus="status">
         {
@@ -443,6 +442,15 @@
     document.addEventListener('DOMContentLoaded', function() {
 
         const fileInput = document.getElementById('files');
+
+        const form = document.getElementById('doctorFileForm');
+        const submitButton = document.getElementById('submitButton');
+
+        if (form && submitButton) {
+            form.addEventListener('submit', function () {
+                submitButton.disabled = true;
+            });
+        }
 
         fileInput.addEventListener('change', function(event) {
             if (event.target.files.length > 0) {
