@@ -9,8 +9,11 @@ import java.util.Optional;
 
 public interface AppointmentFileService {
 
-     List<AppointmentFile> create( MultipartFile[] files, String uploader_role, long appointment_id);
-     Optional<AppointmentFile> getById(long id);
-     List<AppointmentFile> getByAppointmentId(long appointment_id);
-     Optional<AppointmentFile> getAuthorizedFile(long fileId, long appointmentId, String username);
+    List<AppointmentFile> create(MultipartFile[] files, String uploader_role, long appointment_id);
+
+    Optional<AppointmentFile> getById(long id);
+
+    List<AppointmentFile> getByAppointmentId(long appointment_id);
+
+    Optional<AppointmentFile> getAuthorizedFile(long fileId, long appointmentId, String username);
 }
