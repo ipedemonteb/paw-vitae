@@ -135,6 +135,8 @@
                         <!-- Hidden fields to store actual values -->
                         <form:hidden path="appointmentDate" id="appointmentDate" />
                         <form:hidden path="appointmentHour" id="appointmentHour" />
+                        <form:hidden path="patientId" id="patientId"/>
+                        <form:hidden path="doctorId" id="doctorId"/>
 
                         <!-- Error messages for date and hour -->
 
