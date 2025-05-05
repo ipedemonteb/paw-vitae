@@ -90,7 +90,7 @@
                     </div>
                 </c:if>
 
-                <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment" id="appointmentForm" class="appointment-form" enctype="multipart/form-data" onsubmit="return submitOnce(this);">>
+                <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment" id="appointmentForm" class="appointment-form" enctype="multipart/form-data" onsubmit="return submitOnce(this);">
                     <div class="specialty-card-appointment">
                         <div class="specialty-icon-appointment">
                             <i class="fas fa-stethoscope"></i>
@@ -137,8 +137,7 @@
                         <form:hidden path="appointmentHour" id="appointmentHour" />
 
                         <!-- Error messages for date and hour -->
-                        <form:errors path="appointmentDate" cssClass="error-message" />
-                        <form:errors path="appointmentHour" cssClass="error-message" />
+
 
                         <!-- Time slots container -->
                         <div id="timeSlotsContainer" class="time-slots-container" style="display: none;">
@@ -151,6 +150,8 @@
                             <p class="mb-1"><strong><spring:message code="appointment.summary.title"/></strong></p>
                             <p id="appointmentSummaryText" class="mb-0"></p>
                         </div>
+                        <form:errors path="appointmentDate" cssClass="error-message" />
+                        <form:errors path="appointmentHour" cssClass="error-message" />
                     </div>
 
                     <!-- Reason for appointment -->
