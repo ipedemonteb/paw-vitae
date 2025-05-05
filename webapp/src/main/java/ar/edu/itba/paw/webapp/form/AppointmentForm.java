@@ -6,7 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-@AppointmentExistence(doctorId = "doctorId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existence}")
+@AppointmentExistence(userId = "doctorId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existence}")
+@AppointmentExistence(userId = "patientId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existence}")
 @AppointmentValidDate(date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.valid}")
 public class AppointmentForm {
 
@@ -32,7 +33,7 @@ public class AppointmentForm {
     private long specialtyId;
 
     @NotNull
-    private final long doctorId;
+    private long doctorId;
 
     @NotNull
     private long patientId;
@@ -51,6 +52,10 @@ public class AppointmentForm {
 
     public long getDoctorId() {
         return doctorId;
+    }
+
+    public void setDoctorId(long doctorId) {
+        this.doctorId = doctorId;
     }
 
     public MultipartFile[] getPatientFiles() {

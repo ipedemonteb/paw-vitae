@@ -48,8 +48,11 @@ public class AppointmentController {
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
     public ModelAndView appointment(
             @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
-            @RequestParam(required = true) Long doctorId
+            @RequestParam(required = true) Long doctorId,
+            @ModelAttribute("loggedUser") final Patient patient
     ) {
+        appointmentForm.setPatientId(patient.getId()); //TODO bind please
+        appointmentForm.setDoctorId(doctorId); //TODO bind please
         ModelAndView mav = new ModelAndView("appointment/appointment");
         Doctor doctor = ds.getByIdWithAppointments(doctorId).orElseThrow(UserNotFoundException::new);
         mav.addObject("doctor", doctor);
@@ -64,13 +67,11 @@ public class AppointmentController {
             @ModelAttribute("loggedUser") final Patient patient
     ) {
 
-        appointmentForm.setPatientId(patient.getId()); //TODO find a way to bind instead of set
-
         if (errors.hasErrors()) {
-            return appointment(appointmentForm, doctorId);
+            return appointment(appointmentForm, doctorId, patient);
         }
 
-        Appointment appointment = as.create(appointmentForm.getPatientId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
+        Appointment appointment = as.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
         afs.create( appointmentForm.getFiles(),"patient",appointment.getId());
 
         return new ModelAndView("redirect:/appointment/confirmation/" + appointment.getId());

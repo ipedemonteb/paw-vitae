@@ -8,11 +8,14 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = { AppointmentExistenceValidator.class })
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(AppointmentExistences.class)
 public @interface AppointmentExistence {
     String message() default "Appointment already exists at this time.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-    String doctorId();
+    String userId();
     String date();
     String startTime();
 }
+
+
