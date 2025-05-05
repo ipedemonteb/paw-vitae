@@ -216,7 +216,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary">
+                                            <button id="submitButton" type="submit" class="btn btn-primary">
                                                 <i class="fas fa-star"></i>
                                                 <spring:message code="appointment.details.review.submit" />
                                             </button>
@@ -318,15 +318,19 @@
         const starInputs = document.querySelectorAll('.star-input');
         const ratingDisplay = document.querySelector('.rating-display');
         const starLabels = document.querySelectorAll('.star-label');
+        const form = document.getElementById('ratingForm');
+        const submitButton = document.getElementById('submitButton');
 
+        if (form && submitButton) {
+            form.addEventListener('submit', function () {
+                submitButton.disabled = true;
+            });
+        }
         if (starInputs.length > 0 && ratingDisplay) {
-            // Initialize star rating
             starInputs.forEach((input, index) => {
                 input.addEventListener('change', function() {
                     const value = parseInt(this.value);
                     ratingDisplay.textContent = value + '.0';
-
-                    // Update visual state of stars - left to right
                     starLabels.forEach((label) => {
                         const starValue = parseInt(label.getAttribute('data-value'));
                         if (starValue <= value) {
@@ -338,12 +342,9 @@
                 });
             });
 
-            // Add hover effects - left to right
             starLabels.forEach((label) => {
                 label.addEventListener('mouseenter', function() {
                     const value = parseInt(this.getAttribute('data-value'));
-
-                    // Preview stars on hover
                     starLabels.forEach((l) => {
                         const starValue = parseInt(l.getAttribute('data-value'));
                         if (starValue <= value) {
@@ -355,10 +356,8 @@
                 });
 
                 label.addEventListener('mouseleave', function() {
-                    // Remove hover class from all stars
                     starLabels.forEach(l => l.classList.remove('hover'));
 
-                    // Restore selected stars
                     const selectedInput = document.querySelector('.star-input:checked');
                     if (selectedInput) {
                         const selectedValue = parseInt(selectedInput.value);

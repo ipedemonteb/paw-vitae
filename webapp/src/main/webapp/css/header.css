@@ -42,6 +42,7 @@
     text-decoration: none;
 }
 
+
 .main-header .btn-primary {
     background-color: var(--primary-color);
     color: var(--white);

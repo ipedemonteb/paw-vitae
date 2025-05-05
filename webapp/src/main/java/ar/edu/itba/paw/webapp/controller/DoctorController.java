@@ -69,10 +69,10 @@ public class DoctorController {
                                               @ModelAttribute("loggedUser") final Doctor doctor
     ){
         final ModelAndView mav = new ModelAndView("doctor/dashboard-history");
-        mav.addObject("doctor", doctor);
         Page<Appointment> appointmentsPage = as.getAppointments(doctor.getId(),false, page, 5,status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
+        mav.addObject("doctor", doctor);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
         mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
         return mav;
@@ -148,11 +148,13 @@ public class DoctorController {
     @RequestMapping(value = "doctor/dashboard/appointment-details/{id}", method = RequestMethod.GET)
     public ModelAndView doctorAppointmentDetails(
             @ModelAttribute("doctorFileForm") final DoctorFileForm doctorFileForm,
+            @ModelAttribute("loggedUser") final Doctor doctor,
             @PathVariable("id") Long id) {
         ModelAndView mav = new ModelAndView("/doctor/appointment-details");
         Appointment appointment = as.getById(id).orElseThrow(() ->
                 new IllegalArgumentException("Invalid appointment Id:" + id));
         mav.addObject("appointment", appointment);
+        mav.addObject("doctor",doctor);
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
         mav.addObject("doctorFiles", afs.getByAppointmentId(appointment.getId()));
         Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
@@ -164,11 +166,12 @@ public class DoctorController {
     public ModelAndView doctorAppointmentDetails(
             @Valid @ModelAttribute("doctorFileForm") final DoctorFileForm doctorFileForm,
             BindingResult errors,
+            @ModelAttribute("loggedUser") final Doctor doctor,
             @PathVariable("id") Long id
     ) {
 
         if (errors.hasErrors()) {
-            return doctorAppointmentDetails(doctorFileForm, id);
+            return doctorAppointmentDetails(doctorFileForm,doctor, id);
         }
 
         Appointment appointment = as.getById(id).orElseThrow(() ->

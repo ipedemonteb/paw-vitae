@@ -11,6 +11,7 @@ public class AuthUserDetails extends User {
     @Serial
     private static final long serialVersionUID = 1L;
 
+
     public AuthUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
     }
