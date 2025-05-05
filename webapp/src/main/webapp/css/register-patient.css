@@ -246,6 +246,51 @@ body {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
+/* Add this new rule to maintain error styling on focus */
+.input-field.input-error:focus {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* Add validation icons styling */
+
+.validation-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.validation-icon.valid {
+    color: var(--success);
+}
+
+.validation-icon.error {
+    color: var(--danger);
+}
+
+/* Show validation icons based on input state */
+.input-field.valid + .validation-icon.valid {
+    opacity: 1;
+}
+
+.input-field.input-error + .validation-icon.error {
+    opacity: 1;
+}
+
+/* Add valid state styling */
+.input-field.valid {
+    border-color: var(--success);
+}
+
+.input-field.valid:focus {
+    border-color: var(--success);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
 .input-field:focus + .input-icon {
     color: var(--primary-color);
 }

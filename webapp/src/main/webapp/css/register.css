@@ -259,6 +259,11 @@ body {
     margin-left: 4px;
 }
 
+.required-mark {
+    color: var(--danger);
+    margin-left: 4px;
+}
+
 .input-wrapper {
     position: relative;
     display: flex;
@@ -742,57 +747,49 @@ body {
 /* ===== TOOLTIP STYLES ===== */
 .tooltip {
     position: relative;
-    display: inline-block;
-    margin-left: 0.5rem;
+    display: inline-flex;
+    margin-left: 8px;
 }
 
 .tooltip-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background-color: var(--gray-300);
-    color: var(--white);
-    font-size: 0.75rem;
-    cursor: help;
+    color: var(--text-light);
+    font-size: 16px;
+    cursor: pointer;
 }
 
-.tooltip-text {
-    visibility: hidden;
-    width: 200px;
-    background-color: var(--text-color);
-    color: var(--white);
-    text-align: center;
-    border-radius: 6px;
-    padding: 0.75rem;
+.tooltip-content {
     position: absolute;
-    z-index: 1;
-    bottom: 125%;
+    top: -10px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -100%);
+    width: 250px;
+    background-color: var(--background-dark);
+    color: var(--white);
+    padding: 12px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 400;
+    box-shadow: var(--shadow-md);
     opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 0.85rem;
-    font-weight: normal;
-    box-shadow: var(--shadow-lg);
+    visibility: hidden;
+    transition: var(--transition);
+    z-index: 10;
 }
 
-.tooltip-text::after {
+.tooltip-content::after {
     content: "";
     position: absolute;
-    top: 100%;
+    bottom: -8px;
     left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0;
     border-style: solid;
-    border-color: var(--text-color) transparent transparent transparent;
+    border-color: var(--background-dark) transparent transparent;
 }
 
-.tooltip:hover .tooltip-text {
-    visibility: visible;
+.tooltip:hover .tooltip-content {
     opacity: 1;
+    visibility: visible;
 }
 
 /* ===== CHECKBOX STYLES ===== */
