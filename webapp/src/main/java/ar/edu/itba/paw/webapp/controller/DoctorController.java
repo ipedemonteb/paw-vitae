@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import org.slf4j.Logger;
@@ -128,6 +129,9 @@ public class DoctorController {
                                           @ModelAttribute("loggedUser") final User user
     ){
         boolean result = as.cancelAppointment(appointmentId, user.getId());
+        if (!result) {
+            return new ModelAndView("redirect:/doctor/dashboard/upcoming?cancelled=false");
+        }
         return new ModelAndView("redirect:/doctor/dashboard/upcoming?cancelled=true");
     }
 
@@ -151,8 +155,7 @@ public class DoctorController {
             @ModelAttribute("loggedUser") final Doctor doctor,
             @PathVariable("id") Long id) {
         ModelAndView mav = new ModelAndView("/doctor/appointment-details");
-        Appointment appointment = as.getById(id).orElseThrow(() ->
-                new IllegalArgumentException("Invalid appointment Id:" + id));
+        Appointment appointment = as.getById(id).orElseThrow(AppointmentNotFoundException::new);
         mav.addObject("appointment", appointment);
         mav.addObject("doctor",doctor);
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
@@ -169,14 +172,10 @@ public class DoctorController {
             @ModelAttribute("loggedUser") final Doctor doctor,
             @PathVariable("id") Long id
     ) {
-
         if (errors.hasErrors()) {
             return doctorAppointmentDetails(doctorFileForm,doctor, id);
         }
-
-        Appointment appointment = as.getById(id).orElseThrow(() ->
-                new IllegalArgumentException("Invalid appointment Id:" + id));
-
+        Appointment appointment = as.getById(id).orElseThrow(AppointmentNotFoundException::new);
         afs.create(doctorFileForm.getFiles(),"doctor",appointment.getId());
         as.updateAppointmentReport(appointment.getId(), doctorFileForm.getReport());
         return new ModelAndView("redirect:/doctor/dashboard/appointment-details/" + id);

@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.form.PatientRatingForm;
 import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
 import org.slf4j.Logger;
@@ -118,19 +119,13 @@ public class PatientController {
             @ModelAttribute("patientRatingForm") final PatientRatingForm patientRatingForm,
             @PathVariable("id") Long id) {
         ModelAndView mav = new ModelAndView("patient/appointment-details");
-        Appointment appointment = as.getById(id).orElseThrow(() ->
-                new IllegalArgumentException("Invalid appointment Id:" + id));
-
-        // Check if this appointment already has a rating
+        Appointment appointment = as.getById(id).orElseThrow(AppointmentNotFoundException::new);
         Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
-
         mav.addObject("appointment", appointment);
         mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
         mav.addObject("doctorFiles", afs.getByAppointmentId(appointment.getId()));
         mav.addObject("existingRating", existingRating.orElse(null));
-
-        // Only create a new form if there's no existing rating
-        if (!existingRating.isPresent()) {
+        if (existingRating.isEmpty()) {
             patientRatingForm.setAppointmentId(id);
             mav.addObject("patientRatingForm", patientRatingForm);
         }
@@ -146,14 +141,9 @@ public class PatientController {
         if (errors.hasErrors()) {
             return patientAppointmentDetails(form, form.getAppointmentId());
         }
-
-        Appointment appointment = as.getById(form.getAppointmentId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid appointment Id:" + form.getAppointmentId()));
-
-        // Check if rating already exists
+        Appointment appointment = as.getById(form.getAppointmentId()).orElseThrow(AppointmentNotFoundException::new);
         Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
         if (existingRating.isPresent()) {
-            // Rating already exists, redirect back
             return new ModelAndView("redirect:/patient/dashboard/appointment-details/" + form.getAppointmentId());
         }
 
