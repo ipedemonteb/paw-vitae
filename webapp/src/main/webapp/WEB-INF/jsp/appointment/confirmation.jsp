@@ -92,7 +92,7 @@
                                         <i class="fas fa-file-pdf"></i>
                                     </div>
                                     <div class="file-details">
-                                        <div class="file-name">${file.fileName}</div>
+                                        <div class="file-name"><c:out value="${file.fileName}"/></div>
                                         <div class="file-meta">
                                             <span class="file-type">PDF</span>
                                         </div>
