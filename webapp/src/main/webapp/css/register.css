@@ -372,7 +372,7 @@ body {
 }
 
 .password-strength.strength-strong .strength-meter-fill {
-    width: 75%;
+    width: 100%;
     background-color: var(--success);
 }
 
