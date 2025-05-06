@@ -180,56 +180,8 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <div class="footer-logo">
-                        <h2><spring:message code="app.name" /></h2>
-                    </div>
-                    <p class="footer-description"><spring:message code="footer.description" /></p>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
 
-                <div class="footer-column">
-                    <h3 class="footer-heading"><spring:message code="footer.quickLinks" /></h3>
-                    <ul class="footer-links">
-                        <li><a href="<c:url value='/' />"><spring:message code="footer.links.home" /></a></li>
-                        <li><a href="<c:url value='/about-us' />"><spring:message code="footer.links.about" /></a></li>
-                        <li><a href="#"><spring:message code="footer.links.services" /></a></li>
-                        <li><a href="#"><spring:message code="footer.links.doctors" /></a></li>
-                        <li><a href="#"><spring:message code="footer.links.contact" /></a></li>
-                    </ul>
-                </div>
 
-                <div class="footer-column">
-                    <h3 class="footer-heading"><spring:message code="footer.services" /></h3>
-                    <ul class="footer-links">
-                        <li><a href="#"><spring:message code="footer.services.appointments" /></a></li>
-                        <li><a href="#"><spring:message code="footer.services.consultations" /></a></li>
-                        <li><a href="#"><spring:message code="footer.services.emergency" /></a></li>
-                        <li><a href="#"><spring:message code="footer.services.diagnostics" /></a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-column">
-                    <h3 class="footer-heading"><spring:message code="footer.contact" /></h3>
-                    <ul class="contact-info">
-                        <li><i class="fas fa-map-marker-alt"></i> <spring:message code="footer.contact.address" /></li>
-                        <li><i class="fas fa-phone"></i> <spring:message code="footer.contact.phone" /></li>
-                        <li><i class="fas fa-envelope"></i> <spring:message code="footer.contact.email" /></li>
-                    </ul>
-                </div>
-            </div>
-
-        </div>
-    </footer>
 
     <!-- Back to top button -->
     <button id="backToTop" class="back-to-top">

@@ -210,127 +210,50 @@
         </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section class="testimonials-section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag"><spring:message code="landing.testimonials.tag" /></span>
-                <h2 class="section-title"><spring:message code="landing.testimonials.title" /></h2>
-                <p class="section-subtitle"><spring:message code="landing.testimonials.subtitle" /></p>
-            </div>
-
-            <div class="testimonials-slider">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                        <p class="testimonial-text"><spring:message code="landing.testimonials.1.text" /></p>
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <%--                        <img src="<c:url value='/images/avatar-1.jpg' />" alt="<spring:message code="landing.testimonials.1.name" />" />--%>
-                        </div>
-                        <div class="author-info">
-                            <h4 class="author-name"><spring:message code="landing.testimonials.1.name" /></h4>
-                            <p class="author-title"><spring:message code="landing.testimonials.1.title" /></p>
-                        </div>
-                    </div>
+    <!-- Doctor Ratings Section -->
+    <c:if test="${not empty ratings}">
+        <section class="testimonials-section doctor-ratings-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag"><spring:message code="landing.doctor.ratings.tag" text="Calificaciones" /></span>
+                    <h2 class="section-title"><spring:message code="landing.doctor.ratings.title" text="Calificaciones de Doctores" /></h2>
+                    <p class="section-subtitle"><spring:message code="landing.doctor.ratings.subtitle" text="Vea lo que nuestros pacientes dicen sobre nuestros doctores" /></p>
                 </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                        <p class="testimonial-text"><spring:message code="landing.testimonials.2.text" /></p>
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                <div class="testimonials-slider">
+                    <c:forEach items="${ratings}" var="entry" varStatus="status">
+                        <div class="testimonial-card doctor-rating-card">
+                            <div class="testimonial-content">
+                                <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                                <p class="testimonial-text">${entry.key.comment}</p>
+                                <div class="testimonial-rating">
+                                    <c:forEach begin="1" end="5" var="star">
+                                        <i class="fas fa-star ${star <= entry.key.rating ? '' : 'far'}"></i>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">
+                                        <%-- <img src="<c:url value='/images/avatar-${status.index + 1}.jpg' />" alt="${entry.value.name}" /> --%>
+                                </div>
+                                <div class="author-info">
+                                    <h4 class="author-name">${entry.value.name} ${entry.value.lastName}</h4>
+                                    <p class="author-title"><spring:message code="landing.doctor.ratings.patient" text="Paciente" /></p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <%--                        <img src="<c:url value='/images/avatar-2.jpg' />" alt="<spring:message code="landing.testimonials.2.name" />" />--%>
-                        </div>
-                        <div class="author-info">
-                            <h4 class="author-name"><spring:message code="landing.testimonials.2.name" /></h4>
-                            <p class="author-title"><spring:message code="landing.testimonials.2.title" /></p>
-                        </div>
-                    </div>
+                    </c:forEach>
+                </div>
+
+                <div class="testimonial-controls">
+                    <button class="testimonial-prev"><i class="fas fa-arrow-left"></i></button>
+                    <button class="testimonial-next"><i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-
-            <div class="testimonial-controls">
-                <button class="testimonial-prev"><i class="fas fa-arrow-left"></i></button>
-                <button class="testimonial-next"><i class="fas fa-arrow-right"></i></button>
-            </div>
-        </div>
-    </section>
+        </section>
+    </c:if>
 
     <!-- Footer -->
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <div class="footer-logo">
-                        <h2><spring:message code="app.name" /></h2>
-                    </div>
-                    <p class="footer-description"><spring:message code="footer.description" /></p>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-
-                <div class="footer-column">
-                    <h3 class="footer-heading"><spring:message code="footer.quickLinks" /></h3>
-                    <ul class="footer-links">
-                        <li><a href="#"><spring:message code="footer.links.home" /></a></li>
-                        <li><a href="#"><spring:message code="footer.links.about" /></a></li>
-                        <li><a href="#"><spring:message code="footer.links.services" /></a></li>
-                        <li><a href="#"><spring:message code="footer.links.doctors" /></a></li>
-                        <li><a href="#"><spring:message code="footer.links.contact" /></a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-column">
-                    <h3 class="footer-heading"><spring:message code="footer.services" /></h3>
-                    <ul class="footer-links">
-                        <li><a href="#"><spring:message code="footer.services.appointments" /></a></li>
-                        <li><a href="#"><spring:message code="footer.services.consultations" /></a></li>
-                        <li><a href="#"><spring:message code="footer.services.emergency" /></a></li>
-                        <li><a href="#"><spring:message code="footer.services.diagnostics" /></a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-column">
-                    <h3 class="footer-heading"><spring:message code="footer.contact" /></h3>
-                    <ul class="contact-info">
-                        <li><i class="fas fa-map-marker-alt"></i> <spring:message code="footer.contact.address" /></li>
-                        <li><i class="fas fa-phone"></i> <spring:message code="footer.contact.phone" /></li>
-                        <li><i class="fas fa-envelope"></i> <spring:message code="footer.contact.email" /></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p class="copyright"><spring:message code="footer.copyright" arguments="2025" /></p>
-                <div class="footer-bottom-links">
-                    <a href="#"><spring:message code="footer.privacy" /></a>
-                    <a href="#"><spring:message code="footer.terms" /></a>
-                </div>
-            </div>
-        </div>
-    </footer>
 
     <!-- Back to top button -->
     <button id="backToTop" class="back-to-top">
@@ -379,30 +302,32 @@
         });
     });
 
-    // Testimonial slider controls
+    // Doctor ratings slider controls
     const prevButton = document.querySelector('.testimonial-prev');
     const nextButton = document.querySelector('.testimonial-next');
-    const testimonials = document.querySelectorAll('.testimonial-card');
-    let currentTestimonial = 0;
+    const doctorRatings = document.querySelectorAll('.doctor-rating-card');
+    let currentRating = 0;
 
-    function showTestimonial(index) {
-        testimonials.forEach((testimonial, i) => {
-            testimonial.style.display = i === index ? 'flex' : 'none';
+    if (doctorRatings.length > 0) {
+        function showRating(index) {
+            doctorRatings.forEach((rating, i) => {
+                rating.style.display = i === index ? 'flex' : 'none';
+            });
+        }
+
+        prevButton.addEventListener('click', () => {
+            currentRating = (currentRating - 1 + doctorRatings.length) % doctorRatings.length;
+            showRating(currentRating);
         });
+
+        nextButton.addEventListener('click', () => {
+            currentRating = (currentRating + 1) % doctorRatings.length;
+            showRating(currentRating);
+        });
+
+        // Initialize rating display
+        showRating(currentRating);
     }
-
-    prevButton.addEventListener('click', () => {
-        currentTestimonial = (currentTestimonial - 1 + testimonials.length) % testimonials.length;
-        showTestimonial(currentTestimonial);
-    });
-
-    nextButton.addEventListener('click', () => {
-        currentTestimonial = (currentTestimonial + 1) % testimonials.length;
-        showTestimonial(currentTestimonial);
-    });
-
-    // Initialize testimonial display
-    showTestimonial(currentTestimonial);
 
     // Set current year for copyright
     document.addEventListener('DOMContentLoaded', function() {

@@ -7,13 +7,15 @@ import java.util.Optional;
 
 public interface RatingDao {
 
-    public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment);
+     Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment);
 
-    public Optional<Rating> getRating(long id);
+     Optional<Rating> getRating(long id);
 
-    public Optional<Rating> getRatingByAppointmentId(long appointmentId);
+     Optional<Rating> getRatingByAppointmentId(long appointmentId);
 
-    public List<Rating> getRatingsByDoctorId(long doctorId);
+     List<Rating> getRatingsByDoctorId(long doctorId);
 
-    public List<Rating> getRatingsByPatientId(long patientId);
+     List<Rating> getRatingsByPatientId(long patientId);
+
+     List<Rating> getFiveTopRatings();
 }
