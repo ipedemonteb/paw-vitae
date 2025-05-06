@@ -10,8 +10,6 @@ public interface UserService {
 
     boolean changePassword(String token, String password);
 
-    String getLanguageById(long id);
-
     void changeLanguage(long id, String language);
 
     void setVerificationToken(User user);

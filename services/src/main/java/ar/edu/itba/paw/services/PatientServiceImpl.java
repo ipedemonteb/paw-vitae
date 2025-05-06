@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class PatientServiceImpl implements PatientService {
         this.as = as;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Patient> getById(long id) {
         Optional<Patient> patient = patientDao.getById(id);
@@ -56,6 +58,7 @@ public class PatientServiceImpl implements PatientService {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Patient> getByEmail(String email) {
         return patientDao.getByEmail(email);
@@ -75,17 +78,21 @@ public class PatientServiceImpl implements PatientService {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Patient> getByIdWithAppointments(long id) {
         Optional<Patient> patient = patientDao.getById(id);
         patient.ifPresent(c -> c.setAppointments(as.getByPatientId(id)));
         return patient;
     }
+
+    @Transactional(readOnly = true)
     @Override
     public Optional<Patient> getByResetToken(String token) {
         return patientDao.getByResetToken(token);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Patient> getByVerificationToken(String token) {
         return patientDao.getByVerificationToken(token);

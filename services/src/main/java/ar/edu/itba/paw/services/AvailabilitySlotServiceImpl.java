@@ -22,6 +22,7 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
     public AvailabilitySlotServiceImpl(final AvailabilitySlotsDao availabilitySlotsDao) {
         this.availabilitySlotsDao = availabilitySlotsDao;
     }
+
     @Transactional
     @Override
     public AvailabilitySlot create(long docId, AvailabilitySlot slot) {
@@ -29,6 +30,7 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
         LOGGER.info("AvailabilitySlot created: {}", toReturn);
       return  toReturn;
     }
+
     @Transactional
     @Override
     public List<AvailabilitySlot> create(long docId, List<AvailabilitySlot> slots) {
@@ -39,6 +41,7 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
         LOGGER.debug("Creating {} availability slots for doctor {}", slots.size(), docId);
         return returnSlot;
     }
+
     @Transactional
     @Override
     public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
@@ -46,11 +49,11 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
         LOGGER.debug("Updating availability for doctor {}: {} slots", id, availabilitySlots.size());
 
     }
+
     @Transactional(readOnly = true)
     @Override
     public List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId) {
         return availabilitySlotsDao.getAvailabilityByDoctorId(doctorId);
     }
-
 
 }

@@ -52,10 +52,6 @@ public class UserServiceImpl implements UserService {
         return patient.isPresent() ? patient : ds.getByEmail(email);
     }
 
-    public String getLanguageById(long id) {
-        return userDao.getLanguageById(id);
-    }
-
     @Transactional
     public void changeLanguage(long id, String language) {
         userDao.changeLanguage(id, language);
@@ -89,7 +85,7 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Password reset token set and email sent for user id={}", user.getId());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Optional<? extends User> getByResetToken(String token) {
         LOGGER.debug("Retrieving user by reset token");
@@ -120,7 +116,7 @@ public class UserServiceImpl implements UserService {
         return Optional.empty();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public boolean verifyRecoveryToken(String token) {
         boolean valid = ps.getByResetToken(token).isPresent() || ds.getByResetToken(token).isPresent();

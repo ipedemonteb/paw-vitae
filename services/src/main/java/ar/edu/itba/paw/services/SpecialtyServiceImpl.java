@@ -50,6 +50,7 @@ private final SpecialtyDao specialtyDao;
         return specialtyDao.getByIds(ids);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Specialty> getByDoctorId(long id) {
         return specialtyDao.getByDoctorId(id);
