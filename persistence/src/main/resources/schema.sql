@@ -82,14 +82,6 @@ CREATE TABLE IF NOT EXISTS Appointments (
     FOREIGN KEY (doctor_id, specialty_id) REFERENCES Doctor_Specialties(doctor_id, specialty_id) ON DELETE CASCADE
     );
 
-CREATE UNIQUE INDEX IF NOT EXISTS ux_appointments_doctor_date_not_cancelled
-    ON appointments(doctor_id, "date")
-    WHERE status <> 'cancelado';
-
-CREATE UNIQUE INDEX IF NOT EXISTS ux_appointments_client_date_not_cancelled
-    ON appointments(client_id, "date")
-    WHERE status <> 'cancelado';
-
 CREATE TABLE IF NOT EXISTS Ratings (
                                        id SERIAL PRIMARY KEY,
                                        doctor_id INT NOT NULL,
