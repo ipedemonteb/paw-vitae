@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @AppointmentExistence(userId = "doctorId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existence}")
 @AppointmentExistence(userId = "patientId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existence}")
 @AppointmentValidDate(date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.valid}")
+@AppointmentValidSpecialtyForDoctor(doctorId = "doctorId", specialtyId = "specialtyId", message = "{appointment.specialty.valid}")
 public class AppointmentForm {
 
 
