@@ -25,13 +25,14 @@ public class RatingServiceImpl implements RatingService {
     private final RatingDao ratingDao;
     private final DoctorService doctorService;
     private final PatientService patientService;
+
     @Autowired
-    public RatingServiceImpl(RatingDao ratingDao,
-                             DoctorService doctorService,PatientService patientService) {
+    public RatingServiceImpl(RatingDao ratingDao, DoctorService doctorService, PatientService patientService) {
         this.ratingDao = ratingDao;
         this.doctorService = doctorService;
         this.patientService = patientService;
     }
+
     @Transactional
     @Override
     public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
@@ -49,9 +50,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<Rating> getRatingByAppointmentId(long appointmentId) {
-        return ratingDao.getRatingByAppointmentId(appointmentId);
-    }
+    public Optional<Rating> getRatingByAppointmentId(long appointmentId) { return ratingDao.getRatingByAppointmentId(appointmentId); }
 
     @Transactional(readOnly = true)
     @Override
@@ -65,10 +64,11 @@ public class RatingServiceImpl implements RatingService {
         return ratingDao.getRatingsByPatientId(patientId);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Map<Rating,Patient> getFiveTopRatings() {
+    public Map<Rating, Patient> getFiveTopRatings() {
         return ratingDao.getFiveTopRatings().stream().collect(Collectors.toMap(
-                        rating -> rating,
-                        rating -> patientService.getById(rating.getPatientId()).orElseThrow(UserNotFoundException::new)));
+                rating -> rating,
+                rating -> patientService.getById(rating.getPatientId()).orElseThrow(UserNotFoundException::new)));
     }
 }
