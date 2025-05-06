@@ -15,6 +15,7 @@ import java.util.Optional;
 public class UserDaoImpl implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;
+
     @Autowired
     public UserDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -41,7 +42,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void changePassword(long id, String password){
+    public void changePassword(long id, String password) {
         jdbcTemplate.update("UPDATE users SET password = ? WHERE id = ?", password, id);
     }
 
@@ -56,7 +57,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void removeResetToken(String token){
+    public void removeResetToken(String token) {
         jdbcTemplate.update("UPDATE users SET reset_token = NULL WHERE reset_token = ?", token);
 
     }

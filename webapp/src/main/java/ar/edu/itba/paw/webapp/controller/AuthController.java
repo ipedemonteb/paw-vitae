@@ -49,7 +49,7 @@ public class AuthController {
         }
         ds.create(
                 form.getName(), form.getLastName(), form.getEmail(), form.getPassword(),
-                form.getPhone(), LocaleContextHolder.getLocale().getLanguage(),form.getImage(),form.getSpecialties(),
+                form.getPhone(), LocaleContextHolder.getLocale().getLanguage(), form.getImage(), form.getSpecialties(),
                 form.getCoverages(), form.getAvailabilitySlots()
         );
         Optional<User> userOpt = us.getByEmail(form.getEmail()).map(user -> (User) user);
@@ -79,12 +79,12 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/register-patient", method = RequestMethod.POST)
-    public ModelAndView registerPatient(@Valid @ModelAttribute("patientForm") final PatientForm patientForm, final BindingResult errors)  {
-        if(errors.hasErrors()) {
+    public ModelAndView registerPatient(@Valid @ModelAttribute("patientForm") final PatientForm patientForm, final BindingResult errors) {
+        if (errors.hasErrors()) {
             return patientForm(patientForm);
         }
         ps.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(),
-                patientForm.getPhone(), LocaleContextHolder.getLocale().getLanguage(),patientForm.getCoverage() );
+                patientForm.getPhone(), LocaleContextHolder.getLocale().getLanguage(), patientForm.getCoverage());
         Optional<User> userOpt = us.getByEmail(patientForm.getEmail()).map(user -> (User) user);
         if (userOpt.isEmpty()) {
             return new ModelAndView("redirect:/email-sent");
@@ -103,7 +103,7 @@ public class AuthController {
         return new ModelAndView("redirect:/");
     }
 
-    @RequestMapping(value="/recover-password", method = RequestMethod.GET)
+    @RequestMapping(value = "/recover-password", method = RequestMethod.GET)
     public ModelAndView recoverPassword(@ModelAttribute("recoverPasswordForm") final RecoverPasswordForm recoverPasswordForm) {
         return new ModelAndView("auth/recover-password");
     }
@@ -155,7 +155,7 @@ public class AuthController {
     }
 
     @RequestMapping("/verify")
-    public ModelAndView verifyAccount(@RequestParam(value = "token",required = false) String token) {
+    public ModelAndView verifyAccount(@RequestParam(value = "token", required = false) String token) {
         if (token == null) {
             return new ModelAndView("auth/verify");
         }
@@ -166,6 +166,7 @@ public class AuthController {
             return new ModelAndView("redirect:/verify?success=false");
         }
     }
+
     @RequestMapping("/verify-result")
     public ModelAndView verifyResult() {
         return new ModelAndView("auth/verify");

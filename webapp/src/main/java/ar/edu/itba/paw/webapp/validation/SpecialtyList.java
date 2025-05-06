@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SpecialtyList {
+
     String message() default "Invalid coverage.";
 
     Class<?>[] groups() default {};

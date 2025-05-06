@@ -10,8 +10,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 @Repository
@@ -22,20 +20,16 @@ public class PatientDaoImpl implements PatientDao {
             "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified " +
             "FROM Users u JOIN Clients c ON c.client_id = u.id " +
             "JOIN Coverages cov ON cov.id = c.coverage_id ";
-
-    private JdbcTemplate jdbcTemplate;
-
+    public static RowMapper<Patient> ROW_MAPPER;
     private final SimpleJdbcInsert jdbcInsertPatient;
 
     private final SimpleJdbcInsert jdbcInsertUser;
-
-    public static RowMapper<Patient> ROW_MAPPER;
-
+    private JdbcTemplate jdbcTemplate;
 
 
     @Autowired
-    public PatientDaoImpl(final DataSource ds, final DaoUtils daoUtils) {
-        ROW_MAPPER = daoUtils.getPatientRowMapper();
+    public PatientDaoImpl(final DataSource ds, final DaoRowMappers daoRowMappers) {
+        ROW_MAPPER = daoRowMappers.getPatientRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertPatient = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("clients")

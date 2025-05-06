@@ -16,12 +16,19 @@ import java.time.format.DateTimeParseException;
 @ControllerAdvice
 public class GlobalInitBinder {
 
-    public GlobalInitBinder() {}
+    public GlobalInitBinder() {
+    }
 
     @InitBinder
     public void bindLocalTime(WebDataBinder binder) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
+            @Override
+            public String getAsText() {
+                LocalTime value = (LocalTime) getValue();
+                return value != null ? value.format(formatter) : "";
+            }
+
             @Override
             public void setAsText(String text) {
                 if (text == null || text.trim().isEmpty()) {
@@ -33,12 +40,6 @@ public class GlobalInitBinder {
                 } catch (DateTimeParseException e) {
                     throw new IllegalArgumentException("Invalid time format: " + text, e);
                 }
-            }
-
-            @Override
-            public String getAsText() {
-                LocalTime value = (LocalTime) getValue();
-                return value != null ? value.format(formatter) : "";
             }
         });
     }

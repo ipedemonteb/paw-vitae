@@ -10,8 +10,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class EmailValidator implements ConstraintValidator<EmailExistance, String> {
 
-    @Autowired
     private DoctorService ds;
+
+    @Autowired
+    public EmailValidator(DoctorService ds) {
+        this.ds = ds;
+    }
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {

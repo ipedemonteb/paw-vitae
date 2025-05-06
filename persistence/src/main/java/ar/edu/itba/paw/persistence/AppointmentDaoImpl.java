@@ -55,15 +55,15 @@ public class AppointmentDaoImpl implements AppointmentDao {
     private PatientDao patientDao;
 
     @Autowired
-    public AppointmentDaoImpl(final DataSource ds, DoctorDao doctorDao, PatientDao patientDao, DaoUtils daoUtils) {
+    public AppointmentDaoImpl(final DataSource ds, DoctorDao doctorDao, PatientDao patientDao, DaoRowMappers daoRowMappers) {
         this.doctorDao = doctorDao;
         this.patientDao = patientDao;
-        DOCTOR_ROW_MAPPER = daoUtils.getDoctorRowMapper();
-        PATIENT_ROW_MAPPER = daoUtils.getPatientRowMapper();
+        DOCTOR_ROW_MAPPER = daoRowMappers.getDoctorRowMapper();
+        PATIENT_ROW_MAPPER = daoRowMappers.getPatientRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
-                .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id","report")
+                .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id", "report")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -95,7 +95,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public List<Appointment> getByPatientId(long patientId) {
         StringBuilder sql = new StringBuilder(BASE_SQL)
-                .append("WHERE a.client_id = ? " )
+                .append("WHERE a.client_id = ? ")
                 .append(ORDER_BY_DATE_ASC);
 
         return jdbcTemplate.query(sql.toString(), ROW_MAPPER, patientId);
@@ -137,7 +137,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
         String condition = isFuture ? buildDateRangeCondition(filter) : buildStatusCondition(filter);
         String order = isFuture ? ORDER_BY_DATE_ASC : ORDER_BY_DATE_DESC;
         String sql = BASE_SQL + condition + order + "LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, ROW_MAPPER, userId,userId, size, (page - 1) * size);
+        return jdbcTemplate.query(sql, ROW_MAPPER, userId, userId, size, (page - 1) * size);
     }
 
     @Override
@@ -161,20 +161,27 @@ public class AppointmentDaoImpl implements AppointmentDao {
     private String buildDateRangeCondition(String dateRange) {
         StringBuilder sql = new StringBuilder();
         return switch (dateRange) {
-            case "today" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND DATE(a.date) = CURRENT_DATE AND a.status <> 'cancelado' AND a.date > NOW() ").toString();
-            case "week" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date BETWEEN NOW() AND NOW() + INTERVAL '7 DAYS' AND a.status <> 'cancelado' ").toString();
-            case "month" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date BETWEEN NOW() AND NOW() + INTERVAL '1 MONTH' AND a.status <> 'cancelado' ").toString();
-            default -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date > NOW() AND a.status <> 'cancelado' ").toString();
+            case "today" ->
+                    sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND DATE(a.date) = CURRENT_DATE AND a.status <> 'cancelado' AND a.date > NOW() ").toString();
+            case "week" ->
+                    sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date BETWEEN NOW() AND NOW() + INTERVAL '7 DAYS' AND a.status <> 'cancelado' ").toString();
+            case "month" ->
+                    sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date BETWEEN NOW() AND NOW() + INTERVAL '1 MONTH' AND a.status <> 'cancelado' ").toString();
+            default ->
+                    sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date > NOW() AND a.status <> 'cancelado' ").toString();
         };
     }
 
     private String buildStatusCondition(String status) {
         StringBuilder sql = new StringBuilder();
         return switch (status) {
-            case "completed" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'completo' AND a.date < NOW() ").toString();
-            case "cancelled" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'cancelado' ").toString();
+            case "completed" ->
+                    sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'completo' AND a.date < NOW() ").toString();
+            case "cancelled" ->
+                    sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'cancelado' ").toString();
             case "all" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date < NOW() ").toString();
-            case "confirmed" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'confirmado' AND a.date > NOW() ").toString();
+            case "confirmed" ->
+                    sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'confirmado' AND a.date > NOW() ").toString();
             default -> sql.append(" ").toString();
         };
     }
