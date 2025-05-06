@@ -80,4 +80,9 @@ public class RatingDaoImpl implements RatingDao
         return jdbcTemplate.query("SELECT * FROM ratings WHERE client_id = ?", ROW_MAPPER, patientId);
     }
 
+    @Override
+    public List<Rating> getFiveTopRatings() {
+        return jdbcTemplate.query("SELECT * FROM ratings where rating >= 4 ORDER BY rating DESC LIMIT 5", ROW_MAPPER);
+    }
+
 }

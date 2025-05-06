@@ -2,8 +2,11 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.RatingDao;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
+import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.RatingService;
+import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Rating;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,18 +14,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class RatingServiceImpl implements RatingService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RatingServiceImpl.class);
     private final RatingDao ratingDao;
     private final DoctorService doctorService;
+    private final PatientService patientService;
     @Autowired
     public RatingServiceImpl(RatingDao ratingDao,
-                             DoctorService doctorService) {
+                             DoctorService doctorService,PatientService patientService) {
         this.ratingDao = ratingDao;
         this.doctorService = doctorService;
+        this.patientService = patientService;
     }
     @Transactional
     @Override
@@ -57,4 +65,10 @@ public class RatingServiceImpl implements RatingService {
         return ratingDao.getRatingsByPatientId(patientId);
     }
 
+    @Override
+    public Map<Rating,Patient> getFiveTopRatings() {
+        return ratingDao.getFiveTopRatings().stream().collect(Collectors.toMap(
+                        rating -> rating,
+                        rating -> patientService.getById(rating.getPatientId()).orElseThrow(UserNotFoundException::new)));
+    }
 }
