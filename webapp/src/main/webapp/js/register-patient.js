@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSubmitButtonState()
 })
 
-// Add validation icons to input fields
+// Replace the addValidationIcons function to use Font Awesome icons
 function addValidationIcons() {
     const inputFields = document.querySelectorAll(".input-field")
 
@@ -86,22 +86,74 @@ function addValidationIcons() {
         const container = field.parentElement
         if (!container || !container.classList.contains("input-container")) return
 
-        // Create valid icon
-        const validIcon = document.createElement("i")
-        validIcon.className = "fas fa-check-circle validation-icon valid"
+        // Remove any existing validation icons first
+        const existingIcons = container.querySelectorAll('.validation-icon')
+        existingIcons.forEach(icon => icon.remove())
 
-        // Create error icon
-        const errorIcon = document.createElement("i")
-        errorIcon.className = "fas fa-exclamation-circle validation-icon error"
+        // Create valid icon with Font Awesome
+        const validIcon = document.createElement("div")
+        validIcon.className = "validation-icon valid"
+        validIcon.innerHTML = '<i class="fas fa-check-circle"></i>'
 
-        // Add icons after the input field
+        // Create error icon with Font Awesome
+        const errorIcon = document.createElement("div")
+        errorIcon.className = "validation-icon error"
+        errorIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>'
+
+        // Add icons to container
         container.appendChild(validIcon)
         container.appendChild(errorIcon)
     })
 }
 
+// Keep the setFieldError and setFieldValid functions the same as they're working
+function setFieldError(field, errorElement, message) {
+    if (!field) return
+
+    field.classList.add("input-error")
+    field.classList.remove("valid")
+
+    // Update validation icons
+    const container = field.parentElement
+    if (container) {
+        const validIcon = container.querySelector('.validation-icon.valid')
+        const errorIcon = container.querySelector('.validation-icon.error')
+
+        if (validIcon) validIcon.style.opacity = "0"
+        if (errorIcon) errorIcon.style.opacity = "1"
+    }
+
+    if (errorElement) {
+        errorElement.textContent = message || ""
+        errorElement.style.display = "block"
+    }
+}
+
+function setFieldValid(field, errorElement) {
+    if (!field) return
+
+    field.classList.remove("input-error")
+    field.classList.add("valid")
+
+    // Update validation icons
+    const container = field.parentElement
+    if (container) {
+        const validIcon = container.querySelector('.validation-icon.valid')
+        const errorIcon = container.querySelector('.validation-icon.error')
+
+        if (validIcon) validIcon.style.opacity = "1"
+        if (errorIcon) errorIcon.style.opacity = "0"
+    }
+
+    if (errorElement) {
+        errorElement.style.display = "none"
+    }
+}
+
 // Validate name fields
 function validateName(field) {
+
+    const errorElement = document.getElementById(field.id + "-validation-message");
     if (!field) return false
 
     const value = field.value.trim()
@@ -110,24 +162,15 @@ function validateName(field) {
         setFieldError(field)
         return false
     } else if (value.length < 2) {
+        errorElement.style.display = "block"
+        errorElement.textContent = window.messages.nameTooShort
         setFieldError(field)
         return false
     } else {
+        errorElement.style.display = "none"
         setFieldValid(field)
         return true
     }
-}
-
-// Set field to error state
-function setFieldError(field) {
-    field.classList.add("input-error")
-    field.classList.remove("valid")
-}
-
-// Set field to valid state
-function setFieldValid(field) {
-    field.classList.remove("input-error")
-    field.classList.add("valid")
 }
 
 function restorePasswordValues() {

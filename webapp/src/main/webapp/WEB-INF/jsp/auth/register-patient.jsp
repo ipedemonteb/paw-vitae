@@ -80,6 +80,7 @@
                                             placeholder="${namePlaceholder}"
                                 />
                             </div>
+                            <div id="name-validation-message" class="error-text" style="display: none;"></div>
                             <form:errors path="name" class="error-text"/>
                         </div>
 
@@ -94,6 +95,7 @@
                                             placeholder="${lastNamePlaceholder}"
                                 />
                             </div>
+                            <div id="lastName-validation-message" class="error-text" style="display: none;"></div>
                             <form:errors path="lastName" class="error-text"/>
                         </div>
 
@@ -259,6 +261,9 @@
         passwordLength: '<spring:message code="register.passwordLength" javaScriptEscape="true" />',
         emailInvalid: '<spring:message code="appointment.validation.email" javaScriptEscape="true" />',
         phoneInvalid: '<spring:message code="appointment.validation.phone" javaScriptEscape="true" />',
+        fieldRequired: '<spring:message code="register.fieldRequired" javaScriptEscape="true" />',
+        nameTooShort: '<spring:message code="register.nameTooShort" javaScriptEscape="true" />',
+        nameInvalid: '<spring:message code="register.nameInvalid" javaScriptEscape="true" />',
     };
 
     const fixedHeader = document.querySelector(".main-header");
