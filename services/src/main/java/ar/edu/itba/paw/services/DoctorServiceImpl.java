@@ -146,6 +146,7 @@ public class DoctorServiceImpl implements DoctorService {
         return doctor;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<Doctor> getWithFilters(Long specialtyId, Long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
         if (weekdays == null) {
@@ -164,10 +165,12 @@ public class DoctorServiceImpl implements DoctorService {
         LOGGER.info("Rating updated for doctor with id={}, rating={}", id, rating);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Doctor> getByResetToken(String token){
         return doctorDao.getByResetToken(token);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Doctor> getByVerificationToken(String token){
         return doctorDao.getByVerificationToken(token);
     }
