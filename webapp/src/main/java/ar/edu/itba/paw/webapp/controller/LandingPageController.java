@@ -32,4 +32,9 @@ public class LandingPageController {
         return new ModelAndView("landingPage/home").addObject("specialties", specialties).addObject("imageId",us.getImageId(user));
     }
 
+    @RequestMapping(value = "/about-us")
+    public ModelAndView aboutUs(){
+        return new ModelAndView("landingPage/about-us");
+    }
+
 }
