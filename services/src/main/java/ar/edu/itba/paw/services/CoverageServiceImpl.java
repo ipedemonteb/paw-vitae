@@ -17,12 +17,12 @@ import java.util.Optional;
 @Service
 public class CoverageServiceImpl implements CoverageService {
 
-     private final CoverageDao coverageDao;
+    private final CoverageDao coverageDao;
 
-     @Autowired
-     public CoverageServiceImpl(CoverageDao coverageDao) {
-         this.coverageDao = coverageDao;
-     }
+    @Autowired
+    public CoverageServiceImpl(CoverageDao coverageDao) {
+        this.coverageDao = coverageDao;
+    }
 
     @Transactional(readOnly = true)
     @Cacheable

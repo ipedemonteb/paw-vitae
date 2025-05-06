@@ -19,11 +19,10 @@ import java.util.*;
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentServiceImpl.class);
     private final AppointmentDao appointmentDao;
     private final SpecialtyService specialtyService;
     private final MailService mailService;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentServiceImpl.class);
 
     @Autowired
     public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService) {
@@ -59,7 +58,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     @Override
     public List<Appointment> getByPatientId(long patientId) {
-        return  appointmentDao.getByPatientId(patientId);
+        return appointmentDao.getByPatientId(patientId);
     }
 
     @Transactional(readOnly = true)
@@ -78,7 +77,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional
     @Override
-    public Boolean cancelAppointment(long appointmentId,long userId) {
+    public Boolean cancelAppointment(long appointmentId, long userId) {
         Optional<Appointment> appt = getById(appointmentId);
         if (appt.isEmpty()) {
             LOGGER.warn("Appointment not found: {}", appointmentId);
@@ -108,7 +107,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     @Override
     public void updateAppointmentReport(long appointmentId, String report) {
-        if(report==null) {
+        if (report == null) {
             return;
         }
         Optional<Appointment> appointment = getById(appointmentId);

@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 public class SpecialtyServiceImpl implements SpecialtyService {
 
-private final SpecialtyDao specialtyDao;
+    private final SpecialtyDao specialtyDao;
 
     @Autowired
     public SpecialtyServiceImpl(SpecialtyDao specialtyDao) {

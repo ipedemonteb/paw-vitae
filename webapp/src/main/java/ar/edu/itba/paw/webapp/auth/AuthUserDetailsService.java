@@ -32,11 +32,9 @@ import java.util.regex.Pattern;
 @Component
 public class AuthUserDetailsService implements UserDetailsService {
 
-    private UserService us;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthUserDetailsService.class);
-    private final Pattern BCRYPT_PATTERN = Pattern
-            .compile("\\$2[ayb]\\$\\d{2}\\$[\\w./]{53}");
+    private final Pattern BCRYPT_PATTERN = Pattern.compile("\\$2[ayb]\\$\\d{2}\\$[\\w./]{53}");
+    private UserService us;
 
     @Autowired
     public AuthUserDetailsService(final UserService us) {
@@ -68,8 +66,6 @@ public class AuthUserDetailsService implements UserDetailsService {
                 List.of(new SimpleGrantedAuthority("ROLE_PATIENT"))
         );
     }
-
-
 
 
 }

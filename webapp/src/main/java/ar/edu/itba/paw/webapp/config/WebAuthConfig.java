@@ -35,11 +35,15 @@ import java.util.concurrent.TimeUnit;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private AuthUserDetailsService authUserDetailsService;
+    private String rememberMeSecretKey;
 
     @Autowired
-    private String rememberMeSecretKey;
+    public WebAuthConfig(AuthUserDetailsService authUserDetailsService, String rememberMeSecretKey) {
+        this.authUserDetailsService = authUserDetailsService;
+        this.rememberMeSecretKey = rememberMeSecretKey;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -62,46 +66,47 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
                 .invalidSessionUrl("/")
-                    .and()
+                .and()
                 .authorizeRequests()
-                .antMatchers("/","/verify","/verify-confirmation","/verify-result","/email-sent", "/image/*","/recover-password", "/change-password", "/change-password-result", "/about-us").permitAll()
-                    .antMatchers( "/login", "/register-patient", "/register","/email-sent").anonymous()
-                    .antMatchers("/search").access("isAnonymous() or hasRole('PATIENT')")
-                    .antMatchers("/doctor/dashboard/appointment-details/{id}", "/patient/dashboard/appointment-details/{id}", "/appointment/{id}/file/").access("@accessHandler.canHandleAppointment(authentication, #id)")
-                    .antMatchers("doctor/dashboard/appointment/cancel", "patient/dashboard/appointment/cancel").access("@accessHandler.canHandleAppointment(authentication, request.getParameter('appointmentId'))")
-                    .antMatchers("/appointment/confirmation/{id}").access("hasRole('PATIENT') and @accessHandler.canHandleAppointment(authentication, #id)")
-                    .antMatchers("/doctor/**").hasRole("DOCTOR")
-                    .antMatchers("/patient/**").hasRole("PATIENT")
-                    .antMatchers("/appointment/*/file/*").authenticated()
-                    .anyRequest().authenticated()
-                    .and()
+                .antMatchers("/", "/verify", "/verify-confirmation", "/verify-result", "/email-sent", "/image/*", "/recover-password", "/change-password", "/change-password-result", "/about-us").permitAll()
+                .antMatchers("/login", "/register-patient", "/register", "/email-sent").anonymous()
+                .antMatchers("/search").access("isAnonymous() or hasRole('PATIENT')")
+                .antMatchers("/doctor/dashboard/appointment-details/{id}", "/patient/dashboard/appointment-details/{id}", "/appointment/{id}/file/").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers("doctor/dashboard/appointment/cancel", "patient/dashboard/appointment/cancel").access("@accessHandler.canHandleAppointment(authentication, request.getParameter('appointmentId'))")
+                .antMatchers("/appointment/confirmation/{id}").access("hasRole('PATIENT') and @accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers("/doctor/**").hasRole("DOCTOR")
+                .antMatchers("/patient/**").hasRole("PATIENT")
+                .antMatchers("/appointment/*/file/*").authenticated()
+                .anyRequest().authenticated()
+                .and()
                 .formLogin()
-                    .usernameParameter("j_email")
-                    .passwordParameter("j_password")
-                    .loginPage("/login")
-                    .successHandler(customAuthenticationSuccessHandler())
-                    .and()
+                .usernameParameter("j_email")
+                .passwordParameter("j_password")
+                .loginPage("/login")
+                .successHandler(customAuthenticationSuccessHandler())
+                .and()
                 .rememberMe()
-                    .rememberMeParameter("j_rememberme")
-                    .userDetailsService(authUserDetailsService)
-                    .key(rememberMeSecretKey)
-                    .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-                    .and()
+                .rememberMeParameter("j_rememberme")
+                .userDetailsService(authUserDetailsService)
+                .key(rememberMeSecretKey)
+                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
+                .and()
                 .logout()
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/login")
-                    .and()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                .and()
                 .exceptionHandling()
 //                    .accessDeniedPage("/error/403")
                 .authenticationEntryPoint(authEntryPointHandler())
-                    .and()
+                .and()
                 .csrf()
-                    .disable();
+                .disable();
     }
+
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/css/**", "/js/**", "/img/**","/favicon.ico",  "/src/main/favicon.ico","image/*","**/image", "/error/**" );
+                .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/src/main/favicon.ico", "image/*", "**/image", "/error/**");
     }
 
     @Bean

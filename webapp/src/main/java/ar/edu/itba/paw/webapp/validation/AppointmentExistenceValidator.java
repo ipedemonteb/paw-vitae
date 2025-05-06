@@ -11,12 +11,16 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class AppointmentExistenceValidator implements ConstraintValidator<AppointmentExistence, Object> {
+
     private String userIdFieldName;
     private String dateFieldName;
     private String startTimeFieldName;
+    private AppointmentService as;
 
     @Autowired
-    private AppointmentService as;
+    public AppointmentExistenceValidator(AppointmentService as) {
+        this.as = as;
+    }
 
     @Override
     public void initialize(AppointmentExistence constraintAnnotation) {

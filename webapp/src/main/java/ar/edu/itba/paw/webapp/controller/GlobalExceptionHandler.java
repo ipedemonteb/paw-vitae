@@ -22,6 +22,7 @@ import java.util.Objects;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @RequestMapping("/error/403")
@@ -38,6 +39,7 @@ public class GlobalExceptionHandler {
         mav.addObject("exception", ex.getMessage());
         return mav;
     }
+
     @ExceptionHandler(MessagingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleMessagingException(MessagingException e) {
@@ -45,13 +47,15 @@ public class GlobalExceptionHandler {
         mav.addObject("message", "mail.error");
         return mav;
     }
+
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView handleUserNotFoundException(UserNotFoundException e) {
         ModelAndView mav = new ModelAndView("/error/genericError");
-        mav.addObject("message","user.notfound");
+        mav.addObject("message", "user.notfound");
         return mav;
     }
+
     @ExceptionHandler(AppointmentNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView handleAppointmentNotFoundException(AppointmentNotFoundException e) {
@@ -59,6 +63,7 @@ public class GlobalExceptionHandler {
         mav.addObject("message", "appointment.notfound");
         return mav;
     }
+
     @ExceptionHandler(SpecialtyNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView handleSpecialtyNotFoundException(SpecialtyNotFoundException e) {

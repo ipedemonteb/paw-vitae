@@ -26,15 +26,13 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
-
-    @Value("${app.base-url}")
-    private String BASE_URL;
-
     private final PasswordEncoder passwordEncoder;
     private final UserDao userDao;
     private final MailService ms;
     private final PatientService ps;
     private final DoctorService ds;
+    @Value("${app.base-url}")
+    private String BASE_URL;
 
     @Autowired
     public UserServiceImpl(PasswordEncoder passwordEncoder, UserDao userDao, MailService ms, PatientService ps, DoctorService ds) {

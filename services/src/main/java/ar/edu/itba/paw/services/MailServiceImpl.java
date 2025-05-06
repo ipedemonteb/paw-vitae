@@ -20,6 +20,7 @@ import java.util.*;
 
 @Service
 public class MailServiceImpl implements MailService {
+
     private final static String from_mail = "vitaepaw@gmail.com";
     private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender mailSender;
@@ -63,7 +64,7 @@ public class MailServiceImpl implements MailService {
         String htmlContentDoctor;
         String htmlContentPatient;
 
-         if (appointment.getStatus().equals(AppointmentStatus.CONFIRMADO.getValue())) {
+        if (appointment.getStatus().equals(AppointmentStatus.CONFIRMADO.getValue())) {
             htmlContentDoctor = templateEngine.process("DoctorAppointmentConfirmation", doctorContext);
             htmlContentPatient = templateEngine.process("PatientAppointmentConfirmation", patientContext);
         } else {
@@ -141,12 +142,12 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendRecoverPasswordEmail(User user, String resetLink) {
 
-        Locale userLocale =  Locale.forLanguageTag(user.getLanguage());
+        Locale userLocale = Locale.forLanguageTag(user.getLanguage());
 
 
         Context context = new Context(userLocale);
         context.setVariable("resetUrl", resetLink);
-        context.setVariable("userName", user.getName()+ " " + user.getLastName()); // Replace with actual name if available
+        context.setVariable("userName", user.getName() + " " + user.getLastName()); // Replace with actual name if available
         context.setVariable("expiryHours", 1); // e.g., 1 hour expiry
 
         String htmlContent = templateEngine.process("RecoverPassword", context);
@@ -169,10 +170,10 @@ public class MailServiceImpl implements MailService {
     @Async
     @Override
     public void sendVerificationRegisterEmail(User user, String verificationLink) {
-        Locale userLocale =  Locale.forLanguageTag(user.getLanguage());
+        Locale userLocale = Locale.forLanguageTag(user.getLanguage());
         Context context = new Context(userLocale);
         context.setVariable("verificationUrl", verificationLink);
-        context.setVariable("userName", user.getName()+ " " + user.getLastName()); // Replace with actual name if available
+        context.setVariable("userName", user.getName() + " " + user.getLastName()); // Replace with actual name if available
 
         String htmlContent = templateEngine.process("VerificationEmail", context);
 

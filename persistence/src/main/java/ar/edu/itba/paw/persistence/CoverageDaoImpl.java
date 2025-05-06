@@ -19,9 +19,9 @@ import java.util.Optional;
 @Repository
 public class CoverageDaoImpl implements CoverageDao {
 
+    private final static RowMapper<Coverage> COVERAGE_MAPPER = (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name"));
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
-    private final static RowMapper<Coverage> COVERAGE_MAPPER = (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name"));
 
     @Autowired
     public CoverageDaoImpl(final DataSource ds) {
@@ -32,7 +32,7 @@ public class CoverageDaoImpl implements CoverageDao {
 
     @Override
     public Optional<Coverage> findById(long id) {
-        return jdbcTemplate.query("SELECT * FROM coverages WHERE id = ?", COVERAGE_MAPPER,id).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM coverages WHERE id = ?", COVERAGE_MAPPER, id).stream().findFirst();
     }
 
     @Override
@@ -46,7 +46,7 @@ public class CoverageDaoImpl implements CoverageDao {
 
     @Override
     public Optional<Coverage> findByName(String name) {
-        return jdbcTemplate.query("SELECT * FROM coverages WHERE coverage_name = ?", COVERAGE_MAPPER,name).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM coverages WHERE coverage_name = ?", COVERAGE_MAPPER, name).stream().findFirst();
     }
 
     @Override

@@ -50,7 +50,9 @@ public class RatingServiceImpl implements RatingService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<Rating> getRatingByAppointmentId(long appointmentId) { return ratingDao.getRatingByAppointmentId(appointmentId); }
+    public Optional<Rating> getRatingByAppointmentId(long appointmentId) {
+        return ratingDao.getRatingByAppointmentId(appointmentId);
+    }
 
     @Transactional(readOnly = true)
     @Override

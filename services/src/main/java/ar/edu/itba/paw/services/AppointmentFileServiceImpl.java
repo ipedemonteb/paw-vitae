@@ -16,34 +16,35 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class AppointmentFileServiceImpl implements AppointmentFileService {
-    private  final AppointmentFileDao appointmentFileDao;
-    private  final AppointmentService appointmentService;
+
+    private final AppointmentFileDao appointmentFileDao;
+    private final AppointmentService appointmentService;
     Logger LOGGER = LoggerFactory.getLogger(ImageServiceImpl.class);
+
     @Autowired
-    public AppointmentFileServiceImpl(final AppointmentFileDao appointmentFileDao,
-                                      final AppointmentService appointmentService) {
+    public AppointmentFileServiceImpl(final AppointmentFileDao appointmentFileDao, final AppointmentService appointmentService) {
         this.appointmentFileDao = appointmentFileDao;
         this.appointmentService = appointmentService;
     }
 
     @Transactional
     @Override
-    public List<AppointmentFile> create(MultipartFile[] files, String uploader_role, long appointment_id)  {
+    public List<AppointmentFile> create(MultipartFile[] files, String uploader_role, long appointment_id) {
         if (files.length == 0) {
             return null;
         }
-        List <AppointmentFile> appointmentFiles = new ArrayList<>();
+        List<AppointmentFile> appointmentFiles = new ArrayList<>();
         for (MultipartFile file : files) {
             if (file == null || file.isEmpty()) {
                 continue;
             }
             try {
                 appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment_id));
-            }
-            catch (IOException e) {
-                LOGGER.error("Error while adding files {} ", files,  e);
+            } catch (IOException e) {
+                LOGGER.error("Error while adding files {} ", files, e);
             }
         }
         LOGGER.info("Appointment files created successfully: {} for appointment with id {}", appointmentFiles, appointment_id);

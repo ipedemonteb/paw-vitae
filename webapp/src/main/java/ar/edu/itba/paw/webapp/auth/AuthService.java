@@ -14,10 +14,15 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
-    @Autowired
     private UserDetailsService userDetailsService;
-    @Autowired
     private UserService userService;
+
+    @Autowired
+    public AuthService(UserDetailsService userDetailsService, UserService userService) {
+        this.userDetailsService = userDetailsService;
+        this.userService = userService;
+    }
+
     public boolean verifyAndLoginUser(String token) {
         Optional<? extends User> user =userService.verifyValidationToken(token);
         if (user.isEmpty()) {

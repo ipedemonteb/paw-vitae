@@ -20,15 +20,11 @@ import java.util.Optional;
 @Service
 public class PatientServiceImpl implements PatientService {
 
-    Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
-
     private final PatientDao patientDao;
-
     private final PasswordEncoder passwordEncoder;
-
     private final CoverageService cs;
-
     private final AppointmentService as;
+    Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
 
     @Autowired
     public PatientServiceImpl(PatientDao patientDao, PasswordEncoder passwordEncoder, CoverageService cs, AppointmentService as) {
@@ -42,7 +38,7 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Optional<Patient> getById(long id) {
         Optional<Patient> patient = patientDao.getById(id);
-        if(patient.isEmpty()){
+        if (patient.isEmpty()) {
             LOGGER.warn("No patient found with id {}", id);
         }
         return patient;

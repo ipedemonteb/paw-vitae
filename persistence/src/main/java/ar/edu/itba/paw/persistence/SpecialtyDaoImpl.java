@@ -18,9 +18,9 @@ import java.util.Optional;
 @Repository
 public class SpecialtyDaoImpl implements SpecialtyDao {
 
+    private final static RowMapper<Specialty> SPECIALTY_MAPPER = (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key"));
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
-    private final static RowMapper<Specialty> SPECIALTY_MAPPER = (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key"));
 
     @Autowired
     public SpecialtyDaoImpl(final DataSource ds) {
@@ -31,12 +31,12 @@ public class SpecialtyDaoImpl implements SpecialtyDao {
 
     @Override
     public Optional<Specialty> getById(long id) {
-        return jdbcTemplate.query("SELECT * FROM specialties WHERE id = ?", SPECIALTY_MAPPER,id).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM specialties WHERE id = ?", SPECIALTY_MAPPER, id).stream().findFirst();
     }
 
     @Override
     public Optional<Specialty> getByName(String name) {
-        return jdbcTemplate.query("SELECT * FROM specialties WHERE key = ?", SPECIALTY_MAPPER,name).stream().findFirst();
+        return jdbcTemplate.query("SELECT * FROM specialties WHERE key = ?", SPECIALTY_MAPPER, name).stream().findFirst();
     }
 
     @Override

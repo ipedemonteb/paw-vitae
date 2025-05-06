@@ -7,8 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 public class CoverageListValidator implements javax.validation.ConstraintValidator<CoverageList, List<String>> {
-    @Autowired
+
     private CoverageService cs;
+
+    @Autowired
+    public CoverageListValidator(CoverageService cs) {
+        this.cs = cs;
+    }
+
     @Override
     public boolean isValid(List<String> values, javax.validation.ConstraintValidatorContext context) {
         if (values == null) {

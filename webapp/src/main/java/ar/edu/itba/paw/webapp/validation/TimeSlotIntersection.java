@@ -6,10 +6,13 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = TimeSlotIntersectionValidator.class)
-@Target({ElementType.FIELD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TimeSlotIntersection {
+
     String message() default "Time slots must not overlap.";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }
