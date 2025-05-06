@@ -264,6 +264,7 @@
         fieldRequired: '<spring:message code="register.fieldRequired" javaScriptEscape="true" />',
         nameTooShort: '<spring:message code="register.nameTooShort" javaScriptEscape="true" />',
         nameInvalid: '<spring:message code="register.nameInvalid" javaScriptEscape="true" />',
+        passwordInvalid: '<spring:message code="register.passwordInvalid" javaScriptEscape="true" />'
     };
 
     const fixedHeader = document.querySelector(".main-header");

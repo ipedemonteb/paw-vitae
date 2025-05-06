@@ -47,7 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (passwordField) {
         passwordField.addEventListener("input", function () {
             checkPasswordStrength()
-            validatePasswordRequirements(this.value)
+            validatePassword()
+            // validatePasswordRequirements(this.value)
             updateNextButtonState(1)
         })
     }
@@ -348,7 +349,8 @@ function restorePasswordValues() {
     if (passwordValue && passwordValue.value && passwordField) {
         passwordField.value = passwordValue.value
         checkPasswordStrength()
-        validatePasswordRequirements(passwordField.value)
+        validatePassword()
+        // validatePasswordRequirements(passwordField.value)
     }
 
     if (repeatPasswordValue && repeatPasswordValue.value && repeatPasswordField) {
@@ -463,7 +465,7 @@ function validateField(field) {
     } else if (field.id === "phone") {
         return validatePhone(field)
     } else if (field.id === "password") {
-        return validatePasswordRequirements(field.value)
+        return validatePassword()
     } else if (field.id === "repeatPassword") {
         return checkPasswordMatch()
     } else if (field.id === "name" || field.id === "lastName") {
@@ -606,7 +608,7 @@ function validateSectionWithoutUI(sectionNumber) {
             isValid = false
         }
 
-        if ((password.value && repeatPassword.value && password.value !== repeatPassword.value) || (password.value && repeatPassword.value && !validatePasswordRequirements(password.value))) {
+        if ((password.value && repeatPassword.value && password.value !== repeatPassword.value) || (password.value && repeatPassword.value && !validatePassword())) {
             isValid = false
         }
 
@@ -645,6 +647,44 @@ function initPasswordStrength() {
     const password = document.getElementById("password")
     if (password && password.value) {
         checkPasswordStrength()
+    }
+}
+
+function validatePassword() {
+    const password = document.getElementById("password").value
+    const passwordField = document.getElementById("password")
+    const lengthMessage = document.getElementById("password-length-message")
+
+    // Check simplified requirements
+    const hasLength = password.length >= 8
+    const hasUppercase = /[A-Z]/.test(password)
+    const hasNumber = /[0-9]/.test(password)
+
+    if (password && (!hasLength || !hasUppercase || !hasNumber)) {
+        // Password doesn't meet requirements
+        setFieldError(passwordField)
+        if (lengthMessage) {
+            lengthMessage.textContent =
+                window.messages?.passwordInvalid ||
+                "Password must be at least 8 characters with one uppercase letter and one number"
+            lengthMessage.style.display = "block"
+        }
+        return false
+    } else if (password) {
+        // Password meets requirements
+        setFieldValid(passwordField)
+        if (lengthMessage) {
+            lengthMessage.style.display = "none"
+        }
+        return true
+    } else {
+        // No password entered
+        passwordField.classList.remove("input-error")
+        passwordField.classList.remove("valid")
+        if (lengthMessage) {
+            lengthMessage.style.display = "none"
+        }
+        return true
     }
 }
 
@@ -1004,39 +1044,30 @@ function checkPasswordStrength() {
     // Calculate strength
     let strength = 0
 
-    // Length check
     if (password.length >= 8) strength += 1
-    if (password.length >= 12) strength += 1
 
     // Character variety check
     if (/[A-Z]/.test(password)) strength += 1
-    if (/[a-z]/.test(password)) strength += 1
     if (/[0-9]/.test(password)) strength += 1
-    if (/[^A-Za-z0-9]/.test(password)) strength += 1
 
     // Set strength level
     let strengthClass = ""
     let strengthLabel = ""
     let strengthIcon = ""
 
-    if (strength < 3) {
+    if (strength < 1) {
         strengthClass = "strength-weak"
         strengthLabel = window.messages?.passwordWeak || "Weak"
         strengthIcon =
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><circle cx="12" cy="12" r="10"></circle></svg>'
-    } else if (strength < 4) {
+    } else if (strength < 3) {
         strengthClass = "strength-medium"
         strengthLabel = window.messages?.passwordMedium || "Medium"
         strengthIcon =
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><circle cx="12" cy="12" r="10"></circle></svg>'
-    } else if (strength < 6) {
+    } else {
         strengthClass = "strength-strong"
         strengthLabel = window.messages?.passwordStrong || "Strong"
-        strengthIcon =
-            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>'
-    } else {
-        strengthClass = "strength-very-strong"
-        strengthLabel = window.messages?.passwordVeryStrong || "Very Strong"
         strengthIcon =
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>'
     }
