@@ -254,6 +254,7 @@ body {
 
 /* Add validation icons styling */
 
+/* Update the validation icon styles to match Font Awesome icons */
 .validation-icon {
     position: absolute;
     right: 12px;
@@ -262,6 +263,8 @@ body {
     opacity: 0;
     transition: opacity 0.2s ease;
     pointer-events: none;
+    z-index: 10;
+    font-size: 18px; /* Adjust size for Font Awesome icons */
 }
 
 .validation-icon.valid {
@@ -298,6 +301,14 @@ body {
 .input-error {
     border-color: var(--danger);
 }
+
+.error-message {
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
 
 .error-text {
     color: var(--danger);
