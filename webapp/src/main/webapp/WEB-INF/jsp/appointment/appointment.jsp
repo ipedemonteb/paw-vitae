@@ -113,7 +113,6 @@
                     <form:hidden path="specialtyId" id="specialtyId" />
                     <input type="hidden" name="doctorId" value="${doctor.id}" />
 
-                    <!-- Custom Date and Time Picker -->
                     <div class="form-group">
                         <label for="datePickerInput" class="required-field"><spring:message code="appointment.form.datetime"/></label>
                         <div class="date-picker-container">
