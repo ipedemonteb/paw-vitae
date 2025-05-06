@@ -108,7 +108,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 password,
                 phone,
                 language,
-                imageId,
+                imageId  != null ? imageId : -1L,
                 false
         );
     }
