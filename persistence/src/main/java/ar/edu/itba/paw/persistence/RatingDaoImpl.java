@@ -82,7 +82,7 @@ public class RatingDaoImpl implements RatingDao
 
     @Override
     public List<Rating> getFiveTopRatings() {
-        return jdbcTemplate.query("SELECT * FROM ratings where rating >= 4 ORDER BY rating DESC LIMIT 5", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM ratings where rating >= 4 AND comment IS NOT NULL AND comment <> '' ORDER BY rating DESC LIMIT 5", ROW_MAPPER);
     }
 
 }

@@ -225,7 +225,7 @@
                         <div class="testimonial-card doctor-rating-card">
                             <div class="testimonial-content">
                                 <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                                <p class="testimonial-text">${entry.key.comment}</p>
+                                <p class="testimonial-text"><c:out value="${entry.key.comment}"/></p>
                                 <div class="testimonial-rating">
                                     <c:forEach begin="1" end="5" var="star">
                                         <i class="fas fa-star ${star <= entry.key.rating ? '' : 'far'}"></i>
