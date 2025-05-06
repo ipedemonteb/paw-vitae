@@ -25,8 +25,8 @@
         <sec:authorize access="isAnonymous() or hasRole('ROLE_PATIENT')">
           <li><a href="<c:url value='/search' />" class="nav-link"><spring:message code="nav.doctors" /></a></li>
         </sec:authorize>
-        <li><a href="<c:url value='#' />" class="nav-link"><spring:message code="nav.services" /></a></li>
-        <li><a href="<c:url value='#' />" class="nav-link"><spring:message code="nav.about" /></a></li>
+<%--        <li><a href="<c:url value='#' />" class="nav-link"><spring:message code="nav.services" /></a></li>--%>
+        <li><a href="<c:url value='/about-us' />" class="nav-link"><spring:message code="nav.about" /></a></li>
 
         <!-- Mobile-only auth buttons -->
         <sec:authorize access="isAnonymous()">

@@ -64,7 +64,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .invalidSessionUrl("/")
                     .and()
                 .authorizeRequests()
-                .antMatchers("/","/verify","/verify-confirmation","/verify-result","/email-sent", "/image/*","/recover-password", "/change-password", "/change-password-result").permitAll()
+                .antMatchers("/","/verify","/verify-confirmation","/verify-result","/email-sent", "/image/*","/recover-password", "/change-password", "/change-password-result", "/about-us").permitAll()
                     .antMatchers( "/login", "/register-patient", "/register","/email-sent").anonymous()
                     .antMatchers("/search").access("isAnonymous() or hasRole('PATIENT')")
                     .antMatchers("/doctor/dashboard/appointment-details/{id}", "/patient/dashboard/appointment-details/{id}", "/appointment/{id}/file/").access("@accessHandler.canHandleAppointment(authentication, #id)")
