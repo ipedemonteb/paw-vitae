@@ -348,7 +348,12 @@
         </c:forEach>
     ]
 
-
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        const specialtyDropdown = document.getElementById('specialtyDropdown');
+        if (specialtyDropdown.value === '0') {
+            specialtyDropdown.name = '';
+        }
+    });
 
     // Mobile menu toggle
     document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
