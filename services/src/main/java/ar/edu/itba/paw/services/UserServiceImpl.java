@@ -30,6 +30,8 @@ public class UserServiceImpl implements UserService {
     @Value("${app.base-url}")
     private String BASE_URL;
 
+
+
     private final PasswordEncoder passwordEncoder;
     private final UserDao userDao;
     private final MailService ms;
@@ -46,6 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<? extends User> getByEmail(String email) {
         LOGGER.debug("Fetching user by email: {}", email);
         Optional<Patient> patient = ps.getByEmail(email);

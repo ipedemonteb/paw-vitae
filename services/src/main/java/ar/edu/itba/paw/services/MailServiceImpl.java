@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,11 +21,15 @@ import java.util.*;
 
 @Service
 public class MailServiceImpl implements MailService {
-    private final static String from_mail = "vitaepaw@gmail.com";
+    @Value("${mail.username}")
+    private static String from_mail;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final MessageSource messageSource;
+
+
 
     @Autowired
     public MailServiceImpl(final JavaMailSender mailSender, final TemplateEngine templateEngine, final MessageSource messageSource) {
@@ -56,7 +61,6 @@ public class MailServiceImpl implements MailService {
         templateModel.put("appointmentDate", date.toLocalDate().toString());
         templateModel.put("appointmentTime", date.getHour());
         templateModel.put("appointmentId", appointment.getId());
-        //@TODO: Check
         templateModel.put("reason", (appointment.getReason() != null && !appointment.getReason().isEmpty()) ? appointment.getReason() : "-");
         patientContext.setVariables(templateModel);
         doctorContext.setVariables(templateModel);
