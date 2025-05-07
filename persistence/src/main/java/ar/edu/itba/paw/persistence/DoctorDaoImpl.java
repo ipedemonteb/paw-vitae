@@ -23,8 +23,8 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
 
     @Autowired
-    public DoctorDaoImpl(final DataSource ds, final DaoUtils daoUtils) {
-        ROW_MAPPER = daoUtils.getDoctorRowMapper();
+    public DoctorDaoImpl(final DataSource ds, final DaoRowMappers daoRowMappers) {
+        ROW_MAPPER = daoRowMappers.getDoctorRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
@@ -108,7 +108,7 @@ public class DoctorDaoImpl implements DoctorDao {
                 password,
                 phone,
                 language,
-                imageId  != null ? imageId : -1L,
+                imageId != null ? imageId : -1L,
                 false
         );
     }

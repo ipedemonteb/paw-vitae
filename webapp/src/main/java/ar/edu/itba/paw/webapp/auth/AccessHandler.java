@@ -21,14 +21,14 @@ public class AccessHandler {
 
     /**
      * @return true if the currently authenticated user is
-     *         either the client or the doctor on that appointment
+     * either the client or the doctor on that appointment
      */
     public boolean canHandleAppointment(Authentication auth, Long appointmentId) {
         Object principal = auth.getPrincipal();
-        if(!(principal instanceof AuthUserDetails)) {
+        if (!(principal instanceof AuthUserDetails)) {
             return false;
         }
-        long userId = userSvc.getByEmail(((AuthUserDetails)principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
+        long userId = userSvc.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
         return apptSvc.getById(appointmentId)
                 .map(a -> a.getPatient().getId() == userId
                         || a.getDoctor().getId() == userId)

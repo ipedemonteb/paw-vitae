@@ -15,11 +15,14 @@ import java.util.Optional;
 
 @Controller
 public class FileController {
+
     private final AppointmentFileService fileService;
+
     @Autowired
     public FileController(AppointmentFileService fileService) {
         this.fileService = fileService;
     }
+
     @RequestMapping("/appointment/{appointmentId}/file/{fileId}")
     public void downloadFile(@PathVariable long appointmentId,
                              @PathVariable long fileId,

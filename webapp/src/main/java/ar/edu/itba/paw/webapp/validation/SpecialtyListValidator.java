@@ -9,8 +9,12 @@ import java.util.List;
 
 public class SpecialtyListValidator implements ConstraintValidator<SpecialtyList, List<String>> {
 
-    @Autowired
     private SpecialtyService specialtyService;
+
+    @Autowired
+    public SpecialtyListValidator(SpecialtyService specialtyService) {
+        this.specialtyService = specialtyService;
+    }
 
     @Override
     public boolean isValid(List<String> strings, ConstraintValidatorContext constraintValidatorContext) {

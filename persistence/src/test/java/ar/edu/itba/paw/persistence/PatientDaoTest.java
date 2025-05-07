@@ -55,15 +55,15 @@ public class PatientDaoTest {
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsertUser;
     private SimpleJdbcInsert jdbcInsertPatient;
-    private DaoUtils daoUtils;
+    private DaoRowMappers daoRowMappers;
 
     @Autowired
     private DataSource ds;
 
     @Before
     public void setUp() {
-        this.daoUtils = new DaoUtils();
-        this.patientDao = new PatientDaoImpl(ds, daoUtils);
+        this.daoRowMappers = new DaoRowMappers();
+        this.patientDao = new PatientDaoImpl(ds, daoRowMappers);
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsertUser = new SimpleJdbcInsert(ds)
                 .withTableName("Users")
@@ -163,7 +163,7 @@ public class PatientDaoTest {
         //Postconditions
         Optional<Patient> updatedClient = jdbcTemplate.query(SQL_QUERY,
                 new Object[]{1L},
-                daoUtils.getPatientRowMapper()
+                daoRowMappers.getPatientRowMapper()
         ).stream().findFirst();
         assertTrue(updatedClient.isPresent());
         assertEquals(updatedName, updatedClient.get().getName());
@@ -285,7 +285,7 @@ public class PatientDaoTest {
         //Postconditions
         Optional<Patient> updatedPatient = jdbcTemplate.query(SQL_QUERY,
                 new Object[]{TEST_ID},
-                daoUtils.getPatientRowMapper()
+                daoRowMappers.getPatientRowMapper()
         ).stream().findFirst();
         assertTrue(updatedPatient.isPresent());
         assertEquals(newLanguage, updatedPatient.get().getLanguage());

@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +35,7 @@ public class ImageDaoTest {
     @Before
     public void setUp() {
         this.mockDoctor = Mockito.mock(DoctorDao.class);
-        this.imageDao = new ImageDaoImpl(ds, mockDoctor);
+        this.imageDao = new ImageDaoImpl(ds);
         this.jdbcTemplate = new JdbcTemplate(ds);
     }
 

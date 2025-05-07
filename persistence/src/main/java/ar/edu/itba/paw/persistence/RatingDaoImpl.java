@@ -13,11 +13,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 @Repository
-public class RatingDaoImpl implements RatingDao
-{
+public class RatingDaoImpl implements RatingDao {
+
+    private static final RowMapper<Rating> ROW_MAPPER = (rs, rowNum) -> new Rating(
+            rs.getLong("id"),
+            rs.getInt("rating"),
+            rs.getInt("doctor_id"),
+            rs.getInt("client_id"),
+            rs.getInt("appointment_id"),
+            rs.getString("comment")
+    );
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
+
     @Autowired
     public RatingDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -26,18 +36,10 @@ public class RatingDaoImpl implements RatingDao
                 .usingColumns("rating", "doctor_id", "client_id", "appointment_id", "comment")
                 .usingGeneratedKeyColumns("id");
     }
-    private static final RowMapper<Rating> ROW_MAPPER = (rs, rowNum) -> new Rating(
-        rs.getLong("id"),
-        rs.getInt("rating"),
-        rs.getInt("doctor_id"),
-        rs.getInt("client_id"),
-        rs.getInt("appointment_id"),
-        rs.getString("comment")
-    );
 
     @Override
     public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
-        final Map<String,Object> args = new HashMap<>(Map.of(
+        final Map<String, Object> args = new HashMap<>(Map.of(
                 "rating", rating,
                 "doctor_id", doctorId,
                 "client_id", patientId,

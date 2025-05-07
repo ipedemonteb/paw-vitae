@@ -6,8 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintValidator;
 
 public class SpecialtyValidator implements ConstraintValidator<Specialty, Long> {
-    @Autowired
+
     private SpecialtyService specialtyService;
+
+    @Autowired
+    public SpecialtyValidator(SpecialtyService specialtyService) {
+        this.specialtyService = specialtyService;
+    }
 
     @Override
     public boolean isValid(Long value, javax.validation.ConstraintValidatorContext context) {

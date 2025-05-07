@@ -15,22 +15,22 @@ import java.util.Map;
 
 @Repository
 public class AvailabilitySlotDaoImpl implements AvailabilitySlotsDao {
-    private  final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert simpleJdbcInsert;
-
-    @Autowired
-    public AvailabilitySlotDaoImpl(final DataSource ds) {
-          this.jdbcTemplate = new JdbcTemplate(ds);
-          this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                  .withTableName("doctor_availability")
-                  .usingColumns("start_time", "end_time", "doctor_id", "day_of_week");
-    }
 
     private static final RowMapper<AvailabilitySlot> AVAILABILITY_SLOT_ROW_MAPPER = (rs, rowNum) -> new AvailabilitySlot(
             rs.getInt("day_of_week"),
             rs.getTime("start_time").toLocalTime(),
             rs.getTime("end_time").toLocalTime()
     );
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert simpleJdbcInsert;
+
+    @Autowired
+    public AvailabilitySlotDaoImpl(final DataSource ds) {
+        this.jdbcTemplate = new JdbcTemplate(ds);
+        this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("doctor_availability")
+                .usingColumns("start_time", "end_time", "doctor_id", "day_of_week");
+    }
 
     @Override
     public AvailabilitySlot create(long docId, AvailabilitySlot slot) {
@@ -59,7 +59,7 @@ public class AvailabilitySlotDaoImpl implements AvailabilitySlotsDao {
     @Override
     public List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId) {
         return jdbcTemplate.query(
-                "SELECT * FROM doctor_availability WHERE doctor_id = ?",AVAILABILITY_SLOT_ROW_MAPPER,
+                "SELECT * FROM doctor_availability WHERE doctor_id = ?", AVAILABILITY_SLOT_ROW_MAPPER,
                 doctorId
         );
     }
