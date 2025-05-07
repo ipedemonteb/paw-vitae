@@ -161,10 +161,10 @@
       <p><spring:message code="logout.confirm.message" /></p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline modal-cancel"><spring:message code="logout.confirm.cancel" /></button>
+      <button class="modal-btn modal-btn-outline modal-cancel"><spring:message code="logout.confirm.cancel" /></button>
       <form action="<c:url value='/logout' />" method="post" class="logout-form">
         <sec:csrfInput />
-        <button type="submit" class="btn btn-primary"><spring:message code="logout.confirm.yes" /></button>
+        <button type="submit" class="modal-btn modal-btn-primary"><spring:message code="logout.confirm.yes" /></button>
       </form>
     </div>
   </div>
