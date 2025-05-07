@@ -100,7 +100,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling()
 //                    .accessDeniedPage("/error/403")
-                .authenticationEntryPoint(authEntryPointHandler())
+                    .authenticationEntryPoint(authEntryPointHandler())
                 .and()
                 .csrf()
                 .disable();
