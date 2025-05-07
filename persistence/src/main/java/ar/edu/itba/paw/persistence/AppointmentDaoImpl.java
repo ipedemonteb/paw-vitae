@@ -55,11 +55,11 @@ public class AppointmentDaoImpl implements AppointmentDao {
     private PatientDao patientDao;
 
     @Autowired
-    public AppointmentDaoImpl(final DataSource ds, DoctorDao doctorDao, PatientDao patientDao, DaoRowMappers daoRowMappers) {
+    public AppointmentDaoImpl(final DataSource ds, DoctorDao doctorDao, PatientDao patientDao) {
         this.doctorDao = doctorDao;
         this.patientDao = patientDao;
-        DOCTOR_ROW_MAPPER = daoRowMappers.getDoctorRowMapper();
-        PATIENT_ROW_MAPPER = daoRowMappers.getPatientRowMapper();
+        DOCTOR_ROW_MAPPER = DaoRowMappers.getDoctorRowMapper();
+        PATIENT_ROW_MAPPER = DaoRowMappers.getPatientRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
