@@ -8,7 +8,16 @@ function showSuccessToast() {
     const toast = document.getElementById('successToast');
     if (!toast) return;
     toast.classList.add('show');
-console.log("APPEARED");
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+        hideSuccessToast();
+    }, 5000);
+}
+
+function showErrorToast() {
+    const toast = document.getElementById('errorToast');
+    if (!toast) return;
+    toast.classList.add('show');
     // Auto hide after 5 seconds
     setTimeout(() => {
         hideSuccessToast();
@@ -18,6 +27,18 @@ console.log("APPEARED");
 // Hide success toast notification
 function hideSuccessToast() {
     const toast = document.getElementById('successToast');
+    if (!toast) return;
+
+    toast.style.animation = 'fadeOut 0.3s ease forwards';
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.style.animation = '';
+    }, 300);
+}
+
+function hideErrorToast() {
+    const toast = document.getElementById('errorToast');
     if (!toast) return;
 
     toast.style.animation = 'fadeOut 0.3s ease forwards';
