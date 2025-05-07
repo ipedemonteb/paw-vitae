@@ -39,11 +39,4 @@ document.addEventListener('DOMContentLoaded', function() {
         const newUrl = window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
     }
-
-    // Close success toast when Escape key is pressed
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            hideSuccessToast();
-        }
-    });
 });

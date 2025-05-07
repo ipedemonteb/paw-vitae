@@ -6,10 +6,9 @@ import ar.edu.itba.paw.models.Patient;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class DaoRowMappers {
+public final class DaoRowMappers {
 
-    public static final RowMapper<Doctor> DOCTOR_ROW_MAPPER = (rs, rowNum) -> new Doctor(
+    private static final RowMapper<Doctor> DOCTOR_ROW_MAPPER = (rs, rowNum) -> new Doctor(
             rs.getString("doctor_name"),
             rs.getLong("doctor_id"),
             rs.getString("doctor_last_name"),
@@ -23,7 +22,7 @@ public class DaoRowMappers {
             rs.getBoolean("doctor_verified")
     );
 
-    public final static RowMapper<Patient> PATIENT_ROW_MAPPER = (rs, rowNum) -> new Patient(
+    private final static RowMapper<Patient> PATIENT_ROW_MAPPER = (rs, rowNum) -> new Patient(
             rs.getString("patient_name"), // Use the alias patient_name
             rs.getLong("patient_id"),    // Use the alias patient_id
             rs.getString("patient_last_name"),
@@ -35,13 +34,11 @@ public class DaoRowMappers {
             rs.getBoolean("patient_verified")
     );
 
-    public RowMapper<Patient> getPatientRowMapper() {
+    public static RowMapper<Patient> getPatientRowMapper() {
         return PATIENT_ROW_MAPPER;
     }
 
-    public RowMapper<Doctor> getDoctorRowMapper() {
-        return DOCTOR_ROW_MAPPER;
-    }
+    public static RowMapper<Doctor> getDoctorRowMapper() { return DOCTOR_ROW_MAPPER; }
 }
 
 

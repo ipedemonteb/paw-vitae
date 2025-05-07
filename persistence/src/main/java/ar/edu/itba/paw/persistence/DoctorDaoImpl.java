@@ -23,8 +23,8 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
 
     @Autowired
-    public DoctorDaoImpl(final DataSource ds, final DaoRowMappers daoRowMappers) {
-        ROW_MAPPER = daoRowMappers.getDoctorRowMapper();
+    public DoctorDaoImpl(final DataSource ds) {
+        ROW_MAPPER = DaoRowMappers.getDoctorRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
