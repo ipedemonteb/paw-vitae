@@ -347,7 +347,6 @@
                                                        varStatus="status">
                                                 <div class="time-slot-row" id="slot-row-${status.index}"
                                                      data-index="${status.index}">
-                                                    <!-- This will be populated by JavaScript on page load -->
                                                 </div>
                                             </c:forEach>
                                         </c:if>
