@@ -72,7 +72,7 @@
             <i class="fas fa-calendar-alt"></i>
             <span><spring:message code="dashboard.tab.upcoming" /></span>
         </a>
-        <a href="<c:url value='/doctor/dashboard/history'/>" class="nav-tab active>
+        <a href="<c:url value='/doctor/dashboard/history'/>" class="nav-tab active">
             <i class="fas fa-history"></i>
             <span><spring:message code="dashboard.tab.history" /></span>
         </a>

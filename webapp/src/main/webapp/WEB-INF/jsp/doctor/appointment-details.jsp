@@ -443,7 +443,7 @@
     }
     document.addEventListener('DOMContentLoaded', function() {
 
-        const fileInput = document.getElementById('files');
+
 
         const form = document.getElementById('doctorFileForm');
         const submitButton = document.getElementById('submitButton');
@@ -454,11 +454,7 @@
             });
         }
 
-        fileInput.addEventListener('change', function(event) {
-            if (event.target.files.length > 0) {
-                showSuccessToast(); // Muestra la notificación de éxito
-            }
-        });
+
 
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('updated') === 'true') {
@@ -477,6 +473,17 @@
             }
         });
     });
+
+    const fileInput = document.getElementById('files');
+    fileInput.addEventListener('change', function(event) {
+        console.log(fileInput)
+        console.log(event.target.files);
+        if (event.target.files.length > 0) {
+            console.log("HELP");
+            showSuccessToast(); // Muestra la notificación de éxito
+        }
+    });
+
 
 </script>
 

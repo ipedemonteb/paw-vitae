@@ -112,6 +112,29 @@ body {
     border-color: var(--primary-light);
 }
 
+.file-remove {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f5f9;
+    color: var(--text-light);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.file-remove:hover {
+    background-color: #fee2e2;
+    color: var(--color-error);
+    transform: rotate(90deg);
+}
+
+
 .doctor-image {
     width: 100px;
     height: 100px;
