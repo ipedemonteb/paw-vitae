@@ -262,7 +262,6 @@
 </main>
 
 <!-- Scripts -->
-<script src="<c:url value='/js/autocomplete.js'/>"></script>
 <script>
     contextPath = "${pageContext.request.contextPath}";
     doctorNames = [
