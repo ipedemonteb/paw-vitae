@@ -197,7 +197,7 @@
     </div>
 </main>
 
-<<script src="<c:url value="/js/toast-notification.js"/>"></script>
+<script src="<c:url value="/js/toast-notification.js"/>"></script>
 
 <script>
     // Create a messages object to be used by the JavaScript

@@ -108,7 +108,7 @@ public class CoverageDaoTest {
         List<Coverage> coverages = coverageDao.getAll();
 
         //Postconditions
-        List<String> names = coverages.stream().map(Coverage::getName).collect(Collectors.toList());
+        List<String> names = coverages.stream().map(Coverage::getName).toList();
         assertEquals(2, coverages.size());
         assertTrue(names.containsAll(List.of(COVERAGE_NAME_1, COVERAGE_NAME_2)));
     }
