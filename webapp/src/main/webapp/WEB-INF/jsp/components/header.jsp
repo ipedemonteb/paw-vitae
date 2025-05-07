@@ -292,11 +292,13 @@
 
     // Add active class to current nav link
     const currentPath = window.location.pathname;
+    const context = '${pageContext.request.contextPath}';
+    console.log(context);
     const navLinks = document.querySelectorAll('.nav-link');
 
     navLinks.forEach(link => {
       const href = link.getAttribute('href').split('?')[0]; // Remove query params for comparison
-      if (currentPath === href || (href !== '/' && currentPath.startsWith(href))) {
+      if (currentPath === href || (href !== context + '/' && currentPath.includes(href))) {
         link.classList.add('active');
       }
     });
