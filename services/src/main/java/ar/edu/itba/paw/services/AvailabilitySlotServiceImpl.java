@@ -46,8 +46,11 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
     @Transactional
     @Override
     public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
-        availabilitySlotsDao.updateDoctorAvailability(id, availabilitySlots);
-        LOGGER.debug("Updating availability for doctor {}: {} slots", id, availabilitySlots.size());
+        List<AvailabilitySlot> filteredSlots = availabilitySlots.stream().filter(slot -> {
+            return slot.getStartTime() != null && slot.getEndTime() != null;
+        }).toList();
+        availabilitySlotsDao.updateDoctorAvailability(id, filteredSlots);
+        LOGGER.debug("Updating availability for doctor {}: {} slots", id, filteredSlots.size());
 
     }
 

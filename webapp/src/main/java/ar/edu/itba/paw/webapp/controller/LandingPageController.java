@@ -39,8 +39,8 @@ public class LandingPageController {
     }
 
     @RequestMapping(value = "/about-us")
-    public ModelAndView aboutUs() {
-        return new ModelAndView("landingPage/about-us");
+    public ModelAndView aboutUs(@ModelAttribute("loggedUser") final User user) {
+        return new ModelAndView("landingPage/about-us").addObject("imageId", us.getImageId(user));
     }
 
 }
