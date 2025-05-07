@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +53,15 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
         availabilitySlotsDao.updateDoctorAvailability(id, filteredSlots);
         LOGGER.debug("Updating availability for doctor {}: {} slots", id, filteredSlots.size());
 
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public boolean isAvailableAtDateAndTime(long doctorId, LocalDate date, int time) {
+        List<AvailabilitySlot> slots = getAvailabilityByDoctorId(doctorId);
+        return slots.stream().anyMatch(slot -> {
+            return slot.getDayOfWeek() == (date.getDayOfWeek().getValue() - 1) && slot.getStartTime().getHour() <= time && slot.getEndTime().getHour() >= time;
+        });
     }
 
     @Transactional(readOnly = true)

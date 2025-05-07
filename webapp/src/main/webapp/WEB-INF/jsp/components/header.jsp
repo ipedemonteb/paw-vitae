@@ -231,7 +231,6 @@
     // Add active class to current nav link
     const currentPath = window.location.pathname;
     const context = '${pageContext.request.contextPath}';
-    console.log(context);
     const navLinks = document.querySelectorAll('.nav-link');
 
     navLinks.forEach(link => {
