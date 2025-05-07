@@ -118,6 +118,10 @@ a:focus {
     color: var(--primary-color);
 }
 
+a {
+    text-decoration: none;
+}
+
 .nav-link::after {
     content: "";
     position: absolute;
