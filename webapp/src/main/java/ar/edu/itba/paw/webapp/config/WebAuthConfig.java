@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,10 +40,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     private String rememberMeSecretKey;
 
     @Autowired
-    public WebAuthConfig(AuthUserDetailsService authUserDetailsService, String rememberMeSecretKey) {
+    public WebAuthConfig(@Lazy AuthUserDetailsService authUserDetailsService, String rememberMeSecretKey) {
         this.authUserDetailsService = authUserDetailsService;
         this.rememberMeSecretKey = rememberMeSecretKey;
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

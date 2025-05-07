@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<? extends User> getByEmail(String email) {
         LOGGER.debug("Fetching user by email: {}", email);
         Optional<Patient> patient = ps.getByEmail(email);
