@@ -296,7 +296,7 @@
 
     navLinks.forEach(link => {
       const href = link.getAttribute('href').split('?')[0]; // Remove query params for comparison
-      if (currentPath === href || (href !== '/' && currentPath.startsWith(href))) {
+      if (currentPath === href || (href !== '/' && currentPath.includes(href))) {
         link.classList.add('active');
       }
     });
