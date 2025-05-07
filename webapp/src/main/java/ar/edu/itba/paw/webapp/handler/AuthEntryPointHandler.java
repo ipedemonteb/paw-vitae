@@ -22,7 +22,6 @@ public class AuthEntryPointHandler implements AuthenticationEntryPoint {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String ctx = request.getContextPath();
 
-        // Check for remember-me cookie even if auth is null
         boolean hasRememberMeCookie = false;
         if (request.getCookies() != null) {
             for (javax.servlet.http.Cookie cookie : request.getCookies()) {
@@ -33,14 +32,9 @@ public class AuthEntryPointHandler implements AuthenticationEntryPoint {
             }
         }
 
-        if (hasRememberMeCookie) {
-            // User has a remember-me cookie but authentication failed
-            response.sendRedirect(ctx + "/error/403");
-        } else if (auth instanceof RememberMeAuthenticationToken) {
-            // Fall back to the previous behavior if auth is not null
-            response.sendRedirect(ctx + "/error/403");
+        if (hasRememberMeCookie || auth instanceof RememberMeAuthenticationToken) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
         } else {
-            // No remember-me cookie or authentication
             response.sendRedirect(ctx + "/login");
         }
     }

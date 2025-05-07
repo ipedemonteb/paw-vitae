@@ -41,12 +41,12 @@
       </div>
 
       <!-- Search Bar -->
-      <div class="search-bar-container">
-        <div class="search-bar">
-          <i class="fas fa-search search-icon"></i>
-          <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input">
-        </div>
-      </div>
+<%--      <div class="search-bar-container">--%>
+<%--        <div class="search-bar">--%>
+<%--          <i class="fas fa-search search-icon"></i>--%>
+<%--          <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input">--%>
+<%--        </div>--%>
+<%--      </div>--%>
     </div>
 
     <!-- Filters Section -->
@@ -388,9 +388,9 @@
                   <a href="<c:url value='/appointment?doctorId=${doctor.id}'/>" class="btn btn-primary">
                     <i class="fas fa-calendar-check"></i> <spring:message code="search.button.schedule" />
                   </a>
-                  <button class="btn btn-secondary" onclick="viewDoctorProfile('${doctor.id}')">
-                    <i class="fas fa-user-md"></i> <spring:message code="search.button.view.profile" />
-                  </button>
+<%--                  <button class="btn btn-secondary" onclick="viewDoctorProfile('${doctor.id}')">--%>
+<%--                    <i class="fas fa-user-md"></i> <spring:message code="search.button.view.profile" />--%>
+<%--                  </button>--%>
                 </div>
               </div>
             </c:forEach>
@@ -507,9 +507,9 @@
 <script>
   contextPath = "${pageContext.request.contextPath}";
 
-  function viewDoctorProfile(doctorId) {
-    window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;
-  }
+  <%--function viewDoctorProfile(doctorId) {--%>
+  <%--  window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;--%>
+  <%--}--%>
 
   function clearWeekdaysFilter() {
     const currentUrl = new URL(window.location.href);

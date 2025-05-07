@@ -25,10 +25,6 @@ public class GlobalExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @RequestMapping("/error/403")
-    public ModelAndView error403() {
-        return new ModelAndView("error/403");
-    }
 
     // 500 – all other uncaught exceptions
     @ExceptionHandler(Exception.class)
