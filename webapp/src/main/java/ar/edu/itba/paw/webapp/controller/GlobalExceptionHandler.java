@@ -39,6 +39,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MessagingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleMessagingException(MessagingException e) {
+        LOGGER.error("Mail exception occurred", e);
         ModelAndView mav = new ModelAndView("/error/genericError");
         mav.addObject("message", "mail.error");
         return mav;
@@ -47,6 +48,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView handleUserNotFoundException(UserNotFoundException e) {
+        LOGGER.error("User not found exception occurred", e);
         ModelAndView mav = new ModelAndView("/error/genericError");
         mav.addObject("message", "user.notfound");
         return mav;
@@ -55,6 +57,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AppointmentNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView handleAppointmentNotFoundException(AppointmentNotFoundException e) {
+        LOGGER.error("Appointment not found exception occurred", e);
         ModelAndView mav = new ModelAndView("/error/genericError");
         mav.addObject("message", "appointment.notfound");
         return mav;
@@ -63,6 +66,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SpecialtyNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView handleSpecialtyNotFoundException(SpecialtyNotFoundException e) {
+        LOGGER.error("Specialty not found exception occurred", e);
         ModelAndView mav = new ModelAndView("/error/genericError");
         mav.addObject("message", "specialty.notfound");
         return mav;
