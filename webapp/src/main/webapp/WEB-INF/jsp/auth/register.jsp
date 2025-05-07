@@ -328,12 +328,15 @@
                             <h2><spring:message code="register.availability"/></h2>
 
                             <div class="form-group">
-                                <label class="form-label required-field">
+
+                                <label for="password" class="form-label">
                                     <spring:message code="register.availabilitySlots"/>
-                                    <span class="tooltip">
-                                    <span class="tooltip-icon">?</span>
-                                    <span class="tooltip-text"><spring:message code="register.timeSlotHelp"/></span>
-                                </span>
+                                    <span class="required-mark">*</span>
+                                    <div class="tooltip">
+                                        <i class="fas fa-info-circle tooltip-icon"></i>
+                                        <span class="tooltip-content"><spring:message
+                                                code="register.timeSlotHelp"/></span>
+                                    </div>
                                 </label>
                                 <div id="timeslots-container" class="timeslots-container">
                                     <div id="no-slots-message" class="no-slots-message">
