@@ -363,14 +363,6 @@
         const newUrl = window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
     }
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            document.querySelectorAll('.modal-overlay').forEach(modal => {
-                modal.classList.remove('show');
-            });
-            hideSuccessToast();
-        }
-    });
 
         function submitOnce(form) {
         if (form.getAttribute('data-submitting') === 'true') {
