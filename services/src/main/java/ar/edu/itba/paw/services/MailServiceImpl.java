@@ -22,7 +22,8 @@ import java.util.*;
 @Service
 public class MailServiceImpl implements MailService {
     @Value("${mail.username}")
-    private static String from_mail;
+    private String from_mail;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
