@@ -29,9 +29,6 @@
     <a href="${pageContext.request.contextPath}/" class="btn">
       <spring:message code="common.return.home" />
     </a>
-    <a href="${pageContext.request.contextPath}/appointments" class="btn btn-outline">
-      <spring:message code="error.404.view.appointments" />
-    </a>
   </div>
 
   <div class="suggestions">
