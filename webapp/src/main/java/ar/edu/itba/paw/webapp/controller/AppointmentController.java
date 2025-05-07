@@ -32,8 +32,8 @@ public class AppointmentController {
             @RequestParam(required = true) Long doctorId,
             @ModelAttribute("loggedUser") final Patient patient
     ) {
-        appointmentForm.setPatientId(patient.getId()); //TODO bind please
-        appointmentForm.setDoctorId(doctorId); //TODO bind please
+        appointmentForm.setPatientId(patient.getId());
+        appointmentForm.setDoctorId(doctorId);
         ModelAndView mav = new ModelAndView("appointment/appointment");
         Doctor doctor = ds.getByIdWithAppointments(doctorId).orElseThrow(UserNotFoundException::new);
         mav.addObject("doctor", doctor);
@@ -44,7 +44,7 @@ public class AppointmentController {
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
             final BindingResult errors,
-            @RequestParam(required = true) Long doctorId,
+            @RequestParam() Long doctorId,
             @ModelAttribute("loggedUser") final Patient patient
     ) {
 
