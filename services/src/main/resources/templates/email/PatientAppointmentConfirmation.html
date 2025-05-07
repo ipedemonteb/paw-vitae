@@ -131,7 +131,9 @@
         </div>
 
         <div class="text-center">
-            <a href="http://pawserver.it.itba.edu.ar/paw-2025a-11/appointment/details/appointmentId" class="button" th:text="#{mail.see.details}"></a>
+            <a th:href="@{'http://pawserver.it.itba.edu.ar/paw-2025a-11/patient/dashboard/appointment-details/' + ${appointmentId}}"
+               class="button"
+               th:text="#{mail.see.details}"></a>
         </div>
 
         <div class="reminder-box">

@@ -147,8 +147,8 @@ public class MailServiceImpl implements MailService {
 
         Context context = new Context(userLocale);
         context.setVariable("resetUrl", resetLink);
-        context.setVariable("userName", user.getName() + " " + user.getLastName()); // Replace with actual name if available
-        context.setVariable("expiryHours", 1); // e.g., 1 hour expiry
+        context.setVariable("userName", user.getName() + " " + user.getLastName());
+        context.setVariable("expiryHours", 1);
 
         String htmlContent = templateEngine.process("RecoverPassword", context);
 
