@@ -28,8 +28,8 @@ public class PatientDaoImpl implements PatientDao {
 
 
     @Autowired
-    public PatientDaoImpl(final DataSource ds, final DaoRowMappers daoRowMappers) {
-        ROW_MAPPER = daoRowMappers.getPatientRowMapper();
+    public PatientDaoImpl(final DataSource ds) {
+        ROW_MAPPER = DaoRowMappers.getPatientRowMapper();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertPatient = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("clients")
