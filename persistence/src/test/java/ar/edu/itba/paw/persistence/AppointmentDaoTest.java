@@ -71,7 +71,7 @@ public class AppointmentDaoTest {
         this.daoRowMappers = new DaoRowMappers();
         this.mockDoctor = mock(DoctorDao.class);
         this.mockPatient = mock(PatientDao.class);
-        this.appointmentDao = new AppointmentDaoImpl(ds, mockDoctor, mockPatient, daoRowMappers);
+        this.appointmentDao = new AppointmentDaoImpl(ds, mockDoctor, mockPatient);
         this.insertAppointment = new SimpleJdbcInsert(ds)
                 .withTableName("Appointments")
                 .usingGeneratedKeyColumns("id");
