@@ -106,7 +106,7 @@
             <i class="fas fa-user-md"></i>
             <span><spring:message code="dashboard.tab.profile" /></span>
         </a>
-        <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab active" >
+        <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab active >
             <i class="fas fa-calendar-check"></i>
         <span><spring:message code="dashboard.tab.availability" /></span>
         </a>
@@ -151,8 +151,8 @@
                                             <label class="time-label"><spring:message code="register.startTime" /></label>
                                             <select name="availabilitySlots[${status.index}].startTime" class="form-control" data-index="${status.index}" onchange="checkOverlap(this)">
                                                 <c:forEach var="hour" begin="8" end="20">
-                                                    <c:set var="formattedHour" value="${hour}" />
-                                                    <option value="${formattedHour}" <c:if test="${slot.startTime == hour}">selected</c:if>>
+                                                    <c:set var="formattedHour" value="${hour < 10 ? '0' : ''}${hour}:00" />
+                                                    <option value="${formattedHour}" <c:if test="${slot.startTime.hour == hour}">selected</c:if>>
                                                         <c:choose>
                                                             <c:when test="${hour > 12}">${hour-12}:00 PM</c:when>
                                                             <c:when test="${hour == 12}">12:00 PM</c:when>
@@ -166,8 +166,8 @@
                                             <label class="time-label"><spring:message code="register.endTime" /></label>
                                             <select name="availabilitySlots[${status.index}].endTime" class="form-control" data-index="${status.index}" onchange="checkOverlap(this)">
                                                 <c:forEach var="hour" begin="8" end="20">
-                                                    <c:set var="formattedHour" value="${hour}" />
-                                                    <option value="${formattedHour}" <c:if test="${slot.endTime == hour}">selected</c:if>>
+                                                    <c:set var="formattedHour" value="${hour < 10 ? '0' : ''}${hour}:00" />
+                                                    <option value="${formattedHour}" <c:if test="${slot.endTime.hour == hour}">selected</c:if>>
                                                         <c:choose>
                                                             <c:when test="${hour > 12}">${hour-12}:00 PM</c:when>
                                                             <c:when test="${hour == 12}">12:00 PM</c:when>
@@ -334,8 +334,8 @@
         timeSlots.push({
             index: ${status.index},
             day: ${slot.dayOfWeek},
-            startTime: parseInt(${slot.startTime}),
-            endTime: parseInt(${slot.endTime})
+            startTime: '${slot.startTime}',
+            endTime: '${slot.endTime}'
         });
         </c:forEach>
 
@@ -351,7 +351,7 @@
             const ampm = i < 12 ? 'AM' : 'PM';
             const value = (i < 10 ? '0' + i : i) + ':00';
             const display = hour + ':00 ' + ampm;
-            hours.push({ value: i, display: display });
+            hours.push({ value: value, display: display });
         }
         return hours;
     }
@@ -447,8 +447,8 @@
         });
 
         // Set default values (9 AM for start, 5 PM for end)
-        startSelect.value = 9;
-        endSelect.value = 17;
+        startSelect.value = '09:00';
+        endSelect.value = '17:00';
 
         startContainer.appendChild(startSelect);
         endContainer.appendChild(endSelect);
@@ -477,8 +477,8 @@
         timeSlots.push({
             index: slotCounter,
             day: 0,
-            startTime: 9,
-            endTime: 17
+            startTime: '09:00',
+            endTime: '17:00'
         });
 
         // Check for overlaps
@@ -517,7 +517,7 @@
         }
 
         // Check if end time is after start time
-        if (parseInt(startTime) >= parseInt(endTime)) {
+        if (startTime >= endTime) {
             row.classList.add('slot-error');
             showSlotError('<spring:message code="register.timeSlotInvalidTime" javaScriptEscape="true" />');
             updateSaveButtonState();
@@ -629,7 +629,7 @@
             if (!row) continue;
 
             // Check if end time is after start time
-            if (parseInt(slot.startTime) >= parseInt(slot.endTime)) {
+            if (slot.startTime >= slot.endTime) {
                 row.classList.add('slot-error');
                 showSlotError('<spring:message code="register.timeSlotInvalidTime" javaScriptEscape="true" />');
                 hasErrors = true;

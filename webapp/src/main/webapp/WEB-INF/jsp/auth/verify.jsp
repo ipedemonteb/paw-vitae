@@ -102,7 +102,9 @@
 </head>
 <body>
 <!-- Include Header Component -->
-<jsp:include page="/WEB-INF/jsp/components/header.jsp"/>
+<jsp:include page="/WEB-INF/jsp/components/header.jsp">
+    <jsp:param name="id" value="${imageId}"/>
+</jsp:include>
 
 <div class="register-container">
     <div class="register-card">
