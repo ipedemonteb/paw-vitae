@@ -87,9 +87,9 @@
 
     <div class="auth-buttons desktop-only">
       <sec:authorize access="isAnonymous()">
-        <a href="<c:url value='/login' />" class="btn btn-outline"><spring:message code="nav.login" /></a>
+        <a href="<c:url value='/login' />" class="modal-btn modal-btn-outline"><spring:message code="nav.login" /></a>
         <div class="register-dropdown">
-          <button class="btn btn-primary register-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+          <button class="modal-btn modal-btn-primary register-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
             <span><spring:message code="nav.register" /></span>
             <i class="fas fa-chevron-down"></i>
           </button>
