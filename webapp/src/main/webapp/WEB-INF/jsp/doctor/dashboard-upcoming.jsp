@@ -38,6 +38,21 @@
     </button>
 </div>
 
+
+<div id="errorToast" class="error-toast">
+    <div class="error-toast-icon">
+        <i class="fas fa-check"></i>
+    </div>
+    <div class="error-toast-content">
+        <div class="error-toast-title"><spring:message code="appointment.cancel.error.title"/></div>
+        <div class="error-toast-message"><spring:message code="appointment.cancel.error.message"/></div>
+    </div>
+    <button class="error-toast-close" onclick="hideErrorToast()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+
 <div class="dashboard-container">
     <!-- Doctor Profile Header -->
     <div class="dashboard-header">
@@ -291,6 +306,12 @@
             const newUrl = window.location.pathname;
             window.history.replaceState({}, document.title, newUrl);
         }
+        if(urlParams.get('cancelled')=== 'false'){
+            showErrorToast();
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+
 
         // Confirm appointment functionality
         const confirmButtons = document.querySelectorAll('.confirm-appointment');

@@ -34,6 +34,20 @@
     </button>
 </div>
 
+<div id="errorToast" class="error-toast">
+    <div class="error-toast-icon">
+        <i class="fas fa-check"></i>
+    </div>
+    <div class="error-toast-content">
+        <div class="error-toast-title"><spring:message code="appointment.cancel.error.title"/></div>
+        <div class="error-toast-message"><spring:message code="appointment.cancel.error.message"/></div>
+    </div>
+    <button class="error-toast-close" onclick="hideErrorToast()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+
 <jsp:include page="/WEB-INF/jsp/components/modal.jsp">
     <jsp:param name="id" value="cancelAppointmentModal"/>
     <jsp:param name="confirm" value="appointment.action.cancel"/>
@@ -201,6 +215,11 @@
             showSuccessToast();
 
             // Remove the query parameter without refreshing the page
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+        if(urlParams.get('cancelled')=== 'false'){
+            showErrorToast();
             const newUrl = window.location.pathname;
             window.history.replaceState({}, document.title, newUrl);
         }
