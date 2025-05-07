@@ -12,11 +12,11 @@ public interface UserService {
 
     void changeLanguage(long id, String language);
 
-    void setVerificationToken(User user);
+    void setVerificationToken(String email);
 
     void setVerificationStatus(User user, boolean status);
 
-    void setResetPasswordToken(User user);
+    void setResetPasswordToken(String email);
 
     Optional<? extends User> verifyValidationToken(String token);
 

@@ -77,6 +77,85 @@
     background-color: rgba(6, 95, 70, 0.1);
 }
 
+/* Error Notification Toast Styles */
+.error-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #fef2f2;
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 9999;
+    transform: translateY(20px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    max-width: 350px;
+}
+
+.error-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.error-toast-icon {
+    width: 24px;
+    height: 24px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.error-toast-icon i {
+    color: white;
+    font-size: 14px;
+}
+
+.error-toast-content {
+    flex: 1;
+}
+
+.error-toast-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.error-toast-message {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.error-toast-close {
+    color: #991b1b;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.error-toast-close:hover {
+    background-color: rgba(153, 27, 27, 0.1);
+}
+
 @keyframes fadeOut {
     from {
         opacity: 1;

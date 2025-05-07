@@ -111,7 +111,8 @@ public class PatientController {
             @ModelAttribute("loggedUser") final User user
     ) {
         boolean result = as.cancelAppointment(appointmentId, user.getId());
-        return new ModelAndView("redirect:/patient/dashboard/upcoming?cancelled=true");
+        String value = String.valueOf(result);
+        return new ModelAndView("redirect:/patient/dashboard/upcoming?cancelled=" + value);
     }
 
     @RequestMapping(value = "patient/dashboard/appointment-details/{id}", method = RequestMethod.GET)

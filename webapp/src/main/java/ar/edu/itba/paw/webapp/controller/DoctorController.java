@@ -130,10 +130,8 @@ public class DoctorController {
                                           @ModelAttribute("loggedUser") final User user
     ) {
         boolean result = as.cancelAppointment(appointmentId, user.getId());
-        if (!result) {
-            return new ModelAndView("redirect:/doctor/dashboard/upcoming?cancelled=false");
-        }
-        return new ModelAndView("redirect:/doctor/dashboard/upcoming?cancelled=true");
+        String value = String.valueOf(result);
+        return new ModelAndView("redirect:/doctor/dashboard/upcoming?cancelled=" + value);
     }
 
     @RequestMapping(value = "/doctor/dashboard/availability/update", method = RequestMethod.POST)

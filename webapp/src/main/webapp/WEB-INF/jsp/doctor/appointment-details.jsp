@@ -476,10 +476,7 @@
 
     const fileInput = document.getElementById('files');
     fileInput.addEventListener('change', function(event) {
-        console.log(fileInput)
-        console.log(event.target.files);
         if (event.target.files.length > 0) {
-            console.log("HELP");
             showSuccessToast(); // Muestra la notificación de éxito
         }
     });

@@ -59,7 +59,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void setVerificationToken(User user) {
+    public void setVerificationToken(String email) {
+        User user = getByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
         String token = UUID.randomUUID().toString();
         String verificationLink = BASE_URL + "/verify-confirmation?token=" + token;
         ms.sendVerificationRegisterEmail(user, verificationLink);
@@ -76,7 +77,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void setResetPasswordToken(User user) {
+    public void setResetPasswordToken(String email) {
+        User user = getByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
         String token = UUID.randomUUID().toString();
         String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
         ms.sendRecoverPasswordEmail(user, resetPasswordLink);
