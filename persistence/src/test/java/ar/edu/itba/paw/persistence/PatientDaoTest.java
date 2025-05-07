@@ -162,8 +162,8 @@ public class PatientDaoTest {
 
         //Postconditions
         Optional<Patient> updatedClient = jdbcTemplate.query(SQL_QUERY,
-                new Object[]{1L},
-                daoRowMappers.getPatientRowMapper()
+                daoRowMappers.getPatientRowMapper(),
+                1L
         ).stream().findFirst();
         assertTrue(updatedClient.isPresent());
         assertEquals(updatedName, updatedClient.get().getName());
@@ -284,8 +284,8 @@ public class PatientDaoTest {
 
         //Postconditions
         Optional<Patient> updatedPatient = jdbcTemplate.query(SQL_QUERY,
-                new Object[]{TEST_ID},
-                daoRowMappers.getPatientRowMapper()
+                daoRowMappers.getPatientRowMapper(),
+                TEST_ID
         ).stream().findFirst();
         assertTrue(updatedPatient.isPresent());
         assertEquals(newLanguage, updatedPatient.get().getLanguage());

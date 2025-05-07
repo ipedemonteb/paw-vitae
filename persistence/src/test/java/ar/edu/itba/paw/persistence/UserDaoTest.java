@@ -55,8 +55,8 @@ public class UserDaoTest {
 
         //Postconditions
         List<String> finalToken = jdbcTemplate.query(SQL_QUERY_VERIFICATIONTOKEN,
-                new Object[]{PAT_ID},
-                (rs, rowNum) -> rs.getString("verification_token")
+                (rs, rowNum) -> rs.getString("verification_token"),
+                PAT_ID
         );
         assertFalse(finalToken.isEmpty());
         assertEquals(1, finalToken.size());
@@ -73,8 +73,8 @@ public class UserDaoTest {
 
         //Postconditions
         List<Boolean> finalStatus = jdbcTemplate.query(SQL_QUERY_ISVERIFIED,
-                new Object[]{PAT_ID},
-                (rs, rowNum) -> rs.getBoolean("is_verified")
+                (rs, rowNum) -> rs.getBoolean("is_verified"),
+                PAT_ID
         );
         assertFalse(finalStatus.isEmpty());
         assertEquals(1, finalStatus.size());
@@ -91,8 +91,8 @@ public class UserDaoTest {
 
         //Postconditions
         List<String> finalResetToken = jdbcTemplate.query(SQL_QUERY_RESETTOKEN,
-                new Object[]{PAT_ID},
-                (rs, rowNum) -> rs.getString("reset_token")
+                (rs, rowNum) -> rs.getString("reset_token"),
+                PAT_ID
         );
         assertFalse(finalResetToken.isEmpty());
         assertEquals(1, finalResetToken.size());
@@ -119,8 +119,8 @@ public class UserDaoTest {
 
         //Postconditions
         List<String> finalToken = jdbcTemplate.query(SQL_QUERY_VERIFICATIONTOKEN,
-                new Object[]{id},
-                (rs, rowNum) -> rs.getString("verification_token")
+                (rs, rowNum) -> rs.getString("verification_token"),
+                id
         );
         assertNull(finalToken.getFirst());
     }
@@ -135,8 +135,8 @@ public class UserDaoTest {
 
         //Postconditions
         List<String> finalPassword = jdbcTemplate.query(SQL_QUERY_PASSWORD,
-                new Object[]{PAT_ID},
-                (rs, rowNum) -> rs.getString("password")
+                (rs, rowNum) -> rs.getString("password"),
+                PAT_ID
         );
         assertFalse(finalPassword.isEmpty());
         assertEquals(1, finalPassword.size());
@@ -165,8 +165,8 @@ public class UserDaoTest {
 
         //Postconditions
         List<String> finalLanguage = jdbcTemplate.query(SQL_QUERY_LANGUAGE,
-                new Object[]{PAT_ID},
-                (rs, rowNum) -> rs.getString("language")
+                (rs, rowNum) -> rs.getString("language"),
+                PAT_ID
         );
         assertFalse(finalLanguage.isEmpty());
         assertEquals(1, finalLanguage.size());
@@ -192,8 +192,8 @@ public class UserDaoTest {
 
         //Postconditions
         List<String> finalToken = jdbcTemplate.query(SQL_QUERY_RESETTOKEN,
-                new Object[]{id},
-                (rs, rowNum) -> rs.getString("reset_token")
+                (rs, rowNum) -> rs.getString("reset_token"),
+                id
         );
         assertNull(finalToken.getFirst());
     }
