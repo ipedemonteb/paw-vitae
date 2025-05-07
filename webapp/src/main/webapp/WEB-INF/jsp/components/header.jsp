@@ -4,6 +4,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <link rel="stylesheet" href="<c:url value='/css/header.css'/> "/>
+<link rel="stylesheet" href="<c:url value='/css/modal.css'/> "/>
 
 <header class="main-header">
   <div class="container">
@@ -148,27 +149,18 @@
   </div>
 </header>
 
-<!-- Logout Confirmation Modal -->
-<div class="modal-overlay" id="logoutModal">
-  <div class="modal-container">
-    <div class="modal-header">
-      <h3><spring:message code="logout.confirm.title" /></h3>
-      <button class="modal-close" aria-label="Close modal">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="modal-body">
-      <p><spring:message code="logout.confirm.message" /></p>
-    </div>
-    <div class="modal-footer">
-      <button class="modal-btn modal-btn-outline modal-cancel"><spring:message code="logout.confirm.cancel" /></button>
-      <form action="<c:url value='/logout' />" method="post" class="logout-form">
-        <sec:csrfInput />
-        <button type="submit" class="modal-btn modal-btn-primary"><spring:message code="logout.confirm.yes" /></button>
-      </form>
-    </div>
-  </div>
-</div>
+<jsp:include page="/WEB-INF/jsp/components/modal.jsp">
+  <jsp:param name="confirm" value="logout.confirm.yes"/>
+  <jsp:param name="id" value="logoutModal"/>
+  <jsp:param name="title" value="logout.confirm.title"/>
+  <jsp:param name="message" value="logout.confirm.message"/>
+  <jsp:param name="actionPath" value="/logout"/>
+  <jsp:param name="divId" value=""/>
+  <jsp:param name="formId" value=""/>
+  <jsp:param name="buttonId" value=""/>
+  <jsp:param name="buttonClass" value="logout-btn"/>
+</jsp:include>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -235,60 +227,6 @@
         menus.forEach(menu => menu.classList.remove('show'));
       }
     });
-
-    // Logout modal functionality for both desktop and mobile
-    const setupLogoutModal = function(btnSelector) {
-      const logoutBtn = document.querySelector(btnSelector);
-      const logoutModal = document.getElementById('logoutModal');
-      const modalClose = document.querySelector('.modal-close');
-      const modalCancel = document.querySelector('.modal-cancel');
-
-      if (logoutBtn && logoutModal) {
-        logoutBtn.addEventListener('click', function() {
-          logoutModal.classList.add('show');
-          body.classList.add('modal-open');
-
-          // If mobile menu is open, close it
-          if (mainNav.classList.contains('active')) {
-            mainNav.classList.remove('active');
-            mobileMenuToggle.classList.remove('active');
-            body.classList.remove('menu-open');
-          }
-        });
-      }
-
-      // Close modal functions
-      const closeModal = function() {
-        logoutModal.classList.remove('show');
-        body.classList.remove('modal-open');
-      };
-
-      if (modalClose) {
-        modalClose.addEventListener('click', closeModal);
-      }
-
-      if (modalCancel) {
-        modalCancel.addEventListener('click', closeModal);
-      }
-
-      // Close modal when clicking outside
-      logoutModal.addEventListener('click', function(e) {
-        if (e.target === logoutModal) {
-          closeModal();
-        }
-      });
-
-      // Close modal on escape key
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && logoutModal.classList.contains('show')) {
-          closeModal();
-        }
-      });
-    };
-
-    // Setup logout modal for both desktop and mobile
-    setupLogoutModal('.logout-btn');
-    setupLogoutModal('.mobile-logout-btn');
 
     // Add active class to current nav link
     const currentPath = window.location.pathname;
