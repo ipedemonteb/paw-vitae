@@ -10,6 +10,7 @@ import javax.validation.constraints.*;
 import java.time.LocalTime;
 import java.util.List;
 
+@RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "{register.passwordsDoNotMatch}")
 public class DoctorForm {
 
     @NotEmpty
@@ -37,7 +38,7 @@ public class DoctorForm {
     @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")
     private String phone;
-    @CoverageList(message = "{specialties.invalids}")
+    @SpecialtyList(message = "{specialties.invalids}")
     @NotEmpty
     private List<String> specialties;
     @CoverageList(message = "{coverages.invalids}")
