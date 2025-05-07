@@ -90,7 +90,7 @@ public class SpecialtyDaoTest {
         List<Specialty> specialties = specialtyDao.getAll();
 
         //Postconditions
-        List<String> keys = specialties.stream().map(Specialty::getKey).collect(Collectors.toList());
+        List<String> keys = specialties.stream().map(Specialty::getKey).toList();
         assertEquals(3, specialties.size());
         assertTrue(keys.containsAll(List.of("Cardiology", "Neurology", "Orthopedics")));
     }

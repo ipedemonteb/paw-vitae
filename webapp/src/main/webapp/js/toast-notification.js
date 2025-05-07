@@ -7,9 +7,8 @@
 function showSuccessToast() {
     const toast = document.getElementById('successToast');
     if (!toast) return;
-
     toast.classList.add('show');
-
+console.log("APPEARED");
     // Auto hide after 5 seconds
     setTimeout(() => {
         hideSuccessToast();
