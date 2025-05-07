@@ -17,7 +17,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<jsp:include page="/WEB-INF/jsp/components/header.jsp" />
+<jsp:include page="/WEB-INF/jsp/components/header.jsp" >
+    <jsp:param name="id" value="${imageId}"/>
+</jsp:include>
 
 <main>
     <!-- Hero Section -->
