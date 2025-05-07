@@ -63,7 +63,7 @@ public class PatientDaoTest {
     @Before
     public void setUp() {
         this.daoRowMappers = new DaoRowMappers();
-        this.patientDao = new PatientDaoImpl(ds, daoRowMappers);
+        this.patientDao = new PatientDaoImpl(ds);
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.jdbcInsertUser = new SimpleJdbcInsert(ds)
                 .withTableName("Users")
