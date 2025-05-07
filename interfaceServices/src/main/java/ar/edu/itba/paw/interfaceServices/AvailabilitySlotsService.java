@@ -3,6 +3,7 @@ package ar.edu.itba.paw.interfaceServices;
 import ar.edu.itba.paw.models.AvailabilitySlot;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -15,4 +16,6 @@ public interface AvailabilitySlotsService {
     List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId);
 
     List<AvailabilitySlot> create(long docId, List<AvailabilitySlot> slots);
+
+    boolean isAvailableAtDateAndTime(long doctorId, LocalDate date, int time);
 }
