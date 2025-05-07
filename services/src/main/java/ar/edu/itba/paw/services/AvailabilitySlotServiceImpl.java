@@ -12,11 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
 public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
 
-    private final AvailabilitySlotsDao availabilitySlotsDao;
     private static final Logger LOGGER = LoggerFactory.getLogger(AvailabilitySlotServiceImpl.class);
+    private final AvailabilitySlotsDao availabilitySlotsDao;
 
     @Autowired
     public AvailabilitySlotServiceImpl(final AvailabilitySlotsDao availabilitySlotsDao) {
@@ -28,7 +29,7 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
     public AvailabilitySlot create(long docId, AvailabilitySlot slot) {
         AvailabilitySlot toReturn = availabilitySlotsDao.create(docId, slot);
         LOGGER.info("AvailabilitySlot created: {}", toReturn);
-      return  toReturn;
+        return toReturn;
     }
 
     @Transactional

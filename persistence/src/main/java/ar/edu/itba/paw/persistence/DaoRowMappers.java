@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DaoUtils {
+public class DaoRowMappers {
 
     public static final RowMapper<Doctor> DOCTOR_ROW_MAPPER = (rs, rowNum) -> new Doctor(
             rs.getString("doctor_name"),

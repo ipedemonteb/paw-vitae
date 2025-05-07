@@ -54,13 +54,20 @@ import java.util.Properties;
 @EnableAsync
 @EnableScheduling
 @EnableWebMvc
-@ComponentScan({"ar.edu.itba.paw.webapp.controller","ar.edu.itba.paw.services","ar.edu.itba.paw.persistence"})
+@ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence"})
 @Configuration
 @PropertySource("classpath:application.properties")
 public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigurer {
 
-    @Autowired
     private Environment env;
+
+    @Value("classpath:schema.sql")
+    private Resource schemaSql;
+
+    @Autowired
+    public WebConfig(Environment env) {
+        this.env = env;
+    }
 
     @Bean
     @Override
@@ -86,6 +93,7 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
         viewResolver.setSuffix(".jsp");
         return viewResolver;
     }
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         super.addResourceHandlers(registry);
@@ -96,6 +104,7 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
                 .setCachePeriod(0)
                 .resourceChain(false);
     }
+
     @Bean
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
@@ -111,8 +120,6 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
         return new DataSourceTransactionManager(ds);
     }
 
-    @Value("classpath:schema.sql")
-    private Resource schemaSql;
     @Bean
     public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
         final DataSourceInitializer dsi = new DataSourceInitializer();
@@ -150,6 +157,7 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
         resolver.setMaxUploadSize(5242880); // 5MB
         return resolver;
     }
+
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();

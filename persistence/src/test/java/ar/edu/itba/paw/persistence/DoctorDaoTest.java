@@ -59,14 +59,14 @@ public class DoctorDaoTest {
 
     @Autowired
     private DataSource ds;
-    private DaoUtils daoUtils;
+    private DaoRowMappers daoRowMappers;
 
     @Before
     public void setUp() {
         this.jdbcTemplate = new JdbcTemplate(ds);
-        this.daoUtils = new DaoUtils();
+        this.daoRowMappers = new DaoRowMappers();
         this.mockAvailability = mock(AvailabilitySlotsDao.class);
-        this.doctorDao = new DoctorDaoImpl(ds, daoUtils);
+        this.doctorDao = new DoctorDaoImpl(ds, daoRowMappers);
         this.jdbcInsertUser = new SimpleJdbcInsert(ds)
                 .withTableName("Users")
                 .usingGeneratedKeyColumns("id");
@@ -172,7 +172,7 @@ public class DoctorDaoTest {
         //Postconditions
         Optional<Doctor> updatedDoctor = jdbcTemplate.query(SQL_QUERY,
                 new Object[]{TEST_ID},
-                daoUtils.getDoctorRowMapper()
+                daoRowMappers.getDoctorRowMapper()
         ).stream().findFirst();
         assertTrue(updatedDoctor.isPresent());
         assertEquals(finalRating, updatedDoctor.get().getRating(), 0.01);
@@ -251,7 +251,7 @@ public class DoctorDaoTest {
         //Postconditions
         Optional<Doctor> updatedDoctor = jdbcTemplate.query(SQL_QUERY,
                 new Object[]{TEST_ID},
-                daoUtils.getDoctorRowMapper()
+                daoRowMappers.getDoctorRowMapper()
         ).stream().findFirst();
         assertTrue(updatedDoctor.isPresent());
         assertEquals(TEST_ID, updatedDoctor.get().getId());
@@ -303,7 +303,7 @@ public class DoctorDaoTest {
         //Postconditions
         Optional<Doctor> updatedDoctor = jdbcTemplate.query(SQL_QUERY,
                 new Object[]{TEST_ID},
-                daoUtils.getDoctorRowMapper()
+                daoRowMappers.getDoctorRowMapper()
         ).stream().findFirst();
         assertTrue(updatedDoctor.isPresent());
         assertEquals(newLanguage, updatedDoctor.get().getLanguage());

@@ -1,4 +1,5 @@
 package ar.edu.itba.paw.services;
+
 import ar.edu.itba.paw.interfacePersistence.ImageDao;
 import ar.edu.itba.paw.interfaceServices.ImageService;
 import ar.edu.itba.paw.models.Images;
@@ -11,10 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
+
 @Service
-public class ImageServiceImpl implements ImageService{
-    Logger LOGGER = LoggerFactory.getLogger(ImageServiceImpl.class);
+public class ImageServiceImpl implements ImageService {
+
     private final ImageDao imageDao;
+    Logger LOGGER = LoggerFactory.getLogger(ImageServiceImpl.class);
+
     @Autowired
     public ImageServiceImpl(ImageDao imageDao) {
         this.imageDao = imageDao;

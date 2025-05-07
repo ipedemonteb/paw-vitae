@@ -30,8 +30,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder, AppointmentService as,ImageService is,
-                             AvailabilitySlotsService ass) {
+    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder, AppointmentService as, ImageService is, AvailabilitySlotsService ass) {
         this.doctorDao = doctorDao;
         this.ss = ss;
         this.cs = cs;
@@ -66,9 +65,9 @@ public class DoctorServiceImpl implements DoctorService {
                 .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
                 .toList();
         Doctor doctor = this.doctorDao.create(
-                name, lastName, email, passwordEncoder.encode(password), phone, language,(img == null ? null : img.getId()), specialtyList, coverageList
+                name, lastName, email, passwordEncoder.encode(password), phone, language, (img == null ? null : img.getId()), specialtyList, coverageList
         );
-        ass.create(doctor.getId(),filteredSlots);
+        ass.create(doctor.getId(), filteredSlots);
         populateDoctorDetails(doctor, specialtyList, coverageList, filteredSlots);
         LOGGER.info("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
         return doctor;
@@ -78,7 +77,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Optional<Doctor> getById(long id) {
         Optional<Doctor> doctor = this.doctorDao.getById(id);
-        if(doctor.isEmpty()){
+        if (doctor.isEmpty()) {
             LOGGER.warn("No doctor found with id {}", id);
         }
         doctor.ifPresent(this::populateDoctorDetails);
@@ -166,12 +165,12 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Doctor> getByResetToken(String token){
+    public Optional<Doctor> getByResetToken(String token) {
         return doctorDao.getByResetToken(token);
     }
 
     @Transactional(readOnly = true)
-    public Optional<Doctor> getByVerificationToken(String token){
+    public Optional<Doctor> getByVerificationToken(String token) {
         return doctorDao.getByVerificationToken(token);
     }
 

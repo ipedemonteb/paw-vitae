@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Specialty {
+
     String message() default "Invalid Specialty.";
 
     Class<?>[] groups() default {};

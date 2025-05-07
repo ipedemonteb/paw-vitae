@@ -16,8 +16,6 @@ import java.util.Optional;
 @Repository
 public class AppointmentFileDaoImpl implements AppointmentFileDao {
 
-    private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
     private final static RowMapper<AppointmentFile> ROW_MAPPER = (rs, rowNum) -> new AppointmentFile(
             rs.getString("file_name"),
             rs.getBytes("file_data"),
@@ -25,6 +23,8 @@ public class AppointmentFileDaoImpl implements AppointmentFileDao {
             rs.getString("uploader_role"),
             rs.getLong("appointment_id")
     );
+    private JdbcTemplate jdbcTemplate;
+    private SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public AppointmentFileDaoImpl(final DataSource ds) {

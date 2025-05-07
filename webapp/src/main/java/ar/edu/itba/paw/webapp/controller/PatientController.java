@@ -30,9 +30,9 @@ public class PatientController {
     private final CoverageService covs;
     private final AppointmentFileService afs;
     private final RatingService rs;
+
     @Autowired
     public PatientController(PatientService ps, AppointmentService as, CoverageService covs, AppointmentFileService afs, RatingService rs) {
-
         this.ps = ps;
         this.as = as;
         this.covs = covs;
@@ -49,11 +49,11 @@ public class PatientController {
     public ModelAndView getUpcomingAppointments(@RequestParam(value = "page", defaultValue = "1") int page,
                                                 @RequestParam(defaultValue = "all", required = false) String dateRange,
                                                 @ModelAttribute("loggedUser") final Patient patient
-    ){
+    ) {
 
         final ModelAndView mav = new ModelAndView("patient/dashboard-upcoming");
         mav.addObject("patient", patient);
-        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(),true,page, 5,dateRange);
+        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(), true, page, 5, dateRange);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
 
         mav.addObject("currentPage", page);
@@ -65,12 +65,12 @@ public class PatientController {
 
     @RequestMapping(value = "/patient/dashboard/history")
     public ModelAndView getAppointmentHistory(@RequestParam(value = "page", defaultValue = "1") int page,
-                                              @RequestParam( defaultValue = "all",required = false) String status,
-                                                @ModelAttribute("loggedUser") final Patient patient
-    ){
+                                              @RequestParam(defaultValue = "all", required = false) String status,
+                                              @ModelAttribute("loggedUser") final Patient patient
+    ) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-history");
         mav.addObject("patient", patient);
-        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(),false,page, 5, status);
+        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(), false, page, 5, status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
@@ -80,7 +80,7 @@ public class PatientController {
 
     @RequestMapping(value = "/patient/dashboard/profile")
     public ModelAndView getProfile(@ModelAttribute("updatePatientForm") final UpdatePatientForm updatePatientForm,
-                                      @ModelAttribute("loggedUser") final Patient patient
+                                   @ModelAttribute("loggedUser") final Patient patient
     ) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-profile");
         updatePatientForm.setForm(patient);

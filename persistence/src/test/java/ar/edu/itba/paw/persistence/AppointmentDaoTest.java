@@ -16,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -65,15 +63,15 @@ public class AppointmentDaoTest {
 
     @Autowired
     private DataSource ds;
-    private DaoUtils daoUtils;
+    private DaoRowMappers daoRowMappers;
 
     @Before
     public void setUp() {
         this.jdbcTemplate = new JdbcTemplate(ds);
-        this.daoUtils = new DaoUtils();
+        this.daoRowMappers = new DaoRowMappers();
         this.mockDoctor = mock(DoctorDao.class);
         this.mockPatient = mock(PatientDao.class);
-        this.appointmentDao = new AppointmentDaoImpl(ds, mockDoctor, mockPatient, daoUtils);
+        this.appointmentDao = new AppointmentDaoImpl(ds, mockDoctor, mockPatient, daoRowMappers);
         this.insertAppointment = new SimpleJdbcInsert(ds)
                 .withTableName("Appointments")
                 .usingGeneratedKeyColumns("id");
