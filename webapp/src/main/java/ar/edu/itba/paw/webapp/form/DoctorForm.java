@@ -49,6 +49,7 @@ public class DoctorForm {
     private MultipartFile image;
 
     @NotEmpty
+    @ValidTimeSlot(message = "{slots.invalid}")
     @TimeSlotIntersection(message = "{slots.overlap}")
     private List<AvailabilitySlot> availabilitySlots;
 

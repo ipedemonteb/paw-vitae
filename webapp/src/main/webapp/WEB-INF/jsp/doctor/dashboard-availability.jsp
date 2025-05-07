@@ -185,16 +185,16 @@
                             <div id="time-slot-error" class="error-message" style="display: none; margin-bottom: 10px;"></div>
 
                             <button type="button" class="btn-add-slot" id="add-slot-btn" onclick="addTimeSlotRow()">
-                                <i class="fas fa-plus-circle"></i> <spring:message code="dashboard.availability.addTimeSlot" />
+                                <i class="fas fa-plus"></i> <spring:message code="dashboard.availability.addTimeSlot" />
                             </button>
-                        </div>
-                        <div>
-                            <form:errors path="availabilitySlots" cssClass="error-message" />
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary" onclick="this.disabled=true; this.form.submit();">
-                                <i class="fas fa-save"></i> <spring:message code="dashboard.availability.saveChanges" />
-                            </button>
+                            <div>
+                                <form:errors path="availabilitySlots" cssClass="error-message" />
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-submit-doctor" onclick="this.disabled=true; this.form.submit();">
+                                    <spring:message code="dashboard.availability.saveChanges" />
+                                </button>
+                            </div>
                         </div>
                     </form:form>
                 </div>
