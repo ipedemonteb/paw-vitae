@@ -161,11 +161,11 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
+        mailSender.setHost(env.getProperty("mail.host"));
+        mailSender.setPort(Integer.parseInt(Objects.requireNonNull(env.getProperty("mail.port"))));
 
-        mailSender.setUsername("vitaepaw@gmail.com");
-        mailSender.setPassword("cknn xrna teqg hzdi");
+        mailSender.setUsername(env.getProperty("mail.username"));
+        mailSender.setPassword(env.getProperty("mail.password"));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

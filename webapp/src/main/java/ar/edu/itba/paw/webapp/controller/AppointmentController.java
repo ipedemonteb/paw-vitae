@@ -1,17 +1,14 @@
 package ar.edu.itba.paw.webapp.controller;
-
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.validation.Valid;
 
 @Controller

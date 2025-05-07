@@ -44,7 +44,6 @@ public class AuthUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         final User user = us.getByEmail(email).orElseThrow(() -> new UsernameNotFoundException("No user with the email " + email));
-
         if (user instanceof Doctor) {
             return new AuthUserDetails(
                     email,
