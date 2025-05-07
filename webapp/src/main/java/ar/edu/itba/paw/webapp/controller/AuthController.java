@@ -56,7 +56,7 @@ public class AuthController {
         if (userOpt.isEmpty()) {
             return new ModelAndView("redirect:/email-sent");
         }
-        us.setVerificationToken(userOpt.get());
+        us.setVerificationToken(form.getEmail());
         return new ModelAndView("redirect:/email-sent");
     }
 
@@ -85,11 +85,7 @@ public class AuthController {
         }
         ps.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(),
                 patientForm.getPhone(), LocaleContextHolder.getLocale().getLanguage(), patientForm.getCoverage());
-        Optional<User> userOpt = us.getByEmail(patientForm.getEmail()).map(user -> (User) user);
-        if (userOpt.isEmpty()) {
-            return new ModelAndView("redirect:/email-sent");
-        }
-        us.setVerificationToken(userOpt.get());
+        us.setVerificationToken(patientForm.getEmail());
         return new ModelAndView("redirect:/email-sent");
     }
 
@@ -113,12 +109,7 @@ public class AuthController {
         if (errors.hasErrors()) {
             return new ModelAndView("auth/recover-password");
         }
-        Optional<User> userOpt = us.getByEmail(form.getEmail()).map(user -> (User) user);
-        if (userOpt.isEmpty()) {
-            return new ModelAndView("redirect:/recover-password?recover=sent");
-        }
-
-        us.setResetPasswordToken(userOpt.get());
+        us.setResetPasswordToken(form.getEmail());
         return new ModelAndView("redirect:/recover-password?recover=sent");
     }
 
@@ -137,11 +128,9 @@ public class AuthController {
             return new ModelAndView("auth/change-password").addObject("token", token);
         }
         boolean success = us.changePassword(token, form.getPassword());
-        if (success) {
-            return new ModelAndView("redirect:/change-password-result?success=true");
-        } else {
-            return new ModelAndView("redirect:/change-password-result?success=false");
-        }
+        String value = String.valueOf(success);
+            return new ModelAndView("redirect:/change-password-result?success="+value);
+
     }
 
     @RequestMapping(value = "/change-password-result", method = RequestMethod.GET)
@@ -160,11 +149,8 @@ public class AuthController {
             return new ModelAndView("auth/verify").addObject("imageId", us.getImageId(user));
         }
         boolean success = as.verifyAndLoginUser(token);
-        if (success) {
-            return new ModelAndView("redirect:/verify?success=true");
-        } else {
-            return new ModelAndView("redirect:/verify?success=false");
-        }
+        String value = String.valueOf(success);
+        return new ModelAndView("redirect:/verify?success="+value);
     }
 
     @RequestMapping("/verify-result")
