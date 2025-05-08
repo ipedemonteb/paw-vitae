@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{patient.file.upload.title}"></title>
+    <title th:text="#{patient.report.added.title}"></title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -51,6 +51,69 @@
         .appointment-details li:last-child {
             border-bottom: none;
         }
+        .report-container {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+        .report-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+        .report-icon {
+            background-color: #2e7d32;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .star-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px;
+            line-height: 0;
+            display: block;
+            text-align: center;
+        }
+
+
+        .report-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        .report-content {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #495057;
+            white-space: pre-line;
+        }
+        .report-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 60px;
+            color: rgba(46, 125, 50, 0.05);
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 0;
+        }
         .footer {
             text-align: center;
             padding-top: 20px;
@@ -75,11 +138,6 @@
             color: #2e7d32;
             font-weight: bold;
         }
-        .file-icon {
-            font-size: 24px;
-            color: #2e7d32;
-            margin: 10px 0;
-        }
         @media only screen and (max-width: 600px) {
             .container {
                 width: 100%;
@@ -91,29 +149,38 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1 th:text="#{patient.file.upload.title}"></h1>
+        <h1 th:text="#{patient.report.added.title}"></h1>
     </div>
 
     <div class="content">
+        <!-- Fixed greeting to use patient name only -->
         <p><strong th:text="#{patient.greeting(${patient.name}, ${patient.lastName})}"></strong></p>
 
-        <p th:text="#{patient.file.upload.message(${doctor.name}, ${doctor.lastName})}"></p>
+        <!-- Fixed message to use doctor's full name -->
+        <p th:text="#{patient.report.added.message(${doctor.name}, ${doctor.lastName})}"></p>
 
         <div class="appointment-details">
-            <h3 th:text="#{patient.file.upload.details}"></h3>
+            <h3 th:text="#{patient.report.added.details}"></h3>
             <ul>
-                <li><strong th:text="#{patient.doctor.label}"></strong> <span th:text="${doctor.name}"></span></li>
                 <li><strong th:text="#{patient.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
-                <li><strong th:text="#{patient.time.label}"></strong> <span th:text="${appointmentTime} + 'hs'"></span></li>
+                <li><strong th:text="#{patient.time.label}"></strong> <span th:text="${appointmentTime}"></span></li>
             </ul>
+        </div>
 
+        <h3 th:text="#{patient.report.added.report.title}"></h3>
+
+        <div class="report-container">
+            <div class="report-header">
+                <h4 class="report-title" th:text="#{patient.report.added.medical.report}"></h4>
+            </div>
+            <div class="report-content" th:text="${report}"></div>
         </div>
 
         <div class="text-center">
-            <a th:href="@{'http://pawserver.it.itba.edu.ar/paw-2025a-11/patient/dashboard/appointment-details/' + ${appointment.id}}" class="button" th:text="#{patient.view.uploaded.files}"></a>
+            <a th:href="@{'http://pawserver.it.itba.edu.ar/paw-2025a-11/patient/dashboard/appointment-details/' + ${appointment.id}}" class="button" th:text="#{patient.view.appointment.details}"></a>
         </div>
 
-        <p th:text="#{patient.file.upload.importance}"></p>
+        <p th:text="#{patient.report.added.importance}"></p>
 
         <p th:text="#{patient.thanks}"></p>
 

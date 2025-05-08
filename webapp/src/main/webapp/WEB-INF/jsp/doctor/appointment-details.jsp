@@ -41,6 +41,19 @@
     </button>
 </div>
 
+<div id="reportSuccessToast" class="success-toast">
+    <div class="success-toast-icon">
+        <i class="fas fa-check"></i>
+    </div>
+    <div class="success-toast-content">
+        <div class="success-toast-title"><spring:message code="report.added"/></div>
+        <div class="success-toast-message"><spring:message code="report.added.message"/></div>
+    </div>
+    <button class="success-toast-close" onclick="hideSuccessToast()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
 <!-- Main Content -->
 <main class="main-content">
     <div class="container">
@@ -370,7 +383,7 @@
                                     </h2>
                                     <div class="form-group">
                                         <label><spring:message code="appointment.details.report"/></label>
-                                        <textarea class="form-control" rows="4" disabled></textarea>
+                                        <textarea label="report" id="report" class="form-control" rows="4" disabled></textarea>
                                     </div>
                                     <div class="no-files-message">
                                         <div class="no-files-content">
@@ -556,7 +569,14 @@
     const fileInput = document.getElementById('files');
     fileInput.addEventListener('change', function(event) {
         if (event.target.files.length > 0) {
-            showSuccessToast(); // Muestra la notificación de éxito
+            showSuccessToast();
+        }
+    });
+
+    const reportInput = document.getElementById('report');
+    reportInput.addEventListener('change', function(event) {
+        if (event.target.value.trim() !== '') {
+            showReportSuccessToast();
         }
     });
 

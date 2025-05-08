@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -223,10 +224,80 @@ public class MailServiceImpl implements MailService {
             helper.setFrom(from_mail);
 
             mailSender.send(message);
-            LOGGER.info("Verification email sent to: {}", doctor.getEmail());
+            LOGGER.info("Doctor rated notification email sent to: {}", doctor.getEmail());
         } catch (MessagingException e) {
-            LOGGER.error("Error sending verification email to {}", doctor.getEmail(), e);
+            LOGGER.error("Error sending rated notification email to {}", doctor.getEmail(), e);
         }
     }
+
+    @Async
+    @Override
+    public void sendFileUploadMail(Doctor doctor, Patient patient, Appointment appointment, List<AppointmentFile> uploadedFiles) {
+        Locale userLocale = Locale.forLanguageTag(patient.getLanguage());
+        Context context = new Context(userLocale);
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        context.setVariable("appointmentDate", appointment.getDate().format(dateFormatter));
+        context.setVariable("appointmentTime", appointment.getDate().format(timeFormatter));
+        context.setVariable("doctor", doctor);
+        context.setVariable("patient", patient);
+        context.setVariable("appointment", appointment);
+
+        String htmlContent = templateEngine.process("PatientFileUploadedNotification", context);
+
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(patient.getEmail());
+            helper.setSubject(messageSource.getMessage("patient.file.upload.title", null, userLocale));
+            helper.setText(htmlContent, true);
+            helper.setFrom(from_mail);
+
+            // Attach uploaded files
+            for (AppointmentFile file : uploadedFiles) {
+                if (file.getFileData() != null && file.getFileName() != null) {
+                    helper.addAttachment(file.getFileName(), new ByteArrayResource(file.getFileData()));
+                }
+            }
+
+            mailSender.send(message);
+            LOGGER.info("File uploaded notification email sent to: {}", patient.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending file uploaded notification email to {}", patient.getEmail(), e);
+        }
+    }
+    @Async
+    @Override
+    public void sendReportAddedMail(Doctor doctor, Patient patient, Appointment appointment, String report) {
+        Locale userLocale = Locale.forLanguageTag(patient.getLanguage());
+        Context context = new Context(userLocale);
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        context.setVariable("appointmentDate", appointment.getDate().format(dateFormatter));
+        context.setVariable("appointmentTime", appointment.getDate().format(timeFormatter));
+        context.setVariable("doctor", doctor);
+        context.setVariable("patient", patient);
+        context.setVariable("appointment", appointment);
+        context.setVariable("report", report);
+
+        String htmlContent = templateEngine.process("PatientReportAddedNotification", context);
+
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(patient.getEmail());
+            helper.setSubject(messageSource.getMessage("patient.report.added.title", null, userLocale));
+            helper.setText(htmlContent, true);
+            helper.setFrom(from_mail);
+
+            mailSender.send(message);
+            LOGGER.info("Report uploaded notification email sent to: {}", patient.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending report uploaded notification email to {}", patient.getEmail(), e);
+        }
+    }
+
 
 }
