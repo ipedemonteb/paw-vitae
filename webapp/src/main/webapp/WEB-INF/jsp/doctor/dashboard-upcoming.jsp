@@ -234,7 +234,7 @@
 
                                         <div class="appointment-actions">
 
-                                            <c:if test="${status eq confirmed}">
+                                            <c:if test="${status eq confirmed && appointment.cancellable}">
                                                 <button class="btn btn-danger cancel-appointment" data-id="${appointment.id}">
                                                     <i class="fas fa-times-circle"></i>
                                                     <span><spring:message code="appointment.action.cancel" /></span>
