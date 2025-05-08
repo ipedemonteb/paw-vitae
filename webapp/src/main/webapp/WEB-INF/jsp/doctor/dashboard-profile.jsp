@@ -15,6 +15,7 @@
     <title><spring:message code="dashboard.profile.title" /></title>
     <link rel="stylesheet" href="<c:url value='/css/doctor-dashboard.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/profile-image-upload.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -43,7 +44,7 @@
     <div class="dashboard-header">
         <div class="doctor-info">
             <div class="doctor-avatar">
-                <img src="<c:url value="/image/${doctor.imageId}"/>" alt="<c:out value="${doctor.name} ${doctor.lastName}"/>"/>
+                <img id="doctor-profile-image" src="<c:url value="/image/${doctor.imageId}"/>" alt="<c:out value="${doctor.name} ${doctor.lastName}"/>"/>
             </div>
             <div class="doctor-details">
                 <h1 class="doctor-name"><c:out value="${doctor.name}" /> <c:out value="${doctor.lastName}" /></h1>
@@ -57,6 +58,28 @@
                         <span><c:out value="${doctor.phone}" /></span>
                     </div>
                 </div>
+                <c:if test="${doctor.ratingCount > 0}">
+                    <div class="doctor-rating">
+                        <div class="rating-stars">
+                            <c:forEach begin="1" end="5" var="i">
+                                <c:choose>
+                                    <c:when test="${doctor.rating >= i}">
+                                        <i class="fas fa-star"></i>
+                                    </c:when>
+                                    <c:when test="${doctor.rating >= i - 0.5}">
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="far fa-star"></i>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+                        </div>
+                        <div class="rating-value">
+                            <fmt:formatNumber value="${doctor.rating}" pattern="#.#" /> <span class="rating-count">(${doctor.ratingCount})</span>
+                        </div>
+                    </div>
+                </c:if>
                 <div class="doctor-specialties">
                     <c:forEach items="${doctor.specialtyList}" var="specialty" varStatus="status">
                         <span class="specialty-tag">
@@ -210,7 +233,39 @@
                         <spring:message code="dashboard.profile.edit" />
                     </h3>
 
-                    <form:form id="updateDoctorForm" modelAttribute="updateDoctorForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/update" cssClass="edit-profile-form">
+                    <form:form id="updateDoctorForm" modelAttribute="updateDoctorForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/update" cssClass="edit-profile-form" enctype="multipart/form-data">
+                        <!-- Imagen de perfil -->
+                        <div class="form-group">
+                            <label class="form-label"><spring:message code="register.profileImage" /></label>
+                            <div class="image-upload-container">
+                                <div class="image-upload-area" id="image-upload-area">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span><spring:message code="register.chooseImage" /></span>
+                                </div>
+                                <form:input path="image" id="image" type="file" class="file-input" accept="image/jpeg,image/png,image/jpg" />
+                                <div id="image-preview-container" class="image-preview-container" style="display: none;">
+                                    <div class="image-preview-content">
+                                        <div class="image-preview-thumbnail">
+                                            <img id="image-preview" src="/placeholder.svg" alt="Vista previa">
+                                        </div>
+                                        <div class="image-preview-info">
+                                            <div id="image-preview-name" class="image-preview-name"></div>
+                                            <div id="image-preview-details" class="image-preview-details"></div>
+                                        </div>
+                                        <button type="button" id="remove-image" class="remove-image-btn" aria-label="Eliminar imagen">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <form:errors path="image" cssClass="error-message" id="image-error" />
+                            </div>
+                            <div class="text-muted">
+                                <spring:message code="register.imageRequirements" />
+                            </div>
+                        </div>
+
+
+
                         <div class="form-row">
                             <div class="form-group">
                                 <form:label path="name"><spring:message code="register.firstName" /></form:label>
@@ -243,7 +298,6 @@
                             </div>
                             <div class="multi-select-container" id="coverages-container">
                                 <div class="custom-multi-select" id="coverages-options">
-                                    <input type="text" id="coverages-search" class="search-box" placeholder="<spring:message code="register.search" />" />
                                     <c:forEach items="${coverageList}" var="coverage">
                                         <div class="custom-multi-select-option"
                                              data-value="${coverage.id}"
@@ -274,7 +328,7 @@
                             </div>
                             <div class="multi-select-container" id="specialties-container">
                                 <div class="custom-multi-select" id="specialties-options">
-                                    <input type="text" id="specialties-search" class="search-box" placeholder="<spring:message code="register.search" />" />
+
                                     <c:forEach items="${specialtyList}" var="specialty">
                                         <div class="custom-multi-select-option"
                                              data-value="${specialty.id}"
@@ -335,6 +389,7 @@
 </div>
 
 <script src="<c:url value='/js/toast-notification.js' />"></script>
+<script src="<c:url value='/js/profile-image-upload.js' />"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -370,20 +425,15 @@
         // Initialize coverages dropdown
         initCoveragesDropdown();
 
-        // Initialize search functionality for coverages
-        initCoveragesSearch();
-
         // Pre-select the current coverages
         preSelectCurrentCoverages();
 
         // Initialize specialties dropdown
         initSpecialtiesDropdown();
 
-        // Initialize search functionality for specialties
-        initSpecialtiesSearch();
-
         // Pre-select the current specialties
         preSelectCurrentSpecialties();
+
 
         // Modal functionality
         let currentAppointmentId = null;
@@ -481,27 +531,7 @@
         const selectedNames = Array.from(selectedOptions).map(option => option.getAttribute('data-name'));
         selectedCoveragesDisplay.innerHTML = selectedNames.length > 0
             ? selectedNames.join(', ')
-            : '<em>None selected</em>';
-    }
-
-    function initCoveragesSearch() {
-        const searchBox = document.getElementById('coverages-search');
-        const options = document.querySelectorAll('#coverages-options .custom-multi-select-option');
-
-        if (searchBox) {
-            searchBox.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-
-                options.forEach(option => {
-                    const text = option.querySelector('.option-text').textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        option.style.display = 'flex';
-                    } else {
-                        option.style.display = 'none';
-                    }
-                });
-            });
-        }
+            : '';
     }
 
     function preSelectCurrentCoverages() {
@@ -555,27 +585,7 @@
         const selectedNames = Array.from(selectedOptions).map(option => option.getAttribute('data-name'));
         selectedSpecialtiesDisplay.innerHTML = selectedNames.length > 0
             ? selectedNames.join(', ')
-            : '<em>None selected</em>';
-    }
-
-    function initSpecialtiesSearch() {
-        const searchBox = document.getElementById('specialties-search');
-        const options = document.querySelectorAll('#specialties-options .custom-multi-select-option');
-
-        if (searchBox) {
-            searchBox.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-
-                options.forEach(option => {
-                    const text = option.querySelector('.option-text').textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        option.style.display = 'flex';
-                    } else {
-                        option.style.display = 'none';
-                    }
-                });
-            });
-        }
+            : '';
     }
 
     const fixedHeader = document.querySelector(".main-header");

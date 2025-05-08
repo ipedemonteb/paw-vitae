@@ -8,8 +8,8 @@
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/V-logo.svg/2048px-V-logo.svg.png" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><spring:message code="error.500.title" /> - Medical Appointments</title>
-    <link rel="stylesheet" href="<c:url value='/css/400.css'/> "/>
+    <title><spring:message code="error.404.title" /> - Medical Appointments</title>
+    <link rel="stylesheet" href="<c:url value='/css/404.css'/> "/>
 </head>
 <body>
 <div class="error-container">
@@ -20,15 +20,15 @@
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
     </div>
-    <div class="error-code"><spring:message code="error.500.code" /></div>
-    <h1 class="error-title"><spring:message code="error.500.title" /></h1>
+    <div class="error-code"><spring:message code="error.404.code" /></div>
+    <h1 class="error-title"><spring:message code="error.404.title" /></h1>
     <p class="error-message">
         <c:choose>
             <c:when test="${not empty message}">
                 <spring:message code="${message}"/>
             </c:when>
             <c:otherwise>
-                <spring:message code="error.500.message" />
+                <spring:message code="error.404.message" />
             </c:otherwise>
         </c:choose>
     </p>

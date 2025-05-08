@@ -41,6 +41,11 @@ public class ImageDaoImpl implements ImageDao {
     }
 
     @Override
+    public void deleteImage(long id) {
+        jdbcTemplate.update("DELETE FROM images WHERE id = ?", id);
+    }
+
+    @Override
     public Optional<Images> findById(long id) {
         return jdbcTemplate.query("SELECT * FROM images WHERE id = ?", ROW_MAPPER, id).stream().findFirst();
     }
