@@ -17,6 +17,7 @@ public interface DoctorDao {
 
     int countBySpecialty(long specialtyId);
 
+    void updateImage(long id, Long imageId);
     Optional<Doctor> getByEmail(String email);
 
     void UpdateDoctorRating(long id, long rating);

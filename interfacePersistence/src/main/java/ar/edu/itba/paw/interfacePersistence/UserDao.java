@@ -5,6 +5,9 @@ import ar.edu.itba.paw.models.User;
 import java.util.Optional;
 
 public interface UserDao {
+
+    Number create(String name, String lastName, String email, String password, String phone, String language);
+
     void setVerificationToken(long id, String token);
 
     void setVerificationStatus(long id, boolean status);

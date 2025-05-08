@@ -2,10 +2,7 @@ package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.webapp.validation.CoverageList;
-import ar.edu.itba.paw.webapp.validation.EmailExistance;
-import ar.edu.itba.paw.webapp.validation.FileSize;
-import ar.edu.itba.paw.webapp.validation.SpecialtyList;
+import ar.edu.itba.paw.webapp.validation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Specialty;
@@ -19,6 +16,17 @@ public class UpdateDoctorForm {
     @NotEmpty
     private String lastName;
 
+    @FileType(types = {"image/jpeg", "image/png", "image/jpg"},message = "{fileType.invalid}")
+    @FileSize(max = 2097154) // 2MB
+    private MultipartFile image;
+
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
+    }
 
     @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")

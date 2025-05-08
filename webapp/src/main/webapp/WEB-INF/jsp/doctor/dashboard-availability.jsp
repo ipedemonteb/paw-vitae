@@ -56,6 +56,28 @@
                         <span><c:out value="${doctor.phone}" /></span>
                     </div>
                 </div>
+                <c:if test="${doctor.ratingCount > 0}">
+                    <div class="doctor-rating">
+                        <div class="rating-stars">
+                            <c:forEach begin="1" end="5" var="i">
+                                <c:choose>
+                                    <c:when test="${doctor.rating >= i}">
+                                        <i class="fas fa-star"></i>
+                                    </c:when>
+                                    <c:when test="${doctor.rating >= i - 0.5}">
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="far fa-star"></i>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+                        </div>
+                        <div class="rating-value">
+                            <fmt:formatNumber value="${doctor.rating}" pattern="#.#" /> <span class="rating-count">(${doctor.ratingCount})</span>
+                        </div>
+                    </div>
+                </c:if>
                 <div class="doctor-specialties">
                     <c:forEach items="${doctor.specialtyList}" var="specialty" varStatus="status">
                             <span class="specialty-tag">
@@ -185,16 +207,16 @@
                             <div id="time-slot-error" class="error-message" style="display: none; margin-bottom: 10px;"></div>
 
                             <button type="button" class="btn-add-slot" id="add-slot-btn" onclick="addTimeSlotRow()">
-                                <i class="fas fa-plus-circle"></i> <spring:message code="dashboard.availability.addTimeSlot" />
+                                <i class="fas fa-plus"></i> <spring:message code="dashboard.availability.addTimeSlot" />
                             </button>
-                        </div>
-                        <div>
-                            <form:errors path="availabilitySlots" cssClass="error-message" />
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary" onclick="this.disabled=true; this.form.submit();">
-                                <i class="fas fa-save"></i> <spring:message code="dashboard.availability.saveChanges" />
-                            </button>
+                            <div>
+                                <form:errors path="availabilitySlots" cssClass="error-message" />
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-submit-doctor" onclick="this.disabled=true; this.form.submit();">
+                                    <spring:message code="dashboard.availability.saveChanges" />
+                                </button>
+                            </div>
                         </div>
                     </form:form>
                 </div>
@@ -315,16 +337,6 @@
                     this.classList.remove('show');
                 }
             });
-        });
-
-        // Cerrar modales con tecla Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay').forEach(modal => {
-                    modal.classList.remove('show');
-                });
-                hideSuccessToast();
-            }
         });
     });
 

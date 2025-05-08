@@ -9,16 +9,37 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class UserDaoImpl implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
+
+
 
     @Autowired
     public UserDaoImpl(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
+        jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("users")
+                .usingGeneratedKeyColumns("id");
+    }
+
+    @Override
+    public Number create(String name, String lastName, String email, String password, String phone, String language) {
+        final Map<String, Object> args = new HashMap<>();
+        args.put("name", name);
+        args.put("last_name", lastName);
+        args.put("email", email);
+        args.put("password", password);
+        args.put("phone", phone);
+        args.put("language", language);
+        args.put("is_verified", false);
+        return jdbcInsert.executeAndReturnKey(args);
     }
 
     @Override
