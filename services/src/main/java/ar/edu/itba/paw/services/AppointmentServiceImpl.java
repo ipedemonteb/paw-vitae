@@ -58,13 +58,23 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     @Override
     public List<Appointment> getByPatientId(long patientId) {
-        return appointmentDao.getByPatientId(patientId);
+        List<Appointment> appointments = appointmentDao.getByPatientId(patientId);
+        appointments.forEach(a -> {
+            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            a.setCancellable(isCancellable);
+        });
+        return appointments;
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Appointment> getByDoctorId(long doctorId) {
-        return appointmentDao.getByDoctorId(doctorId);
+        List<Appointment> appointments = appointmentDao.getByDoctorId(doctorId);
+        appointments.forEach(a -> {
+            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            a.setCancellable(isCancellable);
+        });
+        return appointments;
     }
 
     @Override
@@ -84,6 +94,12 @@ public class AppointmentServiceImpl implements AppointmentService {
             return false;
         }
 
+        Appointment appointment = appt.get();
+        if (!appointment.getCancellable()) {
+            LOGGER.warn("Cannot cancel appointment less than two hours in advance: {}", appointmentId);
+            return false;
+        }
+
         appointmentDao.cancelAppointment(appointmentId);
         appt.get().setStatus(AppointmentStatus.CANCELADO.getValue());
         mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appt.get());
@@ -94,7 +110,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     @Override
     public Optional<Appointment> getById(long appointmentId) {
-        return appointmentDao.getById(appointmentId);
+        Optional<Appointment> appointment = appointmentDao.getById(appointmentId);
+        appointment.ifPresent(a -> {
+            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            a.setCancellable(isCancellable);
+        });
+        return appointment;
     }
 
     @Transactional(readOnly = true)
@@ -104,6 +125,10 @@ public class AppointmentServiceImpl implements AppointmentService {
             page = 1;
         }
         List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, filter);
+        appointments.forEach(a -> {
+            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            a.setCancellable(isCancellable);
+        });
         return new Page<>(appointments, page, size, appointmentDao.countAppointments(userId, isFuture, filter));
     }
 
@@ -129,6 +154,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (date == null || time == null) {
             return Collections.emptyList();
         }
-        return appointmentDao.getAppointmentsByUserAndDate(userId, date, time);
+        List<Appointment> appointments = appointmentDao.getAppointmentsByUserAndDate(userId, date, time);
+        appointments.forEach(a -> {
+            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            a.setCancellable(isCancellable);
+        });
+        return appointments;
     }
 }

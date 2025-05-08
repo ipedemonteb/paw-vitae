@@ -12,6 +12,7 @@ public class Appointment {
     private Doctor doctor;
     private Patient patient;
     private String report;
+    private Boolean cancellable = true;
 
     public Appointment(LocalDateTime date, String status, String reason, long id, Specialty specialty, Doctor doctor, Patient patient, String report) {
         this.date = date;
@@ -79,4 +80,12 @@ public class Appointment {
     public String getReport() { return report; }
 
     public void setReport(String report) { this.report = report; }
+
+    public Boolean getCancellable() {
+        return cancellable;
+    }
+
+    public void setCancellable(Boolean cancellable) {
+        this.cancellable = cancellable;
+    }
 }
