@@ -43,22 +43,22 @@ public class DoctorExtractor implements ResultSetExtractor<List<Doctor>> {
                 map.put(id, doc);
             }
 
+            Set<Specialty> specialtySet = new HashSet<>(doc.getSpecialtyList());
+            Set<Coverage> coverageSet = new HashSet<>(doc.getCoverageList());
+            Set<AvailabilitySlot> availabilitySet = new HashSet<>(doc.getAvailabilitySlots());
+
             // specialties
             long specId = rs.getLong("specialty_id");
             if (!rs.wasNull()) {
                 Specialty s = new Specialty(specId, rs.getString("specialty_key"));
-                if (!doc.getSpecialtyList().contains(s)) {
-                    doc.getSpecialtyList().add(s);
-                }
+                specialtySet.add(s);
             }
 
             // coverages
             long covId = rs.getLong("coverage_id");
             if (!rs.wasNull()) {
                 Coverage c = new Coverage(covId, rs.getString("coverage_name"));
-                if (!doc.getCoverageList().contains(c)) {
-                    doc.getCoverageList().add(c);
-                }
+                coverageSet.add(c);
             }
 
             // availability
@@ -67,10 +67,12 @@ public class DoctorExtractor implements ResultSetExtractor<List<Doctor>> {
                 LocalTime start = rs.getTime("start_time").toLocalTime();
                 LocalTime end = rs.getTime("end_time").toLocalTime();
                 AvailabilitySlot slot = new AvailabilitySlot(dow, start, end);
-                if (!doc.getAvailabilitySlots().contains(slot)) {
-                    doc.getAvailabilitySlots().add(slot);
-                }
+                availabilitySet.add(slot);
             }
+
+            doc.setSpecialtyList(new ArrayList<>(specialtySet));
+            doc.setCoverageList(new ArrayList<>(coverageSet));
+            doc.setAvailabilitySlots(new ArrayList<>(availabilitySet));
         }
         return new ArrayList<>(map.values());
     }
