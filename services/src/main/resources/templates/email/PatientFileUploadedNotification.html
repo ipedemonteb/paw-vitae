@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{patient.file.upload.title}"></title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+        .logo {
+            max-width: 150px;
+            height: auto;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .appointment-details {
+            background-color: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .appointment-details ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .appointment-details li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+        .appointment-details li:last-child {
+            border-bottom: none;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+            color: #777777;
+            font-size: 14px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #2e7d32;
+            color: white !important;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .highlight {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .file-icon {
+            font-size: 24px;
+            color: #2e7d32;
+            margin: 10px 0;
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 100%;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1 th:text="#{patient.file.upload.title}"></h1>
+    </div>
+
+    <div class="content">
+        <p><strong th:text="#{patient.greeting(${patientName})}"></strong></p>
+
+        <p th:text="#{patient.file.upload.message(${doctorName})}"></p>
+
+        <div class="appointment-details">
+            <h3 th:text="#{patient.file.upload.details}"></h3>
+            <ul>
+                <li><strong th:text="#{patient.doctor.label}"></strong> <span th:text="${doctorName}"></span></li>
+                <li><strong th:text="#{patient.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
+                <li><strong th:text="#{patient.time.label}"></strong> <span th:text="${appointmentTime}"></span></li>
+                <li><strong th:text="#{patient.specialty.label}"></strong> <span th:text="${specialty}"></span></li>
+            </ul>
+
+            <div class="text-center">
+                <p th:text="#{patient.file.upload.files.added}"></p>
+                <div class="file-icon">
+                    <span>&#128196;</span>
+                </div>
+                <p th:if="${fileCount > 0}" th:text="#{patient.file.upload.count(${fileCount})}"></p>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a th:href="@{'http://pawserver.it.itba.edu.ar/paw-2025a-11/patient/dashboard/appointment-details/' + ${appointmentId}}" class="button" th:text="#{patient.view.uploaded.files}"></a>
+        </div>
+
+        <p th:text="#{patient.file.upload.importance}"></p>
+
+        <p th:text="#{patient.thanks}"></p>
+
+        <p th:text="#{email.signature}"></p>
+    </div>
+
+    <div class="footer">
+        <p th:text="#{email.copyright}"></p>
+    </div>
+</div>
+</body>
+</html>
