@@ -1,11 +1,12 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.RatingDao;
-import ar.edu.itba.paw.interfaceServices.DoctorService;
-import ar.edu.itba.paw.interfaceServices.PatientService;
-import ar.edu.itba.paw.interfaceServices.RatingService;
+import ar.edu.itba.paw.interfaceServices.*;
+import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Rating;
+import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +26,16 @@ public class RatingServiceImpl implements RatingService {
     private final RatingDao ratingDao;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final MailService mailService;
+    private final AppointmentService appointmentService;
 
     @Autowired
-    public RatingServiceImpl(RatingDao ratingDao, DoctorService doctorService, PatientService patientService) {
+    public RatingServiceImpl(RatingDao ratingDao, DoctorService doctorService, PatientService patientService, MailService mailService, AppointmentService appointmentService) {
         this.ratingDao = ratingDao;
         this.doctorService = doctorService;
         this.patientService = patientService;
+        this.mailService = mailService;
+        this.appointmentService = appointmentService;
     }
 
     @Transactional
@@ -38,6 +43,10 @@ public class RatingServiceImpl implements RatingService {
     public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
         Rating rating_aux = ratingDao.create(rating, doctorId, patientId, appointmentId, comment);
         doctorService.UpdateDoctorRating(doctorId, rating_aux.getRating());
+        Doctor doctor = doctorService.getById(doctorId).orElseThrow(IllegalArgumentException::new);
+        Patient patient = patientService.getById(patientId).orElseThrow(IllegalArgumentException::new);
+        Appointment appointment = appointmentService.getById(appointmentId).orElseThrow(IllegalArgumentException::new);
+        mailService.sendRatingMail(doctor, patient, appointment, rating_aux.getRating(), comment);
         LOGGER.info("Rating created: {} with id: {} for doctor with id {} by patient with id {}", rating_aux, rating_aux.getId(), doctorId, patientId);
         return rating_aux;
     }
