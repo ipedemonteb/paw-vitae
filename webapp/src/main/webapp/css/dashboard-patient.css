@@ -474,6 +474,34 @@ body {
     width: 250px;
 }
 
+/* Add these styles to your dashboard-patient.css file */
+
+.coverage-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+}
+
+.coverage-item {
+    background-color: #f0f7ff;
+    border: 1px solid #d0e3ff;
+    border-radius: 6px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: 9rem;
+}
+
+.coverage-item:hover {
+    background-color: #e0f0ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
 /* Appointments List */
 .appointments-list {
     display: flex;

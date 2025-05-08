@@ -88,9 +88,12 @@
                 </c:choose>;">
                     <h3 class="section-title"><spring:message code="dashboard.profile.coverages" /></h3>
                     <div class="coverages-list">
-                        <div class="coverage-item">
-                            <c:out value="${patient.coverage.name}" />
-                        </div>
+                        <a href="${pageContext.request.contextPath}/search?coverage=${patient.coverage.id}&page=1" class="coverage-item-link">
+                            <div class="coverage-item">
+                                <c:out value="${patient.coverage.name}" />
+                                <i class="fas fa-search" style="margin-left: 8px;"></i>
+                            </div>
+                        </a>
                     </div>
                 </div>
 
