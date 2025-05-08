@@ -14,6 +14,16 @@ function showSuccessToast() {
     }, 5000);
 }
 
+function showReportSuccessToast() {
+    const toast = document.getElementById('reportSuccessToast');
+    if (!toast) return;
+    toast.classList.add('show');
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+        hideSuccessToast();
+    }, 5000);
+}
+
 function showErrorToast() {
     const toast = document.getElementById('errorToast');
     if (!toast) return;

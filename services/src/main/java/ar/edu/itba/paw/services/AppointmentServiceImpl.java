@@ -116,6 +116,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         Optional<Appointment> appointment = getById(appointmentId);
         if (appointment.isPresent()) {
             appointmentDao.updateReport(appointmentId, report);
+            mailService.sendReportAddedMail(appointment.get().getDoctor(), appointment.get().getPatient(), appointment.get(), report);
             LOGGER.info("Report added to appointment: {}", appointment.get());
         } else {
             LOGGER.info("Appointment not found: {}", appointmentId);

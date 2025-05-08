@@ -3,8 +3,11 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.AppointmentFileDao;
 import ar.edu.itba.paw.interfaceServices.AppointmentFileService;
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
+import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentFile;
+import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,12 +26,14 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
 
     private final AppointmentFileDao appointmentFileDao;
     private final AppointmentService appointmentService;
+    private final MailService mailService;
     Logger LOGGER = LoggerFactory.getLogger(ImageServiceImpl.class);
 
     @Autowired
-    public AppointmentFileServiceImpl(final AppointmentFileDao appointmentFileDao, final AppointmentService appointmentService) {
+    public AppointmentFileServiceImpl(final AppointmentFileDao appointmentFileDao, final AppointmentService appointmentService, MailService mailService) {
         this.appointmentFileDao = appointmentFileDao;
         this.appointmentService = appointmentService;
+        this.mailService = mailService;
     }
 
     @Transactional
@@ -46,6 +52,12 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
             } catch (IOException e) {
                 LOGGER.error("Error while adding files {} ", files, e);
             }
+        }
+        if(uploader_role.equals("doctor") && !appointmentFiles.isEmpty()) {
+            Appointment appointment = appointmentService.getById(appointment_id).orElseThrow(IllegalArgumentException:: new);
+            Doctor doctor = appointment.getDoctor();
+            Patient patient = appointment.getPatient();
+            mailService.sendFileUploadMail(doctor, patient, appointment, appointmentFiles);
         }
         LOGGER.info("Appointment files created successfully: {} for appointment with id {}", appointmentFiles, appointment_id);
         return appointmentFiles;
