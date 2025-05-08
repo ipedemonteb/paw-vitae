@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -37,29 +39,17 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     private static final String ORDER_BY_DATE_ASC = "ORDER BY a.date ASC ";
     private static final String ORDER_BY_DATE_DESC = "ORDER BY a.date DESC ";
-    private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
-    private RowMapper<Doctor> DOCTOR_ROW_MAPPER;
-    private RowMapper<Patient> PATIENT_ROW_MAPPER;
-    private final RowMapper<Appointment> ROW_MAPPER = (rs, rowNum) -> new Appointment(
-            rs.getTimestamp("date").toLocalDateTime(),
-            rs.getString("status"),
-            rs.getString("reason"),
-            rs.getLong("id"),
-            new Specialty(rs.getLong("specialty_id"), rs.getString("specialty_key")),
-            DOCTOR_ROW_MAPPER.mapRow(rs, 1),
-            PATIENT_ROW_MAPPER.mapRow(rs, 1),
-            rs.getString("report")
-    );
-    private DoctorDao doctorDao;
-    private PatientDao patientDao;
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
+    private static RowMapper<Appointment> APPOINTMENT_ROW_MAPPER;
+    private final DoctorDao doctorDao;
+    private final PatientDao patientDao;
 
     @Autowired
     public AppointmentDaoImpl(final DataSource ds, DoctorDao doctorDao, PatientDao patientDao) {
         this.doctorDao = doctorDao;
         this.patientDao = patientDao;
-        DOCTOR_ROW_MAPPER = DaoRowMappers.getDoctorRowMapper();
-        PATIENT_ROW_MAPPER = DaoRowMappers.getPatientRowMapper();
+        APPOINTMENT_ROW_MAPPER = DaoRowMappers.APPOINTMENT_ROW_MAPPER;
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
@@ -98,7 +88,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 .append("WHERE a.client_id = ? ")
                 .append(ORDER_BY_DATE_ASC);
 
-        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, patientId);
+        return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, patientId);
     }
 
     @Override
@@ -111,7 +101,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 .append("AND a.date BETWEEN ? AND ? ")
                 .append(ORDER_BY_DATE_ASC);
 
-        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, doctorId, today, endOfNextMonth);
+        return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, doctorId, today, endOfNextMonth);
     }
 
     @Override
@@ -130,7 +120,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public Optional<Appointment> getById(long appointmentId) {
         StringBuilder sql = new StringBuilder(BASE_SQL).append("WHERE a.id = ?");
-        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, appointmentId).stream().findFirst();
+        return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, appointmentId).stream().findFirst();
     }
 
     @Override
@@ -138,13 +128,13 @@ public class AppointmentDaoImpl implements AppointmentDao {
         String condition = isFuture ? buildDateRangeCondition(filter) : buildStatusCondition(filter);
         String order = isFuture ? ORDER_BY_DATE_ASC : ORDER_BY_DATE_DESC;
         String sql = BASE_SQL + condition + order + "LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, ROW_MAPPER, userId, userId, size, (page - 1) * size);
+        return jdbcTemplate.query(sql, APPOINTMENT_ROW_MAPPER, userId, userId, size, (page - 1) * size);
     }
 
     @Override
     public List<Appointment> getAppointmentsByDate(LocalDate today) {
         StringBuilder sql = new StringBuilder(BASE_SQL).append("WHERE DATE(a.date) = ? ").append(ORDER_BY_DATE_ASC);
-        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, today);
+        return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, today);
     }
 
     @Override
@@ -193,6 +183,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 .append("AND a.date::time = ? ")
                 .append(ORDER_BY_DATE_ASC);
 
-        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, userId, userId, java.sql.Date.valueOf(date), java.sql.Time.valueOf(LocalTime.of(time, 0)));
+        return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, userId, userId, Date.valueOf(date), Time.valueOf(LocalTime.of(time, 0)));
     }
 }
