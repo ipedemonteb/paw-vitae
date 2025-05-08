@@ -999,3 +999,128 @@ textarea.form-control {
         text-overflow: ellipsis;
     }
 }
+/* Locked Section Styles */
+.locked-section {
+    position: relative;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+}
+
+.locked-section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.locked-section-icon {
+    background-color: #e9ecef;
+    color: #495057;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+
+.locked-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #343a40;
+    margin: 0;
+}
+
+.locked-section-message {
+    color: #6c757d;
+    font-size: 1rem;
+    margin: 0 0 1.5rem 0;
+    padding-left: calc(36px + 1rem); /* Align with title text */
+}
+
+.locked-section-content {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    pointer-events: none;
+    user-select: none;
+    border: 1px solid #dee2e6;
+}
+
+.locked-section-content h2,
+.locked-section-content h3,
+.locked-section-content .rating-title,
+.locked-section-content .files-title {
+    color: #6c757d;
+}
+
+.locked-section-content i {
+    color: #adb5bd;
+}
+
+.locked-section-content .no-reviews-icon,
+.locked-section-content .file-upload-icon {
+    color: #ced4da;
+}
+
+.locked-section-content .no-reviews-title,
+.locked-section-content .no-reviews-text,
+.locked-section-content .file-upload-primary,
+.locked-section-content .file-upload-secondary {
+    color: #6c757d;
+}
+
+/* Disabled form elements */
+.locked-section-content textarea,
+.locked-section-content input,
+.locked-section-content select,
+.locked-section-content button {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.locked-section-content .file-upload-dropzone {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    cursor: not-allowed;
+}
+
+/* Star rating in locked state */
+.locked-section-content .far.fa-star {
+    color: #ced4da;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .locked-section {
+        padding: 1rem;
+    }
+
+    .locked-section-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+    }
+
+    .locked-section-title {
+        font-size: 1.1rem;
+    }
+
+    .locked-section-message {
+        font-size: 0.9rem;
+        padding-left: calc(30px + 1rem);
+    }
+
+    .locked-section-content {
+        padding: 1rem;
+    }
+}

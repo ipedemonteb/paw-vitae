@@ -404,7 +404,7 @@ body {
 }
 
 .strength-strong .strength-fill {
-    width: 75%;
+    width: 100%;
     background-color: var(--success);
 }
 

@@ -50,12 +50,10 @@ public class PatientController {
                                                 @RequestParam(defaultValue = "all", required = false) String dateRange,
                                                 @ModelAttribute("loggedUser") final Patient patient
     ) {
-
         final ModelAndView mav = new ModelAndView("patient/dashboard-upcoming");
         mav.addObject("patient", patient);
-        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(), true, page, 5, dateRange);
+        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(), true, page, 10, dateRange);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
-
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
         mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
@@ -70,7 +68,7 @@ public class PatientController {
     ) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-history");
         mav.addObject("patient", patient);
-        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(), false, page, 5, status);
+        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(), false, page, 10, status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());

@@ -45,7 +45,6 @@
     --status-noShow-border: #d1d5db;
 }
 
-
 * {
     margin: 0;
     padding: 0;
@@ -111,8 +110,12 @@ body {
 
 /* Animación de carga */
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .fa-spin {
@@ -1482,5 +1485,83 @@ body {
 
     .info-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+    gap: 0.5rem;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    color: var(--text-secondary);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.pagination-btn:hover {
+    background-color: var(--background-light);
+    color: var(--primary-color);
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pagination-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    color: var(--text-color);
+    border: 1px solid #e2e8f0;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.pagination-number:hover {
+    background-color: var(--background-light);
+    color: var(--primary-color);
+}
+
+.pagination-number.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--text-light);
+}
+
+/* Responsive styles for pagination */
+@media (max-width: 576px) {
+    .pagination-numbers {
+        display: flex;
+        max-width: 200px;
+        overflow-x: auto;
+        padding: 0 0.5rem;
     }
 }

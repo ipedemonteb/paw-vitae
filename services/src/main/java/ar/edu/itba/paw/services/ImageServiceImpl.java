@@ -50,5 +50,11 @@ public class ImageServiceImpl implements ImageService {
         return imageDao.findById(id);
     }
 
+    @Override
+    @Transactional
+    public void deleteImage(long id) {
+        imageDao.deleteImage(id);
+    }
+
 
 }
