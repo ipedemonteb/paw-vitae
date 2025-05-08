@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -28,12 +29,7 @@ public class FileController {
                              @PathVariable long fileId,
                              HttpServletResponse response) throws IOException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<AppointmentFile> fileOpt = fileService.getAuthorizedFile(fileId, appointmentId, username);
-        if (fileOpt.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-        AppointmentFile file = fileOpt.get();
+        AppointmentFile file = fileService.getAuthorizedFile(fileId, appointmentId, username).orElseThrow(FileNotFoundException::new);
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getFileName() + "\"");
         response.getOutputStream().write(file.getFileData());

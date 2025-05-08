@@ -179,10 +179,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
                     sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'completo' AND a.date < NOW() ").toString();
             case "cancelled" ->
                     sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'cancelado' ").toString();
-            case "all" -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND (a.date < NOW() OR a.status = 'cancelado')").toString();
-            case "confirmed" ->
-                    sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'confirmado' AND a.date > NOW() ").toString();
-            default -> sql.append(" ").toString();
+            default -> sql.append("WHERE (a.doctor_id = ? OR a.client_id = ?) AND (a.date < NOW() OR a.status = 'cancelado')").toString();
+
         };
     }
 
