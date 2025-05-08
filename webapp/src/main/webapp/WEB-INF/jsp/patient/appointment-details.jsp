@@ -160,133 +160,225 @@
                     </div>
                 </div>
 
-                <!-- Check if appointment has passed -->
-                <c:if test="${appointment.status == 'completo'}">
-                    <c:set var="appointmentPassed" value="true" />
-                <sec:authorize access="hasRole('PATIENT')">
-                    <h2 class="rating-title">
-                        <i class="fas fa-star"></i>
-                        <spring:message code="appointment.details.review.title" />
-                    </h2>
-                        <div class="rating-section">
-                            <c:choose>
-                                <c:when test="${not empty existingRating}">
-                                    <!-- Display existing rating -->
-                                    <div class="existing-review">
-                                        <div class="review-header">
-                                            <div class="review-stars">
-                                                <c:forEach begin="1" end="5" var="star">
-                                                    <i class="fa${star <= existingRating.rating ? 's' : 'r'} fa-star" aria-hidden="true"></i>
-                                                </c:forEach>
-                                                <span class="rating-value"><c:out value="${existingRating.rating}"/></span>
+                <%-- Add this to your existing <head> section --%>
+                <link rel="stylesheet" href="<c:url value='/css/locked-section.css' />" />
+
+                <%-- Replace the conditional section for completed appointments with this code --%>
+                <c:choose>
+                    <c:when test="${appointment.status == 'completo'}">
+                        <%-- Rating Section (Unlocked) --%>
+                        <sec:authorize access="hasRole('PATIENT')">
+                            <h2 class="rating-title">
+                                <i class="fas fa-star"></i>
+                                <spring:message code="appointment.details.review.title" />
+                            </h2>
+                            <div class="rating-section">
+                                <c:choose>
+                                    <c:when test="${not empty existingRating}">
+                                        <!-- Display existing rating -->
+                                        <div class="existing-review">
+                                            <div class="review-header">
+                                                <div class="review-stars">
+                                                    <c:forEach begin="1" end="5" var="star">
+                                                        <i class="fa${star <= existingRating.rating ? 's' : 'r'} fa-star" aria-hidden="true"></i>
+                                                    </c:forEach>
+                                                    <span class="rating-value"><c:out value="${existingRating.rating}"/></span>
+                                                </div>
+                                            </div>
+                                            <div class="review-comment">
+                                                <c:out value="${existingRating.comment}" />
                                             </div>
                                         </div>
-                                        <div class="review-comment">
-                                            <c:out value="${existingRating.comment}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <!-- Review form -->
+                                        <form:form modelAttribute="patientRatingForm" method="post" action="${pageContext.request.contextPath}/patient/dashboard/appointment/rate" class="rating-form" id="ratingForm">
+                                            <form:hidden path="appointmentId" value="${appointment.id}" />
+
+                                            <div class="form-group">
+                                                <label class="required-field">
+                                                    <spring:message code="appointment.details.review.rating" />
+                                                </label>
+                                                <div class="star-rating">
+                                                    <div class="stars-container">
+                                                        <c:forEach begin="1" end="5" var="star">
+                                                            <form:radiobutton path="rating" id="star${star}" value="${star}" cssClass="star-input" />
+                                                            <label for="star${star}" class="star-label" data-value="${star}"><i class="fas fa-star"></i></label>
+                                                        </c:forEach>
+                                                    </div>
+                                                    <div class="rating-display">0.0</div>
+                                                </div>
+                                                <form:errors path="rating" cssClass="error-message" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="comment" class="required-field">
+                                                    <spring:message code="appointment.details.review.comment" />
+                                                </label>
+                                                <form:textarea path="comment" id="comment" class="form-control" rows="4" />
+                                                <form:errors path="comment" cssClass="error-message" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <button id="submitButton" type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-star"></i>
+                                                    <spring:message code="appointment.details.review.submit" />
+                                                </button>
+                                            </div>
+                                        </form:form>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </sec:authorize>
+
+                        <%-- Doctor Files Section (Unlocked) --%>
+                        <div class="files-section">
+                            <h2 class="files-title">
+                                <i class="fas fa-file-medical-alt"></i>
+                                <spring:message code="appointment.details.doctor.files.title"/>
+                            </h2>
+
+                            <c:choose>
+                                <c:when test="${empty appointment.report}">
+                                    <div class="specialty-card-appointment">
+                                        <div class="no-files-content">
+                                            <i class="fas fa-info-circle"></i>
+                                            <p><spring:message code="appointment.details.doctor.noreport" /></p>
                                         </div>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
-                                    <!-- Review form -->
-                                    <form:form modelAttribute="patientRatingForm" method="post" action="${pageContext.request.contextPath}/patient/dashboard/appointment/rate" class="rating-form" id="ratingForm">
-                                        <form:hidden path="appointmentId" value="${appointment.id}" />
-
-                                        <div class="form-group">
-                                            <label class="required-field">
-                                                <spring:message code="appointment.details.review.rating" />
-                                            </label>
-                                            <div class="star-rating">
-                                                <div class="stars-container">
-                                                    <c:forEach begin="1" end="5" var="star">
-                                                        <form:radiobutton path="rating" id="star${star}" value="${star}" cssClass="star-input" />
-                                                        <label for="star${star}" class="star-label" data-value="${star}"><i class="fas fa-star"></i></label>
-                                                    </c:forEach>
-                                                </div>
-                                                <div class="rating-display">0.0</div>
-                                            </div>
-                                            <form:errors path="rating" cssClass="error-message" />
+                                    <div class="specialty-card-appointment">
+                                        <div class="specialty-icon-appointment">
+                                            <i class="fas fa-asterisk"></i>
                                         </div>
-
-                                        <div class="form-group">
-                                            <label for="comment" class="required-field">
-                                                <spring:message code="appointment.details.review.comment" />
-                                            </label>
-                                            <form:textarea path="comment" id="comment" class="form-control" rows="4" />
-                                            <form:errors path="comment" cssClass="error-message" />
+                                        <div class="specialty-content">
+                                            <span class="specialty-value-appointment"><c:out value="${appointment.report}"/> </span>
                                         </div>
-
-                                        <div class="form-group">
-                                            <button id="submitButton" type="submit" class="btn btn-primary">
-                                                <i class="fas fa-star"></i>
-                                                <spring:message code="appointment.details.review.submit" />
-                                            </button>
-                                        </div>
-                                    </form:form>
+                                    </div>
                                 </c:otherwise>
                             </c:choose>
-                        </div>
-                    </sec:authorize>
 
+                            <div class="files-list">
+                                <c:set var="hasDoctorFiles" value="false" />
+                                <c:forEach var="file" items="${doctorFiles}">
+                                    <c:if test="${file.uploader_role == 'doctor'}">
+                                        <c:set var="hasDoctorFiles" value="true" />
+                                        <div class="file-item">
+                                            <div class="file-icon">
+                                                <i class="far fa-file-pdf"></i>
+                                            </div>
+                                            <div class="file-info">
+                                                <div class="file-name"><c:out value="${file.fileName}" /></div>
+                                            </div>
+                                            <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </c:if>
+                                </c:forEach>
 
-                <!-- Doctor Files Section -->
-                <div class="files-section">
-                    <h2 class="files-title">
-                        <i class="fas fa-file-medical-alt"></i>
-                        <spring:message code="appointment.details.doctor.files.title"/>
-                    </h2>
-
-                    <c:choose>
-                    <c:when test="${empty appointment.report}">
-                        <div class="specialty-card-appointment">
-                            <div class="no-files-content">
-                                <i class="fas fa-info-circle"></i>
-                                <p><spring:message code="appointment.details.doctor.noreport" /></p>
+                                <c:if test="${not hasDoctorFiles}">
+                                    <div class="no-files-message">
+                                        <div class="no-files-content">
+                                            <i class="fas fa-info-circle"></i>
+                                            <p><spring:message code="appointment.details.doctor.nofiles" /></p>
+                                        </div>
+                                    </div>
+                                </c:if>
                             </div>
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <div class="specialty-card-appointment">
-                            <div class="specialty-icon-appointment">
-                                <i class="fas fa-asterisk"></i>
+                        <%-- Rating Section (Locked) --%>
+                        <div class="locked-section">
+                            <div class="locked-section-header">
+                                <div class="locked-section-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <h3 class="locked-section-title">
+                                    <spring:message code="appointment.locked.rating.title"/>
+                                </h3>
                             </div>
-                            <div class="specialty-content">
-                                <span class="specialty-value-appointment"><c:out value="${appointment.report}"/> </span>
+                            <p class="locked-section-message">
+                                <spring:message code="appointment.locked.rating.message"/>
+                            </p>
+                            <div class="locked-section-content">
+                                <h2 class="rating-title">
+                                    <i class="fas fa-star"></i>
+                                    <spring:message code="appointment.details.review.title" />
+                                </h2>
+                                <div class="rating-section">
+                                    <div class="form-group">
+                                        <label class="required-field">
+                                            <spring:message code="appointment.details.review.rating" />
+                                        </label>
+                                        <div class="star-rating">
+                                            <div class="stars-container">
+                                                <c:forEach begin="1" end="5" var="star">
+                                                    <input type="radio" id="star${star}" value="${star}" class="star-input" disabled />
+                                                    <label for="star${star}" class="star-label" data-value="${star}"><i class="fas fa-star"></i></label>
+                                                </c:forEach>
+                                            </div>
+                                            <div class="rating-display">0.0</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="comment-disabled" class="required-field">
+                                            <spring:message code="appointment.details.review.comment" />
+                                        </label>
+                                        <textarea id="comment-disabled" class="form-control" rows="4" disabled></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary" disabled>
+                                            <i class="fas fa-star"></i>
+                                            <spring:message code="appointment.details.review.submit" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <%-- Doctor Files Section (Locked) --%>
+                        <div class="locked-section">
+                            <div class="locked-section-header">
+                                <div class="locked-section-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <h3 class="locked-section-title">
+                                    <spring:message code="appointment.locked.doctor.files.title"/>
+                                </h3>
+                            </div>
+                            <p class="locked-section-message">
+                                <spring:message code="appointment.locked.doctor.files.message"/>
+                            </p>
+                            <div class="locked-section-content">
+                                <h2 class="files-title">
+                                    <i class="fas fa-file-medical-alt"></i>
+                                    <spring:message code="appointment.details.doctor.files.title"/>
+                                </h2>
+
+                                <div class="specialty-card-appointment">
+                                    <div class="no-files-content">
+                                        <i class="fas fa-info-circle"></i>
+                                        <p><spring:message code="appointment.details.doctor.noreport" /></p>
+                                    </div>
+                                </div>
+
+                                <div class="files-list">
+                                    <div class="no-files-message">
+                                        <div class="no-files-content">
+                                            <i class="fas fa-info-circle"></i>
+                                            <p><spring:message code="appointment.details.doctor.nofiles" /></p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </c:otherwise>
                 </c:choose>
-
-                    <div class="files-list">
-
-                        <c:set var="hasDoctorFiles" value="false" />
-                        <c:forEach var="file" items="${doctorFiles}">
-                            <c:if test="${file.uploader_role == 'doctor'}">
-                                <c:set var="hasDoctorFiles" value="true" />
-                                <div class="file-item">
-                                    <div class="file-icon">
-                                        <i class="far fa-file-pdf"></i>
-                                    </div>
-                                    <div class="file-info">
-                                        <div class="file-name"><c:out value="${file.fileName}" /></div>
-                                    </div>
-                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
-                                        <i class="fas fa-download"></i>
-                                    </a>
-                                </div>
-                            </c:if>
-                        </c:forEach>
-
-                        <c:if test="${not hasDoctorFiles}">
-                            <div class="no-files-message">
-                                <div class="no-files-content">
-                                    <i class="fas fa-info-circle"></i>
-                                    <p><spring:message code="appointment.details.doctor.nofiles" /></p>
-                                </div>
-                            </div>
-                        </c:if>
-                    </div>
-                </div>
-                </c:if>
 
                 <div class="back-button-container">
                     <a href="${pageContext.request.contextPath}/patient/dashboard" class="back-button">
