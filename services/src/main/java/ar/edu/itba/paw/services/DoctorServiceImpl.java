@@ -40,21 +40,6 @@ public class DoctorServiceImpl implements DoctorService {
         this.ass = ass;
     }
 
-    private void populateDoctorDetails(Doctor doctor) {
-        long id = doctor.getId();
-        populateDoctorDetails(doctor, ss.getByDoctorId(id), cs.findByDoctorId(id), ass.getAvailabilityByDoctorId(id));
-    }
-
-    private void populateDoctorDetails(Doctor doctor, List<Specialty> specialties, List<Coverage> coverages, List<AvailabilitySlot> availabilitySlots) {
-        doctor.setCoverageList(coverages);
-        doctor.setSpecialtyList(specialties);
-        doctor.setAvailabilitySlots(availabilitySlots);
-    }
-
-    private void populateDoctorDetails(List<Doctor> doctors) {
-        doctors.forEach(this::populateDoctorDetails);
-    }
-
     @Transactional
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
@@ -68,7 +53,6 @@ public class DoctorServiceImpl implements DoctorService {
                 name, lastName, email, passwordEncoder.encode(password), phone, language, (img == null ? null : img.getId()), specialtyList, coverageList
         );
         ass.create(doctor.getId(), filteredSlots);
-        populateDoctorDetails(doctor, specialtyList, coverageList, filteredSlots);
         LOGGER.info("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
         return doctor;
     }
@@ -80,7 +64,6 @@ public class DoctorServiceImpl implements DoctorService {
         if (doctor.isEmpty()) {
             LOGGER.warn("No doctor found with id {}", id);
         }
-        doctor.ifPresent(this::populateDoctorDetails);
         return doctor;
     }
 
@@ -89,7 +72,6 @@ public class DoctorServiceImpl implements DoctorService {
     public Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
         int total = doctorDao.countBySpecialty(specialtyId);
         List<Doctor> docs = doctorDao.getBySpecialty(specialtyId, page, pageSize);
-        populateDoctorDetails(docs);
         return new Page<>(docs, page, pageSize, total);
     }
 
@@ -98,7 +80,6 @@ public class DoctorServiceImpl implements DoctorService {
     public Page<Doctor> getBySpecialtyWithAppointments(long specialtyId, int page, int pageSize) {
         List<Doctor> docs = doctorDao.getBySpecialty(specialtyId, page, pageSize);
         int total = doctorDao.countBySpecialty(specialtyId);
-        populateDoctorDetails(docs);
         docs.forEach(doctor -> doctor.setAppointments(as.getByDoctorId(doctor.getId())));
         return new Page<>(docs, page, pageSize, total);
     }
@@ -106,9 +87,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional(readOnly = true)
     @Override
     public Optional<Doctor> getByEmail(String email) {
-        Optional<Doctor> doctor = this.doctorDao.getByEmail(email);
-//        doctor.ifPresent(this::populateDoctorDetails);
-        return doctor;
+        return this.doctorDao.getByEmail(email);
     }
 
     @Transactional
@@ -145,10 +124,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Optional<Doctor> getByIdWithAppointments(long id) {
         Optional<Doctor> doctor = getById(id);
-        doctor.ifPresent(d -> {
-            populateDoctorDetails(d);
-            d.setAppointments(as.getByDoctorId(id));
-        });
+        doctor.ifPresent(d -> d.setAppointments(as.getByDoctorId(id)));
         return doctor;
     }
 
@@ -163,7 +139,6 @@ public class DoctorServiceImpl implements DoctorService {
         }
         List<Doctor> docs = doctorDao.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, pageSize);
         int total = doctorDao.countWithFilters(specialtyId, coverageId, weekdays, orderBy, direction);
-        populateDoctorDetails(docs);
         return new Page<>(docs, page, pageSize, total);
     }
 
