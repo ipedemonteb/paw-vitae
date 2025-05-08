@@ -107,7 +107,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Optional<Doctor> getByEmail(String email) {
         Optional<Doctor> doctor = this.doctorDao.getByEmail(email);
-        doctor.ifPresent(this::populateDoctorDetails);
+//        doctor.ifPresent(this::populateDoctorDetails);
         return doctor;
     }
 

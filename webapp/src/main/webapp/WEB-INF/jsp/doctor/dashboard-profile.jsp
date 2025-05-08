@@ -15,6 +15,7 @@
     <title><spring:message code="dashboard.profile.title" /></title>
     <link rel="stylesheet" href="<c:url value='/css/doctor-dashboard.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/profile-image-upload.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -43,7 +44,7 @@
     <div class="dashboard-header">
         <div class="doctor-info">
             <div class="doctor-avatar">
-                <img src="<c:url value="/image/${doctor.imageId}"/>" alt="<c:out value="${doctor.name} ${doctor.lastName}"/>"/>
+                <img id="doctor-profile-image" src="<c:url value="/image/${doctor.imageId}"/>" alt="<c:out value="${doctor.name} ${doctor.lastName}"/>"/>
             </div>
             <div class="doctor-details">
                 <h1 class="doctor-name"><c:out value="${doctor.name}" /> <c:out value="${doctor.lastName}" /></h1>
@@ -232,7 +233,39 @@
                         <spring:message code="dashboard.profile.edit" />
                     </h3>
 
-                    <form:form id="updateDoctorForm" modelAttribute="updateDoctorForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/update" cssClass="edit-profile-form">
+                    <form:form id="updateDoctorForm" modelAttribute="updateDoctorForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/update" cssClass="edit-profile-form" enctype="multipart/form-data">
+                        <!-- Imagen de perfil -->
+                        <div class="form-group">
+                            <label class="form-label"><spring:message code="register.profileImage" /></label>
+                            <div class="image-upload-container">
+                                <div class="image-upload-area" id="image-upload-area">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span><spring:message code="register.chooseImage" /></span>
+                                </div>
+                                <form:input path="image" id="image" type="file" class="file-input" accept="image/jpeg,image/png,image/jpg" />
+                                <div id="image-preview-container" class="image-preview-container" style="display: none;">
+                                    <div class="image-preview-content">
+                                        <div class="image-preview-thumbnail">
+                                            <img id="image-preview" src="/placeholder.svg" alt="Vista previa">
+                                        </div>
+                                        <div class="image-preview-info">
+                                            <div id="image-preview-name" class="image-preview-name"></div>
+                                            <div id="image-preview-details" class="image-preview-details"></div>
+                                        </div>
+                                        <button type="button" id="remove-image" class="remove-image-btn" aria-label="Eliminar imagen">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <form:errors path="image" cssClass="error-message" id="image-error" />
+                            </div>
+                            <div class="text-muted">
+                                <spring:message code="register.imageRequirements" />
+                            </div>
+                        </div>
+
+
+
                         <div class="form-row">
                             <div class="form-group">
                                 <form:label path="name"><spring:message code="register.firstName" /></form:label>
@@ -356,6 +389,7 @@
 </div>
 
 <script src="<c:url value='/js/toast-notification.js' />"></script>
+<script src="<c:url value='/js/profile-image-upload.js' />"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -391,17 +425,15 @@
         // Initialize coverages dropdown
         initCoveragesDropdown();
 
-
-
         // Pre-select the current coverages
         preSelectCurrentCoverages();
 
         // Initialize specialties dropdown
         initSpecialtiesDropdown();
 
-
         // Pre-select the current specialties
         preSelectCurrentSpecialties();
+
 
         // Modal functionality
         let currentAppointmentId = null;
@@ -502,8 +534,6 @@
             : '';
     }
 
-
-
     function preSelectCurrentCoverages() {
         // Get the current doctor's coverages from the display
         const currentCoverages = document.querySelectorAll('.coverages-list .coverage-item');
@@ -557,7 +587,6 @@
             ? selectedNames.join(', ')
             : '';
     }
-
 
     const fixedHeader = document.querySelector(".main-header");
     const mainContent = document.querySelector(".dashboard-container");
