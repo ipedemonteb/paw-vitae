@@ -100,6 +100,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     @Override
     public Page<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter) {
+        if (page < 1) {
+            page = 1;
+        }
         List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, filter);
         return new Page<>(appointments, page, size, appointmentDao.countAppointments(userId, isFuture, filter));
     }

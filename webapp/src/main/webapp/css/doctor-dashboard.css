@@ -175,6 +175,55 @@ body {
     box-shadow: var(--shadow-sm);
 }
 
+/* Agregar estilos para las calificaciones del doctor en el header */
+.doctor-rating {
+    margin-top: 0.5rem;
+}
+
+.doctor-rating .stars {
+    display: flex;
+    align-items: center;
+    color: #f59e0b;
+    font-size: 0.9rem;
+}
+
+.doctor-rating .rating-value {
+    margin-left: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.doctor-rating .rating-count {
+    margin-left: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+/* Doctor Rating in Header */
+.doctor-rating-header {
+    margin-top: 0.5rem;
+}
+
+.doctor-rating-header .stars {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--warning-color);
+    font-size: 0.9rem;
+}
+
+.doctor-rating-header .rating-value {
+    margin-left: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.doctor-rating-header .rating-count {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-left: 0.25rem;
+}
+
 .dashboard-stats {
     display: flex;
     gap: 1rem;
@@ -1735,4 +1784,33 @@ body {
         overflow-x: auto;
         padding: 0 0.5rem;
     }
+}
+
+/* Doctor Rating Styles */
+.doctor-rating {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
+
+.rating-stars {
+    display: flex;
+    margin-right: 8px;
+}
+
+.rating-stars i {
+    color: #ffd700;
+    margin-right: 2px;
+}
+
+.rating-value {
+    font-weight: 500;
+    color: #555;
+}
+
+.rating-count {
+    font-size: 0.9em;
+    color: #777;
+    margin-left: 2px;
 }

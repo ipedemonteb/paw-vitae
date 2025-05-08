@@ -113,7 +113,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages) {
+    public void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages,MultipartFile image) {
         Doctor currentDoctor = getById(id)
                 .orElseThrow(() -> {
                     LOGGER.warn("Attempted to update non-existent doctor with id={}", id);
@@ -127,10 +127,17 @@ public class DoctorServiceImpl implements DoctorService {
                 || !currentDoctor.getPhone().equals(phone)
                 || !currentDoctor.getSpecialtyList().equals(specialtyList)
                 || !currentDoctor.getCoverageList().equals(coverageList);
-
         if (hasChanged) {
             doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList);
             LOGGER.info("Doctor updated successfully: id={}", id);
+        }
+        if (image != null && !image.isEmpty()) {
+            Images img = is.create(image);
+            doctorDao.updateImage(id, img.getId());
+            if (currentDoctor.getImageId() != -1) {
+                is.deleteImage(currentDoctor.getId());
+            }
+            LOGGER.info("Doctor image updated successfully: id={}", id);
         }
     }
 
@@ -151,8 +158,8 @@ public class DoctorServiceImpl implements DoctorService {
         if (weekdays == null) {
             weekdays = new ArrayList<>();
         }
-        if (page < 0) {
-            page = 0;
+        if (page < 1) {
+            page = 1;
         }
         List<Doctor> docs = doctorDao.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, pageSize);
         int total = doctorDao.countWithFilters(specialtyId, coverageId, weekdays, orderBy, direction);

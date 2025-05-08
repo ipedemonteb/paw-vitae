@@ -247,4 +247,8 @@ public class DoctorDaoImpl implements DoctorDao {
                 ROW_MAPPER, token
         ).stream().findFirst();
     }
+    @Override
+    public void updateImage(long id, Long imageId) {
+        jdbcTemplate.update("UPDATE doctors SET image_id = ? WHERE doctor_id = ?", imageId, id);
+    }
 }

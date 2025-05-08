@@ -41,12 +41,12 @@
                             <option value="cancelled" ${param.status == 'cancelled' ? 'selected' : ''}><spring:message code="appointment.status.cancelled" /></option>
                         </select>
                     </div>
-                    <div class="search-container">
-                        <button class="search-button">
-                            <i class="fas fa-search"></i>
-                        </button>
-                        <input type="text" class="search-input" placeholder="<spring:message code="dashboard.search.placeholder" />" />
-                    </div>
+<%--                    <div class="search-container">--%>
+<%--                        <button class="search-button">--%>
+<%--                            <i class="fas fa-search"></i>--%>
+<%--                        </button>--%>
+<%--                        <input type="text" class="search-input" placeholder="<spring:message code="dashboard.search.placeholder" />" />--%>
+<%--                    </div>--%>
                 </div>
             </div>
 
