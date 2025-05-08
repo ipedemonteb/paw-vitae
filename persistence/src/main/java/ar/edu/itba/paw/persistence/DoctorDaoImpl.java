@@ -211,9 +211,9 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        sql.append("WHERE u.id IN (SELECT doctor_id FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.is_verified = TRUE ");
+        sql.append("WHERE u.id IN (SELECT doctor_id FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.is_verified = true ");
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
-        sql.append("LIMIT ? OFFSET ?) ORDER BY ").append(orderBy).append(" ").append(direction);
+        sql.append("ORDER BY ").append(orderBy).append(" ").append(direction).append(" LIMIT ? OFFSET ?)");
         params.add(pageSize);
         params.add((page - 1) * pageSize);
         return jdbcTemplate.query(sql.toString(), new DoctorExtractor(), params.toArray());
