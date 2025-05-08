@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
+import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,10 +22,12 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctor;
     private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
+    private final UserDao userDao;
 
     @Autowired
-    public DoctorDaoImpl(final DataSource ds) {
+    public DoctorDaoImpl(final DataSource ds, UserDao userDao) {
         ROW_MAPPER = DaoRowMappers.getDoctorRowMapper();
+        this.userDao = userDao;
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
@@ -71,15 +74,7 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId,
                          List<Specialty> specialties, List<Coverage> coverages) {
-        final Map<String, Object> argsUser = new HashMap<>();
-        argsUser.put("name", name);
-        argsUser.put("last_name", lastName);
-        argsUser.put("email", email);
-        argsUser.put("password", password);
-        argsUser.put("phone", phone);
-        argsUser.put("language", language);
-        argsUser.put("is_verified", false);
-        final Number docId = jdbcInsertUser.executeAndReturnKey(argsUser);
+        final Number docId = userDao.create(name, lastName, email, password, phone, language);
         final Map<String, Object> argsDoctor = new HashMap<>();
         argsDoctor.put("doctor_id", docId);
         argsDoctor.put("image_id", imageId);
