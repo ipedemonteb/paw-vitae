@@ -21,15 +21,16 @@ public class PatientDaoImpl implements PatientDao {
             "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified " +
             "FROM Users u JOIN Clients c ON c.client_id = u.id " +
             "JOIN Coverages cov ON cov.id = c.coverage_id ";
+
     public static RowMapper<Patient> ROW_MAPPER;
     private final SimpleJdbcInsert jdbcInsertPatient;
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
     private final UserDao userDao;
 
 
     @Autowired
     public PatientDaoImpl(final DataSource ds, UserDao userDao) {
-        ROW_MAPPER = DaoRowMappers.getPatientRowMapper();
+        ROW_MAPPER = DaoRowMappers.PATIENT_ROW_MAPPER;
         this.userDao = userDao;
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertPatient = new SimpleJdbcInsert(jdbcTemplate)

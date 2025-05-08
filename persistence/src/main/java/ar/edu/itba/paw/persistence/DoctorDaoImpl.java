@@ -15,7 +15,6 @@ import java.util.*;
 public class DoctorDaoImpl implements DoctorDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsertUser;
     private final SimpleJdbcInsert jdbcInsertDoctor;
     private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
@@ -56,9 +55,6 @@ public class DoctorDaoImpl implements DoctorDao {
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
                 .usingColumns("doctor_id", "image_id");
-        jdbcInsertUser = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("users")
-                .usingGeneratedKeyColumns("id");
         jdbcInsertDoctorCoverage = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctor_coverages")
                 .usingColumns("doctor_id", "coverage_id");
