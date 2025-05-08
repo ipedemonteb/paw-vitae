@@ -55,7 +55,7 @@ public class DoctorController {
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-upcoming");
         mav.addObject("doctor", doctor);
-        Page<Appointment> appointmentsPage = as.getAppointments(doctor.getId(), true, page, 5, dateRange);
+        Page<Appointment> appointmentsPage = as.getAppointments(doctor.getId(), true, page, 10, dateRange);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
@@ -71,7 +71,7 @@ public class DoctorController {
                                               @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-history");
-        Page<Appointment> appointmentsPage = as.getAppointments(doctor.getId(), false, page, 5, status);
+        Page<Appointment> appointmentsPage = as.getAppointments(doctor.getId(), false, page, 10, status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("doctor", doctor);

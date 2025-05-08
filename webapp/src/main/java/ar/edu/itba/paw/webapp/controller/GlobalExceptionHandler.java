@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
+import ar.edu.itba.paw.models.exception.FileNotFoundException;
 import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
@@ -40,35 +41,43 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleMessagingException(MessagingException e) {
         LOGGER.error("Mail exception occurred", e);
-        ModelAndView mav = new ModelAndView("/error/genericError");
-        mav.addObject("message", "mail.error");
+        ModelAndView mav = new ModelAndView("error/500");
+        mav.addObject("exception", e.getMessage());
         return mav;
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ModelAndView handleUserNotFoundException(UserNotFoundException e) {
+    @ResponseStatus(HttpStatus.NOT_FOUND)    public ModelAndView handleUserNotFoundException(UserNotFoundException e) {
         LOGGER.error("User not found exception occurred", e);
-        ModelAndView mav = new ModelAndView("/error/genericError");
+        ModelAndView mav = new ModelAndView("/error/genericNotFoundError");
         mav.addObject("message", "user.notfound");
         return mav;
     }
 
     @ExceptionHandler(AppointmentNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ModelAndView handleAppointmentNotFoundException(AppointmentNotFoundException e) {
         LOGGER.error("Appointment not found exception occurred", e);
-        ModelAndView mav = new ModelAndView("/error/genericError");
+        ModelAndView mav = new ModelAndView("/error/genericNotFoundError");
         mav.addObject("message", "appointment.notfound");
         return mav;
     }
 
     @ExceptionHandler(SpecialtyNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ModelAndView handleSpecialtyNotFoundException(SpecialtyNotFoundException e) {
         LOGGER.error("Specialty not found exception occurred", e);
-        ModelAndView mav = new ModelAndView("/error/genericError");
+        ModelAndView mav = new ModelAndView("/error/genericNotFoundError");
         mav.addObject("message", "specialty.notfound");
+        return mav;
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ModelAndView handleFileNotFoundException(FileNotFoundException e) {
+        LOGGER.error("File not found exception occurred", e);
+        ModelAndView mav = new ModelAndView("/error/genericNotFoundError");
+        mav.addObject("message", "file.notfound");
         return mav;
     }
 }

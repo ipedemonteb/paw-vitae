@@ -25,6 +25,17 @@
     <jsp:param name="id" value="${doctor.imageId}" />
 </jsp:include>
 
+<c:set var="validRanges" value="today,week,month,all" />
+<c:choose>
+    <c:when test="${fn:contains(validRanges, param.dateRange)}">
+        <c:set var="selectedDateRange" value="${param.dateRange}" />
+    </c:when>
+    <c:otherwise>
+        <c:set var="selectedDateRange" value="all" />
+    </c:otherwise>
+</c:choose>
+
+
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
         <i class="fas fa-check"></i>
@@ -126,10 +137,10 @@
                     <div class="date-filter">
                         <label for="date-range"><spring:message code="dashboard.filter.dateRange" />:</label>
                         <select id="date-range" class="filter-select" onchange="applyDateFilter(this.value)">
-                            <option value="today" ${param.dateRange == 'today' ? 'selected' : ''}><spring:message code="dashboard.filter.today" /></option>
-                            <option value="week" ${param.dateRange == 'week' ? 'selected' : ''}><spring:message code="dashboard.filter.thisWeek" /></option>
-                            <option value="month" ${param.dateRange == 'month' ? 'selected' : ''}><spring:message code="dashboard.filter.thisMonth" /></option>
-                            <option value="all" ${param.dateRange == 'all' || empty param.dateRange ? 'selected' : ''}><spring:message code="dashboard.filter.all" /></option>
+                            <option value="today" ${selectedDateRange == 'today' ? 'selected' : ''}><spring:message code="dashboard.filter.today" /></option>
+                            <option value="week" ${selectedDateRange == 'week' ? 'selected' : ''}><spring:message code="dashboard.filter.thisWeek" /></option>
+                            <option value="month" ${selectedDateRange == 'month' ? 'selected' : ''}><spring:message code="dashboard.filter.thisMonth" /></option>
+                            <option value="all" ${selectedDateRange == 'all' ? 'selected' : ''}><spring:message code="dashboard.filter.all" /></option>
                         </select>
                     </div>
                 </div>
@@ -218,12 +229,49 @@
                                 </div>
                             </div>
                         </c:forEach>
-                        <c:if test="${hasMore}">
-                            <div class="load-more-container">
-                                <button id="loadMoreUpcoming" class="btn-load-more" data-current-page="${currentPage}" data-total-pages="${totalPages}">
-                                    <i class="fas fa-sync-alt"></i>
-                                    <span><spring:message code="dashboard.loadMore"  /></span>
-                                </button>
+                        <!-- Pagination -->
+                        <c:if test="${totalPages > 1}">
+                            <div class="pagination">
+                                <c:if test="${currentPage > 1}">
+                                    <a href="<c:url value='/doctor/dashboard/upcoming?page=${currentPage - 1}&dateRange=${param.dateRange != null ? param.dateRange : "all"}' />" class="pagination-btn">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </c:if>
+
+                                <div class="pagination-numbers">
+                                    <c:set var="startPage" value="${Math.max(1, currentPage - 2)}" />
+                                    <c:set var="endPage" value="${Math.min(totalPages, startPage + 4)}" />
+                                    <c:if test="${startPage > 1}">
+                                        <a href="<c:url value='/doctor/dashboard/upcoming?page=1&dateRange=${param.dateRange != null ? param.dateRange : "all"}' />" class="pagination-number">1</a>
+                                        <c:if test="${startPage > 2}">
+                                            <span class="pagination-ellipsis">...</span>
+                                        </c:if>
+                                    </c:if>
+
+                                    <c:forEach begin="${startPage}" end="${endPage}" var="i">
+                                        <c:choose>
+                                            <c:when test="${i == currentPage}">
+                                                <span class="pagination-number active">${i}</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a href="<c:url value='/doctor/dashboard/upcoming?page=${i}&dateRange=${param.dateRange != null ? param.dateRange : "all"}' />" class="pagination-number">${i}</a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:forEach>
+
+                                    <c:if test="${endPage < totalPages}">
+                                        <c:if test="${endPage < totalPages - 1}">
+                                            <span class="pagination-ellipsis">...</span>
+                                        </c:if>
+                                        <a href="<c:url value='/doctor/dashboard/upcoming?page=${totalPages}&dateRange=${param.dateRange != null ? param.dateRange : "all"}' />" class="pagination-number">${totalPages}</a>
+                                    </c:if>
+                                </div>
+
+                                <c:if test="${currentPage < totalPages}">
+                                    <a href="<c:url value='/doctor/dashboard/upcoming?page=${currentPage + 1}&dateRange=${param.dateRange != null ? param.dateRange : "all"}' />" class="pagination-btn">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </c:if>
                             </div>
                         </c:if>
                     </div>
@@ -377,138 +425,6 @@
                 });
             }
         });
-
-        // Cargar más citas próximas
-        const loadMoreUpcomingBtn = document.getElementById('loadMoreUpcoming');
-        if (loadMoreUpcomingBtn) {
-            loadMoreUpcomingBtn.addEventListener('click', function() {
-                const currentPage = parseInt(this.getAttribute('data-current-page'));
-                const nextPage = currentPage + 1;
-                const totalPages = parseInt(this.getAttribute('data-total-pages'));
-
-                // Verificar si ya estamos en la última página
-                if (nextPage > totalPages) {
-                    this.parentNode.remove();
-                    return;
-                }
-
-                // Mostrar indicador de carga
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                this.disabled = true;
-
-                // Construir la URL con el parámetro de página y asegurarse de que sea reconocida como AJAX
-                const url = new URL(`${pageContext.request.contextPath}/doctor/dashboard/upcoming`, window.location.origin);
-                url.searchParams.append('page', nextPage);
-                url.searchParams.append('ajax', 'true'); // Añadir un parámetro para indicar que es una solicitud AJAX
-                url.searchParams.append('dateRange', '${param.dateRange != null ? param.dateRange : "all"}');
-
-                // Realizar la petición AJAX
-                fetch(url.toString(), {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest', // Cabecera estándar para solicitudes AJAX
-                        'Accept': 'text/html' // Especificar que esperamos HTML
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Error en la respuesta del servidor: ' + response.status);
-                        }
-                        return response.text();
-                    })
-                    .then(html => {
-                        // Crear un elemento temporal para parsear el HTML
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, 'text/html');
-
-                        // Extraer las nuevas citas
-                        const newAppointments = doc.querySelectorAll('.appointment-card');
-
-                        if (newAppointments.length === 0) {
-                            // Si no hay más citas, eliminar el botón
-                            this.parentNode.remove();
-                            return;
-                        }
-
-                        // Obtener los IDs de las citas actuales
-                        const currentAppointmentIds = Array.from(
-                            document.querySelectorAll('.appointment-card')
-                        ).map(card => card.getAttribute('data-id'));
-
-                        // Agregar las nuevas citas
-                        const appointmentsList = document.querySelector('.appointments-list');
-                        const loadMoreContainer = document.querySelector('.load-more-container');
-                        let addedCount = 0;
-
-                        newAppointments.forEach(appointment => {
-                            const appointmentId = appointment.getAttribute('data-id');
-
-                            // Verificar si la cita ya existe
-                            if (!currentAppointmentIds.includes(appointmentId)) {
-                                // Clonar el nodo para agregarlo a nuestro DOM
-                                const appointmentNode = document.importNode(appointment, true);
-                                appointmentsList.insertBefore(appointmentNode, loadMoreContainer);
-
-                                // Inicializar los botones de confirmar y cancelar para las nuevas citas
-                                const confirmBtn = appointmentNode.querySelector('.confirm-appointment');
-                                if (confirmBtn) {
-                                    confirmBtn.addEventListener('click', function(e) {
-                                        e.preventDefault();
-                                        const appointmentId = this.getAttribute('data-id');
-                                        showConfirmModal(appointmentId);
-                                    });
-                                }
-
-                                const cancelBtn = appointmentNode.querySelector('.cancel-appointment');
-                                if (cancelBtn) {
-                                    cancelBtn.addEventListener('click', function(e) {
-                                        e.preventDefault();
-                                        const appointmentId = this.getAttribute('data-id');
-                                        showCancelModal(appointmentId);
-                                    });
-                                }
-
-                                addedCount++;
-                            }
-                        });
-
-                        if (addedCount === 0) {
-                            // Si no se agregaron citas nuevas, podría ser que estemos en la última página
-                            if (nextPage >= totalPages) {
-                                this.parentNode.remove();
-                            } else {
-                                // O podría ser que todas las citas ya estaban cargadas
-                                // Intentar con la siguiente página
-                                this.setAttribute('data-current-page', nextPage);
-                                setTimeout(() => {
-                                    this.click();
-                                }, 500);
-                            }
-                            return;
-                        }
-
-                        // Actualizar el botón con la nueva página
-                        this.setAttribute('data-current-page', nextPage);
-
-                        // Verificar si hay más páginas
-                        if (nextPage >= totalPages) {
-                            this.parentNode.remove(); // Eliminar el botón si no hay más páginas
-                        } else {
-                            // Restaurar el botón
-                            this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore"  /></span>';
-                            this.disabled = false;
-                        }
-                    })
-                    .catch(error => {
-
-                        this.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
-                        setTimeout(() => {
-                            this.innerHTML = '<i class="fas fa-sync-alt"></i> <span><spring:message code="dashboard.loadMore"  /></span>';
-                            this.disabled = false;
-                        }, 2000);
-                    });
-            });
-        }
     });
 </script>
 
