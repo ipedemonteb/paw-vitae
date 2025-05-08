@@ -213,7 +213,7 @@ public class DoctorDaoImpl implements DoctorDao {
         StringBuilder sql = new StringBuilder(BASE_SQL);
         sql.append("WHERE u.id IN (SELECT doctor_id FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.is_verified = true ");
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
-        sql.append("ORDER BY ").append(orderBy).append(" ").append(direction).append(" LIMIT ? OFFSET ?)");
+        sql.append("ORDER BY ").append(orderBy).append(" ").append(direction).append(" LIMIT ? OFFSET ?) ORDER BY ").append(orderBy).append(" ").append(direction);
         params.add(pageSize);
         params.add((page - 1) * pageSize);
         return jdbcTemplate.query(sql.toString(), new DoctorExtractor(), params.toArray());
