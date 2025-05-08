@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Objects;
+
 public class Coverage {
 
     private final long id;
@@ -20,5 +22,17 @@ public class Coverage {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Coverage coverage = (Coverage) o;
+        return id == coverage.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
