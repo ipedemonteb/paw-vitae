@@ -402,6 +402,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <form:errors path="" cssClass="error-message" />
                                     <div class="form-group">
                                         <button type="button" class="btn btn-primary btn-block" disabled>
                             <span>

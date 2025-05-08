@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.form;
 
-import javax.validation.constraints.*;
+import ar.edu.itba.paw.webapp.validation.InvalidRatingForm;
 
+import javax.validation.constraints.*;
+@InvalidRatingForm(message = "{InvalidRatingForm.message}")
 public class PatientRatingForm {
 
     @NotNull

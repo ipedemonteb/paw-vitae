@@ -212,7 +212,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="comment" class="required-field">
+                                                <label for="comment">
                                                     <spring:message code="appointment.details.review.comment" />
                                                 </label>
                                                 <form:textarea path="comment" id="comment" class="form-control" rows="4" />
@@ -325,12 +325,12 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="comment-disabled" class="required-field">
+                                        <label for="comment-disabled">
                                             <spring:message code="appointment.details.review.comment" />
                                         </label>
                                         <textarea id="comment-disabled" class="form-control" rows="4" disabled></textarea>
                                     </div>
-
+                                    <form:errors path="" cssClass="error-message" />
                                     <div class="form-group">
                                         <button type="button" class="btn btn-primary" disabled>
                                             <i class="fas fa-star"></i>

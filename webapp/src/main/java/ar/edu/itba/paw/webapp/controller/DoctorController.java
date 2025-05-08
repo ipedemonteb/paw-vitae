@@ -163,6 +163,7 @@ public class DoctorController {
         mav.addObject("doctorFiles", afs.getByAppointmentId(appointment.getId()));
         Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
         mav.addObject("existingRating", existingRating.orElse(null));
+        doctorFileForm.setAppointmentId(id);
         return mav;
     }
 
