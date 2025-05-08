@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.models.*;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +20,7 @@ public final class DaoRowMappers {
             rs.getBoolean("doctor_verified")
     );
 
-    private final static RowMapper<Patient> PATIENT_ROW_MAPPER = (rs, rowNum) -> new Patient(
+    final static RowMapper<Patient> PATIENT_ROW_MAPPER = (rs, rowNum) -> new Patient(
             rs.getString("patient_name"), // Use the alias patient_name
             rs.getLong("patient_id"),    // Use the alias patient_id
             rs.getString("patient_last_name"),
@@ -34,11 +32,16 @@ public final class DaoRowMappers {
             rs.getBoolean("patient_verified")
     );
 
-    public static RowMapper<Patient> getPatientRowMapper() {
-        return PATIENT_ROW_MAPPER;
-    }
-
-    public static RowMapper<Doctor> getDoctorRowMapper() { return DOCTOR_ROW_MAPPER; }
+    final static RowMapper<Appointment> APPOINTMENT_ROW_MAPPER = (rs, rowNum) -> new Appointment(
+            rs.getTimestamp("date").toLocalDateTime(),
+            rs.getString("status"),
+            rs.getString("reason"),
+            rs.getLong("id"),
+            new Specialty(rs.getLong("specialty_id"), rs.getString("specialty_key")),
+            DOCTOR_ROW_MAPPER.mapRow(rs, 1),
+            PATIENT_ROW_MAPPER.mapRow(rs, 1),
+            rs.getString("report")
+    );
 }
 
 
