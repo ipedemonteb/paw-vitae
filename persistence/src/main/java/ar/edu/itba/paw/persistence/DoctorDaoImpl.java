@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
+import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +19,7 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctor;
     private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
+    private final UserDao userDao;
 
     private final static String BASE_SQL = "SELECT " +
             "  u.id                   AS doctor_id, " +
@@ -48,7 +50,8 @@ public class DoctorDaoImpl implements DoctorDao {
 
 
     @Autowired
-    public DoctorDaoImpl(final DataSource ds) {
+    public DoctorDaoImpl(final DataSource ds, UserDao userDao) {
+        this.userDao = userDao;
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
@@ -95,15 +98,7 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId,
                          List<Specialty> specialties, List<Coverage> coverages) {
-        final Map<String, Object> argsUser = new HashMap<>();
-        argsUser.put("name", name);
-        argsUser.put("last_name", lastName);
-        argsUser.put("email", email);
-        argsUser.put("password", password);
-        argsUser.put("phone", phone);
-        argsUser.put("language", language);
-        argsUser.put("is_verified", false);
-        final Number docId = jdbcInsertUser.executeAndReturnKey(argsUser);
+        final Number docId = userDao.create(name, lastName, email, password, phone, language);
         final Map<String, Object> argsDoctor = new HashMap<>();
         argsDoctor.put("doctor_id", docId);
         argsDoctor.put("image_id", imageId);
@@ -244,5 +239,9 @@ public class DoctorDaoImpl implements DoctorDao {
         StringBuilder sql = new StringBuilder(BASE_SQL);
         sql.append("WHERE u.reset_token = ?");
         return Optional.ofNullable(jdbcTemplate.query(sql.toString(), new DoctorExtractor(), token)).orElse(Collections.emptyList()).stream().findFirst();
+    }
+    @Override
+    public void updateImage(long id, Long imageId) {
+        jdbcTemplate.update("UPDATE doctors SET image_id = ? WHERE doctor_id = ?", imageId, id);
     }
 }

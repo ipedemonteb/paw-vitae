@@ -41,12 +41,12 @@
       </div>
 
       <!-- Search Bar -->
-<%--      <div class="search-bar-container">--%>
-<%--        <div class="search-bar">--%>
-<%--          <i class="fas fa-search search-icon"></i>--%>
-<%--          <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input">--%>
-<%--        </div>--%>
-<%--      </div>--%>
+      <%--      <div class="search-bar-container">--%>
+      <%--        <div class="search-bar">--%>
+      <%--          <i class="fas fa-search search-icon"></i>--%>
+      <%--          <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input">--%>
+      <%--        </div>--%>
+      <%--      </div>--%>
     </div>
 
     <!-- Filters Section -->
@@ -130,10 +130,10 @@
           <i class="fas fa-filter"></i> <spring:message code="search.active.filters" />
         </div>
         <div class="filter-tags-container">
-<%--          <c:if test="${not empty param.orderBy}">--%>
-            <div class="filter-tag">
-              <i class="fas fa-sort"></i>
-              <span>
+          <%--          <c:if test="${not empty param.orderBy}">--%>
+          <div class="filter-tag">
+            <i class="fas fa-sort"></i>
+            <span>
                 <c:choose>
                   <c:when test="${param.orderBy == 'name' || empty param.orderBy}">
                     <spring:message code="search.sort.by.name" />
@@ -155,8 +155,8 @@
                   <i class="fas fa-arrow-down"></i>
                 </c:if>
               </span>
-            </div>
-<%--          </c:if>--%>
+          </div>
+          <%--          </c:if>--%>
           <c:if test="${not empty param.specialty && param.specialty != '0'}">
             <div class="filter-tag">
               <i class="fas fa-stethoscope"></i>
@@ -235,17 +235,17 @@
       </div>
 
       <!-- Quick Filters -->
-<%--      <div class="quick-filters">--%>
-<%--        <button class="quick-filter-btn active" data-filter="all">--%>
-<%--          <spring:message code="search.filter.all" />--%>
-<%--        </button>--%>
-<%--        <button class="quick-filter-btn" data-filter="top-rated">--%>
-<%--          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />--%>
-<%--        </button>--%>
-<%--        <button class="quick-filter-btn" data-filter="new">--%>
-<%--          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />--%>
-<%--        </button>--%>
-<%--      </div>--%>
+      <%--      <div class="quick-filters">--%>
+      <%--        <button class="quick-filter-btn active" data-filter="all">--%>
+      <%--          <spring:message code="search.filter.all" />--%>
+      <%--        </button>--%>
+      <%--        <button class="quick-filter-btn" data-filter="top-rated">--%>
+      <%--          <i class="fas fa-star"></i> <spring:message code="search.filter.top_rated" />--%>
+      <%--        </button>--%>
+      <%--        <button class="quick-filter-btn" data-filter="new">--%>
+      <%--          <i class="fas fa-certificate"></i> <spring:message code="search.filter.new" />--%>
+      <%--        </button>--%>
+      <%--      </div>--%>
     </div>
 
     <!-- Results Section -->
@@ -272,26 +272,26 @@
         </div>
 
         <!-- Active Filters -->
-<%--        <div class="active-filters">--%>
-<%--          <c:if test="${not empty param.weekdays}">--%>
-<%--            <div class="active-filter">--%>
-<%--              <i class="fas fa-calendar-week"></i> <spring:message code="search.filter.weekdays" />--%>
-<%--              <button class="clear-filter" onclick="clearWeekdaysFilter()">×</button>--%>
-<%--            </div>--%>
-<%--          </c:if>--%>
-<%--          <c:if test="${param.coverage != '0' && not empty param.coverage}">--%>
-<%--            <div class="active-filter">--%>
-<%--              <i class="fas fa-shield-alt"></i> <spring:message code="search.filter.coverage" />--%>
-<%--              <button class="clear-filter" onclick="clearCoverageFilter()">×</button>--%>
-<%--            </div>--%>
-<%--          </c:if>--%>
-<%--          <c:if test="${param.specialty != '0' && not empty param.specialty}">--%>
-<%--            <div class="active-filter">--%>
-<%--              <i class="fas fa-stethoscope"></i> <spring:message code="search.filter.specialty" />--%>
-<%--              <button class="clear-filter" onclick="clearSpecialtyFilter()">×</button>--%>
-<%--            </div>--%>
-<%--          </c:if>--%>
-<%--        </div>--%>
+        <%--        <div class="active-filters">--%>
+        <%--          <c:if test="${not empty param.weekdays}">--%>
+        <%--            <div class="active-filter">--%>
+        <%--              <i class="fas fa-calendar-week"></i> <spring:message code="search.filter.weekdays" />--%>
+        <%--              <button class="clear-filter" onclick="clearWeekdaysFilter()">×</button>--%>
+        <%--            </div>--%>
+        <%--          </c:if>--%>
+        <%--          <c:if test="${param.coverage != '0' && not empty param.coverage}">--%>
+        <%--            <div class="active-filter">--%>
+        <%--              <i class="fas fa-shield-alt"></i> <spring:message code="search.filter.coverage" />--%>
+        <%--              <button class="clear-filter" onclick="clearCoverageFilter()">×</button>--%>
+        <%--            </div>--%>
+        <%--          </c:if>--%>
+        <%--          <c:if test="${param.specialty != '0' && not empty param.specialty}">--%>
+        <%--            <div class="active-filter">--%>
+        <%--              <i class="fas fa-stethoscope"></i> <spring:message code="search.filter.specialty" />--%>
+        <%--              <button class="clear-filter" onclick="clearSpecialtyFilter()">×</button>--%>
+        <%--            </div>--%>
+        <%--          </c:if>--%>
+        <%--        </div>--%>
       </div>
 
       <c:choose>
@@ -314,27 +314,29 @@
                     <img src="<c:url value='/image/${doctor.imageId}'/>" alt="<c:out value='${doctor.name} ${doctor.lastName}'/>" class="avatar-img">
                   </div>
                   <div class="doctor-rating">
-                    <div class="stars">
-                      <c:set var="fullStars" value="${doctor.rating.intValue()}" />
-                      <c:set var="hasHalfStar" value="${doctor.rating - fullStars >= 0.5}" />
-                      <c:set var="emptyStars" value="${5 - fullStars - (hasHalfStar ? 1 : 0)}" />
+                    <c:if test="${doctor.ratingCount > 0}">
+                      <div class="stars">
+                        <c:set var="fullStars" value="${doctor.rating.intValue()}" />
+                        <c:set var="hasHalfStar" value="${doctor.rating - fullStars >= 0.5}" />
+                        <c:set var="emptyStars" value="${5 - fullStars - (hasHalfStar ? 1 : 0)}" />
 
-                      <!-- Render full stars -->
-                      <c:forEach begin="1" end="${fullStars}" var="i">
-                        <i class="fas fa-star"></i>
-                      </c:forEach>
+                        <!-- Render full stars -->
+                        <c:forEach begin="1" end="${fullStars}" var="i">
+                          <i class="fas fa-star"></i>
+                        </c:forEach>
 
-                      <!-- Render half star if applicable -->
-                      <c:if test="${hasHalfStar}">
-                        <i class="fas fa-star-half-alt"></i>
-                      </c:if>
+                        <!-- Render half star if applicable -->
+                        <c:if test="${hasHalfStar}">
+                          <i class="fas fa-star-half-alt"></i>
+                        </c:if>
 
-                      <!-- Render empty stars -->
-                      <c:forEach begin="1" end="${emptyStars}" var="i">
-                        <i class="far fa-star"></i>
-                      </c:forEach>
-                    </div>
-                    <span class="rating-count"><fmt:formatNumber value="${doctor.rating}" type="number" maxFractionDigits="1" minFractionDigits="1" /></span>
+                        <!-- Render empty stars -->
+                        <c:forEach begin="1" end="${emptyStars}" var="i">
+                          <i class="far fa-star"></i>
+                        </c:forEach>
+                      </div>
+                      <span class="rating-count"><fmt:formatNumber value="${doctor.rating}" type="number" maxFractionDigits="1" minFractionDigits="1" /></span>
+                    </c:if>
                   </div>
                 </div>
 
@@ -388,9 +390,9 @@
                   <a href="<c:url value='/appointment?doctorId=${doctor.id}'/>" class="btn btn-primary">
                     <i class="fas fa-calendar-check"></i> <spring:message code="search.button.schedule" />
                   </a>
-<%--                  <button class="btn btn-secondary" onclick="viewDoctorProfile('${doctor.id}')">--%>
-<%--                    <i class="fas fa-user-md"></i> <spring:message code="search.button.view.profile" />--%>
-<%--                  </button>--%>
+                    <%--                  <button class="btn btn-secondary" onclick="viewDoctorProfile('${doctor.id}')">--%>
+                    <%--                    <i class="fas fa-user-md"></i> <spring:message code="search.button.view.profile" />--%>
+                    <%--                  </button>--%>
                 </div>
               </div>
             </c:forEach>

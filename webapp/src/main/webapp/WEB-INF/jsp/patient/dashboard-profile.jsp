@@ -129,7 +129,6 @@
                             </div>
                             <div class="multi-select-container" id="coverage-container">
                                 <div class="custom-multi-select" id="coverage-options">
-                                    <input type="text" id="coverage-search" class="search-box" placeholder="<spring:message code="register.search" />" />
                                     <c:forEach items="${coverageList}" var="coverage">
                                         <div class="custom-multi-select-option"
                                              data-value="${coverage.id}"

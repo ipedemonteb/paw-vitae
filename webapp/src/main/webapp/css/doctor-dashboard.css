@@ -175,6 +175,55 @@ body {
     box-shadow: var(--shadow-sm);
 }
 
+/* Agregar estilos para las calificaciones del doctor en el header */
+.doctor-rating {
+    margin-top: 0.5rem;
+}
+
+.doctor-rating .stars {
+    display: flex;
+    align-items: center;
+    color: #f59e0b;
+    font-size: 0.9rem;
+}
+
+.doctor-rating .rating-value {
+    margin-left: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.doctor-rating .rating-count {
+    margin-left: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+/* Doctor Rating in Header */
+.doctor-rating-header {
+    margin-top: 0.5rem;
+}
+
+.doctor-rating-header .stars {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--warning-color);
+    font-size: 0.9rem;
+}
+
+.doctor-rating-header .rating-value {
+    margin-left: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.doctor-rating-header .rating-count {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-left: 0.25rem;
+}
+
 .dashboard-stats {
     display: flex;
     gap: 1rem;
@@ -312,7 +361,6 @@ body {
     }
 }
 
-
 .load-more-container {
     display: flex;
     justify-content: center;
@@ -355,8 +403,12 @@ body {
 
 /* Animación de carga */
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .fa-spin {
@@ -1172,7 +1224,7 @@ body {
     align-items: center;
     margin-top: auto;
     padding-top: 0.75rem;
-    border-top: 1px dashed #e2e8f0
+    border-top: 1px dashed #e2e8f0;
 }
 
 .specialty-badge {
@@ -1333,7 +1385,6 @@ body {
     cursor: pointer;
     transition: var(--transition);
 }
-
 
 .btn-add-slot:hover {
     background-color: rgba(59, 130, 246, 0.1);
@@ -1655,4 +1706,111 @@ body {
 
 .btn-confirm:hover {
     background-color: #059669;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+    gap: 0.5rem;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-fast) var(--ease);
+    text-decoration: none;
+}
+
+.pagination-btn:hover {
+    background-color: var(--gray-100);
+    color: var(--text-primary);
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pagination-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    color: var(--text-secondary);
+    border: 1px solid #e2e8f0;
+    font-weight: 500;
+    transition: all var(--transition-fast) var(--ease);
+    text-decoration: none;
+}
+
+.pagination-number:hover {
+    background-color: var(--gray-100);
+    color: var(--text-primary);
+}
+
+.pagination-number.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--text-secondary);
+}
+
+/* Responsive styles for pagination */
+@media (max-width: 576px) {
+    .pagination-numbers {
+        display: flex;
+        max-width: 200px;
+        overflow-x: auto;
+        padding: 0 0.5rem;
+    }
+}
+
+/* Doctor Rating Styles */
+.doctor-rating {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
+
+.rating-stars {
+    display: flex;
+    margin-right: 8px;
+}
+
+.rating-stars i {
+    color: #ffd700;
+    margin-right: 2px;
+}
+
+.rating-value {
+    font-weight: 500;
+    color: #555;
+}
+
+.rating-count {
+    font-size: 0.9em;
+    color: #777;
+    margin-left: 2px;
 }

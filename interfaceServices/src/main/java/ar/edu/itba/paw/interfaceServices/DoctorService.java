@@ -18,7 +18,7 @@ public interface DoctorService {
 
     Optional<Doctor> getByEmail(String email);
 
-    void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages);
+     void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages,MultipartFile image);
 
     void UpdateDoctorRating(long id, long rating);
 

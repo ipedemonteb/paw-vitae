@@ -17,6 +17,7 @@ import org.thymeleaf.context.Context;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -190,6 +191,41 @@ public class MailServiceImpl implements MailService {
             LOGGER.info("Verification email sent to: {}", user.getEmail());
         } catch (MessagingException e) {
             LOGGER.error("Error sending verification email to {}", user.getEmail(), e);
+        }
+    }
+
+    @Async
+    @Override
+    public void sendRatingMail(Doctor doctor, Patient patient, Appointment appointment, long rating, String ratingMessage){
+        Locale userLocale = Locale.forLanguageTag(doctor.getLanguage());
+        Context context = new Context(userLocale);
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        context.setVariable("appointmentDate", appointment.getDate().format(dateFormatter));
+        context.setVariable("appointmentTime", appointment.getDate().format(timeFormatter));
+
+        context.setVariable("rating", rating);
+        context.setVariable("ratingMessage", ratingMessage);
+        context.setVariable("doctor", doctor);
+        context.setVariable("patient", patient);
+        context.setVariable("appointment", appointment);
+
+
+        String htmlContent = templateEngine.process("DoctorRatedNotification", context);
+
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(doctor.getEmail());
+            helper.setSubject(messageSource.getMessage("doctor.rating.title", null, userLocale));
+            helper.setText(htmlContent, true);
+            helper.setFrom(from_mail);
+
+            mailSender.send(message);
+            LOGGER.info("Verification email sent to: {}", doctor.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending verification email to {}", doctor.getEmail(), e);
         }
     }
 
