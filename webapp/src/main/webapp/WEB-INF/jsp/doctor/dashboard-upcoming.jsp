@@ -83,6 +83,28 @@
                         <span><c:out value="${doctor.phone}" /></span>
                     </div>
                 </div>
+                <c:if test="${doctor.ratingCount > 0}">
+                    <div class="doctor-rating">
+                        <div class="rating-stars">
+                            <c:forEach begin="1" end="5" var="i">
+                                <c:choose>
+                                    <c:when test="${doctor.rating >= i}">
+                                        <i class="fas fa-star"></i>
+                                    </c:when>
+                                    <c:when test="${doctor.rating >= i - 0.5}">
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="far fa-star"></i>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+                        </div>
+                        <div class="rating-value">
+                            <fmt:formatNumber value="${doctor.rating}" pattern="#.#" /> <span class="rating-count">(${doctor.ratingCount})</span>
+                        </div>
+                    </div>
+                </c:if>
                 <div class="doctor-specialties">
                     <c:forEach items="${doctor.specialtyList}" var="specialty" varStatus="status">
                         <span class="specialty-tag">

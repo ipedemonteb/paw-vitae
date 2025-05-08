@@ -57,6 +57,28 @@
                         <span><c:out value="${doctor.phone}" /></span>
                     </div>
                 </div>
+                <c:if test="${doctor.ratingCount > 0}">
+                    <div class="doctor-rating">
+                        <div class="rating-stars">
+                            <c:forEach begin="1" end="5" var="i">
+                                <c:choose>
+                                    <c:when test="${doctor.rating >= i}">
+                                        <i class="fas fa-star"></i>
+                                    </c:when>
+                                    <c:when test="${doctor.rating >= i - 0.5}">
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="far fa-star"></i>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+                        </div>
+                        <div class="rating-value">
+                            <fmt:formatNumber value="${doctor.rating}" pattern="#.#" /> <span class="rating-count">(${doctor.ratingCount})</span>
+                        </div>
+                    </div>
+                </c:if>
                 <div class="doctor-specialties">
                     <c:forEach items="${doctor.specialtyList}" var="specialty" varStatus="status">
                         <span class="specialty-tag">
@@ -243,7 +265,6 @@
                             </div>
                             <div class="multi-select-container" id="coverages-container">
                                 <div class="custom-multi-select" id="coverages-options">
-                                    <input type="text" id="coverages-search" class="search-box" placeholder="<spring:message code="register.search" />" />
                                     <c:forEach items="${coverageList}" var="coverage">
                                         <div class="custom-multi-select-option"
                                              data-value="${coverage.id}"
@@ -274,7 +295,7 @@
                             </div>
                             <div class="multi-select-container" id="specialties-container">
                                 <div class="custom-multi-select" id="specialties-options">
-                                    <input type="text" id="specialties-search" class="search-box" placeholder="<spring:message code="register.search" />" />
+
                                     <c:forEach items="${specialtyList}" var="specialty">
                                         <div class="custom-multi-select-option"
                                              data-value="${specialty.id}"
@@ -370,8 +391,7 @@
         // Initialize coverages dropdown
         initCoveragesDropdown();
 
-        // Initialize search functionality for coverages
-        initCoveragesSearch();
+
 
         // Pre-select the current coverages
         preSelectCurrentCoverages();
@@ -379,8 +399,6 @@
         // Initialize specialties dropdown
         initSpecialtiesDropdown();
 
-        // Initialize search functionality for specialties
-        initSpecialtiesSearch();
 
         // Pre-select the current specialties
         preSelectCurrentSpecialties();
@@ -481,28 +499,10 @@
         const selectedNames = Array.from(selectedOptions).map(option => option.getAttribute('data-name'));
         selectedCoveragesDisplay.innerHTML = selectedNames.length > 0
             ? selectedNames.join(', ')
-            : '<em>None selected</em>';
+            : '';
     }
 
-    function initCoveragesSearch() {
-        const searchBox = document.getElementById('coverages-search');
-        const options = document.querySelectorAll('#coverages-options .custom-multi-select-option');
 
-        if (searchBox) {
-            searchBox.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-
-                options.forEach(option => {
-                    const text = option.querySelector('.option-text').textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        option.style.display = 'flex';
-                    } else {
-                        option.style.display = 'none';
-                    }
-                });
-            });
-        }
-    }
 
     function preSelectCurrentCoverages() {
         // Get the current doctor's coverages from the display
@@ -555,28 +555,9 @@
         const selectedNames = Array.from(selectedOptions).map(option => option.getAttribute('data-name'));
         selectedSpecialtiesDisplay.innerHTML = selectedNames.length > 0
             ? selectedNames.join(', ')
-            : '<em>None selected</em>';
+            : '';
     }
 
-    function initSpecialtiesSearch() {
-        const searchBox = document.getElementById('specialties-search');
-        const options = document.querySelectorAll('#specialties-options .custom-multi-select-option');
-
-        if (searchBox) {
-            searchBox.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-
-                options.forEach(option => {
-                    const text = option.querySelector('.option-text').textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        option.style.display = 'flex';
-                    } else {
-                        option.style.display = 'none';
-                    }
-                });
-            });
-        }
-    }
 
     const fixedHeader = document.querySelector(".main-header");
     const mainContent = document.querySelector(".dashboard-container");

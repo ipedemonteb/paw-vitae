@@ -119,9 +119,11 @@ public class DoctorController {
                 updateDoctorForm.getLastName(),
                 updateDoctorForm.getPhone(),
                 updateDoctorForm.getSpecialties(),
-                updateDoctorForm.getCoverages());
+                updateDoctorForm.getCoverages(),
+                updateDoctorForm.getImage());
         return new ModelAndView("redirect:/doctor/dashboard/profile?updated=true");
     }
+
 
 
     @PostMapping(value = "/doctor/dashboard/appointment/cancel", produces = "application/json")
