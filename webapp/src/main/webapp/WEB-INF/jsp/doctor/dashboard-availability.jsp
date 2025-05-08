@@ -128,7 +128,7 @@
             <i class="fas fa-user-md"></i>
             <span><spring:message code="dashboard.tab.profile" /></span>
         </a>
-        <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab active >
+        <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab active" >
             <i class="fas fa-calendar-check"></i>
         <span><spring:message code="dashboard.tab.availability" /></span>
         </a>

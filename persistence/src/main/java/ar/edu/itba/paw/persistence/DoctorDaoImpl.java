@@ -5,7 +5,6 @@ import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -15,8 +14,6 @@ import java.util.*;
 @Repository
 public class DoctorDaoImpl implements DoctorDao {
 
-    private final static String BASE_SQL = "SELECT u.name AS doctor_name, u.id AS doctor_id, u.last_name AS doctor_last_name, u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id,u.is_verified AS doctor_verified FROM users u JOIN doctors d ON u.id = d.doctor_id ";
-    public static RowMapper<Doctor> ROW_MAPPER;
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsertUser;
     private final SimpleJdbcInsert jdbcInsertDoctor;
@@ -24,9 +21,36 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
     private final UserDao userDao;
 
+    private final static String BASE_SQL = "SELECT " +
+            "  u.id                   AS doctor_id, " +
+            "  u.name                 AS doctor_name, " +
+            "  u.last_name            AS doctor_last_name, " +
+            "  u.email                AS doctor_email, " +
+            "  u.password             AS doctor_password, " +
+            "  u.phone                AS doctor_phone, " +
+            "  u.language             AS doctor_language, " +
+            "  u.is_verified          AS doctor_verified, " +
+            "  d.rating               AS rating, " +
+            "  d.rating_count         AS rating_count, " +
+            "  d.image_id             AS image_id, " +
+            "  s.id                   AS specialty_id, " +
+            "  s.key                  AS specialty_key, " +
+            "  c.id                   AS coverage_id, " +
+            "  c.coverage_name        AS coverage_name, " +
+            "  a.day_of_week          AS day_of_week, " +
+            "  a.start_time           AS start_time, " +
+            "  a.end_time             AS end_time " +
+            "FROM users u " +
+            "  JOIN doctors d        ON u.id = d.doctor_id " +
+            "  LEFT JOIN doctor_specialties ds ON ds.doctor_id     = u.id " +
+            "  LEFT JOIN specialties        s  ON s.id             = ds.specialty_id " +
+            "  LEFT JOIN doctor_coverages   dc ON dc.doctor_id     = u.id " +
+            "  LEFT JOIN coverages          c  ON c.id             = dc.coverage_id " +
+            "  LEFT JOIN doctor_availability a ON a.doctor_id      = u.id ";
+
+
     @Autowired
     public DoctorDaoImpl(final DataSource ds, UserDao userDao) {
-        ROW_MAPPER = DaoRowMappers.getDoctorRowMapper();
         this.userDao = userDao;
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
@@ -111,19 +135,15 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public Optional<Doctor> getById(long id) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        return jdbcTemplate.query(
-                sql.append("WHERE u.id = ?").toString(),
-                ROW_MAPPER, id
-        ).stream().findFirst();
+        sql.append("WHERE u.id = ?");
+        return Optional.ofNullable(jdbcTemplate.query(sql.toString(), new DoctorExtractor(), id)).orElse(Collections.emptyList()).stream().findFirst();
     }
 
     @Override
     public Optional<Doctor> getByEmail(String email) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        return jdbcTemplate.query(
-                sql.append("WHERE u.email = ?").toString(),
-                ROW_MAPPER, email
-        ).stream().findFirst();
+        sql.append("WHERE u.email = ?");
+        return Optional.ofNullable(jdbcTemplate.query(sql.toString(), new DoctorExtractor(), email)).orElse(Collections.emptyList()).stream().findFirst();
     }
 
     @Override
@@ -138,26 +158,10 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public List<Doctor> getByIds(Set<Long> ids) {
-        if (ids.isEmpty()) {
-            return Collections.emptyList();
-        }
-        StringBuilder sql = new StringBuilder(BASE_SQL);
-        return jdbcTemplate.query(
-                sql.append("WHERE u.id IN (").append(String.join(",", Collections.nCopies(ids.size(), "?"))).append(")").toString(),
-                ROW_MAPPER, ids.toArray()
-        );
-    }
-
-    @Override
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        return jdbcTemplate.query(
-                sql.append("JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id ")
-                        .append("JOIN specialties s ON ds.specialty_id = s.id ")
-                        .append("WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?").toString(), ROW_MAPPER,
-                specialtyId, pageSize, (page - 1) * pageSize
-        );
+        sql.append("WHERE u.id IN (SELECT doctor_id FROM users u JOIN doctor_specialties ds ON u.id = ds.doctor_id WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?)");
+        return jdbcTemplate.query(sql.toString(), new DoctorExtractor(), specialtyId, pageSize, (page - 1) * pageSize);
     }
 
     @Override
@@ -207,14 +211,12 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        sql.append("WHERE 1=1 AND u.is_verified = true ");
+        sql.append("WHERE u.id IN (SELECT doctor_id FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.is_verified = true ");
         List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
-
-        sql.append("ORDER BY ").append(orderBy).append(" ").append(direction);
-        sql.append(" LIMIT ? OFFSET ?");
+        sql.append("ORDER BY ").append(orderBy).append(" ").append(direction).append(" LIMIT ? OFFSET ?) ORDER BY ").append(orderBy).append(" ").append(direction);
         params.add(pageSize);
         params.add((page - 1) * pageSize);
-        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, params.toArray());
+        return jdbcTemplate.query(sql.toString(), new DoctorExtractor(), params.toArray());
     }
 
     @Override
@@ -228,19 +230,15 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public Optional<Doctor> getByVerificationToken(String token) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        return jdbcTemplate.query(
-                sql.append("WHERE u.verification_token = ?").toString(),
-                ROW_MAPPER, token
-        ).stream().findFirst();
+        sql.append("WHERE u.verification_token = ?");
+        return Optional.ofNullable(jdbcTemplate.query(sql.toString(), new DoctorExtractor(), token)).orElse(Collections.emptyList()).stream().findFirst();
     }
 
     @Override
     public Optional<Doctor> getByResetToken(String token) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
-        return jdbcTemplate.query(
-                sql.append("WHERE u.reset_token = ?").toString(),
-                ROW_MAPPER, token
-        ).stream().findFirst();
+        sql.append("WHERE u.reset_token = ?");
+        return Optional.ofNullable(jdbcTemplate.query(sql.toString(), new DoctorExtractor(), token)).orElse(Collections.emptyList()).stream().findFirst();
     }
     @Override
     public void updateImage(long id, Long imageId) {

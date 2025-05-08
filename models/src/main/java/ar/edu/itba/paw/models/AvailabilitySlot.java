@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class AvailabilitySlot {
 
@@ -42,5 +43,17 @@ public class AvailabilitySlot {
 
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        AvailabilitySlot that = (AvailabilitySlot) o;
+        return dayOfWeek == that.dayOfWeek && Objects.equals(startTime, that.startTime) && Objects.equals(endTime, that.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dayOfWeek, startTime, endTime);
     }
 }

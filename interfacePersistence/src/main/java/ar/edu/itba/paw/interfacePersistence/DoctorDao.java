@@ -22,8 +22,6 @@ public interface DoctorDao {
 
     void UpdateDoctorRating(long id, long rating);
 
-    List<Doctor> getByIds(Set<Long> ids);
-
     void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages);
 
     String getLanguage(long id);
