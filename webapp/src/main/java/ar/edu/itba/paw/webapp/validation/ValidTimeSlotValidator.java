@@ -15,6 +15,9 @@ public class ValidTimeSlotValidator implements ConstraintValidator<ValidTimeSlot
         }
 
         for (AvailabilitySlot slot : availabilitySlotList) {
+            if (slot.getStartTime() == null && slot.getEndTime() == null) {
+                continue;
+            }
             if (slot.getStartTime() == null || slot.getEndTime() == null || slot.getStartTime().isAfter(slot.getEndTime())
                     || slot.getDayOfWeek() > 6 || slot.getDayOfWeek() < 0 || slot.getStartTime().getHour() < 8
                     || slot.getStartTime().getHour() > 20 || slot.getEndTime().getHour() < 8 || slot.getEndTime().getHour() > 20
