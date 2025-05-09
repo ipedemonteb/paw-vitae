@@ -1,9 +1,5 @@
 package ar.edu.itba.paw.interfacePersistence;
 
-import ar.edu.itba.paw.models.User;
-
-import java.util.Optional;
-
 public interface UserDao {
 
     Number create(String name, String lastName, String email, String password, String phone, String language);
@@ -23,5 +19,7 @@ public interface UserDao {
     void changeLanguage(long id, String language);
 
     void removeResetToken(String token);
+
+    void update(long id, String name, String lastName, String phone);
 
 }

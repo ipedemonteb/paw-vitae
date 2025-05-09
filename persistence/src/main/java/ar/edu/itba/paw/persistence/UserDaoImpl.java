@@ -1,17 +1,14 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.UserDao;
-import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -80,7 +77,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void removeResetToken(String token) {
         jdbcTemplate.update("UPDATE users SET reset_token = NULL WHERE reset_token = ?", token);
-
     }
 
+    @Override
+    public void update(long id, String name, String lastName, String phone) {
+        jdbcTemplate.update("UPDATE users SET name = ?, last_name = ?, phone = ? WHERE id = ?", name, lastName, phone, id);
+    }
 }

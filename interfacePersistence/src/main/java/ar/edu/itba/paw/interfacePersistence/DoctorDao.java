@@ -5,7 +5,6 @@ import ar.edu.itba.paw.models.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface DoctorDao {
 
@@ -22,11 +21,8 @@ public interface DoctorDao {
 
     void UpdateDoctorRating(long id, long rating);
 
-    void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages);
-
-    String getLanguage(long id);
-
-    void changeLanguage(long id, String language);
+//    void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages);
+    void updateDoctor(long id, List<Long> specialties, List<Long> coverages);
 
     List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);
 

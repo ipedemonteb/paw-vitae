@@ -78,11 +78,9 @@ public class PatientDaoImpl implements PatientDao {
     }
 
     @Override
-    public void updatePatient(long id, String name, String lastName, String phone, Coverage coverage) {
-        jdbcTemplate.update("UPDATE users SET name = ?, last_name = ?, phone = ? WHERE id = ?",
-                name, lastName, phone, id);
-        if (coverage != null) {
-            jdbcTemplate.update("UPDATE clients SET coverage_id = ? WHERE client_id = ?", coverage.getId(), id);
+    public void updatePatient(long id, Long coverageId) {
+        if (coverageId != null) {
+            jdbcTemplate.update("UPDATE clients SET coverage_id = ? WHERE client_id = ?", coverageId, id);
         }
     }
 

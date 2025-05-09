@@ -6,12 +6,10 @@ import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,16 +60,12 @@ public class PatientServiceImpl implements PatientService {
 
     @Transactional
     @Override
-    public void updatePatient(Patient patient, String name, String lastName, String phone, Coverage coverage) {
-        boolean hasChanged = !patient.getName().equals(name)
-                || !patient.getLastName().equals(lastName)
-                || !patient.getPhone().equals(phone)
-                || !patient.getCoverage().getName().equals(coverage.getName());
+    public void updatePatient(Patient patient, Long coverageId) { //TODO unify how these things are handled, doctoDao does something else entirely
+        boolean hasChanged = patient.getCoverage().getId() != coverageId;
         if (hasChanged) {
-            patientDao.updatePatient(patient.getId(), name, lastName, phone, coverage);
-            LOGGER.info("Patient updated successfully: id={}, email={}", patient.getId(), patient.getEmail());
+            patientDao.updatePatient(patient.getId(), coverageId);
+            LOGGER.info("Patient updated successfully: id={}", patient);
         }
-
     }
 
     @Transactional(readOnly = true)

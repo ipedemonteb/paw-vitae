@@ -15,7 +15,8 @@ public interface PatientDao {
 
     Optional<Patient> getByEmail(String email);
 
-    void updatePatient(long id, String name, String lastName, String phone, Coverage coverage);
+//    void updatePatient(long id, String name, String lastName, String phone, Coverage coverage);
+    void updatePatient(long id, Long coverageId);
 
     List<Patient> getByIds(Set<Long> ids);
 

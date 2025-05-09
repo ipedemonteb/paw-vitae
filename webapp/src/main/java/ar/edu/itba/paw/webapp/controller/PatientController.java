@@ -33,14 +33,16 @@ public class PatientController {
     private final CoverageService covs;
     private final AppointmentFileService afs;
     private final RatingService rs;
+    private final UserService us;
 
     @Autowired
-    public PatientController(PatientService ps, AppointmentService as, CoverageService covs, AppointmentFileService afs, RatingService rs) {
+    public PatientController(PatientService ps, AppointmentService as, CoverageService covs, AppointmentFileService afs, RatingService rs, UserService us) {
         this.ps = ps;
         this.as = as;
         this.covs = covs;
         this.afs = afs;
         this.rs = rs;
+        this.us = us;
     }
 
     @RequestMapping(value = "/patient/dashboard")
@@ -101,7 +103,7 @@ public class PatientController {
             mav.addObject("display", "block");
             return mav;
         }
-        ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), covs.findById(Long.parseLong(updatePatientForm.getCoverage())).orElse(null));
+        us.update(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), Long.parseLong(updatePatientForm.getCoverage()));
         return new ModelAndView("redirect:/patient/dashboard/profile?updated=true");
     }
 

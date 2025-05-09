@@ -1,12 +1,16 @@
 package ar.edu.itba.paw.interfaceServices;
 
 import ar.edu.itba.paw.models.User;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
     Optional<? extends User> getByEmail(String email);
+
+    Optional<? extends User> getById(long id);
 
     boolean changePassword(String token, String password);
 
@@ -25,4 +29,8 @@ public interface UserService {
     boolean verifyRecoveryToken(String token);
 
     Long getImageId(User user);
+
+    void update(User user, String name, String lastName, String phone, List<String> specialties, List<String> coverages, MultipartFile image);
+
+    void update(User user, String name, String lastName, String phone, Long coverageId);
 }
