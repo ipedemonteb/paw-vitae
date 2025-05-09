@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
@@ -22,8 +21,6 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorDao doctorDao;
 
-    private final SpecialtyService ss;
-    private final CoverageService cs;
     private final AppointmentService as;
     private final ImageService is;
     private final AvailabilitySlotsService ass;
@@ -31,10 +28,8 @@ public class DoctorServiceImpl implements DoctorService {
     private final UserService userService;
 
     @Autowired
-    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder, AppointmentService as, ImageService is, AvailabilitySlotsService ass, UserService userService) {
+    public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder, AppointmentService as, ImageService is, AvailabilitySlotsService ass, UserService userService) {
         this.doctorDao = doctorDao;
-        this.ss = ss;
-        this.cs = cs;
         this.passwordEncoder = passwordEncoder;
         this.as = as;
         this.is = is;
@@ -56,7 +51,7 @@ public class DoctorServiceImpl implements DoctorService {
         long id = userService.create(name, lastName, email, passwordEncoder.encode(password), phone, language);
         Doctor doctor = this.doctorDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, (img == null ? null : img.getId()), specialtyList, coverageList);
         ass.create(id, filteredSlots);
-        doctor.setAvailabilitySlots(filteredSlots); //TODO is this needed?
+        doctor.setAvailabilitySlots(filteredSlots);
         LOGGER.info("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
         return doctor;
     }
