@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -23,18 +24,18 @@ import static org.junit.Assert.*;
 @Transactional
 public class ImageDaoTest {
 
+    private static final String IMAGE_TABLE = "images";
+
     private static final long IMAGE_ID = 1L;
 
     private ImageDaoImpl imageDao;
     private JdbcTemplate jdbcTemplate;
-    private DoctorDao mockDoctor;
 
     @Autowired
     private DataSource ds;
 
     @Before
     public void setUp() {
-        this.mockDoctor = Mockito.mock(DoctorDao.class);
         this.imageDao = new ImageDaoImpl(ds);
         this.jdbcTemplate = new JdbcTemplate(ds);
     }
@@ -51,10 +52,23 @@ public class ImageDaoTest {
         assertNotNull(createdImage);
         assertEquals(image.length, createdImage.getImage().length);
         assertArrayEquals(image, createdImage.getImage());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, IMAGE_TABLE, "id = " + createdImage.getId()));
     }
 
     @Test
-    public void testGetByIdDoesNotExist() {
+    public void testDeleteImage() {
+        //Preconditions
+        long imageId = 1L;
+
+        //Exercise
+        imageDao.deleteImage(imageId);
+
+        //Postconditions
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, IMAGE_TABLE, "id = " + imageId));
+    }
+
+    @Test
+    public void testFindByIdDoesNotExist() {
         //Preconditions
 
         //Exercise
@@ -65,7 +79,7 @@ public class ImageDaoTest {
     }
 
     @Test
-    public void testGetByIdExists() {
+    public void testFindByIdExists() {
 
         // Exercise
         Optional<Images> maybeImage = imageDao.findById(IMAGE_ID);

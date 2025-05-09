@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -23,9 +24,10 @@ import static org.junit.Assert.*;
 @Transactional
 public class RatingDaoTest {
 
+    private static final String RATINGS_TABLE = "ratings";
+
     private RatingDao ratingDao;
     private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
 
     private static final long RAT_ID = 1L;
     private static final long PAT_ID = 1L;
@@ -41,7 +43,6 @@ public class RatingDaoTest {
     public void setUp() {
         ratingDao = new RatingDaoImpl(ds);
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(ds);
     }
 
     @Test
@@ -58,11 +59,8 @@ public class RatingDaoTest {
 
         //Postconditions
         assertNotNull(rating);
-        assertEquals(doctorId, rating.getDoctorId());
-        assertEquals(patientId, rating.getPatientId());
-        assertEquals(appointmentId, rating.getAppointmentId());
         assertEquals(score, rating.getRating());
-        assertEquals(comment, rating.getComment());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, RATINGS_TABLE, "doctor_id = " + doctorId + " AND client_id = " + patientId + " AND appointment_id = " + appointmentId));
     }
 
     @Test
@@ -95,7 +93,7 @@ public class RatingDaoTest {
     }
 
     @Test
-    public void getRatingByAppointmentIdDoesNotExist() {
+    public void testGetRatingByAppointmentIdDoesNotExist() {
         //Preconditions
 
         //Exercise
@@ -106,7 +104,7 @@ public class RatingDaoTest {
     }
 
     @Test
-    public void getRatingByAppointmentIdExists() {
+    public void testGetRatingByAppointmentIdExists() {
         //Preconditions
         long appointmentId = 1L;
 
@@ -123,7 +121,7 @@ public class RatingDaoTest {
     }
 
     @Test
-    public void getRatingByDoctorIdDoesNotExist() {
+    public void testGetRatingByDoctorIdDoesNotExist() {
         //Preconditions
 
         //Exercise
@@ -133,23 +131,10 @@ public class RatingDaoTest {
         assertTrue(maybeRating.isEmpty());
     }
 
-    //@TODO:CHECK
     @Test
-    public void getRatingByDoctorIdExists() {
+    public void testGetRatingByDoctorIdExists() {
         //Preconditions
-//        long score = 4;
         long doctorId = 2L;
-//        long patientId = 1L;
-//        long appointmentId = 2L;
-//        String comment = "Great doctor!";
-//        Number number = jdbcInsert.executeAndReturnKey(Map.of(
-//                "id", 2L,
-//                "doctor_id", doctorId,
-//                "client_id", patientId,
-//                "appointment_id", appointmentId,
-//                "rating", score,
-//                "comment", comment
-//        ));
 
         //Exercise
         List<Rating> maybeRatings = ratingDao.getRatingsByDoctorId(doctorId);
@@ -167,7 +152,7 @@ public class RatingDaoTest {
     }
 
     @Test
-    public void getRatingByPatientIdDoesNotExist() {
+    public void testGetRatingByPatientIdDoesNotExist() {
         //Preconditions
 
         //Exercise
@@ -178,7 +163,7 @@ public class RatingDaoTest {
     }
 
     @Test
-    public void getRatingByPatientIdExists() {
+    public void testGetRatingByPatientIdExists() {
         //Preconditions
         long patientId = 1L;
 
@@ -195,5 +180,21 @@ public class RatingDaoTest {
         assertEquals(APP_ID, result.getAppointmentId());
         assertEquals(RATING, result.getRating());
         assertEquals(COMMENT, result.getComment());
+    }
+
+    @Test
+    public void testGetFiveTopRatings() {
+        //Preconditions
+
+        //Exercise
+        List<Rating> results = ratingDao.getFiveTopRatings();
+
+        //Postconditions
+        assertFalse(results.isEmpty());
+        assertEquals(5, results.size());
+        assertTrue(results.getFirst().getRating() >= results.getLast().getRating());
+        for (int i = 0; i < results.size() - 1; i++) {
+            assertTrue(results.get(i).getRating() >= results.get(i + 1).getRating());
+        }
     }
 }

@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -22,6 +22,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class CoverageDaoTest {
+
+    private static final String COVERAGE_TABLE = "coverages";
 
     private CoverageDaoImpl coverageDao;
     private JdbcTemplate jdbcTemplate;
@@ -50,6 +52,7 @@ public class CoverageDaoTest {
         //Postconditions
         assertNotNull(test_Coverage);
         assertEquals(testCoverageName, test_Coverage.getName());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, COVERAGE_TABLE, "id = " + test_Coverage.getId()));
     }
 
     @Test
@@ -137,5 +140,29 @@ public class CoverageDaoTest {
 
         //Postconditions
         assertTrue(specialties.isEmpty());
+    }
+
+    @Test
+    public void testFindByDoctorIdDoesNotExist() {
+        //Preconditions
+
+        //Exercise
+        List<Coverage> coverages = coverageDao.findByDoctorId(1000L);
+
+        //Postconditions
+        assertTrue(coverages.isEmpty());
+    }
+
+    @Test
+    public void testFindByDoctorIdExists() {
+        //Preconditions
+        long doctorId = 5L;
+
+        //Exercise
+        List<Coverage> coverages = coverageDao.findByDoctorId(doctorId);
+
+        //Postconditions
+        assertEquals(2, coverages.size());
+        assertTrue(coverages.stream().map(Coverage::getName).toList().containsAll(List.of(COVERAGE_NAME_1, COVERAGE_NAME_2)));
     }
 }

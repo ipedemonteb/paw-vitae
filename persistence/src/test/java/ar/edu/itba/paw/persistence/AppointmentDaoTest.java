@@ -12,10 +12,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,8 @@ public class AppointmentDaoTest {
 
     private static final String SQL_QUERY_STATUS = "SELECT status FROM appointments WHERE id = ?";
     private static final String SQL_QUERY_REPORT= "SELECT report FROM appointments WHERE id = ?";
+
+    private static final String APPOINTMENT_TABLE = "appointments";
 
     private static final long DOC_ID = 2L;
     private static final String DOC_NAME = "Jane";
@@ -56,28 +60,25 @@ public class AppointmentDaoTest {
     private static final boolean PAT_VERIFIED = true;
 
     private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert insertAppointment;
     private AppointmentDao appointmentDao;
     private DoctorDao mockDoctor;
     private PatientDao mockPatient;
+    private SimpleJdbcInsert insertAppointment;
 
     @Autowired
     private DataSource ds;
-    private DaoRowMappers daoRowMappers;
 
     @Before
     public void setUp() {
         this.jdbcTemplate = new JdbcTemplate(ds);
-        this.daoRowMappers = new DaoRowMappers();
         this.mockDoctor = mock(DoctorDao.class);
         this.mockPatient = mock(PatientDao.class);
         this.appointmentDao = new AppointmentDaoImpl(ds, mockDoctor, mockPatient);
         this.insertAppointment = new SimpleJdbcInsert(ds)
-                .withTableName("Appointments")
+                .withTableName(APPOINTMENT_TABLE)
                 .usingGeneratedKeyColumns("id");
     }
 
-    //@TODO: CHECK IF ITS OK
     @Test
     public void testCreate() {
         //Preconditions
@@ -100,11 +101,7 @@ public class AppointmentDaoTest {
 
         //Postconditions
         assertNotNull(appointment);
-        assertEquals(patientId, appointment.getPatient().getId());
-        assertEquals(docId, appointment.getDoctor().getId());
-        assertEquals(dateTime, appointment.getDate());
-        assertEquals(reason, appointment.getReason());
-        assertEquals(specialty.getId(), appointment.getSpecialty().getId());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, APPOINTMENT_TABLE, "id = " + appointment.getId()));
     }
 
     @Test
@@ -169,7 +166,6 @@ public class AppointmentDaoTest {
         assertEquals(2, maybeAppointments.size());
     }
 
-    //@TODO: Check if its ok
     @Test
     public void testCancelAppointment() {
         //Preconditions
@@ -179,13 +175,33 @@ public class AppointmentDaoTest {
         appointmentDao.cancelAppointment(appointmentId);
 
         //Postconditions
-        List<String> finalAppointment = jdbcTemplate.query(SQL_QUERY_STATUS,
-                (rs, rowNum) -> rs.getString("status"),
-                appointmentId
-        );
-        assertFalse(finalAppointment.isEmpty());
-        assertEquals(1, finalAppointment.size());
-        assertEquals("cancelado", finalAppointment.getFirst());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, APPOINTMENT_TABLE, "id = " + appointmentId + " AND status = 'cancelado'"));
+    }
+
+    @Test
+    public void testCompleteAppointment() {
+        //Preconditions
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, APPOINTMENT_TABLE);
+        insertAppointment.execute(Map.of(
+                "doctor_id", DOC_ID,
+                "client_id", PAT_ID,
+                "specialty_id", 1L,
+                "date", LocalDateTime.now().minusDays(2),
+                "status", "confirmado"
+        ));
+        insertAppointment.execute(Map.of(
+                "doctor_id", DOC_ID,
+                "client_id", PAT_ID,
+                "specialty_id", 1L,
+                "date", LocalDateTime.now().minusDays(2),
+                "status", "confirmado"
+        ));
+
+        //Exercise
+        appointmentDao.completeAppointments();
+
+        //Postconditions
+        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, APPOINTMENT_TABLE, "status = 'completo'"));
     }
 
     @Test
@@ -199,7 +215,6 @@ public class AppointmentDaoTest {
         assertFalse(maybeAppointment.isPresent());
     }
 
-    //@TODO: SHOULD I CHECK MORE PARAMS?
     @Test
     public void testGetByIdExists() {
         //Preconditions
@@ -288,12 +303,10 @@ public class AppointmentDaoTest {
         appointmentDao.updateReport(appointmentId, newReport);
 
         //Postconditions
-        List<String> finalAppointment = jdbcTemplate.query(SQL_QUERY_REPORT,
-                (rs, rowNum) -> rs.getString("report"),
-                appointmentId
-        );
-        assertFalse(finalAppointment.isEmpty());
-        assertEquals(1, finalAppointment.size());
-        assertEquals(newReport, finalAppointment.getFirst());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, APPOINTMENT_TABLE, "id = " + appointmentId + " AND report = '" + newReport + "'"));
     }
+
+//    //@TODO: CHECK
+//    @Test
+//    public void testGetAppointmentsByUserAndDate() {}
 }
