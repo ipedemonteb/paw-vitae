@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.interfacePersistence.CoverageDao;
 import ar.edu.itba.paw.interfacePersistence.PatientDao;
 import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.models.Patient;
@@ -26,12 +27,14 @@ public class PatientDaoImpl implements PatientDao {
     private final SimpleJdbcInsert jdbcInsertPatient;
     private final JdbcTemplate jdbcTemplate;
     private final UserDao userDao;
+    private final CoverageDao coverageDao;
 
 
     @Autowired
-    public PatientDaoImpl(final DataSource ds, UserDao userDao) {
+    public PatientDaoImpl(final DataSource ds, UserDao userDao, CoverageDao coverageDao) {
         ROW_MAPPER = DaoRowMappers.PATIENT_ROW_MAPPER;
         this.userDao = userDao;
+        this.coverageDao = coverageDao;
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertPatient = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("clients")
@@ -47,17 +50,39 @@ public class PatientDaoImpl implements PatientDao {
         ).stream().findFirst();
     }
 
+//    @Override
+//    public Patient create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage) {
+//        final Number patientId = userDao.create(name, lastName, email, password, phone, language);
+//        final Map<String, Object> argsPatient = new HashMap<>();
+//        argsPatient.put("client_id", patientId);
+//        argsPatient.put("coverage_id", coverage.getId());
+//        jdbcInsertPatient.execute(argsPatient);
+//
+//        return new Patient(
+//                name,
+//                patientId.longValue(),
+//                lastName,
+//                email,
+//                password,
+//                phone,
+//                language,
+//                coverage,
+//                false
+//        );
+//    }
+
     @Override
-    public Patient create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage) {
-        final Number patientId = userDao.create(name, lastName, email, password, phone, language);
+    public Patient create(long id, String name, String lastName, String email, String password, String phone, String language, Long coverageId) {
         final Map<String, Object> argsPatient = new HashMap<>();
-        argsPatient.put("client_id", patientId);
-        argsPatient.put("coverage_id", coverage.getId());
+        argsPatient.put("client_id", id);
+        argsPatient.put("coverage_id", coverageId);
         jdbcInsertPatient.execute(argsPatient);
+
+        Coverage coverage = coverageDao.findById(coverageId).orElse(null); //TODO does this go here | check orElse thing
 
         return new Patient(
                 name,
-                patientId.longValue(),
+                id,
                 lastName,
                 email,
                 password,
