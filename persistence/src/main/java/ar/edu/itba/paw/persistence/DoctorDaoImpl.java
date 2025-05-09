@@ -18,7 +18,6 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctor;
     private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
-    private final UserDao userDao;
 
     private final static String BASE_SQL = "SELECT " +
             "  u.id                   AS doctor_id, " +
@@ -50,7 +49,6 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Autowired
     public DoctorDaoImpl(final DataSource ds, UserDao userDao) {
-        this.userDao = userDao;
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
@@ -90,43 +88,6 @@ public class DoctorDaoImpl implements DoctorDao {
         }
         return params;
     }
-
-//    @Override
-//    public Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId,
-//                         List<Specialty> specialties, List<Coverage> coverages) {
-//        final Number docId = userDao.create(name, lastName, email, password, phone, language);
-//        final Map<String, Object> argsDoctor = new HashMap<>();
-//        argsDoctor.put("doctor_id", docId);
-//        argsDoctor.put("image_id", imageId);
-//
-//        jdbcInsertDoctor.execute(argsDoctor);
-//
-//        for (Specialty specialty : specialties) {
-//            final Map<String, Object> args = new HashMap<>();
-//            args.put("doctor_id", docId);
-//            args.put("specialty_id", specialty.getId());
-//            jdbcInsertDoctorSpecialty.execute(args);
-//        }
-//
-//        for (Coverage coverage : coverages) {
-//            final Map<String, Object> args = new HashMap<>();
-//            args.put("doctor_id", docId);
-//            args.put("coverage_id", coverage.getId());
-//            jdbcInsertDoctorCoverage.execute(args);
-//        }
-//
-//        return new Doctor(
-//                name,
-//                docId.longValue(),
-//                lastName,
-//                email,
-//                password,
-//                phone,
-//                language,
-//                imageId != null ? imageId : -1L,
-//                false
-//        );
-//    }
 
     @Override
     public Doctor create(long id, String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Long> specialties, List<Long> coverages) {
@@ -238,11 +199,40 @@ public class DoctorDaoImpl implements DoctorDao {
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
+
+        String orderByQuery = switch (orderBy) {
+            case "name" -> "name";
+            case "last_name" -> "last_name";
+            case "rating" -> "rating";
+            case "email" -> "email";
+            default -> "doctor_id";
+        };
+
+        String directionQuery = switch (direction) {
+            case "asc" -> "ASC";
+            case "desc" -> "DESC";
+            default -> "ASC";
+        };
+
+        long specialtyIdQuery = specialtyId > 0 ? specialtyId : 0;
+
+        long coverageIdQuery = coverageId > 0 ? coverageId : 0;
+
+        List<Integer> weekdaysQuery = new ArrayList<>();
+
+        for (Integer weekday : weekdays) {
+            if (weekday >= 0 && weekday < 7) {
+                weekdaysQuery.add(weekday);
+            }
+        }
+
+        long pageQuery = page > 0 ? page : 1;
+
         sql.append("WHERE u.id IN (SELECT doctor_id FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.is_verified = true ");
-        List<Object> params = getObjects(specialtyId, coverageId, weekdays, sql);
-        sql.append("ORDER BY ").append(orderBy).append(" ").append(direction).append(" LIMIT ? OFFSET ?) ORDER BY ").append(orderBy).append(" ").append(direction);
+        List<Object> params = getObjects(specialtyIdQuery, coverageIdQuery, weekdaysQuery, sql);
+        sql.append("ORDER BY ").append(orderByQuery).append(" ").append(directionQuery).append(" LIMIT ? OFFSET ?) ORDER BY ").append(orderByQuery).append(" ").append(directionQuery);
         params.add(pageSize);
-        params.add((page - 1) * pageSize);
+        params.add((pageQuery - 1) * pageSize);
         return jdbcTemplate.query(sql.toString(), new DoctorExtractor(), params.toArray());
     }
 

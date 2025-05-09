@@ -116,7 +116,7 @@ public class DoctorController {
             mav.addObject("display", "block");
             return mav;
         }
-        us.update(doctor,
+        ds.updateDoctor(doctor,
                 updateDoctorForm.getName(),
                 updateDoctorForm.getLastName(),
                 updateDoctorForm.getPhone(),

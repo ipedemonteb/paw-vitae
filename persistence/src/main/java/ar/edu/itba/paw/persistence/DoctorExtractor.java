@@ -32,13 +32,10 @@ public class DoctorExtractor implements ResultSetExtractor<List<Doctor>> {
                         rs.getString("doctor_password"),
                         rs.getString("doctor_phone"),
                         rs.getString("doctor_language"),
-                        rs.getBoolean("doctor_verified"),
-                        new ArrayList<>(), // will fill below
-                        new ArrayList<>(),
-                        new ArrayList<>(),
+                        rs.getLong("image_id"),
                         rs.getDouble("rating"),
                         rs.getInt("rating_count"),
-                        rs.getLong("image_id")
+                        rs.getBoolean("doctor_verified")
                 );
                 map.put(id, doc);
             }
