@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Doctor extends User {
 
-    private List<Specialty> specialtyList;
+    private List<Specialty> specialtyList = new ArrayList<>();
     private List<Coverage> coverageList = new ArrayList<>();
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
     private Double rating = 5.0;
@@ -23,16 +23,6 @@ public class Doctor extends User {
 
     public Doctor(String name, long id, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified) {
         super(name, id, lastName, email, password, phone, language, verified);
-        this.imageId = imageId;
-    }
-
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language, boolean verified, List<Specialty> specialtyList, List<Coverage> coverageList, List<AvailabilitySlot> availabilitySlots, Double rating, int ratingCount, long imageId) {
-        super(name, id, lastName, email, password, phone, language, verified);
-        this.specialtyList = specialtyList;
-        this.coverageList = coverageList;
-        this.availabilitySlots = availabilitySlots;
-        this.rating = rating;
-        this.ratingCount = ratingCount;
         this.imageId = imageId;
     }
 
