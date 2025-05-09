@@ -95,18 +95,6 @@
             </div>
         </div>
         <div class="dashboard-stats">
-            <c:if test="${not empty upcomingAppointments}">
-                <div class="stat-item">
-                    <div class="stat-value">${upcomingAppointments.size()}</div>
-                    <div class="stat-label"><spring:message code="dashboard.stats.upcoming" /></div>
-                </div>
-            </c:if>
-            <c:if test="${not empty pastAppointments}">
-                <div class="stat-item">
-                    <div class="stat-value">${pastAppointments.size()}</div>
-                    <div class="stat-label"><spring:message code="dashboard.stats.past" /></div>
-                </div>
-            </c:if>
             <div class="stat-item">
                 <div class="stat-value">${doctor.specialtyList.size()}</div>
                 <div class="stat-label"><spring:message code="dashboard.stats.specialties" /></div>
@@ -130,7 +118,7 @@
         </a>
         <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab active" >
             <i class="fas fa-calendar-check"></i>
-        <span><spring:message code="dashboard.tab.availability" /></span>
+            <span><spring:message code="dashboard.tab.availability" /></span>
         </a>
     </div>
 
@@ -205,15 +193,16 @@
                             </div>
 
                             <div id="time-slot-error" class="error-message" style="display: none; margin-bottom: 10px;"></div>
+                            <div class="error-container">
+                                <form:errors path="availabilitySlots" cssClass="error-message" element="div" />
+                            </div>
 
                             <button type="button" class="btn-add-slot" id="add-slot-btn" onclick="addTimeSlotRow()">
                                 <i class="fas fa-plus"></i> <spring:message code="dashboard.availability.addTimeSlot" />
                             </button>
-                            <div>
-                                <form:errors path="availabilitySlots" cssClass="error-message" />
-                            </div>
+
                             <div class="form-actions">
-                                <button type="submit" class="btn-submit-doctor" onclick="this.disabled=true; this.form.submit();">
+                                <button type="submit" class="btn-submit-doctor" id="save-button" onclick="this.disabled=true; this.form.submit();">
                                     <spring:message code="dashboard.availability.saveChanges" />
                                 </button>
                             </div>
@@ -283,6 +272,9 @@
                 return true;
             });
         }
+
+        // Check for form errors and show them
+        checkFormErrors();
     });
 
     function initializeTimeSlots() {
@@ -517,12 +509,17 @@
         const errorElement = document.getElementById('time-slot-error');
         errorElement.textContent = message;
         errorElement.style.display = 'block';
+        errorElement.classList.add('visible');
+
+        // Scroll to the error message
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     // Clear all slot errors
     function clearSlotErrors() {
         const errorElement = document.getElementById('time-slot-error');
         errorElement.style.display = 'none';
+        errorElement.classList.remove('visible');
 
         const errorRows = document.querySelectorAll('.slot-error');
         errorRows.forEach(row => {

@@ -697,9 +697,20 @@ body {
 }
 
 .error-message {
-    color: var(--danger);
-    font-size: 0.85rem;
-    display: none;
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+    font-weight: 500;
+}
+
+.error-container {
+    margin-top: 0.5rem;
+}
+
+/* Make sure the form stays visible when there are errors */
+#edit-profile-form.has-error {
+    display: block !important;
 }
 
 .form-actions {
