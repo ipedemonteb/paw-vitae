@@ -92,31 +92,29 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateDoctor(long id, String name, String lastName, String phone, List<String> specialties, List<String> coverages,MultipartFile image) {
-        Doctor currentDoctor = getById(id)
-                .orElseThrow(() -> {
-                    LOGGER.warn("Attempted to update non-existent doctor with id={}", id);
-                    return new IllegalArgumentException("Doctor not found");
-                });
-        List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList()));
-        List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList()));
+    public void updateDoctor(Doctor doctor, List<Long> specialties, List<Long> coverages, MultipartFile image) {
+        List<Long> specialtyIds = doctor.getSpecialtyList()
+                .stream()
+                .map(Specialty::getId)
+                .toList();
+        List<Long> coverageIds = doctor.getCoverageList()
+                .stream()
+                .map(Coverage::getId)
+                .toList();
 
-        boolean hasChanged = !currentDoctor.getName().equals(name)
-                || !currentDoctor.getLastName().equals(lastName)
-                || !currentDoctor.getPhone().equals(phone)
-                || !currentDoctor.getSpecialtyList().equals(specialtyList)
-                || !currentDoctor.getCoverageList().equals(coverageList);
+        boolean hasChanged = !specialtyIds.equals(specialties) //TODO is the equals of lists well implemented in java?
+                || !coverageIds.equals(coverages);
         if (hasChanged) {
-            doctorDao.updateDoctor(id, name, lastName, phone, specialtyList, coverageList);
-            LOGGER.info("Doctor updated successfully: id={}", id);
+            doctorDao.updateDoctor(doctor.getId(), specialties, coverages);
+            LOGGER.info("Doctor updated successfully: id={}", doctor.getId());
         }
         if (image != null && !image.isEmpty()) {
             Images img = is.create(image);
-            doctorDao.updateImage(id, img.getId());
-            if (currentDoctor.getImageId() != -1) {
-                is.deleteImage(currentDoctor.getId());
+            doctorDao.updateImage(doctor.getId(), img.getId());
+            if (doctor.getImageId() != -1) {
+                is.deleteImage(doctor.getId());
             }
-            LOGGER.info("Doctor image updated successfully: id={}", id);
+            LOGGER.info("Doctor image updated successfully: id={}", doctor.getId());
         }
     }
 

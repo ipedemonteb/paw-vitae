@@ -161,38 +161,34 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages) {
-
-        jdbcTemplate.update(
-                "UPDATE users SET name = ?, last_name = ?, phone = ? WHERE id = ?",
-                name, lastName, phone, id
-        );
+    public void updateDoctor(long id, List<Long> specialties, List<Long> coverages) {
 
         jdbcTemplate.update("DELETE FROM doctor_specialties WHERE doctor_id = ?", id);
-        for (Specialty specialty : specialties) {
-            jdbcTemplate.update(
-                    "INSERT INTO doctor_specialties (doctor_id, specialty_id) VALUES (?, ?)",
-                    id, specialty.getId()
-            );
+        StringBuilder specialtyBuilder = new StringBuilder("INSERT INTO doctor_specialties (doctor_id, specialty_id) VALUES ");
+        List<Object> specialtyParams = new ArrayList<>();
+        for (int i = 0; i < specialties.size(); i++) {
+            specialtyBuilder.append("(?, ?)");
+            if (i < specialties.size() - 1) {
+                specialtyBuilder.append(", ");
+            }
+            specialtyParams.add((int) id);
+            specialtyParams.add(specialties.get(i));
         }
+        jdbcTemplate.update(specialtyBuilder.toString(), specialtyParams.toArray());
 
         jdbcTemplate.update("DELETE FROM doctor_coverages WHERE doctor_id = ?", id);
-        for (Coverage coverage : coverages) {
-            jdbcTemplate.update(
-                    "INSERT INTO doctor_coverages (doctor_id, coverage_id) VALUES (?, ?)",
-                    id, coverage.getId()
-            );
+
+        StringBuilder coverageBuilder = new StringBuilder("INSERT INTO doctor_coverages (doctor_id, coverage_id) VALUES ");
+        List<Object> coverageParams = new ArrayList<>();
+        for (int i = 0; i < coverages.size(); i++) {
+            coverageBuilder.append("(?, ?)");
+            if (i < coverages.size() - 1) {
+                coverageBuilder.append(", ");
+            }
+            coverageParams.add((int) id);
+            coverageParams.add(coverages.get(i));
         }
-    }
-
-    @Override
-    public String getLanguage(long id) {
-        return jdbcTemplate.query("SELECT language FROM Users WHERE id = ?", (rs, rowNum) -> rs.getString("language"), id).stream().findFirst().orElse(null);
-    }
-
-    @Override
-    public void changeLanguage(long id, String language) {
-        jdbcTemplate.update("UPDATE Users SET language = ? WHERE id = ?", language, id);
+        jdbcTemplate.update(coverageBuilder.toString(), coverageParams.toArray());
     }
 
     @Override

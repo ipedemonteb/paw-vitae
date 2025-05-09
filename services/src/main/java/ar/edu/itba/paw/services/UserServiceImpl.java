@@ -1,15 +1,11 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfacePersistence.PatientDao;
-import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.UserService;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -45,10 +43,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<? extends User> getByEmail(String email) {
+    public Optional<? extends User> getByEmail(String email) { //TODO possibly implement isPatient method instead of this
         LOGGER.debug("Fetching user by email: {}", email);
         Optional<Patient> patient = ps.getByEmail(email);
         return patient.isPresent() ? patient : ds.getByEmail(email);
+    }
+
+    @Override
+    public Optional<? extends User> getById(long id) {
+        LOGGER.debug("Fetching user by id: {}", id);
+        Optional<Patient> patient = ps.getById(id);
+        return patient.isPresent() ? patient : ds.getById(id);
     }
 
     @Transactional
@@ -152,6 +157,44 @@ public class UserServiceImpl implements UserService {
             return -1L;
         }
         return ((Doctor) user).getImageId();
+    }
+
+//    @Override
+//    public void update(long id, String name, String lastName, String phone, String password) {
+//        if (name == null || lastName == null || phone == null || password == null) {
+//            throw new IllegalArgumentException("Name, last name, phone, and password cannot be null");
+//        }
+//        String encodedPassword = passwordEncoder.encode(password);
+//        userDao.update(id, name, lastName, phone, encodedPassword);
+//        LOGGER.info("User updated successfully with id={}", id);
+//    }
+
+
+    @Override
+    public void update(User user, String name, String lastName, String phone, List<String> specialties, List<String> coverages, MultipartFile image) {
+        if (name == null || lastName == null || phone == null || specialties == null || coverages == null) {
+            throw new IllegalArgumentException("Name, last name, phone, specialties, and coverages cannot be null");
+        }
+        List<Long> specialtyIds = specialties.stream()
+                .map(Long::parseLong)
+                .toList();
+        List<Long> coverageIds = coverages.stream()
+                .map(Long::parseLong)
+                .toList();
+
+        userDao.update(user.getId(), name, lastName, phone);
+        ds.updateDoctor((Doctor) user, specialtyIds, coverageIds, image);
+        LOGGER.info("User updated successfully with id={}", user.getId());
+    }
+
+    @Override
+    public void update(User user, String name, String lastName, String phone, Long coverageId) {
+        if (name == null || lastName == null || phone == null) {
+            throw new IllegalArgumentException("Name, last name, and phone cannot be null");
+        }
+        userDao.update(user.getId(), name, lastName, phone);
+        ps.updatePatient((Patient) user, coverageId);
+        LOGGER.info("User updated successfully with id={}", user);
     }
 }
 
