@@ -196,5 +196,35 @@ public class UserServiceImpl implements UserService {
         ps.updatePatient((Patient) user, coverageId);
         LOGGER.info("User updated successfully with id={}", user);
     }
+
+    @Override
+    public User create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
+        if (name == null || lastName == null || email == null || password == null || phone == null || language == null) {
+            throw new IllegalArgumentException("Name, last name, email, password, phone, and language cannot be null");
+        }
+        String encodedPassword = passwordEncoder.encode(password);
+        List<Long> specialtyIds = specialties.stream()
+                .map(Long::parseLong)
+                .toList();
+        List<Long> coverageIds = coverages.stream()
+                .map(Long::parseLong)
+                .toList();
+        long id = userDao.create(name, lastName, email, encodedPassword, phone, language).longValue();
+        Doctor doctor = ds.create(id, name, lastName, email, encodedPassword, phone, language, image, specialtyIds, coverageIds, availabilitySlots);
+        LOGGER.info("Doctor created successfully with id={}", doctor.getId());
+        return doctor;
+    }
+
+    @Override
+    public User create(String name, String lastName, String email, String password, String phone, String language, String coverage) {
+        if (name == null || lastName == null || email == null || password == null || phone == null || language == null) {
+            throw new IllegalArgumentException("Name, last name, email, password, phone, and language cannot be null");
+        }
+        String encodedPassword = passwordEncoder.encode(password);
+        long id = userDao.create(name, lastName, email, encodedPassword, phone, language).longValue();
+        Patient patient = ps.create(id, name, lastName, email, encodedPassword, phone, language, Long.parseLong(coverage));
+        LOGGER.info("Patient created successfully with id={}", patient.getId());
+        return patient;
+    }
 }
 
