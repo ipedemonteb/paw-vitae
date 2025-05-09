@@ -25,7 +25,6 @@
           rel="stylesheet">
 </head>
 <body>
-<!-- Include Header Component -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp"/>
 
 <div class="register-container">
@@ -237,7 +236,9 @@
                                 </div>
                                 <div id="file-name" class="file-name"></div>
                                 <div id="image-error" class="error-message" style="display: none;"></div>
-                                <form:errors path="image" cssClass="error-message"/>
+                                <div class="error-container">
+                                    <form:errors path="image" cssClass="error-message visible"/>
+                                </div>
                             </div>
 
                             <div class="form-navigation">
@@ -280,7 +281,9 @@
                                 <small class="form-text text-muted">
                                     <spring:message code="register.selectSpecialties"/>
                                 </small>
-                                <form:errors path="specialties" cssClass="error-message"/>
+                                <div class="error-container">
+                                    <form:errors path="specialties" cssClass="error-message visible"/>
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -310,7 +313,9 @@
                                 <small class="form-text text-muted">
                                     <spring:message code="register.selectCoverage"/>
                                 </small>
-                                <form:errors path="coverages" cssClass="error-message"/>
+                                <div class="error-container">
+                                    <form:errors path="coverages" cssClass="error-message visible"/>
+                                </div>
                             </div>
 
                             <div class="form-navigation">
@@ -344,7 +349,6 @@
                                     </div>
 
                                     <div id="time-slot-inputs">
-                                        <!-- Time slot inputs will be added here -->
                                         <c:if test="${not empty registerForm.availabilitySlots}">
                                             <c:forEach items="${registerForm.availabilitySlots}" var="slot"
                                                        varStatus="status">
@@ -356,7 +360,7 @@
                                     </div>
 
                                     <div id="time-slot-error" class="error-message" style="display: none;"></div>
-                                    <div id="server-time-slot-error" class="error-message">
+                                    <div class="error-container">
                                         <form:errors path="availabilitySlots" cssClass="error-message visible"/>
                                     </div>
 
@@ -364,7 +368,6 @@
                                         <i class="fas fa-plus"></i> <spring:message code="register.addTimeSlot"/>
                                     </button>
                                 </div>
-                                <form:errors path="availabilitySlots" cssClass="error-message"/>
                             </div>
 
                             <div class="form-group terms-checkbox">
@@ -391,9 +394,8 @@
     </div>
 </div>
 
-<!-- Store message translations as JavaScript variables for use in JS file -->
+
 <script>
-    // Create a global object to store message translations
     window.messages = {
         dayOfWeek: '<spring:message code="register.dayOfWeek" javaScriptEscape="true" />',
         startTime: '<spring:message code="register.startTime" javaScriptEscape="true" />',
@@ -432,7 +434,7 @@
         submitting: '<spring:message code="register.submitting" javaScriptEscape="true" />'
     };
 
-    // Store existing availability slots data if present
+
     <c:if test="${not empty registerForm.availabilitySlots}">
     window.existingSlots = [
         <c:forEach items="${registerForm.availabilitySlots}" var="slot" varStatus="status">
@@ -446,7 +448,6 @@
     ];
     </c:if>
 
-    // Check if there are any form errors and determine which section to show
     <c:if test="${status.error}">
     window.hasErrors = true;
     <c:if test="${not empty status.errorMessages['name'] || not empty status.errorMessages['lastName'] ||
@@ -472,17 +473,15 @@
             mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
         };
 
-        // Adjust on page load
         adjustContentMargin();
-
-        // Adjust on window resize
         window.addEventListener("resize", adjustContentMargin);
     }
 
 
 </script>
 
-<!-- Include JavaScript -->
 <script src="<c:url value='/js/register.js' />" defer></script>
+
 </body>
 </html>
+
