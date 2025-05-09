@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface DoctorDao {
 
-//    Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Specialty> specialties, List<Coverage> coverages);
     Doctor create(long id, String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Long> specialties, List<Long> coverages);
 
     Optional<Doctor> getById(final long id);
@@ -18,11 +17,11 @@ public interface DoctorDao {
     int countBySpecialty(long specialtyId);
 
     void updateImage(long id, Long imageId);
+
     Optional<Doctor> getByEmail(String email);
 
     void UpdateDoctorRating(long id, long rating);
 
-//    void updateDoctor(long id, String name, String lastName, String phone, List<Specialty> specialties, List<Coverage> coverages);
     void updateDoctor(long id, List<Long> specialties, List<Long> coverages);
 
     List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);

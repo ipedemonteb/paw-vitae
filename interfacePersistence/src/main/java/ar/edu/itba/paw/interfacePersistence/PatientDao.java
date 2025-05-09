@@ -11,12 +11,10 @@ public interface PatientDao {
 
     Optional<Patient> getById(long id);
 
-//    Patient create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage);
-    Patient create(long id, String name, String lastName, String email, String password, String phone, String language,Long coverageId);
+    Patient create(long id, String name, String lastName, String email, String password, String phone, String language,Coverage coverage);
 
     Optional<Patient> getByEmail(String email);
 
-//    void updatePatient(long id, String name, String lastName, String phone, Coverage coverage);
     void updatePatient(long id, Long coverageId);
 
     List<Patient> getByIds(Set<Long> ids);

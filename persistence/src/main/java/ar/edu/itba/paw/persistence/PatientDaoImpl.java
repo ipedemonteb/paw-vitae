@@ -50,35 +50,12 @@ public class PatientDaoImpl implements PatientDao {
         ).stream().findFirst();
     }
 
-//    @Override
-//    public Patient create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage) {
-//        final Number patientId = userDao.create(name, lastName, email, password, phone, language);
-//        final Map<String, Object> argsPatient = new HashMap<>();
-//        argsPatient.put("client_id", patientId);
-//        argsPatient.put("coverage_id", coverage.getId());
-//        jdbcInsertPatient.execute(argsPatient);
-//
-//        return new Patient(
-//                name,
-//                patientId.longValue(),
-//                lastName,
-//                email,
-//                password,
-//                phone,
-//                language,
-//                coverage,
-//                false
-//        );
-//    }
-
     @Override
-    public Patient create(long id, String name, String lastName, String email, String password, String phone, String language, Long coverageId) {
+    public Patient create(long id, String name, String lastName, String email, String password, String phone, String language, Coverage coverage) {
         final Map<String, Object> argsPatient = new HashMap<>();
         argsPatient.put("client_id", id);
-        argsPatient.put("coverage_id", coverageId);
+        argsPatient.put("coverage_id", coverage.getId());
         jdbcInsertPatient.execute(argsPatient);
-
-        Coverage coverage = coverageDao.findById(coverageId).orElse(null); //TODO does this go here | check orElse thing
 
         return new Patient(
                 name,

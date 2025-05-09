@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
     private String BASE_URL;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserDao userDao, MailService ms, PatientService ps, DoctorService ds) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserDao userDao, MailService ms, @Lazy PatientService ps,@Lazy DoctorService ds) {
         this.passwordEncoder = passwordEncoder;
         this.userDao = userDao;
         this.ms = ms;
@@ -159,73 +160,16 @@ public class UserServiceImpl implements UserService {
         return ((Doctor) user).getImageId();
     }
 
-//    @Override
-//    public void update(long id, String name, String lastName, String phone, String password) {
-//        if (name == null || lastName == null || phone == null || password == null) {
-//            throw new IllegalArgumentException("Name, last name, phone, and password cannot be null");
-//        }
-//        String encodedPassword = passwordEncoder.encode(password);
-//        userDao.update(id, name, lastName, phone, encodedPassword);
-//        LOGGER.info("User updated successfully with id={}", id);
-//    }
-
-
     @Override
-    public void update(User user, String name, String lastName, String phone, List<String> specialties, List<String> coverages, MultipartFile image) {
-        if (name == null || lastName == null || phone == null || specialties == null || coverages == null) {
-            throw new IllegalArgumentException("Name, last name, phone, specialties, and coverages cannot be null");
-        }
-        List<Long> specialtyIds = specialties.stream()
-                .map(Long::parseLong)
-                .toList();
-        List<Long> coverageIds = coverages.stream()
-                .map(Long::parseLong)
-                .toList();
-
-        userDao.update(user.getId(), name, lastName, phone);
-        ds.updateDoctor((Doctor) user, specialtyIds, coverageIds, image);
-        LOGGER.info("User updated successfully with id={}", user.getId());
-    }
-
-    @Override
-    public void update(User user, String name, String lastName, String phone, Long coverageId) {
-        if (name == null || lastName == null || phone == null) {
-            throw new IllegalArgumentException("Name, last name, and phone cannot be null");
-        }
-        userDao.update(user.getId(), name, lastName, phone);
-        ps.updatePatient((Patient) user, coverageId);
-        LOGGER.info("User updated successfully with id={}", user);
-    }
-
-
-    @Override
-    public User create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
-        if (name == null || lastName == null || email == null || password == null || phone == null || language == null) {
-            throw new IllegalArgumentException("Name, last name, email, password, phone, and language cannot be null");
-        }
+    public long create(String name, String lastName, String email, String password, String phone, String language) {
         String encodedPassword = passwordEncoder.encode(password);
-        List<Long> specialtyIds = specialties.stream()
-                .map(Long::parseLong)
-                .toList();
-        List<Long> coverageIds = coverages.stream()
-                .map(Long::parseLong)
-                .toList();
-        long id = userDao.create(name, lastName, email, encodedPassword, phone, language).longValue();
-        Doctor doctor = ds.create(id, name, lastName, email, encodedPassword, phone, language, image, specialtyIds, coverageIds, availabilitySlots);
-        LOGGER.info("Doctor created successfully with id={}", doctor.getId());
-        return doctor;
+        return userDao.create(name, lastName, email, encodedPassword, phone, language).longValue();
     }
 
     @Override
-    public User create(String name, String lastName, String email, String password, String phone, String language, String coverage) {
-        if (name == null || lastName == null || email == null || password == null || phone == null || language == null) {
-            throw new IllegalArgumentException("Name, last name, email, password, phone, and language cannot be null");
-        }
-        String encodedPassword = passwordEncoder.encode(password);
-        long id = userDao.create(name, lastName, email, encodedPassword, phone, language).longValue();
-        Patient patient = ps.create(id, name, lastName, email, encodedPassword, phone, language, Long.parseLong(coverage));
-        LOGGER.info("Patient created successfully with id={}", patient.getId());
-        return patient;
+    public void update(long id, String name, String lastName, String phone) {
+        userDao.update(id, name, lastName, phone);
+        LOGGER.info("User updated successfully with id={}", id);
     }
 }
 

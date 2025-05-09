@@ -103,7 +103,7 @@ public class PatientController {
             mav.addObject("display", "block");
             return mav;
         }
-        us.update(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), Long.parseLong(updatePatientForm.getCoverage()));
+        ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), Long.parseLong(updatePatientForm.getCoverage()));
         return new ModelAndView("redirect:/patient/dashboard/profile?updated=true");
     }
 
