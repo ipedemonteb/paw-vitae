@@ -42,14 +42,22 @@ public class PatientServiceImpl implements PatientService {
         return patient;
     }
 
+//    @Transactional
+//    @Override
+//    public Patient create(String name, String lastName, String email, String password, String phone, String language, String coverage) {
+//        Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);
+//        Patient patient = this.patientDao.create(name, lastName, email, passwordEncoder.encode(password), phone, language, cov);
+//        LOGGER.info("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
+//        return patient;
+//
+//    }
+
     @Transactional
     @Override
-    public Patient create(String name, String lastName, String email, String password, String phone, String language, String coverage) {
-        Coverage cov = cs.findById(Long.parseLong(coverage)).orElse(null);
-        Patient patient = this.patientDao.create(name, lastName, email, passwordEncoder.encode(password), phone, language, cov);
+    public Patient create(long id, String name, String lastName, String email, String password, String phone, String language, Long coverageId) {
+        Patient patient = this.patientDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, coverageId);
         LOGGER.info("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
         return patient;
-
     }
 
     @Transactional(readOnly = true)
