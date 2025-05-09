@@ -18,7 +18,6 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctor;
     private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
-    private final UserDao userDao;
 
     private final static String BASE_SQL = "SELECT " +
             "  u.id                   AS doctor_id, " +
@@ -50,7 +49,6 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Autowired
     public DoctorDaoImpl(final DataSource ds, UserDao userDao) {
-        this.userDao = userDao;
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
@@ -90,43 +88,6 @@ public class DoctorDaoImpl implements DoctorDao {
         }
         return params;
     }
-
-//    @Override
-//    public Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId,
-//                         List<Specialty> specialties, List<Coverage> coverages) {
-//        final Number docId = userDao.create(name, lastName, email, password, phone, language);
-//        final Map<String, Object> argsDoctor = new HashMap<>();
-//        argsDoctor.put("doctor_id", docId);
-//        argsDoctor.put("image_id", imageId);
-//
-//        jdbcInsertDoctor.execute(argsDoctor);
-//
-//        for (Specialty specialty : specialties) {
-//            final Map<String, Object> args = new HashMap<>();
-//            args.put("doctor_id", docId);
-//            args.put("specialty_id", specialty.getId());
-//            jdbcInsertDoctorSpecialty.execute(args);
-//        }
-//
-//        for (Coverage coverage : coverages) {
-//            final Map<String, Object> args = new HashMap<>();
-//            args.put("doctor_id", docId);
-//            args.put("coverage_id", coverage.getId());
-//            jdbcInsertDoctorCoverage.execute(args);
-//        }
-//
-//        return new Doctor(
-//                name,
-//                docId.longValue(),
-//                lastName,
-//                email,
-//                password,
-//                phone,
-//                language,
-//                imageId != null ? imageId : -1L,
-//                false
-//        );
-//    }
 
     @Override
     public Doctor create(long id, String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Long> specialties, List<Long> coverages) {

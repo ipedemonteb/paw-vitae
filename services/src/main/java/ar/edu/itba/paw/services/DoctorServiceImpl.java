@@ -28,9 +28,10 @@ public class DoctorServiceImpl implements DoctorService {
     private final ImageService is;
     private final AvailabilitySlotsService ass;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     @Autowired
-    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder, AppointmentService as, ImageService is, AvailabilitySlotsService ass) {
+    public DoctorServiceImpl(DoctorDao doctorDao, SpecialtyService ss, CoverageService cs, PasswordEncoder passwordEncoder, AppointmentService as, ImageService is, AvailabilitySlotsService ass, UserService userService) {
         this.doctorDao = doctorDao;
         this.ss = ss;
         this.cs = cs;
@@ -38,35 +39,24 @@ public class DoctorServiceImpl implements DoctorService {
         this.as = as;
         this.is = is;
         this.ass = ass;
+        this.userService = userService;
     }
-
-//    @Transactional
-//    @Override
-//    public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
-//        List<Coverage> coverageList = cs.findByIds(coverages.stream().map(Long::valueOf).collect(Collectors.toList()));
-//        List<Specialty> specialtyList = ss.getByIds(specialties.stream().map(Long::valueOf).collect(Collectors.toList()));
-//        Images img = is.create(image);
-//        List<AvailabilitySlot> filteredSlots = availabilitySlots.stream()
-//                .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
-//                .toList();
-//        Doctor doctor = this.doctorDao.create(
-//                name, lastName, email, passwordEncoder.encode(password), phone, language, (img == null ? null : img.getId()), specialtyList, coverageList
-//        );
-//        ass.create(doctor.getId(), filteredSlots);
-//        LOGGER.info("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
-//        return doctor;
-//    }
 
     @Transactional
     @Override
-    public Doctor create(long id, String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlot> availabilitySlots) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots) {
         Images img = is.create(image);
         List<AvailabilitySlot> filteredSlots = availabilitySlots.stream()
                 .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
                 .toList();
-        Doctor doctor = this.doctorDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, (img == null ? null : img.getId()), specialties, coverages
-        );
-        ass.create(doctor.getId(), filteredSlots);
+
+        List<Long> specialtyList = specialties.stream().map(Long::parseLong).toList();
+        List<Long> coverageList = coverages.stream().map(Long::parseLong).toList();
+
+        long id = userService.create(name, lastName, email, passwordEncoder.encode(password), phone, language);
+        Doctor doctor = this.doctorDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, (img == null ? null : img.getId()), specialtyList, coverageList);
+        ass.create(id, filteredSlots);
+        doctor.setAvailabilitySlots(filteredSlots); //TODO is this needed?
         LOGGER.info("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
         return doctor;
     }
@@ -106,7 +96,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateDoctor(Doctor doctor, List<Long> specialties, List<Long> coverages, MultipartFile image) {
+    public void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<String> specialties, List<String> coverages, MultipartFile image) {
         List<Long> specialtyIds = doctor.getSpecialtyList()
                 .stream()
                 .map(Specialty::getId)
@@ -116,11 +106,21 @@ public class DoctorServiceImpl implements DoctorService {
                 .map(Coverage::getId)
                 .toList();
 
-        boolean hasChanged = !specialtyIds.equals(specialties) //TODO is the equals of lists well implemented in java?
-                || !coverageIds.equals(coverages);
-        if (hasChanged) {
-            doctorDao.updateDoctor(doctor.getId(), specialties, coverages);
+        List<Long> specialtyList = specialties.stream().map(Long::parseLong).toList();
+        List<Long> coverageList = coverages.stream().map(Long::parseLong).toList();
+
+        boolean hasChangedDoctor = !specialtyIds.equals(specialtyList) //TODO is the equals of lists well implemented in java?
+                || !coverageIds.equals(coverageList);
+        boolean hasChangedUser = !doctor.getName().equals(name)
+                || !doctor.getLastName().equals(lastName)
+                || !doctor.getPhone().equals(phone);
+        if (hasChangedDoctor) {
+            doctorDao.updateDoctor(doctor.getId(), specialtyList, coverageList);
             LOGGER.info("Doctor updated successfully: id={}", doctor.getId());
+        }
+        if (hasChangedUser) {
+            userService.update(doctor.getId(), name, lastName, phone);
+            LOGGER.info("User updated successfully: id={}", doctor.getId());
         }
         if (image != null && !image.isEmpty()) {
             Images img = is.create(image);

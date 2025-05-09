@@ -8,13 +8,11 @@ public interface PatientService {
 
     Optional<Patient> getById(long id);
 
-//    Patient create(String name, String lastName, String email, String password, String phone, String language, String coverage);
-    Patient create(long id, String name, String lastName, String email, String password, String phone, String language, Long coverageId);
+    Patient create(String name, String lastName, String email, String password, String phone, String language, String coverageId);
 
     Optional<Patient> getByEmail(String email);
 
-//    void updatePatient(Patient patient, String name, String lastName, String phone, Coverage coverage);
-    void updatePatient(Patient patient, Long coverageId);
+    void updatePatient(Patient patient, String name, String lastName, String phone, Long coverageId);
 
     Optional<Patient> getByIdWithAppointments(long id);
 

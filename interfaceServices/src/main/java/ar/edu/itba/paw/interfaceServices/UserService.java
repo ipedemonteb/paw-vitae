@@ -31,10 +31,8 @@ public interface UserService {
 
     Long getImageId(User user);
 
-    void update(User user, String name, String lastName, String phone, List<String> specialties, List<String> coverages, MultipartFile image);
+    long create(String name, String lastName, String email, String password, String phone, String language);
 
-    void update(User user, String name, String lastName, String phone, Long coverageId);
+    void update(long id, String name, String lastName, String phone);
 
-    User create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots);
-    User create(String name, String lastName, String email, String password, String phone, String language, String coverage);
 }
