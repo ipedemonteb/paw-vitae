@@ -196,5 +196,6 @@ public class UserServiceImpl implements UserService {
         ps.updatePatient((Patient) user, coverageId);
         LOGGER.info("User updated successfully with id={}", user);
     }
+
 }
 
