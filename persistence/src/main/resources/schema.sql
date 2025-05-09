@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS Clients (
                                        client_id INT PRIMARY KEY,
                                        coverage_id INT NOT NULL,
                                        FOREIGN KEY (client_id) REFERENCES Users(id) ON DELETE CASCADE,
-    FOREIGN KEY (coverage_id) REFERENCES Coverages(id)
+                                        FOREIGN KEY (coverage_id) REFERENCES Coverages(id) ON DELETE SET NULL
     );
 
 CREATE TABLE IF NOT EXISTS Images (
