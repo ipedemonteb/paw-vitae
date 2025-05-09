@@ -91,33 +91,68 @@ public class DoctorDaoImpl implements DoctorDao {
         return params;
     }
 
+//    @Override
+//    public Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId,
+//                         List<Specialty> specialties, List<Coverage> coverages) {
+//        final Number docId = userDao.create(name, lastName, email, password, phone, language);
+//        final Map<String, Object> argsDoctor = new HashMap<>();
+//        argsDoctor.put("doctor_id", docId);
+//        argsDoctor.put("image_id", imageId);
+//
+//        jdbcInsertDoctor.execute(argsDoctor);
+//
+//        for (Specialty specialty : specialties) {
+//            final Map<String, Object> args = new HashMap<>();
+//            args.put("doctor_id", docId);
+//            args.put("specialty_id", specialty.getId());
+//            jdbcInsertDoctorSpecialty.execute(args);
+//        }
+//
+//        for (Coverage coverage : coverages) {
+//            final Map<String, Object> args = new HashMap<>();
+//            args.put("doctor_id", docId);
+//            args.put("coverage_id", coverage.getId());
+//            jdbcInsertDoctorCoverage.execute(args);
+//        }
+//
+//        return new Doctor(
+//                name,
+//                docId.longValue(),
+//                lastName,
+//                email,
+//                password,
+//                phone,
+//                language,
+//                imageId != null ? imageId : -1L,
+//                false
+//        );
+//    }
+
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId,
-                         List<Specialty> specialties, List<Coverage> coverages) {
-        final Number docId = userDao.create(name, lastName, email, password, phone, language);
+    public Doctor create(long id, String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Long> specialties, List<Long> coverages) {
         final Map<String, Object> argsDoctor = new HashMap<>();
-        argsDoctor.put("doctor_id", docId);
+        argsDoctor.put("doctor_id", id);
         argsDoctor.put("image_id", imageId);
 
         jdbcInsertDoctor.execute(argsDoctor);
 
-        for (Specialty specialty : specialties) {
+        for (Long specialty : specialties) {
             final Map<String, Object> args = new HashMap<>();
-            args.put("doctor_id", docId);
-            args.put("specialty_id", specialty.getId());
+            args.put("doctor_id", id);
+            args.put("specialty_id", specialty);
             jdbcInsertDoctorSpecialty.execute(args);
         }
 
-        for (Coverage coverage : coverages) {
+        for (Long coverage : coverages) {
             final Map<String, Object> args = new HashMap<>();
-            args.put("doctor_id", docId);
-            args.put("coverage_id", coverage.getId());
+            args.put("doctor_id", id);
+            args.put("coverage_id", coverage);
             jdbcInsertDoctorCoverage.execute(args);
         }
 
         return new Doctor(
                 name,
-                docId.longValue(),
+                id,
                 lastName,
                 email,
                 password,
@@ -154,7 +189,7 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
+    public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) { //TODO check in what does update differ from jdbcinsert
         StringBuilder sql = new StringBuilder(BASE_SQL);
         sql.append("WHERE u.id IN (SELECT doctor_id FROM users u JOIN doctor_specialties ds ON u.id = ds.doctor_id WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?)");
         return jdbcTemplate.query(sql.toString(), new DoctorExtractor(), specialtyId, pageSize, (page - 1) * pageSize);

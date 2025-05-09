@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaceServices;
 
+import ar.edu.itba.paw.models.AvailabilitySlot;
 import ar.edu.itba.paw.models.User;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,4 +34,7 @@ public interface UserService {
     void update(User user, String name, String lastName, String phone, List<String> specialties, List<String> coverages, MultipartFile image);
 
     void update(User user, String name, String lastName, String phone, Long coverageId);
+
+    User create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<String> specialties, List<String> coverages, List<AvailabilitySlot> availabilitySlots);
+    User create(String name, String lastName, String email, String password, String phone, String language, String coverage);
 }

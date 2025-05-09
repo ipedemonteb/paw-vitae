@@ -8,7 +8,8 @@ import java.util.Optional;
 
 public interface DoctorDao {
 
-    Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Specialty> specialties, List<Coverage> coverages);
+//    Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Specialty> specialties, List<Coverage> coverages);
+    Doctor create(long id, String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Long> specialties, List<Long> coverages);
 
     Optional<Doctor> getById(final long id);
 
