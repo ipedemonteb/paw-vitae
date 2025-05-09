@@ -333,37 +333,6 @@
             });
         }
 
-        // Modal functionality
-        let currentAppointmentId = null;
-
-        // Funciones para mostrar/ocultar modales
-        window.showConfirmModal = function(appointmentId) {
-            currentAppointmentId = appointmentId;
-            document.getElementById('confirmAppointmentModal').classList.add('show');
-        }
-
-        window.hideConfirmModal = function() {
-            document.getElementById('confirmAppointmentModal').classList.remove('show');
-        }
-
-        window.showCancelModal = function(appointmentId) {
-            currentAppointmentId = appointmentId;
-            document.getElementById('cancelAppointmentModal').classList.add('show');
-        }
-
-        window.hideCancelModal = function() {
-            document.getElementById('cancelAppointmentModal').classList.remove('show');
-        }
-
-        // Cerrar modales al hacer clic fuera
-        document.querySelectorAll('.modal-overlay').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('show');
-                }
-            });
-        });
-
         const fixedHeader = document.querySelector(".main-header");
         const mainContent = document.querySelector(".dashboard-container");
 
@@ -379,15 +348,6 @@
             // Adjust on window resize
             window.addEventListener("resize", adjustContentMargin);
         }
-
-        // Cerrar modales con tecla Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay').forEach(modal => {
-                    modal.classList.remove('show');
-                });
-            }
-        });
 
         // Función para inicializar filtros y eventos en las citas cargadas
         function initializeFiltersAndEvents() {

@@ -283,61 +283,6 @@
                 return true;
             });
         }
-
-        // Modal functionality
-        let currentAppointmentId = null;
-
-        window.showCancelModal = function(appointmentId) {
-            currentAppointmentId = appointmentId;
-            document.getElementById('cancelAppointmentModal').classList.add('show');
-        }
-
-        window.hideCancelModal = function() {
-            document.getElementById('cancelAppointmentModal').classList.remove('show');
-        }
-
-
-        // Cancel appointment functionality
-        const cancelButtons = document.querySelectorAll('.cancel-appointment');
-        cancelButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const appointmentId = this.getAttribute('data-id');
-                showCancelModal(appointmentId);
-            });
-        });
-
-        // Cancel button in modal
-        const cancelAppointmentBtn = document.getElementById('cancelAppointmentBtn');
-        if (cancelAppointmentBtn) {
-            cancelAppointmentBtn.addEventListener('click', function() {
-                if (currentAppointmentId) {
-                    fetch(`${pageContext.request.contextPath}/doctor/dashboard/appointment/cancel`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({ appointmentId: currentAppointmentId })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.reload();
-                            }
-                        });
-                }
-                hideCancelModal();
-            });
-        }
-
-        // Cerrar modales al hacer clic fuera
-        document.querySelectorAll('.modal-overlay').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('show');
-                }
-            });
-        });
     });
 
     function initializeTimeSlots() {

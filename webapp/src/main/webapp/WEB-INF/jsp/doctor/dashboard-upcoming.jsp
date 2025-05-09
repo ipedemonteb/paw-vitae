@@ -312,32 +312,17 @@
     </div>
 </div>
 
-<div id="cancelAppointmentModal" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header">
-            <div class="modal-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
-                </svg>
-            </div>
-            <h3 class="modal-title"><spring:message code="appointment.cancel.title" /></h3>
-        </div>
-        <div class="modal-body">
-            <p class="modal-message"><spring:message code="appointment.cancel.message" /></p>
-        </div>
-        <div class="modal-footer" id="cancelModal">
-            <form id="cancelForm" action="${pageContext.request.contextPath}/doctor/dashboard/appointment/cancel" method="post">
-                <input type="hidden" name="appointmentId" value="" />
-                <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
-                    <spring:message code="logout.confirmation.cancel"/>
-                </button>
-                <button type="submit" class="btn-modal btn-primary" id="cancelAppointmentBtn">
-                    <spring:message code="appointment.action.cancel"/>
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
+<jsp:include page="/WEB-INF/jsp/components/modal.jsp">
+    <jsp:param name="id" value="cancelAppointmentModal"/>
+    <jsp:param name="confirm" value="appointment.action.cancel"/>
+    <jsp:param name="title" value="appointment.cancel.title"/>
+    <jsp:param name="message" value="appointment.cancel.message"/>
+    <jsp:param name="actionPath" value="${pageContext.request.contextPath}/doctor/dashboard/appointment/cancel"/>
+    <jsp:param name="divId" value="cancelModal"/>
+    <jsp:param name="formId" value="cancelForm"/>
+    <jsp:param name="buttonId" value="cancelAppointmentBtn"/>
+    <jsp:param name="buttonClass" value="cancel-appointment"/>
+</jsp:include>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -345,83 +330,6 @@
         window.applyDateFilter = function(value) {
             window.location.href = '${pageContext.request.contextPath}/doctor/dashboard/upcoming?dateRange=' + value;
         };
-
-        // Modal functionality
-        let currentAppointmentId = null;
-
-        // Funciones para mostrar/ocultar modales
-        window.showConfirmModal = function(appointmentId) {
-            currentAppointmentId = appointmentId;
-            document.getElementById('confirmAppointmentModal').classList.add('show');
-        }
-
-        window.hideConfirmModal = function() {
-            document.getElementById('confirmAppointmentModal').classList.remove('show');
-        }
-
-        window.showCancelModal = function(appointmentId) {
-            currentAppointmentId = appointmentId;
-            document.getElementById('cancelAppointmentModal').classList.add('show');
-        }
-
-        window.hideCancelModal = function() {
-            document.getElementById('cancelAppointmentModal').classList.remove('show');
-        }
-
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('cancelled') === 'true') {
-            showSuccessToast();
-
-            // Remove the query parameter without refreshing the page
-            const newUrl = window.location.pathname;
-            window.history.replaceState({}, document.title, newUrl);
-        }
-        if(urlParams.get('cancelled')=== 'false'){
-            showErrorToast();
-            const newUrl = window.location.pathname;
-            window.history.replaceState({}, document.title, newUrl);
-        }
-
-
-        // Confirm appointment functionality
-        const confirmButtons = document.querySelectorAll('.confirm-appointment');
-        confirmButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const appointmentId = this.getAttribute('data-id');
-                showConfirmModal(appointmentId);
-            });
-        });
-
-
-        // Cancel appointment functionality
-        const cancelButtons = document.querySelectorAll('.cancel-appointment');
-        cancelButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const appointmentId = this.getAttribute('data-id');
-                showCancelModal(appointmentId);
-            });
-        });
-
-
-        // Cerrar modales al hacer clic fuera
-        document.querySelectorAll('.modal-overlay').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('show');
-                }
-            });
-        });
-
-        document.querySelectorAll('.cancel-appointment').forEach(button => {
-            button.addEventListener('click', () => {
-                const apptId = button.getAttribute('data-id');
-                document
-                    .querySelector('#cancelForm input[name="appointmentId"]')
-                    .value = apptId;
-            });
-        });
 
         const fixedHeader = document.querySelector(".main-header");
         const mainContent = document.querySelector(".dashboard-container");
@@ -438,15 +346,19 @@
             // Adjust on window resize
             window.addEventListener("resize", adjustContentMargin);
         }
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('cancelled') === 'true') {
+            showSuccessToast();
 
-        // Cerrar modales con tecla Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay').forEach(modal => {
-                    modal.classList.remove('show');
-                });
-            }
-        });
+            // Remove the query parameter without refreshing the page
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+        if(urlParams.get('cancelled')=== 'false'){
+            showErrorToast();
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
     });
 </script>
 
