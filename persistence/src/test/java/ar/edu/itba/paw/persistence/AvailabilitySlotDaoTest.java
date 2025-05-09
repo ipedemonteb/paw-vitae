@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -26,13 +27,12 @@ import static org.junit.Assert.*;
 @Transactional
 public class AvailabilitySlotDaoTest {
 
-    private final static String SQL_QUERY_AVAILABILITY = "SELECT * FROM doctor_availability WHERE doctor_id = ?";
+    private static final String DOCAVAILABILITY_TABLE = "doctor_availability";
 
     private static final long DOC_ID = 2L;
 
     private JdbcTemplate jdbcTemplate;
     private AvailabilitySlotsDao availabilitySlotsDao;
-    private SimpleJdbcInsert jdbcInsertTimeAvailability;
 
     @Autowired
     private DataSource ds;
@@ -41,8 +41,6 @@ public class AvailabilitySlotDaoTest {
     public void setUp() {
         this.jdbcTemplate = new JdbcTemplate(ds);
         this.availabilitySlotsDao = new AvailabilitySlotDaoImpl(ds);
-        this.jdbcInsertTimeAvailability = new SimpleJdbcInsert(ds)
-                .withTableName("Doctor_Availability");
     }
 
     @Test
@@ -65,52 +63,60 @@ public class AvailabilitySlotDaoTest {
         assertEquals(dayOfWeek, createdSlot.getDayOfWeek());
         assertEquals(LocalTime.of(startTimeHour, startTimeMinute), createdSlot.getStartTime());
         assertEquals(LocalTime.of(endTimeHour, startTimeMinute), createdSlot.getEndTime());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCAVAILABILITY_TABLE, "doctor_id = " + DOC_ID +
+                " AND day_of_week = " + dayOfWeek +
+                " AND start_time = '" + Time.valueOf(LocalTime.of(startTimeHour, startTimeMinute)) + "'" +
+                " AND end_time = '" + Time.valueOf(LocalTime.of(endTimeHour, startTimeMinute)) + "'"));
     }
 
     @Test
     public void testUpdateDoctorAvailability() {
         //Preconditions
+        int dayOfWeek1 = 3;
+        int dayOfWeek2 = 4;
+        int startTimeHour = 8;
+        int startTimeMinute = 0;
+        int endTimeHour = 16;
         List<AvailabilitySlot> availability = List.of(
-                new AvailabilitySlot(3,
-                        LocalTime.of(8, 0),
-                        LocalTime.of(16, 0)),
-                new AvailabilitySlot(4,
-                        LocalTime.of(8, 0),
-                        LocalTime.of(16, 0))
+                new AvailabilitySlot(dayOfWeek1,
+                        LocalTime.of(startTimeHour, startTimeMinute),
+                        LocalTime.of(endTimeHour, startTimeMinute)),
+                new AvailabilitySlot(dayOfWeek2,
+                        LocalTime.of(startTimeHour, startTimeMinute),
+                        LocalTime.of(endTimeHour, startTimeMinute))
         );
 
         //Exercise
         availabilitySlotsDao.updateDoctorAvailability(DOC_ID, availability);
 
         //Postconditions
-        List<AvailabilitySlot> finalAvailability = jdbcTemplate.query(SQL_QUERY_AVAILABILITY,
-                (rs, rowNum) -> new AvailabilitySlot(
-                        rs.getInt("day_of_week"),
-                        rs.getTime("start_time").toLocalTime(),
-                        rs.getTime("end_time").toLocalTime()
-                ),
-                DOC_ID
-        );
-        assertFalse(finalAvailability.isEmpty());
-        assertEquals(2, finalAvailability.size());
+        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCAVAILABILITY_TABLE, "doctor_id = " + DOC_ID +
+                " AND start_time = '" + Time.valueOf(LocalTime.of(startTimeHour, startTimeMinute)) + "'" +
+                " AND end_time = '" + Time.valueOf(LocalTime.of(endTimeHour, startTimeMinute)) + "'"));
     }
 
     @Test
-    public void testGetAvailabilityByDoctorId() {
+    public void testGetAvailabilityByDoctorIdDoesNotExist() {
         //Preconditions
-        int dayOfWeek = 2;
-        jdbcInsertTimeAvailability.execute(Map.of(
-                "doctor_id", DOC_ID,
-                "day_of_week", dayOfWeek,
-                "start_time", Time.valueOf(LocalTime.of(8, 0)),
-                "end_time", Time.valueOf(LocalTime.of(16, 0))
-        ));
+        long docId = 1000L;
 
         //Exercise
-        List<AvailabilitySlot> finalAvailability = availabilitySlotsDao.getAvailabilityByDoctorId(DOC_ID);
+        List<AvailabilitySlot> finalAvailability = availabilitySlotsDao.getAvailabilityByDoctorId(docId);
+
+        //Postconditions
+        assertTrue(finalAvailability.isEmpty());
+    }
+
+    @Test
+    public void testGetAvailabilityByDoctorIdExists() {
+        //Preconditions
+        long docId = 4L;
+
+        //Exercise
+        List<AvailabilitySlot> finalAvailability = availabilitySlotsDao.getAvailabilityByDoctorId(docId);
 
         //Postconditions
         assertFalse(finalAvailability.isEmpty());
-        assertEquals(2, finalAvailability.size());
+        assertEquals(7, finalAvailability.size());
     }
 }

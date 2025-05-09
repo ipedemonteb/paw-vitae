@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -21,6 +22,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class AppointmentFileDeoTest {
+
+    private static final String APPOINTMENTFILE_TABLE = "appointment_files";
 
     private static final long FILE_ID = 1L;
     private static final long APPOINTMENT_ID = 1L;
@@ -52,6 +55,7 @@ public class AppointmentFileDeoTest {
         assertNotNull(createdFile);
         assertEquals(fileName, createdFile.getFileName());
         assertArrayEquals(fileData, createdFile.getFileData());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, APPOINTMENTFILE_TABLE, "id = " + createdFile.getId()));
     }
 
     @Test

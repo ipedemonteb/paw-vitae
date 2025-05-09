@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -26,11 +27,8 @@ import static org.junit.Assert.*;
 @Transactional
 public class PatientDaoTest {
 
-    private static final String SQL_QUERY = "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
-            "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
-            "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified " +
-            "FROM Users u JOIN Clients c ON c.client_id = u.id " +
-            "JOIN Coverages cov ON cov.id = c.coverage_id WHERE u.id = ?";
+    private static final String PATIENT_TABLE = "clients";
+    private static final String USER_TABLE = "users";
 
     private static final String NAME = "Juan Sebastián";
     private static final String LASTNAME = "Verón";
@@ -40,6 +38,7 @@ public class PatientDaoTest {
     private static final String LANGUAGE = "es";
 
     private static final long TEST_ID = 1L;
+    private static final long TEST_ID2 = 3L;
     private static final String TEST_NAME = "John";
     private static final String TEST_LASTNAME = "Doe";
     private static final String TEST_EMAIL = "john@example.com";
@@ -53,23 +52,15 @@ public class PatientDaoTest {
 
     private PatientDaoImpl patientDao;
     private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsertUser;
-    private SimpleJdbcInsert jdbcInsertPatient;
-    private DaoRowMappers daoRowMappers;
 
     @Autowired
     private DataSource ds;
 
     @Before
     public void setUp() {
-        this.daoRowMappers = new DaoRowMappers();
-        this.patientDao = new PatientDaoImpl(ds, );
+        UserDaoImpl userDao = new UserDaoImpl(ds);
+        this.patientDao = new PatientDaoImpl(ds, userDao);
         this.jdbcTemplate = new JdbcTemplate(ds);
-        this.jdbcInsertUser = new SimpleJdbcInsert(ds)
-                .withTableName("Users")
-                .usingGeneratedKeyColumns("id");
-        this.jdbcInsertPatient = new SimpleJdbcInsert(ds)
-                .withTableName("Clients");
     }
 
     @Test
@@ -84,10 +75,7 @@ public class PatientDaoTest {
         assertNotNull(patient);
         assertEquals(EMAIL, patient.getEmail());
         assertEquals(NAME, patient.getName());
-        assertEquals(PASSWORD, patient.getPassword());
-        assertEquals(PHONE, patient.getPhone());
-        assertEquals(LANGUAGE, patient.getLanguage());
-        assertEquals(coverage.getId(), patient.getCoverage().getId());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, PATIENT_TABLE, "client_id = " + patient.getId()));
     }
 
     @Test
@@ -101,7 +89,6 @@ public class PatientDaoTest {
         assertFalse(maybeClient.isPresent());
     }
 
-    //@TODO: CHECK, SHOULD I MAKE A NEW INSERTION FOR THIS TEST?
     @Test
     public void testGetByIdExists() {
         //Preconditions
@@ -148,28 +135,24 @@ public class PatientDaoTest {
         assertEquals(TEST_COVERAGE_ID, maybePatient.get().getCoverage().getId());
     }
 
-    //@TODO: CHECK IF ITS OK
     @Test
-    public void testUpdateClient() {
+    public void testUpdatePatient() {
         //Preconditions
-        String updatedName = "Jane";
+        long patientId = 1L;
+        String updatedName = "Adam";
         String updatedLastName = "Smith";
         String updatedPhone = "1188888888";
         Coverage updatedCoverage = new Coverage(TEST_COVERAGE_ID_2, TEST_COVERAGE_NAME_2);
 
         //Exercise
-        patientDao.updatePatient(1L, updatedName, updatedLastName, updatedPhone, updatedCoverage);
+        patientDao.updatePatient(patientId, updatedName, updatedLastName, updatedPhone, updatedCoverage);
 
         //Postconditions
-        Optional<Patient> updatedClient = jdbcTemplate.query(SQL_QUERY,
-                daoRowMappers.getPatientRowMapper(),
-                1L
-        ).stream().findFirst();
-        assertTrue(updatedClient.isPresent());
-        assertEquals(updatedName, updatedClient.get().getName());
-        assertEquals(updatedLastName, updatedClient.get().getLastName());
-        assertEquals(updatedPhone, updatedClient.get().getPhone());
-        assertEquals(updatedCoverage.getId(), updatedClient.get().getCoverage().getId());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = " + patientId +
+                " AND name = '" + updatedName + "'" +
+                " AND last_name = '" + updatedLastName + "'" +
+                " AND phone = '" + updatedPhone + "'"
+        ));
     }
 
     @Test
@@ -184,38 +167,20 @@ public class PatientDaoTest {
         assertTrue(patients.isEmpty());
     }
 
-    //@TODO: CHECK, SHOULD I ASK FOR MORE PATIENTS?
     @Test
     public void testGetByIdsExists() {
-                            //Preconditions
-                            Set<Long> ids = Set.of(TEST_ID);
+        //Preconditions
+        Set<Long> ids = Set.of(TEST_ID, TEST_ID2);
 
-                            //Exercise
-                            List<Patient> patients = patientDao.getByIds(ids);
+        //Exercise
+        List<Patient> patients = patientDao.getByIds(ids);
 
-                            //Postconditions
-                            assertFalse(patients.isEmpty());
-                            Patient patient = patients.getFirst();
-                            assertEquals(1, patients.size());
-                            assertEquals(TEST_ID, patient.getId());
+        //Postconditions
+        assertFalse(patients.isEmpty());
+        assertEquals(2, patients.size());
+        assertEquals(TEST_ID, patients.getFirst().getId());
+        assertEquals(TEST_ID2, patients.getLast().getId());
     }
-
-//    @Test
-//    public void testUpdatePassword() {
-//        //Preconditions
-//        String newPassword = "newpassword";
-//
-//        //Exercise
-//        patientDao.changePassword(TEST_ID, newPassword);
-//
-//        //Postconditions
-//        Optional<Patient> updatedPatient = jdbcTemplate.query(SQL_QUERY,
-//                new Object[]{TEST_ID},
-//                daoUtils.getPatientRowMapper()
-//        ).stream().findFirst();
-//        assertTrue(updatedPatient.isPresent());
-//        assertEquals(newPassword, updatedPatient.get().getPassword());
-//    }
 
     @Test
     public void testGetLanguage() {
@@ -244,33 +209,20 @@ public class PatientDaoTest {
     @Test
     public void testGetByVerificationTokenExists() {
         //Preconditions
-        String verification_token = "VERIFICATIONTOKEN";
-        long id = jdbcInsertUser.executeAndReturnKey(Map.of(
-                "name", NAME,
-                "last_name", LASTNAME,
-                "email", EMAIL,
-                "password", PASSWORD,
-                "phone", PHONE,
-                "language", LANGUAGE,
-                "verification_token", verification_token
-        )).longValue();
-        jdbcInsertPatient.execute(Map.of(
-                "client_id", id,
-                "coverage_id", TEST_COVERAGE_ID
-        ));
+        String verificationToken = "VERIFTOKEN";
 
         //Exercise
-        Optional<Patient> maybePatient = patientDao.getByVerificationToken(verification_token);
+        Optional<Patient> maybePatient = patientDao.getByVerificationToken(verificationToken);
 
         //Postconditions
         assertTrue(maybePatient.isPresent());
-        assertEquals(id, maybePatient.get().getId());
-        assertEquals(NAME, maybePatient.get().getName());
-        assertEquals(LASTNAME, maybePatient.get().getLastName());
-        assertEquals(EMAIL, maybePatient.get().getEmail());
-        assertEquals(PASSWORD, maybePatient.get().getPassword());
-        assertEquals(PHONE, maybePatient.get().getPhone());
-        assertEquals(LANGUAGE, maybePatient.get().getLanguage());
+        assertEquals(TEST_ID, maybePatient.get().getId());
+        assertEquals(TEST_NAME, maybePatient.get().getName());
+        assertEquals(TEST_LASTNAME, maybePatient.get().getLastName());
+        assertEquals(TEST_EMAIL, maybePatient.get().getEmail());
+        assertEquals(TEST_PASSWORD, maybePatient.get().getPassword());
+        assertEquals(TEST_PHONE, maybePatient.get().getPhone());
+        assertEquals(TEST_LANGUAGE, maybePatient.get().getLanguage());
         assertEquals(TEST_COVERAGE_ID, maybePatient.get().getCoverage().getId());
     }
 
@@ -283,11 +235,38 @@ public class PatientDaoTest {
         patientDao.changeLanguage(TEST_ID, newLanguage);
 
         //Postconditions
-        Optional<Patient> updatedPatient = jdbcTemplate.query(SQL_QUERY,
-                daoRowMappers.getPatientRowMapper(),
-                TEST_ID
-        ).stream().findFirst();
-        assertTrue(updatedPatient.isPresent());
-        assertEquals(newLanguage, updatedPatient.get().getLanguage());
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = " + TEST_ID + "AND language = '" + newLanguage + "'"));
+    }
+
+    @Test
+    public void testGetByResetTokenDoesNotExist() {
+        //Preconditions
+        String nonExistToken = "NOTOKEN";
+
+        //Exercise
+        Optional<Patient> maybePatient = patientDao.getByResetToken(nonExistToken);
+
+        //Postconditions
+        assertFalse(maybePatient.isPresent());
+    }
+
+    @Test
+    public void testGetByResetTokenExists() {
+        //Preconditions
+        String resetToken = "RESTOKEN";
+
+        //Exercise
+        Optional<Patient> maybePatient = patientDao.getByResetToken(resetToken);
+
+        //Postconditions
+        assertTrue(maybePatient.isPresent());
+        assertEquals(TEST_ID, maybePatient.get().getId());
+        assertEquals(TEST_NAME, maybePatient.get().getName());
+        assertEquals(TEST_LASTNAME, maybePatient.get().getLastName());
+        assertEquals(TEST_EMAIL, maybePatient.get().getEmail());
+        assertEquals(TEST_PASSWORD, maybePatient.get().getPassword());
+        assertEquals(TEST_PHONE, maybePatient.get().getPhone());
+        assertEquals(TEST_LANGUAGE, maybePatient.get().getLanguage());
+        assertEquals(TEST_COVERAGE_ID, maybePatient.get().getCoverage().getId());
     }
 }

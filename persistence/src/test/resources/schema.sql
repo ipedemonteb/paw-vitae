@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS Appointments (
     FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE,
     FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE,
     FOREIGN KEY (doctor_id, specialty_id) REFERENCES Doctor_Specialties(doctor_id, specialty_id) ON DELETE CASCADE,
-    CHECK (status IN ('confirmado','cancelado'))
+    CHECK (status IN ('confirmado','cancelado', 'completo'))
 );
 
 CREATE TABLE IF NOT EXISTS Ratings (

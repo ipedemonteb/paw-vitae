@@ -23,15 +23,14 @@ public class SpecialtyDaoTest {
 
     private SpecialtyDaoImpl specialtyDao;
     private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     private DataSource ds;
 
     @Before
     public void setUp() {
-        jdbcTemplate = new JdbcTemplate(ds);
-        specialtyDao = new SpecialtyDaoImpl(ds);
+        this.jdbcTemplate = new JdbcTemplate(ds);
+        this.specialtyDao = new SpecialtyDaoImpl(ds);
     }
 
     @Test
@@ -91,8 +90,8 @@ public class SpecialtyDaoTest {
 
         //Postconditions
         List<String> keys = specialties.stream().map(Specialty::getKey).toList();
-        assertEquals(3, specialties.size());
-        assertTrue(keys.containsAll(List.of("Cardiology", "Neurology", "Orthopedics")));
+        assertEquals(4, specialties.size());
+        assertTrue(keys.containsAll(List.of("Cardiology", "Neurology", "Orthopedics", "Pediatrics")));
     }
 
     @Test
@@ -119,4 +118,30 @@ public class SpecialtyDaoTest {
         //Postconditions
         assertTrue(specialties.isEmpty());
     }
+
+    @Test
+    public void testGetByDoctorIdDoesNotExist() {
+        //Preconditions
+        long doctorId = 1000L;
+
+        //Exercise
+        List<Specialty> specialties = specialtyDao.getByDoctorId(doctorId);
+
+        //Postconditions
+        assertTrue(specialties.isEmpty());
+    }
+
+    @Test
+    public void testGetByDoctorIdExists() {
+        //Preconditions
+        long doctorId = 2L;
+
+        //Exercise
+        List<Specialty> specialties = specialtyDao.getByDoctorId(doctorId);
+
+        //Postconditions
+        assertFalse(specialties.isEmpty());
+        assertEquals(1L, specialties.getFirst().getId());
+    }
+
 }
