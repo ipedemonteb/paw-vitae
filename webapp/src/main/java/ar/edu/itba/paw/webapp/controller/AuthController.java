@@ -47,7 +47,7 @@ public class AuthController {
         if (errors.hasErrors()) {
             return doctorForm(form);
         }
-        us.create(
+        ds.create(
                 form.getName(), form.getLastName(), form.getEmail(), form.getPassword(),
                 form.getPhone(), LocaleContextHolder.getLocale().getLanguage(), form.getImage(), form.getSpecialties(),
                 form.getCoverages(), form.getAvailabilitySlots()
@@ -83,7 +83,7 @@ public class AuthController {
         if (errors.hasErrors()) {
             return patientForm(patientForm);
         }
-        us.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(),
+        ps.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(),
                 patientForm.getPhone(), LocaleContextHolder.getLocale().getLanguage(), patientForm.getCoverage());
         us.setVerificationToken(patientForm.getEmail());
         return new ModelAndView("redirect:/email-sent");
