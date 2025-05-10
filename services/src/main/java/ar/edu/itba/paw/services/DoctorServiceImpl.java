@@ -73,15 +73,6 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Doctor> getBySpecialtyWithAppointments(long specialtyId, int page, int pageSize) {
-        List<Doctor> docs = doctorDao.getBySpecialty(specialtyId, page, pageSize);
-        int total = doctorDao.countBySpecialty(specialtyId);
-        docs.forEach(doctor -> doctor.setAppointments(as.getByDoctorId(doctor.getId())));
-        return new Page<>(docs, page, pageSize, total);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public Optional<Doctor> getByEmail(String email) {
         return this.doctorDao.getByEmail(email);
     }
@@ -120,14 +111,6 @@ public class DoctorServiceImpl implements DoctorService {
             }
             LOGGER.info("Doctor image updated successfully: id={}", doctor.getId());
         }
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<Doctor> getByIdWithAppointments(long id) {
-        Optional<Doctor> doctor = getById(id);
-        doctor.ifPresent(d -> d.setAppointments(as.getByDoctorId(id)));
-        return doctor;
     }
 
     @Transactional(readOnly = true)
