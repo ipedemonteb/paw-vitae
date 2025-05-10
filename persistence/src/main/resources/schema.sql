@@ -79,7 +79,6 @@ CREATE TABLE IF NOT EXISTS Appointments (
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
     FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE,
     FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE,
-    FOREIGN KEY (doctor_id, specialty_id) REFERENCES Doctor_Specialties(doctor_id, specialty_id)
     );
 
 CREATE TABLE IF NOT EXISTS Ratings (

@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.interfacePersistence.CoverageDao;
+import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Patient;
 import org.junit.Before;
@@ -21,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -29,13 +32,6 @@ public class PatientDaoTest {
 
     private static final String PATIENT_TABLE = "clients";
     private static final String USER_TABLE = "users";
-
-    private static final String NAME = "Juan Sebastián";
-    private static final String LASTNAME = "Verón";
-    private static final String EMAIL = "jsveron@edelp.com";
-    private static final String PASSWORD = "password";
-    private static final String PHONE = "1119681969";
-    private static final String LANGUAGE = "es";
 
     private static final long TEST_ID = 1L;
     private static final long TEST_ID2 = 3L;
@@ -47,8 +43,6 @@ public class PatientDaoTest {
     private static final String TEST_LANGUAGE = "en";
     private static final long TEST_COVERAGE_ID = 1L;
     private static final String TEST_COVERAGE_NAME = "Coverage A";
-    private static final long TEST_COVERAGE_ID_2 = 2L;
-    private static final String TEST_COVERAGE_NAME_2 = "Coverage B";
 
     private PatientDaoImpl patientDao;
     private JdbcTemplate jdbcTemplate;
@@ -58,23 +52,31 @@ public class PatientDaoTest {
 
     @Before
     public void setUp() {
-        UserDaoImpl userDao = new UserDaoImpl(ds);
-        this.patientDao = new PatientDaoImpl(ds, userDao);
+        UserDao userDao = mock(UserDao.class);
+        CoverageDao coverageDao = mock(CoverageDao.class);
+        this.patientDao = new PatientDaoImpl(ds, userDao, coverageDao);
         this.jdbcTemplate = new JdbcTemplate(ds);
     }
 
     @Test
     public void testCreateClient() {
         //Preconditions
+        long userId = 6L;
+        String name = "John";
+        String lastname = "Morgan";
+        String email = "johnmorgan@test.com";
+        String password = "hashedpassword";
+        String phone = "123456789";
+        String language = "es";
         Coverage coverage = new Coverage(TEST_COVERAGE_ID, TEST_COVERAGE_NAME);
 
         //Exercise
-        Patient patient = patientDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, coverage);
+        Patient patient = patientDao.create(userId, name, lastname, email, password, phone, language, coverage);
 
         //Postconditions
         assertNotNull(patient);
-        assertEquals(EMAIL, patient.getEmail());
-        assertEquals(NAME, patient.getName());
+        assertEquals(email, patient.getEmail());
+        assertEquals(name, patient.getName());
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, PATIENT_TABLE, "client_id = " + patient.getId()));
     }
 
@@ -139,20 +141,13 @@ public class PatientDaoTest {
     public void testUpdatePatient() {
         //Preconditions
         long patientId = 1L;
-        String updatedName = "Adam";
-        String updatedLastName = "Smith";
-        String updatedPhone = "1188888888";
-        Coverage updatedCoverage = new Coverage(TEST_COVERAGE_ID_2, TEST_COVERAGE_NAME_2);
+        long newCoverageId = 2L;
 
         //Exercise
-        patientDao.updatePatient(patientId, updatedName, updatedLastName, updatedPhone, updatedCoverage);
+        patientDao.updatePatient(patientId, newCoverageId);
 
         //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = " + patientId +
-                " AND name = '" + updatedName + "'" +
-                " AND last_name = '" + updatedLastName + "'" +
-                " AND phone = '" + updatedPhone + "'"
-        ));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, PATIENT_TABLE, "client_id = " + patientId + " AND coverage_id = " + newCoverageId));
     }
 
     @Test
