@@ -33,19 +33,9 @@ public class DoctorDaoTest {
     private static final String DOCSPEC_TABLE = "doctor_specialties";
     private static final String DOCCOV_TABLE = "doctor_coverages";
     private static final String DOCTOR_TABLE = "doctors";
-    private static final String USER_TABLE = "users";
 
-    private static final String NAME = "Carlos Salvador";
-    private static final String LASTNAME = "Bilardo";
-    private static final String EMAIL = "csbilardo@edelp.com";
-    private static final String PASSWORD = "password";
-    private static final String PHONE = "1177777777";
-    private static final String LANGUAGE = "es";
     private static final long SPEC_ID = 1L;
-    private static final String SPEC_NAME = "Cardiology";
     private static final long COV_ID = 1L;
-    private static final String COV_NAME = "OSDE";
-    private static final long IMAGE_ID = 1L;
 
     private static final long TEST_ID = 2L;
     private static final String TEST_NAME = "Jane";
@@ -77,20 +67,28 @@ public class DoctorDaoTest {
     @Test
     public void testCreateDoctor() {
         //Preconditions
-        List<Specialty> specialties = List.of(new Specialty(SPEC_ID, SPEC_NAME));
-        List<Coverage> coverages = List.of(new Coverage(COV_ID, COV_NAME));
+        long userId = 6L;
+        String name = "Robert";
+        String lastname = "Johnson";
+        String email = "robert@test.com";
+        String password = "hashedpassword";
+        String phone = "123456789";
+        String language = "es";
+        long imageId = 1L;
+        List<Long> specialties = List.of(1L, 2L);
+        List<Long> coverages = List.of(1L, 2L);
 
         //Exercise
-        Doctor doctor = doctorDao.create(NAME, LASTNAME, EMAIL, PASSWORD, PHONE, LANGUAGE, IMAGE_ID, specialties, coverages);
+        Doctor doctor = doctorDao.create(userId, name, lastname, email, password, phone, language, imageId, specialties, coverages);
 
         //Postconditions
         assertNotNull(doctor);
-        assertEquals(NAME, doctor.getName());
-        assertEquals(LASTNAME, doctor.getLastName());
-        assertEquals(EMAIL, doctor.getEmail());
+        assertEquals(name, doctor.getName());
+        assertEquals(lastname, doctor.getLastName());
+        assertEquals(email, doctor.getEmail());
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_TABLE, "doctor_id = " + doctor.getId()));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCSPEC_TABLE, "doctor_id = " + doctor.getId() + " AND specialty_id = " + SPEC_ID));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCCOV_TABLE, "doctor_id = " + doctor.getId() + " AND coverage_id = " + COV_ID));
+        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCSPEC_TABLE, "doctor_id = " + doctor.getId()));
+        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCCOV_TABLE, "doctor_id = " + doctor.getId()));
     }
 
     @Test
@@ -183,47 +181,15 @@ public class DoctorDaoTest {
     @Test
     public void testUpdateDoctor() {
         //Preconditions
-        String updatedName = "Osvaldo";
-        String updatedLastName = "Zubeldía";
-        String updatedPhone = "1122222222";
-        long updatedSpecialtyId = 2L;
-        String updatedSpecialtyName = "Neurology";
-        long updatedCoverageId = 2L;
-        String updatedCoverageName = "Coverage B";
-        List<Specialty> updatedSpecialties = List.of(new Specialty(updatedSpecialtyId, updatedSpecialtyName));
-        List<Coverage> updatedCoverages = List.of(new Coverage(updatedCoverageId, updatedCoverageName));
+        List<Long> newSpecialties = List.of(1L, 2L);
+        List<Long> newCoverages = List.of(1L, 2L);
 
         //Exercise
-        doctorDao.updateDoctor(TEST_ID, updatedName, updatedLastName, updatedPhone, updatedSpecialties, updatedCoverages);
+        doctorDao.updateDoctor(TEST_ID, newSpecialties, newCoverages);
 
         //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = " + TEST_ID +
-                " AND name = '" + updatedName + "' AND last_name = '" + updatedLastName + "' AND phone = '" + updatedPhone + "'"));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCSPEC_TABLE, "doctor_id = " + TEST_ID + " AND specialty_id = " + updatedSpecialtyId));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCCOV_TABLE, "doctor_id = " + TEST_ID + " AND coverage_id = " + updatedCoverageId));
-    }
-
-    @Test
-    public void testGetLanguage() {
-        //Preconditions
-
-        //Exercise
-        String language = doctorDao.getLanguage(TEST_ID);
-
-        //Postconditions
-        assertEquals(LANGUAGE, language);
-    }
-
-    @Test
-    public void testChangeLanguage() {
-        //Preconditions
-        String newLanguage = "en";
-
-        //Exercise
-        doctorDao.changeLanguage(TEST_ID, newLanguage);
-
-        //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = " + TEST_ID + " AND language = '" + newLanguage + "'"));
+        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCSPEC_TABLE, "doctor_id = " + TEST_ID));
+        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCCOV_TABLE, "doctor_id = " + TEST_ID));
     }
 
     @Test
