@@ -140,7 +140,7 @@
                                             <i class="fas fa-exclamation-circle"></i>
                                         </div>
                                     </div>
-                                    <div id="email-validation-message" class="error-message">
+                                    <div class="error-message">
                                         <form:errors path="email"/>
                                     </div>
                                 </div>

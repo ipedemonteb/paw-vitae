@@ -151,14 +151,5 @@ public class DoctorServiceImpl implements DoctorService {
         LOGGER.info("Rating updated for doctor with id={}, rating={}", id, rating);
     }
 
-    @Transactional(readOnly = true)
-    public Optional<Doctor> getByResetToken(String token) {
-        return doctorDao.getByResetToken(token);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<Doctor> getByVerificationToken(String token) {
-        return doctorDao.getByVerificationToken(token);
-    }
 
 }

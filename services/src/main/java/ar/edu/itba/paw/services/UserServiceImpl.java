@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfacePersistence.DoctorDao;
+import ar.edu.itba.paw.interfacePersistence.PatientDao;
 import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.MailService;
@@ -28,33 +30,33 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserDao userDao;
     private final MailService ms;
-    private final PatientService ps;
-    private final DoctorService ds;
+    private final PatientDao pd;
+    private final DoctorDao dd;
     @Value("${app.base-url}")
     private String BASE_URL;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserDao userDao, MailService ms, @Lazy PatientService ps,@Lazy DoctorService ds) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserDao userDao, MailService ms, PatientDao pd, DoctorDao dd) {
         this.passwordEncoder = passwordEncoder;
         this.userDao = userDao;
         this.ms = ms;
-        this.ps = ps;
-        this.ds = ds;
+        this.pd = pd;
+        this.dd = dd;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<? extends User> getByEmail(String email) { //TODO possibly implement isPatient method instead of this
+    public Optional<? extends User> getByEmail(String email) {
         LOGGER.debug("Fetching user by email: {}", email);
-        Optional<Patient> patient = ps.getByEmail(email);
-        return patient.isPresent() ? patient : ds.getByEmail(email);
+        Optional<Patient> patient = pd.getByEmail(email);
+        return patient.isPresent() ? patient : dd.getByEmail(email);
     }
 
     @Override
     public Optional<? extends User> getById(long id) {
         LOGGER.debug("Fetching user by id: {}", id);
-        Optional<Patient> patient = ps.getById(id);
-        return patient.isPresent() ? patient : ds.getById(id);
+        Optional<Patient> patient = pd.getById(id);
+        return patient.isPresent() ? patient : dd.getById(id);
     }
 
     @Transactional
@@ -96,14 +98,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<? extends User> getByResetToken(String token) {
         LOGGER.debug("Retrieving user by reset token");
-        Optional<Patient> patient = ps.getByResetToken(token);
-        return patient.isPresent() ? patient : ds.getByResetToken(token);
+        Optional<Patient> patient = pd.getByResetToken(token);
+        return patient.isPresent() ? patient : dd.getByResetToken(token);
     }
 
     @Transactional
     @Override
     public Optional<? extends User> verifyValidationToken(String token) {
-        Optional<Patient> patient = ps.getByVerificationToken(token);
+        Optional<Patient> patient = pd.getByVerificationToken(token);
         if (patient.isPresent()) {
             setVerificationStatus(patient.get(), true);
             userDao.removeVerificationToken(token);
@@ -111,7 +113,7 @@ public class UserServiceImpl implements UserService {
             return patient;
         }
 
-        Optional<Doctor> doctor = ds.getByVerificationToken(token);
+        Optional<Doctor> doctor = dd.getByVerificationToken(token);
         if (doctor.isPresent()) {
             setVerificationStatus(doctor.get(), true);
             userDao.removeVerificationToken(token);
@@ -126,7 +128,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public boolean verifyRecoveryToken(String token) {
-        boolean valid = ps.getByResetToken(token).isPresent() || ds.getByResetToken(token).isPresent();
+        boolean valid = pd.getByResetToken(token).isPresent() || dd.getByResetToken(token).isPresent();
         if (!valid) {
             LOGGER.warn("Invalid recovery token: {}", token);
         }

@@ -15,7 +15,7 @@ public class AppointmentExistenceValidator implements ConstraintValidator<Appoin
     private String userIdFieldName;
     private String dateFieldName;
     private String startTimeFieldName;
-    private AppointmentService as;
+    private final AppointmentService as;
 
     @Autowired
     public AppointmentExistenceValidator(AppointmentService as) {

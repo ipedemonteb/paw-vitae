@@ -11,7 +11,7 @@ import java.util.List;
 
 public class AppointmentValidSpecialtyForDoctorValidator implements ConstraintValidator<AppointmentValidSpecialtyForDoctor, Object> {
 
-    private SpecialtyService specialtyService;
+    private final SpecialtyService specialtyService;
     private String doctorIdFieldName;
     private String specialtyIdFieldName;
 

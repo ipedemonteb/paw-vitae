@@ -31,10 +31,9 @@ public class DoctorController {
     private final AppointmentFileService afs;
     private final RatingService rs;
     private final AvailabilitySlotsService ass;
-    private final UserService us;
 
     @Autowired
-    public DoctorController(DoctorService ds, AppointmentService as, CoverageService cs, SpecialtyService ss, AppointmentFileService afs, RatingService rs, AvailabilitySlotsService ass, UserService us) {
+    public DoctorController(DoctorService ds, AppointmentService as, CoverageService cs, SpecialtyService ss, AppointmentFileService afs, RatingService rs, AvailabilitySlotsService ass) {
         this.ds = ds;
         this.as = as;
         this.cs = cs;
@@ -42,7 +41,7 @@ public class DoctorController {
         this.afs = afs;
         this.rs = rs;
         this.ass = ass;
-        this.us = us;
+
     }
 
     @RequestMapping(value = "/doctor/dashboard")

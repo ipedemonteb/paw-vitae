@@ -7,7 +7,7 @@ import javax.validation.ConstraintValidator;
 
 public class SpecialtyValidator implements ConstraintValidator<Specialty, Long> {
 
-    private SpecialtyService specialtyService;
+    private final SpecialtyService specialtyService;
 
     @Autowired
     public SpecialtyValidator(SpecialtyService specialtyService) {

@@ -29,11 +29,11 @@ public class PatientForm {
     private String email;
 
     @NotEmpty
-    @Size(min = 8, max = 100)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
     private String password;
 
     @NotEmpty
-    @Size(min = 8, max = 100)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
     private String repeatPassword;
 
     @NotEmpty
