@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.text.SimpleDateFormat, java.util.Date, java.util.TimeZone" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -19,11 +18,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
 
-<!-- Main Content -->
 <main class="main-content">
     <div class="container">
         <div class="appointment-container">
@@ -34,7 +31,6 @@
 
             <div class="appointment-body">
                 <c:set var="doctor" value="${appointment.doctor}" />
-                <!-- Display doctor information if available -->
                 <c:if test="${not empty doctor}">
                     <div class="doctor-info">
                         <div class="doctor-image">
@@ -64,7 +60,6 @@
                     </div>
                 </c:if>
 
-                <!-- Status field -->
                 <div class="specialty-card-appointment status-card">
                     <div class="specialty-icon-appointment">
                         <i class="fas fa-clipboard-check"></i>
@@ -81,7 +76,6 @@
                     </div>
                 </div>
 
-                <!-- Improved date display -->
                 <div class="specialty-card-appointment">
                     <div class="specialty-icon-appointment">
                         <i class="fas fa-calendar"></i>
@@ -123,7 +117,6 @@
                     </div>
                 </div>
 
-                <!-- Patient Files Section -->
                 <div class="files-section">
                     <h2 class="files-title">
                         <i class="fas fa-file-medical"></i>
@@ -175,7 +168,6 @@
                             <div class="rating-section">
                                 <c:choose>
                                     <c:when test="${not empty existingRating}">
-                                        <!-- Display existing rating -->
                                         <div class="existing-review">
                                             <div class="review-header">
                                                 <div class="review-stars">
@@ -191,7 +183,6 @@
                                         </div>
                                     </c:when>
                                     <c:otherwise>
-                                        <!-- Review form -->
                                         <form:form modelAttribute="patientRatingForm" method="post" action="${pageContext.request.contextPath}/patient/dashboard/appointment/rate" class="rating-form" id="ratingForm">
                                             <form:hidden path="appointmentId" value="${appointment.id}" />
 
@@ -389,7 +380,6 @@
             </div>
         </div>
     </div>
-    <!-- Toast notification -->
     <div id="toast-notification" class="toast-notification">
         <div class="toast-icon">
             <i class="fas fa-check-circle"></i>
@@ -406,7 +396,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Star rating functionality
         const starInputs = document.querySelectorAll('.star-input');
         const ratingDisplay = document.querySelector('.rating-display');
         const starLabels = document.querySelectorAll('.star-label');
@@ -466,39 +455,6 @@
             });
         }
 
-        // Handle form submission with AJAX
-        const ratingForm = document.getElementById('ratingForm');
-        if (ratingForm) {
-            ratingForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                // Get form data
-                const formData = new FormData(ratingForm);
-                const url = ratingForm.getAttribute('action');
-
-                // Send AJAX request
-                fetch(url, {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            // Show toast notification
-                            showToast();
-
-                            // Reload the page after a short delay
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            console.error('Error submitting rating');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            });
-        }
 
         // Toast notification functionality
         const toast = document.getElementById('toast-notification');
@@ -521,13 +477,10 @@
             toastClose.addEventListener('click', hideToast);
         }
 
-        // Check if there's a URL parameter indicating a successful rating
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('rated') && urlParams.get('rated') === 'true') {
-            // Show toast notification
             showToast();
 
-            // Remove the parameter from URL without refreshing
             const url = new URL(window.location);
             url.searchParams.delete('rated');
             window.history.replaceState({}, '', url);
@@ -535,7 +488,6 @@
     });
 </script>
 
-<!-- Include the external JavaScript file -->
 <script src="<c:url value='/js/file-upload.js'/>"></script>
 </body>
 </html>
