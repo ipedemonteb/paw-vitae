@@ -24,21 +24,21 @@ import java.util.Optional;
 @Controller
 public class AuthController {
 
-    private final DoctorService ds;
-    private final CoverageService cs;
-    private final SpecialtyService ss;
-    private final PatientService ps;
-    private final UserService us;
-    private final AuthService as;
+    private final DoctorService doctorService;
+    private final CoverageService coverageService;
+    private final SpecialtyService specialtyService;
+    private final PatientService patientService;
+    private final UserService userService;
+    private final AuthService authService;
 
     @Autowired
-    public AuthController(DoctorService ds, CoverageService cs, SpecialtyService ss, PatientService ps, UserService us, AuthService as) {
-        this.ds = ds;
-        this.cs = cs;
-        this.ss = ss;
-        this.ps = ps;
-        this.us = us;
-        this.as = as;
+    public AuthController(DoctorService doctorService, CoverageService coverageService, SpecialtyService specialtyService, PatientService patientService, UserService userService, AuthService authService) {
+        this.doctorService = doctorService;
+        this.coverageService = coverageService;
+        this.specialtyService = specialtyService;
+        this.patientService = patientService;
+        this.userService = userService;
+        this.authService = authService;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -46,23 +46,23 @@ public class AuthController {
         if (errors.hasErrors()) {
             return doctorForm(form);
         }
-        ds.create(
+        doctorService.create(
                 form.getName(), form.getLastName(), form.getEmail(), form.getPassword(),
                 form.getPhone(), LocaleContextHolder.getLocale().getLanguage(), form.getImage(), form.getSpecialties(),
                 form.getCoverages(), form.getAvailabilitySlots()
         );
-        Optional<User> userOpt = us.getByEmail(form.getEmail()).map(user -> (User) user);
+        Optional<User> userOpt = userService.getByEmail(form.getEmail()).map(user -> (User) user);
         if (userOpt.isEmpty()) {
             return new ModelAndView("redirect:/email-sent");
         }
-        us.setVerificationToken(form.getEmail());
+        userService.setVerificationToken(form.getEmail());
         return new ModelAndView("redirect:/email-sent");
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView doctorForm(@ModelAttribute("registerForm") final DoctorForm doctorForm) {
-        List<Coverage> coverageList = cs.getAll();
-        List<Specialty> specialtyList = ss.getAll();
+        List<Coverage> coverageList = coverageService.getAll();
+        List<Specialty> specialtyList = specialtyService.getAll();
         ModelAndView mav = new ModelAndView("auth/register");
         mav.addObject("coverageList", coverageList);
         mav.addObject("specialtyList", specialtyList);
@@ -71,7 +71,7 @@ public class AuthController {
 
     @RequestMapping(value = "/register-patient", method = RequestMethod.GET)
     public ModelAndView patientForm(@ModelAttribute("patientForm") final PatientForm patientForm) {
-        List<Coverage> coverageList = cs.getAll();
+        List<Coverage> coverageList = coverageService.getAll();
         ModelAndView mav = new ModelAndView("auth/register-patient");
         mav.addObject("coverageList", coverageList);
         return mav;
@@ -82,9 +82,9 @@ public class AuthController {
         if (errors.hasErrors()) {
             return patientForm(patientForm);
         }
-        ps.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(),
+        patientService.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(),
                 patientForm.getPhone(), LocaleContextHolder.getLocale().getLanguage(), patientForm.getCoverage());
-        us.setVerificationToken(patientForm.getEmail());
+        userService.setVerificationToken(patientForm.getEmail());
         return new ModelAndView("redirect:/email-sent");
     }
 
@@ -108,7 +108,7 @@ public class AuthController {
         if (errors.hasErrors()) {
             return new ModelAndView("auth/recover-password");
         }
-        us.setResetPasswordToken(form.getEmail());
+        userService.setResetPasswordToken(form.getEmail());
         return new ModelAndView("redirect:/recover-password?recover=sent");
     }
 
@@ -117,7 +117,7 @@ public class AuthController {
         if (token == null ){
             return new ModelAndView("redirect:/");
         }
-        if(!us.verifyRecoveryToken(token)){
+        if(!userService.verifyRecoveryToken(token)){
             return new ModelAndView("redirect:/change-password-result?success=false");
         }
         return new ModelAndView("auth/change-password").addObject("token", token);
@@ -129,7 +129,7 @@ public class AuthController {
         if (errors.hasErrors()) {
             return new ModelAndView("auth/change-password").addObject("token", token);
         }
-        boolean success = us.changePassword(token, form.getPassword());
+        boolean success = userService.changePassword(token, form.getPassword());
         String value = String.valueOf(success);
             return new ModelAndView("redirect:/change-password-result?success="+value);
 
@@ -147,14 +147,14 @@ public class AuthController {
 
     @RequestMapping("/verify")
     public ModelAndView verifyAccount(@ModelAttribute("loggedUser") User user) {
-            return new ModelAndView("auth/verify").addObject("imageId", us.getImageId(user));
+            return new ModelAndView("auth/verify").addObject("imageId", userService.getImageId(user));
     }
     @RequestMapping("/verify-confirmation")
     public ModelAndView verifyConfirmation(@RequestParam(value = "token", required = false) String token) {
         if (token == null) {
             return new ModelAndView("redirect:/");
         }
-        boolean success = as.verifyAndLoginUser(token);
+        boolean success = authService.verifyAndLoginUser(token);
         String value = String.valueOf(success);
         return new ModelAndView("redirect:/verify?success="+value);
     }

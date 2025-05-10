@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
-import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,37 +18,11 @@ public class DoctorDaoImpl implements DoctorDao {
     private final SimpleJdbcInsert jdbcInsertDoctorCoverage;
     private final SimpleJdbcInsert jdbcInsertDoctorSpecialty;
 
-    private final static String BASE_SQL = "SELECT " +
-            "  u.id                   AS doctor_id, " +
-            "  u.name                 AS doctor_name, " +
-            "  u.last_name            AS doctor_last_name, " +
-            "  u.email                AS doctor_email, " +
-            "  u.password             AS doctor_password, " +
-            "  u.phone                AS doctor_phone, " +
-            "  u.language             AS doctor_language, " +
-            "  u.is_verified          AS doctor_verified, " +
-            "  d.rating               AS rating, " +
-            "  d.rating_count         AS rating_count, " +
-            "  d.image_id             AS image_id, " +
-            "  s.id                   AS specialty_id, " +
-            "  s.key                  AS specialty_key, " +
-            "  c.id                   AS coverage_id, " +
-            "  c.coverage_name        AS coverage_name, " +
-            "  a.day_of_week          AS day_of_week, " +
-            "  a.start_time           AS start_time, " +
-            "  a.end_time             AS end_time " +
-            "FROM users u " +
-            "  JOIN doctors d        ON u.id = d.doctor_id " +
-            "  LEFT JOIN doctor_specialties ds ON ds.doctor_id     = u.id " +
-            "  LEFT JOIN specialties        s  ON s.id             = ds.specialty_id " +
-            "  LEFT JOIN doctor_coverages   dc ON dc.doctor_id     = u.id " +
-            "  LEFT JOIN coverages          c  ON c.id             = dc.coverage_id " +
-            "  LEFT JOIN doctor_availability a ON a.doctor_id      = u.id ";
-
+    private final static String BASE_SQL = "SELECT u.id AS doctor_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, u.is_verified AS doctor_verified, d.rating AS rating, d.rating_count AS rating_count, d.image_id AS image_id, s.id AS specialty_id, s.key AS specialty_key, c.id AS coverage_id, c.coverage_name AS coverage_name, a.day_of_week AS day_of_week, a.start_time AS start_time, a.end_time AS end_time FROM users u JOIN doctors d ON u.id = d.doctor_id LEFT JOIN doctor_specialties ds ON ds.doctor_id = u.id LEFT JOIN specialties s ON s.id = ds.specialty_id LEFT JOIN doctor_coverages dc ON dc.doctor_id = u.id LEFT JOIN coverages c ON c.id = dc.coverage_id LEFT JOIN doctor_availability a ON a.doctor_id = u.id ";
 
     @Autowired
-    public DoctorDaoImpl(final DataSource ds, UserDao userDao) {
-        jdbcTemplate = new JdbcTemplate(ds);
+    public DoctorDaoImpl(final DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsertDoctor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctors")
                 .usingColumns("doctor_id", "image_id");
@@ -150,7 +123,7 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) { //TODO check in what does update differ from jdbcinsert
+    public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) { //TODO check in what does update differ from jdbcInsert
         StringBuilder sql = new StringBuilder(BASE_SQL);
         sql.append("WHERE u.id IN (SELECT doctor_id FROM users u JOIN doctor_specialties ds ON u.id = ds.doctor_id WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?)");
         return jdbcTemplate.query(sql.toString(), new DoctorExtractor(), specialtyId, pageSize, (page - 1) * pageSize);
@@ -208,11 +181,7 @@ public class DoctorDaoImpl implements DoctorDao {
             default -> "doctor_id";
         };
 
-        String directionQuery = switch (direction) {
-            case "asc" -> "ASC";
-            case "desc" -> "DESC";
-            default -> "ASC";
-        };
+        String directionQuery = (direction.equals("desc")) ? "DESC" : "ASC";
 
         long specialtyIdQuery = specialtyId > 0 ? specialtyId : 0;
 

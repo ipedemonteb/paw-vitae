@@ -3,9 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.interfacePersistence.PatientDao;
 import ar.edu.itba.paw.interfacePersistence.UserDao;
-import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.MailService;
-import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
@@ -13,13 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,34 +24,34 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private final PasswordEncoder passwordEncoder;
     private final UserDao userDao;
-    private final MailService ms;
-    private final PatientDao pd;
-    private final DoctorDao dd;
+    private final MailService mailService;
+    private final PatientDao patientDao;
+    private final DoctorDao doctorDao;
     @Value("${app.base-url}")
     private String BASE_URL;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserDao userDao, MailService ms, PatientDao pd, DoctorDao dd) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserDao userDao, MailService mailService, PatientDao patientDao, DoctorDao doctorDao) {
         this.passwordEncoder = passwordEncoder;
         this.userDao = userDao;
-        this.ms = ms;
-        this.pd = pd;
-        this.dd = dd;
+        this.mailService = mailService;
+        this.patientDao = patientDao;
+        this.doctorDao = doctorDao;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<? extends User> getByEmail(String email) {
         LOGGER.debug("Fetching user by email: {}", email);
-        Optional<Patient> patient = pd.getByEmail(email);
-        return patient.isPresent() ? patient : dd.getByEmail(email);
+        Optional<Patient> patient = patientDao.getByEmail(email);
+        return patient.isPresent() ? patient : doctorDao.getByEmail(email);
     }
 
     @Override
     public Optional<? extends User> getById(long id) {
         LOGGER.debug("Fetching user by id: {}", id);
-        Optional<Patient> patient = pd.getById(id);
-        return patient.isPresent() ? patient : dd.getById(id);
+        Optional<Patient> patient = patientDao.getById(id);
+        return patient.isPresent() ? patient : doctorDao.getById(id);
     }
 
     @Transactional
@@ -71,7 +66,7 @@ public class UserServiceImpl implements UserService {
         User user = getByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
         String token = UUID.randomUUID().toString();
         String verificationLink = BASE_URL + "/verify-confirmation?token=" + token;
-        ms.sendVerificationRegisterEmail(user, verificationLink);
+        mailService.sendVerificationRegisterEmail(user, verificationLink);
         userDao.setVerificationToken(user.getId(), token);
         LOGGER.info("Verification token set and email sent for user id={}", user.getId());
     }
@@ -89,7 +84,7 @@ public class UserServiceImpl implements UserService {
         User user = getByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
         String token = UUID.randomUUID().toString();
         String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
-        ms.sendRecoverPasswordEmail(user, resetPasswordLink);
+        mailService.sendRecoverPasswordEmail(user, resetPasswordLink);
         userDao.setResetPasswordToken(user.getId(), token);
         LOGGER.info("Password reset token set and email sent for user id={}", user.getId());
     }
@@ -98,14 +93,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<? extends User> getByResetToken(String token) {
         LOGGER.debug("Retrieving user by reset token");
-        Optional<Patient> patient = pd.getByResetToken(token);
-        return patient.isPresent() ? patient : dd.getByResetToken(token);
+        Optional<Patient> patient = patientDao.getByResetToken(token);
+        return patient.isPresent() ? patient : doctorDao.getByResetToken(token);
     }
 
     @Transactional
     @Override
     public Optional<? extends User> verifyValidationToken(String token) {
-        Optional<Patient> patient = pd.getByVerificationToken(token);
+        Optional<Patient> patient = patientDao.getByVerificationToken(token);
         if (patient.isPresent()) {
             setVerificationStatus(patient.get(), true);
             userDao.removeVerificationToken(token);
@@ -113,7 +108,7 @@ public class UserServiceImpl implements UserService {
             return patient;
         }
 
-        Optional<Doctor> doctor = dd.getByVerificationToken(token);
+        Optional<Doctor> doctor = doctorDao.getByVerificationToken(token);
         if (doctor.isPresent()) {
             setVerificationStatus(doctor.get(), true);
             userDao.removeVerificationToken(token);
@@ -128,7 +123,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public boolean verifyRecoveryToken(String token) {
-        boolean valid = pd.getByResetToken(token).isPresent() || dd.getByResetToken(token).isPresent();
+        boolean valid = patientDao.getByResetToken(token).isPresent() || doctorDao.getByResetToken(token).isPresent();
         if (!valid) {
             LOGGER.warn("Invalid recovery token: {}", token);
         }

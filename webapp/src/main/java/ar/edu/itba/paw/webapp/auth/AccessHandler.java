@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 @Component("accessHandler")
 public class AccessHandler {
 
-    private final AppointmentService apptSvc;
-    private final UserService userSvc;
+    private final AppointmentService appointmentService;
+    private final UserService userService;
 
     @Autowired
-    public AccessHandler(AppointmentService apptSvc, UserService userSvc) {
-        this.apptSvc = apptSvc;
-        this.userSvc = userSvc;
+    public AccessHandler(AppointmentService appointmentService, UserService userService) {
+        this.appointmentService = appointmentService;
+        this.userService = userService;
     }
 
     /**
@@ -28,8 +28,8 @@ public class AccessHandler {
         if (!(principal instanceof AuthUserDetails)) {
             return false;
         }
-        long userId = userSvc.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
-        return apptSvc.getById(appointmentId)
+        long userId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
+        return appointmentService.getById(appointmentId)
                 .map(a -> a.getPatient().getId() == userId
                         || a.getDoctor().getId() == userId)
                 .orElse(false);

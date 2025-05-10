@@ -23,12 +23,12 @@ public class AppointmentFileDaoImpl implements AppointmentFileDao {
             rs.getString("uploader_role"),
             rs.getLong("appointment_id")
     );
-    private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
     @Autowired
-    public AppointmentFileDaoImpl(final DataSource ds) {
-        jdbcTemplate = new JdbcTemplate(ds);
+    public AppointmentFileDaoImpl(final DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointment_files")
                 .usingColumns("file_name", "file_data", "uploader_role", "appointment_id")

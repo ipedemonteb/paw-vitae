@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Rating;
-import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

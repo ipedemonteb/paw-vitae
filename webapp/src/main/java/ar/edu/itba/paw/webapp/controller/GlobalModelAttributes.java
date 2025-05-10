@@ -24,7 +24,7 @@ public class GlobalModelAttributes {
     @ModelAttribute(value = "loggedUser", binding = false)
     public Optional<? extends User> loggedUser() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return userService.getByEmail((String) auth.getName());
+        return userService.getByEmail(auth.getName());
     }
 
 }

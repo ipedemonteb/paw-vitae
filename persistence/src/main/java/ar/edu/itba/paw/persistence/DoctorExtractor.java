@@ -7,7 +7,6 @@ import ar.edu.itba.paw.models.Specialty;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-import javax.print.Doc;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalTime;
