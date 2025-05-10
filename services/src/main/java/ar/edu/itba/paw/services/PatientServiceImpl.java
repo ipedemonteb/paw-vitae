@@ -47,8 +47,8 @@ public class PatientServiceImpl implements PatientService {
 
     @Transactional
     @Override
-    public Patient create(String name, String lastName, String email, String password, String phone, String language, String coverageId) {
-        Coverage coverage = cs.findById(Long.parseLong(coverageId)).orElse(null); //TODO coverageNotFoundException?
+    public Patient create(String name, String lastName, String email, String password, String phone, String language, long coverageId) {
+        Coverage coverage = cs.findById(coverageId).orElse(null); //TODO coverageNotFoundException?
         long id = us.create(name, lastName, email, passwordEncoder.encode(password), phone, language);
         Patient patient = this.patientDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, coverage);
         LOGGER.info("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
@@ -63,7 +63,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Transactional
     @Override
-    public void updatePatient(Patient patient, String name, String lastName, String phone, Long coverageId) { //TODO unify how these things are handled, doctoDao does something else entirely
+    public void updatePatient(Patient patient, String name, String lastName, String phone, long coverageId) { //TODO unify how these things are handled, doctoDao does something else entirely
         boolean hasChangedPatient = patient.getCoverage().getId() != coverageId;
         boolean hasChangedUser = !patient.getName().equals(name) || !patient.getLastName().equals(lastName) || !patient.getPhone().equals(phone);
         if (hasChangedPatient) {

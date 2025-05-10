@@ -7,9 +7,9 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
-public class SpecialtyListValidator implements ConstraintValidator<SpecialtyList, List<String>> {
+public class SpecialtyListValidator implements ConstraintValidator<SpecialtyList, List<Long>> {
 
-    private SpecialtyService specialtyService;
+    private final SpecialtyService specialtyService;
 
     @Autowired
     public SpecialtyListValidator(SpecialtyService specialtyService) {
@@ -17,12 +17,12 @@ public class SpecialtyListValidator implements ConstraintValidator<SpecialtyList
     }
 
     @Override
-    public boolean isValid(List<String> strings, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(List<Long> strings, ConstraintValidatorContext constraintValidatorContext) {
         if (strings == null) {
             return true;
         }
-        for (String value : strings) {
-            if (specialtyService.getById(Integer.parseInt(value)).isEmpty()) {
+        for (Long value : strings) {
+            if (specialtyService.getById(value).isEmpty()) {
                 return false;
             }
         }

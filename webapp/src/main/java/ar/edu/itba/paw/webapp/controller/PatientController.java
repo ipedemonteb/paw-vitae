@@ -86,7 +86,6 @@ public class PatientController {
                                    @ModelAttribute("loggedUser") final Patient patient
     ) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-profile");
-        updatePatientForm.setForm(patient);
         mav.addObject("patient", patient);
         mav.addObject("coverageList", covs.getAll());
         mav.addObject("display", "none");
@@ -103,7 +102,7 @@ public class PatientController {
             mav.addObject("display", "block");
             return mav;
         }
-        ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), Long.parseLong(updatePatientForm.getCoverage()));
+        ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), updatePatientForm.getCoverage());
         return new ModelAndView("redirect:/patient/dashboard/profile?updated=true");
     }
 

@@ -88,7 +88,6 @@ public class DoctorController {
                                    @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-profile");
-        updateDoctorForm.setForm(doctor);
         mav.addObject("doctor", doctor);
         mav.addObject("coverageList", cs.getAll());
         mav.addObject("specialtyList", ss.getAll());

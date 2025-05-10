@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 
-public class CoverageValidator implements ConstraintValidator<Coverage, String> {
+public class CoverageValidator implements ConstraintValidator<Coverage, Long> {
 
-    private CoverageService cs;
+    private final CoverageService cs;
 
     @Autowired
     public CoverageValidator(CoverageService cs) {
@@ -15,7 +15,7 @@ public class CoverageValidator implements ConstraintValidator<Coverage, String> 
     }
 
     @Override
-    public boolean isValid(String value, javax.validation.ConstraintValidatorContext context) {
-        return value == null || cs.findById(Integer.parseInt(value)).isPresent();
+    public boolean isValid(Long value, javax.validation.ConstraintValidatorContext context) {
+        return value == null || cs.findById(value).isPresent();
     }
 }

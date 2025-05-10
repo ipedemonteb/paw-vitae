@@ -4,15 +4,15 @@ import java.util.Objects;
 
 public class Coverage {
 
-    private final long id;
+    private final Long id;
     private String name;
 
-    public Coverage(long id, String name) {
+    public Coverage(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
