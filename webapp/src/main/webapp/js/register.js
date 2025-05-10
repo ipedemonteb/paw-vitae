@@ -39,13 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add event listeners
     const addSlotBtn = document.getElementById("add-slot-btn")
     if (addSlotBtn) {
-        // addSlotBtn.addEventListener("click", addTimeSlotRow) // Replaced with new implementation
+        addSlotBtn.addEventListener("click", addNewTimeSlot)
     }
 
     // Enhanced password validation - make it more responsive
     const passwordField = document.getElementById("password")
     if (passwordField) {
-        passwordField.addEventListener("input", function () {
+        passwordField.addEventListener("input", () => {
             checkPasswordStrength()
             validatePassword()
             // validatePasswordRequirements(this.value)
@@ -438,7 +438,8 @@ function validateMultiSelect(selectId) {
     const container = document.getElementById(selectId + "-container")
     if (!container) return false
 
-    const errorElement = container.querySelector(".error-message")
+    const errorContainer = container.nextElementSibling.nextElementSibling
+    const errorElement = errorContainer ? errorContainer.querySelector(".error-message") : null
 
     if (!select.options || select.selectedOptions.length === 0) {
         container.classList.add("error")
@@ -608,7 +609,10 @@ function validateSectionWithoutUI(sectionNumber) {
             isValid = false
         }
 
-        if ((password.value && repeatPassword.value && password.value !== repeatPassword.value) || (password.value && repeatPassword.value && !validatePassword())) {
+        if (
+            (password.value && repeatPassword.value && password.value !== repeatPassword.value) ||
+            (password.value && repeatPassword.value && !validatePassword())
+        ) {
             isValid = false
         }
 
@@ -662,28 +666,20 @@ function validatePassword() {
 
     if (password && (!hasLength || !hasUppercase || !hasNumber)) {
         // Password doesn't meet requirements
-        setFieldError(passwordField)
-        if (lengthMessage) {
-            lengthMessage.textContent =
-                window.messages?.passwordInvalid ||
-                "Password must be at least 8 characters with one uppercase letter and one number"
-            lengthMessage.style.display = "block"
-        }
+        setFieldError(
+            passwordField,
+            lengthMessage,
+            window.messages?.passwordInvalid ||
+            "Password must be at least 8 characters with one uppercase letter and one number",
+        )
         return false
     } else if (password) {
         // Password meets requirements
-        setFieldValid(passwordField)
-        if (lengthMessage) {
-            lengthMessage.style.display = "none"
-        }
+        setFieldValid(passwordField, lengthMessage)
         return true
     } else {
         // No password entered
-        passwordField.classList.remove("input-error")
-        passwordField.classList.remove("valid")
-        if (lengthMessage) {
-            lengthMessage.style.display = "none"
-        }
+        clearFieldValidation(passwordField, lengthMessage)
         return true
     }
 }
@@ -758,8 +754,7 @@ function validatePasswordRequirements(password) {
 
     if (password) {
         // if (hasLength && (hasUppercase || hasLowercase) && (hasNumber || hasSpecial))
-        if (hasLength && hasUppercase && hasLowercase && hasNumber && hasSpecial)
-        {
+        if (hasLength && hasUppercase && hasLowercase && hasNumber && hasSpecial) {
             setFieldValid(passwordField, errorElement)
             return true
         } else {
@@ -792,13 +787,35 @@ function updateRequirement(element, isValid) {
 function initMultiSelect() {
     updateSelectedDisplay("specialties")
     updateSelectedDisplay("coverages")
+
+    // Check for server-side validation errors in multi-selects
+    checkMultiSelectErrors("specialties")
+    checkMultiSelectErrors("coverages")
 }
 
+// Check for server-side validation errors in multi-selects
+function checkMultiSelectErrors(selectId) {
+    const container = document.getElementById(selectId + "-container")
+    if (!container) return
+
+    const errorContainer = container.nextElementSibling.nextElementSibling
+    const errorElement = errorContainer ? errorContainer.querySelector(".error-message") : null
+
+    if (errorElement && errorElement.textContent.trim() !== "") {
+        container.classList.add("error")
+        errorElement.classList.add("visible")
+
+        // If we're in section 2, mark it as having errors
+        const section2 = document.querySelector('.form-section[data-section="2"]')
+        if (section2) {
+            section2.classList.add("has-errors")
+        }
+    }
+}
 
 // Replace the validateForm function with this improved version:
 // Form validation
 function validateForm() {
-
     // Validate all sections
     for (let i = 1; i <= 3; i++) {
         if (!validateSection(i)) {
@@ -816,9 +833,9 @@ function validateForm() {
 
     // ✅ Validate time slots
     if (!areTimeSlotsValid()) {
+        showSection(3)
         return false
     }
-
 
     // Store password values in hidden fields before submission
     const passwordField = document.getElementById("password")
@@ -841,6 +858,45 @@ function validateForm() {
 function checkFormErrors() {
     if (window.hasErrors && window.errorSection) {
         showSection(window.errorSection)
+
+        // Mark the section with errors
+        const section = document.querySelector(`.form-section[data-section="${window.errorSection}"]`)
+        if (section) {
+            section.classList.add("has-errors")
+
+            // Find all visible error messages in this section
+            const errorMessages = section.querySelectorAll(".error-message")
+            errorMessages.forEach((errorMsg) => {
+                if (errorMsg.textContent.trim() !== "") {
+                    errorMsg.classList.add("visible")
+
+                    // If this is the first visible error, scroll to it
+                    if (!window.scrolledToError) {
+                        errorMsg.scrollIntoView({ behavior: "smooth", block: "center" })
+                        window.scrolledToError = true
+                    }
+                }
+            })
+        }
+
+        // Check for time slot errors in section 3
+        if (window.errorSection === 3) {
+            const timeSlotError = document.getElementById("time-slot-error")
+            const availabilityErrorContainer = document.querySelector(".error-container .error-message")
+
+            if (availabilityErrorContainer && availabilityErrorContainer.textContent.trim() !== "") {
+                if (timeSlotError) {
+                    timeSlotError.textContent = availabilityErrorContainer.textContent
+                    timeSlotError.style.display = "block"
+                    timeSlotError.classList.add("visible")
+
+                    if (!window.scrolledToError) {
+                        timeSlotError.scrollIntoView({ behavior: "smooth", block: "center" })
+                        window.scrolledToError = true
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -1171,7 +1227,8 @@ function toggleOption(optionElement, selectId) {
             }
 
             // Hide error message
-            const errorElement = document.querySelector(`#${selectId}-container .error-message`)
+            const errorContainer = container.nextElementSibling.nextElementSibling
+            const errorElement = errorContainer ? errorContainer.querySelector(".error-message") : null
             if (errorElement) {
                 errorElement.classList.remove("visible")
             }
@@ -1373,7 +1430,7 @@ function renderAllTimeSlots() {
     availabilitySlots.forEach((slot) => {
         renderTimeSlot(slot)
     })
-    validateTimeSlots();
+    validateTimeSlots()
 }
 
 // Add a new time slot
@@ -1657,16 +1714,10 @@ function showTimeSlotError(message) {
     if (errorElement) {
         errorElement.textContent = message
         errorElement.style.display = "block"
-        errorElement.classList.add("visible"); // Add visible class for better visibility
-
-        // Also show the server-side error if it exists
-        // const serverErrorElement = document.querySelector("form .error-message[data-path='availabilitySlots']");
-        // if (serverErrorElement && serverErrorElement.textContent.trim()) {
-        //     errorElement.textContent += " " + serverErrorElement.textContent;
-        // }
+        errorElement.classList.add("visible") // Add visible class for better visibility
 
         // Scroll to the error message
-        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        errorElement.scrollIntoView({ behavior: "smooth", block: "center" })
     }
 }
 
@@ -1681,6 +1732,7 @@ function clearTimeSlotErrors() {
     const errorElement = document.getElementById("time-slot-error")
     if (errorElement) {
         errorElement.style.display = "none"
+        errorElement.classList.remove("visible")
     }
 
     // Clear error class from all rows

@@ -19,8 +19,8 @@ public class AppointmentForm {
     private LocalDate appointmentDate;
 
     @NotNull(message = "{appointment.hour.notnull}")
-    @Min(value = 8, message = "Hour must be between 8 and 20")
-    @Max(value = 20, message = "Hour must be between 8 and 20")
+    @Min(value = 8, message = "${appointment.hour.invalid}")
+    @Max(value = 20, message = "${appointment.hour.invalid}")
     private Integer appointmentHour;
 
     @Size(max = 255)

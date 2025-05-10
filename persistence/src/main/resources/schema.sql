@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS Clients (
                                        client_id INT PRIMARY KEY,
                                        coverage_id INT NOT NULL,
                                        FOREIGN KEY (client_id) REFERENCES Users(id) ON DELETE CASCADE,
-    FOREIGN KEY (coverage_id) REFERENCES Coverages(id)
+                                        FOREIGN KEY (coverage_id) REFERENCES Coverages(id) ON DELETE SET NULL
     );
 
 CREATE TABLE IF NOT EXISTS Images (
@@ -78,8 +78,7 @@ CREATE TABLE IF NOT EXISTS Appointments (
     report TEXT,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
     FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE,
-    FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE,
-    FOREIGN KEY (doctor_id, specialty_id) REFERENCES Doctor_Specialties(doctor_id, specialty_id)
+    FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE
     );
 
 CREATE TABLE IF NOT EXISTS Ratings (

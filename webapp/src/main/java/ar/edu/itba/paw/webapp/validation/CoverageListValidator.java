@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public class CoverageListValidator implements javax.validation.ConstraintValidator<CoverageList, List<String>> {
+public class CoverageListValidator implements javax.validation.ConstraintValidator<CoverageList, List<Long>> {
 
-    private CoverageService cs;
+    private final CoverageService cs;
 
     @Autowired
     public CoverageListValidator(CoverageService cs) {
@@ -16,12 +16,12 @@ public class CoverageListValidator implements javax.validation.ConstraintValidat
     }
 
     @Override
-    public boolean isValid(List<String> values, javax.validation.ConstraintValidatorContext context) {
+    public boolean isValid(List<Long> values, javax.validation.ConstraintValidatorContext context) {
         if (values == null) {
             return true;
         }
-        for (String value : values) {
-            if (cs.findById(Integer.parseInt(value)).isEmpty()) {
+        for (Long value : values) {
+            if (cs.findById(value).isEmpty()) {
                 return false;
             }
         }

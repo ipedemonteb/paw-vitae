@@ -33,18 +33,12 @@ public class UpdateDoctorForm {
     private String phone;
     @CoverageList(message = "{coverages.invalids}")
     @NotEmpty
-    private List<String> coverages;
+    private List<Long> coverages;
     @SpecialtyList(message = "{specialties.invalids}")
     @NotEmpty
-    private List<String> specialties;
+    private List<Long> specialties;
 
-    public void setForm(Doctor doctor) {
-        this.name = doctor.getName();
-        this.lastName = doctor.getLastName();
-        this.phone = doctor.getPhone();
-        this.coverages = doctor.getCoverageList().stream().map(Coverage::getName).toList();
-        this.specialties = doctor.getSpecialtyList().stream().map(Specialty::getKey).toList();
-    }
+
     public String getName() {
         return name;
     }
@@ -69,21 +63,20 @@ public class UpdateDoctorForm {
         this.phone = phone;
     }
 
-    public List<String> getSpecialties() {
-        return specialties;
-    }
-
-    public void setSpecialties(List<String> specialties) {
-        this.specialties = specialties;
-    }
-
-    public List<String> getCoverages() {
+    public List<Long> getCoverages() {
         return coverages;
     }
 
-    public void setCoverages(List<String> coverages) {
+    public void setCoverages(List<Long> coverages) {
         this.coverages = coverages;
     }
 
+    public List<Long> getSpecialties() {
+        return specialties;
+    }
+
+    public void setSpecialties(List<Long> specialties) {
+        this.specialties = specialties;
+    }
 }
 

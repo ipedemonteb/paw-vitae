@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,9 +13,9 @@ import javax.validation.Valid;
 @Controller
 public class AppointmentController {
 
-    private AppointmentService as;
-    private DoctorService ds;
-    private AppointmentFileService afs;
+    private final AppointmentService as;
+    private final DoctorService ds;
+    private final AppointmentFileService afs;
 
     @Autowired
     public AppointmentController(AppointmentService as, DoctorService ds, AppointmentFileService afs) {
@@ -35,7 +34,7 @@ public class AppointmentController {
         appointmentForm.setPatientId(patient.getId());
         appointmentForm.setDoctorId(doctorId);
         ModelAndView mav = new ModelAndView("appointment/appointment");
-        Doctor doctor = ds.getByIdWithAppointments(doctorId).orElseThrow(UserNotFoundException::new);
+        Doctor doctor = ds.getByIdWithAppointments(doctorId).orElseThrow(IllegalArgumentException::new);
         mav.addObject("doctor", doctor);
         return mav;
     }

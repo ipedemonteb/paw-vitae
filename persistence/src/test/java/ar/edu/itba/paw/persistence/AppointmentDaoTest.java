@@ -32,9 +32,6 @@ import static org.mockito.Mockito.when;
 @Transactional
 public class AppointmentDaoTest {
 
-    private static final String SQL_QUERY_STATUS = "SELECT status FROM appointments WHERE id = ?";
-    private static final String SQL_QUERY_REPORT= "SELECT report FROM appointments WHERE id = ?";
-
     private static final String APPOINTMENT_TABLE = "appointments";
 
     private static final long DOC_ID = 2L;
@@ -87,14 +84,12 @@ public class AppointmentDaoTest {
         LocalDateTime dateTime = LocalDateTime.of(2025, 8, 1, 8, 0);
         String reason = "General checking";
         Specialty specialty = new Specialty(1L, "Cardiology");
-        Doctor mockDoctorObj = new Doctor(DOC_NAME, DOC_ID, DOC_LASTNAME,
+        Doctor doctor = new Doctor(DOC_NAME, DOC_ID, DOC_LASTNAME,
                 DOC_EMAIL, DOC_PASSWORD, DOC_PHONE, DOC_LANGUAGE, DOC_IMG,
                 DOC_RATING, DOC_RATCOUNT, DOC_VERIFIED);
-        Patient mockPatientObj = new Patient(PAT_NAME, PAT_ID, PAT_LASTNAME,
+        Patient patient = new Patient(PAT_NAME, PAT_ID, PAT_LASTNAME,
                 PAT_EMAIL, PAT_PASSWORD, PAT_PHONE, PAT_LANGUAGE, PAT_COVERAGE,
                 PAT_VERIFIED);
-        when(mockDoctor.getById(docId)).thenReturn(Optional.of(mockDoctorObj));
-        when(mockPatient.getById(patientId)).thenReturn(Optional.of(mockPatientObj));
 
         //Exercise
         Appointment appointment = appointmentDao.create(patientId, docId, dateTime, reason, specialty);
@@ -266,19 +261,18 @@ public class AppointmentDaoTest {
         });
     }
 
-    //@TODO: CHECK PROBLEM WITH DATABASE
-//    @Test
-//    public void testGetAppointmentsByDate() {
-//        //Preconditions
-//        LocalDate date = LocalDate.of(2025, 4, 29);
-//
-//        //Exercise
-//        List<Appointment> appointments = appointmentDao.getAppointmentsByDate(date);
-//
-//        //Postconditions
-//        assertFalse(appointments.isEmpty());
-//        assertEquals(1, appointments.size());
-//    }
+    @Test
+    public void testGetAppointmentsByDate() {
+        //Preconditions
+        LocalDate date = LocalDate.of(2025, 4, 29);
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getAppointmentsByDate(date);
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(1, appointments.size());
+    }
 
     @Test
     public void testCountAppointments() {
@@ -306,7 +300,19 @@ public class AppointmentDaoTest {
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, APPOINTMENT_TABLE, "id = " + appointmentId + " AND report = '" + newReport + "'"));
     }
 
-//    //@TODO: CHECK
-//    @Test
-//    public void testGetAppointmentsByUserAndDate() {}
+    @Test
+    public void testGetAppointmentsByUserAndDate() {
+        //Preconditions
+        long userId = 1L;
+        LocalDate date = LocalDate.of(2025, 4, 29);
+        Integer time = 10;
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getAppointmentsByUserAndDate(userId, date, time);
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(1, appointments.size());
+        assertEquals(userId, appointments.getFirst().getPatient().getId());
+    }
 }
