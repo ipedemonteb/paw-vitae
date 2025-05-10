@@ -35,7 +35,7 @@ public class AppointmentController {
         appointmentForm.setPatientId(patient.getId());
         appointmentForm.setDoctorId(doctorId);
         ModelAndView mav = new ModelAndView("appointment/appointment");
-        Doctor doctor = ds.getByIdWithAppointments(doctorId).orElseThrow(UserNotFoundException::new);
+        Doctor doctor = ds.getByIdWithAppointments(doctorId).orElseThrow(IllegalArgumentException::new);
         mav.addObject("doctor", doctor);
         return mav;
     }

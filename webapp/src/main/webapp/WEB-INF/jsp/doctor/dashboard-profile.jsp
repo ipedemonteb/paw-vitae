@@ -235,31 +235,35 @@
 
                     <form:form id="updateDoctorForm" modelAttribute="updateDoctorForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/update" cssClass="edit-profile-form" enctype="multipart/form-data">
                         <!-- Imagen de perfil -->
-                        <div class="form-group">
-                            <label class="form-label"><spring:message code="register.profileImage" /></label>
-                            <div class="image-upload-container">
-                                <div class="image-upload-area" id="image-upload-area">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <span><spring:message code="register.chooseImage" /></span>
-                                </div>
-                                <form:input path="image" id="image" type="file" class="file-input" accept="image/jpeg,image/png,image/jpg" />
-                                <div id="image-preview-container" class="image-preview-container" style="display: none;">
-                                    <div class="image-preview-content">
-                                        <div class="image-preview-info">
-                                            <div id="image-preview-name" class="image-preview-name"></div>
-                                            <div id="image-preview-details" class="image-preview-details"></div>
-                                        </div>
-                                        <button type="button" id="remove-image" class="remove-image-btn" aria-label="Eliminar imagen">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                    <div class="form-group">
+                        <label class="form-label"><spring:message code="register.profileImage" /></label>
+                        <div class="image-upload-container">
+                            <div class="image-upload-area" id="image-upload-area">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span><spring:message code="register.chooseImage" /></span>
+                            </div>
+                            <form:input path="image" id="image" type="file" class="file-input" accept="image/jpeg,image/png,image/jpg" />
+                            <div id="image-preview-container" class="image-preview-container" style="display: none;">
+                                <div class="image-preview-content">
+                                    <div class="image-preview-thumbnail">
+                                        <img id="image-preview" src="/placeholder.svg" alt="Vista previa">
                                     </div>
+                                    <div class="image-preview-info">
+                                        <div id="image-preview-name" class="image-preview-name"></div>
+                                        <div id="image-preview-details" class="image-preview-details"></div>
+                                    </div>
+                                    <button type="button" id="remove-image" class="remove-image-btn" aria-label="Eliminar imagen">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
-                                <form:errors path="image" cssClass="error-message" id="image-error" />
                             </div>
-                            <div class="text-muted">
-                                <spring:message code="register.imageRequirements" />
-                            </div>
+                            <form:errors path="image" cssClass="error-message" id="image-error" />
                         </div>
+                        <div class="text-muted">
+                            <spring:message code="register.imageRequirements" />
+                        </div>
+                    </div>
+
 
 
 

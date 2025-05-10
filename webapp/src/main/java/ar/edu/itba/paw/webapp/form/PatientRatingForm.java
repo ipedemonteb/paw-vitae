@@ -17,7 +17,7 @@ public class PatientRatingForm {
     @NotNull
     private Long appointmentId;
 
-    // Getters and Setters
+
     public Integer getRating() {
         return rating;
     }

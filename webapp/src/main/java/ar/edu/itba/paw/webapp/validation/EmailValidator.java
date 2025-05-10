@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class EmailValidator implements ConstraintValidator<EmailExistance, String> {
 
-    private UserService us;
+    private final UserService us;
 
     @Autowired
     public EmailValidator(UserService us) {

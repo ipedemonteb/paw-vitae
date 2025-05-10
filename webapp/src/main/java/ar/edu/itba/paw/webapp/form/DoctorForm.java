@@ -23,12 +23,12 @@ public class DoctorForm {
 
     @NotEmpty
     @Email
-    @EmailExistance
+    @EmailExistance( message = "{email.existance}")
     @Size(max = 100)
     private String email;
 
     @NotEmpty
-    @Size(min = 8, max = 100)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
     private String password;
 
     @NotEmpty

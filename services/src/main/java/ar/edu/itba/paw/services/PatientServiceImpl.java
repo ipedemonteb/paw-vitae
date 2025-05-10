@@ -75,24 +75,4 @@ public class PatientServiceImpl implements PatientService {
             LOGGER.info("User updated successfully: id={}", patient);
         }
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<Patient> getByIdWithAppointments(long id) {
-        Optional<Patient> patient = patientDao.getById(id);
-        patient.ifPresent(c -> c.setAppointments(as.getByPatientId(id)));
-        return patient;
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<Patient> getByResetToken(String token) {
-        return patientDao.getByResetToken(token);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<Patient> getByVerificationToken(String token) {
-        return patientDao.getByVerificationToken(token);
-    }
 }

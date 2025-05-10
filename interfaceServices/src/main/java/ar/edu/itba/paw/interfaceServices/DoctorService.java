@@ -26,7 +26,4 @@ public interface DoctorService {
 
     Page<Doctor> getWithFilters(Long specialtyId, Long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);
 
-    Optional<Doctor> getByResetToken(String token);
-
-    Optional<Doctor> getByVerificationToken(String token);
 }
