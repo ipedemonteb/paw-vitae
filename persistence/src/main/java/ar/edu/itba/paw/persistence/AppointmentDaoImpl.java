@@ -133,7 +133,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
     @Override
     public List<Appointment> getAppointmentsByDate(LocalDate today) {
-        StringBuilder sql = new StringBuilder(BASE_SQL).append("WHERE DATE(a.date) = ? ").append(ORDER_BY_DATE_ASC);
+        StringBuilder sql = new StringBuilder(BASE_SQL).append("WHERE CAST(a.date AS DATE) = ? ").append(ORDER_BY_DATE_ASC);
         return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, today);
     }
 
@@ -179,8 +179,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
     public List<Appointment> getAppointmentsByUserAndDate(long userId, LocalDate date, Integer time) {
         StringBuilder sql = new StringBuilder(BASE_SQL)
                 .append("WHERE (a.doctor_id = ? OR a.client_id = ?) ")
-                .append("AND a.date::date = ? ")
-                .append("AND a.date::time = ? ")
+                .append("AND CAST(a.date AS DATE) = ? ")
+                .append("AND CASt(a.date AS TIME) = ? ")
                 .append(ORDER_BY_DATE_ASC);
 
         return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, userId, userId, Date.valueOf(date), Time.valueOf(LocalTime.of(time, 0)));
