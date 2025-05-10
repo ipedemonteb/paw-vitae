@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,9 +16,9 @@ import java.util.Map;
 @Controller
 public class AppointmentController {
 
-    private AppointmentService as;
-    private DoctorService ds;
-    private AppointmentFileService afs;
+    private final AppointmentService as;
+    private final DoctorService ds;
+    private final AppointmentFileService afs;
 
     @Autowired
     public AppointmentController(AppointmentService as, DoctorService ds, AppointmentFileService afs) {
