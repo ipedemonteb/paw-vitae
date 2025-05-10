@@ -29,7 +29,6 @@ public class AuthController {
     private final SpecialtyService ss;
     private final PatientService ps;
     private final UserService us;
-
     private final AuthService as;
 
     @Autowired
@@ -115,8 +114,11 @@ public class AuthController {
 
     @RequestMapping(value = "/change-password", method = RequestMethod.GET)
     public ModelAndView changePassword(@RequestParam(value = "token", required = false) String token, @ModelAttribute("ChangePasswordForm") ChangePasswordForm ChangePasswordForm) {
-        if (token == null) {
+        if (token == null ){
             return new ModelAndView("redirect:/");
+        }
+        if(!us.verifyRecoveryToken(token)){
+            return new ModelAndView("redirect:/change-password-result?success=false");
         }
         return new ModelAndView("auth/change-password").addObject("token", token);
     }
@@ -144,28 +146,16 @@ public class AuthController {
     }
 
     @RequestMapping("/verify")
-    public ModelAndView verifyAccount(@RequestParam(value = "token", required = false) String token, @ModelAttribute("loggedUser") User user) {
-        if (token == null) {
+    public ModelAndView verifyAccount(@ModelAttribute("loggedUser") User user) {
             return new ModelAndView("auth/verify").addObject("imageId", us.getImageId(user));
-        }
-        boolean success = as.verifyAndLoginUser(token);
-        String value = String.valueOf(success);
-        return new ModelAndView("redirect:/verify?success="+value);
     }
-
-    @RequestMapping("/verify-result")
-    public ModelAndView verifyResult() {
-        return new ModelAndView("auth/verify");
-    }
-
-
     @RequestMapping("/verify-confirmation")
     public ModelAndView verifyConfirmation(@RequestParam(value = "token", required = false) String token) {
         if (token == null) {
             return new ModelAndView("redirect:/");
         }
-        ModelAndView mav = new ModelAndView("auth/verify-confirmation");
-        mav.addObject("token", token);
-        return mav;
+        boolean success = as.verifyAndLoginUser(token);
+        String value = String.valueOf(success);
+        return new ModelAndView("redirect:/verify?success="+value);
     }
 }

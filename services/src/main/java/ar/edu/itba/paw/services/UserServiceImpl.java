@@ -138,20 +138,16 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public boolean changePassword(String token, String password) {
-        if (verifyRecoveryToken(token)) {
-            Optional<? extends User> user = getByResetToken(token);
-            if (user.isPresent()) {
+        Optional<? extends User> user = getByResetToken(token);
+        if (user.isPresent()) {
                 String newPassword = passwordEncoder.encode(password);
                 userDao.changePassword(user.get().getId(), newPassword);
                 userDao.removeResetToken(token);
                 LOGGER.info("Password changed successfully for user id={}", user.get().getId());
                 return true;
-            }
+        }
             LOGGER.warn("User not found for valid token");
             return false;
-        }
-        LOGGER.warn("Password change failed due to invalid token");
-        return false;
     }
 
     @Override
