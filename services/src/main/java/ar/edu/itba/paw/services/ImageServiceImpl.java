@@ -30,7 +30,7 @@ public class ImageServiceImpl implements ImageService {
         if (image.isEmpty()) {
             return null;
         }
-        Images toReturnImage = null;
+        Images toReturnImage;
         try {
             toReturnImage = imageDao.create(image.getBytes());
         } catch (IOException e) {

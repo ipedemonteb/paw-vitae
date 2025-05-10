@@ -59,7 +59,7 @@ import java.util.Properties;
 @PropertySource("classpath:application.properties")
 public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigurer {
 
-    private Environment env;
+    private final Environment env;
 
     @Value("classpath:schema.sql")
     private Resource schemaSql;

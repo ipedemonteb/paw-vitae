@@ -3,7 +3,6 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.CoverageDao;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Doctor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;

@@ -1,32 +1,25 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.SpecialtyDao;
-import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class SpecialtyDaoImpl implements SpecialtyDao {
 
     private final static RowMapper<Specialty> SPECIALTY_MAPPER = (rs, rowNum) -> new Specialty(rs.getLong("id"), rs.getString("key"));
-    private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public SpecialtyDaoImpl(final DataSource ds) {
-        jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("coverages").usingGeneratedKeyColumns("id");
+    public SpecialtyDaoImpl(final DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override
@@ -51,8 +44,6 @@ public class SpecialtyDaoImpl implements SpecialtyDao {
 
     @Override
     public List<Specialty> getByDoctorId(long id) {
-        return jdbcTemplate.query("SELECT * FROM specialties s " +
-                "JOIN doctor_specialties ds ON s.id = ds.specialty_id " +
-                "WHERE ds.doctor_id = ?", SPECIALTY_MAPPER, id);
+        return jdbcTemplate.query("SELECT * FROM specialties s JOIN doctor_specialties ds ON s.id = ds.specialty_id WHERE ds.doctor_id = ?", SPECIALTY_MAPPER, id);
     }
 }

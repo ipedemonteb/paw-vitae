@@ -19,8 +19,8 @@ public class UserDaoImpl implements UserDao {
 
 
     @Autowired
-    public UserDaoImpl(final DataSource ds) {
-        jdbcTemplate = new JdbcTemplate(ds);
+    public UserDaoImpl(final DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
                 .usingGeneratedKeyColumns("id");
@@ -66,7 +66,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public String getLanguageById(long id) {
-        return jdbcTemplate.queryForObject("SELECT language FROM users WHERE id = ?", new Object[]{id}, String.class);
+        return jdbcTemplate.queryForObject("SELECT language FROM users WHERE id = ?", String.class, id);
     }
 
     @Override

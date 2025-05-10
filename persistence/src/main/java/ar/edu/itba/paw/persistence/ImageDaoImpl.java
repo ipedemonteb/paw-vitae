@@ -21,11 +21,11 @@ public class ImageDaoImpl implements ImageDao {
             rs.getLong("id"),
             rs.getBytes("image")
     );
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public ImageDaoImpl(final DataSource ds) {
-        jdbcTemplate = new JdbcTemplate(ds);
+    public ImageDaoImpl(final DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsertImage = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("images")
                 .usingColumns("image")
