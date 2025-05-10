@@ -162,7 +162,7 @@
                             <option value="today" ${selectedDateRange == 'today' ? 'selected' : ''}><spring:message code="dashboard.filter.today" /></option>
                             <option value="week" ${selectedDateRange == 'week' ? 'selected' : ''}><spring:message code="dashboard.filter.thisWeek" /></option>
                             <option value="month" ${selectedDateRange == 'month' ? 'selected' : ''}><spring:message code="dashboard.filter.thisMonth" /></option>
-                            <option value="all" ${selectedDateRange == 'all' ? 'selected' : ''}><spring:message code="dashboard.filter.all" /></option>
+                            <option value="all" ${selectedDateRange == null || selectedDateRange == 'all' ? 'selected' : ''}><spring:message code="dashboard.filter.all" /></option>
                         </select>
                     </div>
                 </div>

@@ -29,19 +29,19 @@ public class PatientForm {
     private String email;
 
     @NotEmpty
-    @Size(min = 8, max = 100)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
     private String password;
 
     @NotEmpty
-    @Size(min = 8, max = 100)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
     private String repeatPassword;
 
     @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")
     private String phone;
     @Coverage(message = "{coverage.invalid}")
-    @NotEmpty
-    private String coverage;
+    @NotNull
+    private Long coverage;
 
 
 
@@ -94,14 +94,12 @@ public class PatientForm {
         this.phone = phone;
     }
 
-    public String getCoverage() {
+    public Long getCoverage() {
         return coverage;
     }
 
-    public void setCoverage(String coverage) {
+    public void setCoverage(Long coverage) {
         this.coverage = coverage;
     }
-
-
 }
 

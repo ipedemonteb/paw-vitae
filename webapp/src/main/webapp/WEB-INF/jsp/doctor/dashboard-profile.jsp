@@ -235,34 +235,35 @@
 
                     <form:form id="updateDoctorForm" modelAttribute="updateDoctorForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/update" cssClass="edit-profile-form" enctype="multipart/form-data">
                         <!-- Imagen de perfil -->
-                        <div class="form-group">
-                            <label class="form-label"><spring:message code="register.profileImage" /></label>
-                            <div class="image-upload-container">
-                                <div class="image-upload-area" id="image-upload-area">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <span><spring:message code="register.chooseImage" /></span>
-                                </div>
-                                <form:input path="image" id="image" type="file" class="file-input" accept="image/jpeg,image/png,image/jpg" />
-                                <div id="image-preview-container" class="image-preview-container" style="display: none;">
-                                    <div class="image-preview-content">
-                                        <div class="image-preview-thumbnail">
-                                            <img id="image-preview" src="/placeholder.svg" alt="Vista previa">
-                                        </div>
-                                        <div class="image-preview-info">
-                                            <div id="image-preview-name" class="image-preview-name"></div>
-                                            <div id="image-preview-details" class="image-preview-details"></div>
-                                        </div>
-                                        <button type="button" id="remove-image" class="remove-image-btn" aria-label="Eliminar imagen">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                    <div class="form-group">
+                        <label class="form-label"><spring:message code="register.profileImage" /></label>
+                        <div class="image-upload-container">
+                            <div class="image-upload-area" id="image-upload-area">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span><spring:message code="register.chooseImage" /></span>
+                            </div>
+                            <form:input path="image" id="image" type="file" class="file-input" accept="image/jpeg,image/png,image/jpg" />
+                            <div id="image-preview-container" class="image-preview-container" style="display: none;">
+                                <div class="image-preview-content">
+                                    <div class="image-preview-thumbnail">
+                                        <img id="image-preview" src="/placeholder.svg" alt="Vista previa">
                                     </div>
+                                    <div class="image-preview-info">
+                                        <div id="image-preview-name" class="image-preview-name"></div>
+                                        <div id="image-preview-details" class="image-preview-details"></div>
+                                    </div>
+                                    <button type="button" id="remove-image" class="remove-image-btn" aria-label="Eliminar imagen">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
-                                <form:errors path="image" cssClass="error-message" id="image-error" />
                             </div>
-                            <div class="text-muted">
-                                <spring:message code="register.imageRequirements" />
-                            </div>
+                            <form:errors path="image" cssClass="error-message" id="image-error" />
                         </div>
+                        <div class="text-muted">
+                            <spring:message code="register.imageRequirements" />
+                        </div>
+                    </div>
+
 
 
 
@@ -310,10 +311,11 @@
                                         </div>
                                     </c:forEach>
                                 </div>
-                                <!-- Hidden input field for selected coverages -->
-                                <form:input path="coverages" id="coverages-input" cssClass="form-control" style="display: none;" />
+                                <form:hidden path="coverages" id="coverages-input" />
                             </div>
-                            <form:errors path="coverages" cssClass="error-message" />
+                            <div class="error-container">
+                                <form:errors path="coverages" cssClass="error-message" element="div" />
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -328,12 +330,11 @@
                             </div>
                             <div class="multi-select-container" id="specialties-container">
                                 <div class="custom-multi-select" id="specialties-options">
-
                                     <c:forEach items="${specialtyList}" var="specialty">
                                         <div class="custom-multi-select-option"
                                              data-value="${specialty.id}"
                                              data-name='<spring:message code="${specialty.key}" />'
-                                             Onclick=toggleSpecialty(this)>
+                                             onclick="toggleSpecialty(this)">
                                             <div class="option-checkbox"></div>
                                             <div class="option-text">
                                                 <spring:message code="${specialty.key}" />
@@ -341,10 +342,11 @@
                                         </div>
                                     </c:forEach>
                                 </div>
-                                <!-- Hidden input field for selected coverages -->
-                                <form:input path="specialties" id="specialties-input" cssClass="form-control" style="display: none;" />
+                                <form:hidden path="specialties" id="specialties-input" />
                             </div>
-                            <form:errors path="specialties" cssClass="error-message" />
+                            <div class="error-container">
+                                <form:errors path="specialties" cssClass="error-message" element="div" />
+                            </div>
                         </div>
 
                         <div class="form-actions">
@@ -393,7 +395,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Edit Profile Functionality
         const editProfileBtn = document.getElementById('edit-profile-btn');
         const cancelEditBtn = document.getElementById('cancel-edit-btn');
         const profileView = document.getElementById('profile-view');
@@ -422,34 +423,23 @@
             });
         }
 
-        // Initialize coverages dropdown
         initCoveragesDropdown();
 
-        // Pre-select the current coverages
         preSelectCurrentCoverages();
 
-        // Initialize specialties dropdown
         initSpecialtiesDropdown();
-
-        // Pre-select the current specialties
         preSelectCurrentSpecialties();
 
     });
 
-    // Funciones para el manejo de coverages
     function initCoveragesDropdown() {
         const coverageOptions = document.querySelectorAll('#coverages-options .custom-multi-select-option');
         const coveragesInput = document.getElementById('coverages-input');
-
-        // Set initial values from the input
         updateSelectedCoverages();
     }
 
     function toggleCoverage(optionElement) {
-        // Toggle selection state
         optionElement.classList.toggle('selected');
-
-        // Update the hidden input with all selected coverage IDs
         updateSelectedCoverages();
     }
 
@@ -458,13 +448,22 @@
         const coveragesInput = document.getElementById('coverages-input');
         const selectedCoveragesDisplay = document.getElementById('selected-coverages-display');
 
+        // Remove any existing hidden inputs for coverages
+        document.querySelectorAll('input[name^="coverages["]').forEach(el => el.remove());
+
         // Create an array of selected coverage IDs
         const selectedIds = Array.from(selectedOptions).map(option => option.getAttribute('data-value'));
 
-        // Update the hidden input value with comma-separated IDs
-        coveragesInput.value = selectedIds.join(',');
+        selectedIds.forEach((id, index) => {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'coverages[' + index + ']';
+            hiddenInput.value = id;
+            document.getElementById('updateDoctorForm').appendChild(hiddenInput);
+        });
 
-        // Update the display of selected coverages
+        coveragesInput.value = '';
+
         const selectedNames = Array.from(selectedOptions).map(option => option.getAttribute('data-name'));
         selectedCoveragesDisplay.innerHTML = selectedNames.length > 0
             ? selectedNames.join(', ')
@@ -472,11 +471,10 @@
     }
 
     function preSelectCurrentCoverages() {
-        // Get the current doctor's coverages from the display
+
         const currentCoverages = document.querySelectorAll('.coverages-list .coverage-item');
         const coverageNames = Array.from(currentCoverages).map(item => item.textContent.trim());
 
-        // Find and select matching options in the dropdown
         const options = document.querySelectorAll('#coverages-options .custom-multi-select-option');
 
         options.forEach(option => {
@@ -485,25 +483,17 @@
                 option.classList.add('selected');
             }
         });
-
-        // Update the hidden input
         updateSelectedCoverages();
     }
 
-    // Funciones para el manejo de specialties
     function initSpecialtiesDropdown() {
         const specialtyOptions = document.querySelectorAll('#specialties-options .custom-multi-select-option');
         const specialtiesInput = document.getElementById('specialties-input');
-
-        // Set initial values from the input
         updateSelectedSpecialties();
     }
 
     function toggleSpecialty(optionElement) {
-        // Toggle selection state
         optionElement.classList.toggle('selected');
-
-        // Update the hidden input with all selected specialty IDs
         updateSelectedSpecialties();
     }
 
@@ -511,14 +501,19 @@
         const selectedOptions = document.querySelectorAll('#specialties-options .custom-multi-select-option.selected');
         const specialtiesInput = document.getElementById('specialties-input');
         const selectedSpecialtiesDisplay = document.getElementById('selected-specialties-display');
-
-        // Create an array of selected specialty IDs
+        document.querySelectorAll('input[name^="specialties["]').forEach(el => el.remove());
         const selectedIds = Array.from(selectedOptions).map(option => option.getAttribute('data-value'));
+        selectedIds.forEach((id, index) => {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'specialties[' + index + ']';
+            hiddenInput.value = id;
+            document.getElementById('updateDoctorForm').appendChild(hiddenInput);
+        });
 
-        // Update the hidden input value with comma-separated IDs
-        specialtiesInput.value = selectedIds.join(',');
 
-        // Update the display of selected specialties
+        specialtiesInput.value = '';
+
         const selectedNames = Array.from(selectedOptions).map(option => option.getAttribute('data-name'));
         selectedSpecialtiesDisplay.innerHTML = selectedNames.length > 0
             ? selectedNames.join(', ')
@@ -533,30 +528,21 @@
             const headerHeight = fixedHeader.offsetHeight;
             mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
         };
-
-        // Adjust on page load
         adjustContentMargin();
-
-        // Adjust on window resize
         window.addEventListener("resize", adjustContentMargin);
     }
 
     function preSelectCurrentSpecialties() {
-        // Get the current doctor's specialties from the display
         const currentSpecialties = document.querySelectorAll('.specialties-list .specialty-item');
         const specialtyNames = Array.from(currentSpecialties).map(item => item.textContent.trim());
 
-        // Find and select matching options in the dropdown
         const options = document.querySelectorAll('#specialties-options .custom-multi-select-option');
-
         options.forEach(option => {
             const name = option.getAttribute('data-name');
             if (specialtyNames.includes(name)) {
                 option.classList.add('selected');
             }
         });
-
-        // Update the hidden input
         updateSelectedSpecialties();
     }
 </script>

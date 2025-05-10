@@ -23,12 +23,12 @@ public class DoctorForm {
 
     @NotEmpty
     @Email
-    @EmailExistance
+    @EmailExistance( message = "{email.existance}")
     @Size(max = 100)
     private String email;
 
     @NotEmpty
-    @Size(min = 8, max = 100)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
     private String password;
 
     @NotEmpty
@@ -40,10 +40,10 @@ public class DoctorForm {
     private String phone;
     @SpecialtyList(message = "{specialties.invalids}")
     @NotEmpty
-    private List<String> specialties;
+    private List<Long> specialties;
     @CoverageList(message = "{coverages.invalids}")
     @NotEmpty
-    private List<String> coverages;
+    private List<Long> coverages;
     @FileType(types = {"image/jpeg", "image/png", "image/jpg"},message = "{fileType.invalid}")
     @FileSize(max = 2097154) // 2MB
     private MultipartFile image;
@@ -102,19 +102,19 @@ public class DoctorForm {
         this.phone = phone;
     }
 
-    public List<String> getSpecialties() {
+    public List<Long> getSpecialties() {
         return specialties;
     }
 
-    public void setSpecialties(List<String> specialties) {
+    public void setSpecialties(List<Long> specialties) {
         this.specialties = specialties;
     }
 
-    public List<String> getCoverages() {
+    public List<Long> getCoverages() {
         return coverages;
     }
 
-    public void setCoverages(List<String> coverages) {
+    public void setCoverages(List<Long> coverages) {
         this.coverages = coverages;
     }
 
