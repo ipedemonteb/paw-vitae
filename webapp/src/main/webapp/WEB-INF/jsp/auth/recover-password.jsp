@@ -133,33 +133,9 @@
                 validateEmail(this);
                 updateButtonState();
             });
-
-            emailField.addEventListener("blur", function() {
-                validateEmail(this);
-                updateButtonState();
-            });
         }
 
-        function validateEmail(field) {
-            if (!field) return false;
 
-            const email = field.value;
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if (!email && field.hasAttribute("required")) {
-                setFieldError(field, emailValidationMessage, window.messages?.fieldRequired || "Email is required");
-                return false;
-            } else if (email && !emailPattern.test(email)) {
-                setFieldError(field, emailValidationMessage, window.messages?.emailInvalid || "Please enter a valid email address");
-                return false;
-            } else if (email) {
-                setFieldValid(field, emailValidationMessage);
-                return true;
-            } else {
-                clearFieldValidation(field, emailValidationMessage);
-                return true;
-            }
-        }
 
         function setFieldError(field, errorElement, message) {
             if (!field) return;
@@ -215,6 +191,26 @@
             updateButtonState();
         }
     });
+    function validateEmail(field) {
+        if (!field) return false;
+
+        const email = field.value;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!email && field.hasAttribute("required")) {
+            setFieldError(field, emailValidationMessage, window.messages?.fieldRequired || "Email is required");
+            return false;
+        } else if (email && !emailPattern.test(email)) {
+            setFieldError(field, emailValidationMessage, window.messages?.emailInvalid || "Please enter a valid email address");
+            return false;
+        } else if (email) {
+            setFieldValid(field, emailValidationMessage);
+            return true;
+        } else {
+            clearFieldValidation(field, emailValidationMessage);
+            return true;
+        }
+    }
 </script>
 </body>
 </html>

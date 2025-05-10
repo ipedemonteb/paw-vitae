@@ -228,18 +228,21 @@
         }
 
         function validatePasswordRequirements(password) {
-            // Verifica si la contraseña tiene al menos 8 caracteres
+            // Check if password has at least 8 characters
             const hasLength = password && password.length >= 8;
+            // Check if password has at least one uppercase letter
+            const hasUppercase = /[A-Z]/.test(password);
 
             if (password) {
-                if (hasLength) {
+                if (hasLength && hasUppercase ) {
                     setFieldValid(passwordField, passwordLengthMessage);
                     return true;
                 } else {
+                    let errorMessage = window.messages.passwordInvalid;
                     setFieldError(
                         passwordField,
                         passwordLengthMessage,
-                        window.messages?.passwordInvalid || "La contraseña debe tener al menos 8 caracteres"
+                        window.messages?.passwordInvalid || errorMessage
                     );
                     return false;
                 }
