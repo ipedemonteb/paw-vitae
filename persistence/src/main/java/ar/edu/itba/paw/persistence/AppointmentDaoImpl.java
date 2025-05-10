@@ -83,28 +83,6 @@ public class AppointmentDaoImpl implements AppointmentDao {
     }
 
     @Override
-    public List<Appointment> getByPatientId(long patientId) {
-        StringBuilder sql = new StringBuilder(BASE_SQL)
-                .append("WHERE a.client_id = ? ")
-                .append(ORDER_BY_DATE_ASC);
-
-        return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, patientId);
-    }
-
-    @Override
-    public List<Appointment> getByDoctorId(long doctorId) {
-        LocalDate today = LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"));
-        LocalDate endOfNextMonth = today.plusMonths(1).withDayOfMonth(today.plusMonths(1).lengthOfMonth()).plusDays(1);
-        StringBuilder sql = new StringBuilder(BASE_SQL)
-                .append("WHERE a.doctor_id = ? ")
-                .append("AND a.status != 'cancelado' ")
-                .append("AND a.date BETWEEN ? AND ? ")
-                .append(ORDER_BY_DATE_ASC);
-
-        return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, doctorId, today, endOfNextMonth);
-    }
-
-    @Override
     public void cancelAppointment(long appointmentId) {
         jdbcTemplate.update("UPDATE Appointments SET status = ? WHERE id = ?", AppointmentStatus.CANCELADO.getValue(), appointmentId);
     }
@@ -184,5 +162,16 @@ public class AppointmentDaoImpl implements AppointmentDao {
                 .append(ORDER_BY_DATE_ASC);
 
         return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, userId, userId, Date.valueOf(date), Time.valueOf(LocalTime.of(time, 0)));
+    }
+
+    @Override
+    public List<Appointment> getFutureAppointmentsByUser(long userId) {
+        StringBuilder sql = new StringBuilder(BASE_SQL)
+                .append("WHERE (a.doctor_id = ? OR a.client_id = ?) ")
+                .append("AND a.date > NOW() ")
+                .append("AND a.status <> 'cancelado' ")
+                .append(ORDER_BY_DATE_ASC);
+
+        return jdbcTemplate.query(sql.toString(), APPOINTMENT_ROW_MAPPER, userId, userId);
     }
 }

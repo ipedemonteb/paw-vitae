@@ -10,6 +10,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class AppointmentController {
@@ -35,8 +38,10 @@ public class AppointmentController {
         appointmentForm.setPatientId(patient.getId());
         appointmentForm.setDoctorId(doctorId);
         ModelAndView mav = new ModelAndView("appointment/appointment");
-        Doctor doctor = ds.getByIdWithAppointments(doctorId).orElseThrow(IllegalArgumentException::new);
+        Doctor doctor = ds.getById(doctorId).orElseThrow(IllegalArgumentException::new);
+        Map<LocalDate, List<Integer>> appointmentsByDate = as.getFutureAppointmentsByUserAndDate(doctorId);
         mav.addObject("doctor", doctor);
+        mav.addObject("appointmentsByDate", appointmentsByDate);
         return mav;
     }
 

@@ -12,10 +12,6 @@ public interface AppointmentDao {
 
     Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty);
 
-    List<Appointment> getByPatientId(long patientId);
-
-    List<Appointment> getByDoctorId(long doctorId);
-
     void cancelAppointment(long appointmentId);
 
     void completeAppointments();
@@ -27,6 +23,8 @@ public interface AppointmentDao {
     List<Appointment> getAppointmentsByUserAndDate(long userId, LocalDate date, Integer time);
 
     List<Appointment> getAppointmentsByDate(LocalDate today);
+
+    List<Appointment> getFutureAppointmentsByUser(long userId); //Needs no pagination, we limit how far in advance one can schedule appointments.
 
     int countAppointments(long userId, boolean isFuture, String filter);
 
