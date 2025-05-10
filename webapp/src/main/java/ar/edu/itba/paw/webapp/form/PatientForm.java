@@ -40,8 +40,8 @@ public class PatientForm {
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")
     private String phone;
     @Coverage(message = "{coverage.invalid}")
-    @NotEmpty
-    private String coverage;
+    @NotNull
+    private Long coverage;
 
 
 
@@ -94,14 +94,12 @@ public class PatientForm {
         this.phone = phone;
     }
 
-    public String getCoverage() {
+    public Long getCoverage() {
         return coverage;
     }
 
-    public void setCoverage(String coverage) {
+    public void setCoverage(Long coverage) {
         this.coverage = coverage;
     }
-
-
 }
 
