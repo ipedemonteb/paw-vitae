@@ -52,9 +52,7 @@ public class PatientDaoTest {
 
     @Before
     public void setUp() {
-        UserDao userDao = mock(UserDao.class);
-        CoverageDao coverageDao = mock(CoverageDao.class);
-        this.patientDao = new PatientDaoImpl(ds, userDao, coverageDao);
+        this.patientDao = new PatientDaoImpl(ds);
         this.jdbcTemplate = new JdbcTemplate(ds);
     }
 

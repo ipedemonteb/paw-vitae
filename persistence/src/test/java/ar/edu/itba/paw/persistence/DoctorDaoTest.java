@@ -58,10 +58,7 @@ public class DoctorDaoTest {
     @Before
     public void setUp() {
         this.jdbcTemplate = new JdbcTemplate(ds);
-        this.userDao = mock(UserDao.class);
-        when(userDao.create(anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
-                .thenReturn(6L);
-        this.doctorDao = new DoctorDaoImpl(ds, userDao);
+        this.doctorDao = new DoctorDaoImpl(ds);
     }
 
     @Test
