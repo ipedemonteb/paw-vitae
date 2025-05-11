@@ -117,14 +117,14 @@ public class AppointmentDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, APPOINTMENT_TABLE);
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
-                "client_id", PAT_ID,
+                "patient_id", PAT_ID,
                 "specialty_id", 1L,
                 "date", LocalDateTime.now().minusDays(2),
                 "status", "confirmado"
         ));
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
-                "client_id", PAT_ID,
+                "patient_id", PAT_ID,
                 "specialty_id", 1L,
                 "date", LocalDateTime.now().minusDays(2),
                 "status", "confirmado"
@@ -172,14 +172,14 @@ public class AppointmentDaoTest {
         String status = "confirmado";
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
-                "client_id", PAT_ID,
+                "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
                 "date", LocalDateTime.now().plusDays(6),
                 "status", status
         ));
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
-                "client_id", PAT_ID,
+                "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
                 "date", LocalDateTime.now().plusDays(8),
                 "status", status
@@ -261,14 +261,14 @@ public class AppointmentDaoTest {
         String status = "confirmado";
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
-                "client_id", PAT_ID,
+                "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
                 "date", LocalDateTime.now().plusDays(6),
                 "status", status
         ));
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
-                "client_id", PAT_ID,
+                "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
                 "date", LocalDateTime.now().plusDays(8),
                 "status", status

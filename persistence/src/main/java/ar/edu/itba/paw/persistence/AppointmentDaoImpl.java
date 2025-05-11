@@ -22,7 +22,7 @@ import java.util.*;
 @Repository
 public class AppointmentDaoImpl implements AppointmentDao {
 
-    private static final String BASE_SQL = "SELECT a.id, a.date, a.status, a.reason, a.report, s.id AS specialty_id, s.key AS specialty_key, d.doctor_id, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, p.client_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, c.id AS coverage_id, c.coverage_name, pu.is_verified AS patient_verified, u.is_verified AS doctor_verified FROM Appointments a JOIN Specialties s ON a.specialty_id = s.id JOIN Doctors d ON a.doctor_id = d.doctor_id JOIN Users u ON d.doctor_id = u.id JOIN Clients p ON a.client_id = p.client_id JOIN Users pu ON p.client_id = pu.id LEFT JOIN Coverages c ON p.coverage_id = c.id ";
+    private static final String BASE_SQL = "SELECT a.id, a.date, a.status, a.reason, a.report, s.id AS specialty_id, s.key AS specialty_key, d.doctor_id, d.rating AS rating, d.rating_count AS rating_count,d.image_id AS image_id, u.name AS doctor_name, u.last_name AS doctor_last_name, u.email AS doctor_email, u.password AS doctor_password, u.phone AS doctor_phone, u.language AS doctor_language, p.patient_id AS patient_id, pu.name AS patient_name, pu.last_name AS patient_last_name, pu.email AS patient_email, pu.password AS patient_password, pu.phone AS patient_phone, pu.language AS patient_language, c.id AS coverage_id, c.coverage_name, pu.is_verified AS patient_verified, u.is_verified AS doctor_verified FROM Appointments a JOIN Specialties s ON a.specialty_id = s.id JOIN Doctors d ON a.doctor_id = d.doctor_id JOIN Users u ON d.doctor_id = u.id JOIN patients p ON a.patient_id = p.patient_id JOIN Users pu ON p.patient_id = pu.id LEFT JOIN Coverages c ON p.coverage_id = c.id ";
 
     private static final String ORDER_BY_DATE_ASC = "ORDER BY a.date ASC ";
     private static final String ORDER_BY_DATE_DESC = "ORDER BY a.date DESC ";
@@ -40,14 +40,14 @@ public class AppointmentDaoImpl implements AppointmentDao {
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("appointments")
-                .usingColumns("client_id", "doctor_id", "date", "reason", "specialty_id", "report")
+                .usingColumns("patient_id", "doctor_id", "date", "reason", "specialty_id", "report")
                 .usingGeneratedKeyColumns("id");
     }
 
     @Override
     public Appointment create(long patientId, long doctorId, LocalDateTime startDate, String reason, Specialty specialty) {
         final Map<String, Object> args = new HashMap<>();
-        args.put("client_id", patientId);
+        args.put("patient_id", patientId);
         args.put("doctor_id", doctorId);
         args.put("date", java.sql.Timestamp.valueOf(startDate));
         args.put("reason", reason);
@@ -118,23 +118,23 @@ public class AppointmentDaoImpl implements AppointmentDao {
 
         return switch (dateRange) {
             case "today" ->
-                    "WHERE (a.doctor_id = ? OR a.client_id = ?) AND DATE(a.date) = CURRENT_DATE AND a.status <> 'cancelado' AND a.date > NOW() ";
+                    "WHERE (a.doctor_id = ? OR a.patient_id = ?) AND DATE(a.date) = CURRENT_DATE AND a.status <> 'cancelado' AND a.date > NOW() ";
             case "week" ->
-                    "WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date BETWEEN NOW() AND NOW() + INTERVAL '7 DAYS' AND a.status <> 'cancelado' ";
+                    "WHERE (a.doctor_id = ? OR a.patient_id = ?) AND a.date BETWEEN NOW() AND NOW() + INTERVAL '7 DAYS' AND a.status <> 'cancelado' ";
             case "month" ->
-                   "WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date BETWEEN NOW() AND NOW() + INTERVAL '1 MONTH' AND a.status <> 'cancelado' ";
+                   "WHERE (a.doctor_id = ? OR a.patient_id = ?) AND a.date BETWEEN NOW() AND NOW() + INTERVAL '1 MONTH' AND a.status <> 'cancelado' ";
             default ->
-                    "WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.date > NOW() AND a.status <> 'cancelado' ";
+                    "WHERE (a.doctor_id = ? OR a.patient_id = ?) AND a.date > NOW() AND a.status <> 'cancelado' ";
         };
     }
 
     private String buildStatusCondition(String status) {
         return switch (status) {
             case "completed" ->
-                    "WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'completo' AND a.date < NOW() ";
+                    "WHERE (a.doctor_id = ? OR a.patient_id = ?) AND a.status = 'completo' AND a.date < NOW() ";
             case "cancelled" ->
-                    "WHERE (a.doctor_id = ? OR a.client_id = ?) AND a.status = 'cancelado' ";
-            default -> "WHERE (a.doctor_id = ? OR a.client_id = ?) AND (a.date < NOW() OR a.status = 'cancelado')";
+                    "WHERE (a.doctor_id = ? OR a.patient_id = ?) AND a.status = 'cancelado' ";
+            default -> "WHERE (a.doctor_id = ? OR a.patient_id = ?) AND (a.date < NOW() OR a.status = 'cancelado')";
 
         };
     }
@@ -142,7 +142,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public List<Appointment> getAppointmentsByUserAndDate(long userId, LocalDate date, Integer time) {
         StringBuilder sql = new StringBuilder(BASE_SQL)
-                .append("WHERE (a.doctor_id = ? OR a.client_id = ?) ")
+                .append("WHERE (a.doctor_id = ? OR a.patient_id = ?) ")
                 .append("AND CAST(a.date AS DATE) = ? ")
                 .append("AND CASt(a.date AS TIME) = ? ")
                 .append(ORDER_BY_DATE_ASC);
@@ -153,7 +153,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
     @Override
     public List<Appointment> getFutureAppointmentsByUser(long userId) {
         StringBuilder sql = new StringBuilder(BASE_SQL)
-                .append("WHERE (a.doctor_id = ? OR a.client_id = ?) ")
+                .append("WHERE (a.doctor_id = ? OR a.patient_id = ?) ")
                 .append("AND a.date > NOW() ")
                 .append("AND a.status <> 'cancelado' ")
                 .append(ORDER_BY_DATE_ASC);

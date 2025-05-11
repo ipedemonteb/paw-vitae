@@ -9,7 +9,7 @@ VALUES (1, 'John', 'Doe', 'john@example.com', 'hashedpassword', '123456789', 'en
 INSERT INTO Coverages (id, coverage_name)
 VALUES (1, 'Coverage A'), (2, 'Coverage B');
 
-INSERT INTO Clients (client_id, coverage_id)
+INSERT INTO patients (patient_id, coverage_id)
 VALUES (1, 1),
        (3, 2);
 
@@ -48,7 +48,7 @@ VALUES (2, 0, '09:00:00', '12:00:00'),
        (5, 0, '09:00:00', '12:00:00'),
        (5, 1, '09:00:00', '12:00:00');
 
-INSERT INTO Appointments (id, doctor_id, client_id, specialty_id, date, status, reason)
+INSERT INTO Appointments (id, doctor_id, patient_id, specialty_id, date, status, reason)
 VALUES (1, 2, 1, 1, '2025-04-29 10:00:00', 'confirmado', 'Consulta general'),
        (2, 2, 1, 1, '2025-04-30 10:00:00', 'confirmado', 'Consulta particluar'),
        (3, 4, 3, 2, '2025-04-30 10:00:00', 'confirmado', 'Consulta'),
@@ -63,7 +63,7 @@ VALUES (1, 2, 1, 1, '2025-04-29 10:00:00', 'confirmado', 'Consulta general'),
 INSERT INTO Images (id, image)
 VALUES (1, X'0102030405');
 
-INSERT INTO Ratings (id, doctor_id, client_id, appointment_id, rating, comment)
+INSERT INTO Ratings (id, doctor_id, patient_id, appointment_id, rating, comment)
 VALUES (1, 2, 1, 1, 5, 'Excelente atención'),
        (2, 4, 3, 3, 5, 'Buena atención'),
        (3, 4, 3, 4, 4, 'Atención regular'),
