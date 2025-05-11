@@ -53,11 +53,6 @@ public class RatingServiceImplTest {
     @Test
     public void testCreateRating() {
         //Preconditions
-        long SCORE = 5L;
-        long DOCTOR_ID = 1L;
-        long PATIENT_ID = 1L;
-        long APPOINTMENT_ID = 1L;
-        String COMMENT = "Great doctor!";
         when(ratingDao.create(anyLong(), anyLong(), anyLong(), anyLong(), anyString())).thenReturn(new Rating(1L, SCORE, DOCTOR_ID, PATIENT_ID, APPOINTMENT_ID, COMMENT));
         when(doctorService.getById(anyLong())).thenReturn(Optional.of(mock(Doctor.class)));
         when(patientService.getById(anyLong())).thenReturn(Optional.of(mock(Patient.class)));

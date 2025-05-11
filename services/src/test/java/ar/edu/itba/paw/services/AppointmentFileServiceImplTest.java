@@ -1,107 +1,235 @@
-//package ar.edu.itba.paw.services;
-//
-//import ar.edu.itba.paw.interfacePersistence.AppointmentFileDao;
-//import ar.edu.itba.paw.interfaceServices.AppointmentService;
-//import ar.edu.itba.paw.models.*;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.MockitoJUnitRunner;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import java.io.IOException;
-//import java.util.LinkedList;
-//import java.util.List;
-//import java.util.Optional;
-//
-//import static org.junit.Assert.*;
-//import static org.mockito.Mockito.mock;
-//import static org.mockito.Mockito.when;
-//
-//@RunWith(MockitoJUnitRunner.class)
-//public class AppointmentFileServiceImplTest {
-//
-//    @Mock
-//    private AppointmentFileDao appointmentFileDao;
-//
-//    @Mock
-//    private AppointmentService appointmentService;
-//
-//    @InjectMocks
-//    private AppointmentFileServiceImpl appointmentFileService;
-//
-//
-//    @Test
-//    public void testCreateAppointmentFile() throws IOException {
-//        //Preconditions
-//        MultipartFile file = mock(MultipartFile.class);
-//        byte[] data = new byte[]{1, 2, 3};
-//        AppointmentFile expectedFile = mock(AppointmentFile.class);
-//        List<AppointmentFile> result = new LinkedList<>();
-//        when(file.isEmpty()).thenReturn(false);
-//        when(file.getOriginalFilename()).thenReturn("file1.txt");
-//        when(file.getBytes()).thenReturn(data);
-//        when(appointmentFileDao.create("file1.txt", data, "uploader_role", 1L)).thenReturn(expectedFile);
-//        MultipartFile[] files = new MultipartFile[]{file};
-//
-//        //Exercise
-//        try {
-//            result = appointmentFileService.create(files, "uploader_role", 1L);
-//        } catch (Exception e) {
-//            fail("Unexpected error during creation of image: " + e.getMessage());
-//        }
-//
-//        //Postconditions
-//        assertFalse(result.isEmpty());
-//        assertEquals(expectedFile, result.getFirst());
-//    }
-//
-//    @Test
-//    public void testGetAuthorizedFile() {
-//        //Preconditions
-//        long fileId = 1L;
-//        long appointmentId = 2L;
-//        String username = "doctor@example.com";
-//        AppointmentFile mockFile = mock(AppointmentFile.class);
-//        when(mockFile.getAppointment_id()).thenReturn(appointmentId);
-//        Appointment mockAppointment = mock(Appointment.class);
-//        Doctor mockDoctor = mock(Doctor.class);
-//        when(mockDoctor.getEmail()).thenReturn(username);
-//        when(mockAppointment.getDoctor()).thenReturn(mockDoctor);
-//        when(appointmentFileDao.getById(fileId)).thenReturn(Optional.of(mockFile));
-//        when(appointmentService.getById(appointmentId)).thenReturn(Optional.of(mockAppointment));
-//
-//        //Exercise
-//        Optional<AppointmentFile> result = appointmentFileService.getAuthorizedFile(fileId, appointmentId, username);
-//
-//        //Postconditions
-//        assertTrue(result.isPresent());
-//        assertEquals(mockFile, result.get());
-//    }
-//
-//    @Test
-//    public void testGetAuthorizedFileFalse() {
-//        //Preconditions
-//        long fileId = 1L;
-//        long appointmentId = 2L;
-//        String unauthorizedUsername = "another@example.com";
-//        AppointmentFile mockFile = mock(AppointmentFile.class);
-//        when(mockFile.getAppointment_id()).thenReturn(appointmentId);
-//        Appointment mockAppointment = mock(Appointment.class);
-//        Doctor mockDoctor = mock(Doctor.class);
-//        Patient mockPatient = mock(Patient.class);
-//        when(mockDoctor.getEmail()).thenReturn("doctor@example.com");
-//        when(mockPatient.getEmail()).thenReturn("patient@example.com");
-//        when(mockAppointment.getDoctor()).thenReturn(mockDoctor);
-//        when(mockAppointment.getPatient()).thenReturn(mockPatient);
-//        when(appointmentFileDao.getById(fileId)).thenReturn(Optional.of(mockFile));
-//        when(appointmentService.getById(appointmentId)).thenReturn(Optional.of(mockAppointment));
-//
-//        //Exercise
-//        Optional<AppointmentFile> result = appointmentFileService.getAuthorizedFile(fileId, appointmentId, unauthorizedUsername);
-//
-//        //Postconditions
-//        assertTrue(result.isEmpty());
-//    }
-//}
+package ar.edu.itba.paw.services;
+
+import ar.edu.itba.paw.interfacePersistence.AppointmentFileDao;
+import ar.edu.itba.paw.interfaceServices.AppointmentService;
+import ar.edu.itba.paw.interfaceServices.MailService;
+import ar.edu.itba.paw.models.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
+public class AppointmentFileServiceImplTest {
+
+    private static final String UPLOADER = "doctor";
+    private static final long APPOINTMENT_ID = 1L;
+    private static final long FILE_ID = 1L;
+    private static final String USERNAME = "test@test.com";
+    private static final AppointmentFile APPOINTMENT_FILE = new AppointmentFile(
+            "testFile",
+            new byte[]{1, 2, 3},
+            FILE_ID,
+            "doctor",
+            APPOINTMENT_ID
+    );
+    private static final Appointment APPOINTMENT = new Appointment(
+            LocalDateTime.now(),
+            "Confirmado",
+            "Consulta",
+            APPOINTMENT_ID,
+            new Specialty(3L, "Cardiology"),
+            new Doctor("John", 2L, "Doe", "john@test.com", "hashedpassword", "123456789", "es",
+                    1L, true),
+            new Patient("Jane", 1L, "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
+                    new Coverage(1L, "OSDE"), true),
+            "Report"
+    );
+
+
+    @Mock
+    private AppointmentFileDao appointmentFileDao;
+
+    @Mock
+    private AppointmentService appointmentService;
+
+    @Mock
+    private MailService mailService;
+
+    @InjectMocks
+    private AppointmentFileServiceImpl appointmentFileService;
+
+    @Test
+    public void testCreateAppointmentFileEmptyLength() {
+        //Preconditions
+        MultipartFile[] file = new MultipartFile[0];
+
+        //Exercise
+        List<AppointmentFile> appointmentFiles = appointmentFileService.create(file, UPLOADER, APPOINTMENT_ID);
+
+        //Postconditions
+        assertNull(appointmentFiles);
+    }
+
+    @Test
+    public void testCreateAppointmentWithNullFile() {
+        //Preconditions
+        MultipartFile[] file = new MultipartFile[1];
+        file[0] = null;
+
+        //Exercise
+        List<AppointmentFile> appointmentFiles = appointmentFileService.create(file, UPLOADER, APPOINTMENT_ID);
+
+        //Postconditions
+        assertTrue(appointmentFiles.isEmpty());
+    }
+
+    @Test
+    public void testCreateAppointmentWithEmptyFile() {
+        //Preconditions
+        MultipartFile[] file = new MultipartFile[1];
+        MultipartFile emptyFile = mock(MultipartFile.class);
+        file[0] = emptyFile;
+        when(emptyFile.isEmpty()).thenReturn(true);
+
+        //Exercise
+        List<AppointmentFile> appointmentFiles = appointmentFileService.create(file, UPLOADER, APPOINTMENT_ID);
+
+        //Postconditions
+        assertTrue(appointmentFiles.isEmpty());
+    }
+
+    @Test
+    public void testCreateAppointmentWithInvalidAppointmentId() {
+        //Preconditions
+        MultipartFile[] files = new MultipartFile[1];
+        MultipartFile file = mock(MultipartFile.class);
+        files[0] = file;
+        when(file.isEmpty()).thenReturn(false);
+        when(appointmentService.getById(anyLong())).thenThrow(new IllegalArgumentException("Appointment not found"));
+
+        //Exercise & Postconditions
+        assertThrows(IllegalArgumentException.class, () ->
+                appointmentFileService.create(files, UPLOADER, APPOINTMENT_ID)
+        );
+    }
+
+    @Test
+    public void testCreateAppointment() {
+        //Preconditions
+        MultipartFile[] files = new MultipartFile[1];
+        MultipartFile file = mock(MultipartFile.class);
+        files[0] = file;
+        when(file.isEmpty()).thenReturn(false);
+        when(appointmentService.getById(anyLong())).thenReturn(Optional.of(APPOINTMENT));
+        List<AppointmentFile> appointmentFiles = null;
+
+        //Exercise
+        try {
+            appointmentFiles = appointmentFileService.create(files, UPLOADER, APPOINTMENT_ID);
+        } catch (Exception e) {
+            fail("Unexpected error during operation create appointment file: " + e.getMessage());
+        }
+
+        //Postconditions
+        assertNotNull(appointmentFiles);
+        assertFalse(appointmentFiles.isEmpty());
+    }
+
+    @Test
+    public void testGetAuthorizedFileEmpty() {
+        //Preconditions
+        Optional<AppointmentFile> file = Optional.empty();
+
+        //Exercise
+        try {
+            file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
+        } catch (Exception e) {
+            fail("Unexpected error during operation get authorized file: " + e.getMessage());
+        }
+
+        //Postconditions
+        assertFalse(file.isPresent());
+    }
+
+    @Test
+    public void testGetAuthorizedFileNonMatchingAppointmentId() {
+        //Preconditions
+        AppointmentFile appointmentFileOtheId = new AppointmentFile(
+                "testFile",
+                new byte[]{1, 2, 3},
+                FILE_ID,
+                "doctor",
+                2L
+        );
+        when(appointmentFileDao.getById(FILE_ID)).thenReturn(Optional.of(appointmentFileOtheId));
+        Optional<AppointmentFile> file = Optional.empty();
+
+        //Exercise
+        try {
+            file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
+        } catch (Exception e) {
+            fail("Unexpected error during operation get authorized file: " + e.getMessage());
+        }
+
+        //Postconditions
+        assertFalse(file.isPresent());
+    }
+
+    @Test
+    public void testGetAuthorizedFileEmptyAppointment() {
+        //Preconditions
+        when(appointmentFileDao.getById(FILE_ID)).thenReturn(Optional.of(APPOINTMENT_FILE));
+        when(appointmentService.getById(anyLong())).thenReturn(Optional.empty());
+        Optional<AppointmentFile> file = Optional.empty();
+
+        //Exercise
+        try {
+            file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
+        } catch (Exception e) {
+            fail("Unexpected error during operation get authorized file: " + e.getMessage());
+        }
+
+        //Postconditions
+        assertFalse(file.isPresent());
+    }
+
+    @Test
+    public void testGetAuthorizedFileNonMatchingUser() {
+        //Preconditions
+        when(appointmentFileDao.getById(FILE_ID)).thenReturn(Optional.of(APPOINTMENT_FILE));
+        when(appointmentService.getById(anyLong())).thenReturn(Optional.of(APPOINTMENT));
+        Optional<AppointmentFile> file = Optional.empty();
+
+        //Exercise
+        try {
+            file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
+        } catch (Exception e) {
+            fail("Unexpected error during operation get authorized file: " + e.getMessage());
+        }
+
+        //Postconditions
+        assertFalse(file.isPresent());
+    }
+
+    @Test
+    public void testGetAuthorizedFile() {
+        //Preconditions
+        when(appointmentFileDao.getById(FILE_ID)).thenReturn(Optional.of(APPOINTMENT_FILE));
+        when(appointmentService.getById(anyLong())).thenReturn(Optional.of(APPOINTMENT));
+        Optional<AppointmentFile> file = Optional.empty();
+
+        //Exercise
+        try {
+            file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, "john@test.com");
+        } catch (Exception e) {
+            fail("Unexpected error during operation get authorized file: " + e.getMessage());
+        }
+
+        //Postconditions
+        assertTrue(file.isPresent());
+        assertEquals(FILE_ID, file.get().getId());
+        assertEquals(APPOINTMENT_ID, file.get().getAppointment_id());
+    }
+}
