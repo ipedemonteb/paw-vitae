@@ -43,7 +43,6 @@ public class ImageServiceImplTest {
         assertNull(image);
     }
 
-    //@TODO: CHECK IF ITS OK
     @Test
     public void testCreate() {
         //Preconditions

@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.interfaceServices.PatientService;
+import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.User;
@@ -23,6 +24,15 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
+
+    private static final Doctor DOCTOR = new Doctor("John", 2L, "Doe",
+            "john@test.com", "hashedpassword", "123456789",
+            "es", 1L, true
+    );
+    private static final Patient PATIENT = new Patient("Jane", 1L, "Smith",
+            "jane@test.com", "hashedpassword", "987654321", "es",
+            new Coverage(1L, "OSDE"), true
+    );
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -46,8 +56,7 @@ public class UserServiceImplTest {
     @Test
     public void testGetByEmailReturnsPatient() {
         //Preconditions
-        Patient patient = mock(Patient.class);
-        when(patientDao.getByEmail("test@example.com")).thenReturn(Optional.of(patient));
+        when(patientDao.getByEmail("test@example.com")).thenReturn(Optional.of(PATIENT));
         Optional<? extends User> result = Optional.empty();
 
         //Exercise
@@ -59,16 +68,15 @@ public class UserServiceImplTest {
 
         //Postconditions
         assertTrue(result.isPresent());
-        assertEquals(patient.getClass(), result.get().getClass());
+        assertEquals(PATIENT.getClass(), result.get().getClass());
     }
 
     //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testGetByEmailReturnsDoctorIfPatientNotFound() {
         //Preconditions
-        Doctor doctor = mock(Doctor.class);
         when(patientDao.getByEmail("test@example.com")).thenReturn(Optional.empty());
-        when(doctorDao.getByEmail("test@example.com")).thenReturn(Optional.of(doctor));
+        when(doctorDao.getByEmail("test@example.com")).thenReturn(Optional.of(DOCTOR));
         Optional<? extends User> result = Optional.empty();
 
         //Exercise
@@ -80,7 +88,7 @@ public class UserServiceImplTest {
 
         //Postconditions
         assertTrue(result.isPresent());
-        assertEquals(doctor.getClass(), result.get().getClass());
+        assertEquals(DOCTOR.getClass(), result.get().getClass());
     }
 
     @Test
@@ -105,8 +113,7 @@ public class UserServiceImplTest {
     @Test
     public void testGetByIdReturnsPatient() {
         //Preconditions
-        Patient patient = mock(Patient.class);
-        when(patientDao.getById(1L)).thenReturn(Optional.of(patient));
+        when(patientDao.getById(1L)).thenReturn(Optional.of(PATIENT));
         Optional<? extends User> result = Optional.empty();
 
         //Exercise
@@ -118,16 +125,15 @@ public class UserServiceImplTest {
 
         //Postconditions
         assertTrue(result.isPresent());
-        assertEquals(patient.getClass(), result.get().getClass());
+        assertEquals(PATIENT.getClass(), result.get().getClass());
     }
 
     //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testGetByIdReturnsDoctorIfPatientNotFound() {
         //Preconditions
-        Doctor doctor = mock(Doctor.class);
         when(patientDao.getById(1L)).thenReturn(Optional.empty());
-        when(doctorDao.getById(1L)).thenReturn(Optional.of(doctor));
+        when(doctorDao.getById(1L)).thenReturn(Optional.of(DOCTOR));
         Optional<? extends User> result = Optional.empty();
 
         //Exercise
@@ -139,7 +145,7 @@ public class UserServiceImplTest {
 
         //Postconditions
         assertTrue(result.isPresent());
-        assertEquals(doctor.getClass(), result.get().getClass());
+        assertEquals(DOCTOR.getClass(), result.get().getClass());
     }
 
     @Test
@@ -164,8 +170,7 @@ public class UserServiceImplTest {
     @Test
     public void testGetByResetTokenReturnsPatient() {
         //Preconditions
-        Patient patient = mock(Patient.class);
-        when(patientDao.getByResetToken("RESETTOKEN")).thenReturn(Optional.of(patient));
+        when(patientDao.getByResetToken("RESETTOKEN")).thenReturn(Optional.of(PATIENT));
         Optional<? extends User> result = Optional.empty();
 
         //Exercise
@@ -177,16 +182,15 @@ public class UserServiceImplTest {
 
         //Postconditions
         assertTrue(result.isPresent());
-        assertEquals(patient.getClass(), result.get().getClass());
+        assertEquals(PATIENT.getClass(), result.get().getClass());
     }
 
     //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testGetByResetTokenReturnsDoctorIfPatientNotFound() {
         //Preconditions
-        Doctor doctor = mock(Doctor.class);
         when(patientDao.getByResetToken("RESETTOKEN")).thenReturn(Optional.empty());
-        when(doctorDao.getByResetToken("RESETTOKEN")).thenReturn(Optional.of(doctor));
+        when(doctorDao.getByResetToken("RESETTOKEN")).thenReturn(Optional.of(DOCTOR));
         Optional<? extends User> result = Optional.empty();
 
         //Exercise
@@ -198,7 +202,7 @@ public class UserServiceImplTest {
 
         //Postconditions
         assertTrue(result.isPresent());
-        assertEquals(doctor.getClass(), result.get().getClass());
+        assertEquals(DOCTOR.getClass(), result.get().getClass());
     }
 
     @Test
@@ -223,8 +227,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyValidationTokenReturnsPatient() {
         //Preconditions
-        Patient patient = mock(Patient.class);
-        when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(patient));
+        when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(PATIENT));
         Optional<? extends User> result = Optional.empty();
 
         //Exercise
@@ -236,16 +239,15 @@ public class UserServiceImplTest {
 
         //Postconditions
         assertTrue(result.isPresent());
-        assertEquals(patient.getClass(), result.get().getClass());
+        assertEquals(PATIENT.getClass(), result.get().getClass());
     }
 
     //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testVerifyValidationTokenReturnsDoctor() {
         //Preconditions
-        Doctor doctor = mock(Doctor.class);
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.empty());
-        when(doctorDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(mock(Doctor.class)));
+        when(doctorDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(DOCTOR));
         Optional<? extends User> result = Optional.empty();
 
         //Exercise
@@ -257,7 +259,7 @@ public class UserServiceImplTest {
 
         //Postconditions
         assertTrue(result.isPresent());
-        assertEquals(doctor.getClass(), result.get().getClass());
+        assertEquals(DOCTOR.getClass(), result.get().getClass());
     }
 
     @Test
@@ -281,7 +283,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyRecoveryTokenExists() {
         //Preconditions
-        when(patientDao.getByResetToken("RECOVERYTOKEN")).thenReturn(Optional.of(mock(Patient.class)));
+        when(patientDao.getByResetToken("RECOVERYTOKEN")).thenReturn(Optional.of(PATIENT));
         boolean result = false;
 
         //Exercise
@@ -313,10 +315,40 @@ public class UserServiceImplTest {
         assertFalse(result);
     }
 
-    //@TODO: CHECK HOW TO TEST CAUSE IT CALLS ANOTHER FUNCTION
+    //@TODO: CHECK IF ITS OK MOCKING
+    @Test
+    public void testChangePasswordInvalidUser() {
+        //Preconditions
+        boolean result = false;
+
+        //Exercise
+        try {
+            result = userService.changePassword("RECOVERYTOKEN", "newpassword");
+        } catch (Exception e) {
+            fail("Unexpected error during operation get user by email: " + e.getMessage());
+        }
+
+        //Postconditions
+        assertFalse(result);
+    }
+
+    //@TODO: CHECK THE MOCKING
     @Test
     public void testChangePassword() {
         //Preconditions
+        when(patientDao.getByResetToken(anyString())).thenReturn(Optional.of(PATIENT));
+        when(passwordEncoder.encode(anyString())).thenReturn("ENCODEDPASSWORD");
+        boolean result = false;
+
+        //Exercise
+        try {
+            result = userService.changePassword("RECOVERYTOKEN", "NEWPASSWORD");
+        } catch (Exception e) {
+            fail("Unexpected error during operation get user by email: " + e.getMessage());
+        }
+
+        //Postconditions
+        assertTrue(result);
     }
 
     @Test
@@ -335,16 +367,15 @@ public class UserServiceImplTest {
         assertEquals(-1L, result.longValue());
     }
 
+    //@TODO: CHECK CAUSE IT DOESNT USE DB
     @Test
     public void testGetImageIdIsDoctor() {
         //Preconditions
-        Doctor doctor = mock(Doctor.class);
-        when(doctor.getImageId()).thenReturn(1L);
         Long result = 0L;
 
         //Exercise
         try {
-            result = userService.getImageId(doctor);
+            result = userService.getImageId(DOCTOR);
         } catch (Exception e) {
             fail("Unexpected error during operation get user by email: " + e.getMessage());
         }
