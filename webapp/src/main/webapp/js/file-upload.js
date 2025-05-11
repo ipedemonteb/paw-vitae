@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             fileItem.appendChild(fileInfo);
             fileItem.appendChild(fileRemove);
 
-            // Agregar a la vista previa con animación
+
             fileItem.style.opacity = "0";
             fileItem.style.transform = "translateY(10px)";
             filePreview.appendChild(fileItem);

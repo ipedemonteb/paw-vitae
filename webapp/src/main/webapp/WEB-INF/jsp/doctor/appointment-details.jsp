@@ -17,6 +17,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><spring:message code="appointment.details.page.title"/></title>
     <link rel="stylesheet" href="<c:url value='/css/appointment-details.css' />"/>
+
     <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -189,7 +190,6 @@
                     </div>
                 </div>
 
-                <%-- Replace the existing conditional sections with this code --%>
                 <c:choose>
                     <c:when test="${appointment.status == 'completo'}">
                         <%-- Rating Section (Unlocked) --%>
@@ -429,7 +429,6 @@
 <script src="<c:url value="/js/toast-notification.js"/>"></script>
 
 <script>
-    // Create a messages object to be used by the JavaScript
     window.appointmentMessages = {
         months: [
             '<spring:message code="calendar.month.january" />',
@@ -564,13 +563,6 @@
             // Remove the query parameter without refreshing the page
             const newUrl = window.location.pathname;
             window.history.replaceState({}, document.title, newUrl);
-        }
-    });
-
-    const fileInput = document.getElementById('files');
-    fileInput.addEventListener('change', function(event) {
-        if (event.target.files.length > 0) {
-            showSuccessToast();
         }
     });
 
