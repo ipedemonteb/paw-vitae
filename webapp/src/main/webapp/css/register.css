@@ -334,6 +334,18 @@ body {
     display: block;
 }
 
+[class^="error-message-"] {
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+[class^="error-container-"] {
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
 /* ===== PASSWORD STRENGTH METER ===== */
 .password-strength {
     margin-top: 0.75rem;
