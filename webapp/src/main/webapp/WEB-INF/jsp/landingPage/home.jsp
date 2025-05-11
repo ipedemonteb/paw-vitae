@@ -263,24 +263,12 @@
 
 <!-- Scripts -->
 <script>
-    contextPath = "${pageContext.request.contextPath}";
-    doctorNames = [
-        <c:forEach items="${doctors}" var="doctor" varStatus="status">
-        "${fn:escapeXml(doctor.name)} ${fn:escapeXml(doctor.lastName)}"<c:if test="${!status.last}">,</c:if>
-        </c:forEach>
-    ]
 
     document.getElementById('searchForm').addEventListener('submit', function(event) {
         const specialtyDropdown = document.getElementById('specialtyDropdown');
         if (specialtyDropdown.value === '0') {
             specialtyDropdown.name = '';
         }
-    });
-
-    // Mobile menu toggle
-    document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
-        document.querySelector('.main-nav').classList.toggle('active');
-        this.classList.toggle('active');
     });
 
     // Back to top button
