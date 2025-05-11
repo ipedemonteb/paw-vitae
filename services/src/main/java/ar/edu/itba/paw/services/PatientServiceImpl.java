@@ -35,6 +35,7 @@ public class PatientServiceImpl implements PatientService {
     @Transactional(readOnly = true)
     @Override
     public Optional<Patient> getById(long id) {
+        LOGGER.debug("Getting patient with id {}", id);
         Optional<Patient> patient = patientDao.getById(id);
         if (patient.isEmpty()) {
             LOGGER.warn("No patient found with id {}", id);
@@ -45,6 +46,7 @@ public class PatientServiceImpl implements PatientService {
     @Transactional
     @Override
     public Patient create(String name, String lastName, String email, String password, String phone, String language, long coverageId) {
+        LOGGER.debug("Creating patient with name: {}, lastName: {}, email: {}, phone: {}, language: {}, coverageId: {}", name, lastName, email, phone, language, coverageId);
         Coverage coverage = coverageService.findById(coverageId).orElse(null); //TODO coverageNotFoundException?
         long id = userService.create(name, lastName, email, passwordEncoder.encode(password), phone, language);
         Patient patient = this.patientDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, coverage);
@@ -55,12 +57,14 @@ public class PatientServiceImpl implements PatientService {
     @Transactional(readOnly = true)
     @Override
     public Optional<Patient> getByEmail(String email) {
+        LOGGER.debug("Getting patient with email {}", email);
         return patientDao.getByEmail(email);
     }
 
     @Transactional
     @Override
-    public void updatePatient(Patient patient, String name, String lastName, String phone, long coverageId) { //TODO unify how these things are handled, doctoDao does something else entirely
+    public void updatePatient(Patient patient, String name, String lastName, String phone, long coverageId) {
+        LOGGER.debug("Updating patient with id {}: name={}, lastName={}, phone={}, coverageId={}", patient.getId(), name, lastName, phone, coverageId);
         boolean hasChangedPatient = patient.getCoverage().getId() != coverageId;
         boolean hasChangedUser = !patient.getName().equals(name) || !patient.getLastName().equals(lastName) || !patient.getPhone().equals(phone);
         if (hasChangedPatient) {
