@@ -329,90 +329,93 @@
                         </form:form>
                     </c:when>
                     <c:otherwise>
-                        <%-- Rating Section (Locked) --%>
-                        <div class="locked-section">
-                            <div class="locked-section-header">
-                                <div class="locked-section-icon">
-                                    <i class="fas fa-lock"></i>
+                        <c:if test="${!isCancelled}">
+                            <%-- Rating Section (Locked) --%>
+                            <div class="locked-section">
+                                <div class="locked-section-header">
+                                    <div class="locked-section-icon">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <h3 class="locked-section-title">
+                                        <spring:message code="appointment.locked.rating.title"/>
+                                    </h3>
                                 </div>
-                                <h3 class="locked-section-title">
-                                    <spring:message code="appointment.locked.rating.title"/>
-                                </h3>
-                            </div>
-                            <p class="locked-section-message">
-                                <spring:message code="appointment.locked.rating.message"/>
-                            </p>
-                            <div class="locked-section-content">
-                                <div class="rating-section">
-                                    <h2 class="rating-title">
-                                        <i class="fas fa-star"></i>
-                                        <spring:message code="appointment.details.review.title.doctor"/>
-                                    </h2>
-                                    <div class="review-card">
-                                        <div class="no-reviews-message" style="border: none; box-shadow: none; margin-bottom: 0;">
-                                            <div class="no-reviews-icon">
-                                                <i class="far fa-star"></i>
+                                <p class="locked-section-message">
+                                    <spring:message code="appointment.locked.rating.message"/>
+                                </p>
+                                <div class="locked-section-content">
+                                    <div class="rating-section">
+                                        <h2 class="rating-title">
+                                            <i class="fas fa-star"></i>
+                                            <spring:message code="appointment.details.review.title.doctor"/>
+                                        </h2>
+                                        <div class="review-card">
+                                            <div class="no-reviews-message" style="border: none; box-shadow: none; margin-bottom: 0;">
+                                                <div class="no-reviews-icon">
+                                                    <i class="far fa-star"></i>
+                                                </div>
+                                                <h3 class="no-reviews-title">
+                                                    <spring:message code="appointment.details.review.none" text="No Reviews Yet"/>
+                                                </h3>
                                             </div>
-                                            <h3 class="no-reviews-title">
-                                                <spring:message code="appointment.details.review.none" text="No Reviews Yet"/>
-                                            </h3>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <%-- File Upload Section (Locked) --%>
-                        <div class="locked-section">
-                            <div class="locked-section-header">
-                                <div class="locked-section-icon">
-                                    <i class="fas fa-lock"></i>
+                            <%-- File Upload Section (Locked) --%>
+                            <div class="locked-section">
+                                <div class="locked-section-header">
+                                    <div class="locked-section-icon">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <h3 class="locked-section-title">
+                                        <spring:message code="appointment.locked.files.title"/>
+                                    </h3>
                                 </div>
-                                <h3 class="locked-section-title">
-                                    <spring:message code="appointment.locked.files.title"/>
-                                </h3>
-                            </div>
-                            <p class="locked-section-message">
-                                <spring:message code="appointment.locked.files.message"/>
-                            </p>
-                            <div class="locked-section-content">
-                                <div class="files-section">
-                                    <h2 class="files-title">
-                                        <i class="fas fa-file-medical-alt"></i>
-                                        <spring:message code="appointment.details.doctor.files.title"/>
-                                    </h2>
-                                    <div class="form-group">
-                                        <label><spring:message code="appointment.details.report"/></label>
-                                        <textarea label="report" id="report" class="form-control" rows="4" disabled></textarea>
-                                    </div>
-                                    <div class="no-files-message">
-                                        <div class="no-files-content">
-                                            <i class="fas fa-info-circle"></i>
-                                            <p><spring:message code="appointment.details.you.nofiles"/></p>
+                                <p class="locked-section-message">
+                                    <spring:message code="appointment.locked.files.message"/>
+                                </p>
+                                <div class="locked-section-content">
+                                    <div class="files-section">
+                                        <h2 class="files-title">
+                                            <i class="fas fa-file-medical-alt"></i>
+                                            <spring:message code="appointment.details.doctor.files.title"/>
+                                        </h2>
+                                        <div class="form-group">
+                                            <label><spring:message code="appointment.details.report"/></label>
+                                            <textarea label="report" id="report" class="form-control" rows="4" disabled></textarea>
                                         </div>
-                                    </div>
-                                    <div class="file-upload-container">
-                                        <div class="file-upload-dropzone disabled">
-                                            <div class="file-upload-icon">
-                                                <i class="fas fa-cloud-upload-alt"></i>
-                                            </div>
-                                            <div class="file-upload-text">
-                                                <p class="file-upload-primary"><spring:message code="file.upload.dragHere"/></p>
-                                                <p class="file-upload-secondary"><spring:message code="file.upload.onlyPdf"/></p>
+                                        <div class="no-files-message">
+                                            <div class="no-files-content">
+                                                <i class="fas fa-info-circle"></i>
+                                                <p><spring:message code="appointment.details.you.nofiles"/></p>
                                             </div>
                                         </div>
-                                    </div>
-                                    <form:errors path="" cssClass="error-message" />
-                                    <div class="form-group">
-                                        <button type="button" class="btn btn-primary btn-block" disabled>
+                                        <div class="file-upload-container">
+                                            <div class="file-upload-dropzone disabled">
+                                                <div class="file-upload-icon">
+                                                    <i class="fas fa-cloud-upload-alt"></i>
+                                                </div>
+                                                <div class="file-upload-text">
+                                                    <p class="file-upload-primary"><spring:message code="file.upload.dragHere"/></p>
+                                                    <p class="file-upload-secondary"><spring:message code="file.upload.onlyPdf"/></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <form:errors path="" cssClass="error-message" />
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-primary btn-block" disabled>
                             <span>
                                 <spring:message code="appointment.details.doctor.submit"/>
                             </span>
-                                        </button>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </c:if>
+
                     </c:otherwise>
                 </c:choose>
                 <div class="back-button-container">
@@ -429,51 +432,6 @@
 <script src="<c:url value="/js/toast-notification.js"/>"></script>
 
 <script>
-    window.appointmentMessages = {
-        months: [
-            '<spring:message code="calendar.month.january" />',
-            '<spring:message code="calendar.month.february" />',
-            '<spring:message code="calendar.month.march" />',
-            '<spring:message code="calendar.month.april" />',
-            '<spring:message code="calendar.month.may" />',
-            '<spring:message code="calendar.month.june" />',
-            '<spring:message code="calendar.month.july" />',
-            '<spring:message code="calendar.month.august" />',
-            '<spring:message code="calendar.month.september" />',
-            '<spring:message code="calendar.month.october" />',
-            '<spring:message code="calendar.month.november" />',
-            '<spring:message code="calendar.month.december" />'
-        ],
-        weekdays: [
-            '<spring:message code="calendar.day.sunday" />',
-            '<spring:message code="calendar.day.monday" />',
-            '<spring:message code="calendar.day.tuesday" />',
-            '<spring:message code="calendar.day.wednesday" />',
-            '<spring:message code="calendar.day.thursday" />',
-            '<spring:message code="calendar.day.friday" />',
-            '<spring:message code="calendar.day.saturday" />'
-        ],
-        weekdaysShort: [
-            '<spring:message code="calendar.day.short.sun" />',
-            '<spring:message code="calendar.day.short.mon" />',
-            '<spring:message code="calendar.day.short.tue" />',
-            '<spring:message code="calendar.day.short.wed" />',
-            '<spring:message code="calendar.day.short.thu" />',
-            '<spring:message code="calendar.day.short.fri" />',
-            '<spring:message code="calendar.day.short.sat" />'
-        ],
-        appointmentAt: '<spring:message code="appointment.at" />',
-        noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />',
-        fileUpload: {
-            dragHere: '<spring:message code="file.upload.dragHere"  />',
-            onlyPdf: '<spring:message code="file.upload.onlyPdf"  />',
-            tooManyFiles: '<spring:message code="file.upload.tooManyFiles"  />',
-            invalidType: '<spring:message code="file.upload.invalidType"  />',
-            fileAdded: '<spring:message code="file.upload.fileAdded"  />',
-            fileRemoved: '<spring:message code="file.upload.fileRemoved" />',
-            fileTooLarge: '<spring:message code="file.upload.fileTooLarge" />'
-        }
-    };
     document.addEventListener('DOMContentLoaded', function() {
 
 

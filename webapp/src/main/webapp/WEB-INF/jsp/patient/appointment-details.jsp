@@ -185,6 +185,7 @@
                                     <c:otherwise>
                                         <form:form modelAttribute="patientRatingForm" method="post" action="${pageContext.request.contextPath}/patient/dashboard/appointment/rate" class="rating-form" id="ratingForm">
                                             <form:hidden path="appointmentId" value="${appointment.id}" />
+                                            <form:hidden path="doctorId" value="${doctor.id}" />
 
                                             <div class="form-group">
                                                 <label class="required-field">
@@ -281,93 +282,95 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <%-- Rating Section (Locked) --%>
-                        <div class="locked-section">
-                            <div class="locked-section-header">
-                                <div class="locked-section-icon">
-                                    <i class="fas fa-lock"></i>
+                        <c:if test="${!isCancelled}">
+                            <%-- Rating Section (Locked) --%>
+                            <div class="locked-section">
+                                <div class="locked-section-header">
+                                    <div class="locked-section-icon">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <h3 class="locked-section-title">
+                                        <spring:message code="appointment.locked.rating.title"/>
+                                    </h3>
                                 </div>
-                                <h3 class="locked-section-title">
-                                    <spring:message code="appointment.locked.rating.title"/>
-                                </h3>
-                            </div>
-                            <p class="locked-section-message">
-                                <spring:message code="appointment.locked.rating.message"/>
-                            </p>
-                            <div class="locked-section-content">
-                                <h2 class="rating-title">
-                                    <i class="fas fa-star"></i>
-                                    <spring:message code="appointment.details.review.title" />
-                                </h2>
-                                <div class="rating-section">
-                                    <div class="form-group">
-                                        <label class="required-field">
-                                            <spring:message code="appointment.details.review.rating" />
-                                        </label>
-                                        <div class="star-rating">
-                                            <div class="stars-container">
-                                                <c:forEach begin="1" end="5" var="star">
-                                                    <input type="radio" id="star${star}" value="${star}" class="star-input" disabled />
-                                                    <label for="star${star}" class="star-label" data-value="${star}"><i class="fas fa-star"></i></label>
-                                                </c:forEach>
+                                <p class="locked-section-message">
+                                    <spring:message code="appointment.locked.rating.message"/>
+                                </p>
+                                <div class="locked-section-content">
+                                    <h2 class="rating-title">
+                                        <i class="fas fa-star"></i>
+                                        <spring:message code="appointment.details.review.title" />
+                                    </h2>
+                                    <div class="rating-section">
+                                        <div class="form-group">
+                                            <label class="required-field">
+                                                <spring:message code="appointment.details.review.rating" />
+                                            </label>
+                                            <div class="star-rating">
+                                                <div class="stars-container">
+                                                    <c:forEach begin="1" end="5" var="star">
+                                                        <input type="radio" id="star${star}" value="${star}" class="star-input" disabled />
+                                                        <label for="star${star}" class="star-label" data-value="${star}"><i class="fas fa-star"></i></label>
+                                                    </c:forEach>
+                                                </div>
+                                                <div class="rating-display">0.0</div>
                                             </div>
-                                            <div class="rating-display">0.0</div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="comment-disabled">
+                                                <spring:message code="appointment.details.review.comment" />
+                                            </label>
+                                            <textarea id="comment-disabled" class="form-control" rows="4" disabled></textarea>
+                                        </div>
+                                        <form:errors path="" cssClass="error-message" />
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-primary" disabled>
+                                                <i class="fas fa-star"></i>
+                                                <spring:message code="appointment.details.review.submit" />
+                                            </button>
                                         </div>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label for="comment-disabled">
-                                            <spring:message code="appointment.details.review.comment" />
-                                        </label>
-                                        <textarea id="comment-disabled" class="form-control" rows="4" disabled></textarea>
-                                    </div>
-                                    <form:errors path="" cssClass="error-message" />
-                                    <div class="form-group">
-                                        <button type="button" class="btn btn-primary" disabled>
-                                            <i class="fas fa-star"></i>
-                                            <spring:message code="appointment.details.review.submit" />
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <%-- Doctor Files Section (Locked) --%>
-                        <div class="locked-section">
-                            <div class="locked-section-header">
-                                <div class="locked-section-icon">
-                                    <i class="fas fa-lock"></i>
-                                </div>
-                                <h3 class="locked-section-title">
-                                    <spring:message code="appointment.locked.doctor.files.title"/>
-                                </h3>
-                            </div>
-                            <p class="locked-section-message">
-                                <spring:message code="appointment.locked.doctor.files.message"/>
-                            </p>
-                            <div class="locked-section-content">
-                                <h2 class="files-title">
-                                    <i class="fas fa-file-medical-alt"></i>
-                                    <spring:message code="appointment.details.doctor.files.title"/>
-                                </h2>
-
-                                <div class="specialty-card-appointment">
-                                    <div class="no-files-content">
-                                        <i class="fas fa-info-circle"></i>
-                                        <p><spring:message code="appointment.details.doctor.noreport" /></p>
+                            <%-- Doctor Files Section (Locked) --%>
+                            <div class="locked-section">
+                                <div class="locked-section-header">
+                                    <div class="locked-section-icon">
+                                        <i class="fas fa-lock"></i>
                                     </div>
+                                    <h3 class="locked-section-title">
+                                        <spring:message code="appointment.locked.doctor.files.title"/>
+                                    </h3>
                                 </div>
+                                <p class="locked-section-message">
+                                    <spring:message code="appointment.locked.doctor.files.message"/>
+                                </p>
+                                <div class="locked-section-content">
+                                    <h2 class="files-title">
+                                        <i class="fas fa-file-medical-alt"></i>
+                                        <spring:message code="appointment.details.doctor.files.title"/>
+                                    </h2>
 
-                                <div class="files-list">
-                                    <div class="no-files-message">
+                                    <div class="specialty-card-appointment">
                                         <div class="no-files-content">
                                             <i class="fas fa-info-circle"></i>
-                                            <p><spring:message code="appointment.details.doctor.nofiles" /></p>
+                                            <p><spring:message code="appointment.details.doctor.noreport" /></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="files-list">
+                                        <div class="no-files-message">
+                                            <div class="no-files-content">
+                                                <i class="fas fa-info-circle"></i>
+                                                <p><spring:message code="appointment.details.doctor.nofiles" /></p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </c:if>
                     </c:otherwise>
                 </c:choose>
 
