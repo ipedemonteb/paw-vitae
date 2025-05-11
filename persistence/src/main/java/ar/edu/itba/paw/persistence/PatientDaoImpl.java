@@ -15,7 +15,7 @@ import java.util.*;
 @Repository
 public class PatientDaoImpl implements PatientDao {
 
-    private static final String BASE_SQL = "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id ";
+    private static final String BASE_SQL = "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified FROM Users u JOIN patients c ON c.patient_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id ";
 
     public static RowMapper<Patient> ROW_MAPPER;
     private final SimpleJdbcInsert jdbcInsertPatient;
@@ -27,8 +27,8 @@ public class PatientDaoImpl implements PatientDao {
         ROW_MAPPER = DaoRowMappers.PATIENT_ROW_MAPPER;
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsertPatient = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("clients")
-                .usingColumns("client_id", "coverage_id");
+                .withTableName("patients")
+                .usingColumns("patient_id", "coverage_id");
     }
 
     @Override
@@ -43,7 +43,7 @@ public class PatientDaoImpl implements PatientDao {
     @Override
     public Patient create(long id, String name, String lastName, String email, String password, String phone, String language, Coverage coverage) {
         final Map<String, Object> argsPatient = new HashMap<>();
-        argsPatient.put("client_id", id);
+        argsPatient.put("patient_id", id);
         argsPatient.put("coverage_id", coverage.getId());
         jdbcInsertPatient.execute(argsPatient);
 
@@ -72,7 +72,7 @@ public class PatientDaoImpl implements PatientDao {
     @Override
     public void updatePatient(long id, Long coverageId) {
         if (coverageId != null) {
-            jdbcTemplate.update("UPDATE clients SET coverage_id = ? WHERE client_id = ?", coverageId, id);
+            jdbcTemplate.update("UPDATE patients SET coverage_id = ? WHERE patient_id = ?", coverageId, id);
         }
     }
 

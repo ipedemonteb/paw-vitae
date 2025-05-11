@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 @Transactional
 public class PatientDaoTest {
 
-    private static final String PATIENT_TABLE = "clients";
+    private static final String PATIENT_TABLE = "patients";
     private static final String USER_TABLE = "users";
 
     private static final long TEST_ID = 1L;
@@ -57,7 +57,7 @@ public class PatientDaoTest {
     }
 
     @Test
-    public void testCreateClient() {
+    public void testCreatepatient() {
         //Preconditions
         long userId = 6L;
         String name = "John";
@@ -75,7 +75,7 @@ public class PatientDaoTest {
         assertNotNull(patient);
         assertEquals(email, patient.getEmail());
         assertEquals(name, patient.getName());
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, PATIENT_TABLE, "client_id = " + patient.getId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, PATIENT_TABLE, "patient_id = " + patient.getId()));
     }
 
     @Test
@@ -83,10 +83,10 @@ public class PatientDaoTest {
         //Preconditions
 
         //Exercise
-        Optional<Patient> maybeClient = patientDao.getById(1000L);
+        Optional<Patient> maybepatient = patientDao.getById(1000L);
 
         //Postconditions
-        assertFalse(maybeClient.isPresent());
+        assertFalse(maybepatient.isPresent());
     }
 
     @Test
@@ -112,10 +112,10 @@ public class PatientDaoTest {
         String nonExistEmail = "nonExistEmail";
 
         //Exercise
-        Optional<Patient> maybeClient = patientDao.getByEmail(nonExistEmail);
+        Optional<Patient> maybepatient = patientDao.getByEmail(nonExistEmail);
 
         //Postconditions
-        assertFalse(maybeClient.isPresent());
+        assertFalse(maybepatient.isPresent());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class PatientDaoTest {
         patientDao.updatePatient(patientId, newCoverageId);
 
         //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, PATIENT_TABLE, "client_id = " + patientId + " AND coverage_id = " + newCoverageId));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, PATIENT_TABLE, "patient_id = " + patientId + " AND coverage_id = " + newCoverageId));
     }
 
     @Test

@@ -21,7 +21,7 @@ public class RatingDaoImpl implements RatingDao {
             rs.getLong("id"),
             rs.getInt("rating"),
             rs.getInt("doctor_id"),
-            rs.getInt("client_id"),
+            rs.getInt("patient_id"),
             rs.getInt("appointment_id"),
             rs.getString("comment")
     );
@@ -33,7 +33,7 @@ public class RatingDaoImpl implements RatingDao {
         jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("ratings")
-                .usingColumns("rating", "doctor_id", "client_id", "appointment_id", "comment")
+                .usingColumns("rating", "doctor_id", "patient_id", "appointment_id", "comment")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -42,7 +42,7 @@ public class RatingDaoImpl implements RatingDao {
         final Map<String, Object> args = new HashMap<>(Map.of(
                 "rating", rating,
                 "doctor_id", doctorId,
-                "client_id", patientId,
+                "patient_id", patientId,
                 "appointment_id", appointmentId,
                 "comment", comment
         ));
@@ -79,7 +79,7 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public List<Rating> getRatingsByPatientId(long patientId) {
-        return jdbcTemplate.query("SELECT * FROM ratings WHERE client_id = ?", ROW_MAPPER, patientId);
+        return jdbcTemplate.query("SELECT * FROM ratings WHERE patient_id = ?", ROW_MAPPER, patientId);
     }
 
     @Override

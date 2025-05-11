@@ -16,10 +16,10 @@ CREATE TABLE IF NOT EXISTS Coverages (
                                          coverage_name VARCHAR(100) NOT NULL
     );
 
-CREATE TABLE IF NOT EXISTS Clients (
-                                       client_id INT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Patients (
+                                       patient_id INT PRIMARY KEY,
                                        coverage_id INT NOT NULL,
-                                       FOREIGN KEY (client_id) REFERENCES Users(id) ON DELETE CASCADE,
+                                       FOREIGN KEY (patient_id) REFERENCES Users(id) ON DELETE CASCADE,
                                         FOREIGN KEY (coverage_id) REFERENCES Coverages(id) ON DELETE SET NULL
     );
 
@@ -70,26 +70,26 @@ CREATE TABLE IF NOT EXISTS Doctor_Availability (
 CREATE TABLE IF NOT EXISTS Appointments (
                                             id SERIAL PRIMARY KEY,
                                             doctor_id INT NOT NULL,
-                                            client_id INT NOT NULL,
+                                            patient_id INT NOT NULL,
                                             specialty_id INT NOT NULL,
                                             date TIMESTAMP NOT NULL,
                                             status VARCHAR(20) NOT NULL DEFAULT 'confirmado' CHECK (status IN ('confirmado','cancelado','completo')),
     reason TEXT,
     report TEXT,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
-    FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE,
     FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE
     );
 
 CREATE TABLE IF NOT EXISTS Ratings (
                                        id SERIAL PRIMARY KEY,
                                        doctor_id INT NOT NULL,
-                                       client_id INT NOT NULL,
+                                       patient_id INT NOT NULL,
                                        appointment_id INT NOT NULL UNIQUE,
                                        rating INT CHECK (rating >= 1 AND rating <= 5),
     comment TEXT,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
-    FOREIGN KEY (client_id) REFERENCES Clients(client_id) ON DELETE CASCADE,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE,
     FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
     );
 
@@ -101,4 +101,3 @@ CREATE TABLE IF NOT EXISTS appointment_files (
     file_data BYTEA NOT NULL,
     FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
     );
-

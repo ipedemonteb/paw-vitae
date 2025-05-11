@@ -60,7 +60,7 @@ public class RatingDaoTest {
         //Postconditions
         assertNotNull(rating);
         assertEquals(score, rating.getRating());
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, RATINGS_TABLE, "doctor_id = " + doctorId + " AND client_id = " + patientId + " AND appointment_id = " + appointmentId));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, RATINGS_TABLE, "doctor_id = " + doctorId + " AND patient_id = " + patientId + " AND appointment_id = " + appointmentId));
     }
 
     @Test
