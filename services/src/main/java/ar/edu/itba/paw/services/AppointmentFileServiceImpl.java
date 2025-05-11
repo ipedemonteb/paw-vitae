@@ -26,7 +26,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
     private final AppointmentFileDao appointmentFileDao;
     private final AppointmentService appointmentService;
     private final MailService mailService;
-    Logger LOGGER = LoggerFactory.getLogger(ImageServiceImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(AppointmentFileServiceImpl.class);
 
     @Autowired
     public AppointmentFileServiceImpl(final AppointmentFileDao appointmentFileDao, final AppointmentService appointmentService, MailService mailService) {
@@ -38,6 +38,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
     @Transactional
     @Override
     public List<AppointmentFile> create(MultipartFile[] files, String uploader_role, long appointment_id) {
+        LOGGER.debug("Creating appointment files: {} for appointment with id {}", files, appointment_id);
         if (files.length == 0) {
             return null;
         }
@@ -58,7 +59,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
             Patient patient = appointment.getPatient();
             mailService.sendFileUploadMail(doctor, patient, appointment, appointmentFiles);
         }
-        LOGGER.info("Appointment files created successfully: {} for appointment with id {}", appointmentFiles, appointment_id);
+        LOGGER.info("Appointment files created successfully for appointment with id {}", appointment_id);
         return appointmentFiles;
     }
 
@@ -76,6 +77,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
 
     @Transactional(readOnly = true)
     public Optional<AppointmentFile> getAuthorizedFile(long fileId, long appointmentId, String username) {
+        LOGGER.debug("Getting authorized file {} for appointment {} and user {}", fileId, appointmentId, username);
         Optional<AppointmentFile> fileOpt = appointmentFileDao.getById(fileId);
         if (fileOpt.isEmpty()) return Optional.empty();
 

@@ -30,15 +30,6 @@ public class GlobalExceptionHandler {
         return mav;
     }
 
-    @ExceptionHandler(MessagingException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ModelAndView handleMessagingException(MessagingException e) {
-        LOGGER.error("Mail exception occurred", e);
-        ModelAndView mav = new ModelAndView("error/500");
-        mav.addObject("exception", e.getMessage());
-        return mav;
-    }
-
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)    public ModelAndView handleUserNotFoundException(UserNotFoundException e) {
         LOGGER.error("User not found exception occurred", e);

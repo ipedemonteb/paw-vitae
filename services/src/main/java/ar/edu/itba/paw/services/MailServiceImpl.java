@@ -92,14 +92,13 @@ public class MailServiceImpl implements MailService {
 
             doctorHelper.setFrom(from_mail);
             patientHelper.setFrom(from_mail);
+            mailSender.send(doctorMessage);
+            mailSender.send(patientMessage);
+            LOGGER.info("Email sent to doctor: {}", doctor.getEmail());
+            LOGGER.info("Email sent to patient: {}", patient.getEmail());
         } catch (MessagingException e) {
             LOGGER.error("Error creating email message", e);
         }
-
-        mailSender.send(doctorMessage);
-        mailSender.send(patientMessage);
-        LOGGER.info("Email sent to doctor: {}", doctor.getEmail());
-        LOGGER.info("Email sent to patient: {}", patient.getEmail());
     }
 
     @Async
@@ -134,11 +133,11 @@ public class MailServiceImpl implements MailService {
             patientHelper.setSubject(patientSubject);
             patientHelper.setText(htmlContentPatient, true);
             patientHelper.setFrom(from_mail);
+            mailSender.send(patientMessage);
+            LOGGER.info("Email sent to patient: {}", patient.getEmail());
         } catch (MessagingException e) {
             LOGGER.error("Error creating email message", e);
         }
-        mailSender.send(patientMessage);
-        LOGGER.info("Email sent to patient: {}", patient.getEmail());
     }
 
     @Async
@@ -146,7 +145,6 @@ public class MailServiceImpl implements MailService {
     public void sendRecoverPasswordEmail(User user, String resetLink) {
 
         Locale userLocale = Locale.forLanguageTag(user.getLanguage());
-
 
         Context context = new Context(userLocale);
         context.setVariable("resetUrl", resetLink);
@@ -162,7 +160,6 @@ public class MailServiceImpl implements MailService {
             helper.setSubject(messageSource.getMessage("recover.password.email.subject", null, userLocale));
             helper.setText(htmlContent, true);
             helper.setFrom(from_mail);
-
             mailSender.send(message);
             LOGGER.info("Recovery email sent to: {}", user.getEmail());
         } catch (MessagingException e) {
@@ -187,7 +184,6 @@ public class MailServiceImpl implements MailService {
             helper.setSubject(messageSource.getMessage("verification.register.email.title", null, userLocale));
             helper.setText(htmlContent, true);
             helper.setFrom(from_mail);
-
             mailSender.send(message);
             LOGGER.info("Verification email sent to: {}", user.getEmail());
         } catch (MessagingException e) {
@@ -222,7 +218,6 @@ public class MailServiceImpl implements MailService {
             helper.setSubject(messageSource.getMessage("doctor.rating.title", null, userLocale));
             helper.setText(htmlContent, true);
             helper.setFrom(from_mail);
-
             mailSender.send(message);
             LOGGER.info("Doctor rated notification email sent to: {}", doctor.getEmail());
         } catch (MessagingException e) {
@@ -260,7 +255,6 @@ public class MailServiceImpl implements MailService {
                     helper.addAttachment(file.getFileName(), new ByteArrayResource(file.getFileData()));
                 }
             }
-
             mailSender.send(message);
             LOGGER.info("File uploaded notification email sent to: {}", patient.getEmail());
         } catch (MessagingException e) {

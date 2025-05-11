@@ -44,13 +44,15 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     @Override
     public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
+        LOGGER.debug("Creating appointment for patientId: {}, doctorId: {}, date: {}, time: {}, reason: {}, specialtyId: {}", patientId, doctorId, date, time, reason, specialtyId);
+
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
 
         Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
-        LOGGER.info("New appointment created: {}", appointment);
+        LOGGER.info("New appointment created with id: {}", appointment.getId());
 
         return appointment;
     }
@@ -66,6 +68,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     @Override
     public Boolean cancelAppointment(long appointmentId, long userId) {
+        LOGGER.debug("Attempting to cancel appointment with id: {} by user with id: {}", appointmentId, userId);
         Optional<Appointment> appt = getById(appointmentId);
         if (appt.isEmpty()) {
             LOGGER.warn("Appointment not found: {}", appointmentId);
@@ -81,13 +84,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentDao.cancelAppointment(appointmentId);
         appt.get().setStatus(AppointmentStatus.CANCELADO.getValue());
         mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appt.get());
-        LOGGER.info("Appointment cancelled: {}", appt.get());
+        LOGGER.info("Appointment cancelled: {}", appt.get().getId());
         return true;
     }
 
     @Transactional(readOnly = true)
     @Override
     public Optional<Appointment> getById(long appointmentId) {
+        LOGGER.debug("Getting appointment with id: {}", appointmentId);
         Optional<Appointment> appointment = appointmentDao.getById(appointmentId);
         appointment.ifPresent(a -> {
             Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
@@ -99,6 +103,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     @Override
     public Page<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter) {
+        LOGGER.debug("Getting appointments for userId: {}, isFuture: {}, page: {}, size: {}, filter: {}", userId, isFuture, page, size, filter);
         if (page < 1) {
             page = 1;
         }
@@ -113,6 +118,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     @Override
     public void updateAppointmentReport(long appointmentId, String report) {
+        LOGGER.debug("Updating appointment report for appointmentId: {}, report: {}", appointmentId, report);
         if (report == null) {
             return;
         }
@@ -129,6 +135,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     @Override
     public List<Appointment> getAppointmentByUserAndDate(long userId, LocalDate date, Integer time) {
+        LOGGER.debug("Getting appointments for userId: {}, date: {}, time: {}", userId, date, time);
         if (date == null || time == null) {
             return Collections.emptyList();
         }
@@ -143,6 +150,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     @Override
     public Map<LocalDate, List<Integer>> getFutureAppointmentsByUserAndDate(long userId) {
+        LOGGER.debug("Getting future appointments for userId: {}", userId);
         List<Appointment> appointments = appointmentDao.getFutureAppointmentsByUser(userId);
         Map<LocalDate, List<Integer>> appointmentsByDate = new HashMap<>();
         for (Appointment appointment : appointments) {
