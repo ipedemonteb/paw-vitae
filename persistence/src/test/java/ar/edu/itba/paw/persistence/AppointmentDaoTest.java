@@ -100,68 +100,6 @@ public class AppointmentDaoTest {
     }
 
     @Test
-    public void testGetByPatientIdDoesNotExist() {
-        //Preconditions
-        long patientId = 1000L;
-
-        //Exercise
-        List<Appointment> maybeAppointment = appointmentDao.getByPatientId(patientId);
-
-        //Postconditions
-        assertTrue(maybeAppointment.isEmpty());
-    }
-
-    @Test
-    public void testGetByPatientIdExists() {
-        //Preconditions
-
-        //Exercise
-        List<Appointment> maybeAppointments = appointmentDao.getByPatientId(PAT_ID);
-
-        //Postconditions
-        assertFalse(maybeAppointments.isEmpty());
-        assertEquals(2, maybeAppointments.size());
-    }
-
-    @Test
-    public void testGetByDoctorIdDoesNotExist() {
-        //Preconditions
-        long docId = 1000L;
-
-        //Exercise
-        List<Appointment> maybeAppointments = appointmentDao.getByDoctorId(docId);
-
-        //Postconditions
-        assertTrue(maybeAppointments.isEmpty());
-    }
-
-    @Test
-    public void testGetByDoctorIdExists() {
-        //Preconditions
-        insertAppointment.execute(Map.of(
-                "doctor_id", DOC_ID,
-                "client_id", PAT_ID,
-                "specialty_id", 1L,
-                "date", LocalDateTime.now().plusDays(6),
-                "status", "confirmado"
-        ));
-        insertAppointment.execute(Map.of(
-                "doctor_id", DOC_ID,
-                "client_id", PAT_ID,
-                "specialty_id", 1L,
-                "date", LocalDateTime.now().plusDays(8),
-                "status", "confirmado"
-        ));
-
-        //Exercise
-        List<Appointment> maybeAppointments = appointmentDao.getByDoctorId(DOC_ID);
-
-        //Postconditions
-        assertFalse(maybeAppointments.isEmpty());
-        assertEquals(2, maybeAppointments.size());
-    }
-
-    @Test
     public void testCancelAppointment() {
         //Preconditions
         long appointmentId = 1L;
@@ -314,5 +252,44 @@ public class AppointmentDaoTest {
         assertFalse(appointments.isEmpty());
         assertEquals(1, appointments.size());
         assertEquals(userId, appointments.getFirst().getPatient().getId());
+    }
+
+    @Test
+    public void testGetFutureAppointmentsByUserExist() {
+        //Preconditions
+        long specialtyId = 1L;
+        String status = "confirmado";
+        insertAppointment.execute(Map.of(
+                "doctor_id", DOC_ID,
+                "client_id", PAT_ID,
+                "specialty_id", specialtyId,
+                "date", LocalDateTime.now().plusDays(6),
+                "status", status
+        ));
+        insertAppointment.execute(Map.of(
+                "doctor_id", DOC_ID,
+                "client_id", PAT_ID,
+                "specialty_id", specialtyId,
+                "date", LocalDateTime.now().plusDays(8),
+                "status", status
+        ));
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getFutureAppointmentsByUser(PAT_ID);
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(2, appointments.size());
+    }
+
+    @Test
+    public void testGetFutureAppointmentsByUserDoNotExist() {
+        //Preconditions
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getFutureAppointmentsByUser(PAT_ID);
+
+        //Postconditions
+        assertTrue(appointments.isEmpty());
     }
 }

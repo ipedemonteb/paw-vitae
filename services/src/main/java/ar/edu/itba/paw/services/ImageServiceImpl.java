@@ -56,5 +56,4 @@ public class ImageServiceImpl implements ImageService {
         imageDao.deleteImage(id);
     }
 
-
 }
