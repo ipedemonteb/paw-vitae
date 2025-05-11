@@ -89,7 +89,7 @@
                                             code="register.firstName"/></label>
                                     <div class="input-wrapper">
                                         <form:input required="true" path="name" id="name"
-                                                    cssClass="form-control ${status.error ? 'error' : ''}"
+                                                    cssClass="form-control"
                                                     placeholder="${namePlaceholder}"
                                         />
                                         <div class="validation-icon valid">
@@ -100,6 +100,8 @@
                                         </div>
                                     </div>
                                     <div id="name-validation-message" class="error-message">
+                                    </div>
+                                    <div class="error-message-server-name">
                                         <form:errors path="name"/>
                                     </div>
                                 </div>
@@ -109,7 +111,7 @@
                                             code="register.lastName"/></label>
                                     <div class="input-wrapper">
                                         <form:input required="true" path="lastName" id="lastName"
-                                                    cssClass="form-control ${status.error ? 'error' : ''}"
+                                                    cssClass="form-control"
                                                     placeholder="${lastNamePlaceholder}"
                                         />
                                         <div class="validation-icon valid">
@@ -120,6 +122,8 @@
                                         </div>
                                     </div>
                                     <div id="lastName-validation-message" class="error-message">
+                                    </div>
+                                    <div class="error-message-server-lastName">
                                         <form:errors path="lastName"/>
                                     </div>
                                 </div>
@@ -131,7 +135,7 @@
                                             code="register.email"/></label>
                                     <div class="input-wrapper">
                                         <form:input required="true" path="email" id="email"
-                                                    cssClass="form-control ${status.error ? 'error' : ''}"
+                                                    cssClass="form-control"
                                                     placeholder="${emailPlaceholder}"/>
                                         <div class="validation-icon valid">
                                             <i class="fas fa-check-circle"></i>
@@ -140,7 +144,9 @@
                                             <i class="fas fa-exclamation-circle"></i>
                                         </div>
                                     </div>
-                                    <div class="error-message">
+                                    <div id="email-validation-message" class="error-message">
+                                    </div>
+                                    <div class="error-message-server-email">
                                         <form:errors path="email"/>
                                     </div>
                                 </div>
@@ -150,7 +156,7 @@
                                             code="register.phone"/></label>
                                     <div class="input-wrapper">
                                         <form:input required="true" path="phone" id="phone"
-                                                    cssClass="form-control ${status.error ? 'error' : ''}"
+                                                    cssClass="form-control"
                                                     placeholder="+1 (123) 456-7890"
                                         />
                                         <div class="validation-icon valid">
@@ -161,6 +167,8 @@
                                         </div>
                                     </div>
                                     <div id="phone-validation-message" class="error-message">
+                                    </div>
+                                    <div class="error-message-server-phone">
                                         <form:errors path="phone"/>
                                     </div>
                                 </div>
@@ -179,7 +187,7 @@
                                     </label>
                                     <div class="input-wrapper">
                                         <form:password required="true" path="password" id="password"
-                                                       cssClass="form-control ${status.error ? 'error' : ''}"
+                                                       cssClass="form-control"
                                                        placeholder="${passwordPlaceholder}"
                                         />
                                         <div class="validation-icon valid">
@@ -199,6 +207,8 @@
                                         <div class="strength-text"></div>
                                     </div>
                                     <div id="password-length-message" class="error-message">
+                                    </div>
+                                    <div class="error-message-server-password">
                                         <form:errors path="password"/>
                                     </div>
                                 </div>
@@ -208,7 +218,7 @@
                                             code="register.confirmPassword"/></label>
                                     <div class="input-wrapper">
                                         <form:password required="true" path="repeatPassword" id="repeatPassword"
-                                                       cssClass="form-control ${status.error ? 'error' : ''}"
+                                                       cssClass="form-control"
                                                        placeholder="${passwordPlaceholder}"
                                         />
                                         <div class="validation-icon valid">
@@ -219,6 +229,8 @@
                                         </div>
                                     </div>
                                     <div id="password-match-message" class="error-message">
+                                    </div>
+                                    <div  class="error-message-server-repeatPassword">
                                         <form:errors path="repeatPassword"/>
                                     </div>
                                 </div>
@@ -237,6 +249,8 @@
                                 <div id="file-name" class="file-name"></div>
                                 <div id="image-error" class="error-message" style="display: none;"></div>
                                 <div class="error-container">
+                                </div>
+                                <div class="error-container-server-image">
                                     <form:errors path="image" cssClass="error-message visible"/>
                                 </div>
                             </div>
@@ -282,6 +296,8 @@
                                     <spring:message code="register.selectSpecialties"/>
                                 </small>
                                 <div class="error-container">
+                                </div>
+                                <div class="error-container-server-specialties">
                                     <form:errors path="specialties" cssClass="error-message visible"/>
                                 </div>
                             </div>
@@ -314,6 +330,8 @@
                                     <spring:message code="register.selectCoverage"/>
                                 </small>
                                 <div class="error-container">
+                                </div>
+                                <div class="error-container-server-coverages">
                                     <form:errors path="coverages" cssClass="error-message visible"/>
                                 </div>
                             </div>
@@ -361,6 +379,8 @@
 
                                     <div id="time-slot-error" class="error-message" style="display: none;"></div>
                                     <div class="error-container">
+                                    </div>
+                                    <div class="error-container-server-availabilitySlots">
                                         <form:errors path="availabilitySlots" cssClass="error-message visible"/>
                                     </div>
 
@@ -446,22 +466,6 @@
         }<c:if test="${!status.last}">, </c:if>
         </c:forEach>
     ];
-    </c:if>
-
-    <c:if test="${status.error}">
-    window.hasErrors = true;
-    <c:if test="${not empty status.errorMessages['name'] || not empty status.errorMessages['lastName'] ||
-                  not empty status.errorMessages['email'] || not empty status.errorMessages['phone'] ||
-                  not empty status.errorMessages['password'] || not empty status.errorMessages['repeatPassword'] ||
-                  not empty status.errorMessages['image']}">
-    window.errorSection = 1;
-    </c:if>
-    <c:if test="${not empty status.errorMessages['specialties'] || not empty status.errorMessages['coverages']}">
-    window.errorSection = 2;
-    </c:if>
-    <c:if test="${not empty status.errorMessages['availabilitySlots']}">
-    window.errorSection = 3;
-    </c:if>
     </c:if>
 
     const fixedHeader = document.querySelector(".main-header");
