@@ -322,23 +322,6 @@
             appointmentForm.action = contextPath + `/appointment?doctorId=`+ doctorId;
         }
     });
-    const fileInput = document.getElementById('files');
-
-    fileInput.addEventListener('change', function(event) {
-        if (event.target.files.length > 0) {
-            showSuccessToast(); // Muestra la notificación de éxito
-        }
-    });
-
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('updated') === 'true') {
-        showSuccessToast();
-
-        // Remove the query parameter without refreshing the page
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, newUrl);
-    }
-
         function submitOnce(form) {
         if (form.getAttribute('data-submitting') === 'true') {
             return false;
