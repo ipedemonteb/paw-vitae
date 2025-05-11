@@ -31,7 +31,37 @@ public class AppointmentServiceImplTest {
     private static final String REASON = "Checkup";
     private static final String STATUS = "Confirmado";
     private static final String REPORT = "Report";
-    private static final LocalDateTime DATE = LocalDateTime.of(2025, 5, 6, 10, 0);
+    private static final LocalDateTime DATE = LocalDateTime.now().plusDays(1);
+
+    private static final Specialty SPECIALTY = new Specialty(1L, "Cardiology");
+    private static final Doctor DOCTOR = new Doctor("John", 2L, "Doe",
+            "john@test.com", "hashedpassword", "123456789",
+            "es", 1L, true
+    );
+    private static final Patient PATIENT = new Patient("Jane", 1L, "Smith",
+            "jane@test.com", "hashedpassword", "987654321", "es",
+            new Coverage(1L, "OSDE"), true
+    );
+    private static final Appointment APPOINTMENT = new Appointment(
+            DATE,
+            STATUS,
+            REASON,
+            APPOINTMENT_ID,
+            SPECIALTY,
+            DOCTOR,
+            PATIENT,
+            REPORT
+    );
+    private static final Appointment APPOINTMENT_CANC = new Appointment(
+            LocalDateTime.now(),
+            STATUS,
+            REASON,
+            APPOINTMENT_ID,
+            SPECIALTY,
+            DOCTOR,
+            PATIENT,
+            REPORT
+    );
 
     @Mock
     private AppointmentDao appointmentDao;
@@ -59,17 +89,8 @@ public class AppointmentServiceImplTest {
     @Test
     public void testCreate() {
         //Preconditions
-        Specialty specialty = mock(Specialty.class);
-        Appointment expectedAppointment = mock(Appointment.class);
-        Patient patient = mock(Patient.class);
-        Doctor doctor = mock(Doctor.class);
-        when(patient.getId()).thenReturn(PATIENT_ID);
-        when(doctor.getId()).thenReturn(DOCTOR_ID);
-        when(expectedAppointment.getPatient()).thenReturn(patient);
-        when(expectedAppointment.getDoctor()).thenReturn(doctor);
-        when(specialtyService.getById(SPECIALTY_ID)).thenReturn(Optional.of(specialty));
-        when(appointmentDao.create(PATIENT_ID, DOCTOR_ID, DATE, REASON, specialty))
-                .thenReturn(expectedAppointment);
+        when(specialtyService.getById(SPECIALTY_ID)).thenReturn(Optional.of(SPECIALTY));
+        when(appointmentDao.create(eq(PATIENT_ID), eq(DOCTOR_ID), any(LocalDateTime.class), eq(REASON), any(Specialty.class))).thenReturn(APPOINTMENT);
         Appointment appointment = null;
 
         //Exercise
@@ -109,16 +130,13 @@ public class AppointmentServiceImplTest {
     @Test
     public void testCancelAppointmentNotCancellable() {
         //Preconditions
-        long appointmentId = 1L;
         long userId = 1000L;
-        Appointment appointment = mock(Appointment.class);
-        when(appointmentService.getById(appointmentId)).thenReturn(Optional.of(appointment));
-        when(appointment.getDate()).thenReturn(LocalDateTime.now().plusHours(1));
+        when(appointmentService.getById(APPOINTMENT_ID)).thenReturn(Optional.of(APPOINTMENT_CANC));
         boolean result = false;
 
         //Exercise
         try {
-            result = appointmentService.cancelAppointment(appointmentId, userId);
+            result = appointmentService.cancelAppointment(APPOINTMENT_ID, userId);
         } catch (Exception e) {
             fail("Unexpected error during cancellation of appointment: " + e.getMessage());
         }
@@ -133,10 +151,7 @@ public class AppointmentServiceImplTest {
         //Preconditions
         long appointmentId = 1L;
         long userId = 1L;
-        Appointment appointment = mock(Appointment.class);
-        when(appointmentService.getById(appointmentId)).thenReturn(Optional.of(appointment));
-        when(appointment.getDate()).thenReturn(LocalDateTime.now().plusHours(3));
-        when(appointment.getCancellable()).thenReturn(true);
+        when(appointmentService.getById(appointmentId)).thenReturn(Optional.of(APPOINTMENT));
         boolean result = false;
 
         //Exercise
@@ -158,12 +173,7 @@ public class AppointmentServiceImplTest {
         int page = -1;
         int size = 10;
         String filter = "filter";
-        when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString())).thenReturn(List.of(new Appointment(DATE, "confirmado", REASON, APPOINTMENT_ID,
-                mock(Specialty.class),
-                mock(Doctor.class),
-                mock(Patient.class),
-                "report")
-        ));
+        when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString())).thenReturn(List.of(APPOINTMENT));
         when(appointmentDao.countAppointments(userId, isFuture, filter)).thenReturn(1);
         Page<Appointment> appointments = null;
 
@@ -187,12 +197,7 @@ public class AppointmentServiceImplTest {
         int page = 4;
         int size = 10;
         String filter = "filter";
-        when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString())).thenReturn(List.of(new Appointment(DATE, STATUS, REASON, APPOINTMENT_ID,
-                mock(Specialty.class),
-                mock(Doctor.class),
-                mock(Patient.class),
-                REPORT
-        )));
+        when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString())).thenReturn(List.of(APPOINTMENT));
         when(appointmentDao.countAppointments(userId, isFuture, filter)).thenReturn(1);
         Page<Appointment> appointments = null;
 
@@ -239,12 +244,7 @@ public class AppointmentServiceImplTest {
         //Preconditions
         LocalDate date = LocalDate.now();
         Integer time = 10;
-        when(appointmentDao.getAppointmentsByUserAndDate(PATIENT_ID, date, time)).thenReturn(List.of(new Appointment(DATE, STATUS, REASON, APPOINTMENT_ID,
-                mock(Specialty.class),
-                mock(Doctor.class),
-                mock(Patient.class),
-                REPORT
-        )));
+        when(appointmentDao.getAppointmentsByUserAndDate(PATIENT_ID, date, time)).thenReturn(List.of(APPOINTMENT));
         List<Appointment> appointments = Collections.emptyList();
 
         //Exercise

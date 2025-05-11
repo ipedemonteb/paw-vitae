@@ -315,10 +315,40 @@ public class UserServiceImplTest {
         assertFalse(result);
     }
 
-    //@TODO: CHECK HOW TO TEST CAUSE IT CALLS ANOTHER FUNCTION
+    //@TODO: CHECK IF ITS OK MOCKING
+    @Test
+    public void testChangePasswordInvalidUser() {
+        //Preconditions
+        boolean result = false;
+
+        //Exercise
+        try {
+            result = userService.changePassword("RECOVERYTOKEN", "newpassword");
+        } catch (Exception e) {
+            fail("Unexpected error during operation get user by email: " + e.getMessage());
+        }
+
+        //Postconditions
+        assertFalse(result);
+    }
+
+    //@TODO: CHECK THE MOCKING
     @Test
     public void testChangePassword() {
         //Preconditions
+        when(patientDao.getByResetToken(anyString())).thenReturn(Optional.of(PATIENT));
+        when(passwordEncoder.encode(anyString())).thenReturn("ENCODEDPASSWORD");
+        boolean result = false;
+
+        //Exercise
+        try {
+            result = userService.changePassword("RECOVERYTOKEN", "NEWPASSWORD");
+        } catch (Exception e) {
+            fail("Unexpected error during operation get user by email: " + e.getMessage());
+        }
+
+        //Postconditions
+        assertTrue(result);
     }
 
     @Test
