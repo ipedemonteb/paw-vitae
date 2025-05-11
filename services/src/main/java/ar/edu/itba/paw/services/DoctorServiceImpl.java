@@ -43,8 +43,9 @@ public class DoctorServiceImpl implements DoctorService {
         List<AvailabilitySlot> filteredSlots = availabilitySlots.stream()
                 .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
                 .toList();
-        long id = userService.create(name, lastName, email, passwordEncoder.encode(password), phone, language);
-        Doctor doctor = this.doctorDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, (img == null ? null : img.getId()), specialties, coverages);
+        String passwordEncoded = passwordEncoder.encode(password);
+        long id = userService.create(name, lastName, email, passwordEncoded, phone, language);
+        Doctor doctor = this.doctorDao.create(id, name, lastName, email, passwordEncoded, phone, language, (img == null ? null : img.getId()), specialties, coverages);
         availabilitySlotsService.create(id, filteredSlots);
         doctor.setAvailabilitySlots(filteredSlots);
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
