@@ -317,7 +317,7 @@
     <jsp:param name="confirm" value="appointment.action.cancel"/>
     <jsp:param name="title" value="appointment.cancel.title"/>
     <jsp:param name="message" value="appointment.cancel.message"/>
-    <jsp:param name="actionPath" value="${pageContext.request.contextPath}/doctor/dashboard/appointment/cancel"/>
+    <jsp:param name="actionPath" value="/doctor/dashboard/appointment/cancel"/>
     <jsp:param name="divId" value="cancelModal"/>
     <jsp:param name="formId" value="cancelForm"/>
     <jsp:param name="buttonId" value="cancelAppointmentBtn"/>
