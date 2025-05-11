@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.models.exception.CoverageNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +48,10 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Patient create(String name, String lastName, String email, String password, String phone, String language, long coverageId) {
         LOGGER.debug("Creating patient with name: {}, lastName: {}, email: {}, phone: {}, language: {}, coverageId: {}", name, lastName, email, phone, language, coverageId);
-        Coverage coverage = coverageService.findById(coverageId).orElse(null); //TODO coverageNotFoundException?
-        long id = userService.create(name, lastName, email, passwordEncoder.encode(password), phone, language);
-        Patient patient = this.patientDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, coverage);
+        Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
+        String passwordEncoded = passwordEncoder.encode(password);
+        long id = userService.create(name, lastName, email, passwordEncoded, phone, language);
+        Patient patient = this.patientDao.create(id, name, lastName, email, passwordEncoded, phone, language, coverage);
         LOGGER.info("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
         return patient;
     }

@@ -165,8 +165,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public long create(String name, String lastName, String email, String password, String phone, String language) {
         LOGGER.debug("Creating user with name: {}, lastName: {}, email: {}, phone: {}, language: {}", name, lastName, email, phone, language);
-        String encodedPassword = passwordEncoder.encode(password);
-        return userDao.create(name, lastName, email, encodedPassword, phone, language).longValue();
+        return userDao.create(name, lastName, email, password, phone, language).longValue();
     }
 
     @Transactional

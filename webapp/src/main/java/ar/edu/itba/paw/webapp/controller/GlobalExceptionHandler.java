@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
-import ar.edu.itba.paw.models.exception.FileNotFoundException;
-import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
+import ar.edu.itba.paw.models.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -62,6 +59,14 @@ public class GlobalExceptionHandler {
         LOGGER.error("File not found exception occurred", e);
         ModelAndView mav = new ModelAndView("/error/genericNotFoundError");
         mav.addObject("message", "file.notfound");
+        return mav;
+    }
+    @ExceptionHandler(CoverageNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ModelAndView handleCoverageNotFoundException(CoverageNotFoundException e) {
+        LOGGER.error("Coverage not found exception occurred", e);
+        ModelAndView mav = new ModelAndView("/error/genericNotFoundError");
+        mav.addObject("message", "coverage.notfound");
         return mav;
     }
 }
