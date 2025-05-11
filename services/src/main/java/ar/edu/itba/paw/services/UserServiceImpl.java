@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<? extends User> getById(long id) {
         LOGGER.debug("Fetching user by id: {}", id);
         Optional<Patient> patient = patientDao.getById(id);
@@ -63,6 +64,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void setVerificationToken(String email) {
+        LOGGER.debug("Setting verification token for email: {}", email);
         User user = getByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
         String token = UUID.randomUUID().toString();
         String verificationLink = BASE_URL + "/verify-confirmation?token=" + token;
@@ -74,6 +76,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void setVerificationStatus(User user, boolean status) {
+        LOGGER.debug("Setting verification for user id={}", user.getId());
         userDao.setVerificationStatus(user.getId(), status);
         LOGGER.info("Verification status updated to {} for user id={}", status, user.getId());
     }
@@ -81,6 +84,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void setResetPasswordToken(String email) {
+        LOGGER.debug("Setting reset password token for email: {}", email);
         User user = getByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
         String token = UUID.randomUUID().toString();
         String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
@@ -97,9 +101,10 @@ public class UserServiceImpl implements UserService {
         return patient.isPresent() ? patient : doctorDao.getByResetToken(token);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Optional<? extends User> verifyValidationToken(String token) {
+        LOGGER.debug("Verifying validation token");
         Optional<Patient> patient = patientDao.getByVerificationToken(token);
         if (patient.isPresent()) {
             setVerificationStatus(patient.get(), true);
@@ -123,6 +128,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public boolean verifyRecoveryToken(String token) {
+        LOGGER.debug("Verifying recovery token");
         boolean valid = patientDao.getByResetToken(token).isPresent() || doctorDao.getByResetToken(token).isPresent();
         if (!valid) {
             LOGGER.warn("Invalid recovery token: {}", token);
@@ -135,6 +141,7 @@ public class UserServiceImpl implements UserService {
     public boolean changePassword(String token, String password) {
         Optional<? extends User> user = getByResetToken(token);
         if (user.isPresent()) {
+                LOGGER.debug("Changing password for user id={}", user.get().getId());
                 String newPassword = passwordEncoder.encode(password);
                 userDao.changePassword(user.get().getId(), newPassword);
                 userDao.removeResetToken(token);
@@ -150,19 +157,23 @@ public class UserServiceImpl implements UserService {
         if (user == null || user instanceof Patient) {
             return -1L;
         }
+        LOGGER.debug("Getting image id for user id={}", user.getId());
         return ((Doctor) user).getImageId();
     }
 
+    @Transactional
     @Override
     public long create(String name, String lastName, String email, String password, String phone, String language) {
+        LOGGER.debug("Creating user with name: {}, lastName: {}, email: {}, phone: {}, language: {}", name, lastName, email, phone, language);
         String encodedPassword = passwordEncoder.encode(password);
         return userDao.create(name, lastName, email, encodedPassword, phone, language).longValue();
     }
 
+    @Transactional
     @Override
     public void update(long id, String name, String lastName, String phone) {
+        LOGGER.debug("Updating user with id: {}, name: {}, lastName: {}, phone: {}", id, name, lastName, phone);
         userDao.update(id, name, lastName, phone);
-        LOGGER.info("User updated successfully with id={}", id);
     }
 }
 

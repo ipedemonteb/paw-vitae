@@ -40,6 +40,7 @@ public class RatingServiceImpl implements RatingService {
     @Transactional
     @Override
     public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
+        LOGGER.debug("Creating rating with rating: {}, doctorId: {}, patientId: {}, appointmentId: {}, comment: {}", rating, doctorId, patientId, appointmentId, comment);
         Rating rating_aux = ratingDao.create(rating, doctorId, patientId, appointmentId, comment);
         doctorService.UpdateDoctorRating(doctorId, rating_aux.getRating());
         Doctor doctor = doctorService.getById(doctorId).orElseThrow(IllegalArgumentException::new);

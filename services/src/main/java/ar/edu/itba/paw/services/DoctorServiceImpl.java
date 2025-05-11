@@ -38,22 +38,23 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlot> availabilitySlots) {
+        LOGGER.debug("Creating doctor with name: {}, lastName: {}, email: {}, phone: {}, language: {}, specialties: {}, coverages: {}", name, lastName, email, phone, language, specialties, coverages);
         Images img = imageService.create(image);
         List<AvailabilitySlot> filteredSlots = availabilitySlots.stream()
                 .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
                 .toList();
-
         long id = userService.create(name, lastName, email, passwordEncoder.encode(password), phone, language);
         Doctor doctor = this.doctorDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, (img == null ? null : img.getId()), specialties, coverages);
         availabilitySlotsService.create(id, filteredSlots);
         doctor.setAvailabilitySlots(filteredSlots);
-        LOGGER.info("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
+        LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
         return doctor;
     }
 
     @Transactional(readOnly = true)
     @Override
     public Optional<Doctor> getById(long id) {
+        LOGGER.debug("Getting doctor with id {}", id);
         Optional<Doctor> doctor = this.doctorDao.getById(id);
         if (doctor.isEmpty()) {
             LOGGER.warn("No doctor found with id {}", id);
@@ -64,6 +65,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional(readOnly = true)
     @Override
     public Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
+        LOGGER.debug("Getting doctors with special id {}", specialtyId);
         int total = doctorDao.countBySpecialty(specialtyId);
         List<Doctor> docs = doctorDao.getBySpecialty(specialtyId, page, pageSize);
         return new Page<>(docs, page, pageSize, total);
@@ -72,12 +74,14 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional(readOnly = true)
     @Override
     public Optional<Doctor> getByEmail(String email) {
+        LOGGER.debug("Getting doctor with email {}", email);
         return this.doctorDao.getByEmail(email);
     }
 
     @Transactional
     @Override
     public void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages, MultipartFile image) {
+        LOGGER.debug("Updating doctor with id {}, name: {}, lastName: {}, phone: {}, specialties: {}, coverages: {}", doctor.getId(), name, lastName, phone, specialties, coverages);
         List<Long> specialtyIds = doctor.getSpecialtyList()
                 .stream()
                 .map(Specialty::getId)
@@ -86,8 +90,6 @@ public class DoctorServiceImpl implements DoctorService {
                 .stream()
                 .map(Coverage::getId)
                 .toList();
-
-
         boolean hasChangedDoctor = !specialtyIds.equals(specialties) //TODO is the equals of lists well implemented in java?
                 || !coverageIds.equals(coverages);
         boolean hasChangedUser = !doctor.getName().equals(name)
@@ -128,6 +130,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public void UpdateDoctorRating(long id, long rating) {
+        LOGGER.debug("Updating doctor rating with id {}, rating {}", id, rating);
         doctorDao.UpdateDoctorRating(id, rating);
         LOGGER.info("Rating updated for doctor with id={}, rating={}", id, rating);
     }

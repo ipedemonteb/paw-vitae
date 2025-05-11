@@ -27,7 +27,9 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     @Override
     public Images create(MultipartFile image) {
+        LOGGER.debug("Creating image with name '{}' and size {} bytes", image.getOriginalFilename(), image.getSize());
         if (image.isEmpty()) {
+            LOGGER.warn("Image is empty");
             return null;
         }
         Images toReturnImage;
@@ -44,6 +46,7 @@ public class ImageServiceImpl implements ImageService {
     @Transactional(readOnly = true)
     @Override
     public Optional<Images> findById(long id) {
+        LOGGER.debug("Finding image with id {}", id);
         if (id == -1) {
             return Optional.empty();
         }
@@ -53,7 +56,9 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public void deleteImage(long id) {
+        LOGGER.debug("Deleting image with id {}", id);
         imageDao.deleteImage(id);
+        LOGGER.info("Image with id {} deleted", id); //If i reach this line then i can assume the image was deleted
     }
 
 }
