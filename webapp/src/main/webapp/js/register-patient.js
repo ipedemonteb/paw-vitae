@@ -347,19 +347,21 @@ function checkPasswordStrength() {
 
     // Length check
     if (password.length >= 8) strength += 1
+    if (password.length >= 12) strength += 1
 
     // Character variety check
     if (/[A-Z]/.test(password)) strength += 1
     if (/[0-9]/.test(password)) strength += 1
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1
 
     // Set strength level
     let strengthClass = ""
     let strengthLabel = ""
 
-    if (strength < 1) {
+    if (strength < 3) {
         strengthClass = "strength-weak"
         strengthLabel = window.messages.passwordWeak
-    } else if (strength < 3) {
+    } else if (strength < 5) {
         strengthClass = "strength-medium"
         strengthLabel = window.messages.passwordMedium
     } else {

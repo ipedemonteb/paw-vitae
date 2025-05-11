@@ -1119,22 +1119,24 @@ function checkPasswordStrength() {
     let strength = 0
 
     if (password.length >= 8) strength += 1
+    if (password.length >= 12) strength += 1
 
     // Character variety check
     if (/[A-Z]/.test(password)) strength += 1
     if (/[0-9]/.test(password)) strength += 1
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1
 
     // Set strength level
     let strengthClass = ""
     let strengthLabel = ""
     let strengthIcon = ""
 
-    if (strength < 1) {
+    if (strength < 3) {
         strengthClass = "strength-weak"
         strengthLabel = window.messages?.passwordWeak || "Weak"
         strengthIcon =
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><circle cx="12" cy="12" r="10"></circle></svg>'
-    } else if (strength < 3) {
+    } else if (strength < 5) {
         strengthClass = "strength-medium"
         strengthLabel = window.messages?.passwordMedium || "Medium"
         strengthIcon =
