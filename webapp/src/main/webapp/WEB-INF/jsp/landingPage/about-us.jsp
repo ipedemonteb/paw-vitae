@@ -195,12 +195,6 @@
 <script>
     // Mobile menu toggle
     document.addEventListener('DOMContentLoaded', function() {
-        if (document.querySelector('.mobile-menu-toggle')) {
-            document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
-                document.querySelector('.main-nav').classList.toggle('active');
-                this.classList.toggle('active');
-            });
-        }
 
         // Back to top button
         const backToTopButton = document.getElementById('backToTop');

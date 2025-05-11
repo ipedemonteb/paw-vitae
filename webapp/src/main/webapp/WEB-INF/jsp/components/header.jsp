@@ -76,7 +76,7 @@
             </li>
           </sec:authorize>
           <li class="mobile-auth-item">
-            <button class="mobile-logout-btn" type="button">
+            <button class="mobile-logout-btn logout-btn" type="button">
               <i class="fas fa-sign-out-alt"></i>
               <spring:message code="nav.logout" />
             </button>
@@ -235,7 +235,7 @@
 
     navLinks.forEach(link => {
       const href = link.getAttribute('href').split('?')[0]; // Remove query params for comparison
-      if (currentPath === href || (href !== context + '/' && currentPath.includes(href))) {
+      if (currentPath === href || (href !== context + '/' && currentPath === (context + href))) { //TODO HOPE this works on deploy
         link.classList.add('active');
       }
     });
