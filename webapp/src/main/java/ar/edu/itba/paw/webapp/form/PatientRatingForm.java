@@ -17,9 +17,19 @@ public class PatientRatingForm {
     @NotNull
     private Long appointmentId;
 
+    @NotNull
+    private Long doctorId;
+
+    public Long getDoctorId() {
+        return doctorId;
+    }
 
     public Integer getRating() {
         return rating;
+    }
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
     }
 
     public void setRating(Integer rating) {

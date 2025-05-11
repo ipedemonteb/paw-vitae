@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import javax.validation.Valid;
 import java.util.Optional;
 
@@ -122,11 +123,7 @@ public class PatientController {
         mav.addObject("patientFiles", appointmentFileService.getByAppointmentId(appointment.getId()));
         mav.addObject("doctorFiles", appointmentFileService.getByAppointmentId(appointment.getId()));
         mav.addObject("existingRating", existingRating.orElse(null));
-        if (existingRating.isEmpty()) {
-            patientRatingForm.setAppointmentId(id);
-            mav.addObject("patientRatingForm", patientRatingForm);
-        }
-
+        mav.addObject("isCancelled", appointment.getStatus().equals(AppointmentStatus.CANCELADO.getValue()));
         return mav;
     }
 
@@ -138,20 +135,13 @@ public class PatientController {
         if (errors.hasErrors()) {
             return patientAppointmentDetails(form, form.getAppointmentId());
         }
-        Appointment appointment = appointmentService.getById(form.getAppointmentId()).orElseThrow(AppointmentNotFoundException::new);
-        Optional<Rating> existingRating = ratingService.getRatingByAppointmentId(appointment.getId());
-        if (existingRating.isPresent()) {
-            return new ModelAndView("redirect:/patient/dashboard/appointment-details/" + form.getAppointmentId());
-        }
-
         ratingService.create(
                 form.getRating(),
-                appointment.getDoctor().getId(),
+                form.getDoctorId(),
                 patient.getId(),
-                appointment.getId(),
+                form.getAppointmentId(),
                 form.getComment()
         );
-
         return new ModelAndView("redirect:/patient/dashboard/appointment-details/" + form.getAppointmentId() + "?rated=true");
     }
 }
