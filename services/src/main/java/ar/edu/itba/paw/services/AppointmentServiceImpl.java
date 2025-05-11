@@ -55,28 +55,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointment;
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<Appointment> getByPatientId(long patientId) {
-        List<Appointment> appointments = appointmentDao.getByPatientId(patientId);
-        appointments.forEach(a -> {
-            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
-            a.setCancellable(isCancellable);
-        });
-        return appointments;
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<Appointment> getByDoctorId(long doctorId) {
-        List<Appointment> appointments = appointmentDao.getByDoctorId(doctorId);
-        appointments.forEach(a -> {
-            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
-            a.setCancellable(isCancellable);
-        });
-        return appointments;
-    }
-
     @Override
     @Transactional
     @Async
@@ -161,4 +139,17 @@ public class AppointmentServiceImpl implements AppointmentService {
         });
         return appointments;
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Map<LocalDate, List<Integer>> getFutureAppointmentsByUserAndDate(long userId) {
+        List<Appointment> appointments = appointmentDao.getFutureAppointmentsByUser(userId);
+        Map<LocalDate, List<Integer>> appointmentsByDate = new HashMap<>();
+        for (Appointment appointment : appointments) {
+            LocalDate date = appointment.getDate().toLocalDate();
+            appointmentsByDate.computeIfAbsent(date, k -> new ArrayList<>()).add(appointment.getDate().getHour());
+        }
+        return appointmentsByDate;
+    }
+
 }

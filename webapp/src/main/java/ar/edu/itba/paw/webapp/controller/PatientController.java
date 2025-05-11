@@ -11,16 +11,12 @@ import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 
 @Controller
@@ -28,21 +24,19 @@ public class PatientController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PatientController.class);
 
-    private final PatientService ps;
-    private final AppointmentService as;
-    private final CoverageService covs;
-    private final AppointmentFileService afs;
-    private final RatingService rs;
-    private final UserService us;
+    private final PatientService patientService;
+    private final AppointmentService appointmentService;
+    private final CoverageService coverageService;
+    private final AppointmentFileService appointmentFileService;
+    private final RatingService ratingService;
 
     @Autowired
-    public PatientController(PatientService ps, AppointmentService as, CoverageService covs, AppointmentFileService afs, RatingService rs, UserService us) {
-        this.ps = ps;
-        this.as = as;
-        this.covs = covs;
-        this.afs = afs;
-        this.rs = rs;
-        this.us = us;
+    public PatientController(PatientService patientService, AppointmentService appointmentService, CoverageService coverageService, AppointmentFileService appointmentFileService, RatingService ratingService) {
+        this.patientService = patientService;
+        this.appointmentService = appointmentService;
+        this.coverageService = coverageService;
+        this.appointmentFileService = appointmentFileService;
+        this.ratingService = ratingService;
     }
 
     @RequestMapping(value = "/patient/dashboard")
@@ -57,7 +51,7 @@ public class PatientController {
     ) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-upcoming");
         mav.addObject("patient", patient);
-        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(), true, page, 10, dateRange);
+        Page<Appointment> appointmentsPage = appointmentService.getAppointments(patient.getId(), true, page, 10, dateRange);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
@@ -73,7 +67,7 @@ public class PatientController {
     ) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-history");
         mav.addObject("patient", patient);
-        Page<Appointment> appointmentsPage = as.getAppointments(patient.getId(), false, page, 10, status);
+        Page<Appointment> appointmentsPage = appointmentService.getAppointments(patient.getId(), false, page, 10, status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
@@ -87,7 +81,7 @@ public class PatientController {
     ) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-profile");
         mav.addObject("patient", patient);
-        mav.addObject("coverageList", covs.getAll());
+        mav.addObject("coverageList", coverageService.getAll());
         mav.addObject("display", "none");
         return mav;
     }
@@ -102,7 +96,7 @@ public class PatientController {
             mav.addObject("display", "block");
             return mav;
         }
-        ps.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), updatePatientForm.getCoverage());
+        patientService.updatePatient(patient, updatePatientForm.getName(), updatePatientForm.getLastName(), updatePatientForm.getPhone(), updatePatientForm.getCoverage());
         return new ModelAndView("redirect:/patient/dashboard/profile?updated=true");
     }
 
@@ -112,7 +106,7 @@ public class PatientController {
             @RequestParam("appointmentId") Long appointmentId,
             @ModelAttribute("loggedUser") final User user
     ) {
-        boolean result = as.cancelAppointment(appointmentId, user.getId());
+        boolean result = appointmentService.cancelAppointment(appointmentId, user.getId());
         String value = String.valueOf(result);
         return new ModelAndView("redirect:/patient/dashboard/upcoming?cancelled=" + value);
     }
@@ -122,11 +116,11 @@ public class PatientController {
             @ModelAttribute("patientRatingForm") final PatientRatingForm patientRatingForm,
             @PathVariable("id") Long id) {
         ModelAndView mav = new ModelAndView("patient/appointment-details");
-        Appointment appointment = as.getById(id).orElseThrow(AppointmentNotFoundException::new);
-        Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
+        Appointment appointment = appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
+        Optional<Rating> existingRating = ratingService.getRatingByAppointmentId(appointment.getId());
         mav.addObject("appointment", appointment);
-        mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
-        mav.addObject("doctorFiles", afs.getByAppointmentId(appointment.getId()));
+        mav.addObject("patientFiles", appointmentFileService.getByAppointmentId(appointment.getId()));
+        mav.addObject("doctorFiles", appointmentFileService.getByAppointmentId(appointment.getId()));
         mav.addObject("existingRating", existingRating.orElse(null));
         if (existingRating.isEmpty()) {
             patientRatingForm.setAppointmentId(id);
@@ -144,13 +138,13 @@ public class PatientController {
         if (errors.hasErrors()) {
             return patientAppointmentDetails(form, form.getAppointmentId());
         }
-        Appointment appointment = as.getById(form.getAppointmentId()).orElseThrow(AppointmentNotFoundException::new);
-        Optional<Rating> existingRating = rs.getRatingByAppointmentId(appointment.getId());
+        Appointment appointment = appointmentService.getById(form.getAppointmentId()).orElseThrow(AppointmentNotFoundException::new);
+        Optional<Rating> existingRating = ratingService.getRatingByAppointmentId(appointment.getId());
         if (existingRating.isPresent()) {
             return new ModelAndView("redirect:/patient/dashboard/appointment-details/" + form.getAppointmentId());
         }
 
-        rs.create(
+        ratingService.create(
                 form.getRating(),
                 appointment.getDoctor().getId(),
                 patient.getId(),

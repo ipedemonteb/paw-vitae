@@ -47,9 +47,7 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
     @Transactional
     @Override
     public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
-        List<AvailabilitySlot> filteredSlots = availabilitySlots.stream().filter(slot -> {
-            return slot.getStartTime() != null && slot.getEndTime() != null;
-        }).toList();
+        List<AvailabilitySlot> filteredSlots = availabilitySlots.stream().filter(slot -> slot.getStartTime() != null && slot.getEndTime() != null).toList();
         availabilitySlotsDao.updateDoctorAvailability(id, filteredSlots);
         LOGGER.debug("Updating availability for doctor {}: {} slots", id, filteredSlots.size());
 
@@ -59,9 +57,7 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
     @Override
     public boolean isAvailableAtDateAndTime(long doctorId, LocalDate date, int time) {
         List<AvailabilitySlot> slots = getAvailabilityByDoctorId(doctorId);
-        return slots.stream().anyMatch(slot -> {
-            return slot.getDayOfWeek() == (date.getDayOfWeek().getValue() - 1) && slot.getStartTime().getHour() <= time && slot.getEndTime().getHour() >= time;
-        });
+        return slots.stream().anyMatch(slot -> slot.getDayOfWeek() == (date.getDayOfWeek().getValue() - 1) && slot.getStartTime().getHour() <= time && slot.getEndTime().getHour() >= time);
     }
 
     @Transactional(readOnly = true)

@@ -231,6 +231,7 @@ function initFileUpload() {
 
     if (fileInput && fileName && fileLabel) {
         fileInput.addEventListener("change", function () {
+            removeContainerServerError("image")
             const errorElement = document.getElementById("image-error")
             if (!errorElement) return
 
@@ -367,6 +368,7 @@ function addInputValidationListeners() {
     const requiredFields1 = section1.querySelectorAll("input[required]")
     requiredFields1.forEach((field) => {
         field.addEventListener("input", () => {
+            serverSideValidationRemove(field);
             updateNextButtonState(1)
         })
 
@@ -385,6 +387,7 @@ function addInputValidationListeners() {
     specialtiesOptions.forEach((option) => {
         option.addEventListener("click", () => {
             setTimeout(() => {
+                removeContainerServerError("specialties")
                 updateNextButtonState(2)
                 validateMultiSelect("specialties")
             }, 100)
@@ -395,6 +398,7 @@ function addInputValidationListeners() {
     coveragesOptions.forEach((option) => {
         option.addEventListener("click", () => {
             setTimeout(() => {
+                removeContainerServerError("coverages")
                 updateNextButtonState(2)
                 validateMultiSelect("coverages")
             }, 100)
@@ -411,6 +415,20 @@ function addInputValidationListeners() {
             updateSubmitButtonState()
             validateCheckbox(this)
         })
+    }
+}
+
+function removeContainerServerError(name) {
+    const errorDiv = document.querySelector(".error-container-server-" + name)
+    if (errorDiv) {
+        errorDiv.style.display = "none"
+    }
+}
+
+function serverSideValidationRemove(field) {
+    const errorDiv = document.querySelector(".error-message-server-" + field.id)
+    if (errorDiv) {
+        errorDiv.style.display = "none";
     }
 }
 
@@ -1101,22 +1119,24 @@ function checkPasswordStrength() {
     let strength = 0
 
     if (password.length >= 8) strength += 1
+    if (password.length >= 12) strength += 1
 
     // Character variety check
     if (/[A-Z]/.test(password)) strength += 1
     if (/[0-9]/.test(password)) strength += 1
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1
 
     // Set strength level
     let strengthClass = ""
     let strengthLabel = ""
     let strengthIcon = ""
 
-    if (strength < 1) {
+    if (strength < 3) {
         strengthClass = "strength-weak"
         strengthLabel = window.messages?.passwordWeak || "Weak"
         strengthIcon =
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><circle cx="12" cy="12" r="10"></circle></svg>'
-    } else if (strength < 3) {
+    } else if (strength < 5) {
         strengthClass = "strength-medium"
         strengthLabel = window.messages?.passwordMedium || "Medium"
         strengthIcon =
@@ -1702,6 +1722,7 @@ function validateTimeSlots() {
 
             showTimeSlotError(window.messages?.timeSlotOverlap || "Time slots cannot overlap")
         }
+        removeContainerServerError("availabilitySlots")
     })
 
     // Update submit button state

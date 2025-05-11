@@ -49,15 +49,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const validateFiles = (files) => {
 
         if (selectedFiles.length + files.length > MAX_FILES) {
-            showNotification(window.appointmentMessages?.fileUpload?.tooManyFiles || "Máximo 5 archivos permitidos", "error")
+            showNotification(window.appointmentMessages?.fileUpload?.tooManyFiles, "error")
             return false
         }
 
-        // Verificar tipos de archivo
         for (let i = 0; i < files.length; i++) {
             if (!ALLOWED_TYPES.includes(files[i].type)) {
                 showNotification(
-                    window.appointmentMessages?.fileUpload?.invalidType || "Solo se permiten archivos PDF",
+                    window.appointmentMessages?.fileUpload?.invalidType,
                     "error",
                 )
                 return false
@@ -66,14 +65,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (files[i].size > MAX_FILE_SIZE) {
                 showNotification(
-                    window.appointmentMessages?.fileUpload?.fileTooLarge || `El archivo ${files[i].name} excede el límite de 3MB`,
+                    window.appointmentMessages?.fileUpload?.fileTooLarge ,
                     "error",
                 )
 
                 return false
             }
         }
-
+        showSuccessToast()
         return true
     }
 
@@ -96,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
         Array.from(files).forEach((file) => {
             selectedFiles.push(file);
 
-            // Crear contenedor del archivo
             const fileItem = document.createElement("div");
             fileItem.className = "file-item";
             fileItem.dataset.fileName = file.name;
@@ -143,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             fileItem.appendChild(fileInfo);
             fileItem.appendChild(fileRemove);
 
-            // Agregar a la vista previa con animación
+
             fileItem.style.opacity = "0";
             fileItem.style.transform = "translateY(10px)";
             filePreview.appendChild(fileItem);

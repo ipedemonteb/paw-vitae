@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfacePersistence.CoverageDao;
 import ar.edu.itba.paw.interfacePersistence.PatientDao;
-import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Coverage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,25 +15,17 @@ import java.util.*;
 @Repository
 public class PatientDaoImpl implements PatientDao {
 
-    private static final String BASE_SQL = "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, " +
-            "u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, " +
-            "u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified " +
-            "FROM Users u JOIN Clients c ON c.client_id = u.id " +
-            "JOIN Coverages cov ON cov.id = c.coverage_id ";
+    private static final String BASE_SQL = "SELECT u.name AS patient_name, u.id AS patient_id, u.last_name AS patient_last_name, u.email AS patient_email, u.password AS patient_password, u.phone AS patient_phone, u.language AS patient_language, cov.id AS coverage_id, cov.coverage_name, u.is_verified AS patient_verified FROM Users u JOIN Clients c ON c.client_id = u.id JOIN Coverages cov ON cov.id = c.coverage_id ";
 
     public static RowMapper<Patient> ROW_MAPPER;
     private final SimpleJdbcInsert jdbcInsertPatient;
     private final JdbcTemplate jdbcTemplate;
-    private final UserDao userDao;
-    private final CoverageDao coverageDao;
 
 
     @Autowired
-    public PatientDaoImpl(final DataSource ds, UserDao userDao, CoverageDao coverageDao) {
+    public PatientDaoImpl(final DataSource dataSource) {
         ROW_MAPPER = DaoRowMappers.PATIENT_ROW_MAPPER;
-        this.userDao = userDao;
-        this.coverageDao = coverageDao;
-        jdbcTemplate = new JdbcTemplate(ds);
+        jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsertPatient = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("clients")
                 .usingColumns("client_id", "coverage_id");

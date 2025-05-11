@@ -14,15 +14,11 @@ public interface DoctorService {
 
     Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize);
 
-    Page<Doctor> getBySpecialtyWithAppointments(long specialtyId, int page, int pageSize);
-
     Optional<Doctor> getByEmail(String email);
 
      void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages,MultipartFile image);
 
     void UpdateDoctorRating(long id, long rating);
-
-    Optional<Doctor> getByIdWithAppointments(long id);
 
     Page<Doctor> getWithFilters(Long specialtyId, Long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);
 

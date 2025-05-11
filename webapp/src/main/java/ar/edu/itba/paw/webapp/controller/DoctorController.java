@@ -3,44 +3,39 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
 @Controller
 public class DoctorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoctorController.class);
 
-    private final DoctorService ds;
-    private final AppointmentService as;
-    private final CoverageService cs;
-    private final SpecialtyService ss;
-    private final AppointmentFileService afs;
-    private final RatingService rs;
-    private final AvailabilitySlotsService ass;
+    private final DoctorService doctorService;
+    private final AppointmentService appointmentService;
+    private final CoverageService coverageService;
+    private final SpecialtyService specialtyService;
+    private final AppointmentFileService appointmentFileService;
+    private final RatingService ratingService;
+    private final AvailabilitySlotsService availabilitySlotsService;
 
     @Autowired
-    public DoctorController(DoctorService ds, AppointmentService as, CoverageService cs, SpecialtyService ss, AppointmentFileService afs, RatingService rs, AvailabilitySlotsService ass) {
-        this.ds = ds;
-        this.as = as;
-        this.cs = cs;
-        this.ss = ss;
-        this.afs = afs;
-        this.rs = rs;
-        this.ass = ass;
+    public DoctorController(DoctorService doctorService, AppointmentService appointmentService, CoverageService coverageService, SpecialtyService specialtyService, AppointmentFileService appointmentFileService, RatingService ratingService, AvailabilitySlotsService availabilitySlotsService) {
+        this.doctorService = doctorService;
+        this.appointmentService = appointmentService;
+        this.coverageService = coverageService;
+        this.specialtyService = specialtyService;
+        this.appointmentFileService = appointmentFileService;
+        this.ratingService = ratingService;
+        this.availabilitySlotsService = availabilitySlotsService;
 
     }
 
@@ -56,7 +51,7 @@ public class DoctorController {
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-upcoming");
         mav.addObject("doctor", doctor);
-        Page<Appointment> appointmentsPage = as.getAppointments(doctor.getId(), true, page, 10, dateRange);
+        Page<Appointment> appointmentsPage = appointmentService.getAppointments(doctor.getId(), true, page, 10, dateRange);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
@@ -72,7 +67,7 @@ public class DoctorController {
                                               @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-history");
-        Page<Appointment> appointmentsPage = as.getAppointments(doctor.getId(), false, page, 10, status);
+        Page<Appointment> appointmentsPage = appointmentService.getAppointments(doctor.getId(), false, page, 10, status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("doctor", doctor);
@@ -88,8 +83,8 @@ public class DoctorController {
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-profile");
         mav.addObject("doctor", doctor);
-        mav.addObject("coverageList", cs.getAll());
-        mav.addObject("specialtyList", ss.getAll());
+        mav.addObject("coverageList", coverageService.getAll());
+        mav.addObject("specialtyList", specialtyService.getAll());
         mav.addObject("display", "none");
         return mav;
     }
@@ -114,7 +109,7 @@ public class DoctorController {
             mav.addObject("display", "block");
             return mav;
         }
-        ds.updateDoctor(doctor,
+        doctorService.updateDoctor(doctor,
                 updateDoctorForm.getName(),
                 updateDoctorForm.getLastName(),
                 updateDoctorForm.getPhone(),
@@ -131,7 +126,7 @@ public class DoctorController {
     public ModelAndView cancelAppointment(@RequestParam("appointmentId") Long appointmentId,
                                           @ModelAttribute("loggedUser") final User user
     ) {
-        boolean result = as.cancelAppointment(appointmentId, user.getId());
+        boolean result = appointmentService.cancelAppointment(appointmentId, user.getId());
         String value = String.valueOf(result);
         return new ModelAndView("redirect:/doctor/dashboard/upcoming?cancelled=" + value);
     }
@@ -146,7 +141,7 @@ public class DoctorController {
         if (errors.hasErrors()) {
             return getAvailability(form, doctor);
         }
-        ass.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());
+        availabilitySlotsService.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
 
@@ -156,12 +151,12 @@ public class DoctorController {
             @ModelAttribute("loggedUser") final Doctor doctor,
             @PathVariable("id") Long id) {
         ModelAndView mav = new ModelAndView("/doctor/appointment-details");
-        Appointment appointment = as.getById(id).orElseThrow(AppointmentNotFoundException::new);
+        Appointment appointment = appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
         mav.addObject("appointment", appointment);
         mav.addObject("doctor", doctor);
-        mav.addObject("patientFiles", afs.getByAppointmentId(appointment.getId()));
-        mav.addObject("doctorFiles", afs.getByAppointmentId(appointment.getId()));
-        mav.addObject("existingRating", rs.getRatingByAppointmentId(appointment.getId()).orElse(null));
+        mav.addObject("patientFiles", appointmentFileService.getByAppointmentId(appointment.getId()));
+        mav.addObject("doctorFiles", appointmentFileService.getByAppointmentId(appointment.getId()));
+        mav.addObject("existingRating", ratingService.getRatingByAppointmentId(appointment.getId()).orElse(null));
         doctorFileForm.setAppointmentId(id);
         return mav;
     }
@@ -176,9 +171,9 @@ public class DoctorController {
         if (errors.hasErrors()) {
             return doctorAppointmentDetails(doctorFileForm, doctor, id);
         }
-        Appointment appointment = as.getById(id).orElseThrow(AppointmentNotFoundException::new);
-        afs.create(doctorFileForm.getFiles(), "doctor", appointment.getId());
-        as.updateAppointmentReport(appointment.getId(), doctorFileForm.getReport());
+        Appointment appointment = appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
+        appointmentFileService.create(doctorFileForm.getFiles(), "doctor", appointment.getId());
+        appointmentService.updateAppointmentReport(appointment.getId(), doctorFileForm.getReport());
         return new ModelAndView("redirect:/doctor/dashboard/appointment-details/" + id);
     }
 }
