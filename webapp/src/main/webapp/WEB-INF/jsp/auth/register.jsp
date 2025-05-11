@@ -27,7 +27,7 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/components/header.jsp"/>
 
-<div class="register-container">
+<main class="register-container">
     <div class="register-card">
 
         <div class="card-header">
@@ -412,7 +412,7 @@
             </c:choose>
         </div>
     </div>
-</div>
+</main>
 
 
 <script>
@@ -467,19 +467,6 @@
         </c:forEach>
     ];
     </c:if>
-
-    const fixedHeader = document.querySelector(".main-header");
-    const mainContent = document.querySelector(".register-container");
-
-    if (fixedHeader && mainContent) {
-        const adjustContentMargin = () => {
-            const headerHeight = fixedHeader.offsetHeight;
-            mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-        };
-
-        adjustContentMargin();
-        window.addEventListener("resize", adjustContentMargin);
-    }
 
 
 </script>

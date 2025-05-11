@@ -30,6 +30,13 @@
 
 /* Button Styles */
 
+main {
+    margin-top: 8rem !important;
+}
+
+.landing-container {
+    margin-top: 0 !important;
+}
 
 /* Ensure the register dropdown button has the same dimensions */
 .register-dropdown-toggle {

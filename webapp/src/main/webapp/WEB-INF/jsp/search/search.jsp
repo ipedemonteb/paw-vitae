@@ -534,23 +534,6 @@
     window.location.href = currentUrl.toString();
   }
 
-  // Adjust content margin based on header height
-  // const fixedHeader = document.querySelector(".main-header");
-  // const mainContent = document.querySelector(".main-content");
-
-  // if (fixedHeader && mainContent) { //TODO decide if margin is magic or based on header, extend to all jsp
-  //   const adjustContentMargin = () => {
-  //     const headerHeight = fixedHeader.offsetHeight;
-  //     mainContent.style.marginTop = (headerHeight * 1.1) + `px`;
-  //   };
-  //
-  //   // Adjust on page load
-  //   adjustContentMargin();
-  //
-  //   // Adjust on window resize
-  //   window.addEventListener("resize", adjustContentMargin);
-  // }
-
   // Initialize search functionality
   document.addEventListener('DOMContentLoaded', function() {
     initializeSearch();

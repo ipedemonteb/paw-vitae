@@ -39,7 +39,7 @@
     </button>
 </div>
 
-<div class="dashboard-container">
+<main class="dashboard-container">
     <!-- Doctor Profile Header -->
     <div class="dashboard-header">
         <div class="doctor-info">
@@ -364,7 +364,7 @@
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <div id="cancelAppointmentModal" class="modal-overlay">
     <div class="modal-container">
@@ -518,18 +518,6 @@
         selectedSpecialtiesDisplay.innerHTML = selectedNames.length > 0
             ? selectedNames.join(', ')
             : '';
-    }
-
-    const fixedHeader = document.querySelector(".main-header");
-    const mainContent = document.querySelector(".dashboard-container");
-
-    if (fixedHeader && mainContent) {
-        const adjustContentMargin = () => {
-            const headerHeight = fixedHeader.offsetHeight;
-            mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-        };
-        adjustContentMargin();
-        window.addEventListener("resize", adjustContentMargin);
     }
 
     function preSelectCurrentSpecialties() {

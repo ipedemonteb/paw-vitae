@@ -26,7 +26,7 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/components/header.jsp"/>
 
-<div class="page-container">
+<main class="page-container">
     <div class="register-container">
         <div class="register-header">
             <h1 class="register-title"><spring:message code="register.title"/></h1>
@@ -249,7 +249,7 @@
             </c:choose>
         </div>
     </div>
-</div>
+</main>
 
 <script>
     // Create a global object to store message translations
@@ -280,22 +280,6 @@
         nameInvalid: '<spring:message code="register.nameInvalid" javaScriptEscape="true" />',
         passwordInvalid: '<spring:message code="register.passwordInvalid" javaScriptEscape="true" />'
     };
-
-    const fixedHeader = document.querySelector(".main-header");
-    const mainContent = document.querySelector(".page-container");
-
-    if (fixedHeader && mainContent) {
-        const adjustContentMargin = () => {
-            const headerHeight = fixedHeader.offsetHeight;
-            mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-        };
-
-        // Adjust on page load
-        adjustContentMargin();
-
-        // Adjust on window resize
-        window.addEventListener("resize", adjustContentMargin);
-    }
 </script>
 </body>
 </html>

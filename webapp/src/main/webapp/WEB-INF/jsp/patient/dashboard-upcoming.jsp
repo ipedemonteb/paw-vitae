@@ -68,7 +68,7 @@
         <c:set var="selectedDateRange" value="all" />
     </c:otherwise>
 </c:choose>
-<section class="dashboard-container">
+<main class="dashboard-container">
     <!-- Include the dashboard header component -->
     <c:set var="activeTab" value="upcoming" scope="request" />
     <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp" />
@@ -229,7 +229,7 @@
             </c:choose>
         </div>
     </div>
-</section>
+</main>
 
 <script src="<c:url value="/js/toast-notification.js"/> "></script>
 
@@ -239,23 +239,6 @@
         window.applyDateFilter = function(value) {
             window.location.href = '${pageContext.request.contextPath}/patient/dashboard/upcoming?dateRange=' + value;
         };
-
-
-        const fixedHeader = document.querySelector(".main-header");
-        const mainContent = document.querySelector(".dashboard-container");
-
-        if (fixedHeader && mainContent) {
-            const adjustContentMargin = () => {
-                const headerHeight = fixedHeader.offsetHeight;
-                mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-            };
-
-            // Adjust on page load
-            adjustContentMargin();
-
-            // Adjust on window resize
-            window.addEventListener("resize", adjustContentMargin);
-        }
 
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('cancelled') === 'true') {
