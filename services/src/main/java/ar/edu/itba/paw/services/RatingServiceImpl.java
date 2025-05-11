@@ -47,7 +47,7 @@ public class RatingServiceImpl implements RatingService {
         Patient patient = patientService.getById(patientId).orElseThrow(IllegalArgumentException::new);
         Appointment appointment = appointmentService.getById(appointmentId).orElseThrow(IllegalArgumentException::new);
         mailService.sendRatingMail(doctor, patient, appointment, rating_aux.getRating(), comment);
-        LOGGER.info("Rating created: {} with id: {} for doctor with id {} by patient with id {}", rating_aux, rating_aux.getId(), doctorId, patientId);
+        LOGGER.info("Rating created with id: {} for doctor with id {} by patient with id {}", rating_aux.getId(), doctorId, patientId);
         return rating_aux;
     }
 

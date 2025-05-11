@@ -69,11 +69,11 @@ public class PatientServiceImpl implements PatientService {
         boolean hasChangedUser = !patient.getName().equals(name) || !patient.getLastName().equals(lastName) || !patient.getPhone().equals(phone);
         if (hasChangedPatient) {
             patientDao.updatePatient(patient.getId(), coverageId);
-            LOGGER.info("Patient updated successfully: id={}", patient);
+            LOGGER.info("Patient updated successfully: id={}", patient.getId());
         }
         if (hasChangedUser) {
             userService.update(patient.getId(), name, lastName, phone);
-            LOGGER.info("User updated successfully: id={}", patient);
+            LOGGER.info("User updated successfully: id={}", patient.getId());
         }
     }
 }
