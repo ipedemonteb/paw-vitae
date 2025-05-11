@@ -81,7 +81,9 @@
                                 />
                             </div>
                             <div id="name-validation-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="name" class="error-text"/>
+                            <div class="server-error-name">
+                                <form:errors path="name" class="error-text"/>
+                            </div>
                         </div>
 
                         <div class="form-field">
@@ -96,7 +98,9 @@
                                 />
                             </div>
                             <div id="lastName-validation-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="lastName" class="error-text"/>
+                            <div class="server-error-lastName">
+                                <form:errors path="lastName" class="error-text"/>
+                            </div>
                         </div>
 
                         <div class="form-field">
@@ -111,7 +115,9 @@
                                 />
                             </div>
                             <div id="email-validation-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="email" class="error-text"/>
+                            <div class="server-error-email">
+                                <form:errors path="email" class="error-text"/>
+                            </div>
                         </div>
 
                         <div class="form-field">
@@ -126,7 +132,9 @@
                                 />
                             </div>
                             <div id="phone-validation-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="phone" class="error-text"/>
+                            <div class="server-error-phone">
+                                <form:errors path="phone" class="error-text"/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -161,7 +169,9 @@
                                 <span class="strength-text"></span>
                             </div>
                             <div id="password-length-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="password" class="error-text"/>
+                            <div class="server-error-password">
+                                <form:errors path="password" class="error-text"/>
+                            </div>
                         </div>
 
                         <div class="form-field">
@@ -176,7 +186,9 @@
                                 />
                             </div>
                             <div id="password-match-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="repeatPassword" class="error-text"/>
+                            <div class="server-error-repeatPassword">
+                                <form:errors path="repeatPassword" class="error-text"/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -199,7 +211,9 @@
                             </div>
                         </c:forEach>
                     </div>
-                    <form:errors path="coverage" class="error-text"/>
+                    <div class="server-error-coverage">
+                        <form:errors path="coverage" class="error-text"/>
+                    </div>
                 </div>
 
                 <!-- Terms and Conditions -->
