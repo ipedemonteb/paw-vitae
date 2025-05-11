@@ -59,7 +59,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
             Patient patient = appointment.getPatient();
             mailService.sendFileUploadMail(doctor, patient, appointment, appointmentFiles);
         }
-        LOGGER.info("Appointment files created successfully: {} for appointment with id {}", appointmentFiles, appointment_id);
+        LOGGER.info("Appointment files created successfully for appointment with id {}", appointment_id);
         return appointmentFiles;
     }
 

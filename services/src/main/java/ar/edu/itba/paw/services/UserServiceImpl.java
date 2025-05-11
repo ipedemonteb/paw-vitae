@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService {
         LOGGER.debug("Verifying recovery token");
         boolean valid = patientDao.getByResetToken(token).isPresent() || doctorDao.getByResetToken(token).isPresent();
         if (!valid) {
-            LOGGER.warn("Invalid recovery token: {}", token);
+            LOGGER.warn("Invalid recovery token");
         }
         return valid;
     }

@@ -52,7 +52,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
-        LOGGER.info("New appointment created: {}, with id: {}", appointment, appointment.getId());
+        LOGGER.info("New appointment created with id: {}", appointment.getId());
 
         return appointment;
     }
@@ -84,7 +84,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentDao.cancelAppointment(appointmentId);
         appt.get().setStatus(AppointmentStatus.CANCELADO.getValue());
         mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appt.get());
-        LOGGER.info("Appointment cancelled: {}", appt.get());
+        LOGGER.info("Appointment cancelled: {}", appt.get().getId());
         return true;
     }
 
