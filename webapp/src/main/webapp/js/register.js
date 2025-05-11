@@ -231,6 +231,7 @@ function initFileUpload() {
 
     if (fileInput && fileName && fileLabel) {
         fileInput.addEventListener("change", function () {
+            removeContainerServerError("image")
             const errorElement = document.getElementById("image-error")
             if (!errorElement) return
 
@@ -367,6 +368,7 @@ function addInputValidationListeners() {
     const requiredFields1 = section1.querySelectorAll("input[required]")
     requiredFields1.forEach((field) => {
         field.addEventListener("input", () => {
+            serverSideValidationRemove(field);
             updateNextButtonState(1)
         })
 
@@ -385,6 +387,7 @@ function addInputValidationListeners() {
     specialtiesOptions.forEach((option) => {
         option.addEventListener("click", () => {
             setTimeout(() => {
+                removeContainerServerError("specialties")
                 updateNextButtonState(2)
                 validateMultiSelect("specialties")
             }, 100)
@@ -395,6 +398,7 @@ function addInputValidationListeners() {
     coveragesOptions.forEach((option) => {
         option.addEventListener("click", () => {
             setTimeout(() => {
+                removeContainerServerError("coverages")
                 updateNextButtonState(2)
                 validateMultiSelect("coverages")
             }, 100)
@@ -411,6 +415,20 @@ function addInputValidationListeners() {
             updateSubmitButtonState()
             validateCheckbox(this)
         })
+    }
+}
+
+function removeContainerServerError(name) {
+    const errorDiv = document.querySelector(".error-container-server-" + name)
+    if (errorDiv) {
+        errorDiv.style.display = "none"
+    }
+}
+
+function serverSideValidationRemove(field) {
+    const errorDiv = document.querySelector(".error-message-server-" + field.id)
+    if (errorDiv) {
+        errorDiv.style.display = "none";
     }
 }
 
@@ -1702,6 +1720,7 @@ function validateTimeSlots() {
 
             showTimeSlotError(window.messages?.timeSlotOverlap || "Time slots cannot overlap")
         }
+        removeContainerServerError("availabilitySlots")
     })
 
     // Update submit button state
