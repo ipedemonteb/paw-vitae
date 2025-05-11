@@ -88,7 +88,9 @@ public class DoctorServiceImpl implements DoctorService {
                 .toList();
 
 
-        boolean hasChangedDoctor = !specialtyIds.equals(specialties) //TODO is the equals of lists well implemented in java?
+
+        boolean hasChangedDoctor = specialtyIds.size() != specialties.size()
+                || !specialtyIds.stream().sorted().toList().equals(specialties.stream().sorted().toList())
                 || !coverageIds.equals(coverages);
         boolean hasChangedUser = !doctor.getName().equals(name)
                 || !doctor.getLastName().equals(lastName)

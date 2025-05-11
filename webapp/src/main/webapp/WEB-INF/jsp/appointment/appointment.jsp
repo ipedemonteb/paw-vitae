@@ -274,22 +274,6 @@
         </c:forEach>
     ];
 
-    const fixedHeader = document.querySelector(".main-header");
-    const mainContent = document.querySelector("main");
-
-    if (fixedHeader && mainContent) {
-        const adjustContentMargin = () => {
-            const headerHeight = fixedHeader.offsetHeight;
-            mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-        };
-
-        // Adjust on page load
-        adjustContentMargin();
-
-        // Adjust on window resize
-        window.addEventListener("resize", adjustContentMargin);
-    }
-
     // Handle specialty selection
     document.addEventListener('DOMContentLoaded', function() {
         const specialtySelect = document.getElementById('specialtySelect');

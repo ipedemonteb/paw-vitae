@@ -23,7 +23,7 @@
     <jsp:param name="id" value="${doctor.imageId}" />
 </jsp:include>
 
-<div class="dashboard-container">
+<main class="dashboard-container">
     <!-- Doctor Profile Header -->
     <div class="dashboard-header">
         <div class="doctor-info">
@@ -254,7 +254,7 @@
             </c:choose>
         </div>
     </div>
-</div>
+</main>
 
 <!-- Modales comunes -->
 <div id="confirmAppointmentModal" class="modal-overlay">
@@ -331,22 +331,6 @@
                     }
                 });
             });
-        }
-
-        const fixedHeader = document.querySelector(".main-header");
-        const mainContent = document.querySelector(".dashboard-container");
-
-        if (fixedHeader && mainContent) {
-            const adjustContentMargin = () => {
-                const headerHeight = fixedHeader.offsetHeight;
-                mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-            };
-
-            // Adjust on page load
-            adjustContentMargin();
-
-            // Adjust on window resize
-            window.addEventListener("resize", adjustContentMargin);
         }
 
         // Función para inicializar filtros y eventos en las citas cargadas

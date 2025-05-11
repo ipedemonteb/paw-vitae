@@ -21,7 +21,7 @@
     <jsp:param name="id" value="${imageId}" />
 </jsp:include>
 
-<main>
+<main class="landing-container">
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">

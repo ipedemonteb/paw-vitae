@@ -37,7 +37,7 @@
     </button>
 </div>
 
-<div class="dashboard-container">
+<main class="dashboard-container">
     <!-- Doctor Profile Header -->
     <div class="dashboard-header">
         <div class="doctor-info">
@@ -212,7 +212,7 @@
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <div id="cancelAppointmentModal" class="modal-overlay">
     <div class="modal-container">
@@ -613,22 +613,6 @@
 
         updateSaveButtonState();
         return !hasErrors;
-    }
-
-    const fixedHeader = document.querySelector(".main-header");
-    const mainContent = document.querySelector(".dashboard-container");
-
-    if (fixedHeader && mainContent) {
-        const adjustContentMargin = () => {
-            const headerHeight = fixedHeader.offsetHeight;
-            mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-        };
-
-        // Adjust on page load
-        adjustContentMargin();
-
-        // Adjust on window resize
-        window.addEventListener("resize", adjustContentMargin);
     }
 
     function updateSaveButtonState() {

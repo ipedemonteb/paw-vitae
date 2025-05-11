@@ -21,7 +21,7 @@
 <!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<div class="dashboard-container">
+<main class="dashboard-container">
     <!-- Include the dashboard header component -->
     <c:set var="activeTab" value="history" scope="request" />
     <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp" />
@@ -171,7 +171,7 @@
             </c:choose>
         </div>
     </div>
-</div>
+</main>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -179,22 +179,6 @@
         window.applyStatusFilter = function(value) {
             window.location.href = '${pageContext.request.contextPath}/patient/dashboard/history?status=' + value;
         };
-
-        const fixedHeader = document.querySelector(".main-header");
-        const mainContent = document.querySelector(".dashboard-container");
-
-        if (fixedHeader && mainContent) {
-            const adjustContentMargin = () => {
-                const headerHeight = fixedHeader.offsetHeight;
-                mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-            };
-
-            // Adjust on page load
-            adjustContentMargin();
-
-            // Adjust on window resize
-            window.addEventListener("resize", adjustContentMargin);
-        }
 
         // Search functionality
         const searchInput = document.querySelector('.search-input');

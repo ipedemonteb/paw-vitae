@@ -36,7 +36,7 @@
     </button>
 </div>
 
-<div class="dashboard-container">
+<main class="dashboard-container">
     <!-- Include the dashboard header component -->
     <c:set var="activeTab" value="profile" scope="request" />
     <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp" />
@@ -164,7 +164,7 @@
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <!-- Include the toast notification script -->
 <script src="<c:url value='/js/toast-notification.js' />"></script>
@@ -283,22 +283,6 @@
                 }
             }
         }
-    }
-
-    const fixedHeader = document.querySelector(".main-header");
-    const mainContent = document.querySelector(".dashboard-container");
-
-    if (fixedHeader && mainContent) {
-        const adjustContentMargin = () => {
-            const headerHeight = fixedHeader.offsetHeight;
-            mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-        };
-
-        // Adjust on page load
-        adjustContentMargin();
-
-        // Adjust on window resize
-        window.addEventListener("resize", adjustContentMargin);
     }
 
     function initCoverageSearch() {

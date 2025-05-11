@@ -21,7 +21,7 @@
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
 <!-- Main Content -->
-<main class="main-content">
+<div class="main-content">
     <div class="container">
         <div class="recover-password-container">
             <div class="card">
@@ -101,27 +101,11 @@
             </div>
         </div>
     </div>
-</main>
+</div>
 
 <!-- JavaScript for validation -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Fixed header adjustment
-        const fixedHeader = document.querySelector(".main-header");
-        const mainContent = document.querySelector("main");
-
-        if (fixedHeader && mainContent) {
-            const adjustContentMargin = () => {
-                const headerHeight = fixedHeader.offsetHeight;
-                mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-            };
-
-            // Adjust on page load
-            adjustContentMargin();
-
-            // Adjust on window resize
-            window.addEventListener("resize", adjustContentMargin);
-        }
 
         // Email validation
         const emailField = document.getElementById("email");

@@ -15,7 +15,7 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<section class="login-page">
+<main class="login-page">
   <div class="login-container">
     <div class="login-welcome">
       <div class="welcome-content">
@@ -177,7 +177,7 @@
       </div>
     </div>
   </div>
-</section>
+</main>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -299,22 +299,6 @@
         }, 300);
       });
     });
-
-    const fixedHeader = document.querySelector(".main-header");
-    const mainContent = document.querySelector(".login-page");
-
-    if (fixedHeader && mainContent) {
-      const adjustContentMargin = () => {
-        const headerHeight = fixedHeader.offsetHeight;
-        mainContent.style.paddingTop = (headerHeight * 1.25) + `px`;
-      };
-
-      // Adjust on page load
-      adjustContentMargin();
-
-      // Adjust on window resize
-      window.addEventListener("resize", adjustContentMargin);
-    }
 
     // Auto-dismiss notifications after 5 seconds
     const notifications = document.querySelectorAll('.notification');

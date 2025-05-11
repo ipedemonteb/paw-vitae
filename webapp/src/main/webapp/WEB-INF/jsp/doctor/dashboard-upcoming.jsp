@@ -64,7 +64,7 @@
 </div>
 
 
-<div class="dashboard-container">
+<main class="dashboard-container">
     <!-- Doctor Profile Header -->
     <div class="dashboard-header">
         <div class="doctor-info">
@@ -310,7 +310,7 @@
             </c:choose>
         </div>
     </div>
-</div>
+</main>
 
 <jsp:include page="/WEB-INF/jsp/components/modal.jsp">
     <jsp:param name="id" value="cancelAppointmentModal"/>
@@ -331,21 +331,6 @@
             window.location.href = '${pageContext.request.contextPath}/doctor/dashboard/upcoming?dateRange=' + value;
         };
 
-        const fixedHeader = document.querySelector(".main-header");
-        const mainContent = document.querySelector(".dashboard-container");
-
-        if (fixedHeader && mainContent) {
-            const adjustContentMargin = () => {
-                const headerHeight = fixedHeader.offsetHeight;
-                mainContent.style.marginTop = (headerHeight * 1.25) + `px`;
-            };
-
-            // Adjust on page load
-            adjustContentMargin();
-
-            // Adjust on window resize
-            window.addEventListener("resize", adjustContentMargin);
-        }
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('cancelled') === 'true') {
             showSuccessToast();
