@@ -25,37 +25,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Add event listeners
     document.getElementById("password").addEventListener("input", () => {
+        removeServerError("password")
         checkPasswordStrength()
         validatePassword()
         updateSubmitButtonState()
     })
 
     document.getElementById("repeatPassword").addEventListener("input", () => {
+        removeServerError("repeatPassword")
         checkPasswordMatch()
         updateSubmitButtonState()
     })
     document.getElementById("password").addEventListener("input", () => {
+        removeServerError("password")
         checkPasswordMatch()
         updateSubmitButtonState()
     })
 
     document.getElementById("email").addEventListener("input", function () {
+        removeServerError("email")
         validateEmail(this)
         updateSubmitButtonState()
     })
 
     document.getElementById("phone").addEventListener("input", function () {
+        removeServerError("phone")
         validatePhone(this)
         updateSubmitButtonState()
     })
 
     // Add listeners for name and lastName
     document.getElementById("name").addEventListener("input", function () {
+        removeServerError("name")
         validateName(this)
         updateSubmitButtonState()
     })
 
     document.getElementById("lastName").addEventListener("input", function () {
+        removeServerError("lastName")
         validateName(this)
         updateSubmitButtonState()
     })
@@ -65,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add listeners for coverage radio buttons
     document.querySelectorAll('input[name="coverage"]').forEach((radio) => {
         radio.addEventListener("change", () => {
+            removeServerError("coverage")
             updateSubmitButtonState()
         })
     })
@@ -77,6 +85,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial check of button state
     updateSubmitButtonState()
 })
+
+function removeServerError(name) {
+    const errorDiv = document.querySelector(".server-error-" + name)
+    if (errorDiv) {
+        errorDiv.style.display = "none"
+    }
+}
 
 // Replace the addValidationIcons function to use Font Awesome icons
 function addValidationIcons() {
@@ -332,19 +347,21 @@ function checkPasswordStrength() {
 
     // Length check
     if (password.length >= 8) strength += 1
+    if (password.length >= 12) strength += 1
 
     // Character variety check
     if (/[A-Z]/.test(password)) strength += 1
     if (/[0-9]/.test(password)) strength += 1
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1
 
     // Set strength level
     let strengthClass = ""
     let strengthLabel = ""
 
-    if (strength < 1) {
+    if (strength < 3) {
         strengthClass = "strength-weak"
         strengthLabel = window.messages.passwordWeak
-    } else if (strength < 3) {
+    } else if (strength < 5) {
         strengthClass = "strength-medium"
         strengthLabel = window.messages.passwordMedium
     } else {

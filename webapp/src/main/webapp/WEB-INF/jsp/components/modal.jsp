@@ -32,8 +32,12 @@
         const setupModal = function (buttonSelector, modalId, isCancelModal) {
             const triggerButtons = document.querySelectorAll(buttonSelector);
             const modal = document.getElementById(modalId);
-            const modalClose = modal.querySelector('.modal-close');
-            const modalCancel = modal.querySelector('.modal-cancel');
+            let modalClose;
+            let modalCancel;
+            if (modal) {
+                modalClose = modal.querySelector('.modal-close');
+                modalCancel = modal.querySelector('.modal-cancel');
+            }
             const body = document.body;
 
             if (triggerButtons && modal) {
@@ -69,11 +73,13 @@
             }
 
             // Close modal when clicking outside
-            modal.addEventListener('click', function (e) {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
+            if (modal) {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                });
+            }
 
             // Close modal on escape key
             document.addEventListener('keydown', function (e) {

@@ -2,8 +2,6 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.CoverageDao;
 import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,12 +18,12 @@ import java.util.Optional;
 public class CoverageDaoImpl implements CoverageDao {
 
     private final static RowMapper<Coverage> COVERAGE_MAPPER = (rs, rowNum) -> new Coverage(rs.getLong("id"), rs.getString("coverage_name"));
-    private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
     @Autowired
-    public CoverageDaoImpl(final DataSource ds) {
-        jdbcTemplate = new JdbcTemplate(ds);
+    public CoverageDaoImpl(final DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("coverages").usingGeneratedKeyColumns("id");
     }
@@ -56,7 +54,8 @@ public class CoverageDaoImpl implements CoverageDao {
 
     @Override
     public List<Coverage> findByIds(List<Long> ids) {
-        return jdbcTemplate.query("SELECT * FROM coverages WHERE id IN (" + String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new)) + ")", COVERAGE_MAPPER);
+        StringBuilder sql = new StringBuilder("SELECT * FROM coverages WHERE id IN (");
+        return jdbcTemplate.query(sql.append(String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new))).append(")").toString(), COVERAGE_MAPPER);
     }
 
     @Override

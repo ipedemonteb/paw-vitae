@@ -25,8 +25,8 @@ public class AvailabilitySlotDaoImpl implements AvailabilitySlotsDao {
     private final SimpleJdbcInsert simpleJdbcInsert;
 
     @Autowired
-    public AvailabilitySlotDaoImpl(final DataSource ds) {
-        this.jdbcTemplate = new JdbcTemplate(ds);
+    public AvailabilitySlotDaoImpl(final DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("doctor_availability")
                 .usingColumns("start_time", "end_time", "doctor_id", "day_of_week");

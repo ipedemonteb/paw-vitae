@@ -25,12 +25,12 @@ public class RatingDaoImpl implements RatingDao {
             rs.getInt("appointment_id"),
             rs.getString("comment")
     );
-    private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
     @Autowired
-    public RatingDaoImpl(final DataSource ds) {
-        jdbcTemplate = new JdbcTemplate(ds);
+    public RatingDaoImpl(final DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("ratings")
                 .usingColumns("rating", "doctor_id", "client_id", "appointment_id", "comment")

@@ -37,6 +37,30 @@ public class UserDaoTest {
     }
 
     @Test
+    public void testCreateUser() {
+        //Preconditions
+        String name = "John";
+        String lastname = "Morgan";
+        String email = "johnmorgan@test.com";
+        String password = "hashedpassword";
+        String phone = "123456789";
+        String language = "es";
+
+        //Exercise
+        long id = userDao.create(name, lastname, email, password, phone, language).longValue();
+
+        //Postconditions
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = " + id +
+                " AND name = '" + name + "'" +
+                " AND last_name = '" + lastname + "'" +
+                " AND email = '" + email + "'" +
+                " AND password = '" + password + "'" +
+                " AND phone = '" + phone + "'" +
+                " AND language = '" + language + "'"
+        ));
+    }
+
+    @Test
     public void testSetVerificationToken() {
         //Preconditions
         String token = "TESTTOKEN";
@@ -129,5 +153,23 @@ public class UserDaoTest {
 
         //Postconditions
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = 1 AND reset_token IS NULL"));
+    }
+
+    @Test
+    public void testUpdateUser() {
+        //Preconditions
+        String newName = "Jane";
+        String newLastName = "DeMorgan";
+        String newPhone = "987654321";
+
+        //Exercise
+        userDao.update(PAT_ID, newName, newLastName, newPhone);
+
+        //Postconditions
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = " + PAT_ID +
+                " AND name = '" + newName + "'" +
+                " AND last_name = '" + newLastName + "'" +
+                " AND phone = '" + newPhone + "'"
+        ));
     }
 }

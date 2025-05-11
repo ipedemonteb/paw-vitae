@@ -21,33 +21,31 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorDao doctorDao;
 
-    private final AppointmentService as;
-    private final ImageService is;
-    private final AvailabilitySlotsService ass;
+    private final ImageService imageService;
+    private final AvailabilitySlotsService availabilitySlotsService;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
     @Autowired
-    public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder, AppointmentService as, ImageService is, AvailabilitySlotsService ass, UserService userService) {
+    public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder, ImageService imageService, AvailabilitySlotsService availabilitySlotsService, UserService userService) {
         this.doctorDao = doctorDao;
         this.passwordEncoder = passwordEncoder;
-        this.as = as;
-        this.is = is;
-        this.ass = ass;
+        this.imageService = imageService;
+        this.availabilitySlotsService = availabilitySlotsService;
         this.userService = userService;
     }
 
     @Transactional
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlot> availabilitySlots) {
-        Images img = is.create(image);
+        Images img = imageService.create(image);
         List<AvailabilitySlot> filteredSlots = availabilitySlots.stream()
                 .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
                 .toList();
 
         long id = userService.create(name, lastName, email, passwordEncoder.encode(password), phone, language);
         Doctor doctor = this.doctorDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, (img == null ? null : img.getId()), specialties, coverages);
-        ass.create(id, filteredSlots);
+        availabilitySlotsService.create(id, filteredSlots);
         doctor.setAvailabilitySlots(filteredSlots);
         LOGGER.info("Doctor creado exitosamente: id={}, email={}", doctor.getId(), doctor.getEmail());
         return doctor;
@@ -68,15 +66,6 @@ public class DoctorServiceImpl implements DoctorService {
     public Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
         int total = doctorDao.countBySpecialty(specialtyId);
         List<Doctor> docs = doctorDao.getBySpecialty(specialtyId, page, pageSize);
-        return new Page<>(docs, page, pageSize, total);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Page<Doctor> getBySpecialtyWithAppointments(long specialtyId, int page, int pageSize) {
-        List<Doctor> docs = doctorDao.getBySpecialty(specialtyId, page, pageSize);
-        int total = doctorDao.countBySpecialty(specialtyId);
-        docs.forEach(doctor -> doctor.setAppointments(as.getByDoctorId(doctor.getId())));
         return new Page<>(docs, page, pageSize, total);
     }
 
@@ -113,21 +102,13 @@ public class DoctorServiceImpl implements DoctorService {
             LOGGER.info("User updated successfully: id={}", doctor.getId());
         }
         if (image != null && !image.isEmpty()) {
-            Images img = is.create(image);
+            Images img = imageService.create(image);
             doctorDao.updateImage(doctor.getId(), img.getId());
             if (doctor.getImageId() != -1) {
-                is.deleteImage(doctor.getId());
+                imageService.deleteImage(doctor.getId());
             }
             LOGGER.info("Doctor image updated successfully: id={}", doctor.getId());
         }
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<Doctor> getByIdWithAppointments(long id) {
-        Optional<Doctor> doctor = getById(id);
-        doctor.ifPresent(d -> d.setAppointments(as.getByDoctorId(id)));
-        return doctor;
     }
 
     @Transactional(readOnly = true)

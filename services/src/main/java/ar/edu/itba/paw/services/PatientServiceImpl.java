@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.PatientDao;
-import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.UserService;
@@ -21,18 +20,16 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientDao patientDao;
     private final PasswordEncoder passwordEncoder;
-    private final CoverageService cs;
-    private final AppointmentService as;
-    private final UserService us;
+    private final CoverageService coverageService;
+    private final UserService userService;
     Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
 
     @Autowired
-    public PatientServiceImpl(PatientDao patientDao, PasswordEncoder passwordEncoder, CoverageService cs, AppointmentService as, UserService us) {
+    public PatientServiceImpl(PatientDao patientDao, PasswordEncoder passwordEncoder, CoverageService coverageService, UserService userService) {
         this.patientDao = patientDao;
         this.passwordEncoder = passwordEncoder;
-        this.cs = cs;
-        this.as = as;
-        this.us = us;
+        this.coverageService = coverageService;
+        this.userService = userService;
     }
 
     @Transactional(readOnly = true)
@@ -48,8 +45,8 @@ public class PatientServiceImpl implements PatientService {
     @Transactional
     @Override
     public Patient create(String name, String lastName, String email, String password, String phone, String language, long coverageId) {
-        Coverage coverage = cs.findById(coverageId).orElse(null); //TODO coverageNotFoundException?
-        long id = us.create(name, lastName, email, passwordEncoder.encode(password), phone, language);
+        Coverage coverage = coverageService.findById(coverageId).orElse(null); //TODO coverageNotFoundException?
+        long id = userService.create(name, lastName, email, passwordEncoder.encode(password), phone, language);
         Patient patient = this.patientDao.create(id, name, lastName, email, passwordEncoder.encode(password), phone, language, coverage);
         LOGGER.info("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
         return patient;
@@ -71,7 +68,7 @@ public class PatientServiceImpl implements PatientService {
             LOGGER.info("Patient updated successfully: id={}", patient);
         }
         if (hasChangedUser) {
-            us.update(patient.getId(), name, lastName, phone);
+            userService.update(patient.getId(), name, lastName, phone);
             LOGGER.info("User updated successfully: id={}", patient);
         }
     }

@@ -260,44 +260,19 @@
         </c:forEach>
     ];
 
-
     const argDate = new Date().toLocaleString("en-US", {
         timeZone: "America/Argentina/Buenos_Aires",
     });
     const today = new Date(argDate);
 
-
-    const appointments = [
-        <c:forEach var="app" varStatus="status" items="${doctor.appointments}">
+    const FutureAppointments = [
+        <c:forEach items="${appointmentsByDate}" var="appointment" varStatus="status">
         {
-            date: "${app.date}",
-            hour: ${app.date.hour},
+            date: "${appointment.key}",
+            hours: ${appointment.value}
         }<c:if test="${!status.last}">,</c:if>
         </c:forEach>
-    ].filter(app => {
-        const appointmentDate = new Date(app.date);
-        return appointmentDate > today || (appointmentDate === today && appointmentDate.getHours() > today.getHours()); // Filter out past appointments
-    })
-
-    const futureAppointments = Object.entries(
-        appointments.reduce((acc, appointment) => {
-            const date = new Date(appointment.date).toISOString().split('T')[0];  // Extract local date
-            const hour = appointment.hour; // Extract hour
-            if (!acc[date]) {
-                acc[date] = [];
-            } else if(acc[date].includes(hour)) {
-                return acc;
-            }
-            acc[date].push(hour);
-            return acc;
-        }, {})
-    );
-    const FutureAppointments = futureAppointments.map(([date, hours]) => {
-        return {
-            date: date,
-            hours: hours
-        };
-    });
+    ];
 
     const fixedHeader = document.querySelector(".main-header");
     const mainContent = document.querySelector("main");
@@ -347,23 +322,6 @@
             appointmentForm.action = contextPath + `/appointment?doctorId=`+ doctorId;
         }
     });
-    const fileInput = document.getElementById('files');
-
-    fileInput.addEventListener('change', function(event) {
-        if (event.target.files.length > 0) {
-            showSuccessToast(); // Muestra la notificación de éxito
-        }
-    });
-
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('updated') === 'true') {
-        showSuccessToast();
-
-        // Remove the query parameter without refreshing the page
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, newUrl);
-    }
-
         function submitOnce(form) {
         if (form.getAttribute('data-submitting') === 'true') {
             return false;

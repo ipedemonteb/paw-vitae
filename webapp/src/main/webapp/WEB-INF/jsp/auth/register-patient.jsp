@@ -76,12 +76,14 @@
                             </label>
                             <div class="input-container">
                                 <form:input path="name" id="name" required="true"
-                                            class="input-field ${status.error ? 'input-error' : ''}"
+                                            class="input-field"
                                             placeholder="${namePlaceholder}"
                                 />
                             </div>
                             <div id="name-validation-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="name" class="error-text"/>
+                            <div class="server-error-name">
+                                <form:errors path="name" class="error-text"/>
+                            </div>
                         </div>
 
                         <div class="form-field">
@@ -91,12 +93,14 @@
                             </label>
                             <div class="input-container">
                                 <form:input path="lastName" id="lastName" required="true"
-                                            class="input-field ${status.error ? 'input-error' : ''}"
+                                            class="input-field"
                                             placeholder="${lastNamePlaceholder}"
                                 />
                             </div>
                             <div id="lastName-validation-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="lastName" class="error-text"/>
+                            <div class="server-error-lastName">
+                                <form:errors path="lastName" class="error-text"/>
+                            </div>
                         </div>
 
                         <div class="form-field">
@@ -106,12 +110,14 @@
                             </label>
                             <div class="input-container">
                                 <form:input path="email" id="email" required="true"
-                                            class="input-field ${status.error ? 'input-error' : ''}"
+                                            class="input-field"
                                             placeholder="${emailPlaceholder}"
                                 />
                             </div>
                             <div id="email-validation-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="email" class="error-text"/>
+                            <div class="server-error-email">
+                                <form:errors path="email" class="error-text"/>
+                            </div>
                         </div>
 
                         <div class="form-field">
@@ -121,12 +127,14 @@
                             </label>
                             <div class="input-container">
                                 <form:input path="phone" id="phone" required="true"
-                                            class="input-field ${status.error ? 'input-error' : ''}"
+                                            class="input-field"
                                             placeholder="+1 (123) 456-7890"
                                 />
                             </div>
                             <div id="phone-validation-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="phone" class="error-text"/>
+                            <div class="server-error-phone">
+                                <form:errors path="phone" class="error-text"/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -150,7 +158,7 @@
                             </label>
                             <div class="input-container">
                                 <form:password path="password" id="password" required="true"
-                                               class="input-field ${status.error ? 'input-error' : ''}"
+                                               class="input-field"
                                                placeholder="${passwordPlaceholder}"
                                 />
                             </div>
@@ -161,7 +169,9 @@
                                 <span class="strength-text"></span>
                             </div>
                             <div id="password-length-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="password" class="error-text"/>
+                            <div class="server-error-password">
+                                <form:errors path="password" class="error-text"/>
+                            </div>
                         </div>
 
                         <div class="form-field">
@@ -171,12 +181,14 @@
                             </label>
                             <div class="input-container">
                                 <form:password path="repeatPassword" id="repeatPassword" required="true"
-                                               class="input-field ${status.error ? 'input-error' : ''}"
+                                               class="input-field"
                                                placeholder="${passwordPlaceholder}"
                                 />
                             </div>
                             <div id="password-match-message" class="error-text" style="display: none;"></div>
-                            <form:errors path="repeatPassword" class="error-text"/>
+                            <div class="server-error-repeatPassword">
+                                <form:errors path="repeatPassword" class="error-text"/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -199,7 +211,9 @@
                             </div>
                         </c:forEach>
                     </div>
-                    <form:errors path="coverage" class="error-text"/>
+                    <div class="server-error-coverage">
+                        <form:errors path="coverage" class="error-text"/>
+                    </div>
                 </div>
 
                 <!-- Terms and Conditions -->
@@ -282,37 +296,6 @@
         // Adjust on window resize
         window.addEventListener("resize", adjustContentMargin);
     }
-
-    // Store existing availability slots data if present
-    <c:if test="${not empty registerForm.availabilitySlots}">
-    window.existingSlots = [
-        <c:forEach items="${registerForm.availabilitySlots}" var="slot" varStatus="status">
-        {
-            index: ${status.index},
-            day: ${slot.dayOfWeek},
-            startTime: '${slot.startTime}',
-            endTime: '${slot.endTime}'
-        }<c:if test="${!status.last}">, </c:if>
-        </c:forEach>
-    ];
-    </c:if>
-
-    // Check if there are any form errors and determine which section to show
-    <c:if test="${status.error}">
-    window.hasErrors = true;
-    <c:if test="${not empty status.errorMessages['name'] || not empty status.errorMessages['lastName'] ||
-                not empty status.errorMessages['email'] || not empty status.errorMessages['phone'] ||
-                not empty status.errorMessages['password'] || not empty status.errorMessages['repeatPassword'] ||
-                not empty status.errorMessages['image']}">
-    window.errorSection = 1;
-    </c:if>
-    <c:if test="${not empty status.errorMessages['specialties'] || not empty status.errorMessages['coverages']}">
-    window.errorSection = 2;
-    </c:if>
-    <c:if test="${not empty status.errorMessages['availabilitySlots']}">
-    window.errorSection = 3;
-    </c:if>
-    </c:if>
 </script>
 </body>
 </html>
