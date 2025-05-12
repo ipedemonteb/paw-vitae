@@ -153,10 +153,6 @@
                     </div>
                 </div>
 
-                <%-- Add this to your existing <head> section --%>
-                <link rel="stylesheet" href="<c:url value='/css/locked-section.css' />" />
-
-                <%-- Replace the conditional section for completed appointments with this code --%>
                 <c:choose>
                     <c:when test="${appointment.status == 'completo'}">
                         <%-- Rating Section (Unlocked) --%>

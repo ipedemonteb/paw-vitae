@@ -157,7 +157,7 @@
   <jsp:param name="actionPath" value="/logout"/>
   <jsp:param name="divId" value=""/>
   <jsp:param name="formId" value=""/>
-  <jsp:param name="buttonId" value=""/>
+  <jsp:param name="buttonId" value="logout"/>
   <jsp:param name="buttonClass" value="logout-btn"/>
 </jsp:include>
 

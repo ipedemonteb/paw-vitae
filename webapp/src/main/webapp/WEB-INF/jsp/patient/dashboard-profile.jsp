@@ -201,8 +201,7 @@
         // Initialize coverage dropdown
         initCoverageDropdown();
 
-        // Initialize search functionality for coverage
-        initCoverageSearch();
+
 
         // Pre-select the current coverage
         preSelectCurrentCoverage();
@@ -287,23 +286,6 @@
         }
     }
 
-    function initCoverageSearch() {
-        const searchBox = document.getElementById('coverage-search');
-        const options = document.querySelectorAll('#coverage-options .custom-multi-select-option');
-
-        searchBox.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-
-            options.forEach(option => {
-                const text = option.querySelector('.option-text').textContent.toLowerCase();
-                if (text.includes(searchTerm)) {
-                    option.style.display = 'flex';
-                } else {
-                    option.style.display = 'none';
-                }
-            });
-        });
-    }
 
     function preSelectCurrentCoverage() {
         const coverageInput = document.getElementById('coverage-input');
@@ -317,7 +299,6 @@
                 if (id === currentCoverageId) {
                     option.classList.add('selected');
 
-                    // Update the current coverage display
                     const coverageName = option.getAttribute('data-name');
                     const currentCoverageDisplay = document.getElementById('current-coverage-name');
                     if (currentCoverageDisplay) {
@@ -326,7 +307,6 @@
                 }
             });
         } else {
-            // Fallback: Match by name if ID is not set
             const currentCoverageDisplay = document.getElementById('current-coverage-name');
             if (currentCoverageDisplay) {
                 const currentCoverageName = currentCoverageDisplay.textContent;
@@ -338,7 +318,6 @@
                         if (name === currentCoverageName) {
                             option.classList.add('selected');
 
-                            // Update the input with the ID
                             const id = option.getAttribute('data-value');
                             coverageInput.value = id;
                         }
