@@ -240,6 +240,7 @@
                         <form:form modelAttribute="doctorFileForm" method="post"
                                    action="${pageContext.request.contextPath}/doctor/dashboard/appointment-details/${appointment.id}"
                                    class="appointment-form" enctype="multipart/form-data">
+                            <form:hidden path="appointmentId" />
 
                             <div class="files-section">
                                 <h2 class="files-title">
