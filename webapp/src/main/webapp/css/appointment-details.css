@@ -270,7 +270,10 @@ body {
 }
 
 .specialty-content {
+    display: block;
+    overflow: hidden;
     flex-grow: 1;
+    max-width: 100%;
 }
 
 .specialty-label-appointment {
@@ -284,6 +287,8 @@ body {
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--text-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .status-card .specialty-value-appointment {
