@@ -211,7 +211,8 @@ public class MailServiceImpl implements MailService {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         context.setVariable("appointmentDate", appointment.getDate().format(dateFormatter));
         context.setVariable("appointmentTime", appointment.getDate().format(timeFormatter));
-
+        context.setVariable("doctorName", doctor.getName() + " " + doctor.getLastName());
+        context.setVariable("patientName", patient.getName() + " " + patient.getLastName());
         context.setVariable("rating", rating);
         context.setVariable("ratingMessage", ratingMessage);
         context.setVariable("doctor", doctor);

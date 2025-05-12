@@ -104,9 +104,9 @@
     </div>
 
     <div class="content">
-        <p><strong th:text="#{email.greeting(${doctor.name}, ${doctor.lastName})}"></strong></p>
+        <p><strong th:text="#{email.greeting(${doctorName})}"></strong></p>
 
-        <p th:text="#{doctor.rating.notification(${patient.name}, ${patient.lastName})}"></p>
+        <p th:text="#{doctor.rating.notification(${patientName})}"></p>
 
         <div class="appointment-details">
             <h3 th:text="#{doctor.rating.details}"></h3>

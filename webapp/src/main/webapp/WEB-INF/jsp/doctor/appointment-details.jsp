@@ -432,7 +432,22 @@
 
 <script src="<c:url value="/js/toast-notification.js"/>"></script>
 
+
 <script>
+
+
+    window.appointmentMessages = {
+        fileUpload: {
+            dragHere: '<spring:message code="file.upload.dragHere"  />',
+            onlyPdf: '<spring:message code="file.upload.onlyPdf"  />',
+            tooManyFiles: '<spring:message code="file.upload.tooManyFiles"  />',
+            invalidType: '<spring:message code="file.upload.invalidType"  />',
+            fileAdded: '<spring:message code="file.upload.fileAdded"  />',
+            fileRemoved: '<spring:message code="file.upload.fileRemoved" />',
+            fileTooLarge: '<spring:message code="file.upload.fileTooLarge" />'
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
 
 
@@ -458,12 +473,6 @@
         }
     });
 
-    const reportInput = document.getElementById('report');
-    reportInput.addEventListener('change', function(event) {
-        if (event.target.value.trim() !== '') {
-            showReportSuccessToast();
-        }
-    });
 
 
 </script>
