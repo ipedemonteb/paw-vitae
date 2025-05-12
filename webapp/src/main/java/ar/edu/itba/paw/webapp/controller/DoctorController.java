@@ -122,11 +122,11 @@ public class DoctorController {
 
     @PostMapping(value = "/doctor/dashboard/appointment/cancel", produces = "application/json")
     @ResponseBody
-    public ModelAndView cancelAppointment(@RequestParam("appointmentId") Long appointmentId,
+    public ModelAndView cancelAppointment(@ParamCustomizer(paramName = "appointmentId") QueryParam appointmentId,
                                           @ModelAttribute("loggedUser") final User user
     ) {
-        boolean result = appointmentService.cancelAppointment(appointmentId, user.getId());
-        String value = String.valueOf(result); //TODO necessary???
+        boolean result = appointmentService.cancelAppointment(appointmentId.getValue(), user.getId());
+        String value = String.valueOf(result);
         return new ModelAndView("redirect:/doctor/dashboard/upcoming?cancelled=" + value);
     }
 
