@@ -57,14 +57,9 @@ public class RatingServiceImplTest {
         when(doctorService.getById(anyLong())).thenReturn(Optional.of(mock(Doctor.class)));
         when(patientService.getById(anyLong())).thenReturn(Optional.of(mock(Patient.class)));
         when(appointmentService.getById(anyLong())).thenReturn(Optional.of(mock(Appointment.class)));
-        Rating rating = null;
 
         //Exercise
-        try {
-            rating = ratingService.create(SCORE, DOCTOR_ID, PATIENT_ID, APPOINTMENT_ID, COMMENT);
-        } catch (Exception e) {
-            fail("Unexpected error during operation create Rating: " + e.getMessage());
-        }
+        Rating rating = ratingService.create(SCORE, DOCTOR_ID, PATIENT_ID, APPOINTMENT_ID, COMMENT);
 
         //Postconditions
         assertNotNull(rating);

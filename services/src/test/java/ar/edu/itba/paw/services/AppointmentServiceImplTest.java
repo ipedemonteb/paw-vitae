@@ -91,14 +91,9 @@ public class AppointmentServiceImplTest {
         //Preconditions
         when(specialtyService.getById(SPECIALTY_ID)).thenReturn(Optional.of(SPECIALTY));
         when(appointmentDao.create(eq(PATIENT_ID), eq(DOCTOR_ID), any(LocalDateTime.class), eq(REASON), any(Specialty.class))).thenReturn(APPOINTMENT);
-        Appointment appointment = null;
 
         //Exercise
-        try {
-            appointment = appointmentService.create(PATIENT_ID, DOCTOR_ID, DATE.toLocalDate(), DATE.getHour(), REASON, SPECIALTY_ID);
-        } catch (Exception e) {
-            fail("Unexpected error during creation of appointment: " + e.getMessage());
-        }
+        Appointment appointment = appointmentService.create(PATIENT_ID, DOCTOR_ID, DATE.toLocalDate(), DATE.getHour(), REASON, SPECIALTY_ID);
 
         //Postconditions
         assertNotNull(appointment);
@@ -106,60 +101,42 @@ public class AppointmentServiceImplTest {
         assertEquals(DOCTOR_ID, appointment.getDoctor().getId());
     }
 
-    //@TODO: CHECK IF OK CAUSE
     @Test
     public void testCancelAppointmentNotFound() {
         //Preconditions
         long appointmentId = 1L;
         long userId = 1000L;
-        when(appointmentService.getById(appointmentId)).thenReturn(Optional.empty());
-        boolean result = false;
+        when(appointmentDao.getById(appointmentId)).thenReturn(Optional.empty());
 
         //Exercise
-        try {
-            result = appointmentService.cancelAppointment(appointmentId, userId);
-        } catch (Exception e) {
-            fail("Unexpected error during cancellation of appointment: " + e.getMessage());
-        }
+        boolean result = appointmentService.cancelAppointment(appointmentId, userId);
 
         //Postconditions
         assertFalse(result);
     }
 
-    //@TODO: CHECK SAME AS BEFORE
     @Test
     public void testCancelAppointmentNotCancellable() {
         //Preconditions
         long userId = 1000L;
-        when(appointmentService.getById(APPOINTMENT_ID)).thenReturn(Optional.of(APPOINTMENT_CANC));
-        boolean result = false;
+        when(appointmentDao.getById(APPOINTMENT_ID)).thenReturn(Optional.of(APPOINTMENT_CANC));
 
         //Exercise
-        try {
-            result = appointmentService.cancelAppointment(APPOINTMENT_ID, userId);
-        } catch (Exception e) {
-            fail("Unexpected error during cancellation of appointment: " + e.getMessage());
-        }
+        boolean result = appointmentService.cancelAppointment(APPOINTMENT_ID, userId);
 
         //Postconditions
         assertFalse(result);
     }
 
-    //@TODO: CHECK SAME AS BEFORE
     @Test
     public void testCancelAppointment() {
         //Preconditions
         long appointmentId = 1L;
         long userId = 1L;
-        when(appointmentService.getById(appointmentId)).thenReturn(Optional.of(APPOINTMENT));
-        boolean result = false;
+        when(appointmentDao.getById(appointmentId)).thenReturn(Optional.of(APPOINTMENT));
 
         //Exercise
-        try {
-            result = appointmentService.cancelAppointment(appointmentId, userId);
-        } catch (Exception e) {
-            fail("Unexpected error during cancellation of appointment: " + e.getMessage());
-        }
+        boolean result = appointmentService.cancelAppointment(appointmentId, userId);
 
         //Postconditions
         assertTrue(result);
@@ -175,14 +152,9 @@ public class AppointmentServiceImplTest {
         String filter = "filter";
         when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString())).thenReturn(List.of(APPOINTMENT));
         when(appointmentDao.countAppointments(userId, isFuture, filter)).thenReturn(1);
-        Page<Appointment> appointments = null;
 
         //Exercise
-        try{
-            appointments = appointmentService.getAppointments(userId, isFuture, page, size, filter);
-        } catch (Exception e) {
-            fail("Unexpected error during retrieval of appointments: " + e.getMessage());
-        }
+        Page<Appointment> appointments = appointmentService.getAppointments(userId, isFuture, page, size, filter);
 
         //Postconditions
         assertNotNull(appointments);
@@ -199,14 +171,9 @@ public class AppointmentServiceImplTest {
         String filter = "filter";
         when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString())).thenReturn(List.of(APPOINTMENT));
         when(appointmentDao.countAppointments(userId, isFuture, filter)).thenReturn(1);
-        Page<Appointment> appointments = null;
 
         //Exercise
-        try {
-            appointments = appointmentService.getAppointments(userId, isFuture, page, size, filter);
-        } catch (Exception e) {
-            fail("Unexpected error during retrieval of appointments: " + e.getMessage());
-        }
+        Page<Appointment> appointments = appointmentService.getAppointments(userId, isFuture, page, size, filter);
 
         //Postconditions
         assertNotNull(appointments);
@@ -245,14 +212,9 @@ public class AppointmentServiceImplTest {
         LocalDate date = LocalDate.now();
         Integer time = 10;
         when(appointmentDao.getAppointmentsByUserAndDate(PATIENT_ID, date, time)).thenReturn(List.of(APPOINTMENT));
-        List<Appointment> appointments = Collections.emptyList();
 
         //Exercise
-        try {
-            appointments = appointmentService.getAppointmentByUserAndDate(PATIENT_ID, date, time);
-        } catch (Exception e) {
-            fail("Unexpected error during retrieval of appointments: " + e.getMessage());
-        }
+        List<Appointment> appointments = appointmentService.getAppointmentByUserAndDate(PATIENT_ID, date, time);
 
         //Postconditions
         assertFalse(appointments.isEmpty());
