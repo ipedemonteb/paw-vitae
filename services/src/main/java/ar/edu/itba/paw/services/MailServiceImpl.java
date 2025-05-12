@@ -218,8 +218,7 @@ public class MailServiceImpl implements MailService {
         context.setVariable("doctor", doctor);
         context.setVariable("patient", patient);
         context.setVariable("appointment", appointment);
-        context.setVariable("linkUrl", BASE_URL + "/appointment-details/" + appointment.getId());
-
+        context.setVariable("linkUrl", BASE_URL + "/doctor/dashboard/appointment-details/" + appointment.getId());
 
 
         String htmlContent = templateEngine.process("DoctorRatedNotification", context);
