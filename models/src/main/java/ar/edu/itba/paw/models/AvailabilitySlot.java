@@ -12,7 +12,6 @@ public class AvailabilitySlot {
     private LocalTime endTime;
 
     public AvailabilitySlot() {
-        // Default constructor required for Spring data binding
     }
 
     public AvailabilitySlot(int dayOfWeek, LocalTime startTime, LocalTime endTime) {
