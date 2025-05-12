@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS Users (
     language VARCHAR(10),
     verification_token VARCHAR(255),
     reset_token VARCHAR(255),
-    is_verified BOOLEAN DEFAULT FALSE
+    is_verified BOOLEAN DEFAULT FALSE,
+    token_expiration_date TIMESTAMP
     );
 
 CREATE TABLE IF NOT EXISTS Coverages (
