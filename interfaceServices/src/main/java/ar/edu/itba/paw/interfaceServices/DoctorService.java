@@ -20,7 +20,7 @@ public interface DoctorService {
 
     void UpdateDoctorRating(long id, long rating);
 
-    Page<Doctor> getWithFilters(Long specialtyId, Long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);
+    Page<Doctor> getWithFilters(String specialtyId, String coverageId, List<Integer> weekdays, String orderBy, String direction, String page, int pageSize);
 
     String getAllDoctorsDisplayCount();
 }

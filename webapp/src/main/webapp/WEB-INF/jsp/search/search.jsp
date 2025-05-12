@@ -5,16 +5,45 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 
+<%--<c:set var="specialtyName">--%>
+<%--  <c:choose>--%>
+<%--    <c:when test="${empty specialty}">--%>
+<%--      <spring:message code="search.all.specialties"/>--%>
+<%--    </c:when>--%>
+<%--    <c:otherwise>--%>
+<%--      <spring:message code="${specialty.key}"/>--%>
+<%--    </c:otherwise>--%>
+<%--  </c:choose>--%>
+<%--</c:set>--%>
+
+<spring:message code="search.all.specialties" var="allSepcs"/>
+<spring:message code="search.coverage.all" var="allCovs"/>
 <c:set var="specialtyName">
-  <c:choose>
-    <c:when test="${empty specialty}">
-      <spring:message code="search.all.specialties"/>
-    </c:when>
-    <c:otherwise>
-      <spring:message code="${specialty.key}"/>
-    </c:otherwise>
-  </c:choose>
+  <c:forEach items="${allSpecialties}" var="s">
+    <c:if test="${not empty param.specialty && param.specialty.equals(s.id.toString())}">
+      <spring:message code="${s.key}"/>
+    </c:if>
+  </c:forEach>
 </c:set>
+<c:set var="coverageName">
+  <c:forEach items="${coverages}" var="c">
+    <c:if test="${not empty param.coverage && param.coverage.equals(c.id.toString())}">
+      <c:out value="${c.name}"/>
+    </c:if>
+  </c:forEach>
+</c:set>
+<c:if test="${empty coverageName}">
+    <c:set var="coverageName">
+        <c:out value="${allCovs}"/>
+    </c:set>
+</c:if>
+<c:if test="${empty specialtyName}">
+  <c:set var="specialtyName">
+    <c:out value="${allSepcs}"/>
+  </c:set>
+</c:if>
+
+
 
 <!DOCTYPE html>
 <head>
@@ -59,9 +88,9 @@
           <label for="specialtySelect" class="filter-label"><i class="fas fa-stethoscope"></i> <spring:message code="search.specialty" /></label>
           <div class="select-container">
             <select id="specialtySelect" class="filter-select">
-              <option value="0" ${empty specialty ? 'selected' : ''}><spring:message code="search.all.specialties" /></option>
+              <option value="0" ${specialtyName.equals(allSepcs) ? 'selected' : ''}><spring:message code="search.all.specialties" /></option>
               <c:forEach var="spec" items="${allSpecialties}">
-                <option value="<c:out value='${spec.id}'/>" ${not empty specialty && spec.id == specialty.id ? 'selected' : ''}>
+                <option value="<c:out value='${spec.id}'/>" ${not empty param.specialty && param.specialty.equals(spec.id.toString()) ? 'selected' : ''}>
                   <spring:message code="${spec.key}" />
                 </option>
               </c:forEach>
@@ -76,7 +105,7 @@
             <select id="coverageSelect" class="filter-select">
               <option value="0"><spring:message code="search.coverage.all" /></option>
               <c:forEach var="coverage" items="${coverages}">
-                <option value="<c:out value='${coverage.id}'/>" ${param.coverage == coverage.id ? 'selected' : ''}>
+                <option value="<c:out value='${coverage.id}'/>" ${param.coverage.equals(coverage.id.toString()) ? 'selected' : ''}>
                   <c:out value="${coverage.name}" />
                 </option>
               </c:forEach>
@@ -159,12 +188,12 @@
               </span>
           </div>
           <%--          </c:if>--%>
-          <c:if test="${not empty param.specialty && param.specialty != '0'}">
+          <c:if test="${not empty param.specialty && param.specialty != '0' && specialtyName != allSepcs}">
             <div class="filter-tag">
               <i class="fas fa-stethoscope"></i>
               <span>
                 <c:forEach var="spec" items="${allSpecialties}">
-                  <c:if test="${spec.id == param.specialty}">
+                  <c:if test="${param.specialty.equals(spec.id.toString())}">
                     <spring:message code="${spec.key}" />
                   </c:if>
                 </c:forEach>
@@ -172,12 +201,12 @@
               <button class="filter-tag-remove" onclick="clearSpecialtyFilter()">×</button>
             </div>
           </c:if>
-          <c:if test="${not empty param.coverage && param.coverage != '0'}">
+          <c:if test="${not empty param.coverage && param.coverage != '0' && coverageName != allCovs}">
             <div class="filter-tag">
               <i class="fas fa-shield-alt"></i>
               <span>
                 <c:forEach var="coverage" items="${coverages}">
-                  <c:if test="${coverage.id == param.coverage}">
+                  <c:if test="${param.coverage.equals(coverage.id.toString())}">
                     <c:out value="${coverage.name}" />
                   </c:if>
                 </c:forEach>

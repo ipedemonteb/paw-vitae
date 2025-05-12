@@ -195,13 +195,11 @@ public class DoctorDaoImpl implements DoctorDao {
             }
         }
 
-        long pageQuery = page > 0 ? page : 1;
-
         sql.append("WHERE u.id IN (SELECT doctor_id FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.is_verified = true ");
         List<Object> params = getObjects(specialtyIdQuery, coverageIdQuery, weekdaysQuery, sql);
         sql.append("ORDER BY ").append(orderByQuery).append(" ").append(directionQuery).append(" LIMIT ? OFFSET ?) ORDER BY ").append(orderByQuery).append(" ").append(directionQuery);
         params.add(pageSize);
-        params.add((pageQuery - 1) * pageSize);
+        params.add((page - 1) * pageSize);
         return jdbcTemplate.query(sql.toString(), new DoctorExtractor(), params.toArray());
     }
 

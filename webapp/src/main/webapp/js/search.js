@@ -144,7 +144,7 @@ function initializeCoverageFilter() {
 
             // Update URL with coverage parameter
             const currentUrl = new URL(window.location.href)
-            if (coverageId === "0") {
+            if (coverageId === "0" || !isValidNumber(coverageId)) {
                 currentUrl.searchParams.delete("coverage")
             } else {
                 currentUrl.searchParams.set("coverage", coverageId)
@@ -158,8 +158,17 @@ function initializeCoverageFilter() {
         // Set initial value based on URL parameters
         const urlParams = new URLSearchParams(window.location.search)
         const coverageId = urlParams.get("coverage") || "0"
-        coverageSelect.value = coverageId
+        coverageSelect.value = isValidNumber(coverageId) ? coverageId : "0"
     }
+}
+
+
+function isValidNumber(str) {
+    if (str === null || str.trim() === "") {
+        return false; // Null, empty, or whitespace-only strings are not valid numbers
+    }
+    const num = Number(str);
+    return !isNaN(num); // Returns true if the string can be converted to a number
 }
 
 // Specialty Filter Functionality
@@ -173,7 +182,7 @@ function initializeSpecialtyFilter() {
             // Update URL with specialty parameter
             const currentUrl = new URL(window.location.href)
 
-            if (specialtyId === "0") {
+            if (specialtyId === "0" || !isValidNumber(specialtyId)) {
                 // Remove specialty parameter for "All Specialties"
                 currentUrl.searchParams.delete("specialty")
             } else {
@@ -189,7 +198,7 @@ function initializeSpecialtyFilter() {
         // Set initial value based on URL parameters
         const urlParams = new URLSearchParams(window.location.search)
         const specialtyId = urlParams.get("specialty") || "0"
-        specialtySelect.value = specialtyId
+        specialtySelect.value = isValidNumber(specialtyId)? specialtyId : "0"
     }
 }
 
@@ -253,13 +262,13 @@ function applyAllFilters() {
     const currentUrl = new URL(window.location.href)
 
     // Handle specialty parameter
-    if (specialtyId === "0") {
+    if (specialtyId === "0" || !isValidNumber(specialtyId)) {
         currentUrl.searchParams.delete("specialty")
     } else {
         currentUrl.searchParams.set("specialty", specialtyId)
     }
 
-    if (coverageId === "0") {
+    if (coverageId === "0" || !isValidNumber(coverageId)) {
         currentUrl.searchParams.delete("coverage")
     } else {
         currentUrl.searchParams.set("coverage", coverageId)
