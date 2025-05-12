@@ -171,13 +171,21 @@ public class UserServiceImpl implements UserService {
         if (patient.isPresent()) {
             if (userDao.tokenExpirationDate(token).isBefore(now)) {
                 LOGGER.info("Token expired");
-                setVerificationToken(patient.get().getEmail());
+                if(isVerification) {
+                    setVerificationToken(patient.get().getEmail());
+                }
+                else {
+                    setResetPasswordToken(patient.get().getEmail());
+                    return Optional.empty();
+                }
                 return patient;
             }
-            setVerificationStatus(patient.get(), true);
-            userDao.removeVerificationToken(token);
-            LOGGER.info("Verification token valid for patient id={}", patient.get().getId());
-            patient.get().setVerified(true);
+            if(isVerification){
+                setVerificationStatus(patient.get(), true);
+                userDao.removeVerificationToken(token);
+                LOGGER.info("Verification token valid for patient id={}", patient.get().getId());
+                patient.get().setVerified(true);
+            }
             return patient;
         }
         Optional<Doctor> doctor = isVerification
@@ -186,13 +194,21 @@ public class UserServiceImpl implements UserService {
         if (doctor.isPresent()) {
             if (userDao.tokenExpirationDate(token).isBefore(now)) {
                 LOGGER.info("Token expired");
-                setVerificationToken(doctor.get().getEmail());
+                if(isVerification) {
+                    setVerificationToken(doctor.get().getEmail());
+                }
+                else {
+                    setResetPasswordToken(doctor.get().getEmail());
+                    return Optional.empty();
+                }
                 return doctor;
             }
+            if(isVerification){
             setVerificationStatus(doctor.get(), true);
             userDao.removeVerificationToken(token);
             LOGGER.info("Verification token valid for doctor id={}", doctor.get().getId());
             doctor.get().setVerified(true);
+            }
             return doctor;
         }
         LOGGER.warn("No user found with token");
