@@ -25,7 +25,7 @@ public class AuthService {
 
     public boolean verifyAndLoginUser(String token) {
         Optional<? extends User> user =userService.verifyValidationToken(token);
-        if (user.isEmpty()) {
+        if (user.isEmpty() || !user.get().isVerified()) {
             return false;
         }
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.get().getEmail());

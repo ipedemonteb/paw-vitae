@@ -35,4 +35,5 @@ public interface UserService {
 
     void update(long id, String name, String lastName, String phone);
 
+    Optional<? extends User> checkToken (String token, boolean isVerification);
 }

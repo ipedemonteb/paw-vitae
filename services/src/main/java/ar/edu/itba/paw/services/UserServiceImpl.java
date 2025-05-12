@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,7 +71,7 @@ public class UserServiceImpl implements UserService {
         String token = UUID.randomUUID().toString();
         String verificationLink = BASE_URL + "/verify-confirmation?token=" + token;
         mailService.sendVerificationRegisterEmail(user, verificationLink);
-        userDao.setVerificationToken(user.getId(), token);
+        userDao.setVerificationToken(user.getId(), token, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusDays(30));
         LOGGER.info("Verification token set and email sent for user id={}", user.getId());
     }
 
@@ -86,10 +88,14 @@ public class UserServiceImpl implements UserService {
     public void setResetPasswordToken(String email) {
         LOGGER.debug("Setting reset password token for email: {}", email);
         User user = getByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+        if (!user.isVerified()) {
+            LOGGER.warn("User with email {} is not verified", email);
+            return;
+        }
         String token = UUID.randomUUID().toString();
         String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
+        userDao.setResetPasswordToken(user.getId(), token, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(1));
         mailService.sendRecoverPasswordEmail(user, resetPasswordLink);
-        userDao.setResetPasswordToken(user.getId(), token);
         LOGGER.info("Password reset token set and email sent for user id={}", user.getId());
     }
 
@@ -105,35 +111,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<? extends User> verifyValidationToken(String token) {
         LOGGER.debug("Verifying validation token");
-        Optional<Patient> patient = patientDao.getByVerificationToken(token);
-        if (patient.isPresent()) {
-            setVerificationStatus(patient.get(), true);
-            userDao.removeVerificationToken(token);
-            LOGGER.info("Verification token valid for patient id={}", patient.get().getId());
-            return patient;
-        }
-
-        Optional<Doctor> doctor = doctorDao.getByVerificationToken(token);
-        if (doctor.isPresent()) {
-            setVerificationStatus(doctor.get(), true);
-            userDao.removeVerificationToken(token);
-            LOGGER.info("Verification token valid for doctor id={}", doctor.get().getId());
-            return doctor;
-        }
-
-        LOGGER.warn("Invalid verification token: {}", token);
-        return Optional.empty();
+        return checkToken(token,true);
     }
 
     @Transactional(readOnly = true)
     @Override
     public boolean verifyRecoveryToken(String token) {
         LOGGER.debug("Verifying recovery token");
-        boolean valid = patientDao.getByResetToken(token).isPresent() || doctorDao.getByResetToken(token).isPresent();
-        if (!valid) {
-            LOGGER.warn("Invalid recovery token");
-        }
-        return valid;
+        return checkToken(token, false).isPresent();
     }
 
     @Transactional
@@ -173,6 +158,45 @@ public class UserServiceImpl implements UserService {
     public void update(long id, String name, String lastName, String phone) {
         LOGGER.debug("Updating user with id: {}, name: {}, lastName: {}, phone: {}", id, name, lastName, phone);
         userDao.update(id, name, lastName, phone);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<? extends User> checkToken(String token,boolean isVerification) {
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+
+        Optional<Patient> patient = isVerification
+                ? patientDao.getByVerificationToken(token)
+                : patientDao.getByResetToken(token);
+        if (patient.isPresent()) {
+            if (userDao.tokenExpirationDate(token).isBefore(now)) {
+                LOGGER.info("Token expired");
+                setVerificationToken(patient.get().getEmail());
+                return patient;
+            }
+            setVerificationStatus(patient.get(), true);
+            userDao.removeVerificationToken(token);
+            LOGGER.info("Verification token valid for patient id={}", patient.get().getId());
+            patient.get().setVerified(true);
+            return patient;
+        }
+        Optional<Doctor> doctor = isVerification
+                ? doctorDao.getByVerificationToken(token)
+                : doctorDao.getByResetToken(token);
+        if (doctor.isPresent()) {
+            if (userDao.tokenExpirationDate(token).isBefore(now)) {
+                LOGGER.info("Token expired");
+                setVerificationToken(doctor.get().getEmail());
+                return doctor;
+            }
+            setVerificationStatus(doctor.get(), true);
+            userDao.removeVerificationToken(token);
+            LOGGER.info("Verification token valid for doctor id={}", doctor.get().getId());
+            doctor.get().setVerified(true);
+            return doctor;
+        }
+        LOGGER.warn("No user found with token");
+        return Optional.empty();
     }
 }
 

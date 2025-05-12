@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
+import java.time.LocalDateTime;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -64,9 +66,10 @@ public class UserDaoTest {
     public void testSetVerificationToken() {
         //Preconditions
         String token = "TESTTOKEN";
+        LocalDateTime expirationDate = LocalDateTime.now().plusDays(30);
 
         //Exercise
-        userDao.setVerificationToken(PAT_ID, token);
+        userDao.setVerificationToken(PAT_ID, token, expirationDate);
 
         //Postconditions
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "verification_token = '" + token + "'"));
@@ -88,9 +91,10 @@ public class UserDaoTest {
     public void testSetResetPasswordToken() {
         //Preconditions
         String newResetToken = "NEWRESETTOKEN";
+        LocalDateTime expirationDate = LocalDateTime.now().plusDays(30);
 
         //Exercise
-        userDao.setResetPasswordToken(PAT_ID, newResetToken);
+        userDao.setResetPasswordToken(PAT_ID, newResetToken, expirationDate);
 
         //Postconditions
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "reset_token = '" + newResetToken + "'"));
