@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = InvalidRatingFormValidator.class)
-@Target({ ElementType.TYPE }) // Clase completa
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InvalidRatingForm {
     String message() default "Invalid rating form";

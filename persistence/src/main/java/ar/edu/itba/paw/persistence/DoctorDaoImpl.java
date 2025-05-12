@@ -123,7 +123,7 @@ public class DoctorDaoImpl implements DoctorDao {
     }
 
     @Override
-    public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) { //TODO check in what does update differ from jdbcInsert
+    public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
         StringBuilder sql = new StringBuilder(BASE_SQL);
         sql.append("WHERE u.id IN (SELECT doctor_id FROM users u JOIN doctor_specialties ds ON u.id = ds.doctor_id WHERE ds.specialty_id = ? AND u.is_verified = true LIMIT ? OFFSET ?)");
         return jdbcTemplate.query(sql.toString(), new DoctorExtractor(), specialtyId, pageSize, (page - 1) * pageSize);

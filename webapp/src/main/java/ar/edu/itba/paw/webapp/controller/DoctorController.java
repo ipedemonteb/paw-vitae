@@ -171,7 +171,7 @@ public class DoctorController {
         if (errors.hasErrors()) {
             return doctorAppointmentDetails(doctorFileForm, doctor, id);
         }
-        appointmentFileService.create(doctorFileForm.getFiles(), "doctor", id); //TODO already validating in webAuthConfig, safe to use requestParam?
+        appointmentFileService.create(doctorFileForm.getFiles(), "doctor", id);
         appointmentService.updateAppointmentReport(id, doctorFileForm.getReport());
         return new ModelAndView("redirect:/doctor/dashboard/appointment-details/" + id);
     }

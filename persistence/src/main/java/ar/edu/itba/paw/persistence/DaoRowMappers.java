@@ -20,8 +20,8 @@ public final class DaoRowMappers {
     );
 
     final static RowMapper<Patient> PATIENT_ROW_MAPPER = (rs, rowNum) -> new Patient(
-            rs.getString("patient_name"), // Use the alias patient_name
-            rs.getLong("patient_id"),    // Use the alias patient_id
+            rs.getString("patient_name"),
+            rs.getLong("patient_id"),
             rs.getString("patient_last_name"),
             rs.getString("patient_email"),
             rs.getString("patient_password"),
