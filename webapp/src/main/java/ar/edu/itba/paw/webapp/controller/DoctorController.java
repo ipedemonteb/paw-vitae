@@ -94,7 +94,7 @@ public class DoctorController {
                                         @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-availability");
-        updateAvailabilityForm.setForm(doctor.getAvailabilitySlots());
+        updateAvailabilityForm.setAvailabilitySlots(doctor.getAvailabilitySlots());
         mav.addObject("doctor", doctor);
         return mav;
     }
@@ -127,7 +127,7 @@ public class DoctorController {
                                           @ModelAttribute("loggedUser") final User user
     ) {
         boolean result = appointmentService.cancelAppointment(appointmentId, user.getId());
-        String value = String.valueOf(result);
+        String value = String.valueOf(result); //TODO necessary???
         return new ModelAndView("redirect:/doctor/dashboard/upcoming?cancelled=" + value);
     }
 
@@ -172,9 +172,8 @@ public class DoctorController {
         if (errors.hasErrors()) {
             return doctorAppointmentDetails(doctorFileForm, doctor, id);
         }
-        Appointment appointment = appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
-        appointmentFileService.create(doctorFileForm.getFiles(), "doctor", appointment.getId());
-        appointmentService.updateAppointmentReport(appointment.getId(), doctorFileForm.getReport());
+        appointmentFileService.create(doctorFileForm.getFiles(), "doctor", id); //TODO already validating in webAuthConfig, safe to use requestParam?
+        appointmentService.updateAppointmentReport(id, doctorFileForm.getReport());
         return new ModelAndView("redirect:/doctor/dashboard/appointment-details/" + id);
     }
 }

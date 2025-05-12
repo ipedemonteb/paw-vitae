@@ -24,7 +24,4 @@ public class UpdateAvailabilityForm {
     public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) {
         this.availabilitySlots = availabilitySlots;
     }
-    public void setForm(List<AvailabilitySlot> availabilitySlots) {
-        this.availabilitySlots = availabilitySlots;
-    }
 }
