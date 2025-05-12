@@ -166,7 +166,7 @@ public class AppointmentServiceImplTest {
         //Preconditions
         long userId = 1L;
         boolean isFuture = true;
-        int page = 4;
+        int page =4;
         int size = 10;
         String filter = "filter";
         when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString())).thenReturn(List.of(APPOINTMENT));

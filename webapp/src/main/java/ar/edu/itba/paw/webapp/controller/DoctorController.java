@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
+import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,34 +46,32 @@ public class DoctorController {
     }
 
     @RequestMapping(value = "/doctor/dashboard/upcoming", method = RequestMethod.GET)
-    public ModelAndView getUpcomingAppointments(@RequestParam(defaultValue = "1") int page,
+    public ModelAndView getUpcomingAppointments(@ParamCustomizer(defaultValue = 1) QueryParam page,
                                                 @RequestParam(defaultValue = "all", required = false) String dateRange,
                                                 @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-upcoming");
         mav.addObject("doctor", doctor);
-        Page<Appointment> appointmentsPage = appointmentService.getAppointments(doctor.getId(), true, page, 10, dateRange);
+        Page<Appointment> appointmentsPage = appointmentService.getAppointments(doctor.getId(), true,(int) page.getValue(), 10, dateRange);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
-        mav.addObject("currentPage", page);
+        mav.addObject("currentPage", page.getValue());
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
-        mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
         LOGGER.debug("Loading dashboard and upcoming appointments for doctor ID: {}", doctor.getId());
         return mav;
     }
 
 
     @RequestMapping(value = "/doctor/dashboard/history")
-    public ModelAndView getAppointmentHistory(@RequestParam(defaultValue = "1") int page,
+    public ModelAndView getAppointmentHistory(@ParamCustomizer(defaultValue = 1) QueryParam page,
                                               @RequestParam(defaultValue = "all", required = false) String status,
                                               @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-history");
-        Page<Appointment> appointmentsPage = appointmentService.getAppointments(doctor.getId(), false, page, 10, status);
+        Page<Appointment> appointmentsPage = appointmentService.getAppointments(doctor.getId(), false,(int) page.getValue(), 10, status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
-        mav.addObject("currentPage", page);
+        mav.addObject("currentPage", page.getValue());
         mav.addObject("doctor", doctor);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
-        mav.addObject("hasMore", page < appointmentsPage.getTotalPages());
         return mav;
     }
 

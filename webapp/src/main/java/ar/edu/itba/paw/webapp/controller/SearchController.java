@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
-
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,23 +30,25 @@ public class SearchController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ModelAndView searchBySpecialty(
-            @RequestParam(value = "specialty", required = false, defaultValue = "0") String specialtyId,
-            @RequestParam(value = "page", defaultValue = "1") String page,
-            @RequestParam(value = "coverage", required = false, defaultValue = "0") String coverageId,
+            @ParamCustomizer(defaultValue = 0,paramName = "specialtyId") QueryParam specialtyId,
+            @ParamCustomizer( defaultValue = 1) QueryParam page,
+            @ParamCustomizer(defaultValue = 0,paramName = "coverageId") QueryParam coverageId,
             @RequestParam(value = "weekdays", required = false) List<Integer> weekdays,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestParam(value = "view", required = false, defaultValue = "grid") String view
     ) {
         List<Coverage> coverages = coverageService.getAll();
-        Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, 9);
+        Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId.getValue(), coverageId.getValue(), weekdays, orderBy, direction, (int) page.getValue(), 9);
         List<Specialty> allSpecialties = specialtyService.getAll();
         ModelAndView mav = new ModelAndView("search/search");
         mav.addObject("coverages", coverages);
         mav.addObject("doctors", doctorPage.getContent());
         mav.addObject("totalDoctors", doctorPage.getTotalElements());
         mav.addObject("allSpecialties", allSpecialties);
-        mav.addObject("currentPage", page);
+        mav.addObject("currentPage", page.getValue());
+        mav.addObject("specialtyId", specialtyId.getValue());
+        mav.addObject("coverageId", coverageId.getValue());
         mav.addObject("totalPages", doctorPage.getTotalPages());
         mav.addObject("view", view);
         return mav;

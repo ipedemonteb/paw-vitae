@@ -119,31 +119,15 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Doctor> getWithFilters(String specialtyId, String coverageId, List<Integer> weekdays, String orderBy, String direction, String page, int pageSize) {
+    public Page<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
         if (weekdays == null) {
             weekdays = new ArrayList<>();
         }
-        long specialtyIdLong = 0L;
-        long coverageIdLong = 0L;
-        int pageInt = 1;
-        try {
-            specialtyIdLong = NumberUtils.parseNumber(specialtyId, Long.class);
-        } catch (NumberFormatException e) {
-            LOGGER.warn("Invalid specialtyId: {}", specialtyId);
-        }
-        try {
-            coverageIdLong = NumberUtils.parseNumber(coverageId, Long.class);
-        } catch (NumberFormatException e) {
-            LOGGER.warn("Invalid coverageId: {}", coverageId);
-        }
-        try {
-            pageInt = NumberUtils.parseNumber(page, Integer.class);
-        } catch (NumberFormatException e) {
-            LOGGER.warn("Invalid page: {}", page);
-        }
-        List<Doctor> docs = doctorDao.getWithFilters(specialtyIdLong, coverageIdLong, weekdays, orderBy, direction, pageInt, pageSize);
-        int total = doctorDao.countWithFilters(specialtyIdLong, coverageIdLong, weekdays, orderBy, direction);
-        return new Page<>(docs, pageInt, pageSize, total);
+        System.out.println("specialtyId = " + specialtyId);
+        System.out.println("coverageId = " + coverageId);
+        List<Doctor> docs = doctorDao.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, pageSize);
+        int total = doctorDao.countWithFilters(specialtyId, coverageId, weekdays, orderBy, direction);
+        return new Page<>(docs, page, pageSize, total);
     }
 
     @Transactional
