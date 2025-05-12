@@ -130,7 +130,7 @@
         </div>
 
         <div class="text-center">
-            <a th:href="@{'http://pawserver.it.itba.edu.ar/paw-2025a-11/doctor/dashboard/appointment-details/' + ${appointment.id}}" class="button" th:text="#{doctor.view.rating.details}"></a>
+            <a th:href="${linkUrl}" class="button" th:text="#{doctor.view.rating.details}"></a>
         </div>
 
         <p th:text="#{doctor.rating.importance}"></p>

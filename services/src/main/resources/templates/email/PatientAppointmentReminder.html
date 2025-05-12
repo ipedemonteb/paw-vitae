@@ -79,6 +79,9 @@
             margin: 20px 0;
             border-radius: 4px;
         }
+        .text-center {
+            text-align: center;
+        }
         @media only screen and (max-width: 600px) {
             .container {
                 width: 100%;
@@ -105,8 +108,13 @@
                 <li><strong th:text="#{patient.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
                 <li><strong th:text="#{patient.time.label}"></strong> <span th:text="${appointmentTime}"></span></li>
                 <li><strong th:text="#{patient.reason.label}"></strong> <span th:text="${reason}"></span></li>
-                <li><strong th:text="#{patient.location.label}"></strong> <span th:text="${location}"></span></li>
             </ul>
+        </div>
+
+        <div class="text-center">
+            <a th:href="${linkUrl}"
+               class="button"
+               th:text="#{mail.see.details}"></a>
         </div>
 
         <div class="reminder-box">

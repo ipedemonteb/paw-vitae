@@ -112,12 +112,14 @@
                 <li><strong th:text="#{patient.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
                 <li><strong th:text="#{patient.time.label}"></strong> <span th:text="${appointmentTime}"></span></li>
                 <li><strong th:text="#{patient.reason.label}"></strong> <span th:text="${reason}"></span></li>
-                <li><strong th:text="#{patient.location.label}"></strong> <span th:text="${location}"></span></li>
             </ul>
         </div>
 
         <div class="text-center">
-            <a href="http://pawserver.it.itba.edu.ar/paw-2025a-11/" class="button" th:text="#{patient.browse.other.doctors}"></a>
+            <a th:href="${cancelLinkUrlPatient}"
+               class="button"
+               th:text="#{patient.browse.other.doctors}"></a>
+        </div>
         </div>
 
         <p th:text="#{patient.thanks}"></p>

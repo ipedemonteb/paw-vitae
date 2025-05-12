@@ -177,7 +177,7 @@
         </div>
 
         <div class="text-center">
-            <a th:href="@{'http://pawserver.it.itba.edu.ar/paw-2025a-11/patient/dashboard/appointment-details/' + ${appointment.id}}" class="button" th:text="#{patient.view.appointment.details}"></a>
+            <a th:href="${linkUrl}" class="button" th:text="#{patient.view.appointment.details}"></a>
         </div>
 
         <p th:text="#{patient.report.added.importance}"></p>

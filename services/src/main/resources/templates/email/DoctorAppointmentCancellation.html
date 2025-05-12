@@ -105,7 +105,9 @@
         </div>
 
         <div class="text-center">
-            <a href="http://pawserver.it.itba.edu.ar/paw-2025a-11/doctor/dashboard/upcoming" class="button" th:text="#{doctor.see.other.appointments}"></a>
+            <a th:href="${cancelLinkUrlDoctor}"
+               class="button"
+               th:text="#{doctor.see.other.appointments}"></a>
         </div>
 
         <p th:text="#{doctor.cancellation.calendar.update}"></p>
