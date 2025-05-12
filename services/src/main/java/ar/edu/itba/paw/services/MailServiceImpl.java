@@ -183,7 +183,7 @@ public class MailServiceImpl implements MailService {
         Locale userLocale = Locale.forLanguageTag(user.getLanguage());
         Context context = new Context(userLocale);
         context.setVariable("verificationUrl", verificationLink);
-        context.setVariable("userName", user.getName() + " " + user.getLastName()); // Replace with actual name if available
+        context.setVariable("userName", user.getName() + " " + user.getLastName());
 
         String htmlContent = templateEngine.process("VerificationEmail", context);
 
@@ -264,7 +264,6 @@ public class MailServiceImpl implements MailService {
             helper.setText(htmlContent, true);
             helper.setFrom(from_mail);
 
-            // Attach uploaded files
             for (AppointmentFile file : uploadedFiles) {
                 if (file.getFileData() != null && file.getFileName() != null) {
                     helper.addAttachment(file.getFileName(), new ByteArrayResource(file.getFileData()));
