@@ -53,39 +53,27 @@ public class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testGetByEmailReturnsPatient() {
         //Preconditions
         when(patientDao.getByEmail("test@example.com")).thenReturn(Optional.of(PATIENT));
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.getByEmail("test@example.com");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email: " + e.getMessage());
-        }
+        Optional<? extends User> result = userService.getByEmail("test@example.com");
 
         //Postconditions
         assertTrue(result.isPresent());
         assertEquals(PATIENT.getClass(), result.get().getClass());
     }
 
-    //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testGetByEmailReturnsDoctorIfPatientNotFound() {
         //Preconditions
         when(patientDao.getByEmail("test@example.com")).thenReturn(Optional.empty());
         when(doctorDao.getByEmail("test@example.com")).thenReturn(Optional.of(DOCTOR));
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.getByEmail("test@example.com");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email:" + e.getMessage());
-        }
+        Optional<? extends User> result = userService.getByEmail("test@example.com");
 
         //Postconditions
         assertTrue(result.isPresent());
@@ -97,52 +85,35 @@ public class UserServiceImplTest {
         //Preconditions
         when(patientDao.getByEmail("test@example.com")).thenReturn(Optional.empty());
         when(doctorDao.getByEmail("test@example.com")).thenReturn(Optional.empty());
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.getByEmail("test@example.com");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email:" + e.getMessage());
-        }
+        Optional<? extends User> result = userService.getByEmail("test@example.com");
 
         //Postconditions
         assertFalse(result.isPresent());
     }
 
-    //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testGetByIdReturnsPatient() {
         //Preconditions
         when(patientDao.getById(1L)).thenReturn(Optional.of(PATIENT));
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.getById(1L);
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email: " + e.getMessage());
-        }
+        Optional<? extends User> result = userService.getById(1L);
 
         //Postconditions
         assertTrue(result.isPresent());
         assertEquals(PATIENT.getClass(), result.get().getClass());
     }
 
-    //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testGetByIdReturnsDoctorIfPatientNotFound() {
         //Preconditions
         when(patientDao.getById(1L)).thenReturn(Optional.empty());
         when(doctorDao.getById(1L)).thenReturn(Optional.of(DOCTOR));
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.getById(1L);
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email:" + e.getMessage());
-        }
+        Optional<? extends User> result = userService.getById(1L);
 
         //Postconditions
         assertTrue(result.isPresent());
@@ -154,52 +125,35 @@ public class UserServiceImplTest {
         //Preconditions
         when(patientDao.getById(1L)).thenReturn(Optional.empty());
         when(doctorDao.getById(1L)).thenReturn(Optional.empty());
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.getById(1L);
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email:" + e.getMessage());
-        }
+        Optional<? extends User> result = userService.getById(1L);
 
         //Postconditions
         assertFalse(result.isPresent());
     }
 
-    //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testGetByResetTokenReturnsPatient() {
         //Preconditions
         when(patientDao.getByResetToken("RESETTOKEN")).thenReturn(Optional.of(PATIENT));
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.getByResetToken("RESETTOKEN");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email: " + e.getMessage());
-        }
+        Optional<? extends User> result = userService.getByResetToken("RESETTOKEN");
 
         //Postconditions
         assertTrue(result.isPresent());
         assertEquals(PATIENT.getClass(), result.get().getClass());
     }
 
-    //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testGetByResetTokenReturnsDoctorIfPatientNotFound() {
         //Preconditions
         when(patientDao.getByResetToken("RESETTOKEN")).thenReturn(Optional.empty());
         when(doctorDao.getByResetToken("RESETTOKEN")).thenReturn(Optional.of(DOCTOR));
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.getByResetToken("RESETTOKEN");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email:" + e.getMessage());
-        }
+        Optional<? extends User> result = userService.getByResetToken("RESETTOKEN");
 
         //Postconditions
         assertTrue(result.isPresent());
@@ -211,54 +165,53 @@ public class UserServiceImplTest {
         //Preconditions
         when(patientDao.getByResetToken("RESETTOKEN")).thenReturn(Optional.empty());
         when(doctorDao.getByResetToken("RESETTOKEN")).thenReturn(Optional.empty());
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.getByResetToken("RESETTOKEN");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email:" + e.getMessage());
-        }
+        Optional<? extends User> result = userService.getByResetToken("RESETTOKEN");
 
         //Postconditions
         assertFalse(result.isPresent());
     }
 
-    //@TODO: CHECK LEGALITY OF THIS
     @Test
     public void testVerifyValidationTokenReturnsPatient() {
         //Preconditions
         when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(PATIENT));
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.verifyValidationToken("VALIDATIONTOKEN");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email: " + e.getMessage());
-        }
+        Optional<? extends User> result = userService.verifyValidationToken("VALIDATIONTOKEN");
+
 
         //Postconditions
         assertTrue(result.isPresent());
         assertEquals(PATIENT.getClass(), result.get().getClass());
     }
 
-    //@TODO: CHECK LEGALITY OF THIS
+    @Test
+    public void testVerifyValidationTokenReturnsPatientExpiredToken() {
+        //Preconditions
+        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().minusDays(1));
+        when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(PATIENT));
+        when(patientDao.getByEmail("jane@test.com")).thenReturn(Optional.of(PATIENT));
+
+        //Exercise
+        Optional<? extends User> result = userService.verifyValidationToken("VALIDATIONTOKEN");
+
+        //Postconditions
+        assertTrue(result.isPresent());
+        assertEquals(PATIENT.getClass(), result.get().getClass());
+    }
+
     @Test
     public void testVerifyValidationTokenReturnsDoctor() {
         //Preconditions
         when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.empty());
         when(doctorDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(DOCTOR));
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.verifyValidationToken("VALIDATIONTOKEN");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email:" + e.getMessage());
-        }
+        Optional<? extends User> result = userService.verifyValidationToken("VALIDATIONTOKEN");
 
         //Postconditions
         assertTrue(result.isPresent());
@@ -270,14 +223,9 @@ public class UserServiceImplTest {
         //Preconditions
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.empty());
         when(doctorDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.empty());
-        Optional<? extends User> result = Optional.empty();
 
         //Exercise
-        try {
-            result = userService.verifyValidationToken("VALIDATIONTOKEN");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email:" + e.getMessage());
-        }
+        Optional<? extends User> result = userService.verifyValidationToken("VALIDATIONTOKEN");
 
         //Postconditions
         assertFalse(result.isPresent());
@@ -288,14 +236,9 @@ public class UserServiceImplTest {
         //Preconditions
         when(userDao.tokenExpirationDate("RECOVERYTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
         when(patientDao.getByResetToken("RECOVERYTOKEN")).thenReturn(Optional.of(PATIENT));
-        boolean result = false;
 
         //Exercise
-        try {
-            result = userService.verifyRecoveryToken("RECOVERYTOKEN");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email:" + e.getMessage());
-        }
+        boolean result = userService.verifyRecoveryToken("RECOVERYTOKEN");
 
         //Postconditions
         assertTrue(result);
@@ -306,50 +249,33 @@ public class UserServiceImplTest {
         //Preconditions
         when(patientDao.getByResetToken("RECOVERYTOKEN")).thenReturn(Optional.empty());
         when(doctorDao.getByResetToken("RECOVERYTOKEN")).thenReturn(Optional.empty());
-        boolean result = false;
 
         //Exercise
-        try {
-            result = userService.verifyRecoveryToken("RECOVERYTOKEN");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email:" + e.getMessage());
-        }
+        boolean result = userService.verifyRecoveryToken("RECOVERYTOKEN");
 
         //Postconditions
         assertFalse(result);
     }
 
-    //@TODO: CHECK IF ITS OK MOCKING
     @Test
     public void testChangePasswordInvalidUser() {
         //Preconditions
-        boolean result = false;
 
         //Exercise
-        try {
-            result = userService.changePassword("RECOVERYTOKEN", "newpassword");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email: " + e.getMessage());
-        }
+        boolean result = userService.changePassword("RECOVERYTOKEN", "newpassword");
 
         //Postconditions
         assertFalse(result);
     }
 
-    //@TODO: CHECK THE MOCKING
     @Test
     public void testChangePassword() {
         //Preconditions
         when(patientDao.getByResetToken(anyString())).thenReturn(Optional.of(PATIENT));
         when(passwordEncoder.encode(anyString())).thenReturn("ENCODEDPASSWORD");
-        boolean result = false;
 
         //Exercise
-        try {
-            result = userService.changePassword("RECOVERYTOKEN", "NEWPASSWORD");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email: " + e.getMessage());
-        }
+        boolean result = userService.changePassword("RECOVERYTOKEN", "NEWPASSWORD");
 
         //Postconditions
         assertTrue(result);
@@ -358,31 +284,20 @@ public class UserServiceImplTest {
     @Test
     public void testGetImageIdIsNotDoctor() {
         //Preconditions
-        Long result = 0L;
 
         //Exercise
-        try {
-            result = userService.getImageId(null);
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email: " + e.getMessage());
-        }
+        Long result = userService.getImageId(null);
 
         //Postconditions
         assertEquals(-1L, result.longValue());
     }
 
-    //@TODO: CHECK CAUSE IT DOESNT USE DB
     @Test
     public void testGetImageIdIsDoctor() {
         //Preconditions
-        Long result = 0L;
 
         //Exercise
-        try {
-            result = userService.getImageId(DOCTOR);
-        } catch (Exception e) {
-            fail("Unexpected error during operation get user by email: " + e.getMessage());
-        }
+        Long result = userService.getImageId(DOCTOR);
 
         //Postconditions
         assertEquals(1L, result.longValue());

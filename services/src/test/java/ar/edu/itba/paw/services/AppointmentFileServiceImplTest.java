@@ -123,14 +123,9 @@ public class AppointmentFileServiceImplTest {
         files[0] = file;
         when(file.isEmpty()).thenReturn(false);
         when(appointmentService.getById(anyLong())).thenReturn(Optional.of(APPOINTMENT));
-        List<AppointmentFile> appointmentFiles = null;
 
         //Exercise
-        try {
-            appointmentFiles = appointmentFileService.create(files, UPLOADER, APPOINTMENT_ID);
-        } catch (Exception e) {
-            fail("Unexpected error during operation create appointment file: " + e.getMessage());
-        }
+        List<AppointmentFile> appointmentFiles = appointmentFileService.create(files, UPLOADER, APPOINTMENT_ID);
 
         //Postconditions
         assertNotNull(appointmentFiles);
@@ -140,14 +135,9 @@ public class AppointmentFileServiceImplTest {
     @Test
     public void testGetAuthorizedFileEmpty() {
         //Preconditions
-        Optional<AppointmentFile> file = Optional.empty();
 
         //Exercise
-        try {
-            file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
-        } catch (Exception e) {
-            fail("Unexpected error during operation get authorized file: " + e.getMessage());
-        }
+        Optional<AppointmentFile> file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
 
         //Postconditions
         assertFalse(file.isPresent());
@@ -164,14 +154,9 @@ public class AppointmentFileServiceImplTest {
                 2L
         );
         when(appointmentFileDao.getById(FILE_ID)).thenReturn(Optional.of(appointmentFileOtheId));
-        Optional<AppointmentFile> file = Optional.empty();
 
         //Exercise
-        try {
-            file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
-        } catch (Exception e) {
-            fail("Unexpected error during operation get authorized file: " + e.getMessage());
-        }
+        Optional<AppointmentFile> file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
 
         //Postconditions
         assertFalse(file.isPresent());
@@ -182,14 +167,9 @@ public class AppointmentFileServiceImplTest {
         //Preconditions
         when(appointmentFileDao.getById(FILE_ID)).thenReturn(Optional.of(APPOINTMENT_FILE));
         when(appointmentService.getById(anyLong())).thenReturn(Optional.empty());
-        Optional<AppointmentFile> file = Optional.empty();
 
         //Exercise
-        try {
-            file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
-        } catch (Exception e) {
-            fail("Unexpected error during operation get authorized file: " + e.getMessage());
-        }
+        Optional<AppointmentFile> file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
 
         //Postconditions
         assertFalse(file.isPresent());
@@ -200,14 +180,9 @@ public class AppointmentFileServiceImplTest {
         //Preconditions
         when(appointmentFileDao.getById(FILE_ID)).thenReturn(Optional.of(APPOINTMENT_FILE));
         when(appointmentService.getById(anyLong())).thenReturn(Optional.of(APPOINTMENT));
-        Optional<AppointmentFile> file = Optional.empty();
 
         //Exercise
-        try {
-            file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
-        } catch (Exception e) {
-            fail("Unexpected error during operation get authorized file: " + e.getMessage());
-        }
+        Optional<AppointmentFile> file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);
 
         //Postconditions
         assertFalse(file.isPresent());
@@ -218,14 +193,9 @@ public class AppointmentFileServiceImplTest {
         //Preconditions
         when(appointmentFileDao.getById(FILE_ID)).thenReturn(Optional.of(APPOINTMENT_FILE));
         when(appointmentService.getById(anyLong())).thenReturn(Optional.of(APPOINTMENT));
-        Optional<AppointmentFile> file = Optional.empty();
 
         //Exercise
-        try {
-            file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, "john@test.com");
-        } catch (Exception e) {
-            fail("Unexpected error during operation get authorized file: " + e.getMessage());
-        }
+        Optional<AppointmentFile> file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, "john@test.com");
 
         //Postconditions
         assertTrue(file.isPresent());
