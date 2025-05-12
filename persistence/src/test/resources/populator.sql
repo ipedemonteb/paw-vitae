@@ -1,10 +1,11 @@
-INSERT INTO Users (id, name, last_name, email, password, phone, language, verification_token, reset_token, is_verified)
-VALUES (1, 'John', 'Doe', 'john@example.com', 'hashedpassword', '123456789', 'en', 'VERIFTOKEN', 'RESTOKEN', true),
-       (2, 'Jane', 'Smith', 'jane@example.com', 'hashedpassword', '987654321', 'es', 'VERIFTOKEN2', 'RESTOKEN2', true),
-       (3, 'Michael', 'Johnson', 'michael@example.com', 'hashedpassword', '111111111', 'en', 'VERIFTOKEN3', 'RESTOKEN3', true),
-       (4, 'Emily', 'Davis', 'emily@example.com', 'hashedpassword', '333333333', 'es', 'VERIFTOKEN4', 'RESTOKEN4', true),
-       (5, 'Robert', 'Brown', 'robert@example.com', 'hashedpassword', '444444444', 'en', 'VERIFTOKEN5', 'RESTOKEN5', true),
-       (6, 'Linda', 'Wilson', 'linda@example.com', 'hashedpassword', '555555555', 'es', 'VERIFTOKEN6', 'RESTOKEN6', true);
+INSERT INTO Users (id, name, last_name, email, password, phone, language, verification_token, reset_token, is_verified, token_expiration_date)
+VALUES
+    (1, 'John', 'Doe', 'john@example.com', 'hashedpassword', '123456789', 'en', 'VERIFTOKEN', 'RESTOKEN', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP)),
+    (2, 'Jane', 'Smith', 'jane@example.com', 'hashedpassword', '987654321', 'es', 'VERIFTOKEN2', 'RESTOKEN2', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP)),
+    (3, 'Michael', 'Johnson', 'michael@example.com', 'hashedpassword', '111111111', 'en', 'VERIFTOKEN3', 'RESTOKEN3', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP)),
+    (4, 'Emily', 'Davis', 'emily@example.com', 'hashedpassword', '333333333', 'es', 'VERIFTOKEN4', 'RESTOKEN4', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP)),
+    (5, 'Robert', 'Brown', 'robert@example.com', 'hashedpassword', '444444444', 'en', 'VERIFTOKEN5', 'RESTOKEN5', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP)),
+    (6, 'Linda', 'Wilson', 'linda@example.com', 'hashedpassword', '555555555', 'es', 'VERIFTOKEN6', 'RESTOKEN6', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP));
 
 INSERT INTO Coverages (id, coverage_name)
 VALUES (1, 'Coverage A'), (2, 'Coverage B');
