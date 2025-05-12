@@ -138,5 +138,14 @@ public class DoctorServiceImpl implements DoctorService {
         LOGGER.info("Rating updated for doctor with id={}, rating={}", id, rating);
     }
 
-
+    @Transactional(readOnly = true)
+    @Override
+    public String getAllDoctorsDisplayCount() {
+        Integer count = doctorDao.countAll();
+        if (count < 10000) {
+            return String.valueOf(count);
+        } else {
+            return String.valueOf(count / 1000) + "k+";
+        }
+    }
 }

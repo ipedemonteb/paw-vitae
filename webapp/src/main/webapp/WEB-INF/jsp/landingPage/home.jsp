@@ -56,18 +56,18 @@
                 </sec:authorize>
 
                 <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-number"><spring:message code="landing.stats.doctors.number" /></span>
-                        <span class="stat-label"><spring:message code="landing.stats.doctors.label" /></span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number"><spring:message code="landing.stats.patients.number" /></span>
-                        <span class="stat-label"><spring:message code="landing.stats.patients.label" /></span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number"><spring:message code="landing.stats.rating.number" /></span>
-                        <span class="stat-label"><spring:message code="landing.stats.rating.label" /></span>
-                    </div>
+                    <c:if test="${doctorCount > 0}">
+                        <div class="stat-item">
+                            <span class="stat-number">${doctorCount}</span>
+                            <span class="stat-label"><spring:message code="landing.stats.doctors.label" /></span>
+                        </div>
+                    </c:if>
+                    <c:if test="${patientsCount > 0}">
+                        <div class="stat-item">
+                            <span class="stat-number">${patientsCount}</span>
+                            <span class="stat-label"><spring:message code="landing.stats.patients.label" /></span>
+                        </div>
+                    </c:if>
                 </div>
             </div>
             <div class="hero-image">
@@ -92,14 +92,6 @@
                     </div>
                     <h3><spring:message code="landing.mission.accessibility.title" /></h3>
                     <p><spring:message code="landing.mission.accessibility.text" /></p>
-                </div>
-
-                <div class="mission-card">
-                    <div class="card-icon">
-                        <i class="fas fa-award"></i>
-                    </div>
-                    <h3><spring:message code="landing.mission.quality.title" /></h3>
-                    <p><spring:message code="landing.mission.quality.text" /></p>
                 </div>
 
                 <div class="mission-card">
@@ -175,13 +167,6 @@
             </div>
 
             <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <h3><spring:message code="landing.features.verified.title" /></h3>
-                    <p><spring:message code="landing.features.verified.text" /></p>
-                </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -197,14 +182,6 @@
                     </div>
                     <h3><spring:message code="landing.features.easy.title" /></h3>
                     <p><spring:message code="landing.features.easy.text" /></p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <h3><spring:message code="landing.features.communication.title" /></h3>
-                    <p><spring:message code="landing.features.communication.text" /></p>
                 </div>
             </div>
         </div>

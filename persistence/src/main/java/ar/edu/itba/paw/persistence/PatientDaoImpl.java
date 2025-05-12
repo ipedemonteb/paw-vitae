@@ -118,4 +118,10 @@ public class PatientDaoImpl implements PatientDao {
                 ROW_MAPPER, token
         ).stream().findFirst();
     }
+
+    @Override
+    public int countAll() {
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM Users u JOIN patients c ON c.patient_id = u.id AND u.is_verified = true", Integer.class);
+        return count == null ? 0 : count;
+    }
 }
