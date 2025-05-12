@@ -440,7 +440,7 @@
                   <c:if test="${not empty specialtyId and specialtyId != 0}">
                     <c:param name="specialty" value="${specialtyId}" />
                   </c:if>
-                  <c:if test="${not empty coverageId}">
+                  <c:if test="${not empty coverageId and coverageId != 0}">
                     <c:param name="coverage" value="${coverageId}" />
                   </c:if>
                   <!-- here’s the trick: emit one param per selected weekday -->
@@ -475,7 +475,7 @@
                         <c:if test="${not empty specialtyId and specialtyId != 0}">
                           <c:param name="specialty" value="${specialtyId}" />
                         </c:if>
-                        <c:if test="${not empty coverageId}">
+                        <c:if test="${not empty coverageId and coverageId != 0}">
                           <c:param name="coverage" value="${coverageId}" />
                         </c:if>
                         <c:forEach var="wd" items="${paramValues.weekdays}">
@@ -504,7 +504,7 @@
                   <c:if test="${not empty specialtyId and specialtyId != 0}">
                     <c:param name="specialty" value="${specialtyId}" />
                   </c:if>
-                  <c:if test="${not empty coverageId}">
+                  <c:if test="${not empty coverageId and coverageId != 0}">
                     <c:param name="coverage" value="${coverageId}" />
                   </c:if>
                   <c:forEach var="wd" items="${paramValues.weekdays}">
