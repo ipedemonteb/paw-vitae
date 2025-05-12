@@ -39,7 +39,9 @@
 <main class="dashboard-container">
     <!-- Include the dashboard header component -->
     <c:set var="activeTab" value="profile" scope="request" />
-    <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp" />
+    <c:set var="user" value="${patient}" scope="request"/>
+    <c:set var="isDoctor" value="${false}" scope="request"/>
+    <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp"/>
 
     <!-- Dashboard Content Area -->
     <div class="dashboard-content">
