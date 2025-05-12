@@ -1837,3 +1837,18 @@ function updateSubmitButtonState() {
     submitButton.disabled = !isValid
     submitButton.classList.toggle("disabled", !isValid)
 }
+
+function togglePasswordVisibility(fieldId) {
+    const field = document.getElementById(fieldId);
+    const toggleIcon = field.parentElement.querySelector('.password-toggle i');
+
+    if (field.type === 'password') {
+        field.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}

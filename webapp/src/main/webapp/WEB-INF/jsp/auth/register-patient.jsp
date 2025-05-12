@@ -57,7 +57,6 @@
             <form:form modelAttribute="patientForm" method="post"
                        action="${pageContext.request.contextPath}/register-patient" enctype="multipart/form-data"
                        id="patientRegistrationForm">
-                <!-- Hidden fields for password values -->
                 <input type="hidden" id="passwordValue" name="passwordValue" value="${patientForm.password}"/>
                 <input type="hidden" id="repeatPasswordValue" name="repeatPasswordValue"
                        value="${patientForm.repeatPassword}"/>
@@ -147,9 +146,8 @@
 
                     <div class="form-grid">
                         <div class="form-field">
-                            <label for="password" class="field-label">
+                            <label for="password" class="field-label required-field">
                                 <spring:message code="register.password"/>
-                                <span class="required-mark">*</span>
                                 <div class="tooltip">
                                     <i class="fas fa-info-circle tooltip-icon"></i>
                                     <span class="tooltip-content"><spring:message
@@ -161,6 +159,9 @@
                                                class="input-field"
                                                placeholder="${passwordPlaceholder}"
                                 />
+                                <div class="password-toggle" onclick="togglePasswordVisibility('password')">
+                                    <i class="fas fa-eye"></i>
+                                </div>
                             </div>
                             <div class="password-strength">
                                 <div class="strength-bar">
@@ -175,15 +176,17 @@
                         </div>
 
                         <div class="form-field">
-                            <label for="repeatPassword" class="field-label">
+                            <label for="repeatPassword" class="field-label required-field">
                                 <spring:message code="register.confirmPassword"/>
-                                <span class="required-mark">*</span>
                             </label>
                             <div class="input-container">
                                 <form:password path="repeatPassword" id="repeatPassword" required="true"
                                                class="input-field"
                                                placeholder="${passwordPlaceholder}"
                                 />
+                                <div class="password-toggle" onclick="togglePasswordVisibility('repeatPassword')">
+                                    <i class="fas fa-eye"></i>
+                                </div>
                             </div>
                             <div id="password-match-message" class="error-text" style="display: none;"></div>
                             <div class="server-error-repeatPassword">

@@ -17,8 +17,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><spring:message code="register.doctor.title"/></title>
-
-    <!-- Include only register.css -->
     <link rel="stylesheet" href="<c:url value='/css/register.css'/> ">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -56,7 +54,6 @@
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <!-- Progress indicator -->
                     <div class="form-progress">
                         <div class="progress-step active" data-step="1">
                             <div class="step-indicator">1</div>
@@ -78,8 +75,6 @@
                         <input type="hidden" id="passwordValue" name="passwordValue" value="${registerForm.password}"/>
                         <input type="hidden" id="repeatPasswordValue" name="repeatPasswordValue"
                                value="${registerForm.repeatPassword}"/>
-
-                        <!-- Section 1: Personal Information -->
                         <div class="form-section active" data-section="1">
                             <h2><spring:message code="register.personalInfo"/></h2>
 
@@ -196,6 +191,9 @@
                                         <div class="validation-icon error">
                                             <i class="fas fa-exclamation-circle"></i>
                                         </div>
+                                        <div class="password-toggle" onclick="togglePasswordVisibility('password')">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
                                     </div>
                                     <div id="pass-validations">
 
@@ -227,6 +225,9 @@
                                         <div class="validation-icon error">
                                             <i class="fas fa-exclamation-circle"></i>
                                         </div>
+                                        <div class="password-toggle" onclick="togglePasswordVisibility('repeatPassword')">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
                                     </div>
                                     <div id="password-match-message" class="error-message">
                                     </div>
@@ -256,14 +257,13 @@
                             </div>
 
                             <div class="form-navigation">
-                                <div></div> <!-- Empty div for spacing -->
+                                <div></div>
                                 <button type="button" class="btn-next" onclick="nextSection(1)">
                                     <spring:message code="register.next"/> <i class="fas fa-arrow-right"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Section 2: Professional Information -->
                         <div class="form-section" data-section="2">
                             <h2><spring:message code="register.professionalInfo"/></h2>
 
@@ -346,7 +346,6 @@
                             </div>
                         </div>
 
-                        <!-- Section 3: Availability -->
                         <div class="form-section" data-section="3">
                             <h2><spring:message code="register.availability"/></h2>
 
@@ -472,7 +471,6 @@
 </script>
 
 <script src="<c:url value='/js/register.js' />" defer></script>
-
 </body>
 </html>
 
