@@ -24,7 +24,6 @@
           rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp">
     <jsp:param name="id" value="${doctor.imageId}" />
 </jsp:include>

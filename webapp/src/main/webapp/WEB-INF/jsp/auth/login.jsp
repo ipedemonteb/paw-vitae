@@ -157,7 +157,6 @@
               </label>
             </div>
 
-<%--            <a href="<c:url value='/forgot-password' />" class="forgot-password">--%>
             <a href="<c:url value='/recover-password' />" class="forgot-password">
               <spring:message code="login.forgotPassword" />
             </a>
@@ -181,11 +180,10 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Input animations
+
     const inputs = document.querySelectorAll('.input-field input');
 
     inputs.forEach(input => {
-      // Check if input has value on load
       if (input.value !== '') {
         input.classList.add('has-value');
       }
@@ -215,7 +213,7 @@
       });
     });
 
-    // Password visibility toggle
+
     const passwordToggle = document.querySelector('.password-toggle');
     const passwordInput = document.getElementById('password');
 
@@ -247,7 +245,7 @@
       loginForm.addEventListener('submit', function(e) {
         let isValid = true;
 
-        // Validate email
+
         if (!emailInput.value.trim()) {
           emailError.textContent = '<spring:message code="login.validation.email.required" javaScriptEscape="true" />';
           emailInput.classList.add('error');
@@ -286,7 +284,6 @@
       });
     }
 
-    // Close notification
     const notificationCloseButtons = document.querySelectorAll('.notification-close');
 
     notificationCloseButtons.forEach(button => {
@@ -300,7 +297,7 @@
       });
     });
 
-    // Auto-dismiss notifications after 5 seconds
+
     const notifications = document.querySelectorAll('.notification');
 
     notifications.forEach(notification => {
