@@ -230,4 +230,13 @@ public class DoctorDaoImpl implements DoctorDao {
     public void updateImage(long id, Long imageId) {
         jdbcTemplate.update("UPDATE doctors SET image_id = ? WHERE doctor_id = ?", imageId, id);
     }
+
+    @Override
+    public int countAll() {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM users u JOIN doctors d ON u.id = d.doctor_id WHERE u.is_verified = true",
+                Integer.class
+        );
+        return count != null ? count : 0;
+    }
 }

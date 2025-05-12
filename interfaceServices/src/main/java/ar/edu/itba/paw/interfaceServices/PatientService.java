@@ -14,4 +14,6 @@ public interface PatientService {
 
     void updatePatient(Patient patient, String name, String lastName, String phone, long coverageId);
 
+    String getAllPatientsDisplayCount();
+
 }

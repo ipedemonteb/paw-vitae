@@ -26,4 +26,6 @@ public interface PatientDao {
     void changeLanguage(long id, String language);
 
     Optional<Patient> getByResetToken(String token);
+
+    int countAll();
 }

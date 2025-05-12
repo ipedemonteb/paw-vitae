@@ -31,4 +31,6 @@ public interface DoctorDao {
     Optional<Doctor> getByVerificationToken(String token);
 
     Optional<Doctor> getByResetToken(String token);
+
+    int countAll();
 }

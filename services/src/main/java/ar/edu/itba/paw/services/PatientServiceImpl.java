@@ -78,4 +78,14 @@ public class PatientServiceImpl implements PatientService {
             LOGGER.info("User updated successfully: id={}", patient.getId());
         }
     }
+
+    @Override
+    public String getAllPatientsDisplayCount() {
+        int count = patientDao.countAll();
+        if (count < 10000) {
+            return String.valueOf(count);
+        } else {
+            return String.valueOf(count / 1000) + "k+";
+        }
+    }
 }
