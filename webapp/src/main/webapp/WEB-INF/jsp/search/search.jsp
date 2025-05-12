@@ -37,7 +37,9 @@
     <div class="search-header">
       <div class="search-header-content">
         <h1 class="search-title"><spring:message code="search.title" /></h1>
-        <p class="search-subtitle"><spring:message code="search.doctors.specialty" arguments="${specialtyName}"/></p>
+        <p class="search-subtitle">
+          <spring:message code="search.doctors.specialty" arguments="${fn:escapeXml(specialtyName)}"/>
+        </p>
       </div>
 
       <!-- Search Bar -->
