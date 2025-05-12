@@ -194,9 +194,6 @@
                 return true;
             });
         }
-
-        // Check for form errors and show them
-        checkFormErrors();
     });
 
     function initializeTimeSlots() {

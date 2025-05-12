@@ -147,7 +147,6 @@
                             <div id="image-preview-container" class="image-preview-container" style="display: none;">
                                 <div class="image-preview-content">
                                     <div class="image-preview-thumbnail">
-                                        <img id="image-preview" src="/placeholder.svg" alt="Vista previa">
                                     </div>
                                     <div class="image-preview-info">
                                         <div id="image-preview-name" class="image-preview-name"></div>
