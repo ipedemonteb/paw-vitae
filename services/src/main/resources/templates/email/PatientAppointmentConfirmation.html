@@ -126,12 +126,11 @@
                 <li><strong th:text="#{patient.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
                 <li><strong th:text="#{patient.time.label}"></strong> <span th:text="${appointmentTime}"></span></li>
                 <li><strong th:text="#{patient.reason.label}"></strong> <span th:text="${reason}"></span></li>
-                <li><strong th:text="#{patient.location.label}"></strong> <span th:text="${location}"></span></li>
             </ul>
         </div>
 
         <div class="text-center">
-            <a th:href="@{'http://pawserver.it.itba.edu.ar/paw-2025a-11/patient/dashboard/appointment-details/' + ${appointmentId}}"
+            <a th:href="${linkUrlPatient}"
                class="button"
                th:text="#{mail.see.details}"></a>
         </div>

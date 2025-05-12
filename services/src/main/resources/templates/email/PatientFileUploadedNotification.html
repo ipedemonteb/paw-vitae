@@ -95,14 +95,14 @@
     </div>
 
     <div class="content">
-        <p><strong th:text="#{patient.greeting(${patient.name}, ${patient.lastName})}"></strong></p>
+        <p><strong th:text="#{patient.greeting(${patientName})}"></strong></p>
 
-        <p th:text="#{patient.file.upload.message(${doctor.name}, ${doctor.lastName})}"></p>
+        <p th:text="#{patient.file.upload.message(${doctorName})}"></p>
 
         <div class="appointment-details">
             <h3 th:text="#{patient.file.upload.details}"></h3>
             <ul>
-                <li><strong th:text="#{patient.doctor.label}"></strong> <span th:text="${doctor.name}"></span></li>
+                <li><strong th:text="#{patient.doctor.label}"></strong> <span th:text="${doctorName}"></span></li>
                 <li><strong th:text="#{patient.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
                 <li><strong th:text="#{patient.time.label}"></strong> <span th:text="${appointmentTime} + 'hs'"></span></li>
             </ul>
@@ -110,7 +110,7 @@
         </div>
 
         <div class="text-center">
-            <a th:href="@{'http://pawserver.it.itba.edu.ar/paw-2025a-11/patient/dashboard/appointment-details/' + ${appointment.id}}" class="button" th:text="#{patient.view.uploaded.files}"></a>
+            <a th:href="${linkUrl}" class="button" th:text="#{patient.view.uploaded.files}"></a>
         </div>
 
         <p th:text="#{patient.file.upload.importance}"></p>
