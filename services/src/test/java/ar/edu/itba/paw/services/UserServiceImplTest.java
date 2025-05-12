@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -227,6 +228,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyValidationTokenReturnsPatient() {
         //Preconditions
+        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(PATIENT));
         Optional<? extends User> result = Optional.empty();
 
@@ -246,6 +248,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyValidationTokenReturnsDoctor() {
         //Preconditions
+        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.empty());
         when(doctorDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(DOCTOR));
         Optional<? extends User> result = Optional.empty();
@@ -283,6 +286,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyRecoveryTokenExists() {
         //Preconditions
+        when(userDao.tokenExpirationDate("RECOVERYTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
         when(patientDao.getByResetToken("RECOVERYTOKEN")).thenReturn(Optional.of(PATIENT));
         boolean result = false;
 

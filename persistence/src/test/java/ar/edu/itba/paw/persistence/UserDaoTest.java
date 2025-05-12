@@ -26,6 +26,9 @@ public class UserDaoTest {
 
     private static final long PAT_ID = 1;
 
+    private static final LocalDateTime expirationDate = LocalDateTime.now().plusDays(30);
+
+
     private UserDaoImpl userDao;
     private JdbcTemplate jdbcTemplate;
 
@@ -66,7 +69,6 @@ public class UserDaoTest {
     public void testSetVerificationToken() {
         //Preconditions
         String token = "TESTTOKEN";
-        LocalDateTime expirationDate = LocalDateTime.now().plusDays(30);
 
         //Exercise
         userDao.setVerificationToken(PAT_ID, token, expirationDate);
@@ -91,7 +93,6 @@ public class UserDaoTest {
     public void testSetResetPasswordToken() {
         //Preconditions
         String newResetToken = "NEWRESETTOKEN";
-        LocalDateTime expirationDate = LocalDateTime.now().plusDays(30);
 
         //Exercise
         userDao.setResetPasswordToken(PAT_ID, newResetToken, expirationDate);
