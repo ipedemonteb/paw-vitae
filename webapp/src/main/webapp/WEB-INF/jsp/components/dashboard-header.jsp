@@ -2,32 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<!-- Patient Profile Header -->
-<%--<div class="dashboard-header">--%>
-<%--  <div class="doctor-info">--%>
-<%--    <div class="doctor-avatar">--%>
-<%--      <img src="<c:url value="/image/${-1}"/>" alt="<c:out value="${patient.name} ${patient.lastName}"/>">--%>
-<%--    </div>--%>
-<%--    <div class="doctor-details">--%>
-<%--      <h1 class="doctor-name"><c:out value="${patient.name}" /> <c:out value="${patient.lastName}" /></h1>--%>
-<%--      <div class="doctor-meta">--%>
-<%--        <div class="doctor-meta-item">--%>
-<%--          <i class="fas fa-envelope"></i>--%>
-<%--          <span><c:out value="${patient.email}" /></span>--%>
-<%--        </div>--%>
-<%--        <div class="doctor-meta-item">--%>
-<%--          <i class="fas fa-phone"></i>--%>
-<%--          <span><c:out value="${patient.phone}" /></span>--%>
-<%--        </div>--%>
-<%--      </div>--%>
-<%--      <div class="doctor-specialties">--%>
-<%--                <span class="specialty-tag">--%>
-<%--                    <c:out value="${patient.coverage.name}" />--%>
-<%--                </span>--%>
-<%--      </div>--%>
-<%--    </div>--%>
-<%--  </div>--%>
-<%--</div>--%>
 
 <div class="dashboard-header">
   <div class="doctor-info">

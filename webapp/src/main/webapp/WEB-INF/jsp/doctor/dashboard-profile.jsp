@@ -61,35 +61,26 @@
             </div>
 
             <div class="profile-content">
-                <!-- Visible Profile Information -->
                 <div id="profile-view" class="profile-section" style="display: <c:choose>
                 <c:when test="${display == 'none'}">block</c:when>
                 <c:otherwise>none</c:otherwise>
                 </c:choose>;">
-                    <h3 class="section-title">
-                        <i class="fas fa-user-circle"></i>
-                        <spring:message code="dashboard.profile.personalInfo" />
-                    </h3>
+                    <h3 class="section-title"><spring:message code="dashboard.profile.personalInfo" /></h3>
                     <div class="info-grid">
                         <div class="info-item">
-                            <div class="info-label">
-                                <i class="fas fa-user"></i>
-                                <spring:message code="dashboard.profile.name" />
-                            </div>
-                            <div class="info-value"><c:out value="${doctor.name} ${doctor.lastName}" /></div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">
-                                <i class="fas fa-envelope"></i>
-                                <spring:message code="dashboard.profile.email" />
-                            </div>
+                            <div class="info-label"><spring:message code="dashboard.profile.email" /></div>
                             <div class="info-value"><c:out value="${doctor.email}" /></div>
                         </div>
                         <div class="info-item">
-                            <div class="info-label">
-                                <i class="fas fa-phone"></i>
-                                <spring:message code="dashboard.profile.phone" />
-                            </div>
+                            <div class="info-label"><spring:message code="register.firstName" /></div>
+                            <div class="info-value"><c:out value="${doctor.name}" /></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label"><spring:message code="register.lastName" /></div>
+                            <div class="info-value"><c:out value="${doctor.lastName}" /></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label"><spring:message code="dashboard.profile.phone" /></div>
                             <div class="info-value"><c:out value="${doctor.phone}" /></div>
                         </div>
                     </div>
@@ -275,30 +266,6 @@
         </div>
     </div>
 </main>
-
-<div id="cancelAppointmentModal" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header">
-            <div class="modal-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
-                </svg>
-            </div>
-            <h3 class="modal-title"><spring:message code="appointment.cancel.title" /></h3>
-        </div>
-        <div class="modal-body">
-            <p class="modal-message"><spring:message code="appointment.cancel.message" /></p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
-                <spring:message code="logout.confirmation.cancel"/>
-            </button>
-            <button type="button" class="btn-modal btn-danger" id="cancelAppointmentBtn">
-                <spring:message code="appointment.action.cancel"/>
-            </button>
-        </div>
-    </div>
-</div>
 
 <script src="<c:url value='/js/toast-notification.js' />"></script>
 <script src="<c:url value='/js/profile-image-upload.js' />"></script>
