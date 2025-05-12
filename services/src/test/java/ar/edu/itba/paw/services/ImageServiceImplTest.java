@@ -30,14 +30,9 @@ public class ImageServiceImplTest {
         //Preconditions
         MultipartFile imageFile = mock(MultipartFile.class);
         when(imageFile.isEmpty()).thenReturn(true);
-        Images image = null;
 
         //Exercise
-        try {
-            image = imageService.create(imageFile);
-        } catch (Exception e) {
-            fail("Unexpected error during operation create image: " + e.getMessage());
-        }
+        Images image = imageService.create(imageFile);
 
         //Postconditions
         assertNull(image);
@@ -55,14 +50,9 @@ public class ImageServiceImplTest {
             fail("Unexpected error during mocking getBytes: " + e.getMessage());
         }
         when(imageDao.create(imageBytes)).thenReturn(new Images(1, imageBytes));
-        Images image = null;
 
         //Exercise
-        try {
-            image = imageService.create(imageFile);
-        } catch (Exception e) {
-            fail("Unexpected error during operation create image: " + e.getMessage());
-        }
+        Images image = imageService.create(imageFile);
 
         //Postconditions
         assertNotNull(image);
