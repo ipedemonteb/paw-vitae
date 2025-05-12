@@ -57,7 +57,7 @@ public class PatientDaoTest {
     }
 
     @Test
-    public void testCreatepatient() {
+    public void testCreatePatient() {
         //Preconditions
         long userId = 6L;
         String name = "John";
@@ -261,5 +261,16 @@ public class PatientDaoTest {
         assertEquals(TEST_PHONE, maybePatient.get().getPhone());
         assertEquals(TEST_LANGUAGE, maybePatient.get().getLanguage());
         assertEquals(TEST_COVERAGE_ID, maybePatient.get().getCoverage().getId());
+    }
+
+    @Test
+    public void testCountAll() {
+        //Preconditions
+
+        //Exercise
+        long count = patientDao.countAll();
+
+        //Postconditions
+        assertEquals(2, count);
     }
 }
