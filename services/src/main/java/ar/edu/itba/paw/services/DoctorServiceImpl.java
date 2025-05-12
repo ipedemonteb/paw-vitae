@@ -123,8 +123,6 @@ public class DoctorServiceImpl implements DoctorService {
         if (weekdays == null) {
             weekdays = new ArrayList<>();
         }
-        System.out.println("specialtyId = " + specialtyId);
-        System.out.println("coverageId = " + coverageId);
         List<Doctor> docs = doctorDao.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, pageSize);
         int total = doctorDao.countWithFilters(specialtyId, coverageId, weekdays, orderBy, direction);
         return new Page<>(docs, page, pageSize, total);

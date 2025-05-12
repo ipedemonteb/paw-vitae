@@ -30,9 +30,9 @@ public class SearchController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ModelAndView searchBySpecialty(
-            @ParamCustomizer(defaultValue = 0,paramName = "specialtyId") QueryParam specialtyId,
+            @ParamCustomizer(defaultValue = 0,paramName = "specialty") QueryParam specialtyId,
             @ParamCustomizer( defaultValue = 1) QueryParam page,
-            @ParamCustomizer(defaultValue = 0,paramName = "coverageId") QueryParam coverageId,
+            @ParamCustomizer(defaultValue = 0,paramName = "coverage") QueryParam coverageId,
             @RequestParam(value = "weekdays", required = false) List<Integer> weekdays,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
