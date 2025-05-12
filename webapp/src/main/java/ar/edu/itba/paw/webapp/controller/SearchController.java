@@ -33,7 +33,7 @@ public class SearchController {
             @ParamCustomizer(defaultValue = 0,paramName = "specialty") QueryParam specialtyId,
             @ParamCustomizer( defaultValue = 1) QueryParam page,
             @ParamCustomizer(defaultValue = 0,paramName = "coverage") QueryParam coverageId,
-            @RequestParam(value = "weekdays", required = false) List<Integer> weekdays,
+            @ParamCustomizer(paramName = "weekdays") List<QueryParam> weekdays,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestParam(value = "view", required = false, defaultValue = "grid") String view
