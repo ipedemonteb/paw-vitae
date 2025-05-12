@@ -30,15 +30,14 @@ public class SearchController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ModelAndView searchBySpecialty(
-            @RequestParam(value = "specialty", required = false, defaultValue = "0") Long specialtyId,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "coverage", required = false, defaultValue = "0") Long coverageId,
+            @RequestParam(value = "specialty", required = false, defaultValue = "0") String specialtyId,
+            @RequestParam(value = "page", defaultValue = "1") String page,
+            @RequestParam(value = "coverage", required = false, defaultValue = "0") String coverageId,
             @RequestParam(value = "weekdays", required = false) List<Integer> weekdays,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestParam(value = "view", required = false, defaultValue = "grid") String view
     ) {
-        Optional<Specialty> specialtyObj = specialtyService.getById(specialtyId);
         List<Coverage> coverages = coverageService.getAll();
         Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId, coverageId, weekdays, orderBy, direction, page, 9);
         List<Specialty> allSpecialties = specialtyService.getAll();
@@ -46,7 +45,6 @@ public class SearchController {
         mav.addObject("coverages", coverages);
         mav.addObject("doctors", doctorPage.getContent());
         mav.addObject("totalDoctors", doctorPage.getTotalElements());
-        mav.addObject("specialty", specialtyObj.orElse(null));
         mav.addObject("allSpecialties", allSpecialties);
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", doctorPage.getTotalPages());
