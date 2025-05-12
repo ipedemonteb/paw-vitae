@@ -2,10 +2,13 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.UserService;
+import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 
 @Component("accessHandler")
 public class AccessHandler {
@@ -23,13 +26,20 @@ public class AccessHandler {
      * @return true if the currently authenticated user is
      * either the patient or the doctor on that appointment
      */
-    public boolean canHandleAppointment(Authentication auth, Long appointmentId) {
+    public boolean canHandleAppointment(Authentication auth, String appointmentId) {
         Object principal = auth.getPrincipal();
         if (!(principal instanceof AuthUserDetails)) {
             return false;
         }
+        long appointmentIdLong;
+        try {
+            appointmentIdLong = Long.parseLong(appointmentId);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
         long userId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
-        return appointmentService.getById(appointmentId)
+        return appointmentService.getById(appointmentIdLong)
                 .map(a -> a.getPatient().getId() == userId
                         || a.getDoctor().getId() == userId)
                 .orElse(true);
