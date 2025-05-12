@@ -65,89 +65,11 @@
 
 
 <main class="dashboard-container">
-    <!-- Doctor Profile Header -->
-    <div class="dashboard-header">
-        <div class="doctor-info">
-            <div class="doctor-avatar">
-                <img src="<c:url value="/image/${doctor.imageId}"/>" alt="<c:out value="${doctor.name} ${doctor.lastName}"/>"/>
-            </div>
-            <div class="doctor-details">
-                <h1 class="doctor-name"><c:out value="${doctor.name}" /> <c:out value="${doctor.lastName}" /></h1>
-                <div class="doctor-meta">
-                    <div class="doctor-meta-item">
-                        <i class="fas fa-envelope"></i>
-                        <span><c:out value="${doctor.email}" /></span>
-                    </div>
-                    <div class="doctor-meta-item">
-                        <i class="fas fa-phone"></i>
-                        <span><c:out value="${doctor.phone}" /></span>
-                    </div>
-                </div>
-                <c:if test="${doctor.ratingCount > 0}">
-                    <div class="doctor-rating">
-                        <div class="rating-stars">
-                            <c:forEach begin="1" end="5" var="i">
-                                <c:choose>
-                                    <c:when test="${doctor.rating >= i}">
-                                        <i class="fas fa-star"></i>
-                                    </c:when>
-                                    <c:when test="${doctor.rating >= i - 0.5}">
-                                        <i class="fas fa-star-half-alt"></i>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <i class="far fa-star"></i>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-                        </div>
-                        <div class="rating-value">
-                            <fmt:formatNumber value="${doctor.rating}" pattern="#.#" /> <span class="rating-count">(${doctor.ratingCount})</span>
-                        </div>
-                    </div>
-                </c:if>
-                <div class="doctor-specialties">
-                    <c:forEach items="${doctor.specialtyList}" var="specialty" varStatus="status">
-                        <span class="specialty-tag">
-                            <c:choose>
-                                <c:when test="${not empty specialty.key}">
-                                    <spring:message code="${specialty.key}" />
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code="${specialty.key}" />
-                                </c:otherwise>
-                            </c:choose>
-                        </span>
-                    </c:forEach>
-                </div>
-            </div>
-        </div>
-        <div class="dashboard-stats">
-            <div class="stat-item">
-                <div class="stat-value">${doctor.specialtyList.size()}</div>
-                <div class="stat-label"><spring:message code="dashboard.stats.specialties" /></div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Dashboard Navigation Tabs -->
-    <div class="dashboard-nav">
-        <a href="<c:url value='/doctor/dashboard/upcoming'/>" class="nav-tab active">
-            <i class="fas fa-calendar-alt"></i>
-            <span><spring:message code="dashboard.tab.upcoming" /></span>
-        </a>
-        <a href="<c:url value='/doctor/dashboard/history'/>" class="nav-tab ">
-            <i class="fas fa-history"></i>
-            <span><spring:message code="dashboard.tab.history" /></span>
-        </a>
-        <a href="<c:url value='/doctor/dashboard/profile'/>" class="nav-tab">
-            <i class="fas fa-user-md"></i>
-            <span><spring:message code="dashboard.tab.profile" /></span>
-        </a>
-        <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab ">
-            <i class="fas fa-calendar-check"></i>
-            <span><spring:message code="dashboard.tab.availability" /></span>
-        </a>
-    </div>
+    <c:set var="activeTab" value="upcoming" scope="request" />
+    <c:set var="user" value="${doctor}" scope="request"/>
+    <c:set var="isDoctor" value="${true}" scope="request"/>
+    <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp"/>
 
     <!-- Dashboard Content Area -->
     <div class="dashboard-content">

@@ -149,6 +149,7 @@ public class AuthController {
     public ModelAndView verifyAccount(@ModelAttribute("loggedUser") User user) {
             return new ModelAndView("auth/verify").addObject("imageId", userService.getImageId(user));
     }
+
     @RequestMapping("/verify-confirmation")
     public ModelAndView verifyConfirmation(@RequestParam(value = "token", required = false) String token) {
         if (token == null) {
