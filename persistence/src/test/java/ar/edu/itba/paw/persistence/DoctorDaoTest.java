@@ -279,5 +279,16 @@ public class DoctorDaoTest {
         //Postconditions
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_TABLE, "doctor_id = " + TEST_ID + " AND image_id = " + newImageId));
     }
+
+    @Test
+    public void testCountAll() {
+        //Preconditions
+
+        //Exercise
+        int count = doctorDao.countAll();
+
+        //Postconditions
+        assertEquals(3, count);
+    }
 }
 
