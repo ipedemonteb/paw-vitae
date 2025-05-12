@@ -14,11 +14,11 @@ import java.util.List;
 public class DoctorForm {
 
     @NotEmpty
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 30)
     private String name;
 
     @NotEmpty
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 30)
     private String lastName;
 
     @NotEmpty
@@ -29,10 +29,11 @@ public class DoctorForm {
 
     @NotEmpty
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
+    @Size(min = 8, max = 50)
     private String password;
 
     @NotEmpty
-    @Size(min = 8, max = 100)
+    @Size(min = 8, max = 50)
     private String repeatPassword;
 
     @NotEmpty

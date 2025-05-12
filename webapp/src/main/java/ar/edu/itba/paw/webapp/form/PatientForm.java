@@ -15,11 +15,11 @@ import java.util.List;
 public class PatientForm {
 
     @NotEmpty
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 30)
     private String name;
 
     @NotEmpty
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 30)
     private String lastName;
 
     @NotEmpty
@@ -30,10 +30,12 @@ public class PatientForm {
 
     @NotEmpty
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
+    @Size(min = 8, max = 50)
     private String password;
 
     @NotEmpty
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
+    @Size(min = 8, max = 50)
     private String repeatPassword;
 
     @NotEmpty
@@ -42,9 +44,6 @@ public class PatientForm {
     @Coverage(message = "{coverage.invalid}")
     @NotNull
     private Long coverage;
-
-
-
 
     public String getName() {
         return name;
