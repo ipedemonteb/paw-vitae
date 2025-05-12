@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,8 +41,9 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void setVerificationToken(long id, String token) {
-        jdbcTemplate.update("UPDATE users SET verification_token = ? WHERE id = ?", token, id);
+    public void setVerificationToken(long id, String token,LocalDateTime expirationDate) {
+        jdbcTemplate.update("UPDATE users SET verification_token = ?, token_expiration_date = ? WHERE id = ?", token, expirationDate, id);
+
     }
 
     @Override
@@ -50,8 +52,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void setResetPasswordToken(long id, String token) {
-        jdbcTemplate.update("UPDATE users SET reset_token = ? WHERE id = ?", token, id);
+    public void setResetPasswordToken(long id, String token,LocalDateTime expirationDate) {
+        jdbcTemplate.update("UPDATE users SET reset_token = ?, token_expiration_date = ? WHERE id = ?", token, expirationDate, id);
     }
 
     @Override
@@ -78,7 +80,10 @@ public class UserDaoImpl implements UserDao {
     public void removeResetToken(String token) {
         jdbcTemplate.update("UPDATE users SET reset_token = NULL WHERE reset_token = ?", token);
     }
-
+    @Override
+    public LocalDateTime tokenExpirationDate(String token) {
+        return jdbcTemplate.queryForObject("SELECT token_expiration_date FROM users WHERE reset_token = ? OR verification_token = ? ", LocalDateTime.class,token,token);
+    }
     @Override
     public void update(long id, String name, String lastName, String phone) {
         jdbcTemplate.update("UPDATE users SET name = ?, last_name = ?, phone = ? WHERE id = ?", name, lastName, phone, id);
