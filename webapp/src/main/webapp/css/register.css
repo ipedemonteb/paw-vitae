@@ -308,6 +308,7 @@ body {
     outline: none;
 }
 
+
 .validation-icon {
     position: absolute;
     right: 12px;
@@ -1070,3 +1071,26 @@ body {
     display: block;
     margin-top: 0.25rem;
 }
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-light);
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+.validation-icon {
+    position: absolute;
+    right: 40px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: var(--primary-color);
+}
+

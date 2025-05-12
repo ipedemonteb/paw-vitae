@@ -175,7 +175,6 @@
         this.classList.toggle('active');
         document.body.classList.toggle('menu-open');
 
-        // Close any open dropdowns when toggling mobile menu
         const dropdowns = document.querySelectorAll('.user-dropdown-menu, .register-dropdown-menu');
         dropdowns.forEach(dropdown => dropdown.classList.remove('show'));
 
@@ -184,7 +183,6 @@
       });
     }
 
-    // User dropdown functionality
     const setupDropdown = function(toggleSelector, menuSelector) {
       const toggle = document.querySelector(toggleSelector);
       const menu = document.querySelector(menuSelector);
@@ -213,11 +211,9 @@
       }
     };
 
-    // Setup both dropdowns
     setupDropdown('.user-dropdown-toggle', '.user-dropdown-menu');
     setupDropdown('.register-dropdown-toggle', '.register-dropdown-menu');
 
-    // Close dropdowns when clicking outside
     document.addEventListener('click', function(e) {
       if (!e.target.closest('.user-dropdown') && !e.target.closest('.register-dropdown')) {
         const toggles = document.querySelectorAll('.user-dropdown-toggle, .register-dropdown-toggle');
@@ -235,12 +231,11 @@
 
     navLinks.forEach(link => {
       const href = link.getAttribute('href').split('?')[0]; // Remove query params for comparison
-      if (currentPath === href || (href !== context + '/' && currentPath === (context + href))) { //TODO HOPE this works on deploy
+      if (currentPath === href || (href !== context + '/' && currentPath === (context + href))) {
         link.classList.add('active');
       }
     });
 
-    // Handle window resize for responsive behavior
     const handleResize = function() {
       if (window.innerWidth > 768) {
         if (mainNav.classList.contains('active')) {
@@ -253,19 +248,6 @@
 
     window.addEventListener('resize', handleResize);
 
-    // Initial call to handle page load state
     handleResize();
   });
 </script>
-<style>
-  .doctor-avatar-small {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid var(--primary-light);
-    box-shadow: var(--shadow-sm);
-    flex-shrink: 0;
-    transition: var(--transition);
-  }
-</style>

@@ -637,3 +637,13 @@ a {
     white-space: nowrap;
     border-width: 0;
 }
+.doctor-avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--primary-light);
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+    transition: var(--transition);
+}

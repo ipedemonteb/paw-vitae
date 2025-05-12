@@ -745,3 +745,26 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #64748b;
 }
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-light);
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: var(--primary-color);
+}
+
+.input-container:has(.password-toggle) .validation-icon {
+    right: 40px;
+}
+
+.password-field .validation-icon {
+    right: 40px;
+}
