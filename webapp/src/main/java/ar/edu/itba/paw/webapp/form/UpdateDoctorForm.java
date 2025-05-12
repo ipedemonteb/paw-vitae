@@ -10,9 +10,11 @@ import javax.validation.constraints.*;
 import java.util.List;
 
 public class UpdateDoctorForm {
+    @Size(min = 1, max = 30)
     @NotEmpty
     private String name;
 
+    @Size(min = 1, max = 30)
     @NotEmpty
     private String lastName;
 
@@ -37,7 +39,6 @@ public class UpdateDoctorForm {
     @SpecialtyList(message = "{specialties.invalids}")
     @NotEmpty
     private List<Long> specialties;
-
 
     public String getName() {
         return name;
