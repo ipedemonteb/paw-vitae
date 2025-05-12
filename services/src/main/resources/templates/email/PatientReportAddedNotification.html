@@ -154,10 +154,10 @@
 
     <div class="content">
         <!-- Fixed greeting to use patient name only -->
-        <p><strong th:text="#{patient.greeting(${patient.name}, ${patient.lastName})}"></strong></p>
+        <p><strong th:text="#{patient.greeting(${patientName})}"></strong></p>
 
         <!-- Fixed message to use doctor's full name -->
-        <p th:text="#{patient.report.added.message(${doctor.name}, ${doctor.lastName})}"></p>
+        <p th:text="#{patient.report.added.message(${doctorName})}"></p>
 
         <div class="appointment-details">
             <h3 th:text="#{patient.report.added.details}"></h3>
