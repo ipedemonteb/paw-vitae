@@ -65,8 +65,8 @@ public class MailServiceImpl implements MailService {
         templateModel.put("appointmentTime", date.getHour());
         templateModel.put("appointmentId", appointment.getId());
         templateModel.put("reason", (appointment.getReason() != null && !appointment.getReason().isEmpty()) ? appointment.getReason() : "-");
-        templateModel.put("linkUrlPatient", BASE_URL + "patient/dashboard/appointment-details/" + appointment.getId());
-        templateModel.put("linkUrlDoctor", BASE_URL + "doctor/dashboard/appointment-details/" + appointment.getId());
+        templateModel.put("linkUrlPatient", BASE_URL + "/patient/dashboard/appointment-details/" + appointment.getId());
+        templateModel.put("linkUrlDoctor", BASE_URL + "/doctor/dashboard/appointment-details/" + appointment.getId());
         templateModel.put("cancelLinkUrlPatient", BASE_URL + "/search");
         templateModel.put("cancelLinkUrlDoctor", BASE_URL + "/doctor/dashboard/upcoming");
 
@@ -129,7 +129,7 @@ public class MailServiceImpl implements MailService {
         templateModel.put("appointmentDate", date.toLocalDate().toString());
         templateModel.put("appointmentTime", date.getHour());
         templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : "-");
-        templateModel.put("linkUrl", BASE_URL + "patient/dashboard/appointment-details/" + appointment.getId());
+        templateModel.put("linkUrl", BASE_URL + "/patient/dashboard/appointment-details/" + appointment.getId());
 
 
         patientContext.setVariables(templateModel);
@@ -253,7 +253,7 @@ public class MailServiceImpl implements MailService {
         context.setVariable("doctor", doctor);
         context.setVariable("patient", patient);
         context.setVariable("appointment", appointment);
-        context.setVariable("linkUrl", BASE_URL + "patient/dashboard/appointment-details/" + appointment.getId());
+        context.setVariable("linkUrl", BASE_URL + "/patient/dashboard/appointment-details/" + appointment.getId());
 
         String htmlContent = templateEngine.process("PatientFileUploadedNotification", context);
 
@@ -289,9 +289,11 @@ public class MailServiceImpl implements MailService {
         context.setVariable("appointmentTime", appointment.getDate().format(timeFormatter));
         context.setVariable("doctor", doctor);
         context.setVariable("patient", patient);
+        context.setVariable("doctorName", doctor.getName() + " " + doctor.getLastName());
+        context.setVariable("patientName", patient.getName() + " " + patient.getLastName());
         context.setVariable("appointment", appointment);
         context.setVariable("report", report);
-        context.setVariable("linkUrl", BASE_URL + "patient/dashboard/appointment-details/" + appointment.getId());
+        context.setVariable("linkUrl", BASE_URL + "/patient/dashboard/appointment-details/" + appointment.getId());
 
 
         String htmlContent = templateEngine.process("PatientReportAddedNotification", context);
