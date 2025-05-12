@@ -45,7 +45,7 @@ public class AppointmentExistenceValidator implements ConstraintValidator<Appoin
             Integer startTime = (Integer) startTimeField.get(value);
 
             if (date == null || startTime == null) {
-                return true; // If date or start time is null, skip validation
+                return true;
             }
 
             List<Appointment> appointments = as.getAppointmentByUserAndDate(userId, date, startTime);

@@ -190,17 +190,15 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        templateResolver.setCacheable(false); // Disable cache for development
+        templateResolver.setCacheable(false);
         return templateResolver;
     }
 
     @Bean
     public String secretKey() {
         try {
-            // Load the file from the classpath
             Resource resource = new ClassPathResource("secret.key");
             Path path = resource.getFile().toPath();
-            // Read the file content
             return Files.readString(path).trim();
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the secret key file from the classpath", e);
