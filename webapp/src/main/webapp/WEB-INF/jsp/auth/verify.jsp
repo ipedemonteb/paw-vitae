@@ -72,7 +72,7 @@
             transition: var(--transition);
         }
     .card-header {
-        margin-top: 10rem;
+        /*margin-top: 10rem;*/
     }
         .btn-primary:hover {
             background-color: var(--primary-dark);
@@ -97,6 +97,9 @@
         .btn-secondary:hover {
             background-color: var(--gray-100);
             border-color: var(--gray-400);
+        }
+        .register-container {
+            margin-top: 10rem;
         }
     </style>
 </head>
