@@ -40,101 +40,11 @@
 </div>
 
 <main class="dashboard-container">
-    <!-- Doctor Profile Header -->
-    <div class="dashboard-header">
-        <div class="doctor-info">
-            <div class="doctor-avatar">
-                <img id="doctor-profile-image" src="<c:url value="/image/${doctor.imageId}"/>" alt="<c:out value="${doctor.name} ${doctor.lastName}"/>"/>
-            </div>
-            <div class="doctor-details">
-                <h1 class="doctor-name"><c:out value="${doctor.name}" /> <c:out value="${doctor.lastName}" /></h1>
-                <div class="doctor-meta">
-                    <div class="doctor-meta-item">
-                        <i class="fas fa-envelope"></i>
-                        <span><c:out value="${doctor.email}" /></span>
-                    </div>
-                    <div class="doctor-meta-item">
-                        <i class="fas fa-phone"></i>
-                        <span><c:out value="${doctor.phone}" /></span>
-                    </div>
-                </div>
-                <c:if test="${doctor.ratingCount > 0}">
-                    <div class="doctor-rating">
-                        <div class="rating-stars">
-                            <c:forEach begin="1" end="5" var="i">
-                                <c:choose>
-                                    <c:when test="${doctor.rating >= i}">
-                                        <i class="fas fa-star"></i>
-                                    </c:when>
-                                    <c:when test="${doctor.rating >= i - 0.5}">
-                                        <i class="fas fa-star-half-alt"></i>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <i class="far fa-star"></i>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-                        </div>
-                        <div class="rating-value">
-                            <fmt:formatNumber value="${doctor.rating}" pattern="#.#" /> <span class="rating-count">(${doctor.ratingCount})</span>
-                        </div>
-                    </div>
-                </c:if>
-                <div class="doctor-specialties">
-                    <c:forEach items="${doctor.specialtyList}" var="specialty" varStatus="status">
-                        <span class="specialty-tag">
-                            <c:choose>
-                                <c:when test="${not empty specialty.key}">
-                                    <spring:message code="${specialty.key}" />
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code="${specialty.key}" />
-                                </c:otherwise>
-                            </c:choose>
-                        </span>
-                    </c:forEach>
-                </div>
-            </div>
-        </div>
-        <div class="dashboard-stats">
-            <c:if test="${not empty upcomingAppointments}">
-                <div class="stat-item">
-                    <div class="stat-value">${upcomingAppointments.size()}</div>
-                    <div class="stat-label"><spring:message code="dashboard.stats.upcoming" /></div>
-                </div>
-            </c:if>
-            <c:if test="${not empty pastAppointments}">
-                <div class="stat-item">
-                    <div class="stat-value">${pastAppointments.size()}</div>
-                    <div class="stat-label"><spring:message code="dashboard.stats.past" /></div>
-                </div>
-            </c:if>
-            <div class="stat-item">
-                <div class="stat-value">${doctor.specialtyList.size()}</div>
-                <div class="stat-label"><spring:message code="dashboard.stats.specialties" /></div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Dashboard Navigation Tabs -->
-    <div class="dashboard-nav">
-        <a href="<c:url value='/doctor/dashboard/upcoming'/>" class="nav-tab ">
-            <i class="fas fa-calendar-alt"></i>
-            <span><spring:message code="dashboard.tab.upcoming" /></span>
-        </a>
-        <a href="<c:url value='/doctor/dashboard/history'/>" class="nav-tab ">
-            <i class="fas fa-history"></i>
-            <span><spring:message code="dashboard.tab.history" /></span>
-        </a>
-        <a href="<c:url value='/doctor/dashboard/profile'/>" class="nav-tab active ">
-            <i class="fas fa-user-md"></i>
-            <span><spring:message code="dashboard.tab.profile" /></span>
-        </a>
-        <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab ">
-            <i class="fas fa-calendar-check"></i>
-            <span><spring:message code="dashboard.tab.availability" /></span>
-        </a>
-    </div>
+    <c:set var="activeTab" value="profile" scope="request" />
+    <c:set var="user" value="${doctor}" scope="request"/>
+    <c:set var="isDoctor" value="${true}" scope="request"/>
+    <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp"/>
 
     <!-- Dashboard Content Area -->
     <div class="dashboard-content">
@@ -151,35 +61,26 @@
             </div>
 
             <div class="profile-content">
-                <!-- Visible Profile Information -->
                 <div id="profile-view" class="profile-section" style="display: <c:choose>
                 <c:when test="${display == 'none'}">block</c:when>
                 <c:otherwise>none</c:otherwise>
                 </c:choose>;">
-                    <h3 class="section-title">
-                        <i class="fas fa-user-circle"></i>
-                        <spring:message code="dashboard.profile.personalInfo" />
-                    </h3>
+                    <h3 class="section-title"><spring:message code="dashboard.profile.personalInfo" /></h3>
                     <div class="info-grid">
                         <div class="info-item">
-                            <div class="info-label">
-                                <i class="fas fa-user"></i>
-                                <spring:message code="dashboard.profile.name" />
-                            </div>
-                            <div class="info-value"><c:out value="${doctor.name} ${doctor.lastName}" /></div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">
-                                <i class="fas fa-envelope"></i>
-                                <spring:message code="dashboard.profile.email" />
-                            </div>
+                            <div class="info-label"><spring:message code="dashboard.profile.email" /></div>
                             <div class="info-value"><c:out value="${doctor.email}" /></div>
                         </div>
                         <div class="info-item">
-                            <div class="info-label">
-                                <i class="fas fa-phone"></i>
-                                <spring:message code="dashboard.profile.phone" />
-                            </div>
+                            <div class="info-label"><spring:message code="register.firstName" /></div>
+                            <div class="info-value"><c:out value="${doctor.name}" /></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label"><spring:message code="register.lastName" /></div>
+                            <div class="info-value"><c:out value="${doctor.lastName}" /></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label"><spring:message code="dashboard.profile.phone" /></div>
                             <div class="info-value"><c:out value="${doctor.phone}" /></div>
                         </div>
                     </div>
@@ -365,30 +266,6 @@
         </div>
     </div>
 </main>
-
-<div id="cancelAppointmentModal" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header">
-            <div class="modal-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
-                </svg>
-            </div>
-            <h3 class="modal-title"><spring:message code="appointment.cancel.title" /></h3>
-        </div>
-        <div class="modal-body">
-            <p class="modal-message"><spring:message code="appointment.cancel.message" /></p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
-                <spring:message code="logout.confirmation.cancel"/>
-            </button>
-            <button type="button" class="btn-modal btn-danger" id="cancelAppointmentBtn">
-                <spring:message code="appointment.action.cancel"/>
-            </button>
-        </div>
-    </div>
-</div>
 
 <script src="<c:url value='/js/toast-notification.js' />"></script>
 <script src="<c:url value='/js/profile-image-upload.js' />"></script>
