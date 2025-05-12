@@ -355,14 +355,14 @@
                       <spring:message code="${doctorSpecialty.key}" var="specialtyName" />
                       <c:set var="specialtiesText" value="${specialtiesText}${not specStatus.first ? ', ' : ''}${specialtyName}" />
                     </c:forEach>
-                    <c:choose>
-                      <c:when test="${fn:length(specialtiesText) > 30}">
-                        <span title="${specialtiesText}"><c:out value="${fn:substring(specialtiesText, 0, 27)}..." /></span>
-                      </c:when>
-                      <c:otherwise>
+<%--                    <c:choose>--%>
+<%--                      <c:when test="${fn:length(specialtiesText) > 30}">--%>
+<%--                        <span title="${specialtiesText}"><c:out value="${fn:substring(specialtiesText, 0, 27)}..." /></span>--%>
+<%--                      </c:when>--%>
+<%--                      <c:otherwise>--%>
                         <c:out value="${specialtiesText}" />
-                      </c:otherwise>
-                    </c:choose>
+<%--                      </c:otherwise>--%>
+<%--                    </c:choose>--%>
                       <%--                      </c:when>--%>
                       <%--                      <c:otherwise>--%>
                       <%--                        <c:out value="${specialtyName}"/>--%>

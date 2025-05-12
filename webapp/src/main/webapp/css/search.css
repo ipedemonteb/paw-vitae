@@ -437,6 +437,8 @@ body {
 .doctor-card-body {
     padding: 0 1.5rem 1.5rem;
     flex: 1;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .doctor-name {
@@ -450,13 +452,18 @@ body {
 }
 
 .doctor-specialty {
-    display: flex;
+    display: inline-block;
     align-items: center;
     gap: 0.5rem;
     color: var(--primary);
     font-size: 0.875rem;
     font-weight: 500;
     margin-bottom: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100%;
+    min-width: 0;
+    text-overflow: ellipsis;
 }
 
 .doctor-info {
