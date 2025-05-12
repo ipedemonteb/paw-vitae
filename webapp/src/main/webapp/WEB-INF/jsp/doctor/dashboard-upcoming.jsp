@@ -241,10 +241,12 @@
                                                 </button>
                                             </c:if>
 
-                                            <button class="btn btn-primary" onclick="window.location.href='/doctor/dashboard/appointment-details/${appointment.id}'">
-                                                <i class="fas fa-eye"></i>
-                                                <span><spring:message code="appointment.details" /></span>
-                                            </button>
+                                            <div class="appointment-actions">
+                                                <a class="btn btn-primary view-appointment" href="<c:url value='/doctor/dashboard/appointment-details/${appointment.id}' />">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span><spring:message code="appointment.details" /></span>
+                                                </a>
+                                            </div>
                                         </div>
 
                                     </div>
