@@ -23,7 +23,6 @@ public class ParamsResolver implements HandlerMethodArgumentResolver {
 
         ParamCustomizer defaults = parameter.getParameterAnnotation(ParamCustomizer.class);
         String defaultName = (defaults != null && !defaults.paramName().isEmpty()) ? defaults.paramName() : ParamConstants.PAGE_PARAM_NAME;
-        System.out.println("Default name: " + defaultName);
         long defaultValue;
         if (defaultName.equals(ParamConstants.PAGE_PARAM_NAME)) {
              defaultValue = (defaults != null && defaults.defaultValue() > 0) ? defaults.defaultValue() : ParamConstants.DEFAULT_PAGE;
@@ -32,6 +31,7 @@ public class ParamsResolver implements HandlerMethodArgumentResolver {
         }
         long value = parsePositiveIntOrDefault(webRequest.getParameter(defaultName), defaultValue);
         return new QueryParam(value);
+
     }
 
     private long parsePositiveIntOrDefault(String param, long defaultValue) {
