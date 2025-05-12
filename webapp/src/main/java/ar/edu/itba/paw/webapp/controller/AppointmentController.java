@@ -2,7 +2,9 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
+import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -30,15 +32,15 @@ public class AppointmentController {
 
     @RequestMapping(value = "/appointment", method = RequestMethod.GET)
     public ModelAndView appointment(
-            @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
-            @RequestParam("doctorId") Long doctorId,
+            @ModelAttribute(value = "appointmentForm", binding = false) final AppointmentForm appointmentForm,
+            @ParamCustomizer(paramName = "doctorId") QueryParam doctorId,
             @ModelAttribute("loggedUser") final Patient patient
     ) {
-        appointmentForm.setPatientId(patient.getId());
-        appointmentForm.setDoctorId(doctorId);
         ModelAndView mav = new ModelAndView("appointment/appointment");
-        Doctor doctor = doctorService.getById(doctorId).orElseThrow(IllegalArgumentException::new);
-        Map<LocalDate, List<Integer>> appointmentsByDate = appointmentService.getFutureAppointmentsByUserAndDate(doctorId);
+        Doctor doctor = doctorService.getById(doctorId.getValue()).orElseThrow(UserNotFoundException::new);
+        appointmentForm.setPatientId(patient.getId());
+        appointmentForm.setDoctorId(doctor.getId());
+        Map<LocalDate, List<Integer>> appointmentsByDate = appointmentService.getFutureAppointmentsByUserAndDate(doctor.getId());
         mav.addObject("doctor", doctor);
         mav.addObject("appointmentsByDate", appointmentsByDate);
         return mav;
@@ -48,7 +50,7 @@ public class AppointmentController {
     public ModelAndView appointment(
             @Valid @ModelAttribute("appointmentForm") final AppointmentForm appointmentForm,
             final BindingResult errors,
-            @RequestParam() Long doctorId,
+            @ParamCustomizer(paramName = "doctorId") QueryParam doctorId,
             @ModelAttribute("loggedUser") final Patient patient
     ) {
 
@@ -56,7 +58,7 @@ public class AppointmentController {
             return appointment(appointmentForm, doctorId, patient);
         }
 
-        Appointment appointment = appointmentService.create(patient.getId(), doctorId, appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
+        Appointment appointment = appointmentService.create(patient.getId(), doctorId.getValue(), appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
         appointmentFileService.create(appointmentForm.getFiles(), "patient", appointment.getId());
 
         return new ModelAndView("redirect:/appointment/confirmation/" + appointment.getId());
