@@ -20,14 +20,14 @@
 <spring:message code="search.coverage.all" var="allCovs"/>
 <c:set var="specialtyName">
   <c:forEach items="${allSpecialties}" var="s">
-    <c:if test="${not empty param.specialty && param.specialty.equals(s.id.toString())}">
+    <c:if test="${s.id == specialtyId}">
       <spring:message code="${s.key}"/>
     </c:if>
   </c:forEach>
 </c:set>
 <c:set var="coverageName">
   <c:forEach items="${coverages}" var="c">
-    <c:if test="${not empty param.coverage && param.coverage.equals(c.id.toString())}">
+    <c:if test="${not empty coverageId && coverageId == c.id}">
       <c:out value="${c.name}"/>
     </c:if>
   </c:forEach>
@@ -90,7 +90,7 @@
             <select id="specialtySelect" class="filter-select">
               <option value="0" ${specialtyName.equals(allSepcs) ? 'selected' : ''}><spring:message code="search.all.specialties" /></option>
               <c:forEach var="spec" items="${allSpecialties}">
-                <option value="<c:out value='${spec.id}'/>" ${not empty param.specialty && param.specialty.equals(spec.id.toString()) ? 'selected' : ''}>
+                <option value="<c:out value='${spec.id}'/>" ${not empty specialtyId && specialtyId == spec.id ? 'selected' : ''}>
                   <spring:message code="${spec.key}" />
                 </option>
               </c:forEach>
@@ -105,7 +105,7 @@
             <select id="coverageSelect" class="filter-select">
               <option value="0"><spring:message code="search.coverage.all" /></option>
               <c:forEach var="coverage" items="${coverages}">
-                <option value="<c:out value='${coverage.id}'/>" ${param.coverage.equals(coverage.id.toString()) ? 'selected' : ''}>
+                <option value="<c:out value='${coverage.id}'/>" ${coverageId == coverage.id ? 'selected' : ''}>
                   <c:out value="${coverage.name}" />
                 </option>
               </c:forEach>
@@ -188,12 +188,12 @@
               </span>
           </div>
           <%--          </c:if>--%>
-          <c:if test="${not empty param.specialty && param.specialty != '0' && specialtyName != allSepcs}">
+          <c:if test="${not empty specialtyId && specialtyId  != 0 && specialtyName != allSepcs}">
             <div class="filter-tag">
               <i class="fas fa-stethoscope"></i>
               <span>
                 <c:forEach var="spec" items="${allSpecialties}">
-                  <c:if test="${param.specialty.equals(spec.id.toString())}">
+                  <c:if test="${specialtyId == spec.id}">
                     <spring:message code="${spec.key}" />
                   </c:if>
                 </c:forEach>
@@ -201,12 +201,12 @@
               <button class="filter-tag-remove" onclick="clearSpecialtyFilter()">×</button>
             </div>
           </c:if>
-          <c:if test="${not empty param.coverage && param.coverage != '0' && coverageName != allCovs}">
+          <c:if test="${not empty coverageId && coverageId  != 0 && coverageName != allCovs}">
             <div class="filter-tag">
               <i class="fas fa-shield-alt"></i>
               <span>
                 <c:forEach var="coverage" items="${coverages}">
-                  <c:if test="${param.coverage.equals(coverage.id.toString())}">
+                  <c:if test="${coverageId == coverage.id}">
                     <c:out value="${coverage.name}" />
                   </c:if>
                 </c:forEach>
@@ -310,13 +310,13 @@
         <%--              <button class="clear-filter" onclick="clearWeekdaysFilter()">×</button>--%>
         <%--            </div>--%>
         <%--          </c:if>--%>
-        <%--          <c:if test="${param.coverage != '0' && not empty param.coverage}">--%>
+        <%--          <c:if test="${coverageId != 0 && not empty coverageId}">--%>
         <%--            <div class="active-filter">--%>
         <%--              <i class="fas fa-shield-alt"></i> <spring:message code="search.filter.coverage" />--%>
         <%--              <button class="clear-filter" onclick="clearCoverageFilter()">×</button>--%>
         <%--            </div>--%>
         <%--          </c:if>--%>
-        <%--          <c:if test="${param.specialty != '0' && not empty param.specialty}">--%>
+        <%--          <c:if test="${specialtyId != 0 && not empty specialtyId}">--%>
         <%--            <div class="active-filter">--%>
         <%--              <i class="fas fa-stethoscope"></i> <spring:message code="search.filter.specialty" />--%>
         <%--              <button class="clear-filter" onclick="clearSpecialtyFilter()">×</button>--%>
@@ -437,11 +437,11 @@
               <c:if test="${currentPage > 1}">
                 <c:url var="prevUrl" value="/search">
                   <c:param name="page" value="${currentPage - 1}" />
-                  <c:if test="${not empty param.specialty and param.specialty != '0'}">
-                    <c:param name="specialty" value="${param.specialty}" />
+                  <c:if test="${not empty specialtyId and specialtyId != 0}">
+                    <c:param name="specialty" value="${specialtyId}" />
                   </c:if>
-                  <c:if test="${not empty param.coverage}">
-                    <c:param name="coverage" value="${param.coverage}" />
+                  <c:if test="${not empty coverageId}">
+                    <c:param name="coverage" value="${coverageId}" />
                   </c:if>
                   <!-- here’s the trick: emit one param per selected weekday -->
                   <c:forEach var="wd" items="${paramValues.weekdays}">
@@ -472,11 +472,11 @@
                     <c:otherwise>
                       <c:url var="pageUrl" value="/search">
                         <c:param name="page" value="${pageNum}" />
-                        <c:if test="${not empty param.specialty and param.specialty != '0'}">
-                          <c:param name="specialty" value="${param.specialty}" />
+                        <c:if test="${not empty specialtyId and specialtyId != 0}">
+                          <c:param name="specialty" value="${specialtyId}" />
                         </c:if>
-                        <c:if test="${not empty param.coverage}">
-                          <c:param name="coverage" value="${param.coverage}" />
+                        <c:if test="${not empty coverageId}">
+                          <c:param name="coverage" value="${coverageId}" />
                         </c:if>
                         <c:forEach var="wd" items="${paramValues.weekdays}">
                           <c:param name="weekdays" value="${wd}" />
@@ -501,11 +501,11 @@
               <c:if test="${currentPage < totalPages}">
                 <c:url var="nextUrl" value="/search">
                   <c:param name="page" value="${currentPage + 1}" />
-                  <c:if test="${not empty param.specialty and param.specialty != '0'}">
-                    <c:param name="specialty" value="${param.specialty}" />
+                  <c:if test="${not empty specialtyId and specialtyId != 0}">
+                    <c:param name="specialty" value="${specialtyId}" />
                   </c:if>
-                  <c:if test="${not empty param.coverage}">
-                    <c:param name="coverage" value="${param.coverage}" />
+                  <c:if test="${not empty coverageId}">
+                    <c:param name="coverage" value="${coverageId}" />
                   </c:if>
                   <c:forEach var="wd" items="${paramValues.weekdays}">
                     <c:param name="weekdays" value="${wd}" />
