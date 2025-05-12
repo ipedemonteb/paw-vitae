@@ -18,7 +18,7 @@ public class UpdatePatientForm {
     private String lastName;
 
     @NotEmpty
-    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")
+    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "{phone.invalid}")
     private String phone;
     @Coverage(message = "{coverage.invalid}")
     @NotNull

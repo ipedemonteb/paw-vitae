@@ -37,7 +37,7 @@ public class DoctorForm {
     private String repeatPassword;
 
     @NotEmpty
-    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")
+    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "{phone.invalid}")
     private String phone;
     @SpecialtyList(message = "{specialties.invalids}")
     @NotEmpty
