@@ -31,7 +31,7 @@ public class UpdateDoctorForm {
     }
 
     @NotEmpty
-    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}")
+    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "{phone.invalid}")
     private String phone;
     @CoverageList(message = "{coverages.invalids}")
     @NotEmpty
