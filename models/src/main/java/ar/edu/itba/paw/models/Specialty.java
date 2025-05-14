@@ -1,11 +1,23 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
+@Table(name = "specialties")
 public class Specialty {
 
-    private final long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "specialties_id_seq")
+    @SequenceGenerator(allocationSize = 1, sequenceName = "specialties_id_seq", name = "specialties_id_seq")
+    private long id;
+
+    @Column(name = "key", nullable = false)
     private String key;
+
+    public Specialty() {
+        // For Hibernate use
+    }
 
     public Specialty(long id, String key) {
         this.id = id;
