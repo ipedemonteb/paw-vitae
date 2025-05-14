@@ -33,7 +33,7 @@ public class CoverageDaoHibeImpl implements CoverageDao {
     @Override
     public Optional<Coverage> findByName(String name) {
         final TypedQuery<Coverage> query = em.createQuery(
-                "from Coverage as c where c.name = :name",
+                "FROM Coverage AS c WHERE c.name = :name",
                 Coverage.class
         );
         query.setParameter("name", name);
@@ -42,13 +42,13 @@ public class CoverageDaoHibeImpl implements CoverageDao {
 
     @Override
     public List<Coverage> getAll() {
-        return em.createQuery("SELECT c FROM Coverage c", Coverage.class).getResultList();
+        return em.createQuery("FROM Coverage", Coverage.class).getResultList();
     }
 
     @Override
     public List<Coverage> findByIds(List<Long> ids) {
         final TypedQuery<Coverage> query = em.createQuery(
-                "from Coverage as c where c.id in :ids",
+                "FROM Coverage AS c WHERE c.id IN :ids",
                 Coverage.class
         );
         query.setParameter("ids", ids);
