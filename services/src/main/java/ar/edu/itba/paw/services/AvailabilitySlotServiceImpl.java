@@ -27,21 +27,21 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
 
     @Transactional
     @Override
-    public AvailabilitySlot create(long docId, AvailabilitySlot slot) {
-        LOGGER.debug("Creating availability slot for doctor {}: {}", docId, slot);
-        AvailabilitySlot toReturn = availabilitySlotsDao.create(docId, slot);
+    public AvailabilitySlot create( AvailabilitySlot slot) {
+        LOGGER.debug("Creating availability slot for doctor : {}",  slot);
+        AvailabilitySlot toReturn = availabilitySlotsDao.create( slot);
         LOGGER.info("AvailabilitySlot created: {}", toReturn);
         return toReturn;
     }
 
     @Transactional
     @Override
-    public List<AvailabilitySlot> create(long docId, List<AvailabilitySlot> slots) {
+    public List<AvailabilitySlot> create( List<AvailabilitySlot> slots) {
         List<AvailabilitySlot> returnSlot = new ArrayList<>();
         for (AvailabilitySlot slot : slots) {
-            returnSlot.add(create(docId, slot));
+            returnSlot.add(create( slot));
         }
-        LOGGER.debug("Creating {} availability slots for doctor {}", slots.size(), docId);
+        LOGGER.debug("Creating {} availability slots for doctor ", slots.size());
         return returnSlot;
     }
 

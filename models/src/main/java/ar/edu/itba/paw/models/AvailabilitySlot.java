@@ -1,39 +1,42 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
 import java.time.LocalTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "doctor_availability")
 public class AvailabilitySlot {
 
-    private int dayOfWeek; // 0 = Monday, 6 = Sunday
+    @EmbeddedId
+    private AvailabilitySlotId id;
 
-    private LocalTime startTime;
-
+    @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
-    public AvailabilitySlot() {
-    }
+    @MapsId("doctorId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id", nullable = false)
+    private Doctor doctor;
 
-    public AvailabilitySlot(int dayOfWeek, LocalTime startTime, LocalTime endTime) {
-        this.dayOfWeek = dayOfWeek;
-        this.startTime = startTime;
+    public AvailabilitySlot() {}
+
+    public AvailabilitySlot(Doctor doctor, int dayOfWeek, LocalTime startTime, LocalTime endTime) {
+        this.doctor = doctor;
+        this.id = new AvailabilitySlotId(doctor.getId(), dayOfWeek, startTime);
         this.endTime = endTime;
     }
 
-    public int getDayOfWeek() {
-        return dayOfWeek;
+    public AvailabilitySlotId getId() {
+        return id;
     }
 
-    public void setDayOfWeek(int dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
+    public int getDayOfWeek() {
+        return id.getDayOfWeek();
     }
 
     public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
+        return id.getStartTime();
     }
 
     public LocalTime getEndTime() {
@@ -44,15 +47,23 @@ public class AvailabilitySlot {
         this.endTime = endTime;
     }
 
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        AvailabilitySlot that = (AvailabilitySlot) o;
-        return dayOfWeek == that.dayOfWeek && Objects.equals(startTime, that.startTime) && Objects.equals(endTime, that.endTime);
+        if (this == o) return true;
+        if (!(o instanceof AvailabilitySlot that)) return false;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dayOfWeek, startTime, endTime);
+        return Objects.hash(id);
     }
 }

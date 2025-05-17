@@ -1,25 +1,52 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "ratings")
 public class Rating {
 
-    private final long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ratings_id_seq")
+    @SequenceGenerator(allocationSize = 1, sequenceName = "ratings_id_seq", name = "ratings_id_seq")
+    private  long id;
+
+    @Column(name = "rating")
     private long rating;
-    private long doctorId;
-    private long patientId;
-    private long appointmentId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id", nullable = false)
+    private Doctor doctor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_id", nullable = false)
+    private Patient patient;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "appointment_id", nullable = false, unique = true)
+    private Appointment appointment;
+
+    @Column(name = "comment")
     private String comment;
 
-    public Rating(long id, long rating, long doctorId, long patientId, long appointmentId, String comment) {
-        this.id = id;
+    public Rating( long rating, Doctor doctor, Patient patient, Appointment appointment, String comment) {
         this.rating = rating;
-        this.doctorId = doctorId;
-        this.patientId = patientId;
-        this.appointmentId = appointmentId;
+        this.doctor = doctor;
+        this.patient = patient;
+        this.appointment = appointment;
         this.comment = comment;
+    }
+
+    public Rating() {
+        // For Hibernate use
     }
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public long getRating() {
@@ -30,28 +57,28 @@ public class Rating {
         this.rating = rating;
     }
 
-    public long getDoctorId() {
-        return doctorId;
+    public Doctor getDoctor() {
+        return doctor;
     }
 
-    public void setDoctorId(long doctorId) {
-        this.doctorId = doctorId;
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
     }
 
-    public long getPatientId() {
-        return patientId;
+    public Patient getPatient() {
+        return patient;
     }
 
-    public void setPatientId(long patientId) {
-        this.patientId = patientId;
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 
-    public long getAppointmentId() {
-        return appointmentId;
+    public Appointment getAppointment() {
+        return appointment;
     }
 
-    public void setAppointmentId(long appointmentId) {
-        this.appointmentId = appointmentId;
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
     }
 
     public String getComment() {

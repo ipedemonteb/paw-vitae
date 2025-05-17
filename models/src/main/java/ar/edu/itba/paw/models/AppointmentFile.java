@@ -1,19 +1,43 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "appointment_files")
 public class AppointmentFile {
 
-    private String fileName;
-    private byte[] fileData;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appointment_files_id_seq")
+    @SequenceGenerator(name = "appointment_files_id_seq", sequenceName = "appointment_files_id_seq", allocationSize = 1)
     private long id;
-    private String uploader_role;
-    private long appointment_id;
 
-    public AppointmentFile(String fileName, byte[] fileData, long id, String uploader_role, long appointment_id) {
+    @Column(name = "file_name", nullable = false)
+    private String fileName;
+
+    @Lob
+    @Column(name = "file_data", nullable = false)
+    private byte[] fileData;
+
+    @Column(name = "uploader_role", nullable = false)
+    private String uploaderRole;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "appointment_id", nullable = false)
+    private Appointment appointment;
+
+    public AppointmentFile() {
+        // For Hibernate use
+    }
+
+    public AppointmentFile(String fileName, byte[] fileData, String uploaderRole, Appointment appointment) {
         this.fileName = fileName;
         this.fileData = fileData;
-        this.id = id;
-        this.uploader_role = uploader_role;
-        this.appointment_id = appointment_id;
+        this.uploaderRole = uploaderRole;
+        this.appointment = appointment;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getFileName() {
@@ -32,27 +56,19 @@ public class AppointmentFile {
         this.fileData = fileData;
     }
 
-    public long getId() {
-        return id;
+    public String getUploaderRole() {
+        return uploaderRole;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setUploaderRole(String uploaderRole) {
+        this.uploaderRole = uploaderRole;
     }
 
-    public String getUploader_role() {
-        return uploader_role;
+    public Appointment getAppointment() {
+        return appointment;
     }
 
-    public void setUploader_role(String uploader_role) {
-        this.uploader_role = uploader_role;
-    }
-
-    public long getAppointment_id() {
-        return appointment_id;
-    }
-
-    public void setAppointment_id(long appointment_id) {
-        this.appointment_id = appointment_id;
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
     }
 }

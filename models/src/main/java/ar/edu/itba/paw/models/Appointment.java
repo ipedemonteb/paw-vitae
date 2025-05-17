@@ -1,37 +1,61 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "appointments")
 public class Appointment {
 
-    private final long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appointments_id_seq")
+    @SequenceGenerator(name = "appointments_id_seq", sequenceName = "appointments_id_seq", allocationSize = 1)
+    private long id;
+
+    @Column(nullable = false)
     private LocalDateTime date;
+
+    @Column(nullable = false)
     private String status;
+
+    @Column
     private String reason;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "specialty_id", nullable = false)
     private Specialty specialty;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
+
+    @Column
     private String report;
+
+
     private Boolean cancellable = true;
 
-    public Appointment(LocalDateTime date, String status, String reason, long id, Specialty specialty, Doctor doctor, Patient patient, String report) {
+
+
+    public Appointment() {
+        // For Hibernate use
+    }
+
+    public Appointment(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report) {
         this.date = date;
         this.status = status;
         this.reason = reason;
-        this.id = id;
         this.specialty = specialty;
         this.doctor = doctor;
         this.patient = patient;
         this.report = report;
     }
 
-    public Specialty getSpecialty() {
-        return specialty;
-    }
 
-    public void setSpecialty(Specialty specialty) {
-        this.specialty = specialty;
-    }
 
     public long getId() {
         return id;
@@ -61,6 +85,14 @@ public class Appointment {
         this.reason = reason;
     }
 
+    public Specialty getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(Specialty specialty) {
+        this.specialty = specialty;
+    }
+
     public Doctor getDoctor() {
         return doctor;
     }
@@ -77,9 +109,13 @@ public class Appointment {
         this.patient = patient;
     }
 
-    public String getReport() { return report; }
+    public String getReport() {
+        return report;
+    }
 
-    public void setReport(String report) { this.report = report; }
+    public void setReport(String report) {
+        this.report = report;
+    }
 
     public Boolean getCancellable() {
         return cancellable;
