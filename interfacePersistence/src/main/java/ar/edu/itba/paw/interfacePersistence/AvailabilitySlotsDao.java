@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AvailabilitySlotsDao {
 
-    AvailabilitySlot create(long docId, AvailabilitySlot slot);
+    AvailabilitySlot create( AvailabilitySlot slot);
 
     void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots);
 

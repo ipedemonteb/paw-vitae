@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfacePersistence;
 
+import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentFile;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.Optional;
 
 public interface AppointmentFileDao {
 
-    AppointmentFile create(String fileName, byte[] fileData, String uploader_role, long appointment_id);
+    AppointmentFile create(String fileName, byte[] fileData, String uploader_role, Appointment appointment);
 
     Optional<AppointmentFile> getById(long id);
 

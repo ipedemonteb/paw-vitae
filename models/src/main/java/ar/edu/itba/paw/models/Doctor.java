@@ -1,30 +1,65 @@
 package ar.edu.itba.paw.models;
 
-import javax.print.Doc;
-import java.nio.channels.FileLock;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import ar.edu.itba.paw.models.Coverage;
+import ar.edu.itba.paw.models.Specialty;
 
+@Entity
+@Table(name = "doctors")
 public class Doctor extends User {
 
-    private List<Specialty> specialtyList = new ArrayList<>();
-    private List<Coverage> coverageList = new ArrayList<>();
-    private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
-    private Double rating = 5.0;
-    private int ratingCount = 0;
-    private long imageId;
 
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language, Long imageId, Double rating, int ratingCount, boolean verified) {
-        super(name, id, lastName, email, password, phone, language, verified);
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "doctor_specialties",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "specialty_id")
+    )
+    private List<Specialty> specialtyList = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "doctor_coverages",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "coverage_id")
+    )
+    private List<Coverage> coverageList = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
+
+    @Column(name = "rating")
+    private Double rating = 0.0;
+
+    @Column(name = "rating_count")
+    private int ratingCount = 0;
+
+    @Column(name = "image_id")
+    private Long imageId;
+
+    public Doctor() {
+        // For Hibernate use
+    }
+
+    public Doctor(String name, String lastName, String email, String password,
+                  String phone, String language, Long imageId, Double rating,
+                  int ratingCount, boolean verified) {
+        super(name, lastName, email, password, phone, language, verified);
+        this.imageId = imageId;
         this.rating = rating;
         this.ratingCount = ratingCount;
+    }
+
+    public Doctor(String name, String lastName, String email, String password,
+                  String phone, String language, Long imageId, boolean verified) {
+        super(name, lastName, email, password, phone, language, verified);
         this.imageId = imageId;
     }
 
-    public Doctor(String name, long id, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified) {
-        super(name, id, lastName, email, password, phone, language, verified);
-        this.imageId = imageId;
-    }
 
     public List<Specialty> getSpecialtyList() {
         return specialtyList;
@@ -32,22 +67,6 @@ public class Doctor extends User {
 
     public void setSpecialtyList(List<Specialty> specialtyList) {
         this.specialtyList = specialtyList;
-    }
-
-    public Double getRating() {
-        return rating;
-    }
-
-    public void setRating(Double rating) {
-        this.rating = rating;
-    }
-
-    public int getRatingCount() {
-        return ratingCount;
-    }
-
-    public void setRatingCount(int ratingCount) {
-        this.ratingCount = ratingCount;
     }
 
     public List<Coverage> getCoverageList() {
@@ -66,11 +85,27 @@ public class Doctor extends User {
         this.availabilitySlots = availabilitySlots;
     }
 
-    public long getImageId() {
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(int ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public Long getImageId() {
         return imageId;
     }
 
-    public void setImageId(long imageId) {
+    public void setImageId(Long imageId) {
         this.imageId = imageId;
     }
 }

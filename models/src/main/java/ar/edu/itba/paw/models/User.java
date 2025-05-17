@@ -1,25 +1,57 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+@Inheritance(strategy = InheritanceType.JOINED)
+@MappedSuperclass
 public abstract class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
+    @SequenceGenerator(allocationSize = 1, sequenceName = "users_id_seq", name = "users_id_seq")
+    private  long id;
 
-    private final long id;
-    private final String email;
+    @Column(name ="email",unique = true, nullable = false,length = 50)
+    private  String email;
+
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
+
+    @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
+
+    @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "phone", length = 20)
     private String phone;
+
+    @Column(name = "language", length = 10)
     private String language;
+
+    @Column(name = "verification_token")
     private String verificationToken;
-    private boolean verified;
+
+    @Column(name = "is_verified")
+    private boolean verified = false;
+
+    @Column(name = "reset_token")
     private String resetPasswordToken;
+
+    @Column(name = "token_expiration_date")
+    private LocalDateTime tokenExpiration;
+
     private List<Appointment> appointments = new ArrayList<>();
 
-    public User(String name, long id, String lastName, String email, String password, String phone, String language, boolean verified) {
+
+    public User() {
+        // For Hibernate use
+    }
+
+    public User(String name, String lastName, String email, String password, String phone, String language, boolean verified) {
         this.name = name;
-        this.id = id;
+
         this.lastName = lastName;
         this.email = email;
         this.password = password;

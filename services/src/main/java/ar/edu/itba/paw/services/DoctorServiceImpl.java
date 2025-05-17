@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfacePersistence.DoctorDao;
 import ar.edu.itba.paw.interfaceServices.*;
 
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.CoverageNotFoundException;
+import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +28,19 @@ public class DoctorServiceImpl implements DoctorService {
     private final AvailabilitySlotsService availabilitySlotsService;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
+    private final SpecialtyService specialtyService;
+    private final CoverageService coverageService;
 
     @Autowired
-    public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder, ImageService imageService, AvailabilitySlotsService availabilitySlotsService, UserService userService) {
+    public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder, ImageService imageService, AvailabilitySlotsService availabilitySlotsService, UserService userService,
+                             SpecialtyService specialtyService, CoverageService coverageService) {
         this.doctorDao = doctorDao;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
         this.availabilitySlotsService = availabilitySlotsService;
         this.userService = userService;
+        this.specialtyService = specialtyService;
+        this.coverageService = coverageService;
     }
 
     @Transactional
@@ -45,9 +52,19 @@ public class DoctorServiceImpl implements DoctorService {
                 .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
                 .toList();
         String passwordEncoded = passwordEncoder.encode(password);
-        long id = userService.create(name, lastName, email, passwordEncoded, phone, language);
-        Doctor doctor = this.doctorDao.create(id, name, lastName, email, passwordEncoded, phone, language, (img == null ? null : img.getId()), specialties, coverages);
-        availabilitySlotsService.create(id, filteredSlots);
+//       long id = userService.create(name, lastName, email, passwordEncoded, phone, language);
+        List<Specialty> specialtiesList = new ArrayList<>();
+        for (Long specialtyId : specialties) {
+            Specialty specialty = specialtyService.getById(specialtyId).orElseThrow(SpecialtyNotFoundException::new);
+            specialtiesList.add(specialty);
+        }
+        List<Coverage> coveragesList = new ArrayList<>();
+        for (Long coverageId : coverages) {
+            Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
+            coveragesList.add(coverage);
+        }
+        Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, (img == null ? null : img.getId()), specialtiesList, coveragesList);
+        availabilitySlotsService.create(filteredSlots);
         doctor.setAvailabilitySlots(filteredSlots);
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
         return doctor;
