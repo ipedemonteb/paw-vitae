@@ -11,6 +11,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,47 +72,65 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     //@TODO: Fix
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
-        String orderByQuery = switch (orderBy) {
-            case "name" -> "name";
-            case "last_name" -> "last_name";
-            case "rating" -> "rating";
-            case "email" -> "email";
-            default -> "doctor_id";
-        };
+        StringBuilder sql = getSql(specialtyId, coverageId, weekdays);
+        Query nativeQuery = em.createNativeQuery(sql.toString());
 
-        String directionQuery = (direction.equals("desc")) ? "DESC" : "ASC";
-
-        long specialtyIdQuery = specialtyId > 0 ? specialtyId : 0;
-
-        long coverageIdQuery = coverageId > 0 ? coverageId : 0;
-
-        List<Integer> weekdaysQuery = new ArrayList<>();
-
-        for (Integer weekday : weekdays) {
-            if (weekday >= 0 && weekday < 7) {
-                weekdaysQuery.add(weekday);
-            }
+        if (specialtyId > 0) {
+            nativeQuery.setParameter("specialtyId", specialtyId);
+        }
+        if (coverageId > 0) {
+            nativeQuery.setParameter("coverageId", coverageId);
+        }
+        if (weekdays != null && !weekdays.isEmpty()) {
+            nativeQuery.setParameter("weekdays", weekdays.stream().filter(w -> w >= 0 && w < 7).collect(Collectors.toList()));
         }
 
-        Query nativeQuery = em.createNativeQuery("SELECT d.doctor_id FROM doctors d " +
-                                "JOIN users u ON d.doctor_id = u.id "+
-                "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
-                "JOIN doctor_coverages dc ON d.doctor_id = dc.doctor_id " +
-                "JOIN doctor_availability a ON d.doctor_id = a.doctor_id " +
-                "WHERE ds.specialty_id = :specialtyId AND dc.coverage_id = :coverageId AND a.day_of_week IN (:weekdays) AND u.is_verified = true " +
-                "ORDER BY " + orderByQuery + " " + directionQuery)
-                        .setParameter("specialtyId", specialtyIdQuery)
-                        .setParameter("coverageId", coverageIdQuery)
-                        .setParameter("weekdays", weekdaysQuery)
-                        .setFirstResult((page-1) * pageSize)
-                        .setMaxResults(pageSize);
+        nativeQuery.setFirstResult((page-1) * pageSize);
+        nativeQuery.setMaxResults(pageSize);
 
         List<?> doctorIdsRaw = nativeQuery.getResultList();
         List<Long> doctorIds = doctorIdsRaw.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toList());
         TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN (:doctorIds)", Doctor.class);
         query.setParameter("doctorIds", doctorIds);
-        System.out.println("restult" + query.getResultList());
-        return query.getResultList();
+
+        return getDoctors(orderBy, direction, query);
+    }
+
+    private static StringBuilder getSql(long specialtyId, long coverageId, List<Integer> weekdays) {
+        StringBuilder sql = new StringBuilder("SELECT d.doctor_id FROM doctors d " +
+                "JOIN users u ON d.doctor_id = u.id " +
+                "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
+                "JOIN doctor_coverages dc ON d.doctor_id = dc.doctor_id " +
+                "JOIN doctor_availability a ON d.doctor_id = a.doctor_id " +
+                "WHERE u.is_verified = true ");
+
+        if (specialtyId > 0) {
+            sql.append("AND ds.specialty_id = :specialtyId ");
+        }
+        if (coverageId > 0) {
+            sql.append("AND dc.coverage_id = :coverageId ");
+        }
+        if (weekdays != null && !weekdays.isEmpty()) {
+            sql.append("AND a.day_of_week IN (:weekdays) ");
+        }
+        return sql;
+    }
+
+    private static List<Doctor> getDoctors(String orderBy, String direction, TypedQuery<Doctor> query) {
+        List<Doctor> doctors = query.getResultList();
+
+        Comparator<Doctor> comparator = switch (orderBy) {
+            case "name" -> Comparator.comparing(Doctor::getName, String.CASE_INSENSITIVE_ORDER);
+            case "last_name" -> Comparator.comparing(Doctor::getLastName, String.CASE_INSENSITIVE_ORDER);
+            case "rating" -> Comparator.comparing(Doctor::getRating, Comparator.nullsLast(Double::compareTo));
+            case "email" -> Comparator.comparing(Doctor::getEmail, String.CASE_INSENSITIVE_ORDER);
+            default -> Comparator.comparing(Doctor::getId);
+        };
+        if ("desc".equalsIgnoreCase(direction)) {
+            comparator = comparator.reversed();
+        }
+        doctors.sort(comparator);
+        return doctors;
     }
 
     @Override
@@ -142,7 +161,6 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     public int countAll() {
         return 0;
     }
-
 
 
 }
