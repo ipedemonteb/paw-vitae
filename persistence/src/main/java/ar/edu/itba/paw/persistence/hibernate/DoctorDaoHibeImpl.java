@@ -167,7 +167,10 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return query.getSingleResult().intValue();
     }
 
-    //DEPRECATED METHODS:
+
+    // -------------------------------------
+    //  DEPRECATED METHODS
+    // -------------------------------------
 
     //DEPRECATED
     @Override
