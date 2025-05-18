@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 
 @Repository
 public class DoctorDaoHibeImpl implements DoctorDao {
+
     @PersistenceContext
     private EntityManager em;
-
 
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Specialty> specialties, List<Coverage> coverages) {
@@ -36,19 +36,28 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
-        return em.createQuery("FROM Doctor d JOIN d.specialtyList s WHERE s.id = :specialtyId", Doctor.class)
-                .setParameter("specialtyId", specialtyId)
-                .setFirstResult(page * pageSize)
-                .setMaxResults(pageSize)
-                .getResultList();
+        Query nativeQuery = getNativeQuery(specialtyId, 0, null, false);
+        nativeQuery.setFirstResult(page * pageSize);
+        nativeQuery.setMaxResults(pageSize);
+
+        List<?> doctorIdsRaw = nativeQuery.getResultList();
+        List<Long> doctorIds = doctorIdsRaw.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toList());
+        if (doctorIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN (:doctorIds)", Doctor.class);
+        query.setParameter("doctorIds", doctorIds);
+
+        return query.getResultList();
     }
 
     @Override
     public int countBySpecialty(long specialtyId) {
-
-        return 0;
+        Query nativeQuery = getNativeQuery(specialtyId, 0, null, true);
+        return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
+    //TODO: CHECK IF NECESSARY
     @Override
     public void updateImage(long id, Long imageId) {
 
@@ -56,20 +65,26 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public Optional<Doctor> getByEmail(String email) {
-        return Optional.empty();
+        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.email = :email", Doctor.class);
+        query.setParameter("email", email);
+        List<Doctor> result = query.getResultList();
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
     }
 
+
+    //TODO: CHECK IF NECESSARY
     @Override
     public void UpdateDoctorRating(long id, long rating) {
 
     }
 
+
+    //TODO: CHECK IF NECESSARY
     @Override
     public void updateDoctor(long id, List<Long> specialties, List<Long> coverages) {
 
     }
 
-    //@TODO: Fix
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
         Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, false);
@@ -152,18 +167,28 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public Optional<Doctor> getByVerificationToken(String token) {
-        return Optional.empty();
+        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.verificationToken = :token", Doctor.class);
+        query.setParameter("token", token);
+        List<Doctor> result = query.getResultList();
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
     }
 
     @Override
     public Optional<Doctor> getByResetToken(String token) {
-        return Optional.empty();
+        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.resetToken = :token", Doctor.class);
+        query.setParameter("token", token);
+        List<Doctor> result = query.getResultList();
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
     }
 
     @Override
     public int countAll() {
-        return 0;
+        String sql = "SELECT COUNT(DISTINCT d.doctor_id) " +
+                "FROM doctors d " +
+                "JOIN users u ON d.doctor_id = u.id " +
+                "WHERE u.is_verified = true";
+        Query query = em.createNativeQuery(sql);
+        return ((Number) query.getSingleResult()).intValue();
     }
-
 
 }
