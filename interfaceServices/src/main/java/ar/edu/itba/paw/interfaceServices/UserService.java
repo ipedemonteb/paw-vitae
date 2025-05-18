@@ -31,7 +31,7 @@ public interface UserService {
 
     Long getImageId(User user);
 
-    long create(String name, String lastName, String email, String password, String phone, String language);
+
 
     void update(long id, String name, String lastName, String phone);
 

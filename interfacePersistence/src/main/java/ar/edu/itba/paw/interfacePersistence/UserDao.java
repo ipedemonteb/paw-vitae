@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public interface UserDao {
 
-    Number create(String name, String lastName, String email, String password, String phone, String language);
+
 
     void setVerificationToken(long id, String token,LocalDateTime expirationDate);
 
@@ -21,6 +21,6 @@ public interface UserDao {
     void changeLanguage(long id, String language);
 
     void removeResetToken(String token);
-    void update(long id, String name, String lastName, String phone);
+
 
 }
