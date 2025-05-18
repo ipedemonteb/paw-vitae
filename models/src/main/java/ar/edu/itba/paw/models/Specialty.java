@@ -24,6 +24,10 @@ public class Specialty {
         this.key = key;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public long getId() {
         return id;
     }

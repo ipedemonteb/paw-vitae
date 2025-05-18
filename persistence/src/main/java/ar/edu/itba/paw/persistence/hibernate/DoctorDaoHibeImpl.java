@@ -71,20 +71,61 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     //@TODO: Fix
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
-        Query nativeQuery = em.createNativeQuery("SELECT doctor_id from doctors");
-        nativeQuery.setFirstResult((page-1) * pageSize);
-        nativeQuery.setMaxResults(pageSize);
-        System.out.println("nativeQuery CLASS: " + nativeQuery.getResultList().getClass());
+        String orderByQuery = switch (orderBy) {
+            case "name" -> "name";
+            case "last_name" -> "last_name";
+            case "rating" -> "rating";
+            case "email" -> "email";
+            default -> "doctor_id";
+        };
+
+        String directionQuery = (direction.equals("desc")) ? "DESC" : "ASC";
+
+        long specialtyIdQuery = specialtyId > 0 ? specialtyId : 0;
+
+        long coverageIdQuery = coverageId > 0 ? coverageId : 0;
+
+        List<Integer> weekdaysQuery = new ArrayList<>();
+
+        for (Integer weekday : weekdays) {
+            if (weekday >= 0 && weekday < 7) {
+                weekdaysQuery.add(weekday);
+            }
+        }
+
+        Query nativeQuery = em.createNativeQuery("SELECT d.doctor_id FROM doctors d " +
+                                "JOIN users u ON d.doctor_id = u.id "+
+                "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
+                "JOIN doctor_coverages dc ON d.doctor_id = dc.doctor_id " +
+                "JOIN doctor_availability a ON d.doctor_id = a.doctor_id " +
+                "WHERE ds.specialty_id = :specialtyId AND dc.coverage_id = :coverageId AND a.day_of_week IN (:weekdays) AND u.is_verified = true " +
+                "ORDER BY " + orderByQuery + " " + directionQuery)
+                        .setParameter("specialtyId", specialtyIdQuery)
+                        .setParameter("coverageId", coverageIdQuery)
+                        .setParameter("weekdays", weekdaysQuery)
+                        .setFirstResult((page-1) * pageSize)
+                        .setMaxResults(pageSize);
+
         List<?> doctorIdsRaw = nativeQuery.getResultList();
         List<Long> doctorIds = doctorIdsRaw.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toList());
-        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN :doctorIds", Doctor.class);
+        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN (:doctorIds)", Doctor.class);
         query.setParameter("doctorIds", doctorIds);
+        System.out.println("restult" + query.getResultList());
         return query.getResultList();
     }
 
     @Override
     public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction) {
-        return 3;
+        Query nativeQuery = em.createNativeQuery("SELECT COUNT(*) FROM doctors d " +
+                "JOIN users u ON d.doctor_id = u.id "+
+                "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
+                "JOIN doctor_coverages dc ON d.doctor_id = dc.doctor_id " +
+                "JOIN doctor_availability a ON d.doctor_id = a.doctor_id " +
+                "WHERE ds.specialty_id = :specialtyId AND dc.coverage_id = :coverageId AND a.day_of_week IN (:weekdays) AND u.is_verified = true")
+                        .setParameter("specialtyId", specialtyId)
+                        .setParameter("coverageId", coverageId)
+                .setParameter("weekdays", weekdays);
+        return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
     @Override
@@ -101,4 +142,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     public int countAll() {
         return 0;
     }
+
+
+
 }
