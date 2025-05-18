@@ -11,7 +11,7 @@ public interface PatientDao {
 
     Optional<Patient> getById(long id);
 
-    Patient create(long id, String name, String lastName, String email, String password, String phone, String language,Coverage coverage);
+    Patient create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage);
 
     Optional<Patient> getByEmail(String email);
 
