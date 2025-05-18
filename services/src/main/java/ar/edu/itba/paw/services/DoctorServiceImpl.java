@@ -119,7 +119,7 @@ public class DoctorServiceImpl implements DoctorService {
                     imageService.deleteImage(oldImage.getId());
                 }
             }
-        LOGGER.debug("Updated doctor with id {}, name: {}, lastName: {}, phone: {}, specialties: {}, coverages: {}", doctor.getId(), name, lastName, phone, specialties, coverages);
+        LOGGER.info("Doctor updated successfully: id={}", doctor.getId());
     }
 
     @Transactional(readOnly = true)
