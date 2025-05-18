@@ -72,19 +72,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     //@TODO: Fix
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
-        StringBuilder sql = getSql(specialtyId, coverageId, weekdays);
-        Query nativeQuery = em.createNativeQuery(sql.toString());
-
-        if (specialtyId > 0) {
-            nativeQuery.setParameter("specialtyId", specialtyId);
-        }
-        if (coverageId > 0) {
-            nativeQuery.setParameter("coverageId", coverageId);
-        }
-        if (weekdays != null && !weekdays.isEmpty()) {
-            nativeQuery.setParameter("weekdays", weekdays.stream().filter(w -> w >= 0 && w < 7).collect(Collectors.toList()));
-        }
-
+        Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, false);
         nativeQuery.setFirstResult((page-1) * pageSize);
         nativeQuery.setMaxResults(pageSize);
 
@@ -96,8 +84,21 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return getDoctors(orderBy, direction, query);
     }
 
-    private static StringBuilder getSql(long specialtyId, long coverageId, List<Integer> weekdays) {
-        StringBuilder sql = new StringBuilder("SELECT d.doctor_id FROM doctors d " +
+    @Override
+    public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction) {
+        Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, true);
+        return ((Number) nativeQuery.getSingleResult()).intValue();
+    }
+
+
+    private static StringBuilder getSql(long specialtyId, long coverageId, List<Integer> weekdays, boolean isCount) {
+        StringBuilder sql = new StringBuilder();
+        if (isCount) {
+            sql.append("SELECT COUNT(DISTINCT d.doctor_id) ");
+        } else {
+            sql.append("SELECT d.doctor_id ");
+        }
+        sql.append("FROM doctors d " +
                 "JOIN users u ON d.doctor_id = u.id " +
                 "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
                 "JOIN doctor_coverages dc ON d.doctor_id = dc.doctor_id " +
@@ -116,6 +117,22 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return sql;
     }
 
+    private Query getNativeQuery(long specialtyId, long coverageId, List<Integer> weekdays, boolean isCount) {
+        StringBuilder sql = getSql(specialtyId, coverageId, weekdays, isCount);
+        Query nativeQuery = em.createNativeQuery(sql.toString());
+
+        if (specialtyId > 0) {
+            nativeQuery.setParameter("specialtyId", specialtyId);
+        }
+        if (coverageId > 0) {
+            nativeQuery.setParameter("coverageId", coverageId);
+        }
+        if (weekdays != null && !weekdays.isEmpty()) {
+            nativeQuery.setParameter("weekdays", weekdays.stream().filter(w -> w >= 0 && w < 7).collect(Collectors.toList()));
+        }
+        return nativeQuery;
+    }
+
     private static List<Doctor> getDoctors(String orderBy, String direction, TypedQuery<Doctor> query) {
         List<Doctor> doctors = query.getResultList();
 
@@ -131,20 +148,6 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         }
         doctors.sort(comparator);
         return doctors;
-    }
-
-    @Override
-    public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction) {
-        Query nativeQuery = em.createNativeQuery("SELECT COUNT(*) FROM doctors d " +
-                "JOIN users u ON d.doctor_id = u.id "+
-                "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
-                "JOIN doctor_coverages dc ON d.doctor_id = dc.doctor_id " +
-                "JOIN doctor_availability a ON d.doctor_id = a.doctor_id " +
-                "WHERE ds.specialty_id = :specialtyId AND dc.coverage_id = :coverageId AND a.day_of_week IN (:weekdays) AND u.is_verified = true")
-                        .setParameter("specialtyId", specialtyId)
-                        .setParameter("coverageId", coverageId)
-                .setParameter("weekdays", weekdays);
-        return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
     @Override
