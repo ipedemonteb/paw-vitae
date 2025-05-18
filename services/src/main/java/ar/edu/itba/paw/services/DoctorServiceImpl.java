@@ -100,37 +100,26 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages, MultipartFile image) {
         LOGGER.debug("Updating doctor with id {}, name: {}, lastName: {}, phone: {}, specialties: {}, coverages: {}", doctor.getId(), name, lastName, phone, specialties, coverages);
-        List<Long> specialtyIds = doctor.getSpecialtyList()
-                .stream()
-                .map(Specialty::getId)
-                .toList();
-        List<Long> coverageIds = doctor.getCoverageList()
-                .stream()
-                .map(Coverage::getId)
-                .toList();
 
-        boolean hasChangedDoctor = specialtyIds.size() != specialties.size()
-                || !specialtyIds.stream().sorted().toList().equals(specialties.stream().sorted().toList())
-                || !coverageIds.equals(coverages);
-        boolean hasChangedUser = !doctor.getName().equals(name)
-                || !doctor.getLastName().equals(lastName)
-                || !doctor.getPhone().equals(phone);
-        if (hasChangedDoctor) {
-            doctorDao.updateDoctor(doctor.getId(), specialties, coverages);
-            LOGGER.info("Doctor updated successfully: id={}", doctor.getId());
-        }
-        if (hasChangedUser) {
-            userService.update(doctor.getId(), name, lastName, phone);
-            LOGGER.info("User updated successfully: id={}", doctor.getId());
-        }
-        if (image != null && !image.isEmpty()) {
-            Images img = imageService.create(image);
-            doctorDao.updateImage(doctor.getId(), img.getId());
-            if (doctor.getImageId() != -1) {
-                imageService.deleteImage(doctor.getId());
+            doctor.setName(name);
+            doctor.setLastName(lastName);
+            doctor.setPhone(phone);
+
+            List<Specialty> newSpecialties = specialtyService.getByIds(specialties);
+            doctor.setSpecialtyList(newSpecialties);
+
+            List<Coverage> newCoverages = coverageService.findByIds(coverages);
+            doctor.setCoverageList(newCoverages);
+
+            if (image != null && !image.isEmpty()) {
+                Long newImage = imageService.create(image).getId();
+                Images oldImage = doctor.getImageId() != null ? imageService.findById(doctor.getImageId()).orElse(null) : null;
+                doctor.setImageId(newImage);
+                if (oldImage != null && oldImage.getId() != -1) {
+                    imageService.deleteImage(oldImage.getId());
+                }
             }
-            LOGGER.info("Doctor image updated successfully: id={}", doctor.getId());
-        }
+        LOGGER.debug("Updated doctor with id {}, name: {}, lastName: {}, phone: {}, specialties: {}, coverages: {}", doctor.getId(), name, lastName, phone, specialties, coverages);
     }
 
     @Transactional(readOnly = true)
@@ -152,7 +141,14 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public void UpdateDoctorRating(long id, long rating) {
         LOGGER.debug("Updating doctor rating with id {}, rating {}", id, rating);
-        doctorDao.UpdateDoctorRating(id, rating);
+
+        Doctor doctor = doctorDao.getById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + id));
+        Double currentRating = doctor.getRating();
+        int ratingCount = doctor.getRatingCount() + 1;
+        doctor.setRatingCount(ratingCount);
+        Double newRating = (currentRating * (ratingCount - 1) + rating) / ratingCount;
+        doctor.setRating(newRating);
+
         LOGGER.info("Rating updated for doctor with id={}, rating={}", id, rating);
     }
 

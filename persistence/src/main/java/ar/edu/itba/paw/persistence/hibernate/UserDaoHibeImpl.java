@@ -13,8 +13,6 @@ public class UserDaoHibeImpl implements UserDao {
     @PersistenceContext
     private EntityManager em;
 
-
-
     @Override
     public void setVerificationToken(long id, String token, LocalDateTime expirationDate) {
         em.createQuery("UPDATE User u SET u.verificationToken = :token, u.tokenExpiration = :expirationDate WHERE u.id = :id")
