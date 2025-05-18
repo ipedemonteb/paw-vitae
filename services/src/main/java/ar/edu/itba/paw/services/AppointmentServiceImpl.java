@@ -68,7 +68,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Async
     @Scheduled(cron = "0 0 * * * *")
     public void completeAppointments() {
-        appointmentDao.completeAppointments();
+        List<Appointment> appointments= appointmentDao.getPastConfirmedAppointments();
+        for (Appointment appointment : appointments) {
+            appointment.setStatus(AppointmentStatus.COMPLETO.getValue());
+        }
     }
 
     @Transactional
@@ -129,7 +132,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         Optional<Appointment> appointment = getById(appointmentId);
         if (appointment.isPresent()) {
-            appointmentDao.updateReport(appointmentId, report);
+            appointment.get().setReport(report);
             mailService.sendReportAddedMail(appointment.get().getDoctor(), appointment.get().getPatient(), appointment.get(), report);
             LOGGER.info("Report added to appointment: {}", appointment.get());
         } else {
