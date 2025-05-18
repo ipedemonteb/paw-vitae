@@ -57,16 +57,6 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
-    // TODO: CHECK IF NECESSARY
-    @Override
-    public void updateImage(long id, Long imageId) {
-        Doctor doctor = em.find(Doctor.class, id);
-        if (doctor != null) {
-            doctor.setImageId(imageId);
-        }
-    }
-    // check if hibernate is doing this automatically
-
     @Override
     public Optional<Doctor> getByEmail(String email) {
         TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.email = :email", Doctor.class);
@@ -74,48 +64,6 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         List<Doctor> result = query.getResultList();
         return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
     }
-
-
-    //TODO: CHECK IF NECESSARY
-    @Override
-    public void UpdateDoctorRating(long id, long rating) {
-        Doctor doctor = em.find(Doctor.class, id);
-        if (doctor != null) {
-            Double currentRating = doctor.getRating();
-            int ratingCount = doctor.getRatingCount() + 1;
-            doctor.setRatingCount(ratingCount);
-            Double newRating = (currentRating * (ratingCount - 1) + rating) / ratingCount;
-            doctor.setRating(newRating);
-        }
-    }
-    //getters for rating and ratingCount
-    // update from service directly
-
-    //TODO: CHECK IF NECESSARY
-    @Override
-    public void updateDoctor(long id, List<Long> specialties, List<Long> coverages) {
-        Doctor doctor = em.find(Doctor.class, id);
-        if (doctor != null) {
-            List<Specialty> specialtyList = new ArrayList<>();
-            for (Long specialtyId : specialties) {
-                Specialty specialty = em.find(Specialty.class, specialtyId);
-                if (specialty != null) {
-                    specialtyList.add(specialty);
-                }
-            }
-            doctor.setSpecialtyList(specialtyList);
-
-            List<Coverage> coverageList = new ArrayList<>();
-            for (Long coverageId : coverages) {
-                Coverage coverage = em.find(Coverage.class, coverageId);
-                if (coverage != null) {
-                    coverageList.add(coverage);
-                }
-            }
-            doctor.setCoverageList(coverageList);
-        }
-    }
-    // check if hibernate is doing this automatically
 
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
@@ -255,5 +203,24 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return query.getSingleResult().intValue();
     }
 
+
+    // -------------------------------------
+    //  DEPRECATED METHODS
+    // -------------------------------------
+
+    //DEPRECATED
+    @Override
+    public void UpdateDoctorRating(long id, long rating) {
+    }
+
+    //DEPRECATED
+    @Override
+    public void updateDoctor(long id, List<Long> specialties, List<Long> coverages) {
+    }
+
+    // DEPRECATED
+    @Override
+    public void updateImage(long id, Long imageId) {
+    }
 
 }

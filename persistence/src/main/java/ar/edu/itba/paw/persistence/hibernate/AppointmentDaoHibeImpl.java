@@ -31,22 +31,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return appointment;
     }
 
-
-    //TODO: Check if necessary
     @Override
-    public void cancelAppointment(long appointmentId) {
-        Appointment appointment = em.find(Appointment.class, appointmentId);
-        if (appointment != null) {
-            appointment.setStatus(AppointmentStatus.CANCELADO.getValue());
-        }
-    }
-
-    //TODO: Check if can be done from service layer
-    @Override
-    public void completeAppointments() {
-//        em.createQuery("UPDATE Appointment a SET a.status = 'COMPLETO' WHERE a.status = 'CONFIRMADO' AND a.date < CURRENT_TIMESTAMP").executeUpdate();
-    }
-
     public List<Appointment> getPastConfirmedAppointments() {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).withMinute(5).withSecond(0).withNano(0);
         LocalDateTime fiveDaysAgo = now.minusDays(5);
@@ -109,15 +94,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     }
 
 
-    //TODO: Check if necessary
-    @Override
-    public void updateReport(long appointmentId, String report) {
-//        Appointment appointment = em.find(Appointment.class, appointmentId);
-//        if (appointment != null) {
-//            appointment.setReport(report);
-//        }
-    }
-
     //TODO: CHECK
     private static StringBuilder getSql(boolean isFuture, String filter, boolean isCount) {
         StringBuilder sql = new StringBuilder();
@@ -171,6 +147,21 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return nativeQuery;
     }
 
+    // -------------------------------------
+    //  DEPRECATED METHODS
+    // -------------------------------------
+
+    //DEPRECATED
+    @Override
+    public void cancelAppointment(long appointmentId) {}
+
+    //DEPRECATED
+    @Override
+    public void completeAppointments() {}
+
+    //DEPRECATED
+    @Override
+    public void updateReport(long appointmentId, String report) {}
 
 }
 
