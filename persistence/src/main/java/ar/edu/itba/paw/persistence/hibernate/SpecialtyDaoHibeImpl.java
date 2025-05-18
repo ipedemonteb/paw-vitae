@@ -46,9 +46,12 @@ public class SpecialtyDaoHibeImpl implements SpecialtyDao {
         return query.getResultList();
     }
 
-    //@TODO: IMPLEMENT AFTER IMPLEMENTING DOCTOR
+    //@TODO: CHECK
     @Override
     public List<Specialty> getByDoctorId(long id) {
-        return List.of();
+        final TypedQuery<Specialty> query = em.createQuery(
+                "SELECT s FROM Doctor d JOIN d.specialtyList s WHERE d.id = :doctorId", Specialty.class);
+        query.setParameter("doctorId", id);
+        return query.getResultList();
     }
 }
