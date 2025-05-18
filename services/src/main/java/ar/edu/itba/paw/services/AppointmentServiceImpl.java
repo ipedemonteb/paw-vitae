@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,16 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentDao appointmentDao;
     private final SpecialtyService specialtyService;
     private final MailService mailService;
-
+    private final DoctorService doctorService;
+    private final PatientService patientService;
     @Autowired
-    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService) {
+    public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService,
+                                  DoctorService doctorService, PatientService patientService) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;
         this.mailService = mailService;
+        this.doctorService = doctorService;
+        this.patientService = patientService;
     }
 
     @Transactional(readOnly = true)
@@ -41,7 +46,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
-    //@TODO: Fix
     @Transactional
     @Override
     public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
@@ -51,7 +55,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
 
         //Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
-        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")), new Doctor(), new Patient(), null);
+        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new));
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
         LOGGER.info("New appointment created with id: {}", appointment.getId());

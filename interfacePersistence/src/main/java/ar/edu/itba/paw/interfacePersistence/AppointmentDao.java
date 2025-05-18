@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface AppointmentDao {
 
-    Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report);
+    Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient);
 
     void cancelAppointment(long appointmentId);
 

@@ -50,8 +50,7 @@ public class PatientServiceImpl implements PatientService {
         LOGGER.debug("Creating patient with name: {}, lastName: {}, email: {}, phone: {}, language: {}, coverageId: {}", name, lastName, email, phone, language, coverageId);
         Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
         String passwordEncoded = passwordEncoder.encode(password);
-        long id = userService.create(name, lastName, email, passwordEncoded, phone, language);
-        Patient patient = this.patientDao.create(name, lastName, email, passwordEncoded, phone, language, coverage);
+        Patient patient = patientDao.create(name, lastName, email, passwordEncoded, phone, language, coverage);
         LOGGER.info("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
         return patient;
     }

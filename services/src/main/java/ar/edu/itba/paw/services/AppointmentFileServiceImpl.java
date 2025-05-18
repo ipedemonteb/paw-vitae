@@ -8,6 +8,7 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentFile;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         this.mailService = mailService;
     }
 
-    //@TODO: Fix
+
     @Transactional
     @Override
     public List<AppointmentFile> create(MultipartFile[] files, String uploader_role, long appointment_id) {
@@ -43,13 +44,14 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         if (files.length == 0) {
             return null;
         }
+        Appointment appointment = appointmentService.getById(appointment_id).orElseThrow(AppointmentNotFoundException::new);
         List<AppointmentFile> appointmentFiles = new ArrayList<>();
         for (MultipartFile file : files) {
             if (file == null || file.isEmpty()) {
                 continue;
             }
             try {
-                //appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment_id));
+                appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment));
                 appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, new Appointment()));
 
             } catch (IOException e) {
@@ -57,7 +59,6 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
             }
         }
         if(uploader_role.equals("doctor") && !appointmentFiles.isEmpty()) {
-            Appointment appointment = appointmentService.getById(appointment_id).orElseThrow(IllegalArgumentException:: new);
             Doctor doctor = appointment.getDoctor();
             Patient patient = appointment.getPatient();
             mailService.sendFileUploadMail(doctor, patient, appointment, appointmentFiles);
@@ -78,7 +79,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         return appointmentFileDao.getByAppointmentId(appointment_id);
     }
 
-    //@TODO: Fix
+
     @Transactional(readOnly = true)
     public Optional<AppointmentFile> getAuthorizedFile(long fileId, long appointmentId, String username) {
         LOGGER.debug("Getting authorized file {} for appointment {} and user {}", fileId, appointmentId, username);
@@ -86,7 +87,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         if (fileOpt.isEmpty()) return Optional.empty();
 
         AppointmentFile file = fileOpt.get();
-        //if (file.getAppointment_id() != appointmentId) return Optional.empty();
+        if (file.getAppointment().getId() != appointmentId) return Optional.empty();
 
         Optional<Appointment> appointmentOpt = appointmentService.getById(appointmentId);
         if (appointmentOpt.isEmpty()) return Optional.empty();
