@@ -18,6 +18,8 @@ public interface AppointmentDao {
 
     void completeAppointments();
 
+    List<Appointment> getPastConfirmedAppointments();
+
     Optional<Appointment> getById(long appointmentId);
 
     List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter);

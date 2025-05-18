@@ -89,7 +89,7 @@ public class PatientDaoHibeImpl implements PatientDao {
         TypedQuery<Patient> query = em.createQuery("FROM Patient p WHERE p.resetToken = :token", Patient.class);
         query.setParameter("token", token);
         List<Patient> result = query.getResultList();
-        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
     }
 
     @Override
