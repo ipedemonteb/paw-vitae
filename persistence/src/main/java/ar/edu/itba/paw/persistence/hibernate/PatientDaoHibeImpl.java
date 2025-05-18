@@ -42,16 +42,6 @@ public class PatientDaoHibeImpl implements PatientDao {
     }
 
 
-    //TODO: Check if necessary
-    @Override
-    public void updatePatient(long id, Long coverageId) {
-        Patient patient = em.find(Patient.class, id);
-        if (patient != null && coverageId != null) {
-            Coverage coverage = em.find(Coverage.class, coverageId);
-            patient.setCoverage(coverage);
-        }
-    }
-
     @Override
     public List<Patient> getByIds(Set<Long> ids) {
         if (ids == null || ids.isEmpty()) {
@@ -77,15 +67,6 @@ public class PatientDaoHibeImpl implements PatientDao {
     }
 
 
-    //TODO: Check if necessary
-    @Override
-    public void changeLanguage(long id, String language) {
-        Patient patient = em.find(Patient.class, id);
-        if (patient != null) {
-            patient.setLanguage(language);
-        }
-    }
-
     @Override
     public Optional<Patient> getByResetToken(String token) {
         TypedQuery<Patient> query = em.createQuery("FROM Patient p WHERE p.resetToken = :token", Patient.class);
@@ -99,4 +80,20 @@ public class PatientDaoHibeImpl implements PatientDao {
         TypedQuery<Long> query = em.createQuery("SELECT COUNT(p) FROM Patient p", Long.class);
         return query.getSingleResult().intValue();
     }
+
+    // -------------------------------------
+    //  DEPRECATED METHODS
+    // -------------------------------------
+
+
+    //DEPRECATED
+    @Override
+    public void updatePatient(long id, Long coverageId) {
+    }
+
+    //DEPRECATED
+    @Override
+    public void changeLanguage(long id, String language) {
+    }
+
 }

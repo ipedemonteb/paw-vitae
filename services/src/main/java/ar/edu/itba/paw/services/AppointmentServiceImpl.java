@@ -87,10 +87,9 @@ public class AppointmentServiceImpl implements AppointmentService {
             return false;
         }
 
-        appointmentDao.cancelAppointment(appointmentId);
-        appt.get().setStatus(AppointmentStatus.CANCELADO.getValue());
-        mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appt.get());
-        LOGGER.info("Appointment cancelled: {}", appt.get().getId());
+        appointment.setStatus(AppointmentStatus.CANCELADO.getValue());
+        mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appointment);
+        LOGGER.info("Appointment cancelled: {}", appointmentId);
         return true;
     }
 

@@ -66,16 +66,13 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public void updatePatient(Patient patient, String name, String lastName, String phone, long coverageId) {
         LOGGER.debug("Updating patient with id {}: name={}, lastName={}, phone={}, coverageId={}", patient.getId(), name, lastName, phone, coverageId);
-        boolean hasChangedPatient = patient.getCoverage().getId() != coverageId;
-        boolean hasChangedUser = !patient.getName().equals(name) || !patient.getLastName().equals(lastName) || !patient.getPhone().equals(phone);
-        if (hasChangedPatient) {
-            patientDao.updatePatient(patient.getId(), coverageId);
-            LOGGER.info("Patient updated successfully: id={}", patient.getId());
-        }
-        if (hasChangedUser) {
-            userService.update(patient.getId(), name, lastName, phone);
-            LOGGER.info("User updated successfully: id={}", patient.getId());
-        }
+        patient.setName(name);
+        patient.setLastName(lastName);
+        patient.setPhone(phone);
+
+        Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
+        patient.setCoverage(coverage);
+        LOGGER.info("Patient updated successfully: id={}", patient.getId());
     }
 
     @Override

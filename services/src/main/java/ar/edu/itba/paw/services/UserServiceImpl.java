@@ -147,6 +147,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    // USELESS
     @Transactional
     @Override
     public void update(long id, String name, String lastName, String phone) {
