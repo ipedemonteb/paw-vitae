@@ -37,7 +37,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     @Override
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
         Query nativeQuery = getNativeQuery(specialtyId, 0, null, false);
-        nativeQuery.setFirstResult(page * pageSize);
+        nativeQuery.setFirstResult((page-1) * pageSize);
         nativeQuery.setMaxResults(pageSize);
 
         List<?> doctorIdsRaw = nativeQuery.getResultList();
@@ -57,11 +57,11 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
-    //TODO: CHECK IF NECESSARY
+    // TODO: CHECK IF NECESSARY
     @Override
     public void updateImage(long id, Long imageId) {
-
     }
+    // check if hibernate is doing this automatically
 
     @Override
     public Optional<Doctor> getByEmail(String email) {
@@ -75,15 +75,15 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     //TODO: CHECK IF NECESSARY
     @Override
     public void UpdateDoctorRating(long id, long rating) {
-
     }
-
+    //getters for rating and ratingCount
+    // update from service directly
 
     //TODO: CHECK IF NECESSARY
     @Override
     public void updateDoctor(long id, List<Long> specialties, List<Long> coverages) {
-
     }
+    // check if hibernate is doing this automatically
 
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
@@ -170,7 +170,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.verificationToken = :token", Doctor.class);
         query.setParameter("token", token);
         List<Doctor> result = query.getResultList();
-        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
     }
 
     @Override
@@ -178,17 +178,14 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.resetToken = :token", Doctor.class);
         query.setParameter("token", token);
         List<Doctor> result = query.getResultList();
-        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
     }
 
     @Override
     public int countAll() {
-        String sql = "SELECT COUNT(DISTINCT d.doctor_id) " +
-                "FROM doctors d " +
-                "JOIN users u ON d.doctor_id = u.id " +
-                "WHERE u.is_verified = true";
-        Query query = em.createNativeQuery(sql);
-        return ((Number) query.getSingleResult()).intValue();
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(d) FROM Doctor d WHERE d.verified = true", Long.class);
+        return query.getSingleResult().intValue();
     }
+
 
 }
