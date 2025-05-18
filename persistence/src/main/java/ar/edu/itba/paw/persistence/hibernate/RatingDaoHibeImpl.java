@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,16 +42,23 @@ public class RatingDaoHibeImpl implements RatingDao {
 
     @Override
     public List<Rating> getRatingsByDoctorId(long doctorId) {
-        return null;
+        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.doctor.id = id", Rating.class);
+        query.setParameter("id", doctorId);
+        return query.getResultList();
     }
 
     @Override
     public List<Rating> getRatingsByPatientId(long patientId) {
-        return null;
+        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.patient.id = id", Rating.class);
+        query.setParameter("id", patientId);
+        return query.getResultList();
     }
 
     @Override
     public List<Rating> getFiveTopRatings() {
-        return null;
+        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r ORDER BY r.rating DESC", Rating.class);
+        query.setMaxResults(5);
+        List<Rating> ratings = query.getResultList();
+        return ratings.isEmpty() ? Collections.emptyList() : ratings;
     }
 }

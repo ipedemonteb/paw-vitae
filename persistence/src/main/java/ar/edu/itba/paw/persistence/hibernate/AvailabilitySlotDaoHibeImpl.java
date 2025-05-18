@@ -25,7 +25,6 @@ public class AvailabilitySlotDaoHibeImpl implements AvailabilitySlotsDao {
 //        AvailabilitySlot slot = em.find(AvailabilitySlot.class, id);
 //        if (slot != null) {
 //            slot.setAvailabilitySlots(availabilitySlots);
-//            em.merge(slot);
 //        }
     }
 

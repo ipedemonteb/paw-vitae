@@ -45,11 +45,11 @@ public class PatientDaoHibeImpl implements PatientDao {
     //TODO: Check if necessary
     @Override
     public void updatePatient(long id, Long coverageId) {
-//        Patient patient = em.find(Patient.class, id);
-//        if (patient != null && coverageId != null) {
-//            Coverage coverage = em.find(Coverage.class, coverageId);
-//            patient.setCoverage(coverage);
-//        }
+        Patient patient = em.find(Patient.class, id);
+        if (patient != null && coverageId != null) {
+            Coverage coverage = em.find(Coverage.class, coverageId);
+            patient.setCoverage(coverage);
+        }
     }
 
     @Override
@@ -80,10 +80,10 @@ public class PatientDaoHibeImpl implements PatientDao {
     //TODO: Check if necessary
     @Override
     public void changeLanguage(long id, String language) {
-//        Patient patient = em.find(Patient.class, id);
-//        if (patient != null) {
-//            patient.setLanguage(language);
-//        }
+        Patient patient = em.find(Patient.class, id);
+        if (patient != null) {
+            patient.setLanguage(language);
+        }
     }
 
     @Override
