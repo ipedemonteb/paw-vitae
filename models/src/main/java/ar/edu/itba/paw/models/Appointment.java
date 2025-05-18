@@ -36,10 +36,7 @@ public class Appointment {
     @Column
     private String report;
 
-
     private Boolean cancellable = true;
-
-
 
     public Appointment() {
         // For Hibernate use
@@ -54,8 +51,6 @@ public class Appointment {
         this.patient = patient;
         this.report = report;
     }
-
-
 
     public long getId() {
         return id;

@@ -41,6 +41,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
+    //@TODO: Fix
     @Transactional
     @Override
     public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
@@ -49,7 +50,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
 
-        Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
+        //Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
+        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")), new Doctor(), new Patient(), null);
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
         LOGGER.info("New appointment created with id: {}", appointment.getId());

@@ -8,9 +8,8 @@ import ar.edu.itba.paw.models.Specialty;
 
 @Entity
 @Table(name = "doctors")
+@PrimaryKeyJoinColumn(name = "doctor_id")
 public class Doctor extends User {
-
-
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -28,9 +27,11 @@ public class Doctor extends User {
     )
     private List<Coverage> coverageList = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointments;
 
     @Column(name = "rating")
     private Double rating = 0.0;
@@ -53,6 +54,16 @@ public class Doctor extends User {
         this.rating = rating;
         this.ratingCount = ratingCount;
     }
+
+    //Deprecated
+//    public Doctor(String name, long id, String lastName, String email, String password,
+//                  String phone, String language, Long imageId, Double rating,
+//                  int ratingCount, boolean verified) {
+//        super(name, id, lastName, email, password, phone, language, verified);
+//        this.imageId = imageId;
+//        this.rating = rating;
+//        this.ratingCount = ratingCount;
+//    }
 
     public Doctor(String name, String lastName, String email, String password,
                   String phone, String language, Long imageId, boolean verified) {
@@ -107,5 +118,13 @@ public class Doctor extends User {
 
     public void setImageId(Long imageId) {
         this.imageId = imageId;
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 }

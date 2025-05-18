@@ -35,6 +35,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         this.mailService = mailService;
     }
 
+    //@TODO: Fix
     @Transactional
     @Override
     public List<AppointmentFile> create(MultipartFile[] files, String uploader_role, long appointment_id) {
@@ -48,7 +49,9 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
                 continue;
             }
             try {
-                appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment_id));
+                //appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment_id));
+                appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, new Appointment()));
+
             } catch (IOException e) {
                 LOGGER.error("Error while adding files {} ", files, e);
             }
@@ -75,6 +78,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         return appointmentFileDao.getByAppointmentId(appointment_id);
     }
 
+    //@TODO: Fix
     @Transactional(readOnly = true)
     public Optional<AppointmentFile> getAuthorizedFile(long fileId, long appointmentId, String username) {
         LOGGER.debug("Getting authorized file {} for appointment {} and user {}", fileId, appointmentId, username);
@@ -82,7 +86,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         if (fileOpt.isEmpty()) return Optional.empty();
 
         AppointmentFile file = fileOpt.get();
-        if (file.getAppointment_id() != appointmentId) return Optional.empty();
+        //if (file.getAppointment_id() != appointmentId) return Optional.empty();
 
         Optional<Appointment> appointmentOpt = appointmentService.getById(appointmentId);
         if (appointmentOpt.isEmpty()) return Optional.empty();

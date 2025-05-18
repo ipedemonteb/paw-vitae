@@ -1,11 +1,13 @@
 package ar.edu.itba.paw.persistence.hibernate;
 
 import ar.edu.itba.paw.interfacePersistence.UserDao;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 
+@Repository
 public class UserDaoHibeImpl implements UserDao {
 
     @PersistenceContext
@@ -13,7 +15,7 @@ public class UserDaoHibeImpl implements UserDao {
 
     @Override
     public Number create(String name, String lastName, String email, String password, String phone, String language) {
-
+        return 0;
     }
 
     @Override
