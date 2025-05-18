@@ -51,7 +51,7 @@ public class PatientServiceImpl implements PatientService {
         Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
         String passwordEncoded = passwordEncoder.encode(password);
         long id = userService.create(name, lastName, email, passwordEncoded, phone, language);
-        Patient patient = this.patientDao.create(id, name, lastName, email, passwordEncoded, phone, language, coverage);
+        Patient patient = this.patientDao.create(name, lastName, email, passwordEncoded, phone, language, coverage);
         LOGGER.info("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
         return patient;
     }

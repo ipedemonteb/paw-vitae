@@ -46,9 +46,7 @@ public class Doctor extends User {
         // For Hibernate use
     }
 
-    public Doctor(String name, String lastName, String email, String password,
-                  String phone, String language, Long imageId, Double rating,
-                  int ratingCount, boolean verified) {
+    public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, Double rating, int ratingCount, boolean verified) {
         super(name, lastName, email, password, phone, language, verified);
         this.imageId = imageId;
         this.rating = rating;
@@ -65,8 +63,7 @@ public class Doctor extends User {
 //        this.ratingCount = ratingCount;
 //    }
 
-    public Doctor(String name, String lastName, String email, String password,
-                  String phone, String language, Long imageId, boolean verified) {
+    public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified) {
         super(name, lastName, email, password, phone, language, verified);
         this.imageId = imageId;
     }
