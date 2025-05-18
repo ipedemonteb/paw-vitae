@@ -238,8 +238,9 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
                 "org.hibernate.dialect.PostgreSQL92Dialect");
 
         // Si ponen esto en prod, hay tabla!!!
-//        properties.setProperty("hibernate.show_sql", "true");
-//        properties.setProperty("format_sql", "true");
+        //@TODO: BORRAR
+        properties.setProperty("hibernate.show_sql", "true");
+        properties.setProperty("format_sql", "true");
 
         factoryBean.setJpaProperties(properties);
         return factoryBean;

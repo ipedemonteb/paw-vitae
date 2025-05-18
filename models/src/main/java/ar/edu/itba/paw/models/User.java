@@ -4,8 +4,11 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+//@TODO: Check if entity or mappedSuperclass
+@Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@MappedSuperclass
+@Table(name = "users")
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
@@ -42,9 +45,6 @@ public abstract class User {
     @Column(name = "token_expiration_date")
     private LocalDateTime tokenExpiration;
 
-    private List<Appointment> appointments = new ArrayList<>();
-
-
     public User() {
         // For Hibernate use
     }
@@ -58,14 +58,6 @@ public abstract class User {
         this.phone = phone;
         this.language = language;
         this.verified = verified;
-    }
-
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
     }
 
     public String getName() {
