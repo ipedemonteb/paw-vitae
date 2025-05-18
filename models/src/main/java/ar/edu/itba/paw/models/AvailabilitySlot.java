@@ -19,6 +19,9 @@ public class AvailabilitySlot {
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
+
+
+
     public AvailabilitySlot() {}
 
     public AvailabilitySlot(Doctor doctor, int dayOfWeek, LocalTime startTime, LocalTime endTime) {
