@@ -10,8 +10,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class DoctorDaoHibeImpl implements DoctorDao {
@@ -69,25 +71,15 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     //@TODO: Fix
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
-//        Query nativeQuery = em.createNativeQuery("SELECT d.doctor_id FROM doctors d " +
-//                        "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
-//                        "JOIN specialties s ON ds.specialty_id = s.id " +
-//                        "JOIN doctor_coverages dc ON d.doctor_id = dc.doctor_id " +
-//                        "JOIN coverages c ON dc.coverage_id = c.id " +
-//                        "WHERE s.id = :specialtyId AND c.id = :coverageId")
-//                .setParameter("specialtyId", specialtyId)
-//                .setParameter("coverageId", coverageId)
-////        Query nativeQuery = em.createNativeQuery("SELECT d.doctor_id FROM doctors d")
-//                .setFirstResult((page - 1) * pageSize)
-//                .setMaxResults(pageSize);
-//        List<Long> filteredIds = ((List<Object>) nativeQuery.getResultList())
-//                .stream()
-//                .map(result -> ((Number) result).longValue())
-//                .toList();
-//        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN :ids", Doctor.class)
-//                .setParameter("ids", filteredIds);
-//        return query.getResultList();
-        return List.of();
+        Query nativeQuery = em.createNativeQuery("SELECT doctor_id from doctors");
+        nativeQuery.setFirstResult((page-1) * pageSize);
+        nativeQuery.setMaxResults(pageSize);
+        System.out.println("nativeQuery CLASS: " + nativeQuery.getResultList().getClass());
+        List<?> doctorIdsRaw = nativeQuery.getResultList();
+        List<Long> doctorIds = doctorIdsRaw.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toList());
+        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN :doctorIds", Doctor.class);
+        query.setParameter("doctorIds", doctorIds);
+        return query.getResultList();
     }
 
     @Override
