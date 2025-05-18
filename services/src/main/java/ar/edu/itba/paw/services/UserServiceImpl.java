@@ -146,18 +146,11 @@ public class UserServiceImpl implements UserService {
         return ((Doctor) user).getImageId();
     }
 
-    @Transactional
-    @Override
-    public long create(String name, String lastName, String email, String password, String phone, String language) {
-        LOGGER.debug("Creating user with name: {}, lastName: {}, email: {}, phone: {}, language: {}", name, lastName, email, phone, language);
-        return userDao.create(name, lastName, email, password, phone, language).longValue();
-    }
 
     @Transactional
     @Override
     public void update(long id, String name, String lastName, String phone) {
         LOGGER.debug("Updating user with id: {}, name: {}, lastName: {}, phone: {}", id, name, lastName, phone);
-        userDao.update(id, name, lastName, phone);
     }
 
     @Transactional(readOnly = true)
