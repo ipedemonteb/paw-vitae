@@ -40,7 +40,7 @@ public class Doctor extends User {
     private int ratingCount = 0;
 
     @Column(name = "image_id")
-    private Long imageId;
+    private Long imageId=-1L;
 
     public Doctor() {
         // For Hibernate use
