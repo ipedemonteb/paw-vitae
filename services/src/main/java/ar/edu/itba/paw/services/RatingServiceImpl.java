@@ -85,6 +85,5 @@ public class RatingServiceImpl implements RatingService {
         return ratingDao.getFiveTopRatings().stream().collect(Collectors.toMap(
                 rating -> rating,
                 rating -> patientService.getById(rating.getPatient().getId()).orElseThrow(UserNotFoundException::new)));
-
     }
 }

@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.persistence.hibernate;
 
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,10 +35,10 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     //TODO: Check if necessary
     @Override
     public void cancelAppointment(long appointmentId) {
-//        Appointment appointment = em.find(Appointment.class, appointmentId);
-//        if (appointment != null) {
-//            appointment.setStatus("CANCELLED");
-//        }
+        Appointment appointment = em.find(Appointment.class, appointmentId);
+        if (appointment != null) {
+            appointment.setStatus(AppointmentStatus.CANCELADO.getValue());
+        }
     }
 
     //TODO: Check if can be done from service layer
