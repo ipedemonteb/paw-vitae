@@ -143,7 +143,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         if (isCount) {
             sql.append("SELECT COUNT(DISTINCT d.doctor_id) ");
         } else {
-            sql.append("SELECT d.doctor_id ");
+            sql.append("SELECT DISTINCT d.doctor_id ");
         }
         sql.append("FROM doctors d " +
                 "JOIN users u ON d.doctor_id = u.id " +
