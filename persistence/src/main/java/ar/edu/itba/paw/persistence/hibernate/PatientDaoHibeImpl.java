@@ -24,6 +24,8 @@ public class PatientDaoHibeImpl implements PatientDao {
         return Optional.ofNullable(em.find(Patient.class, id));
     }
 
+
+
     @Override
     public Patient create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage) {
         Patient patient = new Patient(name, lastName, email, password, phone, language, coverage, false);

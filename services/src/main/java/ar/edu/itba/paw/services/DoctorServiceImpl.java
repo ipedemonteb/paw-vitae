@@ -52,7 +52,6 @@ public class DoctorServiceImpl implements DoctorService {
                 .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
                 .toList();
         String passwordEncoded = passwordEncoder.encode(password);
-//       long id = userService.create(name, lastName, email, passwordEncoded, phone, language);
         List<Specialty> specialtiesList = new ArrayList<>();
         for (Long specialtyId : specialties) {
             Specialty specialty = specialtyService.getById(specialtyId).orElseThrow(SpecialtyNotFoundException::new);

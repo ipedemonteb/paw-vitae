@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Rating;
+import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,16 +42,16 @@ public class RatingServiceImpl implements RatingService {
     @Transactional
     @Override
     public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
-//        LOGGER.debug("Creating rating with rating: {}, doctorId: {}, patientId: {}, appointmentId: {}, comment: {}", rating, doctorId, patientId, appointmentId, comment);
-//        Rating rating_aux = ratingDao.create(rating, doctorId, patientId, appointmentId, comment);
-//        doctorService.UpdateDoctorRating(doctorId, rating_aux.getRating());
-//        Doctor doctor = doctorService.getById(doctorId).orElseThrow(IllegalArgumentException::new);
-//        Patient patient = patientService.getById(patientId).orElseThrow(IllegalArgumentException::new);
-//        Appointment appointment = appointmentService.getById(appointmentId).orElseThrow(IllegalArgumentException::new);
-//        mailService.sendRatingMail(doctor, patient, appointment, rating_aux.getRating(), comment);
-//        LOGGER.info("Rating created with id: {} for doctor with id {} by patient with id {}", rating_aux.getId(), doctorId, patientId);
-//        return rating_aux;
-        return new Rating();
+        LOGGER.debug("Creating rating with rating: {}, doctorId: {}, patientId: {}, appointmentId: {}, comment: {}", rating, doctorId, patientId, appointmentId, comment);
+        Rating rating_aux = ratingDao.create(rating, doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new),patientService.getById(patientId).orElseThrow(UserNotFoundException::new),appointmentService.getById(appointmentId).orElseThrow(AppointmentNotFoundException::new), comment);
+        doctorService.UpdateDoctorRating(doctorId, rating_aux.getRating());
+        Doctor doctor = doctorService.getById(doctorId).orElseThrow(IllegalArgumentException::new);
+        Patient patient = patientService.getById(patientId).orElseThrow(IllegalArgumentException::new);
+        Appointment appointment = appointmentService.getById(appointmentId).orElseThrow(IllegalArgumentException::new);
+        mailService.sendRatingMail(doctor, patient, appointment, rating_aux.getRating(), comment);
+        LOGGER.info("Rating created with id: {} for doctor with id {} by patient with id {}", rating_aux.getId(), doctorId, patientId);
+        return rating_aux;
+
     }
 
     @Transactional(readOnly = true)
@@ -77,13 +78,13 @@ public class RatingServiceImpl implements RatingService {
         return ratingDao.getRatingsByPatientId(patientId);
     }
 
-    //@TODO: Fix
+
     @Transactional(readOnly = true)
     @Override
     public Map<Rating, Patient> getFiveTopRatings() {
-//        return ratingDao.getFiveTopRatings().stream().collect(Collectors.toMap(
-//                rating -> rating,
-//                rating -> patientService.getById(rating.getPatientId()).orElseThrow(UserNotFoundException::new)));
-        return Map.of();
+        return ratingDao.getFiveTopRatings().stream().collect(Collectors.toMap(
+                rating -> rating,
+                rating -> patientService.getById(rating.getPatient().getId()).orElseThrow(UserNotFoundException::new)));
+
     }
 }
