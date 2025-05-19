@@ -45,12 +45,13 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlot> availabilitySlots) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlotForm> availabilitySlots) {
         LOGGER.debug("Creating doctor with name: {}, lastName: {}, email: {}, phone: {}, language: {}, specialties: {}, coverages: {}", name, lastName, email, phone, language, specialties, coverages);
         Images img = imageService.create(image);
-        List<AvailabilitySlot> filteredSlots = availabilitySlots.stream()
+        List<AvailabilitySlotForm> filteredSlotsForm = availabilitySlots.stream()
                 .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
                 .toList();
+
         String passwordEncoded = passwordEncoder.encode(password);
         List<Specialty> specialtiesList = new ArrayList<>();
         for (Long specialtyId : specialties) {
@@ -63,6 +64,7 @@ public class DoctorServiceImpl implements DoctorService {
             coveragesList.add(coverage);
         }
         Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, (img == null ? null : img.getId()), specialtiesList, coveragesList);
+        List<AvailabilitySlot> filteredSlots = availabilitySlotsService.transformToAvailabilitySlots(doctor,filteredSlotsForm);
         availabilitySlotsService.create(filteredSlots);
         doctor.setAvailabilitySlots(filteredSlots);
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
@@ -162,4 +164,6 @@ public class DoctorServiceImpl implements DoctorService {
             return String.valueOf(count / 1000) + "k+";
         }
     }
+
+
 }

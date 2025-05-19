@@ -107,14 +107,14 @@ public class UserServiceImpl implements UserService {
         return patient.isPresent() ? patient : doctorDao.getByResetToken(token);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public Optional<? extends User> verifyValidationToken(String token) {
         LOGGER.debug("Verifying validation token");
         return checkToken(token,true);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public boolean verifyRecoveryToken(String token) {
         LOGGER.debug("Verifying recovery token");
@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
         LOGGER.debug("Updating user with id: {}, name: {}, lastName: {}, phone: {}", id, name, lastName, phone);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public Optional<? extends User> checkToken(String token,boolean isVerification) {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));

@@ -54,9 +54,7 @@ public class AppointmentExistenceValidator implements ConstraintValidator<Appoin
             if (appointments.isEmpty()) {
                 return true;
             }
-
-            boolean isValid = appointments.size() == 1 &&
-                    !appointments.getFirst().getStatus().equals(AppointmentStatus.CONFIRMADO.getValue());
+            boolean isValid = appointments.size() == 1 && !appointments.getFirst().getStatus().equals(AppointmentStatus.CONFIRMADO.getValue());
 
             if (!isValid) {
                 context.disableDefaultConstraintViolation();

@@ -93,7 +93,7 @@ public class DoctorController {
                                         @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-availability");
-        updateAvailabilityForm.setAvailabilitySlots(doctor.getAvailabilitySlots());
+        updateAvailabilityForm.setAvailabilitySlots(availabilitySlotsService.getDoctorAvailabilitySlots(doctor));
         mav.addObject("doctor", doctor);
         return mav;
     }
@@ -140,7 +140,7 @@ public class DoctorController {
         if (errors.hasErrors()) {
             return getAvailability(form, doctor);
         }
-        availabilitySlotsService.updateDoctorAvailability(doctor.getId(), form.getAvailabilitySlots());
+        availabilitySlotsService.updateDoctorAvailability(doctor, form.getAvailabilitySlots());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
 

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.AvailabilitySlot;
+import ar.edu.itba.paw.models.AvailabilitySlotForm;
 import ar.edu.itba.paw.webapp.validation.TimeSlotIntersection;
 import ar.edu.itba.paw.webapp.validation.ValidTimeSlot;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,12 +17,12 @@ public class UpdateAvailabilityForm {
     @NotEmpty
     @ValidTimeSlot(message = "{slots.invalid}")
     @TimeSlotIntersection(message = "{slots.overlap}")
-    private List<AvailabilitySlot> availabilitySlots;
-    public List<AvailabilitySlot> getAvailabilitySlots() {
+    private List<AvailabilitySlotForm> availabilitySlots;
+    public List<AvailabilitySlotForm> getAvailabilitySlots() {
         return availabilitySlots;
     }
 
-    public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) {
+    public void setAvailabilitySlots(List<AvailabilitySlotForm> availabilitySlots) {
         this.availabilitySlots = availabilitySlots;
     }
 }

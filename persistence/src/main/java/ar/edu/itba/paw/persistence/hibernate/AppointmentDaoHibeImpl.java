@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.List;
@@ -24,7 +25,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     private EntityManager em;
 
     @Override
-    @Transactional
     public Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report) {
         Appointment appointment = new Appointment(date, status, reason, specialty, doctor, patient, report);
         em.persist(appointment);
@@ -64,10 +64,11 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
 
     @Override
     public List<Appointment> getAppointmentsByUserAndDate(long userId, LocalDate date, Integer time) {
-        String queryStr = "SELECT a FROM Appointment a WHERE (a.doctor.id = :userId OR a.patient.id = :userId) AND DATE(a.date) = :date";
+        LocalDateTime targetDateTime = LocalDateTime.of(date, LocalTime.of(time, 0));
+        String queryStr = "SELECT a FROM Appointment a WHERE (a.doctor.id = :userId OR a.patient.id = :userId) AND a.date = :datetime";
         TypedQuery<Appointment> query = em.createQuery(queryStr, Appointment.class)
                 .setParameter("userId", userId)
-                .setParameter("date", date);
+                .setParameter("datetime", targetDateTime);
         return query.getResultList();
     }
 

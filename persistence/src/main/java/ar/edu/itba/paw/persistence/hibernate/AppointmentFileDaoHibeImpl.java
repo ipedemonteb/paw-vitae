@@ -14,10 +14,11 @@ import java.util.Optional;
 public class AppointmentFileDaoHibeImpl implements AppointmentFileDao {
     @PersistenceContext
     private EntityManager em;
+
     @Override
     public AppointmentFile create(String fileName, byte[] fileData, String uploader_role, Appointment appointment) {
         final AppointmentFile appointmentFile = new AppointmentFile(fileName, fileData, uploader_role, appointment);
-        em.persist(appointmentFile);
+           em.persist(appointmentFile);
         return appointmentFile;
     }
 

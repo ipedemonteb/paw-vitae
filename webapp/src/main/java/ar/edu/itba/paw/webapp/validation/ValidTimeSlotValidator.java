@@ -1,19 +1,20 @@
 package ar.edu.itba.paw.webapp.validation;
 
 import ar.edu.itba.paw.models.AvailabilitySlot;
+import ar.edu.itba.paw.models.AvailabilitySlotForm;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
-public class ValidTimeSlotValidator implements ConstraintValidator<ValidTimeSlot, List<AvailabilitySlot>> {
+public class ValidTimeSlotValidator implements ConstraintValidator<ValidTimeSlot, List<AvailabilitySlotForm>> {
 
     @Override
-    public boolean isValid(List<AvailabilitySlot> availabilitySlotList, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(List<AvailabilitySlotForm> availabilitySlotList, ConstraintValidatorContext constraintValidatorContext) {
         if (availabilitySlotList == null || availabilitySlotList.isEmpty()) {
             return true;
         }
-        for (AvailabilitySlot slot : availabilitySlotList) {
+        for (AvailabilitySlotForm slot : availabilitySlotList) {
             if( slot.getStartTime() == null && slot.getEndTime() == null){
                 continue;
             }
