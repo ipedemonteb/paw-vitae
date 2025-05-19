@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface DoctorService {
 
-    Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlot> availabilitySlots);
+    Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlotForm> availabilitySlots);
 
     Optional<Doctor> getById(final long id);
 
@@ -23,4 +23,5 @@ public interface DoctorService {
     Page<Doctor> getWithFilters(long specialtyId, long coverageId, List<QueryParam> weekdays, String orderBy, String direction, int page, int pageSize);
 
     String getAllDoctorsDisplayCount();
+
 }

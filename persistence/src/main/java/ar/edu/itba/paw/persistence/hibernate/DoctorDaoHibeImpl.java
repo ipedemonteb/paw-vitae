@@ -24,7 +24,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Specialty> specialties, List<Coverage> coverages) {
-        Doctor doctor = new Doctor(name, lastName, email, password, phone, language, imageId, false);
+        Doctor doctor = new Doctor(name, lastName, email, password, phone, language, imageId, false,specialties, coverages);
         em.persist(doctor);
         return doctor;
     }

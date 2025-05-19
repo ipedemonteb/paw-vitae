@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.validation;
 
 import ar.edu.itba.paw.models.AvailabilitySlot;
+import ar.edu.itba.paw.models.AvailabilitySlotForm;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.webapp.form.UpdateAvailabilityForm;
 
@@ -13,21 +14,21 @@ import java.util.stream.Collectors;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class TimeSlotIntersectionValidator implements ConstraintValidator<TimeSlotIntersection, List<AvailabilitySlot>> {
+public class TimeSlotIntersectionValidator implements ConstraintValidator<TimeSlotIntersection, List<AvailabilitySlotForm>> {
 
     @Override
-    public boolean isValid(List<AvailabilitySlot> slots, ConstraintValidatorContext context) {
+    public boolean isValid(List<AvailabilitySlotForm> slots, ConstraintValidatorContext context) {
         if (slots == null || slots.isEmpty()) return true;
 
-        Map<Integer, List<AvailabilitySlot>> groupedByDay = slots.stream()
+        Map<Integer, List<AvailabilitySlotForm>> groupedByDay = slots.stream()
                 .filter(slot -> slot != null && slot.getStartTime() != null && slot.getEndTime() != null)
-                .collect(Collectors.groupingBy(AvailabilitySlot::getDayOfWeek));
-        for (Map.Entry<Integer, List<AvailabilitySlot>> entry : groupedByDay.entrySet()) {
-            List<AvailabilitySlot> daySlots = entry.getValue();
-            daySlots.sort(Comparator.comparing(AvailabilitySlot::getStartTime));
+                .collect(Collectors.groupingBy(AvailabilitySlotForm::getDayOfWeek));
+        for (Map.Entry<Integer, List<AvailabilitySlotForm>> entry : groupedByDay.entrySet()) {
+            List<AvailabilitySlotForm> daySlots = entry.getValue();
+            daySlots.sort(Comparator.comparing(AvailabilitySlotForm::getStartTime));
             for (int i = 0; i < daySlots.size() - 1; i++) {
-                AvailabilitySlot current = daySlots.get(i);
-                AvailabilitySlot next = daySlots.get(i + 1);
+                AvailabilitySlotForm current = daySlots.get(i);
+                AvailabilitySlotForm next = daySlots.get(i + 1);
 
                 if (!current.getEndTime().isBefore(next.getStartTime())) {
                     return false;

@@ -34,7 +34,7 @@ public class Doctor extends User {
     private List<Appointment> appointments;
 
     @Column(name = "rating")
-    private Double rating = 0.0;
+    private Double rating = 1.0;
 
     @Column(name = "rating_count")
     private int ratingCount = 0;
@@ -63,9 +63,11 @@ public class Doctor extends User {
 //        this.ratingCount = ratingCount;
 //    }
 
-    public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified) {
+    public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified,List<Specialty> specialtyList, List<Coverage> coverageList) {
         super(name, lastName, email, password, phone, language, verified);
         this.imageId = imageId;
+        this.specialtyList = specialtyList;
+        this.coverageList = coverageList;
     }
 
 

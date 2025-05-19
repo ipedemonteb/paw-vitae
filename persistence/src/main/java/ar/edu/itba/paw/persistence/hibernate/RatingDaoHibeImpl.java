@@ -35,21 +35,25 @@ public class RatingDaoHibeImpl implements RatingDao {
 
     @Override
     public Optional<Rating> getRatingByAppointmentId(long appointmentId) {
-       TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.appointment.id = id", Rating.class);
+       TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.appointment.id = :id", Rating.class);
         query.setParameter("id", appointmentId);
-        return Optional.ofNullable(query.getSingleResult());
+        List<Rating> ratings = query.getResultList();
+        if (ratings.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(ratings.getFirst());
     }
 
     @Override
     public List<Rating> getRatingsByDoctorId(long doctorId) {
-        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.doctor.id = id", Rating.class);
+        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.doctor.id = :id", Rating.class);
         query.setParameter("id", doctorId);
         return query.getResultList();
     }
 
     @Override
     public List<Rating> getRatingsByPatientId(long patientId) {
-        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.patient.id = id", Rating.class);
+        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.patient.id = :id", Rating.class);
         query.setParameter("id", patientId);
         return query.getResultList();
     }

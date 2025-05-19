@@ -69,4 +69,8 @@ public class AvailabilitySlot {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public void setId(AvailabilitySlotId availabilitySlotId) {
+        this.id = availabilitySlotId;
+    }
 }

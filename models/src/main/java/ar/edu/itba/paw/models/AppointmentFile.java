@@ -9,12 +9,11 @@ public class AppointmentFile {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appointment_files_id_seq")
     @SequenceGenerator(name = "appointment_files_id_seq", sequenceName = "appointment_files_id_seq", allocationSize = 1)
-    private long id;
+    private long  id;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
 
-    @Lob
     @Column(name = "file_data", nullable = false)
     private byte[] fileData;
 
@@ -66,6 +65,10 @@ public class AppointmentFile {
 
     public Appointment getAppointment() {
         return appointment;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setAppointment(Appointment appointment) {

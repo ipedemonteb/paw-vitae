@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.form;
 
 
 import ar.edu.itba.paw.models.AvailabilitySlot;
+import ar.edu.itba.paw.models.AvailabilitySlotForm;
 import ar.edu.itba.paw.webapp.validation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,7 +53,7 @@ public class DoctorForm {
     @NotEmpty
     @ValidTimeSlot(message = "{slots.invalid}")
     @TimeSlotIntersection(message = "{slots.overlap}")
-    private List<AvailabilitySlot> availabilitySlots;
+    private List<AvailabilitySlotForm> availabilitySlots;
 
 
     public String getName() {
@@ -127,10 +128,10 @@ public class DoctorForm {
         this.image = image;
     }
 
-    public List<AvailabilitySlot> getAvailabilitySlots() {
+    public List<AvailabilitySlotForm> getAvailabilitySlots() {
         return availabilitySlots;
     }
-    public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) {
+    public void setAvailabilitySlots(List<AvailabilitySlotForm> availabilitySlots) {
         this.availabilitySlots = availabilitySlots;
     }
 }

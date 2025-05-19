@@ -52,8 +52,6 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
             }
             try {
                 appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment));
-                appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, new Appointment()));
-
             } catch (IOException e) {
                 LOGGER.error("Error while adding files {} ", files, e);
             }

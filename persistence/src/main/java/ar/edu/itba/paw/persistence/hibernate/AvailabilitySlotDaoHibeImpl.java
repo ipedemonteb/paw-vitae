@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence.hibernate;
 
 import ar.edu.itba.paw.interfacePersistence.AvailabilitySlotsDao;
 import ar.edu.itba.paw.models.AvailabilitySlot;
+import org.postgresql.core.NativeQuery;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -20,12 +21,14 @@ public class AvailabilitySlotDaoHibeImpl implements AvailabilitySlotsDao {
         return slot;
     }
 
-    @Override //TODO CHANGE
+    @Override
     public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
-//        AvailabilitySlot slot = em.find(AvailabilitySlot.class, id);
-//        if (slot != null) {
-//            slot.setAvailabilitySlots(availabilitySlots);
-//        }
+       em.createQuery("DELETE FROM AvailabilitySlot a WHERE a.doctor.id = :doctorId")
+                .setParameter("doctorId", id)
+                .executeUpdate();
+        for (AvailabilitySlot slot : availabilitySlots) {
+                em.persist(slot);
+        }
     }
 
     @Override
