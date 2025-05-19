@@ -36,7 +36,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
-        Query nativeQuery = getNativeQuery(specialtyId, 0, null, false);
+        Query nativeQuery = getNativeQuery(specialtyId, 0, null, "name", "asc",  false); //TODO aggalan said not to remove this unused method, therefore i need to pass placeholders as arguments, any objections you may have take them up with him
         nativeQuery.setFirstResult((page-1) * pageSize);
         nativeQuery.setMaxResults(pageSize);
 
@@ -53,7 +53,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public int countBySpecialty(long specialtyId) {
-        Query nativeQuery = getNativeQuery(specialtyId, 0, null, true);
+        Query nativeQuery = getNativeQuery(specialtyId, 0, null, "name", "asc",true);
         return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
@@ -67,7 +67,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
-        Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, false);
+        Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, orderBy, direction, false);
         nativeQuery.setFirstResult((page-1) * pageSize);
         nativeQuery.setMaxResults(pageSize);
 
@@ -81,39 +81,75 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction) {
-        Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, true);
+        Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, orderBy, direction, true);
         return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
 
-    private static StringBuilder getSql(long specialtyId, long coverageId, List<Integer> weekdays, boolean isCount) {
+    private static StringBuilder getSql(
+            long specialtyId,
+            long coverageId,
+            List<Integer> weekdays,
+            String orderBy,
+            String direction,
+            boolean isCount
+    ) {
         StringBuilder sql = new StringBuilder();
+
         if (isCount) {
+            // just count distinct IDs
             sql.append("SELECT COUNT(DISTINCT d.doctor_id) ");
         } else {
-            sql.append("SELECT DISTINCT d.doctor_id ");
+            // return the one column you need
+            sql.append("SELECT d.doctor_id ");
         }
-        sql.append("FROM doctors d " +
-                "JOIN users u ON d.doctor_id = u.id " +
-                "JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id " +
-                "JOIN doctor_coverages dc ON d.doctor_id = dc.doctor_id " +
-                "JOIN doctor_availability a ON d.doctor_id = a.doctor_id " +
-                "WHERE u.is_verified = true ");
+
+        // your joins & filters
+        sql.append("""
+        FROM doctors d
+        JOIN users u            ON d.doctor_id = u.id
+        JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id
+        JOIN doctor_coverages dc ON d.doctor_id = dc.doctor_id
+        JOIN doctor_availability a ON d.doctor_id = a.doctor_id
+        WHERE u.is_verified = true
+        """);
 
         if (specialtyId > 0) {
-            sql.append("AND ds.specialty_id = :specialtyId ");
+            sql.append(" AND ds.specialty_id = :specialtyId");
         }
         if (coverageId > 0) {
-            sql.append("AND dc.coverage_id = :coverageId ");
+            sql.append(" AND dc.coverage_id   = :coverageId");
         }
         if (weekdays != null && !weekdays.isEmpty()) {
-            sql.append("AND a.day_of_week IN (:weekdays) ");
+            sql.append(" AND a.day_of_week   IN (:weekdays)");
         }
+
+        if (!isCount) {
+            // GROUP BY doctor_id to get exactly one row per doctor
+            sql.append(" GROUP BY d.doctor_id")
+                    .append(" ORDER BY ");
+
+            // pick the right aggregate for your ORDER BY
+            switch (orderBy) {
+                case "last_name" -> sql.append("MIN(u.last_name) ");
+                case "rating"    -> sql.append("MIN(d.rating) ");
+                case "email"     -> sql.append("MIN(u.email) ");
+                default          -> sql.append("MIN(u.name) ");
+            }
+
+            // direction
+            if ("desc".equalsIgnoreCase(direction)) {
+                sql.append("DESC");
+            } else {
+                sql.append("ASC");
+            }
+        }
+
         return sql;
     }
 
-    private Query getNativeQuery(long specialtyId, long coverageId, List<Integer> weekdays, boolean isCount) {
-        StringBuilder sql = getSql(specialtyId, coverageId, weekdays, isCount);
+    private Query getNativeQuery(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, boolean isCount) {
+        StringBuilder sql = getSql(specialtyId, coverageId, weekdays, orderBy, direction, isCount);
         Query nativeQuery = em.createNativeQuery(sql.toString());
 
         if (specialtyId > 0) {
