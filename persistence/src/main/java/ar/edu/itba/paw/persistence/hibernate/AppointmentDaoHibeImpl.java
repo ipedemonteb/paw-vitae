@@ -54,7 +54,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
 
         List<?> appointmentIdsRaw = nativeQuery.getResultList();
         List<Long> appointmentIds = appointmentIdsRaw.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toList());
-        TypedQuery<Appointment> query = em.createQuery("FROM Appointment a WHERE a.id IN (:appointmentIds)", Appointment.class);
+        TypedQuery<Appointment> query = em.createQuery("FROM Appointment a WHERE a.id IN (:appointmentIds) order by a.date asc", Appointment.class);
         query.setParameter("appointmentIds", appointmentIds);
 
         return query.getResultList();
@@ -101,7 +101,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         if (isCount) {
             sql.append("SELECT COUNT(DISTINCT a.id) ");
         } else {
-            sql.append("SELECT a.id ");
+            sql.append("SELECT a.id FROM ( SELECT a.id, a.date ");
         }
         sql.append("FROM Appointments a WHERE (a.doctor_id = :userId OR a.patient_id = :userId) ");
 
@@ -136,6 +136,9 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
                     sql.append("AND (a.date < NOW() OR a.status = 'cancelado') ");
                     break;
             }
+        }
+        if (!isCount) {
+            sql.append("ORDER BY a.date ASC ) AS a ");
         }
 
         return sql;

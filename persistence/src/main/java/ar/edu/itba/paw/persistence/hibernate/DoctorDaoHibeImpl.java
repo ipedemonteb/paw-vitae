@@ -65,18 +65,33 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
     }
 
+    private String orderBySwitch(String orderBy) {
+        return switch (orderBy) {
+            case "last_name" -> "d.last_name";
+            case "rating" -> "d.rating";
+            case "email" -> "d.email";
+            default -> "d.name";
+        };
+    }
+
+    private String directionSwitch(String direction) {
+        if (direction.equals("desc")) {
+            return "DESC";
+        }
+        return "ASC";
+    }
+
     @Override
     public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
         Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, orderBy, direction, false);
         nativeQuery.setFirstResult((page-1) * pageSize);
         nativeQuery.setMaxResults(pageSize);
-
         List<?> doctorIdsRaw = nativeQuery.getResultList();
         List<Long> doctorIds = doctorIdsRaw.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toList());
-        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN (:doctorIds)", Doctor.class);
+        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN (:doctorIds) order by " + orderBySwitch(orderBy) + " " + directionSwitch(direction), Doctor.class);
         query.setParameter("doctorIds", doctorIds);
 
-        return getDoctors(orderBy, direction, query);
+        return query.getResultList();
     }
 
     @Override
@@ -162,23 +177,6 @@ public class DoctorDaoHibeImpl implements DoctorDao {
             nativeQuery.setParameter("weekdays", weekdays.stream().filter(w -> w >= 0 && w < 7).collect(Collectors.toList()));
         }
         return nativeQuery;
-    }
-
-    private static List<Doctor> getDoctors(String orderBy, String direction, TypedQuery<Doctor> query) {
-        List<Doctor> doctors = query.getResultList();
-
-        Comparator<Doctor> comparator = switch (orderBy) {
-            case "name" -> Comparator.comparing(Doctor::getName, String.CASE_INSENSITIVE_ORDER);
-            case "last_name" -> Comparator.comparing(Doctor::getLastName, String.CASE_INSENSITIVE_ORDER);
-            case "rating" -> Comparator.comparing(Doctor::getRating, Comparator.nullsLast(Double::compareTo));
-            case "email" -> Comparator.comparing(Doctor::getEmail, String.CASE_INSENSITIVE_ORDER);
-            default -> Comparator.comparing(Doctor::getId);
-        };
-        if ("desc".equalsIgnoreCase(direction)) {
-            comparator = comparator.reversed();
-        }
-        doctors.sort(comparator);
-        return doctors;
     }
 
     @Override
