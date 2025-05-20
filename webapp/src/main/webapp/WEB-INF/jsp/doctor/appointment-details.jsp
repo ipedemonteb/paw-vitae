@@ -161,7 +161,7 @@
                     <div class="files-list">
                         <c:set var="hasPatientFiles" value="false"/>
                         <c:forEach var="file" items="${patientFiles}">
-                            <c:if test="${file.uploader_role == 'patient'}">
+                            <c:if test="${file.uploaderRole == 'patient'}">
                                 <c:set var="hasPatientFiles" value="true"/>
                                 <div class="file-item">
                                     <div class="file-icon">
@@ -271,7 +271,7 @@
                                 <div class="files-list">
                                     <c:set var="hasDoctorFiles" value="false"/>
                                     <c:forEach var="file" items="${doctorFiles}">
-                                        <c:if test="${file.uploader_role == 'doctor'}">
+                                        <c:if test="${file.uploaderRole == 'doctor'}">
                                             <c:set var="hasDoctorFiles" value="true"/>
                                             <div class="file-item">
                                                 <div class="file-icon">
