@@ -123,7 +123,7 @@
                                 <div class="appointment-right">
                                     <div class="patient-info">
                                         <div class="patient-avatar">
-                                            <img src="<c:url value="/image/${appointment.doctor.imageId}"/>" alt="<c:out value="${appointment.doctor.name} ${appointment.doctor.lastName}"/>"/>
+                                            <img src="<c:url value="/image/${empty appointment.doctor.imageId ? -1 : appointment.doctor.imageId}"/>" alt="<c:out value="${appointment.doctor.name} ${appointment.doctor.lastName}"/>"/>
                                         </div>
                                         <div>
                                             <div class="patient-name">
