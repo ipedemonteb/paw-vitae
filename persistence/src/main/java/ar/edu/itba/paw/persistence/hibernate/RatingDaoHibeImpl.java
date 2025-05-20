@@ -60,9 +60,8 @@ public class RatingDaoHibeImpl implements RatingDao {
 
     @Override
     public List<Rating> getFiveTopRatings() {
-        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r ORDER BY r.rating DESC", Rating.class);
+        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.comment <> '' ORDER BY r.rating DESC", Rating.class);
         query.setMaxResults(5);
-        List<Rating> ratings = query.getResultList();
-        return ratings.isEmpty() ? Collections.emptyList() : ratings;
+        return query.getResultList();
     }
 }
