@@ -110,7 +110,7 @@
                 <c:if test="${not empty appointment.doctor}">
                     <div class="doctor-info">
                         <div class="doctor-image">
-                            <img src="<c:url value='/image/${appointment.doctor.imageId}'/>" alt="<c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/> " class="doctor-avatar">
+                            <img src="<c:url value='/image/${empty appointment.doctor.imageId ? -1 : appointment.doctor.imageId}'/>" alt="<c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/> " class="doctor-avatar">
                         </div>
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/> </h3>
