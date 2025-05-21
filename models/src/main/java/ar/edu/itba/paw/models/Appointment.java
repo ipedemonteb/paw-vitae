@@ -36,6 +36,7 @@ public class Appointment {
     @Column
     private String report;
 
+    @Transient
     private Boolean cancellable = true;
 
     public Appointment() {
