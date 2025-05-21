@@ -14,7 +14,6 @@ public class ImageDaoHibeImpl implements ImageDao {
     @PersistenceContext
     private EntityManager em;
 
-
     @Override
     public Images create(byte[] image) {
         final Images images = new Images(image);
