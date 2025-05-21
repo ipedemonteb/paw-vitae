@@ -19,6 +19,18 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
+<jsp:include page="/WEB-INF/jsp/components/modal.jsp">
+    <jsp:param name="id" value="cancelAppointmentModal"/>
+    <jsp:param name="confirm" value="appointment.action.cancel"/>
+    <jsp:param name="title" value="appointment.cancel.title"/>
+    <jsp:param name="message" value="appointment.cancel.message"/>
+    <jsp:param name="actionPath" value="/patient/dashboard/appointment/cancel"/>
+    <jsp:param name="divId" value="cancelModal"/>
+    <jsp:param name="formId" value="cancelForm"/>
+    <jsp:param name="buttonId" value="cancelAppointmentBtn"/>
+    <jsp:param name="buttonClass" value="cancel-appointment"/>
+</jsp:include>
+
 
 
 <main class="main-content">
@@ -375,6 +387,12 @@
                         <i class="fas fa-arrow-left"></i>
                         <span><spring:message code="appointment.details.back" text="Back to My Appointments" /></span>
                     </a>
+                    <c:if test="${appointment.status == 'confirmado' && appointment.cancellable}">
+                        <a class="back-button-cancel cancel-appointment" data-id="${appointment.id}">
+                            <i class="fas fa-times-circle"></i>
+                            <span><spring:message code="appointment.cancel" /></span>
+                        </a>
+                    </c:if>
                 </div>
             </div>
         </div>

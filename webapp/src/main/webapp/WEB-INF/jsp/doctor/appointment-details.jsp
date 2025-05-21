@@ -28,6 +28,18 @@
     <jsp:param name="id" value="${doctor.imageId}" />
 </jsp:include>
 
+<jsp:include page="/WEB-INF/jsp/components/modal.jsp">
+    <jsp:param name="id" value="cancelAppointmentModal"/>
+    <jsp:param name="confirm" value="appointment.action.cancel"/>
+    <jsp:param name="title" value="appointment.cancel.title"/>
+    <jsp:param name="message" value="appointment.cancel.message"/>
+    <jsp:param name="actionPath" value="/doctor/dashboard/appointment/cancel"/>
+    <jsp:param name="divId" value="cancelModal"/>
+    <jsp:param name="formId" value="cancelForm"/>
+    <jsp:param name="buttonId" value="cancelAppointmentBtn"/>
+    <jsp:param name="buttonClass" value="cancel-appointment"/>
+</jsp:include>
+
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
         <i class="fas fa-check"></i>
@@ -423,6 +435,12 @@
                         <i class="fas fa-arrow-left"></i>
                         <span><spring:message code="appointment.details.back"/></span>
                     </a>
+                    <c:if test="${appointment.status == 'confirmado' && appointment.cancellable}">
+                        <a class="back-button-cancel cancel-appointment" data-id="${appointment.id}">
+                            <i class="fas fa-times-circle"></i>
+                            <span><spring:message code="appointment.cancel" /></span>
+                        </a>
+                    </c:if>
                 </div>
             </div>
         </div>
