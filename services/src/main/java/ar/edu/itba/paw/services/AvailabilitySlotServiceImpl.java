@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -81,7 +82,9 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
             AvailabilitySlotForm form = new AvailabilitySlotForm(slot.getDayOfWeek(), slot.getStartTime(), slot.getEndTime());
             availabilitySlots.add(form);
         }
-        return availabilitySlots;
+        return availabilitySlots.stream().sorted(Comparator.comparingInt(AvailabilitySlotForm::getDayOfWeek)
+                        .thenComparing(AvailabilitySlotForm::getStartTime))
+                .toList();
     }
 
     @Override
