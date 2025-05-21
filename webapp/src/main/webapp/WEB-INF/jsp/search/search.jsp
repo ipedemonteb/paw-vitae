@@ -342,7 +342,7 @@
               <div class="doctor-card">
                 <div class="doctor-card-header">
                   <div class="doctor-avatar">
-                    <img src="<c:url value='/image/${doctor.imageId}'/>" alt="<c:out value='${doctor.name} ${doctor.lastName}'/>" class="avatar-img">
+                    <img src="<c:url value='/image/${empty doctor.imageId ? -1 : doctor.imageId}'/>" alt="<c:out value='${doctor.name} ${doctor.lastName}'/>" class="avatar-img">
                   </div>
                   <div class="doctor-rating">
                     <c:if test="${doctor.ratingCount > 0}">
