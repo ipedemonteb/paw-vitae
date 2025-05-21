@@ -48,6 +48,7 @@ public class ImageDaoTest {
         this.jdbcTemplate = new JdbcTemplate(ds);
     }
 
+    @Rollback
     @Test
     public void testCreate() {
         //Preconditions

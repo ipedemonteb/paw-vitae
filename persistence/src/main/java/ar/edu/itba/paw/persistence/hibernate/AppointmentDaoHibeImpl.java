@@ -60,8 +60,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return query.getResultList();
     }
 
-
-
     @Override
     public List<Appointment> getAppointmentsByUserAndDate(long userId, LocalDate date, Integer time) {
         LocalDateTime targetDateTime = LocalDateTime.of(date, LocalTime.of(time, 0));
@@ -74,8 +72,12 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
 
     @Override
     public List<Appointment> getAppointmentsByDate(LocalDate today) {
-        TypedQuery<Appointment> query = em.createQuery("SELECT a FROM Appointment a WHERE DATE(a.date) = :today", Appointment.class);
-        query.setParameter("today", today);
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
+        TypedQuery<Appointment> query = em.createQuery(
+                "SELECT a FROM Appointment a WHERE a.date >= :startOfDay AND a.date <= :endOfDay", Appointment.class);
+        query.setParameter("startOfDay", startOfDay);
+        query.setParameter("endOfDay", endOfDay);
         return query.getResultList();
     }
 
