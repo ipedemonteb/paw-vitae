@@ -30,9 +30,6 @@ public class Doctor extends User {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Appointment> appointments;
-
     @Column(name = "rating")
     private Double rating = 1.0;
 
@@ -40,7 +37,7 @@ public class Doctor extends User {
     private int ratingCount = 0;
 
     @Column(name = "image_id")
-    private Long imageId=-1L;
+    private Long imageId = -1L;
 
     public Doctor() {
         // For Hibernate use
@@ -63,7 +60,7 @@ public class Doctor extends User {
 //        this.ratingCount = ratingCount;
 //    }
 
-    public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified,List<Specialty> specialtyList, List<Coverage> coverageList) {
+    public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified, List<Specialty> specialtyList, List<Coverage> coverageList) {
         super(name, lastName, email, password, phone, language, verified);
         this.imageId = imageId;
         this.specialtyList = specialtyList;
@@ -117,13 +114,5 @@ public class Doctor extends User {
 
     public void setImageId(Long imageId) {
         this.imageId = imageId;
-    }
-
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
     }
 }
