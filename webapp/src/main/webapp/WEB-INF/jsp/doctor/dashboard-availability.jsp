@@ -65,7 +65,7 @@
                             </div>
 
                             <div id="time-slot-inputs">
-                                <c:forEach items="${doctor.availabilitySlots}" var="slot" varStatus="status">
+                                <c:forEach items="${updateAvailabilityForm.availabilitySlots}" var="slot" varStatus="status">
                                     <div class="time-slot-row" id="slot-row-${status.index}">
                                         <div class="day-select">
                                             <label class="time-label"><spring:message code="register.dayOfWeek" /></label>
