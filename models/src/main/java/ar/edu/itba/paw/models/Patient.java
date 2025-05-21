@@ -12,8 +12,7 @@ public class Patient extends User {
     @JoinColumn(name = "coverage_id")
     private Coverage coverage;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Appointment> appointments;
+
 
     public Patient() {
         // For Hibernate use
@@ -38,11 +37,4 @@ public class Patient extends User {
         this.coverage = coverage;
     }
 
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
-    }
 }
