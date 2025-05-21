@@ -28,7 +28,11 @@ public class SpecialtyDaoHibeImpl implements SpecialtyDao {
                 Specialty.class
         );
         query.setParameter("key", name);
-        return Optional.ofNullable(query.getSingleResult());
+        List<Specialty> results = query.getResultList();
+        if (results.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(results.getFirst());
     }
 
     @Override
