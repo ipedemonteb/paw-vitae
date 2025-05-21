@@ -67,11 +67,17 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     private String orderBySwitch(String orderBy) {
         return switch (orderBy) {
-            case "last_name" -> "d.last_name";
-            case "rating" -> "d.rating";
+            case "last_name" -> "d.lastName";
             case "email" -> "d.email";
             default -> "d.name";
         };
+    }
+
+    private String orderbyDirectionString(String orderBy, String direction) {
+        if (orderBy.equals("rating")) { //what this does effectively is divide the rated from the unrated so the rated doctors appear first and correctly ordered
+            return "CASE WHEN d.ratingCount > 0 THEN 0 ELSE 1 END, d.rating " + directionSwitch(direction) + ", d.name ASC";
+        }
+        return orderBySwitch(orderBy) + " " + directionSwitch(direction);
     }
 
     private String directionSwitch(String direction) {
@@ -88,7 +94,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         nativeQuery.setMaxResults(pageSize);
         List<?> doctorIdsRaw = nativeQuery.getResultList();
         List<Long> doctorIds = doctorIdsRaw.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toList());
-        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN (:doctorIds) order by " + orderBySwitch(orderBy) + " " + directionSwitch(direction), Doctor.class);
+        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN (:doctorIds) order by " + orderbyDirectionString(orderBy, direction), Doctor.class);
         query.setParameter("doctorIds", doctorIds);
 
         return query.getResultList();
@@ -140,25 +146,34 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         }
 
         if (!isCount) {
-            // GROUP BY doctor_id to get exactly one row per doctor
+            // … your GROUP BY …
             sql.append(" GROUP BY d.doctor_id")
                     .append(" ORDER BY ");
 
-            // pick the right aggregate for your ORDER BY
-            switch (orderBy) {
-                case "last_name" -> sql.append("MIN(u.last_name) ");
-                case "rating"    -> sql.append("MIN(d.rating) ");
-                case "email"     -> sql.append("MIN(u.email) ");
-                default          -> sql.append("MIN(u.name) ");
-            }
-
-            // direction
-            if ("desc".equalsIgnoreCase(direction)) {
-                sql.append("DESC");
+            if ("rating".equals(orderBy)) {
+                // 1) bucket: rated doctors (rating_count>0) come first
+                sql.append("CASE WHEN MAX(d.rating_count) > 0 THEN 0 ELSE 1 END");
+                // 2) within bucket 0, sort by rating
+                sql.append(", MIN(d.rating) ");
+                if ("desc".equalsIgnoreCase(direction)) {
+                    sql.append("DESC");
+                } else {
+                    sql.append("ASC");
+                }
+                // 3) tie-breaker (and sort for bucket 1)
+                sql.append(", MIN(u.name) ASC");
             } else {
-                sql.append("ASC");
+                // keep your existing switch for last_name, email, name, etc.
+                switch (orderBy) {
+                    case "last_name" -> sql.append("MIN(u.last_name) ");
+                    case "email"     -> sql.append("MIN(u.email) ");
+                    default          -> sql.append("MIN(u.name) ");
+                }
+                sql.append(" ")
+                        .append("desc".equalsIgnoreCase(direction) ? "DESC" : "ASC");
             }
         }
+
 
         return sql;
     }
