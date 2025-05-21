@@ -92,8 +92,8 @@ public class MailServiceImpl implements MailService {
             doctorHelper.setTo(doctor.getEmail());
             patientHelper.setTo(patient.getEmail());
 
-            doctorHelper.setSubject(doctorSubject);
-            patientHelper.setSubject(patientSubject);
+            doctorHelper.setSubject(doctorSubject + " #" + appointment.getId());
+            patientHelper.setSubject(patientSubject + " #" + appointment.getId());
 
             doctorHelper.setText(htmlContentDoctor, true);
             patientHelper.setText(htmlContentPatient, true);
