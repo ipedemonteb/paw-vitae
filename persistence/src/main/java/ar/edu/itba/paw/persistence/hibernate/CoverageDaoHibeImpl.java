@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence.hibernate;
 
 import ar.edu.itba.paw.interfacePersistence.CoverageDao;
 import ar.edu.itba.paw.models.Coverage;
+import ar.edu.itba.paw.models.Specialty;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +38,11 @@ public class CoverageDaoHibeImpl implements CoverageDao {
                 Coverage.class
         );
         query.setParameter("name", name);
-        return Optional.ofNullable(query.getSingleResult());
+        List<Coverage> results = query.getResultList();
+        if (results.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(results.getFirst());
     }
 
     @Override
