@@ -149,6 +149,7 @@
                                     <div class="image-preview-thumbnail">
                                     </div>
                                     <div class="image-preview-info">
+                                        <img id="image-preview" class="image-preview-thumbnail"  alt="image" src=""/>
                                         <div id="image-preview-name" class="image-preview-name"></div>
                                         <div id="image-preview-details" class="image-preview-details"></div>
                                     </div>

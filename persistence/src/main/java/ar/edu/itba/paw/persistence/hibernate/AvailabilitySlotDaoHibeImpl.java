@@ -33,8 +33,8 @@ public class AvailabilitySlotDaoHibeImpl implements AvailabilitySlotsDao {
 
     @Override
     public List<AvailabilitySlot> getAvailabilityByDoctorId(long doctorId) {
-        return em.createQuery("FROM AvailabilitySlot a WHERE a.doctor.id = :doctorId", AvailabilitySlot.class)
-                .setParameter("doctorId", doctorId)
+      return em.createQuery("FROM AvailabilitySlot a WHERE a.doctor.id = :doctorId ORDER BY a.id.dayOfWeek, a.id.startTime",
+                 AvailabilitySlot.class).setParameter("doctorId", doctorId)
                 .getResultList();
     }
 }
