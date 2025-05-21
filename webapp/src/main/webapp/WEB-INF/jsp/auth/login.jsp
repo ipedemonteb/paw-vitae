@@ -171,7 +171,15 @@
         </form>
 
         <div class="form-footer">
-          <p><spring:message code="login.noAccount" /> <a href="<c:url value='/register' />"><spring:message code="login.register" /></a></p>
+          <p>
+            <spring:message code="login.noAccount" />
+            <br/>
+            <br/>
+            <a href="<c:url value='/register' />"><spring:message code="login.register" /></a>
+            <br/>
+            <a href="<c:url value='/register-patient' />"><spring:message code="login.registerPatient" /></a>
+          </p>
+
         </div>
       </div>
     </div>
