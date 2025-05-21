@@ -100,8 +100,8 @@
                         </span>
                         <div class="status-display">
                         <span class="specialty-value-appointment status-${appointment.status}">
-                            <spring:message code="appointment.status.${appointment.status}"
-                                            text="${appointment.status}"/>
+                            <spring:message code="${appointment.status}"
+                                            />
                         </span>
                         </div>
                     </div>

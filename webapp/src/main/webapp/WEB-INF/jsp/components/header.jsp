@@ -116,7 +116,7 @@
             </span>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_DOCTOR')">
-          <img src="<c:url value='/image/${param.id}' />" alt="Doctor Avatar" class="doctor-avatar-small" />
+          <img src="<c:url value='/image/${empty param.id ? -1 : param.id}' />" alt="Doctor Avatar" class="doctor-avatar-small" />
         </sec:authorize>
             <span class="user-name">
         <sec:authentication property="principal.username" var="username" />
