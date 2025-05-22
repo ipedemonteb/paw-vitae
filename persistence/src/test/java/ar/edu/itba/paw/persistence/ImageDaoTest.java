@@ -56,6 +56,7 @@ public class ImageDaoTest {
 
         //Exercise
         Images createdImage = imageDao.create(image);
+        em.flush();
 
         //Postconditions
         assertNotNull(createdImage);

@@ -30,19 +30,19 @@
 //    private static final AppointmentFile APPOINTMENT_FILE = new AppointmentFile(
 //            "testFile",
 //            new byte[]{1, 2, 3},
-//            FILE_ID,
 //            "doctor",
 //            APPOINTMENT_ID
 //    );
+//
 //    private static final Appointment APPOINTMENT = new Appointment(
 //            LocalDateTime.now(),
 //            "Confirmado",
 //            "Consulta",
 //            APPOINTMENT_ID,
 //            new Specialty(3L, "Cardiology"),
-//            new Doctor("John", 2L, "Doe", "john@test.com", "hashedpassword", "123456789", "es",
+//            new Doctor("John", "Doe", "john@test.com", "hashedpassword", "123456789", "es",
 //                    1L, true),
-//            new Patient("Jane", 1L, "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
+//            new Patient("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
 //                    new Coverage(1L, "OSDE"), true),
 //            "Report"
 //    );
