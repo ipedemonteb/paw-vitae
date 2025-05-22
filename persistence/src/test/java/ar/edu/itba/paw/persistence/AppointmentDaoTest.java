@@ -57,7 +57,6 @@ public class AppointmentDaoTest {
                 .usingGeneratedKeyColumns("id");
     }
 
-    //@TODO: CHECK IF LEGAL
     @Rollback
     @Test
     public void testCreate() {
@@ -72,6 +71,7 @@ public class AppointmentDaoTest {
 
         //Exercise
         Appointment appointment = appointmentDao.create(dateTime, status, reason, managedSpecialty, managedDoctor, managedPatient, report);
+        em.flush();
 
         //Postconditions
         assertNotNull(appointment);
