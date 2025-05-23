@@ -45,7 +45,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         return doctorOffices;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public List<DoctorOffice> transformToDoctorOffice(Doctor doctor, List<DoctorOfficeForm> officeForms) {
         List<DoctorOffice> doctorOffices = new ArrayList<>();

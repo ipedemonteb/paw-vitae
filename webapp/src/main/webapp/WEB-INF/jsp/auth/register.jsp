@@ -525,6 +525,19 @@
     ];
     </c:if>
 
+
+    <c:if test="${not empty registerForm.doctorOfficeForm}">
+    window.existingOffices = [
+        <c:forEach items="${registerForm.doctorOfficeForm}" var="office" varStatus="status">
+        {
+            index: ${status.index},
+            name: "<c:out value='${office.officeName}'/>",
+            neighborhoodId: ${office.neighborhoodId},
+        }<c:if test="${!status.last}">, </c:if>
+        </c:forEach>
+    ];
+    </c:if>
+
     const neighborhoods = [<c:forEach items="${neighborhoodList}" var="neighborhood" varStatus="status">
         {
             id: "${neighborhood.id}",
