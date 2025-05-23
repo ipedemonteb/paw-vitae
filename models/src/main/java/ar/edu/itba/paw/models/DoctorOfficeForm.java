@@ -32,7 +32,7 @@ public class DoctorOfficeForm {
         DoctorOffice doctorOffice = new DoctorOffice();
         doctorOffice.setDoctor(doctor);
         doctorOffice.setNeighborhood(neighborhood);
-        doctorOffice.setId(new DoctorOfficeId(doctor.getId(), neighborhood.getId(), officeName));
+        doctorOffice.setId(new DoctorOfficeId(doctor.getId(), neighborhoodId, officeName));
         return doctorOffice;
     }
 
