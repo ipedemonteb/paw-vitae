@@ -17,6 +17,7 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
 
     @Override
     public DoctorOffice create(DoctorOffice doctorOffice) {
+        doctorOffice.setNeighborhood(em.getReference(Neighborhood.class, doctorOffice.getNeighborhood().getId()));
         em.persist(doctorOffice);
         return doctorOffice;
     }

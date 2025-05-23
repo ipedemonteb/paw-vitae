@@ -22,17 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
         addOfficeBtn.addEventListener("click", addNewOffice);
     }
 
-    const originalValidateForm = validateForm;
-    validateForm = function() {
-        if (!originalValidateForm()) {
-            return false;
-        }
-
-        createDoctorOfficeHiddenInputs();
-
-        return true;
-    };
-
     const form = document.querySelector(".register-form")
     const submitButton = document.getElementById("registerButton")
 
@@ -46,6 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!validateForm()) {
                 return false
             }
+
+            createDoctorOfficeHiddenInputs();
 
             // Set loading state
             isFormSubmitting = true
@@ -155,6 +146,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Initialize an office entry
 function initializeOffice(index) {
+
+    if (window.existingOffices && window.existingOffices.length > 0 && index === 0) {
+        officeCounter = 0;
+        renderOffices();
+    } else if (index === 0) {
+        doctorOffices.push({
+            index: index,
+            name: "",
+            neighborhoodId: ""
+        });
+    }
+
     // Add event listeners for the neighborhood search
     const searchInput = document.getElementById(`office-neighborhood-search-${index}`);
     if (searchInput) {
@@ -178,15 +181,6 @@ function initializeOffice(index) {
         });
     }
 
-    // Add to doctorOffices array if not already there
-    if (!doctorOffices.find(office => office.index === index)) {
-        doctorOffices.push({
-            index: index,
-            name: "",
-            neighborhoodId: ""
-        });
-    }
-
     // Add click outside listener to close search results
     document.addEventListener("click", function(e) {
         if (!e.target.closest(`#office-neighborhood-search-${index}`) &&
@@ -197,6 +191,96 @@ function initializeOffice(index) {
             }
         }
     });
+}
+
+function renderOffices() {
+    const container = document.getElementById("doctor-offices-container");
+    if (!container) return;
+
+    // Clear existing offices
+    container.innerHTML = "";
+
+    // Render each office
+    window.existingOffices.forEach(office => {
+        const officeEntry = document.createElement("div");
+        officeEntry.className = "office-entry";
+        officeEntry.dataset.index = office.index;
+
+        officeEntry.innerHTML = `
+        <div class="form-row">
+            <div class="form-group">
+                <label for="office-name-${office.index}" class="form-label required-field">${window.messages?.officeName || "Office Name"}</label>
+                <div class="input-wrapper">
+                    <input type="text" id="office-name-${office.index}" class="form-control office-name" 
+                           placeholder="${window.messages?.officeNamePlaceholder || "Enter office name"}" value="${office.name}" required/>
+                    <div class="validation-icon valid">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="validation-icon error">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                </div>
+                <div id="office-name-${office.index}-validation-message" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="office-neighborhood-search-${office.index}" class="form-label required-field">${window.messages?.neighborhood || "Neighborhood"}</label>
+                <div class="input-wrapper">
+                    <input type="text" id="office-neighborhood-search-${office.index}" class="form-control office-neighborhood-search" 
+                           placeholder="${window.messages?.neighborhoodPlaceholder || "Search neighborhood"}" value="${neighborhoods.find(n => n.id === office.neighborhoodId.toString()).name}" autocomplete="off" required/>
+                    <input type="hidden" value="${office.neighborhoodId}" id="office-neighborhood-id-${office.index}" class="office-neighborhood-id"/>
+                    <div class="validation-icon valid">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="validation-icon error">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                </div>
+                <div id="office-neighborhood-results-${office.index}" class="search-results-container" style="display: none;">
+                    <!-- Search results will be populated here -->
+                </div>
+                <div id="office-neighborhood-${office.index}-validation-message" class="error-message"></div>
+            </div>
+            <div class="office-actions">
+                <button type="button" class="btn-remove office-remove" onclick="removeOffice(${office.index})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    `;
+
+        doctorOffices.push({
+            index: office.index,
+            name: `${office.name}`,
+            neighborhoodId: office.neighborhoodId
+        });
+
+        officeEntry.style.opacity = "0";
+        officeEntry.style.transform = "translateY(10px)";
+        container.appendChild(officeEntry);
+
+        // Trigger animation
+        setTimeout(() => {
+            officeEntry.style.opacity = "1";
+            officeEntry.style.transform = "translateY(0)";
+        }, 10);
+
+        // Increment counter
+        officeCounter++;
+
+        // Initialize the new office
+        initializeOffice(officeCounter);
+
+        // Show remove button for the first office if we have more than one
+        if (officeCounter === 1) {
+            const firstRemoveBtn = document.querySelector(".office-remove");
+            if (firstRemoveBtn) {
+                firstRemoveBtn.style.display = "block";
+            }
+        }
+
+        // Update validation
+        updateNextButtonState(2);
+    })
 }
 
 // Add a new office
@@ -281,6 +365,7 @@ function addNewOffice() {
 
     // Remove server error if any
     removeContainerServerError("doctorOfficeForm");
+
 }
 
 // Remove an office
@@ -502,22 +587,37 @@ function createDoctorOfficeHiddenInputs() {
         input.parentNode.removeChild(input);
     });
 
+    const officeNameInputs = document.querySelectorAll(".office-name");
+    const officeNeighborhoodInputs = document.querySelectorAll(".office-neighborhood-id");
+
+    // add to doctorOffices the added offices
+    for (let i = 0; i < officeNameInputs.length; i++) {
+        const name = officeNameInputs[i].value;
+        const neighborhoodId = officeNeighborhoodInputs[i].value;
+        doctorOffices.push({
+            index: i,
+            name: name,
+            neighborhoodId: neighborhoodId
+        });
+    }
+
     // Create new hidden inputs for each office
-    doctorOffices.forEach((office, index) => {
+    doctorOffices.forEach(office => {
         // Skip invalid offices
+
         if (!office.name || !office.neighborhoodId) return;
 
         // Create neighborhood ID input
         const neighborhoodInput = document.createElement("input");
         neighborhoodInput.type = "hidden";
-        neighborhoodInput.name = `doctorOfficeForm[${index}].neighborhoodId`;
+        neighborhoodInput.name = `doctorOfficeForm[${office.index}].neighborhoodId`;
         neighborhoodInput.value = office.neighborhoodId;
         form.appendChild(neighborhoodInput);
 
         // Create office name input
         const nameInput = document.createElement("input");
         nameInput.type = "hidden";
-        nameInput.name = `doctorOfficeForm[${index}].officeName`;
+        nameInput.name = `doctorOfficeForm[${office.index}].officeName`;
         nameInput.value = office.name;
         form.appendChild(nameInput);
     });
