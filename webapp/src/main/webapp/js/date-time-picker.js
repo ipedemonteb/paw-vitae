@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const isUnavailable = unavailabilitySlots.some(slot => {
                 const startDate = new Date(slot.startDate);
                 const endDate = new Date(slot.endDate);
-                return date >= startDate && date <= endDate;
+                return date >= startDate && date < new Date(endDate.setDate(endDate.getDate() + 1));
             });
 
             if(isUnavailable){
