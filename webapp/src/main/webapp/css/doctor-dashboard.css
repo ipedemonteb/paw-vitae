@@ -2045,3 +2045,19 @@ body {
     margin-right: 10px;
     font-size: 16px;
 }
+
+.date-range-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-display-formatted {
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.date-separator {
+    color: #718096;
+    font-weight: 400;
+}
