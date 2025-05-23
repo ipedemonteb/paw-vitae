@@ -16,9 +16,7 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
     private EntityManager em;
 
     @Override
-    public DoctorOffice create(DoctorOffice doctorOffice) { //Do not doubt what is going on in here, the all knowing AI has fixed everything, you change this and it blows up. You have been warned
-        doctorOffice.setNeighborhood(em.getReference(Neighborhood.class, doctorOffice.getNeighborhood().getId()));
-        doctorOffice.setDoctor(em.getReference(Doctor.class, doctorOffice.getDoctor().getId()));
+    public DoctorOffice create(DoctorOffice doctorOffice) {
         em.persist(doctorOffice);
         return doctorOffice;
     }
