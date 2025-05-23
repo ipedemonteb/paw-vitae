@@ -102,3 +102,11 @@ CREATE TABLE IF NOT EXISTS appointment_files (
     file_data BYTEA NOT NULL,
     FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
     );
+
+CREATE TABLE IF NOT EXISTS Doctor_Unavailability (
+                                                     doctor_id INT NOT NULL,
+                                                     start_date DATE NOT NULL,
+                                                     end_date DATE NOT NULL,
+                                                     PRIMARY KEY (doctor_id, start_date, end_date),
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
+    );
