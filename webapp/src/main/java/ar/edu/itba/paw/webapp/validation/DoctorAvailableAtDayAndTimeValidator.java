@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.validation;
 
 import ar.edu.itba.paw.interfaceServices.AvailabilitySlotsService;
+import ar.edu.itba.paw.interfaceServices.UnavailabilitySlotsService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
@@ -13,10 +14,12 @@ public class DoctorAvailableAtDayAndTimeValidator implements ConstraintValidator
     private String dateFieldName;
     private String startTimeFieldName;
     private final AvailabilitySlotsService availabilitySlotsService;
+    private final UnavailabilitySlotsService unavailabilitySlotsService;
 
     @Autowired
-    public DoctorAvailableAtDayAndTimeValidator(AvailabilitySlotsService availabilitySlotsService) {
+    public DoctorAvailableAtDayAndTimeValidator(AvailabilitySlotsService availabilitySlotsService, UnavailabilitySlotsService unavailabilitySlotsService) {
         this.availabilitySlotsService = availabilitySlotsService;
+        this.unavailabilitySlotsService = unavailabilitySlotsService;;
     }
 
     @Override
@@ -44,8 +47,8 @@ public class DoctorAvailableAtDayAndTimeValidator implements ConstraintValidator
             if (date == null || startTime == null) {
                 return true;
             }
-
-            return availabilitySlotsService.isAvailableAtDateAndTime(doctorId, date, startTime);
+            return availabilitySlotsService.isAvailableAtDateAndTime(doctorId, date, startTime)
+                    && !unavailabilitySlotsService.isUnavailableAtDate(doctorId, date);
         }catch (Exception e) {
             return false;
         }
