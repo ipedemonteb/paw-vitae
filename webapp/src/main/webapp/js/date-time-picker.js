@@ -155,7 +155,16 @@ document.addEventListener("DOMContentLoaded", () => {
             let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() + 6) % 7));
             let flag = true;
 
-            if (available !== undefined && available.length > 0) {
+            const isUnavailable = unavailabilitySlots.some(slot => {
+                const startDate = new Date(slot.startDate);
+                const endDate = new Date(slot.endDate);
+                return date >= startDate && date <= endDate;
+            });
+
+            if(isUnavailable){
+                dayElement.classList.add("disabled");
+            }
+            else if (available !== undefined && available.length > 0) {
                 const totalSlots = available.reduce((sum, slot) => sum + slot.slots, 0);
                 // flag = FutureAppointments.some(entry => entry.hours.length === totalSlots && entry.date === formattedDate);
                 if (isToday(date)) {

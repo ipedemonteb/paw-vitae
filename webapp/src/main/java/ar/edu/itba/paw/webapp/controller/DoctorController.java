@@ -27,9 +27,10 @@ public class DoctorController {
     private final AppointmentFileService appointmentFileService;
     private final RatingService ratingService;
     private final AvailabilitySlotsService availabilitySlotsService;
+    private final UnavailabilitySlotsService unavailabilitySlotsService;
 
     @Autowired
-    public DoctorController(DoctorService doctorService, AppointmentService appointmentService, CoverageService coverageService, SpecialtyService specialtyService, AppointmentFileService appointmentFileService, RatingService ratingService, AvailabilitySlotsService availabilitySlotsService) {
+    public DoctorController(DoctorService doctorService, AppointmentService appointmentService, CoverageService coverageService, SpecialtyService specialtyService, AppointmentFileService appointmentFileService, RatingService ratingService, AvailabilitySlotsService availabilitySlotsService, UnavailabilitySlotsService unavailabilitySlotsService) {
         this.doctorService = doctorService;
         this.appointmentService = appointmentService;
         this.coverageService = coverageService;
@@ -37,7 +38,7 @@ public class DoctorController {
         this.appointmentFileService = appointmentFileService;
         this.ratingService = ratingService;
         this.availabilitySlotsService = availabilitySlotsService;
-
+        this.unavailabilitySlotsService = unavailabilitySlotsService;
     }
 
     @RequestMapping(value = "/doctor/dashboard")
@@ -90,10 +91,12 @@ public class DoctorController {
 
     @RequestMapping(value = "/doctor/dashboard/availability")
     public ModelAndView getAvailability(@ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm updateAvailabilityForm,
-                                        @ModelAttribute("loggedUser") final Doctor doctor
+                                        @ModelAttribute("loggedUser") final Doctor doctor,
+                                        @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm updateUnavailabilityForm
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-availability");
         updateAvailabilityForm.setAvailabilitySlots(availabilitySlotsService.getDoctorAvailabilitySlots(doctor));
+        updateUnavailabilityForm.setUnavailabilitySlots(unavailabilitySlotsService.getDoctorUnavailabilitySlots(doctor));
         mav.addObject("doctor", doctor);
         return mav;
     }
@@ -133,16 +136,36 @@ public class DoctorController {
     @RequestMapping(value = "/doctor/dashboard/availability/update", method = RequestMethod.POST)
     public ModelAndView updateAvailability(
             @Valid @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm form,
-            BindingResult errors,
+            BindingResult availabilityErrors,
             @ModelAttribute("loggedUser") final Doctor doctor
     ) {
-
-        if (errors.hasErrors()) {
-            return getAvailability(form, doctor);
+        if (availabilityErrors.hasErrors()) {
+            UpdateUnavailabilityForm unavailabilityForm = new UpdateUnavailabilityForm();
+            unavailabilityForm.setUnavailabilitySlots(unavailabilitySlotsService.getDoctorUnavailabilitySlots(doctor));
+            return getAvailability(form, doctor, unavailabilityForm); // Or however you want to rehydrate the model
         }
+
         availabilitySlotsService.updateDoctorAvailability(doctor, form.getAvailabilitySlots());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
+
+
+    @RequestMapping(value = "/doctor/dashboard/unavailability/update", method = RequestMethod.POST)
+    public ModelAndView updateUnavailability(
+            @Valid @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm unavailabilityForm,
+            BindingResult unavailabilityErrors,
+            @ModelAttribute("loggedUser") final Doctor doctor
+    ) {
+        if (unavailabilityErrors.hasErrors()) {
+            UpdateAvailabilityForm availabilityForm = new UpdateAvailabilityForm();
+            availabilityForm.setAvailabilitySlots(availabilitySlotsService.getDoctorAvailabilitySlots(doctor));
+            return getAvailability(availabilityForm, doctor, unavailabilityForm);
+        }
+
+        unavailabilitySlotsService.updateDoctorUnavailability(doctor, unavailabilityForm.getUnavailabilitySlots());
+        return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
+    }
+
 
     @RequestMapping(value = "doctor/dashboard/appointment-details/{id}", method = RequestMethod.GET)
     public ModelAndView doctorAppointmentDetails(

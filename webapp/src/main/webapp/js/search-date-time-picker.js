@@ -1,3 +1,6 @@
+
+//TODO: ERASE THIS JS FILE
+
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize date pickers for each doctor
     const doctorCards = document.querySelectorAll('.doctor-card');

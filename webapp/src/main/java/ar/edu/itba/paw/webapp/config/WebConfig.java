@@ -18,6 +18,8 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.format.Formatter;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -55,7 +57,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -247,6 +251,23 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
 
         factoryBean.setJpaProperties(properties);
         return factoryBean;
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addFormatter(new LocalDateFormatter());
+    }
+
+    private static class LocalDateFormatter implements Formatter<LocalDate> {
+        @Override
+        public LocalDate parse(String text, Locale locale) {
+            return LocalDate.parse(text);
+        }
+
+        @Override
+        public String print(LocalDate object, Locale locale) {
+            return object.toString();
+        }
     }
 }
 

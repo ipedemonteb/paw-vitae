@@ -67,6 +67,7 @@ public class RatingDaoTest {
 
         // Exercise
         Rating rating = ratingDao.create(score, mangedDoctor, mangedPatient, mangedAppointment, comment);
+        em.flush();
 
         //Postconditions
         assertNotNull(rating);

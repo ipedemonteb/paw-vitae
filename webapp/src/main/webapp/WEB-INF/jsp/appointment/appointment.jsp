@@ -249,6 +249,15 @@
     contextPath = "${pageContext.request.contextPath}";
 
 
+    const unavailabilitySlots = [
+        <c:forEach var="slot" items="${doctor.unavailabilitySlots}" varStatus="status">
+        {
+            startDate: "${slot.startDate}",
+            endDate: "${slot.endDate}"
+        }<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    ];
+
     const availabilitySlots = [
         <c:forEach var="slot" items="${doctor.availabilitySlots}" varStatus="status">
         {

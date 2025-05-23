@@ -37,6 +37,9 @@ public class CoverageDaoTest {
     private static final String COVERAGE_NAME_1 = "Coverage A";
     private static final String COVERAGE_NAME_2 = "Coverage B";
 
+    @PersistenceContext
+    private EntityManager em;
+
     @Autowired
     private DataSource ds;
 
@@ -53,6 +56,7 @@ public class CoverageDaoTest {
 
         //Exercise
         Coverage test_Coverage = coverageDao.create(testCoverageName);
+        em.flush();
 
         //Postconditions
         assertNotNull(test_Coverage);

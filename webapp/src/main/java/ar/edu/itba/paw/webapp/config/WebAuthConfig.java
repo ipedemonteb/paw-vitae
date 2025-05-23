@@ -70,6 +70,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("doctor/dashboard/appointment/cancel").access("@accessHandler.canHandleAppointment(authentication, request.getParameter('appointmentId')) and hasRole('DOCTOR')")
                 .antMatchers( "patient/dashboard/appointment/cancel").access("@accessHandler.canHandleAppointment(authentication, request.getParameter('appointmentId')) and hasRole('PATIENT')")
                 .antMatchers("/appointment/confirmation/{id}").access("hasRole('PATIENT') and @accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers("/appointment").access("hasRole('PATIENT') ")
                 .antMatchers("/doctor/**").hasRole("DOCTOR")
                 .antMatchers("/patient/**").hasRole("PATIENT")
                 .antMatchers("/appointment/*/file/*").authenticated()
