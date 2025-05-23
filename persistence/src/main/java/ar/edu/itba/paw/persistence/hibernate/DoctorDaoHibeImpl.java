@@ -205,7 +205,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public Optional<Doctor> getByResetToken(String token) {
-        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.resetToken = :token", Doctor.class);
+        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.resetPasswordToken = :token", Doctor.class);
         query.setParameter("token", token);
         List<Doctor> result = query.getResultList();
         return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());

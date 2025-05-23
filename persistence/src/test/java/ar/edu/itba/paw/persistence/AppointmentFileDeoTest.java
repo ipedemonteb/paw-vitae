@@ -60,6 +60,7 @@ public class AppointmentFileDeoTest {
 
         //Exercise
         AppointmentFile createdFile = fileDao.create(fileName, fileData, uploaderRole, managedAppointment);
+        em.flush();
 
         //Postconditions
         assertNotNull(createdFile);
