@@ -133,10 +133,17 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="appointment-reason">
-                                        <div class="reason-label"><spring:message code="appointment.reason" />:</div>
-                                        <div class="reason-text"><c:out value="${appointment.reason}" /></div>
-                                    </div>
+                                    <c:if test="${not empty appointment.reason}">
+                                        <div class="appointment-reason">
+                                            <div class="reason-label"><spring:message code="appointment.reason" />:</div>
+                                            <div class="reason-text"><c:out value="${appointment.reason}" /></div>
+                                        </div>
+                                    </c:if>
+                                    <c:if test="${empty appointment.reason}">
+                                        <div class="appointment-reason">
+                                            <div class="reason-text"><spring:message code="appointment.no.reason" /></div>
+                                        </div>
+                                    </c:if>
                                     <div class="appointment-specialty">
                                         <span class="specialty-badge">
                                             <spring:message code="${appointment.specialty.key}" />
