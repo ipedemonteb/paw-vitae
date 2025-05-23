@@ -43,11 +43,11 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
         LOGGER.debug("Creating rating with rating: {}, doctorId: {}, patientId: {}, appointmentId: {}, comment: {}", rating, doctorId, patientId, appointmentId, comment);
-        Rating rating_aux = ratingDao.create(rating, doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new),patientService.getById(patientId).orElseThrow(UserNotFoundException::new),appointmentService.getById(appointmentId).orElseThrow(AppointmentNotFoundException::new), comment);
+        Doctor doctor = doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new);
+        Patient patient = patientService.getById(patientId).orElseThrow(UserNotFoundException::new);
+        Appointment appointment = appointmentService.getById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
+        Rating rating_aux = ratingDao.create(rating, doctor, patient, appointment, comment);
         doctorService.UpdateDoctorRating(doctorId, rating_aux.getRating());
-        Doctor doctor = doctorService.getById(doctorId).orElseThrow(IllegalArgumentException::new);
-        Patient patient = patientService.getById(patientId).orElseThrow(IllegalArgumentException::new);
-        Appointment appointment = appointmentService.getById(appointmentId).orElseThrow(IllegalArgumentException::new);
         mailService.sendRatingMail(doctor, patient, appointment, rating_aux.getRating(), comment);
         LOGGER.info("Rating created with id: {} for doctor with id {} by patient with id {}", rating_aux.getId(), doctorId, patientId);
         return rating_aux;
