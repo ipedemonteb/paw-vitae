@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -38,5 +39,15 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
                         UnavailabilitySlot.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
+    }
+
+    @Override
+    public boolean isUnavailableAtDate(long doctorId, LocalDate date) {
+        Long count = em.createQuery(
+                        "SELECT COUNT(u) FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId AND :date BETWEEN u.id.startDate AND u.id.endDate", Long.class)
+                .setParameter("doctorId", doctorId)
+                .setParameter("date", date)
+                .getSingleResult();
+        return count > 0;
     }
 }
