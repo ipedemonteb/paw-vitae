@@ -1830,3 +1830,201 @@ body {
     color: #777;
     margin-left: 2px;
 }
+
+/* Date Picker Styles */
+.date-picker-css {
+    --primary-color: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-light: #93c5fd;
+    --text-color: #1e293b;
+    --text-light: #64748b;
+    --background-light: #f8fafc;
+    --white: #ffffff;
+    --border-radius: 8px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --transition: all 0.3s ease;
+}
+
+.date-picker-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.date-picker-container .form-group {
+    margin-bottom: 0.5rem;
+}
+
+.date-picker-container .form-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.date-picker-container input[type="date"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #e2e8f0;
+    background-color: var(--white);
+    font-size: 0.95rem;
+    color: var(--text-color);
+    transition: var(--transition);
+    font-family: "Poppins", sans-serif;
+}
+
+.date-picker-container input[type="date"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Unavailability Dates Styles */
+.unavailability-section {
+    margin-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1.5rem;
+}
+
+.subsection-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.subsection-title i {
+    color: var(--primary-color);
+}
+
+.unavailability-dates-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.unavailability-date-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background-color: var(--background-light);
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--primary-color);
+    transition: var(--transition);
+    position: relative;
+}
+
+.unavailability-date-row:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-sm);
+}
+
+.unavailability-date-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.date-range i {
+    color: var(--primary-color);
+}
+
+.btn-remove-unavailability {
+    background-color: transparent;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: var(--transition);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.btn-remove-unavailability:hover {
+    color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Add Unavailability Button */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1rem;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    gap: 0.5rem;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary i {
+    font-size: 0.9rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .tab-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+
+    .unavailability-date-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding-right: 3rem;
+    }
+
+    .btn-remove-unavailability {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .date-picker-container {
+        gap: 0.75rem;
+    }
+
+    .date-range {
+        font-size: 0.85rem;
+    }
+}

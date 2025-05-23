@@ -4,8 +4,7 @@ VALUES
     (2, 'Jane', 'Smith', 'jane@example.com', 'hashedpassword', '987654321', 'es', 'VERIFTOKEN2', 'RESTOKEN2', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP)),
     (3, 'Michael', 'Johnson', 'michael@example.com', 'hashedpassword', '111111111', 'en', 'VERIFTOKEN3', 'RESTOKEN3', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP)),
     (4, 'Emily', 'Davis', 'emily@example.com', 'hashedpassword', '333333333', 'es', 'VERIFTOKEN4', 'RESTOKEN4', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP)),
-    (5, 'Robert', 'Brown', 'robert@example.com', 'hashedpassword', '444444444', 'en', 'VERIFTOKEN5', 'RESTOKEN5', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP)),
-    (6, 'Linda', 'Wilson', 'linda@example.com', 'hashedpassword', '555555555', 'es', 'VERIFTOKEN6', 'RESTOKEN6', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP));
+    (5, 'Robert', 'Brown', 'robert@example.com', 'hashedpassword', '444444444', 'en', 'VERIFTOKEN5', 'RESTOKEN5', true, DATEADD('DAY', 30, CURRENT_TIMESTAMP));
 
 INSERT INTO Coverages (id, coverage_name)
 VALUES (1, 'Coverage A'), (2, 'Coverage B');
@@ -79,10 +78,10 @@ INSERT INTO appointment_files (id, appointment_id, uploader_role, file_name, fil
 VALUES (1, 1, 'doctor', 'informe.pdf', X'0102030405');
 
 
--- ALTER SEQUENCE users_id_seq RESTART WITH 5;
--- ALTER SEQUENCE coverages_id_seq RESTART WITH 3;
--- ALTER SEQUENCE specialties_id_seq RESTART WITH 4;
--- ALTER SEQUENCE appointments_id_seq RESTART WITH 11;
--- ALTER SEQUENCE ratings_id_seq RESTART WITH 10;
--- ALTER SEQUENCE appointment_files_id_seq RESTART WITH 2;
--- ALTER SEQUENCE images_id_seq RESTART WITH 2;
+ALTER SEQUENCE users_id_seq RESTART WITH 6;
+ALTER SEQUENCE coverages_id_seq RESTART WITH 3;
+ALTER SEQUENCE specialties_id_seq RESTART WITH 5;
+ALTER SEQUENCE appointments_id_seq RESTART WITH 11;
+ALTER SEQUENCE ratings_id_seq RESTART WITH 10;
+ALTER SEQUENCE appointment_files_id_seq RESTART WITH 2;
+ALTER SEQUENCE images_id_seq RESTART WITH 2;

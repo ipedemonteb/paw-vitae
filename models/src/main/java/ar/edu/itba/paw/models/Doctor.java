@@ -31,6 +31,9 @@ public class Doctor extends User {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
 
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<UnavailabilitySlot> unavailabilitySlots = new ArrayList<>();
+
     @Column(name = "rating")
     private Double rating = 1.0;
 
@@ -124,5 +127,13 @@ public class Doctor extends User {
 
     public void setImageId(Long imageId) {
         this.imageId = imageId;
+    }
+
+    public List<UnavailabilitySlot> getUnavailabilitySlots() {
+        return unavailabilitySlots;
+    }
+
+    public void setUnavailabilitySlots(List<UnavailabilitySlot> unavailabilitySlots) {
+        this.unavailabilitySlots = unavailabilitySlots;
     }
 }
