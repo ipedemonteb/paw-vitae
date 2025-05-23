@@ -65,6 +65,11 @@
                         <spring:message code="dashboard.availability.currentSlots" />
                     </h3>
 
+                    <div id="trash-warning" class="warning-message" style="display: none; margin-top: 10px;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span><spring:message code="dashboard.availability.trashWarning" /></span>
+                    </div>
+
                     <form:form id="updateAvailabilityForm" modelAttribute="updateAvailabilityForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/availability/update" cssClass="edit-profile-form">
                         <div id="timeslots-container" class="timeslots-container">
                             <div id="no-slots-message" class="no-slots-message" style="${empty updateAvailabilityForm.availabilitySlots ? '' : 'display: none;'}">
@@ -145,6 +150,10 @@
                         <i class="fas fa-calendar-times"></i>
                         <spring:message code="dashboard.availability.unavailabilityDates" />
                     </h3>
+                    <div id="trash-warning" class="warning-message" style="display: none; margin-top: 10px;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span><spring:message code="dashboard.availability.trashWarning" /></span>
+                    </div>
 
                     <form:form id="updateUnavailabilityForm" modelAttribute="updateUnavailabilityForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/unavailability/update" cssClass="edit-profile-form">
                         <div id="no-unavailability-message" class="no-slots-message" style="${empty updateUnavailabilityForm.unavailabilitySlots ? '' : 'display: none;'}">
@@ -627,6 +636,9 @@
 
             // Update no slots message
             updateNoSlotsMessage();
+
+            document.getElementById('trash-warning').style.display = 'block';
+
         }
     }
 
@@ -858,6 +870,9 @@
 
             // Update no unavailability message
             updateNoUnavailabilityMessage();
+
+            // Show the warning message
+            document.getElementById('trash-warning').style.display = 'block';
         }
     }
 

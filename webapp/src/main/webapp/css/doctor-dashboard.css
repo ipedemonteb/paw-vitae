@@ -2028,3 +2028,20 @@ body {
         font-size: 0.85rem;
     }
 }
+.warning-message {
+    background-color: #fff5f5;
+    color: #e53e3e;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border-left: 4px solid #e53e3e;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease;
+}
+
+.warning-message i {
+    margin-right: 10px;
+    font-size: 16px;
+}
