@@ -72,12 +72,12 @@
       </div>
 
       <!-- Search Bar -->
-      <%--      <div class="search-bar-container">--%>
-      <%--        <div class="search-bar">--%>
-      <%--          <i class="fas fa-search search-icon"></i>--%>
-      <%--          <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input">--%>
-      <%--        </div>--%>
-      <%--      </div>--%>
+            <div class="search-bar-container">
+              <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input">
+              </div>
+            </div>
     </div>
 
     <!-- Filters Section -->
@@ -567,7 +567,6 @@
 
   // Initialize search functionality
   document.addEventListener('DOMContentLoaded', function() {
-    initializeSearch();
     initializeViewToggle();
     initializeQuickFilters();
     initializeSorting();

@@ -1,10 +1,12 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.PatientDao;
+import ar.edu.itba.paw.interfaceServices.NeighborhoodService;
 import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Coverage;
+import ar.edu.itba.paw.models.Neighborhood;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.exception.CoverageNotFoundException;
 import org.slf4j.Logger;
@@ -22,15 +24,17 @@ public class PatientServiceImpl implements PatientService {
     private final PatientDao patientDao;
     private final PasswordEncoder passwordEncoder;
     private final CoverageService coverageService;
+    private final NeighborhoodService neighborhoodService;
     private final UserService userService;
     Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
 
     @Autowired
-    public PatientServiceImpl(PatientDao patientDao, PasswordEncoder passwordEncoder, CoverageService coverageService, UserService userService) {
+    public PatientServiceImpl(PatientDao patientDao, PasswordEncoder passwordEncoder, CoverageService coverageService, NeighborhoodService neighborhoodService,UserService userService) {
         this.patientDao = patientDao;
         this.passwordEncoder = passwordEncoder;
         this.coverageService = coverageService;
         this.userService = userService;
+        this.neighborhoodService = neighborhoodService;
     }
 
     @Transactional(readOnly = true)
@@ -46,11 +50,12 @@ public class PatientServiceImpl implements PatientService {
 
     @Transactional
     @Override
-    public Patient create(String name, String lastName, String email, String password, String phone, String language, long coverageId) {
+    public Patient create(String name, String lastName, String email, String password, String phone, String language, long coverageId, long neighborhoodId) {
         LOGGER.debug("Creating patient with name: {}, lastName: {}, email: {}, phone: {}, language: {}, coverageId: {}", name, lastName, email, phone, language, coverageId);
         Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
+        Neighborhood neighborhood = neighborhoodService.getById(neighborhoodId).orElseThrow(() -> new IllegalArgumentException("Neighborhood not found")); //TODO: MAKE CUSTOM EXCEPTION
         String passwordEncoded = passwordEncoder.encode(password);
-        Patient patient = patientDao.create(name, lastName, email, passwordEncoded, phone, language, coverage);
+        Patient patient = patientDao.create(name, lastName, email, passwordEncoded, phone, language, coverage, neighborhood);
         LOGGER.info("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
         return patient;
     }

@@ -336,6 +336,58 @@
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <label class="form-label required-field"><spring:message code="register.doctorOffices"/></label>
+                                <div id="doctor-offices-container">
+                                    <div class="office-entry" data-index="0">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="office-name-0" class="form-label required-field"><spring:message code="register.officeName"/></label>
+                                                <div class="input-wrapper">
+                                                    <input type="text" id="office-name-0" class="form-control office-name" placeholder="<spring:message code="placeholder.officeName"/>" required/>
+                                                    <div class="validation-icon valid">
+                                                        <i class="fas fa-check-circle"></i>
+                                                    </div>
+                                                    <div class="validation-icon error">
+                                                        <i class="fas fa-exclamation-circle"></i>
+                                                    </div>
+                                                </div>
+                                                <div id="office-name-0-validation-message" class="error-message"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="office-neighborhood-search-0" class="form-label required-field"><spring:message code="register.neighborhood"/></label>
+                                                <div class="input-wrapper">
+                                                    <input type="text" id="office-neighborhood-search-0" class="form-control office-neighborhood-search"
+                                                           placeholder="<spring:message code="placeholder.neighborhood"/>" autocomplete="off" required/>
+                                                    <input type="hidden" id="office-neighborhood-id-0" class="office-neighborhood-id"/>
+                                                    <div class="validation-icon valid">
+                                                        <i class="fas fa-check-circle"></i>
+                                                    </div>
+                                                    <div class="validation-icon error">
+                                                        <i class="fas fa-exclamation-circle"></i>
+                                                    </div>
+                                                </div>
+                                                <div id="office-neighborhood-results-0" class="search-results-container" style="display: none;">
+                                                    <!-- Search results will be populated here -->
+                                                </div>
+                                                <div id="office-neighborhood-0-validation-message" class="error-message"></div>
+                                            </div>
+                                            <div class="office-actions">
+                                                <button type="button" class="btn-remove office-remove" onclick="removeOffice(0)" style="display: none;">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="error-container-server-doctorOfficeForm">
+                                    <form:errors path="doctorOfficeForm" cssClass="error-message visible"/>
+                                </div>
+                                <button type="button" class="btn-add-slot" id="add-office-btn">
+                                    <i class="fas fa-plus"></i> <spring:message code="register.addOffice"/>
+                                </button>
+                            </div>
+
                             <div class="form-navigation">
                                 <button type="button" class="btn-prev" onclick="prevSection(2)">
                                     <i class="fas fa-arrow-left"></i> <spring:message code="register.previous"/>
@@ -450,7 +502,13 @@
         passwordReqSpecial: '<spring:message code="register.passwordReqSpecial" javaScriptEscape="true" />',
         specialtiesRequired: '<spring:message code="register.specialtiesRequired" javaScriptEscape="true" />',
         coveragesRequired: '<spring:message code="register.coveragesRequired" javaScriptEscape="true" />',
-        submitting: '<spring:message code="register.submitting" javaScriptEscape="true" />'
+        submitting: '<spring:message code="register.submitting" javaScriptEscape="true" />',
+        officeName: '<spring:message code="register.officeName" javaScriptEscape="true" />',
+        officeNamePlaceholder: '<spring:message code="placeholder.officeName" javaScriptEscape="true" />',
+        neighborhood: '<spring:message code="register.neighborhood" javaScriptEscape="true" />',
+        neighborhoodPlaceholder: '<spring:message code="placeholder.neighborhood" javaScriptEscape="true" />',
+        neighborhoodRequired: '<spring:message code="register.neighborhoodRequired" javaScriptEscape="true" />',
+        officeRequired: '<spring:message code="register.officeRequired" javaScriptEscape="true" />'
     };
 
 
@@ -467,6 +525,12 @@
     ];
     </c:if>
 
+    const neighborhoods = [<c:forEach items="${neighborhoodList}" var="neighborhood" varStatus="status">
+        {
+            id: "${neighborhood.id}",
+            name: "${neighborhood.name}"
+        }<c:if test="${!status.last}">,</c:if>
+        </c:forEach>]
 
 </script>
 

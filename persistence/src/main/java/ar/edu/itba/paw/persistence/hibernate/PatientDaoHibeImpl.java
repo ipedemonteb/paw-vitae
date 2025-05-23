@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence.hibernate;
 
 import ar.edu.itba.paw.interfacePersistence.PatientDao;
 import ar.edu.itba.paw.models.Coverage;
+import ar.edu.itba.paw.models.Neighborhood;
 import ar.edu.itba.paw.models.Patient;
 import org.springframework.stereotype.Repository;
 
@@ -27,8 +28,8 @@ public class PatientDaoHibeImpl implements PatientDao {
 
 
     @Override
-    public Patient create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage) {
-        Patient patient = new Patient(name, lastName, email, password, phone, language, coverage, false);
+    public Patient create(String name, String lastName, String email, String password, String phone, String language, Coverage coverage, Neighborhood neighborhood) {
+        Patient patient = new Patient(name, lastName, email, password, phone, language, coverage, neighborhood, false);
         em.persist(patient);
         return patient;
     }

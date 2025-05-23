@@ -30,10 +30,11 @@ public class DoctorServiceImpl implements DoctorService {
     private final UserService userService;
     private final SpecialtyService specialtyService;
     private final CoverageService coverageService;
+    private final DoctorOfficeService doctorOfficeService;
 
     @Autowired
     public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder, ImageService imageService, AvailabilitySlotsService availabilitySlotsService, UserService userService,
-                             SpecialtyService specialtyService, CoverageService coverageService) {
+                             SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService) {
         this.doctorDao = doctorDao;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
@@ -41,11 +42,12 @@ public class DoctorServiceImpl implements DoctorService {
         this.userService = userService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
+        this.doctorOfficeService = doctorOfficeService;
     }
 
     @Transactional
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlotForm> availabilitySlots) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlotForm> availabilitySlots, List<DoctorOfficeForm> doctorOfficeForm) {
         LOGGER.debug("Creating doctor with name: {}, lastName: {}, email: {}, phone: {}, language: {}, specialties: {}, coverages: {}", name, lastName, email, phone, language, specialties, coverages);
         Images img = imageService.create(image);
         List<AvailabilitySlotForm> filteredSlotsForm = availabilitySlots.stream()
@@ -67,6 +69,9 @@ public class DoctorServiceImpl implements DoctorService {
         List<AvailabilitySlot> filteredSlots = availabilitySlotsService.transformToAvailabilitySlots(doctor,filteredSlotsForm);
         availabilitySlotsService.create(filteredSlots);
         doctor.setAvailabilitySlots(filteredSlots);
+        List<DoctorOffice> doctorOffices = doctorOfficeService.transformToDoctorOffice(doctor, doctorOfficeForm);
+        doctorOfficeService.create(doctorOffices);
+        doctor.setDoctorOffices(doctorOffices);
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
         return doctor;
     }

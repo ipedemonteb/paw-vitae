@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface DoctorService {
 
-    Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlotForm> availabilitySlots);
+    Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlotForm> availabilitySlots, List<DoctorOfficeForm> doctorOfficeForm); //TODO doctorOffices should be DTO
 
     Optional<Doctor> getById(final long id);
 

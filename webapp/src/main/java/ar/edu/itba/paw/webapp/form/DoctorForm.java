@@ -4,6 +4,7 @@ package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.AvailabilitySlot;
 import ar.edu.itba.paw.models.AvailabilitySlotForm;
+import ar.edu.itba.paw.models.DoctorOfficeForm;
 import ar.edu.itba.paw.webapp.validation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,6 +56,13 @@ public class DoctorForm {
     @TimeSlotIntersection(message = "{slots.overlap}")
     private List<AvailabilitySlotForm> availabilitySlots;
 
+    @NotEmpty
+    @NotNull
+    @Size(min = 1, max = 7)
+    @UniqueOffices(message = "{offices.duplicate}")
+    @ValidOfficeNames(message = "{offices.invalid.name}")
+    @ValidOfficeNeighborhood(message = "{offices.invalid.neighborhood}")
+    private List<DoctorOfficeForm> doctorOfficeForm;
 
     public String getName() {
         return name;
@@ -133,6 +141,14 @@ public class DoctorForm {
     }
     public void setAvailabilitySlots(List<AvailabilitySlotForm> availabilitySlots) {
         this.availabilitySlots = availabilitySlots;
+    }
+
+    public List<DoctorOfficeForm> getDoctorOfficeForm() {
+        return doctorOfficeForm;
+    }
+
+    public void setDoctorOfficeForm(List<DoctorOfficeForm> doctorOfficeForm) {
+        this.doctorOfficeForm = doctorOfficeForm;
     }
 }
 

@@ -3,8 +3,6 @@ package ar.edu.itba.paw.models;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Specialty;
 
 @Entity
 @Table(name = "doctors")
@@ -26,6 +24,9 @@ public class Doctor extends User {
             inverseJoinColumns = @JoinColumn(name = "coverage_id")
     )
     private List<Coverage> coverageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<DoctorOffice> doctorOffices = new ArrayList<>();
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
@@ -65,6 +66,7 @@ public class Doctor extends User {
         this.imageId = imageId;
         this.specialtyList = specialtyList;
         this.coverageList = coverageList;
+        this.doctorOffices = doctorOffices;
     }
 
 
@@ -82,6 +84,14 @@ public class Doctor extends User {
 
     public void setCoverageList(List<Coverage> coverageList) {
         this.coverageList = coverageList;
+    }
+
+    public List<DoctorOffice> getDoctorOffices() {
+        return doctorOffices;
+    }
+
+    public void setDoctorOffices(List<DoctorOffice> doctorOffices) {
+        this.doctorOffices = doctorOffices;
     }
 
     public List<AvailabilitySlot> getAvailabilitySlots() {

@@ -27,18 +27,20 @@ public class AuthController {
     private final DoctorService doctorService;
     private final CoverageService coverageService;
     private final SpecialtyService specialtyService;
+    private final NeighborhoodService neighborhoodService;
     private final PatientService patientService;
     private final UserService userService;
     private final AuthService authService;
 
     @Autowired
-    public AuthController(DoctorService doctorService, CoverageService coverageService, SpecialtyService specialtyService, PatientService patientService, UserService userService, AuthService authService) {
+    public AuthController(DoctorService doctorService, CoverageService coverageService, SpecialtyService specialtyService, PatientService patientService, UserService userService, AuthService authService, NeighborhoodService neighborhoodService) {
         this.doctorService = doctorService;
         this.coverageService = coverageService;
         this.specialtyService = specialtyService;
         this.patientService = patientService;
         this.userService = userService;
         this.authService = authService;
+        this.neighborhoodService = neighborhoodService;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -49,7 +51,7 @@ public class AuthController {
         doctorService.create(
                 form.getName(), form.getLastName(), form.getEmail(), form.getPassword(),
                 form.getPhone(), LocaleContextHolder.getLocale().getLanguage(), form.getImage(), form.getSpecialties(),
-                form.getCoverages(), form.getAvailabilitySlots()
+                form.getCoverages(), form.getAvailabilitySlots(), form.getDoctorOfficeForm()
         );
         Optional<User> userOpt = userService.getByEmail(form.getEmail()).map(user -> (User) user);
         if (userOpt.isEmpty()) {
@@ -66,6 +68,7 @@ public class AuthController {
         ModelAndView mav = new ModelAndView("auth/register");
         mav.addObject("coverageList", coverageList);
         mav.addObject("specialtyList", specialtyList);
+        mav.addObject("neighborhoodList", neighborhoodService.getAll());
         return mav;
     }
 
@@ -74,6 +77,7 @@ public class AuthController {
         List<Coverage> coverageList = coverageService.getAll();
         ModelAndView mav = new ModelAndView("auth/register-patient");
         mav.addObject("coverageList", coverageList);
+        mav.addObject("neighborhoodList", neighborhoodService.getAll());
         return mav;
     }
 
@@ -83,7 +87,7 @@ public class AuthController {
             return patientForm(patientForm);
         }
         patientService.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(),
-                patientForm.getPhone(), LocaleContextHolder.getLocale().getLanguage(), patientForm.getCoverage());
+                patientForm.getPhone(), LocaleContextHolder.getLocale().getLanguage(), patientForm.getCoverage(), patientForm.getNeighborhoodId());
         userService.setVerificationToken(patientForm.getEmail());
         return new ModelAndView("redirect:/email-sent");
     }
