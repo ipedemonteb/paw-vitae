@@ -1,0 +1,206 @@
+/* Date Range Picker Styles */
+.date-range-picker-container {
+    margin-top: 1rem;
+}
+
+.hidden-inputs {
+    display: none;
+}
+
+.date-picker-display {
+    margin-bottom: 1rem;
+}
+
+.date-range-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.date-display-item {
+    flex: 1;
+}
+
+.date-display-item label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.date-display-value {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.date-display-value:hover {
+    border-color: var(--primary-color);
+    background-color: var(--background-light);
+}
+
+.date-display-value i {
+    color: var(--primary-color);
+}
+
+.date-display-value.date-selected {
+    border-color: var(--primary-color);
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+.date-display-value.active-selection {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.date-range-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    padding: 0 0.5rem;
+}
+
+/* Calendar Styles */
+.date-picker-calendar {
+    margin-top: 1rem;
+    background: var(--white);
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.date-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--primary-light);
+}
+
+.date-picker-month-year {
+    font-weight: 600;
+    text-align: center;
+    flex-grow: 1;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.date-picker-nav {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.5rem;
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    width: 2rem;
+    height: 2rem;
+}
+
+.date-picker-nav:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.date-picker-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    padding: 0.5rem 0;
+    background-color: var(--background-light);
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.date-picker-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 0.5rem;
+    gap: 2px;
+}
+
+.date-picker-day {
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.date-picker-day:hover:not(.disabled):not(.empty) {
+    background-color: var(--background-light);
+}
+
+.date-picker-day.selected {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.date-picker-day.in-range {
+    background-color: rgba(37, 99, 235, 0.1);
+    border-radius: 0;
+}
+
+.date-picker-day.range-start {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.date-picker-day.range-end {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.date-picker-day.disabled {
+    color: #cbd5e1;
+    cursor: default;
+    pointer-events: none;
+}
+
+.date-picker-day.empty {
+    cursor: default;
+}
+
+/* Green highlight for selected dates */
+.date-picker-day.in-range {
+    background-color: rgba(34, 197, 94, 0.2); /* Light green */
+}
+
+.date-picker-day.range-start,
+.date-picker-day.range-end,
+.date-picker-day.selected {
+    background-color: #22c55e; /* Green */
+    color: white;
+}
+
+/* Error message */
+.error-message {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: rgba(239, 68, 68, 0.1);
+    border-radius: var(--border-radius);
+    border-left: 3px solid #ef4444;
+}

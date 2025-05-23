@@ -84,7 +84,7 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
         LOGGER.debug("Getting unavailability slots for doctor {}", doctorId);
         return unavailabilitySlotsDao.getUnavailabilityByDoctorId(doctorId);
     }
-
+    @Transactional
     @Override
     public List<UnavailabilitySlotForm> getDoctorUnavailabilitySlots(Doctor doctor) {
         List<UnavailabilitySlot> slots = doctor.getUnavailabilitySlots();
@@ -98,7 +98,7 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
                         .thenComparing(UnavailabilitySlotForm::getEndDate))
                 .toList();
     }
-
+    @Transactional
     @Override
     public List<UnavailabilitySlot> transformToUnavailabilitySlots(Doctor doctor, List<UnavailabilitySlotForm> unavailabilitySlots) {
         List<UnavailabilitySlot> slots = new ArrayList<>();
@@ -108,7 +108,7 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
         }
         return slots;
     }
-
+    @Transactional
     @Override
     public List<UnavailabilitySlotForm> transformToUnavailabilitySlotForms(List<UnavailabilitySlot> unavailabilitySlots) {
         List<UnavailabilitySlotForm> slots = new ArrayList<>();
