@@ -7,7 +7,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
-<html lang="en">
 <head>
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/V-logo.svg/2048px-V-logo.svg.png" />
     <meta charset="UTF-8">
@@ -18,6 +17,8 @@
     <link rel="stylesheet" href="<c:url value='/css/date-picker.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
 </head>
 <body>
 <!-- Include the header -->
@@ -166,9 +167,11 @@
                                     <div class="unavailability-date-info">
                                         <div class="date-range">
                                             <i class="fas fa-calendar-day"></i>
-                                            <span>
-                                <c:out value="${unavailability.startDate.toString()}" /> <spring:message code="dashboard.availability.until" /> <c:out value="${unavailability.endDate.toString()}" />
-                            </span>
+                                            <span class="date-range-display">
+                                                <span class="date-display-formatted" data-date="${unavailability.startDate}"></span>
+                                                <span class="date-separator"><spring:message code="dashboard.availability.until" /></span>
+                                                <span class="date-display-formatted" data-date="${unavailability.endDate}"></span>
+                                            </span>
                                         </div>
                                         <input type="hidden" name="unavailabilitySlots[${status.index}].startDate" value="${unavailability.startDate}" />
                                         <input type="hidden" name="unavailabilitySlots[${status.index}].endDate" value="${unavailability.endDate}" />
@@ -302,7 +305,49 @@
     let unavailabilityCounter = ${updateUnavailabilityForm.unavailabilitySlots.size()};
     let unavailabilityDates = [];
 
+    // Localized month names from server
+    const monthNames = [
+        '<spring:message code="month.january" javaScriptEscape="true" />',
+        '<spring:message code="month.february" javaScriptEscape="true" />',
+        '<spring:message code="month.march" javaScriptEscape="true" />',
+        '<spring:message code="month.april" javaScriptEscape="true" />',
+        '<spring:message code="month.may" javaScriptEscape="true" />',
+        '<spring:message code="month.june" javaScriptEscape="true" />',
+        '<spring:message code="month.july" javaScriptEscape="true" />',
+        '<spring:message code="month.august" javaScriptEscape="true" />',
+        '<spring:message code="month.september" javaScriptEscape="true" />',
+        '<spring:message code="month.october" javaScriptEscape="true" />',
+        '<spring:message code="month.november" javaScriptEscape="true" />',
+        '<spring:message code="month.december" javaScriptEscape="true" />'
+    ];
+
+    // Function to format LocalDate string to user-friendly format with localized months
+    function formatLocalDateString(dateString) {
+        if (!dateString) return '';
+
+        // Parse the LocalDate string (YYYY-MM-DD format)
+        const parts = dateString.split('-');
+        if (parts.length !== 3) return dateString;
+
+        const year = parseInt(parts[0]);
+        const month = parseInt(parts[1]) - 1; // JavaScript months are 0-based
+        const day = parseInt(parts[2]);
+
+        // Use localized month names
+        const monthName = monthNames[month];
+
+        // Format: "24 May 2025"
+        return day.toString().padStart(2, '0') + ' ' + monthName + ' ' + year;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        // Format all existing date displays
+        const dateElements = document.querySelectorAll('[data-date]');
+        dateElements.forEach(function(element) {
+            const dateString = element.getAttribute('data-date');
+            element.textContent = formatLocalDateString(dateString);
+        });
+
         initializeTimeSlots();
         initializeUnavailabilityDates();
 
@@ -781,10 +826,8 @@
         const container = document.getElementById('unavailability-dates-container');
 
         // Format dates for display
-        const startDateObj = new Date(startDate);
-        const endDateObj = new Date(endDate);
-        const formattedStartDate = startDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        const formattedEndDate = endDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const formattedStartDate = formatLocalDateString(startDate);
+        const formattedEndDate = formatLocalDateString(endDate);
 
         // Create row
         const row = document.createElement('div');
@@ -802,10 +845,26 @@
         icon.className = 'fas fa-calendar-day';
         dateRange.appendChild(icon);
 
-        const dateText = document.createElement('span');
-        dateText.textContent = formattedStartDate + ' - ' + formattedEndDate;
-        dateRange.appendChild(dateText);
+        const dateRangeDisplay = document.createElement('span');
+        dateRangeDisplay.className = 'date-range-display';
 
+        const startSpan = document.createElement('span');
+        startSpan.className = 'date-display-formatted';
+        startSpan.textContent = formattedStartDate;
+
+        const separatorSpan = document.createElement('span');
+        separatorSpan.className = 'date-separator';
+        separatorSpan.textContent = ' <spring:message code="dashboard.availability.until" javaScriptEscape="true" /> ';
+
+        const endSpan = document.createElement('span');
+        endSpan.className = 'date-display-formatted';
+        endSpan.textContent = formattedEndDate;
+
+        dateRangeDisplay.appendChild(startSpan);
+        dateRangeDisplay.appendChild(separatorSpan);
+        dateRangeDisplay.appendChild(endSpan);
+
+        dateRange.appendChild(dateRangeDisplay);
         dateInfo.appendChild(dateRange);
 
         // Create hidden inputs with ISO format dates for LocalDate binding
@@ -882,4 +941,3 @@
     }
 </script>
 </body>
-</html>
