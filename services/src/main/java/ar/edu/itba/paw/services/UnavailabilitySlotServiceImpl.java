@@ -31,10 +31,7 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
     @Override
     public boolean isUnavailableAtDate(long doctorId, LocalDate date) {
         LOGGER.debug("Checking unavailability for doctor {} at date {}", doctorId, date);
-        List<UnavailabilitySlot> slots = getUnavailabilityByDoctorId(doctorId);
-        return slots.stream().anyMatch(slot ->
-                !date.isBefore(slot.getStartDate()) && !date.isAfter(slot.getEndDate())
-        );
+        return unavailabilitySlotsDao.isUnavailableAtDate(doctorId, date);
     }
 
 
