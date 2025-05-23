@@ -15,6 +15,7 @@
     <title><spring:message code="dashboard.availability.title" /></title>
     <link rel="stylesheet" href="<c:url value='/css/doctor-dashboard.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/date-picker.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -157,7 +158,7 @@
                                         <div class="date-range">
                                             <i class="fas fa-calendar-day"></i>
                                             <span>
-                                <c:out value="${unavailability.startDate.toString()}" /> - <c:out value="${unavailability.endDate.toString()}" />
+                                <c:out value="${unavailability.startDate.toString()}" /> <spring:message code="dashboard.availability.until" /> <c:out value="${unavailability.endDate.toString()}" />
                             </span>
                                         </div>
                                         <input type="hidden" name="unavailabilitySlots[${status.index}].startDate" value="${unavailability.startDate}" />
@@ -190,7 +191,7 @@
     </div>
 </main>
 
-<!-- Unavailability Modal -->
+<!-- Unavailability Modal with Enhanced Date Picker -->
 <div id="unavailabilityModal" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
@@ -202,15 +203,47 @@
         <div class="modal-body">
             <p class="modal-message"><spring:message code="dashboard.availability.addUnavailabilityMessage" /></p>
 
-            <div class="date-picker-container">
-                <div class="form-group">
-                    <label for="startDate" class="form-label"><spring:message code="dashboard.availability.startDate" /></label>
+            <div class="date-range-picker-container">
+                <div class="hidden-inputs">
                     <input type="date" id="startDate" class="form-control" min="${java.time.LocalDate.now()}" />
+                    <input type="date" id="endDate" class="form-control" min="${java.time.LocalDate.now()}" />
                 </div>
 
-                <div class="form-group">
-                    <label for="endDate" class="form-label"><spring:message code="dashboard.availability.endDate" /></label>
-                    <input type="date" id="endDate" class="form-control" min="${java.time.LocalDate.now()}" />
+                <div class="date-picker-display">
+                    <div class="date-range-display">
+                        <div class="date-display-item">
+                            <label><spring:message code="dashboard.availability.startDate" /></label>
+                            <div id="startDateDisplay" class="date-display-value">
+                                <i class="fas fa-calendar-day"></i>
+                                <span><spring:message code="dashboard.availability.startDate.select" /></span>
+                            </div>
+                        </div>
+                        <div class="date-range-separator">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="date-display-item">
+                            <label><spring:message code="dashboard.availability.endDate" /></label>
+                            <div id="endDateDisplay" class="date-display-value">
+                                <i class="fas fa-calendar-day"></i>
+                                <span><spring:message code="dashboard.availability.endDate.select" /></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom calendar -->
+                <div id="datePickerCalendar" class="date-picker-calendar">
+                    <div class="date-picker-header">
+                        <button type="button" id="prevMonthBtn" class="date-picker-nav">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div id="currentMonthYear" class="date-picker-month-year"></div>
+                        <button type="button" id="nextMonthBtn" class="date-picker-nav">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div id="calendarWeekdays" class="date-picker-weekdays"></div>
+                    <div id="calendarDays" class="date-picker-days"></div>
                 </div>
 
                 <div id="date-error-message" class="error-message" style="display: none;"></div>
@@ -251,8 +284,8 @@
     </div>
 </div>
 
-<!-- Include the toast notification script -->
 <script src="<c:url value='/js/toast-notification.js' />"></script>
+<script src="<c:url value='/js/enhanced-date-time-picker.js' />"></script>
 
 <script>
     let slotCounter = ${doctor.availabilitySlots.size()};
