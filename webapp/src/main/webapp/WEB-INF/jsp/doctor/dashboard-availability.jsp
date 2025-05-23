@@ -65,7 +65,7 @@
                         <spring:message code="dashboard.availability.currentSlots" />
                     </h3>
 
-                    <div id="trash-warning" class="warning-message" style="display: none; margin-top: 10px;">
+                    <div id="trash-warning-availability" class="warning-message" style="display: none; margin-top: 10px;">
                         <i class="fas fa-exclamation-triangle"></i>
                         <span><spring:message code="dashboard.availability.trashWarning" /></span>
                     </div>
@@ -637,7 +637,7 @@
             // Update no slots message
             updateNoSlotsMessage();
 
-            document.getElementById('trash-warning').style.display = 'block';
+            document.getElementById('trash-warning-availability').style.display = 'block';
 
         }
     }
