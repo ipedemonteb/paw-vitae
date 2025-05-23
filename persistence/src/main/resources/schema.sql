@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS Coverages (
 CREATE TABLE IF NOT EXISTS Patients (
                                        patient_id INT PRIMARY KEY,
                                        coverage_id INT NOT NULL,
+                                        neighborhood_id INT NOT NULL,
+                                        FOREIGN KEY (neighborhood_id) REFERENCES Neighborhoods(id) ON DELETE RESTRICT,
                                        FOREIGN KEY (patient_id) REFERENCES Users(id) ON DELETE CASCADE,
                                         FOREIGN KEY (coverage_id) REFERENCES Coverages(id) ON DELETE SET NULL
     );
@@ -79,7 +81,7 @@ CREATE TABLE IF NOT EXISTS Appointments (
     report TEXT,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE,
-    FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE
+    FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE RESTRICT
     );
 
 CREATE TABLE IF NOT EXISTS Ratings (
@@ -102,3 +104,19 @@ CREATE TABLE IF NOT EXISTS appointment_files (
     file_data BYTEA NOT NULL,
     FOREIGN KEY (appointment_id) REFERENCES Appointments(id) ON DELETE CASCADE
     );
+
+CREATE TABLE IF NOT EXISTS Neighborhoods
+(
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Doctor_Offices
+(
+    doctor_id      INT NOT NULL,
+    neighborhood_id INT NOT NULL,
+    office_name VARCHAR(50) NOT NULL,
+    PRIMARY KEY (doctor_id, neighborhood_id, office_name),
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
+    FOREIGN KEY (neighborhood_id) REFERENCES Neighborhoods(id) ON DELETE RESTRICT
+);

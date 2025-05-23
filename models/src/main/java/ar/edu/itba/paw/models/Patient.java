@@ -12,15 +12,19 @@ public class Patient extends User {
     @JoinColumn(name = "coverage_id")
     private Coverage coverage;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "neighborhood_id")
+    private Neighborhood neighborhood;
 
 
     public Patient() {
         // For Hibernate use
     }
 
-    public Patient(String name, String lastName, String email, String password, String phone, String language, Coverage coverage, boolean verified) {
+    public Patient(String name, String lastName, String email, String password, String phone, String language, Coverage coverage, Neighborhood neighborhood, boolean verified) {
         super(name, lastName, email, password, phone, language, verified);
         this.coverage = coverage;
+        this.neighborhood = neighborhood;
     }
 
     //Deprecated
@@ -37,4 +41,11 @@ public class Patient extends User {
         this.coverage = coverage;
     }
 
+    public Neighborhood getNeighborhood() {
+        return neighborhood;
+    }
+
+    public void setNeighborhood(Neighborhood neighborhood) {
+        this.neighborhood = neighborhood;
+    }
 }

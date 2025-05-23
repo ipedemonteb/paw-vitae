@@ -8,7 +8,7 @@ public interface PatientService {
 
     Optional<Patient> getById(long id);
 
-    Patient create(String name, String lastName, String email, String password, String phone, String language, long coverageId);
+    Patient create(String name, String lastName, String email, String password, String phone, String language, long coverageId, long neighborhoodId);
 
     Optional<Patient> getByEmail(String email);
 

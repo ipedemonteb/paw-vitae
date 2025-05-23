@@ -119,6 +119,26 @@
                             </div>
                         </div>
 
+                        <div class="form-field" id="search-neighborhood">
+                            <label for="neighborhood-search" class="field-label">
+                                <spring:message code="register.neighborhood"/>
+                                <span class="required-mark">*</span>
+                            </label>
+                            <div class="input-container">
+                                <input type="text" id="neighborhood-search" class="input-field"
+                                       placeholder="<spring:message code="placeholder.neighborhood"/>"
+                                       autocomplete="off"/>
+                                <form:hidden path="neighborhoodId" id="neighborhoodId"/>
+                            </div>
+                            <div id="neighborhood-results" class="search-results-container" style="display: none;">
+                                <!-- Search results will be populated here -->
+                            </div>
+                            <div id="neighborhood-validation-message" class="error-text" style="display: none;"></div>
+                            <div class="server-error-neighborhoodId">
+                                <form:errors path="neighborhoodId" class="error-text"/>
+                            </div>
+                        </div>
+
                         <div class="form-field">
                             <label for="phone" class="field-label">
                                 <spring:message code="register.phone"/>
@@ -281,8 +301,15 @@
         fieldRequired: '<spring:message code="register.fieldRequired" javaScriptEscape="true" />',
         nameTooShort: '<spring:message code="register.nameTooShort" javaScriptEscape="true" />',
         nameInvalid: '<spring:message code="register.nameInvalid" javaScriptEscape="true" />',
-        passwordInvalid: '<spring:message code="register.passwordInvalid" javaScriptEscape="true" />'
+        passwordInvalid: '<spring:message code="register.passwordInvalid" javaScriptEscape="true" />',
+        neighborhoodRequired: '<spring:message code="register.neighborhoodRequired" javaScriptEscape="true" />'
     };
+    const neighborhoods = [<c:forEach items="${neighborhoodList}" var="neighborhood" varStatus="status">
+        {
+            id: "${neighborhood.id}",
+            name: "${neighborhood.name}"
+        }<c:if test="${!status.last}">,</c:if>
+    </c:forEach>]
 </script>
 </body>
 </html>

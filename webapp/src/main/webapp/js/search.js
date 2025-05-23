@@ -1,25 +1,3 @@
-// Doctor Search Functionality
-function initializeSearch() {
-    const searchInput = document.getElementById("doctorSearch")
-    if (searchInput) {
-        searchInput.addEventListener("input", function () {
-            const searchTerm = this.value.toLowerCase()
-            const doctorCards = document.querySelectorAll(".doctor-card")
-
-            doctorCards.forEach((card) => {
-                const doctorName = card.querySelector(".doctor-name").textContent.toLowerCase()
-                const doctorInfo = card.querySelector(".doctor-info").textContent.toLowerCase()
-
-                if (doctorName.includes(searchTerm) || doctorInfo.includes(searchTerm)) {
-                    card.style.display = ""
-                } else {
-                    card.style.display = "none"
-                }
-            })
-        })
-    }
-}
-
 // View Toggle Functionality
 function initializeViewToggle() {
     const viewToggleBtns = document.querySelectorAll(".view-toggle-btn")

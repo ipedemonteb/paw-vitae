@@ -84,7 +84,8 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager(
                 "coverage",
-                "specialty"
+                "specialty",
+                "neighborhood"
         );
     }
 

@@ -2,10 +2,7 @@ package ar.edu.itba.paw.webapp.form;
 
 
 
-import ar.edu.itba.paw.webapp.validation.Coverage;
-import ar.edu.itba.paw.webapp.validation.EmailExistance;
-import ar.edu.itba.paw.webapp.validation.FileSize;
-import ar.edu.itba.paw.webapp.validation.RepeatPasswordMatch;
+import ar.edu.itba.paw.webapp.validation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
@@ -44,6 +41,10 @@ public class PatientForm {
     @Coverage(message = "{coverage.invalid}")
     @NotNull
     private Long coverage;
+
+    @NotNull
+    @Neighborhood(message = "{neighborhood.invalid}")
+    private Long neighborhoodId;
 
     public String getName() {
         return name;
@@ -99,6 +100,14 @@ public class PatientForm {
 
     public void setCoverage(Long coverage) {
         this.coverage = coverage;
+    }
+
+    public Long getNeighborhoodId() {
+        return neighborhoodId;
+    }
+
+    public void setNeighborhoodId(Long neighborhoodId) {
+        this.neighborhoodId = neighborhoodId;
     }
 }
 

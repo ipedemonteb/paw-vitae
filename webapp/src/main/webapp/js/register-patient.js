@@ -82,9 +82,129 @@ document.addEventListener("DOMContentLoaded", () => {
         updateSubmitButtonState()
     })
 
+    document.getElementById("neighborhood-search").addEventListener("input", function() {
+        searchNeighborhoods(this.value);
+    });
+
+    document.getElementById("neighborhood-search").addEventListener("focus", function() {
+        searchNeighborhoods(this.value);
+    });
+
+    document.addEventListener("click", function(e) {
+        if (!e.target.closest("#neighborhood-search") && !e.target.closest("#neighborhood-results")) {
+            document.getElementById("neighborhood-results").style.display = "none";
+        }
+    });
+
     // Initial check of button state
     updateSubmitButtonState()
 })
+
+
+function searchNeighborhoods(query) {
+    const resultsContainer = document.getElementById("neighborhood-results");
+    resultsContainer.innerHTML = "";
+    resultsContainer.style.display = "block";
+
+    // Replace this with your actual implementation
+    // This is just a placeholder to show how it would work
+    resultsContainer.innerHTML = "";
+
+    const searchInput = document.getElementById("neighborhood-search");
+    const searchQuery = searchInput ? searchInput.value.trim().toLowerCase() : "";
+
+    if (query.trim().length === 0) {
+        neighborhoods.forEach(neighborhood => {
+            const item = document.createElement("div");
+            item.className = "search-result-item";
+            item.textContent = neighborhood.name;
+            item.dataset.id = neighborhood.id;
+            item.addEventListener("click", function() {
+                selectNeighborhood(neighborhood.id, neighborhood.name);
+            });
+            resultsContainer.appendChild(item);
+        });
+        validateNeighborhood()
+        return;
+    }
+
+
+    function levenshtein(a, b) {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+        const matrix = [];
+        for (let i = 0; i <= b.length; i++) {
+            matrix[i] = [i];
+        }
+        for (let j = 0; j <= a.length; j++) {
+            matrix[0][j] = j;
+        }
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1
+                    );
+                }
+            }
+        }
+        return matrix[b.length][a.length];
+    }
+
+    let filtered = neighborhoods.map(n => {
+        const name = n.name.toLowerCase();
+        const distance = levenshtein(searchQuery, name);
+        return { ...n, distance };
+    });
+
+    if (searchQuery.length > 0) {
+        filtered = filtered.filter(n => n.name.toLowerCase().includes(searchQuery) || n.distance <= 3);
+        filtered.sort((a, b) => a.distance - b.distance);
+    }
+
+    filtered.forEach(neighborhood => {
+        const item = document.createElement("div");
+        item.className = "search-result-item";
+        item.textContent = neighborhood.name;
+        item.dataset.id = neighborhood.id;
+        item.addEventListener("click", function() {
+            selectNeighborhood(neighborhood.id, neighborhood.name);
+        });
+        resultsContainer.appendChild(item);
+    });
+
+    validateNeighborhood()
+}
+
+function selectNeighborhood(id, name) {
+    document.getElementById("neighborhoodId").value = id;
+    document.getElementById("neighborhood-search").value = name;
+    document.getElementById("neighborhood-results").style.display = "none";
+
+    // Validate the field
+    validateNeighborhood();
+    updateSubmitButtonState();
+}
+
+function validateNeighborhood() {
+    const searchField = document.getElementById("neighborhood-search");
+    const errorElement = document.getElementById("neighborhood-validation-message");
+
+    const neighborhood = neighborhoods.find(neighborhood => neighborhood.name.toLowerCase() === searchField.value.toLowerCase());
+
+    if (!neighborhood) {
+        setFieldError(searchField, errorElement, window.messages?.neighborhoodRequired || "Please select a neighborhood");
+        return false;
+    } else {
+        document.getElementById("neighborhoodId").value = neighborhood.id;
+        setFieldValid(searchField, errorElement);
+        return true;
+    }
+}
 
 function removeServerError(name) {
     const errorDiv = document.querySelector(".server-error-" + name)
@@ -230,9 +350,10 @@ function validateAllFields() {
     const phone = document.getElementById("phone").value.trim()
     const password = document.getElementById("password").value
     const repeatPassword = document.getElementById("repeatPassword").value
+    const neighborhoodId = document.getElementById("neighborhoodId").value
 
     // Check if any required field is empty
-    if (!name || !lastName || !email || !phone || !password || !repeatPassword) {
+    if (!name || !lastName || !email || !phone || !password || !repeatPassword || !neighborhoodId) {
         return false
     }
 
@@ -443,6 +564,7 @@ function validateForm() {
     validatePhone(document.getElementById("phone"))
     validatePassword()
     checkPasswordMatch()
+    validateNeighborhood()
 
     // Store password values in hidden fields before submission
     const passwordField = document.getElementById("password")

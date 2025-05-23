@@ -3,6 +3,11 @@ const slotCounter = 0
 const timeSlots = []
 let isFormSubmitting = false
 const validationTimeout = null
+let officeCounter = 1;
+let doctorOffices = [];
+// Track if office name and neighborhood fields have been touched (by index)
+const officeNameTouched = {};
+const officeNeighborhoodTouched = {};
 
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize components
@@ -10,6 +15,23 @@ document.addEventListener("DOMContentLoaded", () => {
     initPasswordStrength()
     initMultiSelect()
     checkFormErrors()
+    initializeOffice(0);
+
+    const addOfficeBtn = document.getElementById("add-office-btn");
+    if (addOfficeBtn) {
+        addOfficeBtn.addEventListener("click", addNewOffice);
+    }
+
+    const originalValidateForm = validateForm;
+    validateForm = function() {
+        if (!originalValidateForm()) {
+            return false;
+        }
+
+        createDoctorOfficeHiddenInputs();
+
+        return true;
+    };
 
     const form = document.querySelector(".register-form")
     const submitButton = document.getElementById("registerButton")
@@ -130,6 +152,376 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update all validation states at the end
     updateAllValidationStates()
 })
+
+// Initialize an office entry
+function initializeOffice(index) {
+    // Add event listeners for the neighborhood search
+    const searchInput = document.getElementById(`office-neighborhood-search-${index}`);
+    if (searchInput) {
+        searchInput.addEventListener("input", function() {
+            if (!officeNeighborhoodTouched[index]) officeNeighborhoodTouched[index] = true;
+            searchOfficeNeighborhoods(index, this.value);
+        });
+
+        searchInput.addEventListener("focus", function() {
+            searchOfficeNeighborhoods(index, this.value);
+        });
+    }
+
+    // Add event listener for office name
+    const nameInput = document.getElementById(`office-name-${index}`);
+    if (nameInput) {
+        nameInput.addEventListener("input", function() {
+            if (!officeNameTouched[index]) officeNameTouched[index] = true;
+            validateOfficeName(index);
+            updateNextButtonState(2);
+        });
+    }
+
+    // Add to doctorOffices array if not already there
+    if (!doctorOffices.find(office => office.index === index)) {
+        doctorOffices.push({
+            index: index,
+            name: "",
+            neighborhoodId: ""
+        });
+    }
+
+    // Add click outside listener to close search results
+    document.addEventListener("click", function(e) {
+        if (!e.target.closest(`#office-neighborhood-search-${index}`) &&
+            !e.target.closest(`#office-neighborhood-results-${index}`)) {
+            const resultsContainer = document.getElementById(`office-neighborhood-results-${index}`);
+            if (resultsContainer) {
+                resultsContainer.style.display = "none";
+            }
+        }
+    });
+}
+
+// Add a new office
+function addNewOffice() {
+    const container = document.getElementById("doctor-offices-container");
+    if (!container) return;
+
+    // Create new office entry
+    const officeEntry = document.createElement("div");
+    officeEntry.className = "office-entry";
+    officeEntry.dataset.index = officeCounter.toString();
+
+    officeEntry.innerHTML = `
+        <div class="form-row">
+            <div class="form-group">
+                <label for="office-name-${officeCounter}" class="form-label required-field">${window.messages?.officeName || "Office Name"}</label>
+                <div class="input-wrapper">
+                    <input type="text" id="office-name-${officeCounter}" class="form-control office-name" 
+                           placeholder="${window.messages?.officeNamePlaceholder || "Enter office name"}" required/>
+                    <div class="validation-icon valid">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="validation-icon error">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                </div>
+                <div id="office-name-${officeCounter}-validation-message" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="office-neighborhood-search-${officeCounter}" class="form-label required-field">${window.messages?.neighborhood || "Neighborhood"}</label>
+                <div class="input-wrapper">
+                    <input type="text" id="office-neighborhood-search-${officeCounter}" class="form-control office-neighborhood-search" 
+                           placeholder="${window.messages?.neighborhoodPlaceholder || "Search neighborhood"}" autocomplete="off" required/>
+                    <input type="hidden" id="office-neighborhood-id-${officeCounter}" class="office-neighborhood-id"/>
+                    <div class="validation-icon valid">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="validation-icon error">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                </div>
+                <div id="office-neighborhood-results-${officeCounter}" class="search-results-container" style="display: none;">
+                    <!-- Search results will be populated here -->
+                </div>
+                <div id="office-neighborhood-${officeCounter}-validation-message" class="error-message"></div>
+            </div>
+            <div class="office-actions">
+                <button type="button" class="btn-remove office-remove" onclick="removeOffice(${officeCounter})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Add to container with animation
+    officeEntry.style.opacity = "0";
+    officeEntry.style.transform = "translateY(10px)";
+    container.appendChild(officeEntry);
+
+    // Trigger animation
+    setTimeout(() => {
+        officeEntry.style.opacity = "1";
+        officeEntry.style.transform = "translateY(0)";
+    }, 10);
+
+    // Initialize the new office
+    initializeOffice(officeCounter);
+
+    // Show remove button for the first office if we have more than one
+    if (officeCounter === 1) {
+        const firstRemoveBtn = document.querySelector(".office-remove");
+        if (firstRemoveBtn) {
+            firstRemoveBtn.style.display = "block";
+        }
+    }
+
+    // Increment counter
+    officeCounter++;
+
+    // Update validation
+    updateNextButtonState(2);
+
+    // Remove server error if any
+    removeContainerServerError("doctorOfficeForm");
+}
+
+// Remove an office
+function removeOffice(index) {
+    const officeEntry = document.querySelector(`.office-entry[data-index="${index}"]`);
+    if (!officeEntry) return;
+
+    // Animate removal
+    officeEntry.style.opacity = "0";
+    officeEntry.style.transform = "translateY(-10px)";
+
+    setTimeout(() => {
+        // Remove from DOM
+        if (officeEntry.parentNode) {
+            officeEntry.parentNode.removeChild(officeEntry);
+        }
+
+        // Remove from array
+        const officeIndex = doctorOffices.findIndex(office => office.index === parseInt(index));
+        if (officeIndex !== -1) {
+            doctorOffices.splice(officeIndex, 1);
+        }
+
+        // Hide remove button for the first office if it's the only one left
+        if (document.querySelectorAll(".office-entry").length === 1) {
+            const firstRemoveBtn = document.querySelector(".office-remove");
+            if (firstRemoveBtn) {
+                firstRemoveBtn.style.display = "none";
+            }
+        }
+
+        // Update validation
+        updateNextButtonState(2);
+    }, 300);
+
+    // Remove server error if any
+    removeContainerServerError("doctorOfficeForm");
+}
+
+// Search neighborhoods for an office
+function searchOfficeNeighborhoods(index, query) {
+    const resultsContainer = document.getElementById(`office-neighborhood-results-${index}`);
+    if (!resultsContainer) return;
+
+    resultsContainer.innerHTML = "";
+    resultsContainer.style.display = "block";
+
+    // If query is empty, show all neighborhoods
+    if (query.trim().length === 0) {
+        neighborhoods.forEach(neighborhood => {
+            const item = document.createElement("div");
+            item.className = "search-result-item";
+            item.textContent = neighborhood.name;
+            item.dataset.id = neighborhood.id;
+            item.addEventListener("click", function() {
+                selectOfficeNeighborhood(index, neighborhood.id, neighborhood.name);
+            });
+            resultsContainer.appendChild(item);
+        });
+        validateOfficeNeighborhood(index);
+        return;
+    }
+
+    // Search using Levenshtein distance for fuzzy matching
+    function levenshtein(a, b) {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+        const matrix = [];
+        for (let i = 0; i <= b.length; i++) {
+            matrix[i] = [i];
+        }
+        for (let j = 0; j <= a.length; j++) {
+            matrix[0][j] = j;
+        }
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1
+                    );
+                }
+            }
+        }
+        return matrix[b.length][a.length];
+    }
+
+    const searchQuery = query.toLowerCase();
+
+    let filtered = neighborhoods.map(n => {
+        const name = n.name.toLowerCase();
+        const distance = levenshtein(searchQuery, name);
+        return { ...n, distance };
+    });
+
+    if (searchQuery.length > 0) {
+        filtered = filtered.filter(n => n.name.toLowerCase().includes(searchQuery) || n.distance <= 3);
+        filtered.sort((a, b) => a.distance - b.distance);
+    }
+
+    filtered.forEach(neighborhood => {
+        const item = document.createElement("div");
+        item.className = "search-result-item";
+        item.textContent = neighborhood.name;
+        item.dataset.id = neighborhood.id;
+        item.addEventListener("click", function() {
+            selectOfficeNeighborhood(index, neighborhood.id, neighborhood.name);
+        });
+        resultsContainer.appendChild(item);
+    });
+
+    validateOfficeNeighborhood(index);
+}
+
+// Select a neighborhood for an office
+function selectOfficeNeighborhood(index, id, name) {
+    const searchField = document.getElementById(`office-neighborhood-search-${index}`);
+    const idField = document.getElementById(`office-neighborhood-id-${index}`);
+    const resultsContainer = document.getElementById(`office-neighborhood-results-${index}`);
+
+    if (searchField && idField) {
+        searchField.value = name;
+        idField.value = id;
+
+        // Update in doctorOffices array
+        const officeIndex = doctorOffices.findIndex(office => office.index === parseInt(index));
+        if (officeIndex !== -1) {
+            doctorOffices[officeIndex].neighborhoodId = id;
+        }
+    }
+
+    if (resultsContainer) {
+        resultsContainer.style.display = "none";
+    }
+
+    // Validate
+    validateOfficeNeighborhood(index);
+    validateOfficeName(index);
+    updateNextButtonState(2);
+}
+
+// Validate office neighborhood
+function validateOfficeNeighborhood(index) {
+    const searchField = document.getElementById(`office-neighborhood-search-${index}`);
+    const idField = document.getElementById(`office-neighborhood-id-${index}`);
+    const errorElement = document.getElementById(`office-neighborhood-${index}-validation-message`);
+
+    if (!searchField || !idField) return false;
+
+    const neighborhood = neighborhoods.find(n => n.name.toLowerCase() === searchField.value.toLowerCase());
+
+    if (!neighborhood) {
+        if (officeNeighborhoodTouched[index]) {
+            setFieldError(searchField, errorElement, window.messages?.neighborhoodRequired || "Please select a neighborhood");
+        } else {
+            clearFieldValidation(searchField, errorElement);
+        }
+        return false;
+    } else {
+        idField.value = neighborhood.id;
+
+        // Update in doctorOffices array
+        const officeIndex = doctorOffices.findIndex(office => office.index === parseInt(index));
+        if (officeIndex !== -1) {
+            doctorOffices[officeIndex].neighborhoodId = neighborhood.id;
+        }
+
+        setFieldValid(searchField, errorElement);
+        return true;
+    }
+}
+
+// Validate office name
+function validateOfficeName(index) {
+    const nameField = document.getElementById(`office-name-${index}`);
+    const errorElement = document.getElementById(`office-name-${index}-validation-message`);
+
+    if (!nameField) return false;
+
+    const value = nameField.value.trim();
+
+    if (!value) {
+        if (officeNameTouched[index]) {
+            setFieldError(nameField, errorElement, window.messages?.fieldRequired || "Office name is required");
+        } else {
+            clearFieldValidation(nameField, errorElement);
+        }
+        return false;
+    } else if (value.length < 2) {
+        if (officeNameTouched[index]) {
+            setFieldError(nameField, errorElement, window.messages?.nameTooShort || "Name must be at least 2 characters");
+        } else {
+            clearFieldValidation(nameField, errorElement);
+        }
+        return false;
+    } else {
+        // Update in doctorOffices array
+        const officeIndex = doctorOffices.findIndex(office => office.index === parseInt(index));
+        if (officeIndex !== -1) {
+            doctorOffices[officeIndex].name = value;
+        }
+
+        setFieldValid(nameField, errorElement);
+        return true;
+    }
+}
+
+// Create hidden inputs for doctor offices before form submission
+function createDoctorOfficeHiddenInputs() {
+    const form = document.querySelector(".register-form");
+    if (!form) return;
+
+    // Remove any existing hidden inputs
+    const existingInputs = document.querySelectorAll('input[name^="doctorOfficeForm["]');
+    existingInputs.forEach(input => {
+        input.parentNode.removeChild(input);
+    });
+
+    // Create new hidden inputs for each office
+    doctorOffices.forEach((office, index) => {
+        // Skip invalid offices
+        if (!office.name || !office.neighborhoodId) return;
+
+        // Create neighborhood ID input
+        const neighborhoodInput = document.createElement("input");
+        neighborhoodInput.type = "hidden";
+        neighborhoodInput.name = `doctorOfficeForm[${index}].neighborhoodId`;
+        neighborhoodInput.value = office.neighborhoodId;
+        form.appendChild(neighborhoodInput);
+
+        // Create office name input
+        const nameInput = document.createElement("input");
+        nameInput.type = "hidden";
+        nameInput.name = `doctorOfficeForm[${index}].officeName`;
+        nameInput.value = office.name;
+        form.appendChild(nameInput);
+    });
+}
 
 // Add validation icons to input fields
 function addValidationIcons() {
@@ -658,6 +1050,20 @@ function validateSectionWithoutUI(sectionNumber) {
 
         if (!coverages.options || coverages.selectedOptions.length === 0) {
             isValid = false
+        }
+        const officeEntries = document.querySelectorAll(".office-entry");
+        if (officeEntries.length === 0) {
+            isValid = false;
+        } else {
+            officeEntries.forEach(entry => {
+                const index = entry.dataset.index;
+                const nameValid = validateOfficeName(index);
+                const neighborhoodValid = validateOfficeNeighborhood(index);
+
+                if (!nameValid || !neighborhoodValid) {
+                    isValid = false;
+                }
+            });
         }
     }
 
