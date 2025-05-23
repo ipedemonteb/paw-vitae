@@ -590,6 +590,7 @@ function createDoctorOfficeHiddenInputs() {
     const officeNameInputs = document.querySelectorAll(".office-name");
     const officeNeighborhoodInputs = document.querySelectorAll(".office-neighborhood-id");
 
+    doctorOffices = [];
     // add to doctorOffices the added offices
     for (let i = 0; i < officeNameInputs.length; i++) {
         const name = officeNameInputs[i].value;
