@@ -137,12 +137,11 @@ public class DoctorController {
     public ModelAndView updateAvailability(
             @Valid @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm form,
             BindingResult availabilityErrors,
-            @ModelAttribute("loggedUser") final Doctor doctor
+            @ModelAttribute("loggedUser") final Doctor doctor,
+            @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm unavailabilityForm
     ) {
         if (availabilityErrors.hasErrors()) {
-            UpdateUnavailabilityForm unavailabilityForm = new UpdateUnavailabilityForm();
-            unavailabilityForm.setUnavailabilitySlots(unavailabilitySlotsService.getDoctorUnavailabilitySlots(doctor));
-            return getAvailability(form, doctor, unavailabilityForm); // Or however you want to rehydrate the model
+            return getAvailability(form, doctor, unavailabilityForm);
         }
 
         availabilitySlotsService.updateDoctorAvailability(doctor, form.getAvailabilitySlots());
@@ -154,11 +153,10 @@ public class DoctorController {
     public ModelAndView updateUnavailability(
             @Valid @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm unavailabilityForm,
             BindingResult unavailabilityErrors,
-            @ModelAttribute("loggedUser") final Doctor doctor
+            @ModelAttribute("loggedUser") final Doctor doctor,
+            @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm availabilityForm
     ) {
         if (unavailabilityErrors.hasErrors()) {
-            UpdateAvailabilityForm availabilityForm = new UpdateAvailabilityForm();
-            availabilityForm.setAvailabilitySlots(availabilitySlotsService.getDoctorAvailabilitySlots(doctor));
             return getAvailability(availabilityForm, doctor, unavailabilityForm);
         }
 
