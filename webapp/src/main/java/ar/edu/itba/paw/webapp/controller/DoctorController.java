@@ -91,12 +91,11 @@ public class DoctorController {
 
     @RequestMapping(value = "/doctor/dashboard/availability")
     public ModelAndView getAvailability(@ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm updateAvailabilityForm,
-                                        @ModelAttribute("loggedUser") final Doctor doctor,
-                                        @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm updateUnavailabilityForm
+                                        @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-availability");
         updateAvailabilityForm.setAvailabilitySlots(availabilitySlotsService.getDoctorAvailabilitySlots(doctor));
-        updateUnavailabilityForm.setUnavailabilitySlots(unavailabilitySlotsService.getDoctorUnavailabilitySlots(doctor));
+        updateAvailabilityForm.setUnavailabilitySlots(unavailabilitySlotsService.getDoctorUnavailabilitySlots(doctor));
         mav.addObject("doctor", doctor);
         return mav;
     }
@@ -137,13 +136,13 @@ public class DoctorController {
     public ModelAndView updateAvailability(
             @Valid @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm form,
             BindingResult availabilityErrors,
-            @ModelAttribute("loggedUser") final Doctor doctor,
-            @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm unavailabilityForm
+            @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         if (availabilityErrors.hasErrors()) {
-            return getAvailability(form, doctor, unavailabilityForm);
+            return getAvailability(form, doctor);
         }
 
+        unavailabilitySlotsService.updateDoctorUnavailability(doctor, form.getUnavailabilitySlots());
         availabilitySlotsService.updateDoctorAvailability(doctor, form.getAvailabilitySlots());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
@@ -157,7 +156,7 @@ public class DoctorController {
             @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm availabilityForm
     ) {
         if (unavailabilityErrors.hasErrors()) {
-            return getAvailability(availabilityForm, doctor, unavailabilityForm);
+            return getAvailability(availabilityForm, doctor);
         }
 
         unavailabilitySlotsService.updateDoctorUnavailability(doctor, unavailabilityForm.getUnavailabilitySlots());

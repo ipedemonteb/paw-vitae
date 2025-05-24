@@ -59,6 +59,9 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
     @Transactional
     @Override
     public void updateDoctorUnavailability(Doctor doctor, List<UnavailabilitySlotForm> unavailabilitySlots) {
+        if (unavailabilitySlots == null) {
+            unavailabilitySlots = Collections.emptyList();
+        }
         LOGGER.debug("Updating unavailability for doctor {}: {} slots", doctor.getId(), unavailabilitySlots.size());
         List<UnavailabilitySlotForm> filteredSlots = unavailabilitySlots.stream()
                 .filter(slot -> slot.getStartDate() != null && slot.getEndDate() != null)
