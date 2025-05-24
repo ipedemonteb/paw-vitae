@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public interface UnavailabilitySlotsService {
@@ -23,4 +24,5 @@ public interface UnavailabilitySlotsService {
     List<UnavailabilitySlot> getUnavailabilityByDoctorIdCurrentAndNextMonth(long doctorId);
     List<UnavailabilitySlot> transformToUnavailabilitySlots(Doctor doctor,List<UnavailabilitySlotForm> unavailabilitySlots);
     List<UnavailabilitySlotForm> transformToUnavailabilitySlotForms(List<UnavailabilitySlot> unavailabilitySlots);
+    Map<String,Object> getUnavailabilityByDoctorIdAndMonthAndYear(long doctorId, int month, int year);
 }
