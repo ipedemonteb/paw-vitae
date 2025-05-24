@@ -8,12 +8,15 @@ import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @Controller
 public class DoctorController {
@@ -91,12 +94,11 @@ public class DoctorController {
 
     @RequestMapping(value = "/doctor/dashboard/availability")
     public ModelAndView getAvailability(@ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm updateAvailabilityForm,
-                                        @ModelAttribute("loggedUser") final Doctor doctor,
-                                        @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm updateUnavailabilityForm
+                                        @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-availability");
         updateAvailabilityForm.setAvailabilitySlots(availabilitySlotsService.getDoctorAvailabilitySlots(doctor));
-        updateUnavailabilityForm.setUnavailabilitySlots(unavailabilitySlotsService.getDoctorUnavailabilitySlots(doctor));
+        updateAvailabilityForm.setUnavailabilitySlots(unavailabilitySlotsService.getDoctorUnavailabilitySlots(doctor));
         mav.addObject("doctor", doctor);
         return mav;
     }
@@ -137,33 +139,27 @@ public class DoctorController {
     public ModelAndView updateAvailability(
             @Valid @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm form,
             BindingResult availabilityErrors,
-            @ModelAttribute("loggedUser") final Doctor doctor,
-            @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm unavailabilityForm
+            @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         if (availabilityErrors.hasErrors()) {
-            return getAvailability(form, doctor, unavailabilityForm);
+            return getAvailability(form, doctor);
         }
 
+        unavailabilitySlotsService.updateDoctorUnavailability(doctor, form.getUnavailabilitySlots());
         availabilitySlotsService.updateDoctorAvailability(doctor, form.getAvailabilitySlots());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
 
-
-    @RequestMapping(value = "/doctor/dashboard/unavailability/update", method = RequestMethod.POST)
-    public ModelAndView updateUnavailability(
-            @Valid @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm unavailabilityForm,
-            BindingResult unavailabilityErrors,
-            @ModelAttribute("loggedUser") final Doctor doctor,
-            @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm availabilityForm
+    @RequestMapping(value = "/doctor/dashboard/unavailability/{year}/{month}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getUnavailabilityByMonth(
+            @PathVariable("year") int year,
+            @PathVariable("month") int month,
+            @ModelAttribute("loggedUser") final Doctor doctor
     ) {
-        if (unavailabilityErrors.hasErrors()) {
-            return getAvailability(availabilityForm, doctor, unavailabilityForm);
-        }
-
-        unavailabilitySlotsService.updateDoctorUnavailability(doctor, unavailabilityForm.getUnavailabilitySlots());
-        return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
+            Map<String,Object> response = unavailabilitySlotsService.getUnavailabilityByDoctorIdAndMonthAndYear(doctor.getId(), month, year);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
-
 
     @RequestMapping(value = "doctor/dashboard/appointment-details/{id}", method = RequestMethod.GET)
     public ModelAndView doctorAppointmentDetails(

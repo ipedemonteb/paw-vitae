@@ -87,7 +87,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setResetPasswordToken(String email) {
         LOGGER.debug("Setting reset password token for email: {}", email);
-        User user = getByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+        Optional<? extends User> optionalUser = getByEmail(email);
+        if (optionalUser.isEmpty()) {
+            LOGGER.warn("User with email {} not found", email);
+            return;
+        }
+        User user =optionalUser.get();
         if (!user.isVerified()) {
             LOGGER.warn("User with email {} is not verified", email);
             return;
