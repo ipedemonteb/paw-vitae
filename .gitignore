@@ -15,7 +15,7 @@ dist/
 
 # Log files
 *.log
-
+.PVS-Studio/*
 # Package files
 *.jar
 *.war
