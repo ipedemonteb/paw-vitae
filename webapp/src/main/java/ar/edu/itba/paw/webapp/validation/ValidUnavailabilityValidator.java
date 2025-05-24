@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.UnavailabilitySlotForm;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 public class ValidUnavailabilityValidator implements ConstraintValidator<ValidUnavailability, List<UnavailabilitySlotForm>> {
@@ -23,13 +24,13 @@ public class ValidUnavailabilityValidator implements ConstraintValidator<ValidUn
             LocalDate start = slot.getStartDate();
             LocalDate end = slot.getEndDate();
 
-            // Validación de fechas inválidas
+
             if (start.isAfter(end)) {
                 return false;
             }
 
-            // Validación de fechas pasadas (termina antes de hoy)
-            if (end.isBefore(LocalDate.now())) {
+
+            if (end.isBefore(LocalDate.now(ZoneId.of("UTC-3")))) {
                 return false;
             }
         }
