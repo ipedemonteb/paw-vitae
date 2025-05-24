@@ -147,21 +147,21 @@ public class DoctorController {
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
 
-
-    @RequestMapping(value = "/doctor/dashboard/unavailability/update", method = RequestMethod.POST)
-    public ModelAndView updateUnavailability(
-            @Valid @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm unavailabilityForm,
-            BindingResult unavailabilityErrors,
-            @ModelAttribute("loggedUser") final Doctor doctor,
-            @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm availabilityForm
-    ) {
-        if (unavailabilityErrors.hasErrors()) {
-            return getAvailability(availabilityForm, doctor);
-        }
-
-        unavailabilitySlotsService.updateDoctorUnavailability(doctor, unavailabilityForm.getUnavailabilitySlots());
-        return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
-    }
+//DEPRECATED
+//    @RequestMapping(value = "/doctor/dashboard/unavailability/update", method = RequestMethod.POST)
+//    public ModelAndView updateUnavailability(
+//            @Valid @ModelAttribute("updateUnavailabilityForm") UpdateUnavailabilityForm unavailabilityForm,
+//            BindingResult unavailabilityErrors,
+//            @ModelAttribute("loggedUser") final Doctor doctor,
+//            @ModelAttribute("updateAvailabilityForm") UpdateAvailabilityForm availabilityForm
+//    ) {
+//        if (unavailabilityErrors.hasErrors()) {
+//            return getAvailability(availabilityForm, doctor);
+//        }
+//
+//        unavailabilitySlotsService.updateDoctorUnavailability(doctor, unavailabilityForm.getUnavailabilitySlots());
+//        return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
+//    }
 
 
     @RequestMapping(value = "doctor/dashboard/appointment-details/{id}", method = RequestMethod.GET)
