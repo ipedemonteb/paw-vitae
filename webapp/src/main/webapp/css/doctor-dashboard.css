@@ -1911,6 +1911,32 @@ body {
     margin-bottom: 1.5rem;
 }
 
+.btn-submit-doctor-availability {
+    width: auto;
+    display: inline-flex;
+    box-sizing: border-box;
+    background-color: var(--primary-color);
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    font-size: 1rem;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto; /* aligns right in flex or grid parent */
+}
+
+.btn-submit-doctor-availability:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    background-color: var(--primary-dark);
+}
+
 .unavailability-date-row {
     display: flex;
     align-items: center;
