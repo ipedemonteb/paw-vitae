@@ -10,19 +10,22 @@ import ar.edu.itba.paw.webapp.validation.ValidUnavailability;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
-public class UpdateUnavailabilityForm {
 
-    //TODO: CHANGE THE VALIDATIONS FOR UNAVAILABILITY
-    @NotEmpty
-    @ValidUnavailability(message = "{unavailable.slots.invalid}")
-    @UnavailabilityIntersection(message = "{unavailable.slots.overlap}")
-    private List<UnavailabilitySlotForm> unavailabilitySlots;
+//DEPRECATED
 
-    public List<UnavailabilitySlotForm> getUnavailabilitySlots() {
-        return unavailabilitySlots;
-    }
-
-    public void setUnavailabilitySlots(List<UnavailabilitySlotForm> unavailabilitySlots) {
-        this.unavailabilitySlots = unavailabilitySlots;
-    }
-}
+//public class UpdateUnavailabilityForm {
+//
+//    //TODO: CHANGE THE VALIDATIONS FOR UNAVAILABILITY
+//    @NotEmpty
+//    @ValidUnavailability(message = "{unavailable.slots.invalid}")
+//    @UnavailabilityIntersection(message = "{unavailable.slots.overlap}")
+//    private List<UnavailabilitySlotForm> unavailabilitySlots;
+//
+//    public List<UnavailabilitySlotForm> getUnavailabilitySlots() {
+//        return unavailabilitySlots;
+//    }
+//
+//    public void setUnavailabilitySlots(List<UnavailabilitySlotForm> unavailabilitySlots) {
+//        this.unavailabilitySlots = unavailabilitySlots;
+//    }
+//}
