@@ -128,3 +128,15 @@ CREATE TABLE IF NOT EXISTS Doctor_Unavailability (
                                                      PRIMARY KEY (doctor_id, start_date, end_date),
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
     );
+
+CREATE TABLE IF NOT EXISTS Doctor_Office_Specialties (
+                                                            doctor_id INT NOT NULL,
+                                                            neighborhood_id INT NOT NULL,
+                                                            office_name VARCHAR(50) NOT NULL,
+                                                            specialty_id INT NOT NULL,
+                                                            PRIMARY KEY (doctor_id, neighborhood_id, office_name, specialty_id),
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
+    FOREIGN KEY (neighborhood_id) REFERENCES Neighborhoods(id) ON DELETE CASCADE,
+    FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE,
+    FOREIGN KEY (office_name, neighborhood_id, doctor_id) REFERENCES Doctor_Offices(office_name, neighborhood_id, doctor_id) ON DELETE CASCADE
+);

@@ -8,6 +8,7 @@ let doctorOffices = [];
 // Track if office name and neighborhood fields have been touched (by index)
 const officeNameTouched = {};
 const officeNeighborhoodTouched = {};
+const officeSpecialtiesTouched = {};
 
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize components
@@ -46,6 +47,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Submit the form
             form.submit()
+        })
+    }
+
+    const helpme = document.querySelector(".register-container");
+    if (helpme) {
+        helpme.addEventListener("click", function () {
+            console.log(doctorOffices)
+        })
+    }
+
+    const godplease = document.querySelector(".card-title-register")
+    if (godplease) {
+        godplease.addEventListener("click", function () {
+            console.log("NOW NOW NOW: ")
+            createDoctorOfficeHiddenInputs();
         })
     }
 
@@ -142,6 +158,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Update all validation states at the end
     updateAllValidationStates()
+
+    // Add event listener to update office specialty options when doctor's specialties change
+    const specialtiesSelect = document.getElementById('specialties');
+    function updateAllOfficeSpecialtyOptions() {
+        // Get selected doctor specialties (from the main specialties select)
+        const specialtiesSelect = document.getElementById('specialties');
+        const selectedSpecialties = [];
+        if (specialtiesSelect) {
+            for (let option of specialtiesSelect.selectedOptions) {
+                selectedSpecialties.push(option.value.toString());
+            }
+        }
+        for (let i = 0; i < officeCounter; i++) {
+
+            for (let j = 0; j < doctorOffices[i].specialties.length; j++) {
+                if (!selectedSpecialties.includes(doctorOffices[i].specialties[j].toString())) {
+                    //remove that specialty from the office
+                    doctorOffices[i].specialties.splice(j, 1);
+                }
+            }
+
+            // Regenerate the specialty options for each office based on selected doctor specialties
+            const officeOptionsContainer = document.getElementById(`office-specialties-options-${i}`);
+            if (officeOptionsContainer) {
+                officeOptionsContainer.innerHTML = generateSpecialtyOptions(i);
+            }
+            updateOfficeSpecialtiesDisplay(i);
+        }
+    }
+    if (specialtiesSelect) {
+        specialtiesSelect.addEventListener('change', updateAllOfficeSpecialtyOptions);
+    }
+    // Also update when using the custom multi-select UI
+    const specialtiesOptions = document.querySelectorAll("#specialties-options .custom-multi-select-option");
+    specialtiesOptions.forEach(option => {
+        option.addEventListener('click', function () {
+            setTimeout(updateAllOfficeSpecialtyOptions, 0);
+        });
+    });
 })
 
 // Initialize an office entry
@@ -154,7 +209,8 @@ function initializeOffice(index) {
         doctorOffices.push({
             index: index,
             name: "",
-            neighborhoodId: ""
+            neighborhoodId: "",
+            specialties: []
         });
     }
 
@@ -177,6 +233,11 @@ function initializeOffice(index) {
         nameInput.addEventListener("input", function() {
             if (!officeNameTouched[index]) officeNameTouched[index] = true;
             validateOfficeName(index);
+            // Update the doctorOffices array
+            const officeIndex = doctorOffices.findIndex(office => office.index === parseInt(index));
+            if (officeIndex !== -1) {
+                doctorOffices[officeIndex].name = this.value;
+            }
             updateNextButtonState(2);
         });
     }
@@ -209,9 +270,9 @@ function renderOffices() {
         officeEntry.innerHTML = `
         <div class="form-row">
             <div class="form-group">
-                <label for="office-name-${office.index}" class="form-label required-field">${window.messages?.officeName || "Office Name"}</label>
+                <label for="office-name-${officeCounter}" class="form-label required-field">${window.messages?.officeName || "Office Name"}</label>
                 <div class="input-wrapper">
-                    <input type="text" id="office-name-${office.index}" class="form-control office-name" 
+                    <input type="text" id="office-name-${officeCounter}" class="form-control office-name" 
                            placeholder="${window.messages?.officeNamePlaceholder || "Enter office name"}" value="${office.name}" required/>
                     <div class="validation-icon valid">
                         <i class="fas fa-check-circle"></i>
@@ -220,14 +281,14 @@ function renderOffices() {
                         <i class="fas fa-exclamation-circle"></i>
                     </div>
                 </div>
-                <div id="office-name-${office.index}-validation-message" class="error-message"></div>
+                <div id="office-name-${officeCounter}-validation-message" class="error-message"></div>
             </div>
             <div class="form-group">
-                <label for="office-neighborhood-search-${office.index}" class="form-label required-field">${window.messages?.neighborhood || "Neighborhood"}</label>
+                <label for="office-neighborhood-search-${officeCounter}" class="form-label required-field">${window.messages?.neighborhood || "Neighborhood"}</label>
                 <div class="input-wrapper">
-                    <input type="text" id="office-neighborhood-search-${office.index}" class="form-control office-neighborhood-search" 
-                           placeholder="${window.messages?.neighborhoodPlaceholder || "Search neighborhood"}" value="${neighborhoods.find(n => n.id === office.neighborhoodId.toString()).name}" autocomplete="off" required/>
-                    <input type="hidden" value="${office.neighborhoodId}" id="office-neighborhood-id-${office.index}" class="office-neighborhood-id"/>
+                    <input type="text" id="office-neighborhood-search-${officeCounter}" class="form-control office-neighborhood-search" 
+                           placeholder="${window.messages?.neighborhoodPlaceholder || "Search neighborhood"}" autocomplete="off" value="${neighborhoods.find(neighborhood => neighborhood.id.toString() === office.neighborhoodId.toString()).name}" required/>
+                    <input type="hidden" id="office-neighborhood-id-${officeCounter}" value="${office.neighborhoodId}" class="office-neighborhood-id"/>
                     <div class="validation-icon valid">
                         <i class="fas fa-check-circle"></i>
                     </div>
@@ -235,23 +296,43 @@ function renderOffices() {
                         <i class="fas fa-exclamation-circle"></i>
                     </div>
                 </div>
-                <div id="office-neighborhood-results-${office.index}" class="search-results-container" style="display: none;">
+                <div id="office-neighborhood-results-${officeCounter}" class="search-results-container" style="display: none;">
                     <!-- Search results will be populated here -->
                 </div>
-                <div id="office-neighborhood-${office.index}-validation-message" class="error-message"></div>
-            </div>
-            <div class="office-actions">
-                <button type="button" class="btn-remove office-remove" onclick="removeOffice(${office.index})">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div id="office-neighborhood-${officeCounter}-validation-message" class="error-message"></div>
             </div>
         </div>
+        
+        <!-- Add specialty selection for this office -->
+        <div class="form-group">
+            <label class="form-label required-field">${window.messages?.officeSpecialties || "Office Specialties"}</label>
+            <div class="multi-select-container" id="office-specialties-container-${officeCounter}">
+                <div class="custom-multi-select" id="office-specialties-options-${officeCounter}">
+                    ${generateSpecialtyOptions(officeCounter)}
+                </div>
+                <div class="selected-options" id="office-specialties-selected-${officeCounter}"></div>
+            </div>
+            <small class="form-text text-muted">
+                ${window.messages?.selectOfficeSpecialties || "Select specialties for this office"}
+            </small>
+            <div id="office-specialties-${officeCounter}-validation-message" class="error-message"></div>
+        </div>
+        
+        <div class="office-actions">
+            <button type="button" class="btn-remove office-remove" onclick="removeOffice(${officeCounter})">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     `;
+
+        const specialties = office.specialties.map(specialty => specialty.id) || [];
+
 
         doctorOffices.push({
             index: office.index,
             name: `${office.name}`,
-            neighborhoodId: office.neighborhoodId
+            neighborhoodId: office.neighborhoodId,
+            specialties: specialties
         });
 
         officeEntry.style.opacity = "0";
@@ -327,13 +408,37 @@ function addNewOffice() {
                 </div>
                 <div id="office-neighborhood-${officeCounter}-validation-message" class="error-message"></div>
             </div>
-            <div class="office-actions">
-                <button type="button" class="btn-remove office-remove" onclick="removeOffice(${officeCounter})">
-                    <i class="fas fa-times"></i>
-                </button>
+        </div>
+        
+        <!-- Add specialty selection for this office -->
+        <div class="form-group">
+            <label class="form-label required-field">${window.messages?.officeSpecialties || "Office Specialties"}</label>
+            <div class="multi-select-container" id="office-specialties-container-${officeCounter}">
+                <div class="custom-multi-select" id="office-specialties-options-${officeCounter}">
+                    ${generateSpecialtyOptions(officeCounter)}
+                </div>
+                <div class="selected-options" id="office-specialties-selected-${officeCounter}"></div>
             </div>
+            <small class="form-text text-muted">
+                ${window.messages?.selectOfficeSpecialties || "Select specialties for this office"}
+            </small>
+            <div id="office-specialties-${officeCounter}-validation-message" class="error-message"></div>
+        </div>
+        
+        <div class="office-actions">
+            <button type="button" class="btn-remove office-remove" onclick="removeOffice(${officeCounter})">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     `;
+
+    // Add to doctorOffices array
+    doctorOffices.push({
+        index: officeCounter,
+        name: "",
+        neighborhoodId: "",
+        specialties: []
+    })
 
     // Add to container with animation
     officeEntry.style.opacity = "0";
@@ -366,6 +471,183 @@ function addNewOffice() {
     // Remove server error if any
     removeContainerServerError("doctorOfficeForm");
 
+
+}
+
+// Generate specialty options HTML for an office
+function generateSpecialtyOptions(officeIndex) {
+    const specialtiesSelect = document.getElementById('specialties');
+    const selectedSpecialties = [];
+    for (let option of specialtiesSelect.selectedOptions) {
+        selectedSpecialties.push(option.value.toString());
+    }
+    // Get currently selected specialties for this office (to preserve selection)
+    let currentSelected = [];
+    const officeOptionsContainer = document.getElementById(`office-specialties-options-${officeIndex}`);
+    if (officeOptionsContainer) {
+        // Find selected options in the current office's options
+        const selectedOptionDivs = officeOptionsContainer.querySelectorAll('.custom-multi-select-option.selected');
+        selectedOptionDivs.forEach(div => {
+            const val = div.getAttribute('data-value');
+            if (val) currentSelected.push(val);
+        });
+    } else if (doctorOffices[officeIndex] && doctorOffices[officeIndex].specialties) {
+        // Fallback to doctorOffices array if available
+        currentSelected = doctorOffices[officeIndex].specialties;
+    }
+
+    if (typeof window.specialtyList !== 'undefined') {
+        return window.specialtyList
+            .filter(specialty => selectedSpecialties.includes(specialty.id.toString()))
+            .map(specialty => {
+                const isSelected = currentSelected.includes(specialty.id.toString()) || (window.existingOffices && window.existingOffices[officeIndex].specialties.filter(specialty2 => specialty2.id.toString() === specialty.id.toString()).length > 0);
+                return `
+                <div class="custom-multi-select-option${isSelected ? ' selected' : ''}" data-value="${specialty.id}"
+                     onclick="toggleOfficeSpecialty(this, ${officeIndex})">
+                    <div class="option-checkbox"></div>
+                    <div class="option-text">${specialty.name}</div>
+                </div>
+            `;
+            })
+            .join('');
+    }
+    return '';
+}
+
+// Toggle specialty selection for a specific office
+function toggleOfficeSpecialty(optionElement, officeIndex) {
+    const specialtyId = optionElement.getAttribute("data-value");
+
+    // Toggle selected class
+    optionElement.classList.toggle("selected");
+
+    if (!officeSpecialtiesTouched[officeIndex]) {
+        officeSpecialtiesTouched[officeIndex] = true;
+    }
+
+    // Update the doctorOffices array
+    const officeArrayIndex = doctorOffices.findIndex(office => office.index === parseInt(officeIndex));
+    if (officeArrayIndex !== -1) {
+        if (optionElement.classList.contains("selected")) {
+            // Add specialty if not already present
+            if (!doctorOffices[officeArrayIndex].specialties.includes(specialtyId)) {
+                doctorOffices[officeArrayIndex].specialties.push(specialtyId);
+            }
+        } else {
+            // Remove specialty
+            const specialtyIndex = doctorOffices[officeArrayIndex].specialties.indexOf(specialtyId);
+            if (specialtyIndex > -1) {
+                doctorOffices[officeArrayIndex].specialties.splice(specialtyIndex, 1);
+            }
+        }
+    }
+
+    // Update the selected options display
+    updateOfficeSpecialtiesDisplay(officeIndex);
+
+    // Validate office specialties
+    validateOfficeSpecialties(officeIndex);
+
+    // Update next button state
+    updateNextButtonState(2);
+}
+
+// Update the selected specialties display for an office
+function updateOfficeSpecialtiesDisplay(officeIndex) {
+    const selectedContainer = document.getElementById(`office-specialties-selected-${officeIndex}`);
+    if (!selectedContainer) return;
+
+    // Clear the selected container
+    selectedContainer.innerHTML = "";
+
+
+
+    // Get the office data
+    const officeArrayIndex = doctorOffices.findIndex(office => office.index.toString() === officeIndex.toString());
+    if (officeArrayIndex === -1) return;
+
+
+    const selectedSpecialties = doctorOffices[officeArrayIndex].specialties || [];
+
+    // Create badges for selected specialties
+    selectedSpecialties.forEach(specialtyId => {
+        // Find the specialty name (you'll need to have access to the specialty list)
+        const specialtyName = getSpecialtyName(specialtyId);
+
+        const badge = document.createElement("div");
+        badge.className = "selected-option-badge";
+        badge.innerHTML = `
+            ${specialtyName}
+            <span class="remove-option" data-value="${specialtyId}" onclick="removeOfficeSpecialty(this, ${officeIndex})">×</span>
+        `;
+
+        selectedContainer.appendChild(badge);
+    });
+}
+
+// Remove a specialty from an office
+function removeOfficeSpecialty(removeButton, officeIndex) {
+    const specialtyId = removeButton.getAttribute("data-value");
+
+    // Update the doctorOffices array
+    const officeArrayIndex = doctorOffices.findIndex(office => office.index === parseInt(officeIndex));
+    if (officeArrayIndex !== -1) {
+        const specialtyIndex = doctorOffices[officeArrayIndex].specialties.indexOf(specialtyId);
+        if (specialtyIndex > -1) {
+            doctorOffices[officeArrayIndex].specialties.splice(specialtyIndex, 1);
+        }
+    }
+
+    // Update the UI
+    const optionElement = document.querySelector(`#office-specialties-options-${officeIndex} .custom-multi-select-option[data-value="${specialtyId}"]`);
+    if (optionElement) {
+        optionElement.classList.remove("selected");
+    }
+
+    // Update the selected options display
+    updateOfficeSpecialtiesDisplay(officeIndex);
+
+    // Validate office specialties
+    validateOfficeSpecialties(officeIndex);
+
+    // Update next button state
+    updateNextButtonState(2);
+}
+
+// Validate office specialties
+function validateOfficeSpecialties(officeIndex) {
+    const errorElement = document.getElementById(`office-specialties-${officeIndex}-validation-message`);
+    const container = document.getElementById(`office-specialties-container-${officeIndex}`);
+
+    const officeArrayIndex = doctorOffices.findIndex(office => office.index === parseInt(officeIndex));
+    if (officeArrayIndex === -1) return false;
+
+    const selectedSpecialties = doctorOffices[officeArrayIndex].specialties || [];
+
+    if (selectedSpecialties.length === 0) {
+        if (!officeSpecialtiesTouched[officeIndex]) {
+            clearFieldValidation(container, errorElement);
+            return false;
+        }
+        if (container) container.classList.add("error");
+        if (errorElement) {
+            errorElement.textContent = window.messages?.officeSpecialtiesRequired || "Please select at least one specialty for this office";
+            errorElement.classList.add("visible");
+        }
+        return false;
+    } else {
+        if (container) container.classList.remove("error");
+        if (errorElement) {
+            errorElement.classList.remove("visible");
+        }
+        return true;
+    }
+}
+
+// Helper function to get specialty name by ID
+function getSpecialtyName(specialtyId) {
+    const specialtyOption = document.querySelector(`[data-value="${specialtyId}"] .option-text`);
+    return specialtyOption ? specialtyOption.textContent : `Specialty ${specialtyId}`;
 }
 
 // Remove an office
@@ -507,6 +789,11 @@ function selectOfficeNeighborhood(index, id, name) {
     // Validate
     validateOfficeNeighborhood(index);
     validateOfficeName(index);
+    //update doctorOffices array
+    const officeIndex = doctorOffices.findIndex(office => office.index === parseInt(index));
+    if (officeIndex !== -1) {
+        doctorOffices[officeIndex].neighborhoodId = id;
+    }
     updateNextButtonState(2);
 }
 
@@ -587,40 +874,36 @@ function createDoctorOfficeHiddenInputs() {
         input.parentNode.removeChild(input);
     });
 
-    const officeNameInputs = document.querySelectorAll(".office-name");
-    const officeNeighborhoodInputs = document.querySelectorAll(".office-neighborhood-id");
-
-    doctorOffices = [];
-    // add to doctorOffices the added offices
-    for (let i = 0; i < officeNameInputs.length; i++) {
-        const name = officeNameInputs[i].value;
-        const neighborhoodId = officeNeighborhoodInputs[i].value;
-        doctorOffices.push({
-            index: i,
-            name: name,
-            neighborhoodId: neighborhoodId
-        });
-    }
-
     // Create new hidden inputs for each office
-    doctorOffices.forEach(office => {
+    doctorOffices.forEach((office, index) => {
         // Skip invalid offices
 
-        if (!office.name || !office.neighborhoodId) return;
+        if (!office.name || !office.neighborhoodId || !office.specialties) return;
 
         // Create neighborhood ID input
         const neighborhoodInput = document.createElement("input");
         neighborhoodInput.type = "hidden";
-        neighborhoodInput.name = `doctorOfficeForm[${office.index}].neighborhoodId`;
+        neighborhoodInput.name = `doctorOfficeForm[${index}].neighborhoodId`;
         neighborhoodInput.value = office.neighborhoodId;
         form.appendChild(neighborhoodInput);
 
         // Create office name input
         const nameInput = document.createElement("input");
         nameInput.type = "hidden";
-        nameInput.name = `doctorOfficeForm[${office.index}].officeName`;
+        nameInput.name = `doctorOfficeForm[${index}].officeName`;
         nameInput.value = office.name;
         form.appendChild(nameInput);
+
+        // Create specialties input
+
+        for (let index2 = 0; index2 < office.specialties.length; index2++) {
+            const id = office.specialties[index2];
+            const specialtyInput = document.createElement("input");
+            specialtyInput.type = "hidden";
+            specialtyInput.name = `doctorOfficeForm[${index}].specialtyIds[${index2}]`;
+            specialtyInput.value = id;
+            form.appendChild(specialtyInput);
+        }
     });
 }
 
@@ -1160,8 +1443,9 @@ function validateSectionWithoutUI(sectionNumber) {
                 const index = entry.dataset.index;
                 const nameValid = validateOfficeName(index);
                 const neighborhoodValid = validateOfficeNeighborhood(index);
+                const specialtiesValid = validateOfficeSpecialties(index);
 
-                if (!nameValid || !neighborhoodValid) {
+                if (!nameValid || !neighborhoodValid || !specialtiesValid) {
                     isValid = false;
                 }
             });
@@ -2359,3 +2643,5 @@ function togglePasswordVisibility(fieldId) {
         toggleIcon.classList.add('fa-eye');
     }
 }
+
+

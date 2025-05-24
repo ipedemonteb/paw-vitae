@@ -31,6 +31,7 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable
     @Override
     public List<Neighborhood> getAll() {
         return neighborhoodDao.getAll();
