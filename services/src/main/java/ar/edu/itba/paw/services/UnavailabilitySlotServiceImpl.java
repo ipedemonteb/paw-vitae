@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService {
@@ -126,5 +123,24 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
             slots.add(unavailabilitySlot);
         }
         return slots;
+    }
+    @Transactional(readOnly = true)
+    @Override
+    public Map<String,Object> getUnavailabilityByDoctorIdAndMonthAndYear(long doctorId, int month, int year) {
+        if (month < 1 || month > 12) {
+            month = LocalDate.now().getMonthValue();
+        }
+        if (year < 1) {
+            year = LocalDate.now().getYear();
+        }
+        LOGGER.debug("Getting unavailability slots for doctor {} in month {} and year {}", doctorId, month, year);
+        List<UnavailabilitySlotForm> unavailabilitySlotForms = transformToUnavailabilitySlotForms(unavailabilitySlotsDao.getUnavailabilityByDoctorIdAndMonthAndYear(doctorId, month, year));
+        unavailabilitySlotForms.forEach(slot -> System.out.println(slot.getStartDate() + " " + slot.getEndDate()));
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("unavailabilitySlots", unavailabilitySlotForms);
+        response.put("month", month);
+        response.put("year", year);
+        return response;
     }
 }

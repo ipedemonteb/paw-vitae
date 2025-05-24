@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Component("accessHandler")
 public class AccessHandler {
 
@@ -44,6 +46,9 @@ public class AccessHandler {
                         || a.getDoctor().getId() == userId)
                 .orElse(true);
     }
-
+ public boolean canHandleUnavailability( HttpServletRequest request) {
+     String requestedWith = request.getHeader("X-Requested-With");
+     return "XMLHttpRequest".equalsIgnoreCase(requestedWith);
+    }
 }
 
