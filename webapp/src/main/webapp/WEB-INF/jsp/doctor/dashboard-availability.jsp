@@ -7,7 +7,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
-<html lang="en">
 <head>
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/V-logo.svg/2048px-V-logo.svg.png" />
     <meta charset="UTF-8">
@@ -15,7 +14,7 @@
     <title><spring:message code="dashboard.availability.title" /></title>
     <link rel="stylesheet" href="<c:url value='/css/doctor-dashboard.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />" />
-    <link rel="stylesheet" href="<c:url value='/css/date-picker.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/unavailability-calendar.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -50,27 +49,24 @@
         <div class="tab-content active" id="availability-tab">
             <div class="tab-header">
                 <h2><spring:message code="dashboard.availability.title" /></h2>
-
-                <!-- Add Unavailability Button -->
-                <button type="button" class="btn btn-primary" id="add-unavailability-btn" onclick="showUnavailabilityModal()">
-                    <i class="fas fa-calendar-times"></i> <spring:message code="dashboard.availability.addUnavailability" />
-                </button>
             </div>
 
             <div class="profile-content">
-                <!-- Availability Slots Section -->
-                <div class="profile-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-calendar-alt"></i>
-                        <spring:message code="dashboard.availability.currentSlots" />
-                    </h3>
+                <!-- Unified Form for both Availability and Unavailability -->
+                <form:form id="updateAvailabilityForm" modelAttribute="updateAvailabilityForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/availability/update" cssClass="edit-profile-form">
 
-                    <div id="trash-warning-availability" class="warning-message" style="display: none; margin-top: 10px;">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span><spring:message code="dashboard.availability.trashWarning" /></span>
-                    </div>
+                    <!-- Availability Slots Section -->
+                    <div class="profile-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            <spring:message code="dashboard.availability.currentSlots" />
+                        </h3>
 
-                    <form:form id="updateAvailabilityForm" modelAttribute="updateAvailabilityForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/availability/update" cssClass="edit-profile-form">
+                        <div id="trash-warning-availability" class="warning-message" style="display: none; margin-top: 10px;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span><spring:message code="dashboard.availability.trashWarning" /></span>
+                        </div>
+
                         <div id="timeslots-container" class="timeslots-container">
                             <div id="no-slots-message" class="no-slots-message" style="${empty updateAvailabilityForm.availabilitySlots ? '' : 'display: none;'}">
                                 <p><spring:message code="dashboard.availability.noTimeSlots" /></p>
@@ -131,52 +127,92 @@
                                 <form:errors path="availabilitySlots" cssClass="error-message" element="div" />
                             </div>
 
-                            <button type="button" class="btn-add-slot" id="add-slot-btn" onclick="addTimeSlotRow()">
+                            <button type="button" class="btn-add-slot" onclick="addTimeSlotRow()">
                                 <i class="fas fa-plus"></i> <spring:message code="dashboard.availability.addTimeSlot" />
                             </button>
-
-                            <div class="form-actions">
-                                <button type="submit" class="btn-submit-doctor" id="save-availability-button">
-                                    <spring:message code="dashboard.availability.saveAvailability" />
-                                </button>
-                            </div>
                         </div>
-                    </form:form>
-                </div>
-
-                <!-- Unavailability Dates Section -->
-                <div class="profile-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-calendar-times"></i>
-                        <spring:message code="dashboard.availability.unavailabilityDates" />
-                    </h3>
-                    <div id="trash-warning" class="warning-message" style="display: none; margin-top: 10px;">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span><spring:message code="dashboard.availability.trashWarning" /></span>
                     </div>
 
-                    <form:form id="updateUnavailabilityForm" modelAttribute="updateUnavailabilityForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/unavailability/update" cssClass="edit-profile-form">
-                        <div id="no-unavailability-message" class="no-slots-message" style="${empty updateUnavailabilityForm.unavailabilitySlots ? '' : 'display: none;'}">
-                            <p><spring:message code="dashboard.availability.noUnavailabilityDates" /></p>
-                        </div>
+                    <!-- Unavailability Calendar Section -->
+                    <div class="profile-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-calendar-times"></i>
+                            <spring:message code="dashboard.availability.unavailabilityDates" />
+                        </h3>
+                    <div class="unavailability-calendar">
+                        <div class="unavailability-calendar-container">
+                            <!-- Calendar Header -->
+                            <div class="calendar-header">
+                                <button type="button" id="prevMonthBtn" class="calendar-nav-btn">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <div id="currentMonthYear" class="calendar-month-year"></div>
+                                <button type="button" id="nextMonthBtn" class="calendar-nav-btn">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
 
-                        <div id="unavailability-dates-container" class="unavailability-dates-container">
-                            <c:forEach items="${updateUnavailabilityForm.unavailabilitySlots}" var="unavailability" varStatus="status">
-                                <div class="unavailability-date-row" id="unavailability-row-${status.index}">
-                                    <div class="unavailability-date-info">
-                                        <div class="date-range">
-                                            <i class="fas fa-calendar-day"></i>
-                                            <span>
-                                <c:out value="${unavailability.startDate.toString()}" /> <spring:message code="dashboard.availability.until" /> <c:out value="${unavailability.endDate.toString()}" />
-                            </span>
-                                        </div>
-                                        <input type="hidden" name="unavailabilitySlots[${status.index}].startDate" value="${unavailability.startDate}" />
-                                        <input type="hidden" name="unavailabilitySlots[${status.index}].endDate" value="${unavailability.endDate}" />
-                                    </div>
-                                    <button type="button" class="btn-remove-unavailability" onclick="removeUnavailabilityDate(${status.index})">
-                                        <i class="fas fa-trash"></i>
+                            <!-- Calendar Grid -->
+                            <div class="calendar-grid">
+                                <div class="calendar-weekdays">
+                                    <div class="calendar-weekday"><spring:message code="calendar.monday.short" /></div>
+                                    <div class="calendar-weekday"><spring:message code="calendar.tuesday.short" /></div>
+                                    <div class="calendar-weekday"><spring:message code="calendar.wednesday.short" /></div>
+                                    <div class="calendar-weekday"><spring:message code="calendar.thursday.short" /></div>
+                                    <div class="calendar-weekday"><spring:message code="calendar.friday.short" /></div>
+                                    <div class="calendar-weekday"><spring:message code="calendar.saturday.short" /></div>
+                                    <div class="calendar-weekday"><spring:message code="calendar.sunday.short" /></div>
+                                </div>
+                                <div id="calendarDays" class="calendar-days"></div>
+                            </div>
+
+                            <!-- Calendar Legend -->
+                            <div class="calendar-legend">
+
+                                <div class="legend-item">
+                                    <div class="legend-color range-start"></div>
+                                    <span><spring:message code="dashboard.availability.legend.rangeStart" /></span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color range-end"></div>
+                                    <span><spring:message code="dashboard.availability.legend.rangeEnd" /></span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color in-range"></div>
+                                    <span><spring:message code="dashboard.availability.legend.inRange" /></span>
+                                </div>
+                            </div>
+
+                            <!-- Selection Info -->
+                            <div id="selectionInfo" class="selection-info" style="display: none;">
+                                <div class="selection-text">
+                                    <i class="fas fa-calendar-day"></i>
+                                    <span id="selectionText"></span>
+                                </div>
+                                <div class="selection-actions">
+                                    <button type="button" class="btn btn-primary" onclick="confirmSelection()">
+                                        <i class="fas fa-check"></i>
+                                        <spring:message code="dashboard.availability.confirm" />
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="cancelSelection()">
+                                        <i class="fas fa-times"></i>
+                                        <spring:message code="dashboard.availability.cancel" />
                                     </button>
                                 </div>
+                            </div>
+
+                            <!-- Loading indicator -->
+                            <div id="calendarLoading" class="calendar-loading" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span><spring:message code="dashboard.availability.loading" /></span>
+                            </div>
+                        </div>
+
+                        <!-- Hidden container for form inputs -->
+                        <div id="unavailability-inputs-container" style="display: none;">
+                            <c:forEach items="${updateAvailabilityForm.unavailabilitySlots}" var="unavailability" varStatus="status">
+                                <input type="hidden" name="unavailabilitySlots[${status.index}].startDate" value="${unavailability.startDate}" />
+                                <input type="hidden" name="unavailabilitySlots[${status.index}].endDate" value="${unavailability.endDate}" />
                             </c:forEach>
                         </div>
 
@@ -184,134 +220,69 @@
                         <div class="error-container">
                             <form:errors path="unavailabilitySlots" cssClass="error-message" element="div" />
                         </div>
+                    </div>
 
-                        <!-- Hidden fields for deleted items -->
-                        <div id="deleted-unavailability-slots-container"></div>
+                    <!-- Unified Submit Button -->
+                    <button type="submit" class="btn-submit-doctor-availability" id="unified-save-button">
+                        <i class="fas fa-save"></i> <spring:message code="dashboard.availability.saveChanges" />
+                    </button>
 
-                        <div class="form-actions">
-                            <button type="submit" class="btn-submit-doctor" id="save-unavailability-button">
-                                <spring:message code="dashboard.availability.saveUnavailability" />
-                            </button>
-                        </div>
-                    </form:form>
-                </div>
+                </form:form>
             </div>
         </div>
     </div>
 </main>
 
-<!-- Unavailability Modal with Enhanced Date Picker -->
-<div id="unavailabilityModal" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header">
-            <div class="modal-icon">
-                <i class="fas fa-calendar-times"></i>
-            </div>
-            <h3 class="modal-title"><spring:message code="dashboard.availability.addUnavailabilityTitle" /></h3>
-        </div>
-        <div class="modal-body">
-            <p class="modal-message"><spring:message code="dashboard.availability.addUnavailabilityMessage" /></p>
-
-            <div class="date-range-picker-container">
-                <div class="hidden-inputs">
-                    <input type="date" id="startDate" class="form-control" min="${java.time.LocalDate.now()}" />
-                    <input type="date" id="endDate" class="form-control" min="${java.time.LocalDate.now()}" />
-                </div>
-
-                <div class="date-picker-display">
-                    <div class="date-range-display">
-                        <div class="date-display-item">
-                            <label><spring:message code="dashboard.availability.startDate" /></label>
-                            <div id="startDateDisplay" class="date-display-value">
-                                <i class="fas fa-calendar-day"></i>
-                                <span><spring:message code="dashboard.availability.startDate.select" /></span>
-                            </div>
-                        </div>
-                        <div class="date-range-separator">
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                        <div class="date-display-item">
-                            <label><spring:message code="dashboard.availability.endDate" /></label>
-                            <div id="endDateDisplay" class="date-display-value">
-                                <i class="fas fa-calendar-day"></i>
-                                <span><spring:message code="dashboard.availability.endDate.select" /></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Custom calendar -->
-                <div id="datePickerCalendar" class="date-picker-calendar">
-                    <div class="date-picker-header">
-                        <button type="button" id="prevMonthBtn" class="date-picker-nav">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <div id="currentMonthYear" class="date-picker-month-year"></div>
-                        <button type="button" id="nextMonthBtn" class="date-picker-nav">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                    <div id="calendarWeekdays" class="date-picker-weekdays"></div>
-                    <div id="calendarDays" class="date-picker-days"></div>
-                </div>
-
-                <div id="date-error-message" class="error-message" style="display: none;"></div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-modal btn-cancel" onclick="hideUnavailabilityModal()">
-                <spring:message code="dashboard.availability.cancel" />
-            </button>
-            <button type="button" class="btn-modal btn-confirm" id="addUnavailabilityBtn" onclick="addUnavailabilityDate()">
-                <spring:message code="dashboard.availability.add" />
-            </button>
-        </div>
-    </div>
-</div>
-
-<div id="cancelAppointmentModal" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header">
-            <div class="modal-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
-                </svg>
-            </div>
-            <h3 class="modal-title"><spring:message code="appointment.cancel.title" /></h3>
-        </div>
-        <div class="modal-body">
-            <p class="modal-message"><spring:message code="appointment.cancel.message" /></p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-modal btn-cancel" onclick="hideCancelModal();">
-                <spring:message code="logout.confirmation.cancel"/>
-            </button>
-            <button type="button" class="btn-modal btn-danger" id="cancelAppointmentBtn">
-                <spring:message code="appointment.action.cancel"/>
-            </button>
-        </div>
-    </div>
-</div>
-
 <script src="<c:url value='/js/toast-notification.js' />"></script>
-<script src="<c:url value='/js/enhanced-date-time-picker.js' />"></script>
+<script src="<c:url value='/js/unavailability-calendar.js' />"></script>
 
 <script>
-    let slotCounter = ${doctor.availabilitySlots.size()};
+    // Initialize counters with proper fallback values
+    let slotCounter = ${fn:length(updateAvailabilityForm.availabilitySlots)};
     let timeSlots = [];
-    let unavailabilityCounter = ${updateUnavailabilityForm.unavailabilitySlots.size()};
-    let unavailabilityDates = [];
+
+    // Localized month names from server
+    const monthNames = [
+        '<spring:message code="month.january" javaScriptEscape="true" />',
+        '<spring:message code="month.february" javaScriptEscape="true" />',
+        '<spring:message code="month.march" javaScriptEscape="true" />',
+        '<spring:message code="month.april" javaScriptEscape="true" />',
+        '<spring:message code="month.may" javaScriptEscape="true" />',
+        '<spring:message code="month.june" javaScriptEscape="true" />',
+        '<spring:message code="month.july" javaScriptEscape="true" />',
+        '<spring:message code="month.august" javaScriptEscape="true" />',
+        '<spring:message code="month.september" javaScriptEscape="true" />',
+        '<spring:message code="month.october" javaScriptEscape="true" />',
+        '<spring:message code="month.november" javaScriptEscape="true" />',
+        '<spring:message code="month.december" javaScriptEscape="true" />'
+    ];
+
+    // Localized messages
+    const messages = {
+        confirmDelete: '<spring:message code="dashboard.availability.confirmDelete" javaScriptEscape="true" />',
+        deleteSuccess: '<spring:message code="dashboard.availability.deleteSuccess" javaScriptEscape="true" />',
+        addSuccess: '<spring:message code="dashboard.availability.addSuccess" javaScriptEscape="true" />',
+        errorOccurred: '<spring:message code="dashboard.availability.errorOccurred" javaScriptEscape="true" />',
+        selectStartDate: '<spring:message code="dashboard.availability.selectStartDate" javaScriptEscape="true" />',
+        selectEndDate: '<spring:message code="dashboard.availability.selectEndDate" javaScriptEscape="true" />',
+        selectedRange: '<spring:message code="dashboard.availability.selectedRange" javaScriptEscape="true" />',
+        until: '<spring:message code="dashboard.availability.until" javaScriptEscape="true" />'
+    };
+
+    // Context path for AJAX requests
+    const contextPath = '${pageContext.request.contextPath}';
 
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing...');
+
         initializeTimeSlots();
-        initializeUnavailabilityDates();
 
         // Initial validation of slots
         validateAllSlots();
 
-        // Check if availability or unavailability was updated successfully
+        // Check if availability was updated successfully
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('updated') === 'true' || urlParams.get('unavailabilityUpdated') === 'true') {
+        if (urlParams.get('updated') === 'true') {
             showSuccessToast();
 
             // Remove the query parameter without refreshing the page
@@ -331,24 +302,13 @@
             });
         }
 
-        // Set min date for date pickers
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('startDate').min = today;
-        document.getElementById('endDate').min = today;
-
-        // Add event listener for start date change
-        document.getElementById('startDate').addEventListener('change', function() {
-            document.getElementById('endDate').min = this.value;
-            if (document.getElementById('endDate').value &&
-                document.getElementById('endDate').value < this.value) {
-                document.getElementById('endDate').value = this.value;
-            }
-        });
+        console.log('Initialization complete. SlotCounter:', slotCounter);
     });
 
     function initializeTimeSlots() {
+        console.log('Initializing time slots...');
         // Initialize the timeSlots array with existing slots
-        <c:forEach items="${doctor.availabilitySlots}" var="slot" varStatus="status">
+        <c:forEach items="${updateAvailabilityForm.availabilitySlots}" var="slot" varStatus="status">
         timeSlots.push({
             index: ${status.index},
             day: ${slot.dayOfWeek},
@@ -359,20 +319,7 @@
 
         // Update no slots message
         updateNoSlotsMessage();
-    }
-
-    function initializeUnavailabilityDates() {
-        // Initialize the unavailabilityDates array with existing dates
-        <c:forEach items="${updateUnavailabilityForm.unavailabilitySlots}" var="unavailability" varStatus="status">
-        unavailabilityDates.push({
-            index: ${status.index},
-            startDate: '${unavailability.startDate}',
-            endDate: '${unavailability.endDate}'
-        });
-        </c:forEach>
-
-        // Update no unavailability message
-        updateNoUnavailabilityMessage();
+        console.log('Time slots initialized:', timeSlots);
     }
 
     // Generate hours for select options (8 AM to 8 PM)
@@ -389,7 +336,12 @@
     }
 
     function addTimeSlotRow() {
+        console.log('Adding time slot row...');
         const container = document.getElementById('time-slot-inputs');
+        if (!container) {
+            console.error('Container not found');
+            return;
+        }
 
         // Create a new row
         const row = document.createElement('div');
@@ -521,6 +473,8 @@
 
         // Increment counter
         slotCounter++;
+
+        console.log('Time slot row added. New counter:', slotCounter);
     }
 
     // Check for overlapping time slots
@@ -530,6 +484,8 @@
 
         const index = parseInt(changedElement.getAttribute('data-index'));
         const row = document.getElementById('slot-row-' + index);
+
+        if (!row) return false;
 
         // Get values from the row
         const daySelect = row.querySelector('select[name$=".dayOfWeek"]');
@@ -590,19 +546,23 @@
     // Show error message for time slots
     function showSlotError(message) {
         const errorElement = document.getElementById('time-slot-error');
-        errorElement.textContent = message;
-        errorElement.style.display = 'block';
-        errorElement.classList.add('visible');
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            errorElement.classList.add('visible');
 
-        // Scroll to the error message
-        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Scroll to the error message
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 
     // Clear all slot errors
     function clearSlotErrors() {
         const errorElement = document.getElementById('time-slot-error');
-        errorElement.style.display = 'none';
-        errorElement.classList.remove('visible');
+        if (errorElement) {
+            errorElement.style.display = 'none';
+            errorElement.classList.remove('visible');
+        }
 
         const errorRows = document.querySelectorAll('.slot-error');
         errorRows.forEach(row => {
@@ -612,6 +572,7 @@
 
     // Remove a time slot row
     function removeTimeSlotRow(index) {
+        console.log('Removing time slot row:', index);
         const row = document.getElementById('slot-row-' + index);
 
         if (row) {
@@ -620,7 +581,10 @@
             hiddenInput.type = 'hidden';
             hiddenInput.name = 'deletedSlots';
             hiddenInput.value = index;
-            document.getElementById('updateAvailabilityForm').appendChild(hiddenInput);
+            const form = document.getElementById('updateAvailabilityForm');
+            if (form) {
+                form.appendChild(hiddenInput);
+            }
 
             // Remove from DOM
             row.parentNode.removeChild(row);
@@ -637,8 +601,10 @@
             // Update no slots message
             updateNoSlotsMessage();
 
-            document.getElementById('trash-warning-availability').style.display = 'block';
-
+            const warningElement = document.getElementById('trash-warning-availability');
+            if (warningElement) {
+                warningElement.style.display = 'block';
+            }
         }
     }
 
@@ -647,22 +613,12 @@
         const container = document.getElementById('time-slot-inputs');
         const noSlotsMessage = document.getElementById('no-slots-message');
 
-        if (container.children.length === 0) {
-            noSlotsMessage.style.display = 'block';
-        } else {
-            noSlotsMessage.style.display = 'none';
-        }
-    }
-
-    // Update the no unavailability message visibility
-    function updateNoUnavailabilityMessage() {
-        const container = document.getElementById('unavailability-dates-container');
-        const noUnavailabilityMessage = document.getElementById('no-unavailability-message');
-
-        if (container.children.length === 0) {
-            noUnavailabilityMessage.style.display = 'block';
-        } else {
-            noUnavailabilityMessage.style.display = 'none';
+        if (container && noSlotsMessage) {
+            if (container.children.length === 0) {
+                noSlotsMessage.style.display = 'block';
+            } else {
+                noSlotsMessage.style.display = 'none';
+            }
         }
     }
 
@@ -714,7 +670,7 @@
     }
 
     function updateSaveButtonState() {
-        const saveButton = document.querySelector('#updateAvailabilityForm button[type="submit"]');
+        const saveButton = document.getElementById('unified-save-button');
         const hasErrors = document.querySelectorAll('.slot-error').length > 0;
 
         if (saveButton) {
@@ -725,160 +681,6 @@
                 saveButton.classList.remove('btn-disabled');
             }
         }
-    }
-
-    // Show unavailability modal
-    function showUnavailabilityModal() {
-        document.getElementById('unavailabilityModal').classList.add('show');
-        document.getElementById('startDate').value = '';
-        document.getElementById('endDate').value = '';
-        document.getElementById('date-error-message').style.display = 'none';
-    }
-
-    // Hide unavailability modal
-    function hideUnavailabilityModal() {
-        document.getElementById('unavailabilityModal').classList.remove('show');
-    }
-
-    // Add unavailability date
-    function addUnavailabilityDate() {
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        const errorElement = document.getElementById('date-error-message');
-
-        // Validate dates
-        if (!startDate || !endDate) {
-            errorElement.textContent = 'Both start and end dates are required';
-            errorElement.style.display = 'block';
-            return;
-        }
-
-        if (startDate > endDate) {
-            errorElement.textContent = 'Start date must be before or equal to end date';
-            errorElement.style.display = 'block';
-            return;
-        }
-
-        // Check for overlaps with existing unavailability dates
-        const overlaps = unavailabilityDates.some(date => {
-            return !(endDate < date.startDate || startDate > date.endDate);
-        });
-
-        if (overlaps) {
-            errorElement.textContent = 'This date range overlaps with an existing unavailability period';
-            errorElement.style.display = 'block';
-            return;
-        }
-
-        // Add to unavailability dates array
-        unavailabilityDates.push({
-            index: unavailabilityCounter,
-            startDate: startDate,
-            endDate: endDate
-        });
-
-        // Create and add the unavailability date row
-        const container = document.getElementById('unavailability-dates-container');
-
-        // Format dates for display
-        const startDateObj = new Date(startDate);
-        const endDateObj = new Date(endDate);
-        const formattedStartDate = startDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        const formattedEndDate = endDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-        // Create row
-        const row = document.createElement('div');
-        row.className = 'unavailability-date-row';
-        row.id = 'unavailability-row-' + unavailabilityCounter;
-
-        // Create date info
-        const dateInfo = document.createElement('div');
-        dateInfo.className = 'unavailability-date-info';
-
-        const dateRange = document.createElement('div');
-        dateRange.className = 'date-range';
-
-        const icon = document.createElement('i');
-        icon.className = 'fas fa-calendar-day';
-        dateRange.appendChild(icon);
-
-        const dateText = document.createElement('span');
-        dateText.textContent = formattedStartDate + ' - ' + formattedEndDate;
-        dateRange.appendChild(dateText);
-
-        dateInfo.appendChild(dateRange);
-
-        // Create hidden inputs with ISO format dates for LocalDate binding
-        const startDateInput = document.createElement('input');
-        startDateInput.type = 'hidden';
-        startDateInput.name = 'unavailabilitySlots[' + unavailabilityCounter + '].startDate';
-        startDateInput.value = startDate; // ISO format: YYYY-MM-DD
-        dateInfo.appendChild(startDateInput);
-
-        const endDateInput = document.createElement('input');
-        endDateInput.type = 'hidden';
-        endDateInput.name = 'unavailabilitySlots[' + unavailabilityCounter + '].endDate';
-        endDateInput.value = endDate; // ISO format: YYYY-MM-DD
-        dateInfo.appendChild(endDateInput);
-
-        // Create remove button
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'btn-remove-unavailability';
-        removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
-        removeBtn.onclick = function() {
-            removeUnavailabilityDate(unavailabilityCounter);
-        };
-
-        // Add elements to row
-        row.appendChild(dateInfo);
-        row.appendChild(removeBtn);
-
-        // Add row to container
-        container.appendChild(row);
-
-        // Update no unavailability message
-        updateNoUnavailabilityMessage();
-
-        // Increment counter
-        unavailabilityCounter++;
-
-        // Hide modal
-        hideUnavailabilityModal();
-    }
-
-    // Remove unavailability date
-    function removeUnavailabilityDate(index) {
-        const row = document.getElementById('unavailability-row-' + index);
-
-        if (row) {
-            // Create a hidden input to mark this unavailability for deletion
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'deletedUnavailabilitySlots';
-            hiddenInput.value = index;
-            document.getElementById('updateUnavailabilityForm').appendChild(hiddenInput);
-
-            // Remove from DOM
-            row.parentNode.removeChild(row);
-
-            // Remove from array
-            const dateIndex = unavailabilityDates.findIndex(date => date.index === index);
-            if (dateIndex !== -1) {
-                unavailabilityDates.splice(dateIndex, 1);
-            }
-
-            // Update no unavailability message
-            updateNoUnavailabilityMessage();
-
-            // Show the warning message
-            document.getElementById('trash-warning').style.display = 'block';
-        }
-    }
-
-    // Hide cancel modal
-    function hideCancelModal() {
-        document.getElementById('cancelAppointmentModal').classList.remove('show');
     }
 </script>
 </body>

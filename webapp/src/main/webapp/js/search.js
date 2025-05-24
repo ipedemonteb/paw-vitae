@@ -272,7 +272,6 @@ function applyAllFilters() {
 
 // Initialize all functionality
 document.addEventListener("DOMContentLoaded", () => {
-    initializeSearch()
     initializeViewToggle()
     initializeQuickFilters()
     initializeSorting()

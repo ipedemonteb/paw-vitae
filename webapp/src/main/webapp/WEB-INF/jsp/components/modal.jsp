@@ -81,12 +81,13 @@
                 });
             }
 
-            // Close modal on escape key
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && modal.classList.contains('show')) {
-                    closeModal();
-                }
-            });
+            if(modal){
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && modal.classList.contains('show')) {
+                        closeModal();
+                    }
+                });
+            }
         };
 
         // Setup modals for logout and cancel appointment
