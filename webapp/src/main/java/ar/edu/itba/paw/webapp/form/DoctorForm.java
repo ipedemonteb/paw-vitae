@@ -2,16 +2,15 @@ package ar.edu.itba.paw.webapp.form;
 
 
 
-import ar.edu.itba.paw.models.AvailabilitySlot;
 import ar.edu.itba.paw.models.AvailabilitySlotForm;
 import ar.edu.itba.paw.models.DoctorOfficeForm;
 import ar.edu.itba.paw.webapp.validation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
-import java.time.LocalTime;
 import java.util.List;
 
+@AcceptedSpecialties(specialties = "specialties", offices = "doctorOfficeForm", message = "{specialties.not.accepted}")
 @RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "{register.passwordsDoNotMatch}")
 public class DoctorForm {
 
@@ -61,6 +60,7 @@ public class DoctorForm {
     @Size(min = 1, max = 7)
     @UniqueOffices(message = "{offices.duplicate}")
     @ValidOfficeNames(message = "{offices.invalid.name}")
+    @ValidOfficeSpecialties(message = "{offices.invalid.specialties}")
     @ValidOfficeNeighborhood(message = "{offices.invalid.neighborhood}")
     private List<DoctorOfficeForm> doctorOfficeForm;
 

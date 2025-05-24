@@ -47,10 +47,6 @@ public class AvailabilitySlotForm {
     }
 
     public AvailabilitySlot toEntity(Doctor doctor) {
-        AvailabilitySlot slot = new AvailabilitySlot();
-        slot.setId(new AvailabilitySlotId(doctor.getId(), dayOfWeek, startTime));
-        slot.setDoctor(doctor);
-        slot.setEndTime(endTime);
-        return slot;
+        return new AvailabilitySlot(doctor, dayOfWeek, startTime, endTime);
     }
 }

@@ -372,11 +372,35 @@
                                                 </div>
                                                 <div id="office-neighborhood-0-validation-message" class="error-message"></div>
                                             </div>
-                                            <div class="office-actions">
-                                                <button type="button" class="btn-remove office-remove" onclick="removeOffice(0)" style="display: none;">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
+                                        </div>
+
+                                        <!-- Add specialty selection for this office -->
+                                        <div class="form-group">
+                                            <label class="form-label required-field"><spring:message code="register.officeSpecialties"/></label>
+                                            <div class="multi-select-container" id="office-specialties-container-0">
+                                                <div class="custom-multi-select" id="office-specialties-options-0">
+                                                    <c:forEach items="${specialtyList}" var="specialty">
+                                                        <div class="custom-multi-select-option" data-value="${specialty.id}"
+                                                             onclick="toggleOfficeSpecialty(this, 0)">
+                                                            <div class="option-checkbox"></div>
+                                                            <div class="option-text">
+                                                                <spring:message code="${specialty.key}"/>
+                                                            </div>
+                                                        </div>
+                                                    </c:forEach>
+                                                </div>
+                                                <div class="selected-options" id="office-specialties-selected-0"></div>
                                             </div>
+                                            <small class="form-text text-muted">
+                                                <spring:message code="register.selectOfficeSpecialties"/>
+                                            </small>
+                                            <div id="office-specialties-0-validation-message" class="error-message"></div>
+                                        </div>
+
+                                        <div class="office-actions">
+                                            <button type="button" class="btn-remove office-remove" onclick="removeOffice(0)" style="display: none;">
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -508,7 +532,10 @@
         neighborhood: '<spring:message code="register.neighborhood" javaScriptEscape="true" />',
         neighborhoodPlaceholder: '<spring:message code="placeholder.neighborhood" javaScriptEscape="true" />',
         neighborhoodRequired: '<spring:message code="register.neighborhoodRequired" javaScriptEscape="true" />',
-        officeRequired: '<spring:message code="register.officeRequired" javaScriptEscape="true" />'
+        officeRequired: '<spring:message code="register.officeRequired" javaScriptEscape="true" />',
+        officeSpecialties: '<spring:message code="register.officeSpecialties" javaScriptEscape="true" />',
+        selectOfficeSpecialties: '<spring:message code="register.selectOfficeSpecialties" javaScriptEscape="true" />',
+        officeSpecialtiesRequired: '<spring:message code="register.officeSpecialtiesRequired" javaScriptEscape="true" />'
     };
 
 
@@ -525,6 +552,13 @@
     ];
     </c:if>
 
+    window.specialtyList = [<c:forEach items="${specialtyList}" var="specialty" varStatus="status">
+        {
+            id: ${specialty.id},
+            name: "<spring:message code="${specialty.key}"/>"
+        }<c:if test="${!status.last}">,</c:if>
+        </c:forEach>];
+
 
     <c:if test="${not empty registerForm.doctorOfficeForm}">
     window.existingOffices = [
@@ -533,6 +567,14 @@
             index: ${status.index},
             name: "<c:out value='${office.officeName}'/>",
             neighborhoodId: ${office.neighborhoodId},
+            specialties: [
+                <c:forEach items="${office.specialtyIds}" var="sid" varStatus="sidStatus">
+                {
+                    id: ${sid}
+                }
+                <c:if test="${!sidStatus.last}">,</c:if>
+                </c:forEach>
+            ]
         }<c:if test="${!status.last}">, </c:if>
         </c:forEach>
     ];
