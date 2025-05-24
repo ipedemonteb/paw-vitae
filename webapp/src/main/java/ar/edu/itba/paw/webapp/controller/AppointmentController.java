@@ -21,12 +21,14 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
     private final DoctorService doctorService;
     private final AppointmentFileService appointmentFileService;
+    private final UnavailabilitySlotsService unavailabilitySlotsService;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService, DoctorService doctorService, AppointmentFileService appointmentFileService) {
+    public AppointmentController(AppointmentService appointmentService, DoctorService doctorService, AppointmentFileService appointmentFileService, UnavailabilitySlotsService unavailabilitySlotsService) {
         this.appointmentService = appointmentService;
         this.doctorService = doctorService;
         this.appointmentFileService = appointmentFileService;
+        this.unavailabilitySlotsService = unavailabilitySlotsService;
     }
 
 
@@ -43,6 +45,7 @@ public class AppointmentController {
         Map<LocalDate, List<Integer>> appointmentsByDate = appointmentService.getFutureAppointmentsByUserAndDate(doctor.getId());
         mav.addObject("doctor", doctor);
         mav.addObject("appointmentsByDate", appointmentsByDate);
+        mav.addObject("unavailabilitySlots", unavailabilitySlotsService.getUnavailabilityByDoctorIdCurrentAndNextMonth(doctor.getId()));
         return mav;
     }
 

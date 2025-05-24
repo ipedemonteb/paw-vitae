@@ -50,4 +50,23 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
                 .getSingleResult();
         return count > 0;
     }
+    @Override
+    public List<UnavailabilitySlot> getUnavailabilityByDoctorIdCurrentAndNextMonth(long doctorId) {
+        LocalDate now = LocalDate.now();
+        LocalDate startOfThisMonth = now.withDayOfMonth(1);
+        LocalDate endOfNextMonth = now.plusMonths(1).withDayOfMonth(1).plusMonths(1).minusDays(1);
+
+        return em.createQuery("""
+            FROM UnavailabilitySlot u 
+            WHERE u.doctor.id = :doctorId 
+              AND (
+                  u.id.startDate <= :endOfNextMonth 
+                  AND u.id.endDate >= :startOfThisMonth
+              )
+        """, UnavailabilitySlot.class)
+                .setParameter("doctorId", doctorId)
+                .setParameter("startOfThisMonth", startOfThisMonth)
+                .setParameter("endOfNextMonth", endOfNextMonth)
+                .getResultList();
+    }
 }

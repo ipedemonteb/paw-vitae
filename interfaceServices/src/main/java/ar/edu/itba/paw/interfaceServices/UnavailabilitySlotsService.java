@@ -20,7 +20,7 @@ public interface UnavailabilitySlotsService {
     boolean isUnavailableAtDate(long doctorId, LocalDate date);
 
     List<UnavailabilitySlotForm> getDoctorUnavailabilitySlots(Doctor doctor);
-
+    List<UnavailabilitySlot> getUnavailabilityByDoctorIdCurrentAndNextMonth(long doctorId);
     List<UnavailabilitySlot> transformToUnavailabilitySlots(Doctor doctor,List<UnavailabilitySlotForm> unavailabilitySlots);
     List<UnavailabilitySlotForm> transformToUnavailabilitySlotForms(List<UnavailabilitySlot> unavailabilitySlots);
 }

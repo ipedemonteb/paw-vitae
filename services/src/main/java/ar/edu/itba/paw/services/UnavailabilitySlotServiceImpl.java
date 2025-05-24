@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -84,8 +85,8 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
     @Transactional
     @Override
     public List<UnavailabilitySlotForm> getDoctorUnavailabilitySlots(Doctor doctor) {
-        List<UnavailabilitySlot> slots = doctor.getUnavailabilitySlots();
-        List<UnavailabilitySlotForm> unavailabilitySlots = new ArrayList<>();
+        List<UnavailabilitySlot> slots = getUnavailabilityByDoctorId(doctor.getId());
+        List<UnavailabilitySlotForm> unavailabilitySlots = new ArrayList<>();       //TODO CORREGIR
         for (UnavailabilitySlot slot : slots) {
             UnavailabilitySlotForm form = new UnavailabilitySlotForm(slot.getStartDate(), slot.getEndDate());
             unavailabilitySlots.add(form);
@@ -94,7 +95,15 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
                 .sorted(Comparator.comparing(UnavailabilitySlotForm::getStartDate)
                         .thenComparing(UnavailabilitySlotForm::getEndDate))
                 .toList();
+
     }
+    @Transactional(readOnly = true)
+    @Override
+    public List<UnavailabilitySlot> getUnavailabilityByDoctorIdCurrentAndNextMonth(long doctorId) {
+        LOGGER.debug("Getting unavailability slots for doctor {} in current and next month", doctorId);
+        return unavailabilitySlotsDao.getUnavailabilityByDoctorIdCurrentAndNextMonth(doctorId);
+    }
+
     @Transactional
     @Override
     public List<UnavailabilitySlot> transformToUnavailabilitySlots(Doctor doctor, List<UnavailabilitySlotForm> unavailabilitySlots) {

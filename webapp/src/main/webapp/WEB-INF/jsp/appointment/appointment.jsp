@@ -250,7 +250,7 @@
 
 
     const unavailabilitySlots = [
-        <c:forEach var="slot" items="${doctor.unavailabilitySlots}" varStatus="status">
+        <c:forEach var="slot" items="${unavailabilitySlots}" varStatus="status">
         {
             startDate: "${slot.startDate}",
             endDate: "${slot.endDate}"
