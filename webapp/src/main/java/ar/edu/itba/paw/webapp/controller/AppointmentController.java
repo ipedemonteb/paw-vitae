@@ -77,6 +77,7 @@ public class AppointmentController {
         mav.addObject("patientFiles", appointmentFileService.getByAppointmentId(appointment.getId()));
         mav.addObject("appointment", appointment);
         mav.addObject("specialty", appointment.getSpecialty());
+        mav.addObject("office", appointment.getDoctorOffice());
         return mav;
     }
 }
