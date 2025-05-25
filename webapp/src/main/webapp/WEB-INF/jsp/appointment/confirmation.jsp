@@ -51,6 +51,11 @@
                     </div>
 
                     <div class="confirmation-item">
+                        <div class="confirmation-label"><spring:message code="appointment.form.office"/></div>
+                        <div class="confirmation-value"><c:out value="${office.officeName} - ${office.neighborhood.name}"/></div>
+                    </div>
+
+                    <div class="confirmation-item">
                         <div class="confirmation-label"><spring:message code="appointment.form.date"/></div>
                         <div class="confirmation-value">
                             <div style="display: flex; align-items: center;">
