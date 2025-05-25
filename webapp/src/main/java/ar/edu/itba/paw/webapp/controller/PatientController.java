@@ -30,14 +30,16 @@ public class PatientController {
     private final CoverageService coverageService;
     private final AppointmentFileService appointmentFileService;
     private final RatingService ratingService;
+    private final DoctorOfficeService doctorOfficeService;
 
     @Autowired
-    public PatientController(PatientService patientService, AppointmentService appointmentService, CoverageService coverageService, AppointmentFileService appointmentFileService, RatingService ratingService) {
+    public PatientController(PatientService patientService, AppointmentService appointmentService, CoverageService coverageService, AppointmentFileService appointmentFileService, RatingService ratingService, DoctorOfficeService doctorOfficeService) {
         this.patientService = patientService;
         this.appointmentService = appointmentService;
         this.coverageService = coverageService;
         this.appointmentFileService = appointmentFileService;
         this.ratingService = ratingService;
+        this.doctorOfficeService = doctorOfficeService;
     }
 
     @RequestMapping(value = "/patient/dashboard")
@@ -122,6 +124,7 @@ public class PatientController {
         mav.addObject("doctorFiles", appointmentFileService.getByAppointmentId(appointment.getId()));
         mav.addObject("existingRating", existingRating.orElse(null));
         mav.addObject("isCancelled", appointment.getStatus().equals(AppointmentStatus.CANCELADO.getValue()));
+        mav.addObject("office", appointment.getDoctorOffice());
         return mav;
     }
 

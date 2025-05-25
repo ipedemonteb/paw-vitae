@@ -121,6 +121,19 @@
 
                 <div class="specialty-card-appointment">
                     <div class="specialty-icon-appointment">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="specialty-content">
+                        <span class="specialty-label-appointment"><spring:message
+                                code="appointment.form.office"/>:</span>
+                        <span class="specialty-value-appointment">
+                            <c:out value="${office.officeName} - ${office.neighborhood.name}"/>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="specialty-card-appointment">
+                    <div class="specialty-icon-appointment">
                         <i class="fas fa-comment"></i>
                     </div>
                     <div class="specialty-content">
