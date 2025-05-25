@@ -6,7 +6,9 @@ import ar.edu.itba.paw.models.Specialty;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ValidOfficeSpecialtiesValidator implements ConstraintValidator<ValidOfficeSpecialties, List<DoctorOfficeForm>> {
     private final SpecialtyService specialtyService;
@@ -15,7 +17,7 @@ public class ValidOfficeSpecialtiesValidator implements ConstraintValidator<Vali
     public ValidOfficeSpecialtiesValidator(SpecialtyService specialtyService) {
         this.specialtyService = specialtyService;
     }
-
+    Set<Long> seenIds = new HashSet<>();
 
     @Override
     public boolean isValid(List<DoctorOfficeForm> values, javax.validation.ConstraintValidatorContext context) {
@@ -24,21 +26,19 @@ public class ValidOfficeSpecialtiesValidator implements ConstraintValidator<Vali
         }
         for (DoctorOfficeForm specialty : values) {
             if (specialty.getSpecialtyIds() == null || specialty.getSpecialtyIds().isEmpty()) {
-                System.out.println("HOW");
-                System.out.println(specialty.getSpecialtyIds());
-                System.out.println("ya");
+
                 return false;
             }
             for (Long id : specialty.getSpecialtyIds()) {
                 if (id == null || id < 0) {
-                    System.out.println("WHY");
+                    return false;
+                }
+                if (!seenIds.add(id)) {
                     return false;
                 }
             }
             List<Specialty> specialties = specialtyService.getByIds(specialty.getSpecialtyIds());
             if (specialties.size() != specialty.getSpecialtyIds().size()) {
-                System.out.println("WHAT");
-                specialty.getSpecialtyIds().forEach(System.out::println);
                 return false;
             }
         }
