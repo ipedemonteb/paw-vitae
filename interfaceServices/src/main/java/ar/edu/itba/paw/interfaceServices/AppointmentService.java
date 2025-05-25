@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface AppointmentService {
 
-    Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId);
+    Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId);
 
     void sendDailyReminders();
 
