@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectionEnd = null
     let tempSelection = []
 
+
+
     // DOM elements
     const prevMonthBtn = document.getElementById("prevMonthBtn")
     const nextMonthBtn = document.getElementById("nextMonthBtn")
@@ -238,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     e.stopPropagation()
                     deleteUnavailabilityPeriod(unavailabilityStatus.index)
                 })
-                dayElement.title = "Click to delete this unavailability period"
+                dayElement.title = messages.deleteTitle;
                 dayElement.style.cursor = "pointer"
             }
         } else {
@@ -440,12 +442,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let text
         if (!selectionEnd || selectionStart.getTime() === selectionEnd.getTime()) {
-            text = `Select Start Date: ${formatDateForDisplay(selectionStart)}`
-            if (isSelecting && selectionEnd) {
-                text = `${formatDateForDisplay(selectionStart)} - ${formatDateForDisplay(selectionEnd)}`
-            }
+            text = `${formatDateForDisplay(selectionStart)}`
         } else {
-            text = `${formatDateForDisplay(selectionStart)} until ${formatDateForDisplay(selectionEnd)}`
+            text = `${formatDateForDisplay(selectionStart)} hasta ${formatDateForDisplay(selectionEnd)}`
         }
 
         selectionText.textContent = text
@@ -550,6 +549,10 @@ document.addEventListener("DOMContentLoaded", () => {
         renderCalendar()
 
         showSuccess("Unavailability period deleted successfully")
+        const warningElement = document.getElementById('trash-warning-unavailability');
+        if (warningElement) {
+            warningElement.style.display = 'block';
+        }
     }
 
     /**

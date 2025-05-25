@@ -134,6 +134,16 @@
                         </div>
                     </div>
 
+                    <h3 class="section-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        <spring:message code="dashboard.availability.unavailabilityDates" />
+                    </h3>
+                    <div id="trash-warning-unavailability" class="warning-message" style="display: none; margin-top: 10px;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span><spring:message code="dashboard.availability.trashWarning" /></span>
+                    </div>
+
+
                     <!-- Unavailability Calendar Section -->
                     <div class="unavailability-calendar">
                         <div class="unavailability-calendar-container">
@@ -262,6 +272,7 @@
         selectStartDate: '<spring:message code="dashboard.availability.selectStartDate" javaScriptEscape="true" />',
         selectEndDate: '<spring:message code="dashboard.availability.selectEndDate" javaScriptEscape="true" />',
         selectedRange: '<spring:message code="dashboard.availability.selectedRange" javaScriptEscape="true" />',
+        deleteTitle: '<spring:message code="dashboard.availability.deleteTitle" javaScriptEscape="true" />',
         until: '<spring:message code="dashboard.availability.until" javaScriptEscape="true" />'
     };
 
