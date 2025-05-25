@@ -140,6 +140,7 @@ body {
     border-radius: var(--border-radius);
     margin-bottom: 30px;
     border: 1px solid #e2e8f0;
+    overflow: hidden;
     transition: var(--transition);
 }
 
@@ -190,6 +191,7 @@ body {
 
 .doctor-details {
     flex-grow: 1;
+    min-width: 0;
 }
 
 .doctor-name {
@@ -234,6 +236,13 @@ body {
     font-size: 0.95rem;
     color: var(--text-light);
     word-break: break-word;
+}
+
+.card-specialty-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0; /* Reduced spacing between cards */
 }
 
 /* Specialty Card */
@@ -980,6 +989,10 @@ textarea.form-control {
 @media (max-width: 768px) {
     .appointment-container {
         margin: 20px auto 60px;
+    }
+
+    .card-specialty-list {
+        justify-content: center;
     }
 
     .appointment-header {
