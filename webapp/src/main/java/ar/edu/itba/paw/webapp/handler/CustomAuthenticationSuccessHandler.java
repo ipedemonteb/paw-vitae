@@ -34,7 +34,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
     private boolean isSafeRedirect(String url) {
         return url.startsWith("/") &&
-                !url.startsWith("/.well-known") &&
+                !url.contains(".well-known") &&
                 !url.contains("chrome.devtools") &&
                 !url.contains("..");
     }

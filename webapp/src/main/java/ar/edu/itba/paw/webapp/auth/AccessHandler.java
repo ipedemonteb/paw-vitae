@@ -37,7 +37,7 @@ public class AccessHandler {
         try {
             appointmentIdLong = Long.parseLong(appointmentId);
         } catch (NumberFormatException e) {
-            return false;
+            return true;
         }
 
         long userId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
