@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.mail.MessagingException;
@@ -26,7 +27,19 @@ public class GlobalExceptionHandler {
         mav.addObject("exception", ex.getMessage());
         return mav;
     }
+    @ExceptionHandler(NumberFormatException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ModelAndView handleNumberFormatException(NumberFormatException e) {
+        LOGGER.error("Number format exception occurred", e);
+        return new ModelAndView("/error/404");
+    }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ModelAndView handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        LOGGER.error("Method argument type mismatch exception occurred", e);
+        return new ModelAndView("/error/404");
+    }
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)    public ModelAndView handleUserNotFoundException(UserNotFoundException e) {
         LOGGER.error("User not found exception occurred", e);
