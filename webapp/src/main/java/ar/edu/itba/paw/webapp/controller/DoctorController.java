@@ -174,6 +174,7 @@ public class DoctorController {
         mav.addObject("doctorFiles", appointmentFileService.getByAppointmentId(appointment.getId()));
         mav.addObject("existingRating", ratingService.getRatingByAppointmentId(appointment.getId()).orElse(null));
         mav.addObject("isCancelled", appointment.getStatus().equals(AppointmentStatus.CANCELADO.getValue()));
+        mav.addObject("office", appointment.getDoctorOffice());
         doctorFileForm.setAppointmentId(id);
         return mav;
     }
