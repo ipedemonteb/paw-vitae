@@ -7,6 +7,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
+<html>
 <head>
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/V-logo.svg/2048px-V-logo.svg.png" />
     <meta charset="UTF-8">
@@ -134,11 +135,6 @@
                     </div>
 
                     <!-- Unavailability Calendar Section -->
-                    <div class="profile-section">
-                        <h3 class="section-title">
-                            <i class="fas fa-calendar-times"></i>
-                            <spring:message code="dashboard.availability.unavailabilityDates" />
-                        </h3>
                     <div class="unavailability-calendar">
                         <div class="unavailability-calendar-container">
                             <!-- Calendar Header -->

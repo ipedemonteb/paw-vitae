@@ -241,12 +241,15 @@
 <!-- Scripts -->
 <script>
 
-    document.getElementById('searchForm').addEventListener('submit', function(event) {
-        const specialtyDropdown = document.getElementById('specialtyDropdown');
-        if (specialtyDropdown.value === '0') {
-            specialtyDropdown.name = '';
-        }
-    });
+    const searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(event) {
+            const specialtyDropdown = document.getElementById('specialtyDropdown');
+            if (specialtyDropdown.value === '0') {
+                specialtyDropdown.name = '';
+            }
+        });
+    }
 
     // Back to top button
     const backToTopButton = document.getElementById('backToTop');

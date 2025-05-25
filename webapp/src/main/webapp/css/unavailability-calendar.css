@@ -2,6 +2,7 @@
 
 .unavailability-calendar{
     display: flex;
+    flex-wrap: wrap;
     flex-direction: column;
     align-content: center;
     justify-content: center;
@@ -13,7 +14,7 @@
     padding: 1.5rem;
     box-shadow: var(--shadow-sm);
     border: 1px solid #e2e8f0;
-    width: 40rem;
+    width: 80%;
 }
 
 /* Calendar Header */
@@ -175,6 +176,14 @@
     background-color: rgba(16, 185, 129, 0.7);
     color: var(--white);
     border-radius: 0;
+}
+
+.calendar-day.selected {
+    background-color: var(--success-color);
+    color: var(--white);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    font-weight: 600;
 }
 
 .calendar-day.temp-single {
