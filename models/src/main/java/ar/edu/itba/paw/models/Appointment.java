@@ -33,6 +33,10 @@ public class Appointment {
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "office_id", nullable = false)
+    private DoctorOffice doctorOffice;
+
     @Column
     private String report;
 
@@ -43,7 +47,7 @@ public class Appointment {
         // For Hibernate use
     }
 
-    public Appointment(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report) {
+    public Appointment(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice) {
         this.date = date;
         this.status = status;
         this.reason = reason;
@@ -51,6 +55,7 @@ public class Appointment {
         this.doctor = doctor;
         this.patient = patient;
         this.report = report;
+        this.doctorOffice = doctorOffice;
     }
 
     public long getId() {
@@ -119,5 +124,13 @@ public class Appointment {
 
     public void setCancellable(Boolean cancellable) {
         this.cancellable = cancellable;
+    }
+
+    public DoctorOffice getDoctorOffice() {
+        return doctorOffice;
+    }
+
+    public void setDoctorOffice(DoctorOffice doctorOffice) {
+        this.doctorOffice = doctorOffice;
     }
 }

@@ -1,11 +1,15 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.models.DoctorOfficeForm;
 import ar.edu.itba.paw.webapp.validation.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+
+@OfficeOwnedByDoctor(officeId = "officeId", doctorId = "doctorId", message = "{appointment.office.valid}")
+@OfficeAcceptsSpecialty(officeId = "officeId", specialtyId = "specialtyId" ,message = "{appointment.office.specialty.valid}")
 @DoctorAvailableAtDayAndTime(doctorId = "doctorId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.valid}")
 @AppointmentExistence(userId = "doctorId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existence}")
 @AppointmentExistence(userId = "patientId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existence}")
@@ -33,6 +37,9 @@ public class AppointmentForm {
     @NotNull
     @Specialty(message = "{specialty.invalid}")
     private long specialtyId;
+
+    @NotNull
+    private long officeId;
 
     @NotNull
     private long doctorId;
@@ -101,6 +108,14 @@ public class AppointmentForm {
 
     public void setFiles(MultipartFile[] files) {
         this.patientFiles = files;
+    }
+
+    public long getOfficeId() {
+        return officeId;
+    }
+
+    public void setOfficeId(long officeId) {
+        this.officeId = officeId;
     }
 }
 

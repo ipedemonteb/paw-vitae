@@ -40,12 +40,15 @@ public class DoctorForm {
     @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "{phone.invalid}")
     private String phone;
+
     @SpecialtyList(message = "{specialties.invalids}")
     @NotEmpty
     private List<Long> specialties;
+
     @CoverageList(message = "{coverages.invalids}")
     @NotEmpty
     private List<Long> coverages;
+
     @FileType(types = {"image/jpeg", "image/png", "image/jpg"},message = "{fileType.invalid}")
     @FileSize(max = 2097154) // 2MB
     private MultipartFile image;

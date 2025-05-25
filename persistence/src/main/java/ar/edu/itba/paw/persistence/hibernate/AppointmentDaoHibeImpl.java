@@ -25,8 +25,8 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     private EntityManager em;
 
     @Override
-    public Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report) {
-        Appointment appointment = new Appointment(date, status, reason, specialty, doctor, patient, report);
+    public Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice) {
+        Appointment appointment = new Appointment(date, status, reason, specialty, doctor, patient, report, doctorOffice);
         em.persist(appointment);
         return appointment;
     }

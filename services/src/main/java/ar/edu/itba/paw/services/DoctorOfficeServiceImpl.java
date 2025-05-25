@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DoctorOfficeServiceImpl implements DoctorOfficeService {
@@ -56,5 +57,17 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             doctorOffices.add(doctorOffice);
         }
         return doctorOffices;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<DoctorOffice> getById(long id) {
+        return doctorOfficeDao.getById(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorOffice> getByDoctorId(long doctorId) {
+        return doctorOfficeDao.getByDoctorId(doctorId);
     }
 }

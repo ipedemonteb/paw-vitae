@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.interfacePersistence;
 
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,7 +9,7 @@ import java.util.Optional;
 
 public interface AppointmentDao {
 
-    Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report);
+    Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice);
 
     void cancelAppointment(long appointmentId);
 

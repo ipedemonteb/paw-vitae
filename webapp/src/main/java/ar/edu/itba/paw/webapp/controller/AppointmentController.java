@@ -22,13 +22,15 @@ public class AppointmentController {
     private final DoctorService doctorService;
     private final AppointmentFileService appointmentFileService;
     private final UnavailabilitySlotsService unavailabilitySlotsService;
+    private final DoctorOfficeService doctorOfficeService;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService, DoctorService doctorService, AppointmentFileService appointmentFileService, UnavailabilitySlotsService unavailabilitySlotsService) {
+    public AppointmentController(AppointmentService appointmentService, DoctorService doctorService, AppointmentFileService appointmentFileService, UnavailabilitySlotsService unavailabilitySlotsService, DoctorOfficeService doctorOfficeService) {
         this.appointmentService = appointmentService;
         this.doctorService = doctorService;
         this.appointmentFileService = appointmentFileService;
         this.unavailabilitySlotsService = unavailabilitySlotsService;
+        this.doctorOfficeService = doctorOfficeService;
     }
 
 
@@ -46,6 +48,7 @@ public class AppointmentController {
         mav.addObject("doctor", doctor);
         mav.addObject("appointmentsByDate", appointmentsByDate);
         mav.addObject("unavailabilitySlots", unavailabilitySlotsService.getUnavailabilityByDoctorIdCurrentAndNextMonth(doctor.getId()));
+        mav.addObject("doctorOffices", doctorOfficeService.getByDoctorId(doctor.getId()));
         return mav;
     }
 
@@ -60,7 +63,7 @@ public class AppointmentController {
         if (errors.hasErrors()) {
             return appointment(appointmentForm, doctorId, patient);
         }
-        Appointment appointment = appointmentService.create(patient.getId(), doctorId.getValue(), appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId());
+        Appointment appointment = appointmentService.create(patient.getId(), doctorId.getValue(), appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId(), appointmentForm.getOfficeId());
         appointmentFileService.create(appointmentForm.getFiles(), "patient", appointment.getId());
         return new ModelAndView("redirect:/appointment/confirmation/" + appointment.getId());
     }

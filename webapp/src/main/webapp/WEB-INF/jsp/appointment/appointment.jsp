@@ -91,6 +91,7 @@
                 </c:if>
 
                 <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment" id="appointmentForm" class="appointment-form" enctype="multipart/form-data" onsubmit="return submitOnce(this);">
+                    <!-- Replace the existing specialty card section with this enhanced version -->
                     <div class="specialty-card-appointment">
                         <div class="specialty-icon-appointment">
                             <i class="fas fa-stethoscope"></i>
@@ -110,6 +111,31 @@
                         </div>
                     </div>
 
+                    <!-- Add Office Selection Card -->
+                    <div class="office-card-appointment">
+                        <div class="office-icon-appointment">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="office-content">
+                            <span class="office-label-appointment"><spring:message code="appointment.form.office" />:</span>
+                            <div class="office-select-container">
+                                <select id="officeSelect" class="office-select" name="officeId" required>
+                                    <option value=""><spring:message code="appointment.form.selectOffice" /></option>
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div class="office-details" id="officeDetails" style="display: none;">
+                                <div class="office-info">
+                                    <span class="office-name" id="selectedOfficeName"></span>
+                                    <span class="office-neighborhood" id="selectedOfficeNeighborhood"></span>
+                                </div>
+                            </div>
+                            <form:errors path="officeId" cssClass="error-message" />
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields for office data -->
+                    <form:hidden path="officeId" id="officeId" />
                     <form:hidden path="specialtyId" id="specialtyId" />
                     <input type="hidden" name="doctorId" value="${doctor.id}" />
 
@@ -244,9 +270,11 @@
             fileAdded: '<spring:message code="file.upload.fileAdded"  />',
             fileRemoved: '<spring:message code="file.upload.fileRemoved" />',
             fileTooLarge: '<spring:message code="file.upload.fileTooLarge" />'
-        }
+        },
+        selectOffice: '<spring:message code="appointment.form.selectOffice" javaScriptEscape="true" />',
+        officeRequired: '<spring:message code="appointment.form.officeRequired" javaScriptEscape="true" />'
     };
-    contextPath = "${pageContext.request.contextPath}";
+    const contextPath = "${pageContext.request.contextPath}";
 
 
     const unavailabilitySlots = [
@@ -283,15 +311,29 @@
         </c:forEach>
     ];
 
+    const doctorOffices = [
+        <c:forEach items="${doctorOffices}" var="office" varStatus="status">
+        {
+            id: ${office.id},
+            neighborhoodId: ${office.neighborhood.id},
+            neighborhoodName: "${office.neighborhood.name}",
+            officeName: "${office.officeName}",
+            specialtyIds: [<c:forEach items="${office.specialties}" var="specialty" varStatus="specStatus">${specialty.id}<c:if test="${!specStatus.last}">,</c:if></c:forEach>]
+        }<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    ];
+
     // Handle specialty selection
     document.addEventListener('DOMContentLoaded', function() {
         const specialtySelect = document.getElementById('specialtySelect');
         const specialtyId = document.getElementById('specialtyId');
+        const officeSelect = document.getElementById('officeSelect');
         const appointmentForm = document.getElementById('appointmentForm');
 
         // Set initial value
         if (specialtySelect && specialtyId) {
             specialtyId.value = specialtySelect.value;
+            updateOfficeOptions(specialtySelect.value);
         }
 
         // Update hidden field and form action when specialty changes
@@ -301,11 +343,24 @@
                     specialtyId.value = this.value;
                 }
 
+                // Update office options based on selected specialty
+                updateOfficeOptions(this.value);
+
+                // Clear office selection
+                clearOfficeSelection();
+
                 // Update form action with selected specialty
                 if (appointmentForm) {
                     const doctorId = ${doctor.id};
                     appointmentForm.action = contextPath + `/appointment?doctorId=` + doctorId;
                 }
+            });
+        }
+
+        // Handle office selection
+        if (officeSelect) {
+            officeSelect.addEventListener('change', function() {
+                handleOfficeSelection(this.value);
             });
         }
 
@@ -315,12 +370,22 @@
             appointmentForm.action = contextPath + `/appointment?doctorId=`+ doctorId;
         }
     });
-        function submitOnce(form) {
+    function submitOnce(form) {
         if (form.getAttribute('data-submitting') === 'true') {
             return false;
         }
-        form.setAttribute('data-submitting', 'true');
 
+        // Validate office selection
+        const officeSelect = document.getElementById('officeSelect');
+        const officeCard = document.querySelector('.office-card-appointment');
+
+        if (officeCard && officeCard.style.display !== 'none' && officeSelect && !officeSelect.value) {
+            alert(window.appointmentMessages?.officeRequired || 'Please select an office');
+            officeSelect.focus();
+            return false;
+        }
+
+        form.setAttribute('data-submitting', 'true');
 
         const submitButton = form.querySelector('button[type="submit"]');
         if (submitButton) {
@@ -328,7 +393,91 @@
                 submitButton.disabled = true;
             }, 10);
         }
-            return true;
+        return true;
+    }
+
+    // Function to update office options based on selected specialty
+    function updateOfficeOptions(selectedSpecialtyId) {
+        const officeSelect = document.getElementById('officeSelect');
+        if (!officeSelect) return;
+
+        // Clear existing options except the first one
+        officeSelect.innerHTML = '<option value="">' +
+            (window.appointmentMessages?.selectOffice || 'Select an office') + '</option>';
+
+        // Filter offices that handle the selected specialty
+        const filteredOffices = doctorOffices.filter(office =>
+            office.specialtyIds.includes(parseInt(selectedSpecialtyId))
+        );
+
+        // Add filtered offices to the select
+        filteredOffices.forEach(office => {
+            const option = document.createElement('option');
+            option.value = office.id; // Use the office ID as the value
+            option.textContent = office.officeName + ` - ` + office.neighborhoodName;
+            option.dataset.neighborhoodId = office.neighborhoodId;
+            option.dataset.neighborhoodName = office.neighborhoodName;
+            option.dataset.officeName = office.officeName;
+            officeSelect.appendChild(option);
+        });
+
+        // Show/hide office select based on available options
+        const officeCard = document.querySelector('.office-card-appointment');
+        if (officeCard) {
+            if (filteredOffices.length > 0) {
+                officeCard.style.display = 'flex';
+                officeSelect.required = true;
+            } else {
+                officeCard.style.display = 'none';
+                officeSelect.required = false;
+            }
+        }
+    }
+
+    // Function to handle office selection
+    // Function to handle office selection
+    function handleOfficeSelection(selectedOfficeId) {
+        const officeDetails = document.getElementById('officeDetails');
+        const selectedOfficeName = document.getElementById('selectedOfficeName');
+        const selectedOfficeNeighborhood = document.getElementById('selectedOfficeNeighborhood');
+        const officeSelect = document.getElementById('officeSelect');
+
+        if (selectedOfficeId) {
+            // Find the selected option to get the data attributes
+            const selectedOption = officeSelect.querySelector(`option[value="` + selectedOfficeId + `"]`);
+
+            if (selectedOption) {
+                const officeName = selectedOption.dataset.officeName;
+                const neighborhoodName = selectedOption.dataset.neighborhoodName;
+
+                // Update display
+                if (selectedOfficeName) {
+                    selectedOfficeName.textContent = officeName;
+                }
+                if (selectedOfficeNeighborhood) {
+                    selectedOfficeNeighborhood.textContent = neighborhoodName;
+                }
+                if (officeDetails) {
+                    officeDetails.style.display = 'block';
+                }
+            }
+        } else {
+            clearOfficeSelection();
+        }
+    }
+
+    // Function to clear office selection
+    // Function to clear office selection
+    function clearOfficeSelection() {
+        const officeDetails = document.getElementById('officeDetails');
+        const officeSelect = document.getElementById('officeSelect');
+
+        if (officeDetails) {
+            officeDetails.style.display = 'none';
+        }
+        if (officeSelect) {
+            officeSelect.value = '';
+        }
     }
 
 </script>

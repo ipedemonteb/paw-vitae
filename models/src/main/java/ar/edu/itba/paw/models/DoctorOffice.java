@@ -2,20 +2,21 @@ package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "doctor_offices")
 public class DoctorOffice {
 
-    @EmbeddedId
-    private DoctorOfficeId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_offices_id_seq")
+    @SequenceGenerator(allocationSize = 1, sequenceName = "doctor_offices_id_seq", name = "doctor_offices_id_seq")
+    private long id;
 
-    @MapsId("doctorId")   // tells JPA which part of the PK this maps to
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
-    @MapsId("neighborhoodId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL) //TODO find out where cascade types are necessary
     @JoinColumn(name = "neighborhood_id")
     private Neighborhood neighborhood;
@@ -23,9 +24,7 @@ public class DoctorOffice {
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "doctor_office_specialties",
             joinColumns = {
-                    @JoinColumn(name = "doctor_id"),
-                    @JoinColumn(name = "neighborhood_id"),
-                    @JoinColumn(name = "office_name")
+                    @JoinColumn(name = "office_id")
             },
             inverseJoinColumns = {
                     @JoinColumn(name = "specialty_id")
@@ -33,31 +32,20 @@ public class DoctorOffice {
     )
     private List<Specialty> specialties;
 
-    // no separate field for officeName; access via id.getOfficeName()
+    @Column(name = "office_name", length = 50)
+    private String officeName;
 
     public DoctorOffice() { }
 
     public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName) {
-        this.id = new DoctorOfficeId(
-                doctor.getId(),
-                neighborhood.getId(),
-                officeName
-        );
         this.doctor = doctor;
         this.neighborhood = neighborhood;
         this.specialties = specialties;
+        this.officeName = officeName;
     }
 
-    public String getOfficeName() {
-        return id.getOfficeName();
-    }
-
-    public DoctorOfficeId getId() {
+    public long getId() {
         return id;
-    }
-
-    public void setId(DoctorOfficeId id) {
-        this.id = id;
     }
 
     public Doctor getDoctor() {
@@ -82,5 +70,25 @@ public class DoctorOffice {
 
     public void setSpecialties(List<Specialty> specialties) {
         this.specialties = specialties;
+    }
+
+    public String getOfficeName() {
+        return officeName;
+    }
+
+    public void setOfficeName(String officeName) {
+        this.officeName = officeName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        DoctorOffice that = (DoctorOffice) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

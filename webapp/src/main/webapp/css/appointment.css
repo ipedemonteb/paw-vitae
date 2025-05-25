@@ -475,6 +475,200 @@ textarea.form-control {
     overflow: visible;
 }
 
+/* Office Selection Card */
+.office-card-appointment {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 24px;
+    background-color: var(--background-light);
+    border-radius: var(--border-radius);
+    margin-bottom: 30px;
+    border: 1px solid #e2e8f0;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.office-card-appointment:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+
+.office-card-appointment::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background-color: var(--secondary-color);
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+}
+
+.office-card-appointment:hover::before {
+    width: 7px;
+    background-color: var(--accent-color);
+    transition: var(--transition);
+}
+
+.office-icon-appointment {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #dbeafe;
+    color: var(--secondary-color);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.office-content {
+    flex-grow: 1;
+    width: 100%;
+}
+
+.office-label-appointment {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 5px;
+}
+
+.office-select-container {
+    position: relative;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.office-select {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    background-color: var(--white);
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    appearance: none;
+    cursor: pointer;
+    transition: var(--transition);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230284c7'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 20px;
+    padding-right: 45px;
+    box-shadow: var(--shadow-sm);
+}
+
+.office-select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.office-select:hover {
+    border-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.office-select option {
+    padding: 12px;
+    font-size: 1rem;
+}
+
+/* Office Details Display */
+.office-details {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: rgba(2, 132, 199, 0.05);
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--secondary-color);
+    animation: fadeIn 0.3s ease;
+}
+
+.office-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.office-name {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+.office-neighborhood {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.office-neighborhood::before {
+    content: "📍 ";
+    margin-right: 5px;
+}
+
+/* Responsive adjustments for office select */
+@media (max-width: 768px) {
+    .office-card-appointment {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .office-icon-appointment {
+        margin: 0 auto;
+    }
+
+    .office-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .office-select-container {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .office-select {
+        font-size: 1rem;
+        padding: 10px 14px;
+        padding-right: 40px;
+        background-size: 18px;
+    }
+
+    .office-details {
+        margin-top: 10px;
+        padding: 12px;
+    }
+
+    .office-name {
+        font-size: 1rem;
+    }
+
+    .office-neighborhood {
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation for office selection */
+.office-select:focus {
+    animation: pulse 1s ease;
+}
+
+/* Hide office card initially if no offices available */
+.office-card-appointment[style*="display: none"] {
+    display: none !important;
+}
+
 /* Time Slot Button */
 .time-slot-btn {
     padding: 12px;

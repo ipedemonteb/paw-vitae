@@ -37,10 +37,7 @@ public class ValidOfficeSpecialtiesValidator implements ConstraintValidator<Vali
                     return false;
                 }
             }
-            List<Specialty> specialties = specialtyService.getByIds(specialty.getSpecialtyIds());
-            if (specialties.size() != specialty.getSpecialtyIds().size()) {
-                return false;
-            }
+            seenIds.clear();
         }
         return true;
     }

@@ -26,14 +26,17 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final MailService mailService;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final DoctorOfficeService doctorOfficeService;
+
     @Autowired
     public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService,
-                                  DoctorService doctorService, PatientService patientService) {
+                                  DoctorService doctorService, PatientService patientService, DoctorOfficeService doctorOfficeService) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;
         this.mailService = mailService;
         this.doctorService = doctorService;
         this.patientService = patientService;
+        this.doctorOfficeService = doctorOfficeService;
     }
 
     @Transactional(readOnly = true)
@@ -48,14 +51,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional
     @Override
-    public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId) {
+    public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId) {
         LOGGER.debug("Creating appointment for patientId: {}, doctorId: {}, date: {}, time: {}, reason: {}, specialtyId: {}", patientId, doctorId, date, time, reason, specialtyId);
 
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
 
+        DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(() -> new IllegalArgumentException("Doctor office not found")); // TODO: MAKE CUSTOM EXCEPTION
+
         //Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
-        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "");
+        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice);
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
         LOGGER.info("New appointment created with id: {}", appointment.getId());

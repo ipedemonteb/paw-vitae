@@ -79,9 +79,11 @@ CREATE TABLE IF NOT EXISTS Appointments (
                                             status VARCHAR(20) NOT NULL DEFAULT 'confirmado' CHECK (status IN ('confirmado','cancelado','completo')),
     reason TEXT,
     report TEXT,
+    office_id INT NOT NULL,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE,
-    FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE RESTRICT
+    FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE RESTRICT,
+    FOREIGN KEY (office_id) REFERENCES Doctor_Offices(id) ON DELETE RESTRICT
     );
 
 CREATE TABLE IF NOT EXISTS Ratings (
@@ -113,10 +115,11 @@ CREATE TABLE IF NOT EXISTS Neighborhoods
 
 CREATE TABLE IF NOT EXISTS Doctor_Offices
 (
+    id SERIAL PRIMARY KEY,
     doctor_id      INT NOT NULL,
     neighborhood_id INT NOT NULL,
     office_name VARCHAR(50) NOT NULL,
-    PRIMARY KEY (doctor_id, neighborhood_id, office_name),
+    UNIQUE (doctor_id, neighborhood_id, office_name),
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
     FOREIGN KEY (neighborhood_id) REFERENCES Neighborhoods(id) ON DELETE RESTRICT
 );
@@ -130,13 +133,9 @@ CREATE TABLE IF NOT EXISTS Doctor_Unavailability (
     );
 
 CREATE TABLE IF NOT EXISTS Doctor_Office_Specialties (
-                                                            doctor_id INT NOT NULL,
-                                                            neighborhood_id INT NOT NULL,
-                                                            office_name VARCHAR(50) NOT NULL,
+                                                            office_id INT NOT NULL,
                                                             specialty_id INT NOT NULL,
-                                                            PRIMARY KEY (doctor_id, neighborhood_id, office_name, specialty_id),
-    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
-    FOREIGN KEY (neighborhood_id) REFERENCES Neighborhoods(id) ON DELETE CASCADE,
-    FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE,
-    FOREIGN KEY (office_name, neighborhood_id, doctor_id) REFERENCES Doctor_Offices(office_name, neighborhood_id, doctor_id) ON DELETE CASCADE
+                                                            PRIMARY KEY (office_id, specialty_id),
+    FOREIGN KEY (office_id) REFERENCES Doctor_Offices(id) ON DELETE CASCADE,
+    FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE
 );
