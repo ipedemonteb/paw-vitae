@@ -3,9 +3,11 @@ import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,4 +55,13 @@ public class SearchController {
         mav.addObject("view", view);
         return mav;
     }
+
+    @RequestMapping(value = "/search/{doctorId}", method = RequestMethod.GET)
+    public ModelAndView searchByDoctorId(@PathVariable("doctorId") Long doctorId) {
+        Doctor doctor = doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new);
+        ModelAndView mav = new ModelAndView("search/doctor-public-profile");
+        mav.addObject("doctor", doctor);
+        return mav;
+    }
+
 }

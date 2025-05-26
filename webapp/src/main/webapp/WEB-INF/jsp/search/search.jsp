@@ -33,17 +33,15 @@
   </c:forEach>
 </c:set>
 <c:if test="${empty coverageName}">
-    <c:set var="coverageName">
-        <c:out value="${allCovs}"/>
-    </c:set>
+  <c:set var="coverageName">
+    <c:out value="${allCovs}"/>
+  </c:set>
 </c:if>
 <c:if test="${empty specialtyName}">
   <c:set var="specialtyName">
     <c:out value="${allSepcs}"/>
   </c:set>
 </c:if>
-
-
 
 <!DOCTYPE html>
 <head>
@@ -72,12 +70,12 @@
       </div>
 
       <!-- Search Bar -->
-            <div class="search-bar-container">
-              <div class="search-bar">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input">
-              </div>
-            </div>
+      <div class="search-bar-container">
+        <div class="search-bar">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input">
+        </div>
+      </div>
     </div>
 
     <!-- Filters Section -->
@@ -384,14 +382,14 @@
                       <spring:message code="${doctorSpecialty.key}" var="specialtyName" />
                       <c:set var="specialtiesText" value="${specialtiesText}${not specStatus.first ? ', ' : ''}${specialtyName}" />
                     </c:forEach>
-<%--                    <c:choose>--%>
-<%--                      <c:when test="${fn:length(specialtiesText) > 30}">--%>
-<%--                        <span title="${specialtiesText}"><c:out value="${fn:substring(specialtiesText, 0, 27)}..." /></span>--%>
-<%--                      </c:when>--%>
-<%--                      <c:otherwise>--%>
-                        <c:out value="${specialtiesText}" />
-<%--                      </c:otherwise>--%>
-<%--                    </c:choose>--%>
+                      <%--                    <c:choose>--%>
+                      <%--                      <c:when test="${fn:length(specialtiesText) > 30}">--%>
+                      <%--                        <span title="${specialtiesText}"><c:out value="${fn:substring(specialtiesText, 0, 27)}..." /></span>--%>
+                      <%--                      </c:when>--%>
+                      <%--                      <c:otherwise>--%>
+                    <c:out value="${specialtiesText}" />
+                      <%--                      </c:otherwise>--%>
+                      <%--                    </c:choose>--%>
                       <%--                      </c:when>--%>
                       <%--                      <c:otherwise>--%>
                       <%--                        <c:out value="${specialtyName}"/>--%>
@@ -421,9 +419,9 @@
                   <a href="<c:url value='/appointment?doctorId=${doctor.id}'/>" class="btn btn-primary">
                     <i class="fas fa-calendar-check"></i> <spring:message code="search.button.schedule" />
                   </a>
-                    <%--                  <button class="btn btn-secondary" onclick="viewDoctorProfile('${doctor.id}')">--%>
-                    <%--                    <i class="fas fa-user-md"></i> <spring:message code="search.button.view.profile" />--%>
-                    <%--                  </button>--%>
+                  <a href="<c:url value='/search/${doctor.id}'/>" class="btn btn-secondary">
+                    <i class="fas fa-user-md"></i> <spring:message code="search.button.view.profile" />
+                  </a>
                 </div>
               </div>
             </c:forEach>
@@ -443,7 +441,6 @@
                   <c:if test="${not empty coverageId and coverageId != 0}">
                     <c:param name="coverage" value="${coverageId}" />
                   </c:if>
-                  <!-- here’s the trick: emit one param per selected weekday -->
                   <c:forEach var="wd" items="${paramValues.weekdays}">
                     <c:param name="weekdays" value="${wd}" />
                   </c:forEach>
@@ -582,3 +579,4 @@
   });
 </script>
 </body>
+</html>
