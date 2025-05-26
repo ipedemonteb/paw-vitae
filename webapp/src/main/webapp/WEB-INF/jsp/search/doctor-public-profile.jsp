@@ -1,0 +1,249 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<!DOCTYPE html>
+<html lang="${pageContext.response.locale}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><spring:message code="doctor.profile.title" arguments="${doctor.name},${doctor.lastName}" /></title>
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/V-logo.svg/2048px-V-logo.svg.png" />
+    <link rel="stylesheet" href="<c:url value='/css/doctor-profile.css' />" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<jsp:include page="/WEB-INF/jsp/components/header.jsp" />
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="container">
+        <!-- Back Button -->
+        <div class="back-navigation">
+            <a href="javascript:history.back()" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                <spring:message code="doctor.profile.back" />
+            </a>
+        </div>
+
+        <!-- Doctor Profile Header -->
+        <div class="profile-header">
+            <div class="profile-header-content">
+                <div class="doctor-avatar-section">
+                    <div class="doctor-avatar-large">
+                        <img src="<c:url value='/image/${empty doctor.imageId || doctor.imageId == -1 ? -1 : doctor.imageId}'/>"
+                             alt="<c:out value='${doctor.name} ${doctor.lastName}'/>"
+                             class="avatar-img">
+                    </div>
+                    <c:if test="${doctor.verified}">
+                        <div class="verified-badge">
+                            <i class="fas fa-check-circle"></i>
+                            <span><spring:message code="doctor.profile.verified" /></span>
+                        </div>
+                    </c:if>
+                </div>
+
+                <div class="doctor-info-section">
+                    <h1 class="doctor-name">
+                        <c:out value="Dr. ${doctor.name} ${doctor.lastName}" />
+                    </h1>
+
+                    <!-- Rating Section -->
+                    <div class="rating-section">
+                        <c:choose>
+                            <c:when test="${doctor.ratingCount > 0}">
+                                <div class="stars-large">
+                                    <c:set var="fullStars" value="${doctor.rating.intValue()}" />
+                                    <c:set var="hasHalfStar" value="${doctor.rating - fullStars >= 0.5}" />
+                                    <c:set var="emptyStars" value="${5 - fullStars - (hasHalfStar ? 1 : 0)}" />
+
+                                    <!-- Render full stars -->
+                                    <c:forEach begin="1" end="${fullStars}" var="i">
+                                        <i class="fas fa-star"></i>
+                                    </c:forEach>
+
+                                    <!-- Render half star if applicable -->
+                                    <c:if test="${hasHalfStar}">
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </c:if>
+
+                                    <!-- Render empty stars -->
+                                    <c:forEach begin="1" end="${emptyStars}" var="i">
+                                        <i class="far fa-star"></i>
+                                    </c:forEach>
+                                </div>
+                                <div class="rating-info">
+                                        <span class="rating-value">
+                                            <fmt:formatNumber value="${doctor.rating}" type="number" maxFractionDigits="1" minFractionDigits="1" />
+                                        </span>
+                                    <span class="rating-count">
+                                            (<spring:message code="doctor.profile.rating.count" arguments="${doctor.ratingCount}" />)
+                                        </span>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="no-rating">
+                                    <i class="fas fa-star-o"></i>
+                                    <span><spring:message code="doctor.profile.no.rating" /></span>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:${doctor.email}"><c:out value="${doctor.email}" /></a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <a href="tel:${doctor.phone}"><c:out value="${doctor.phone}" /></a>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <a href="<c:url value='/appointment?doctorId=${doctor.id}'/>" class="btn btn-primary btn-large">
+                            <i class="fas fa-calendar-check"></i>
+                            <spring:message code="doctor.profile.schedule.appointment" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Details Grid -->
+        <div class="details-grid">
+            <!-- Specialties Section -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h3><i class="fas fa-stethoscope"></i> <spring:message code="doctor.profile.specialties" /></h3>
+                </div>
+                <div class="detail-card-content">
+                    <c:choose>
+                        <c:when test="${not empty doctor.specialtyList}">
+                            <div class="specialty-list">
+                                <c:forEach var="specialty" items="${doctor.specialtyList}">
+                                    <div class="specialty-item">
+                                        <i class="fas fa-check-circle"></i>
+                                        <spring:message code="${specialty.key}" />
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="no-data"><spring:message code="doctor.profile.no.specialties" /></p>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+
+            <!-- Coverage Section -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h3><i class="fas fa-shield-alt"></i> <spring:message code="doctor.profile.coverages" /></h3>
+                </div>
+                <div class="detail-card-content">
+                    <c:choose>
+                        <c:when test="${not empty doctor.coverageList}">
+                            <div class="coverage-list">
+                                <c:forEach var="coverage" items="${doctor.coverageList}">
+                                    <div class="coverage-item">
+                                        <i class="fas fa-check-circle"></i>
+                                        <c:out value="${coverage.name}" />
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="no-data"><spring:message code="doctor.profile.no.coverages" /></p>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+
+            <!-- Office Locations Section -->
+            <div class="detail-card full-width">
+                <div class="detail-card-header">
+                    <h3><i class="fas fa-map-marker-alt"></i> <spring:message code="doctor.profile.offices" /></h3>
+                </div>
+                <div class="detail-card-content">
+                    <c:choose>
+                        <c:when test="${not empty doctor.doctorOffices}">
+                            <div class="office-list">
+                                <c:forEach var="office" items="${doctor.doctorOffices}">
+                                    <div class="office-item">
+                                        <div class="office-info">
+                                            <h4 class="office-name">
+                                                <i class="fas fa-building"></i>
+                                                <c:out value="${office.officeName}" />
+                                            </h4>
+                                            <div class="office-address">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                <span>
+                                                        <c:out value="${office.neighborhood.name}" />
+                                                    </span>
+                                            </div>
+                                            <c:if test="${not empty doctor.phone}">
+                                                <div class="office-phone">
+                                                    <i class="fas fa-phone"></i>
+                                                    <a href="tel:${doctor.phone}"><c:out value="${doctor.phone}" /></a>
+                                                </div>
+                                            </c:if>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="no-data"><spring:message code="doctor.profile.no.offices" /></p>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+
+            <!-- Availability Section -->
+            <div class="detail-card full-width">
+                <div class="detail-card-header">
+                    <h3><i class="fas fa-calendar-alt"></i> <spring:message code="doctor.profile.availability" /></h3>
+                </div>
+                <div class="detail-card-content">
+                    <div class="availability-info">
+                        <div class="availability-status">
+                            <i class="fas fa-calendar-check"></i>
+                            <span class="status-text available">
+                                    <spring:message code="doctor.profile.accepting.appointments" />
+                                </span>
+                        </div>
+                        <p class="availability-note">
+                            <spring:message code="doctor.profile.availability.note" />
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="cta-section">
+            <div class="cta-content">
+                <h3><spring:message code="doctor.profile.ready.to.book" /></h3>
+                <p>
+                    <spring:message code="doctor.profile.book.description" arguments="${doctor.name},${doctor.lastName}" />
+                </p>
+                <a href="<c:url value='/appointment?doctorId=${doctor.id}'/>" class="btn btn-primary btn-large">
+                    <i class="fas fa-calendar-plus"></i>
+                    <spring:message code="doctor.profile.book.now" />
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+</body>
+</html>
