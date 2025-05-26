@@ -9,4 +9,6 @@ public interface DoctorOfficeDao {
     DoctorOffice create(DoctorOffice doctorOffice);
     Optional<DoctorOffice> getById(long id);
     List<DoctorOffice> getByDoctorId(long doctorId);
+    void update( long doctorId,List<DoctorOffice> disableOffices, List<DoctorOffice> officesToCreate, List<DoctorOffice> officesToActivate);
+    List<DoctorOffice> getByNameAndNeighborhoodId(String officeName, long neighborhoodId, long doctorId);
 }

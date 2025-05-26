@@ -34,7 +34,8 @@ public class DoctorOffice {
 
     @Column(name = "office_name", length = 50)
     private String officeName;
-
+    @Column(name = "active")
+    private boolean active = true;
     public DoctorOffice() { }
 
     public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName) {
@@ -78,6 +79,14 @@ public class DoctorOffice {
 
     public void setOfficeName(String officeName) {
         this.officeName = officeName;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override
