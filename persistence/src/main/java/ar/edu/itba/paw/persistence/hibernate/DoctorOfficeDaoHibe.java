@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.persistence.hibernate;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorOfficeDao;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.DoctorOffice;
-import ar.edu.itba.paw.models.DoctorOfficeId;
-import ar.edu.itba.paw.models.Neighborhood;
+import ar.edu.itba.paw.models.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -46,7 +43,6 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
         }
 
         for (DoctorOffice newOffice : officesToCreate) {
-            String normalizedName = newOffice.getOfficeName().trim().toLowerCase();
             Long neighborhoodId = newOffice.getNeighborhood().getId();
 
             Doctor doctorRef = em.getReference(Doctor.class, doctorId);
@@ -57,7 +53,9 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
             em.persist(newOffice);
         }
         for (DoctorOffice officeToActivate : officesToActivate) {
-            officeToActivate.setActive(true);
+            em.getReference(Neighborhood.class, officeToActivate.getNeighborhood().getId());
+            em.getReference(Doctor.class, doctorId);
+            officeToActivate.getSpecialties().forEach(specialty -> em.getReference(Specialty.class, specialty.getId()));
             em.merge(officeToActivate);
         }
     }

@@ -1,9 +1,157 @@
+/* ===== DASHBOARD OFFICES CSS ===== */
+/* Modern, responsive CSS matching register.css styling exactly */
 
-.form-group {
-    position: relative;
+/* Import CSS variables from register.css */
+:root {
+    /* Colors */
+    --primary-color: #3b82f6;
+    --primary-dark: #1d4ed8;
+    --primary-light: #93c5fd;
+    --secondary-color: #0ea5e9;
+    --accent-color: #8b5cf6;
+    --text-color: #1e293b;
+    --text-light: #64748b;
+    --background-light: #f8fafc;
+    --background-dark: #1a202c;
+    --white: #ffffff;
+    --danger: #ef4444;
+    --danger-dark: #b91c1c;
+    --success: #10b981;
+    --success-dark: #059669;
+    --warning: #f59e0b;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    /* Border Radius */
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+
+    /* Transitions */
+    --transition: all 0.3s ease;
+}
+
+/* ===== FORM GROUP STYLES ===== */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
     margin-bottom: 1.5rem;
 }
 
+.form-group {
+    flex: 1;
+    min-width: 250px;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.required-field::after {
+    content: "*";
+    color: var(--danger);
+    margin-left: 4px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    transition: var(--transition);
+    color: var(--text-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.form-control.error {
+    border-color: var(--danger);
+}
+
+.form-control.error:focus {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+    outline: none;
+}
+
+.form-control.valid {
+    border-color: var(--success);
+}
+
+.form-control.valid:focus {
+    border-color: var(--success);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    outline: none;
+}
+
+/* ===== VALIDATION STYLES ===== */
+.validation-icon {
+    position: absolute;
+    right: 12px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 2;
+}
+
+.validation-icon.valid {
+    color: var(--success);
+}
+
+.validation-icon.error {
+    color: var(--danger);
+}
+
+.form-control.valid + .validation-icon.valid,
+.input-wrapper .form-control.valid ~ .validation-icon.valid {
+    opacity: 1;
+}
+
+.form-control.error + .validation-icon.error,
+.input-wrapper .form-control.error ~ .validation-icon.error {
+    opacity: 1;
+}
+
+.error-message {
+    color: var(--danger);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.error-message.visible {
+    opacity: 1;
+}
+
+/* ===== NEIGHBORHOOD SEARCH STYLES ===== */
 .neighborhood-search-wrapper {
     position: relative;
 }
@@ -20,7 +168,7 @@
     max-height: 200px;
     overflow-y: auto;
     z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: none;
 }
 
@@ -42,6 +190,7 @@
     border-bottom: none;
 }
 
+/* ===== OFFICE ENTRY STYLES ===== */
 .office-entry {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -49,6 +198,12 @@
     margin-bottom: 20px;
     background: #fafafa;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    position: relative;
+}
+
+.office-entry:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .office-actions {
@@ -79,6 +234,42 @@
 .btn-remove:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+}
+
+.office-remove {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #dc3545;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.office-remove:hover {
+    background: #c82333;
+}
+
+/* ===== MULTI-SELECT STYLES ===== */
+.multi-select-container {
+    margin-bottom: 0.75rem;
+}
+
+.custom-multi-select {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
 }
 
 /* Custom checkbox styles */
@@ -136,14 +327,6 @@
     font-size: 14px;
 }
 
-.custom-multi-select {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    max-height: 200px;
-    overflow-y: auto;
-    background: white;
-}
-
 .selected-options {
     margin-top: 10px;
     display: flex;
@@ -153,57 +336,50 @@
 }
 
 .specialty-tag {
-    background-color: #007bff;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
     display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin: 0.125rem;
 }
 
-/* Form validation styles */
-.input-wrapper {
-    position: relative;
+/* ===== BUTTON STYLES ===== */
+.btn-add-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--white);
+    border: 1px dashed var(--primary-color);
+    border-radius: var(--border-radius);
+    color: var(--primary-color);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
-.validation-icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: opacity 0.2s ease;
+.btn-add-slot:hover {
+    background-color: rgba(59, 130, 246, 0.1);
 }
 
-.validation-icon.valid {
-    color: #28a745;
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.validation-icon.error {
-    color: #dc3545;
-}
-
-.form-control.valid + .validation-icon.valid {
-    opacity: 1;
-}
-
-.form-control.error + .validation-icon.error {
-    opacity: 1;
-}
-
-.error-message {
-    color: #dc3545;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.error-message.visible {
-    opacity: 1;
-}
-
-/* Responsive design */
+/* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
     .office-entry {
         padding: 15px;
@@ -216,4 +392,25 @@
     .search-results-container {
         max-height: 150px;
     }
+}
+
+/* ===== CONTAINER ERROR STYLES ===== */
+.multi-select-container.error {
+    border-color: var(--danger);
+}
+
+.multi-select-container.error .custom-multi-select {
+    border-color: var(--danger);
+}
+
+/* ===== HELPER CLASSES ===== */
+.text-muted {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.25rem;
 }
