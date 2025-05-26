@@ -161,11 +161,16 @@
 
 <script type="text/javascript">
     // Global variables
-    var officeCounter = 0;
-    var doctorOffices = [];
+    let officeCounter = 0;
+    let doctorOffices = [];
+
+    // Track if fields have been touched for validation
+    const officeNameTouched = {};
+    const officeNeighborhoodTouched = {};
+    const officeSpecialtiesTouched = {};
 
     // Initialize data from JSP
-    var neighborhoods = [
+    const neighborhoods = [
         <c:forEach items="${neighborhoodList}" var="neighborhood" varStatus="status">
         {
             id: "${neighborhood.id}",
@@ -174,7 +179,7 @@
         </c:forEach>
     ];
 
-    var specialtyList = [
+    const specialtyList = [
         <c:forEach items="${specialtyList}" var="specialty" varStatus="status">
         {
             id: ${specialty.id},
@@ -183,9 +188,16 @@
         </c:forEach>
     ];
 
+    // Get doctor's specialties to filter office specialties
+    const doctorSpecialties = [
+        <c:forEach items="${doctor.specialtyList}" var="specialty" varStatus="status">
+        ${specialty.id}<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    ];
+
     // Existing offices data
     <c:if test="${not empty doctorOffices}">
-    var existingOffices = [
+    const existingOffices = [
         <c:forEach items="${doctorOffices}" var="office" varStatus="status">
         {
             index: ${status.index},
@@ -227,12 +239,12 @@
     }
 
     function addNewOffice() {
-        var container = document.getElementById("doctor-offices-container");
+        const container = document.getElementById("doctor-offices-container");
         if (!container) return;
 
-        var officeEntry = document.createElement("div");
+        const officeEntry = document.createElement("div");
         officeEntry.className = "office-entry";
-        officeEntry.setAttribute('data-index', officeCounter);
+        officeEntry.setAttribute('data-index', officeCounter.toString());
 
         officeEntry.innerHTML = createOfficeHTML(officeCounter);
 
@@ -253,9 +265,9 @@
         name = name || '';
         neighborhoodId = neighborhoodId || '';
 
-        var neighborhoodName = '';
+        let neighborhoodName = '';
         if (neighborhoodId) {
-            for (var i = 0; i < neighborhoods.length; i++) {
+            for (let i = 0; i < neighborhoods.length; i++) {
                 if (neighborhoods[i].id.toString() === neighborhoodId.toString()) {
                     neighborhoodName = neighborhoods[i].name;
                     break;
@@ -263,36 +275,45 @@
             }
         }
 
-        var html = '<div class="form-row">';
+        let html = '<div class="form-row">';
 
+        // Office name with validation
         html += '<div class="form-group">';
         html += '<label for="office-name-' + index + '" class="form-label required-field">Nombre del Consultorio</label>';
         html += '<div class="input-wrapper">';
         html += '<input type="text" id="office-name-' + index + '" class="form-control office-name" ';
         html += 'placeholder="Ingrese el nombre del consultorio" value="' + name + '" required/>';
+        html += '<div class="validation-icon valid"><i class="fas fa-check-circle"></i></div>';
+        html += '<div class="validation-icon error"><i class="fas fa-exclamation-circle"></i></div>';
         html += '</div>';
+        html += '<div id="office-name-' + index + '-validation-message" class="error-message"></div>';
         html += '</div>';
 
-        // Neighborhood
+        // Neighborhood with validation
         html += '<div class="form-group">';
         html += '<label for="office-neighborhood-search-' + index + '" class="form-label required-field">Barrio</label>';
         html += '<div class="input-wrapper neighborhood-search-wrapper">';
         html += '<input type="text" id="office-neighborhood-search-' + index + '" class="form-control office-neighborhood-search" ';
         html += 'placeholder="Buscar barrio" value="' + neighborhoodName + '" autocomplete="off" required/>';
         html += '<input type="hidden" id="office-neighborhood-id-' + index + '" class="office-neighborhood-id" value="' + neighborhoodId + '"/>';
+        html += '<div class="validation-icon valid"><i class="fas fa-check-circle"></i></div>';
+        html += '<div class="validation-icon error"><i class="fas fa-exclamation-circle"></i></div>';
         html += '</div>';
         html += '<div id="office-neighborhood-results-' + index + '" class="search-results-container"></div>';
+        html += '<div id="office-neighborhood-' + index + '-validation-message" class="error-message"></div>';
         html += '</div>';
 
         html += '</div>';
 
-        // Specialties
+        // Specialties with validation - only show doctor's specialties
         html += '<div class="form-group">';
         html += '<label class="form-label required-field">Especialidades del Consultorio</label>';
-        html += '<div class="multi-select-container" id="office-specialties-container-' + index + '">';
+        html += '<div class="custom-multi-select" id="office-specialties-container-' + index + '">';
         html += generateSpecialtyOptions(index);
         html += '</div>';
         html += '<div class="selected-options" id="office-specialties-selected-' + index + '"></div>';
+        html += '<small class="form-text text-muted">Seleccione las especialidades para este consultorio</small>';
+        html += '<div id="office-specialties-' + index + '-validation-message" class="error-message"></div>';
         html += '</div>';
 
         html += '<div class="office-actions">';
@@ -305,15 +326,20 @@
     }
 
     function generateSpecialtyOptions(officeIndex) {
-        var html = '<div class="custom-multi-select" id="office-specialties-options-' + officeIndex + '">';
+        let html = '';
 
-        for (var i = 0; i < specialtyList.length; i++) {
-            var specialty = specialtyList[i];
-            var isSelected = false;
+        // Filter specialties to only show doctor's specialties
+        const filteredSpecialties = specialtyList.filter(specialty =>
+            doctorSpecialties.includes(specialty.id)
+        );
+
+        for (let i = 0; i < filteredSpecialties.length; i++) {
+            const specialty = filteredSpecialties[i];
+            let isSelected = false;
 
             // Check if this specialty is selected for this office
-            var officeArrayIndex = -1;
-            for (var j = 0; j < doctorOffices.length; j++) {
+            let officeArrayIndex = -1;
+            for (let j = 0; j < doctorOffices.length; j++) {
                 if (doctorOffices[j].index === parseInt(officeIndex)) {
                     officeArrayIndex = j;
                     break;
@@ -321,7 +347,7 @@
             }
 
             if (officeArrayIndex !== -1 && doctorOffices[officeArrayIndex].specialties) {
-                for (var k = 0; k < doctorOffices[officeArrayIndex].specialties.length; k++) {
+                for (let k = 0; k < doctorOffices[officeArrayIndex].specialties.length; k++) {
                     if (doctorOffices[officeArrayIndex].specialties[k].toString() === specialty.id.toString()) {
                         isSelected = true;
                         break;
@@ -329,62 +355,261 @@
                 }
             }
 
-            html += '<label class="custom-checkbox">';
-            html += '<input type="checkbox" value="' + specialty.id + '" ' + (isSelected ? 'checked' : '') + ' onchange="toggleOfficeSpecialty(this, ' + officeIndex + ')">';
-            html += '<span class="checkmark"></span>';
-            html += '<span class="checkbox-label">' + specialty.name + '</span>';
-            html += '</label>';
+            html += '<div class="custom-multi-select-option' + (isSelected ? ' selected' : '') + '" data-value="' + specialty.id + '" onclick="toggleOfficeSpecialtyOption(this, ' + officeIndex + ')">';
+            html += '<div class="option-checkbox"></div>';
+            html += '<span class="option-text">' + specialty.name + '</span>';
+            html += '</div>';
         }
 
-        html += '</div>';
         return html;
     }
 
+    function toggleOfficeSpecialtyOption(element, officeIndex) {
+        const specialtyId = element.getAttribute('data-value');
+        const isSelected = element.classList.contains('selected');
+
+        if (!officeSpecialtiesTouched[officeIndex]) {
+            officeSpecialtiesTouched[officeIndex] = true;
+        }
+
+        // Toggle selection
+        if (isSelected) {
+            element.classList.remove('selected');
+        } else {
+            element.classList.add('selected');
+        }
+
+        // Update doctorOffices array
+        for (let i = 0; i < doctorOffices.length; i++) {
+            if (doctorOffices[i].index === parseInt(officeIndex)) {
+                if (!isSelected) {
+                    // Add specialty
+                    let found = false;
+                    for (let j = 0; j < doctorOffices[i].specialties.length; j++) {
+                        if (doctorOffices[i].specialties[j] === specialtyId) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        doctorOffices[i].specialties.push(specialtyId);
+                    }
+                } else {
+                    // Remove specialty
+                    for (let j = 0; j < doctorOffices[i].specialties.length; j++) {
+                        if (doctorOffices[i].specialties[j] === specialtyId) {
+                            doctorOffices[i].specialties.splice(j, 1);
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
+        updateOfficeSpecialtiesDisplay(officeIndex);
+        validateOfficeSpecialties(officeIndex);
+    }
+
     function initializeOffice(index) {
-        var searchInput = document.getElementById('office-neighborhood-search-' + index);
+        const searchInput = document.getElementById('office-neighborhood-search-' + index);
         if (searchInput) {
             searchInput.addEventListener("input", function() {
+                if (!officeNeighborhoodTouched[index]) officeNeighborhoodTouched[index] = true;
                 searchOfficeNeighborhoods(index, this.value);
+                validateOfficeNeighborhood(index);
             });
             searchInput.addEventListener("focus", function() {
                 searchOfficeNeighborhoods(index, this.value);
             });
             searchInput.addEventListener("blur", function() {
                 setTimeout(function() {
-                    var resultsContainer = document.getElementById('office-neighborhood-results-' + index);
+                    const resultsContainer = document.getElementById('office-neighborhood-results-' + index);
                     if (resultsContainer) {
                         resultsContainer.style.display = "none";
                     }
+                    validateOfficeNeighborhood(index);
                 }, 200);
             });
         }
 
-        var nameInput = document.getElementById('office-name-' + index);
+        const nameInput = document.getElementById('office-name-' + index);
         if (nameInput) {
             nameInput.addEventListener("input", function() {
-                for (var i = 0; i < doctorOffices.length; i++) {
+                if (!officeNameTouched[index]) officeNameTouched[index] = true;
+                for (let i = 0; i < doctorOffices.length; i++) {
                     if (doctorOffices[i].index === parseInt(index)) {
                         doctorOffices[i].name = this.value;
                         break;
                     }
                 }
+                validateOfficeName(index);
+            });
+            nameInput.addEventListener("blur", function() {
+                validateOfficeName(index);
             });
         }
     }
 
+    // Validation functions
+    function validateOfficeName(index) {
+        const nameField = document.getElementById('office-name-' + index);
+        const errorElement = document.getElementById('office-name-' + index + '-validation-message');
+
+        if (!nameField) return false;
+
+        const value = nameField.value.trim();
+
+        if (!value) {
+            if (officeNameTouched[index]) {
+                setFieldError(nameField, errorElement, "Office name is required");
+            } else {
+                clearFieldValidation(nameField, errorElement);
+            }
+            return false;
+        } else if (value.length < 2) {
+            if (officeNameTouched[index]) {
+                setFieldError(nameField, errorElement, "Name must be at least 2 characters");
+            } else {
+                clearFieldValidation(nameField, errorElement);
+            }
+            return false;
+        } else {
+            setFieldValid(nameField, errorElement);
+            return true;
+        }
+    }
+
+    function validateOfficeNeighborhood(index) {
+        const searchField = document.getElementById('office-neighborhood-search-' + index);
+        const idField = document.getElementById('office-neighborhood-id-' + index);
+        const errorElement = document.getElementById('office-neighborhood-' + index + '-validation-message');
+
+        if (!searchField || !idField) return false;
+
+        const neighborhood = neighborhoods.find(function(n) {
+            return n.name.toLowerCase() === searchField.value.toLowerCase();
+        });
+
+        if (!neighborhood) {
+            if (officeNeighborhoodTouched[index]) {
+                setFieldError(searchField, errorElement, "Please select a valid neighborhood");
+            } else {
+                clearFieldValidation(searchField, errorElement);
+            }
+            return false;
+        } else {
+            idField.value = neighborhood.id;
+            for (let i = 0; i < doctorOffices.length; i++) {
+                if (doctorOffices[i].index === parseInt(index)) {
+                    doctorOffices[i].neighborhoodId = neighborhood.id;
+                    break;
+                }
+            }
+            setFieldValid(searchField, errorElement);
+            return true;
+        }
+    }
+
+    function validateOfficeSpecialties(index) {
+        const container = document.getElementById('office-specialties-container-' + index);
+        const errorElement = document.getElementById('office-specialties-' + index + '-validation-message');
+
+        let officeArrayIndex = -1;
+        for (let i = 0; i < doctorOffices.length; i++) {
+            if (doctorOffices[i].index === parseInt(index)) {
+                officeArrayIndex = i;
+                break;
+            }
+        }
+
+        if (officeArrayIndex === -1) return false;
+
+        const selectedSpecialties = doctorOffices[officeArrayIndex].specialties || [];
+
+        if (selectedSpecialties.length === 0) {
+            if (officeSpecialtiesTouched[index]) {
+                setContainerError(container, errorElement, "Please select at least one specialty for this office");
+            } else {
+                clearContainerValidation(container, errorElement);
+            }
+            return false;
+        } else {
+            setContainerValid(container, errorElement);
+            return true;
+        }
+    }
+
+    // Validation helper functions
+    function setFieldError(field, errorElement, message) {
+        if (!field) return;
+        field.classList.add("error");
+        field.classList.remove("valid");
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.classList.add("visible");
+        }
+    }
+
+    function setFieldValid(field, errorElement) {
+        if (!field) return;
+        field.classList.remove("error");
+        field.classList.add("valid");
+        if (errorElement) {
+            errorElement.classList.remove("visible");
+        }
+    }
+
+    function clearFieldValidation(field, errorElement) {
+        if (!field) return;
+        field.classList.remove("error");
+        field.classList.remove("valid");
+        if (errorElement) {
+            errorElement.classList.remove("visible");
+        }
+    }
+
+    function setContainerError(container, errorElement, message) {
+        if (!container) return;
+        container.classList.add("error");
+        container.classList.remove("valid");
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.classList.add("visible");
+        }
+    }
+
+    function setContainerValid(container, errorElement) {
+        if (!container) return;
+        container.classList.remove("error");
+        container.classList.add("valid");
+        if (errorElement) {
+            errorElement.classList.remove("visible");
+        }
+    }
+
+    function clearContainerValidation(container, errorElement) {
+        if (!container) return;
+        container.classList.remove("error");
+        container.classList.remove("valid");
+        if (errorElement) {
+            errorElement.classList.remove("visible");
+        }
+    }
+
     function searchOfficeNeighborhoods(index, query) {
-        var resultsContainer = document.getElementById('office-neighborhood-results-' + index);
+        const resultsContainer = document.getElementById('office-neighborhood-results-' + index);
         if (!resultsContainer) return;
 
         resultsContainer.innerHTML = "";
         resultsContainer.style.display = "block";
 
-        var searchQuery = query.toLowerCase();
+        const searchQuery = query.toLowerCase();
 
-        for (var i = 0; i < neighborhoods.length; i++) {
-            var neighborhood = neighborhoods[i];
+        for (let i = 0; i < neighborhoods.length; i++) {
+            const neighborhood = neighborhoods[i];
             if (query.trim().length === 0 || neighborhood.name.toLowerCase().indexOf(searchQuery) !== -1) {
-                var item = document.createElement("div");
+                const item = document.createElement("div");
                 item.className = "search-result-item";
                 item.innerHTML = '<i class="fas fa-map-marker-alt"></i>' + neighborhood.name;
                 item.setAttribute('data-id', neighborhood.id);
@@ -401,15 +626,15 @@
     }
 
     function selectOfficeNeighborhood(index, id, name) {
-        var searchField = document.getElementById('office-neighborhood-search-' + index);
-        var idField = document.getElementById('office-neighborhood-id-' + index);
-        var resultsContainer = document.getElementById('office-neighborhood-results-' + index);
+        const searchField = document.getElementById('office-neighborhood-search-' + index);
+        const idField = document.getElementById('office-neighborhood-id-' + index);
+        const resultsContainer = document.getElementById('office-neighborhood-results-' + index);
 
         if (searchField && idField) {
             searchField.value = name;
             idField.value = id;
 
-            for (var i = 0; i < doctorOffices.length; i++) {
+            for (let i = 0; i < doctorOffices.length; i++) {
                 if (doctorOffices[i].index === parseInt(index)) {
                     doctorOffices[i].neighborhoodId = id;
                     break;
@@ -420,47 +645,18 @@
         if (resultsContainer) {
             resultsContainer.style.display = "none";
         }
-    }
 
-    function toggleOfficeSpecialty(checkbox, officeIndex) {
-        var specialtyId = checkbox.value;
-
-        for (var i = 0; i < doctorOffices.length; i++) {
-            if (doctorOffices[i].index === parseInt(officeIndex)) {
-                if (checkbox.checked) {
-                    var found = false;
-                    for (var j = 0; j < doctorOffices[i].specialties.length; j++) {
-                        if (doctorOffices[i].specialties[j] === specialtyId) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        doctorOffices[i].specialties.push(specialtyId);
-                    }
-                } else {
-                    for (var j = 0; j < doctorOffices[i].specialties.length; j++) {
-                        if (doctorOffices[i].specialties[j] === specialtyId) {
-                            doctorOffices[i].specialties.splice(j, 1);
-                            break;
-                        }
-                    }
-                }
-                break;
-            }
-        }
-
-        updateOfficeSpecialtiesDisplay(officeIndex);
+        validateOfficeNeighborhood(index);
     }
 
     function updateOfficeSpecialtiesDisplay(officeIndex) {
-        var selectedContainer = document.getElementById('office-specialties-selected-' + officeIndex);
+        const selectedContainer = document.getElementById('office-specialties-selected-' + officeIndex);
         if (!selectedContainer) return;
 
         selectedContainer.innerHTML = "";
 
-        var officeArrayIndex = -1;
-        for (var i = 0; i < doctorOffices.length; i++) {
+        let officeArrayIndex = -1;
+        for (let i = 0; i < doctorOffices.length; i++) {
             if (doctorOffices[i].index.toString() === officeIndex.toString()) {
                 officeArrayIndex = i;
                 break;
@@ -469,20 +665,20 @@
 
         if (officeArrayIndex === -1) return;
 
-        var selectedSpecialties = doctorOffices[officeArrayIndex].specialties || [];
+        const selectedSpecialties = doctorOffices[officeArrayIndex].specialties || [];
 
-        for (var i = 0; i < selectedSpecialties.length; i++) {
-            var specialtyId = selectedSpecialties[i];
-            var specialtyName = 'Specialty ' + specialtyId;
+        for (let i = 0; i < selectedSpecialties.length; i++) {
+            const specialtyId = selectedSpecialties[i];
+            let specialtyName = 'Specialty ' + specialtyId;
 
-            for (var j = 0; j < specialtyList.length; j++) {
+            for (let j = 0; j < specialtyList.length; j++) {
                 if (specialtyList[j].id.toString() === specialtyId.toString()) {
                     specialtyName = specialtyList[j].name;
                     break;
                 }
             }
 
-            var badge = document.createElement("span");
+            const badge = document.createElement("span");
             badge.className = "specialty-tag";
             badge.textContent = specialtyName;
             selectedContainer.appendChild(badge);
@@ -490,12 +686,12 @@
     }
 
     function removeOffice(index) {
-        var officeEntry = document.querySelector('.office-entry[data-index="' + index + '"]');
+        const officeEntry = document.querySelector('.office-entry[data-index="' + index + '"]');
         if (!officeEntry) return;
 
         officeEntry.parentNode.removeChild(officeEntry);
 
-        for (var i = 0; i < doctorOffices.length; i++) {
+        for (let i = 0; i < doctorOffices.length; i++) {
             if (doctorOffices[i].index === parseInt(index)) {
                 doctorOffices.splice(i, 1);
                 break;
@@ -506,25 +702,25 @@
     }
 
     function updateRemoveButtons() {
-        var offices = document.querySelectorAll(".office-entry");
-        var removeButtons = document.querySelectorAll(".office-remove");
+        const offices = document.querySelectorAll(".office-entry");
+        const removeButtons = document.querySelectorAll(".office-remove");
 
-        for (var i = 0; i < removeButtons.length; i++) {
+        for (let i = 0; i < removeButtons.length; i++) {
             removeButtons[i].style.display = offices.length > 1 ? "block" : "none";
         }
     }
 
     function renderExistingOffices() {
-        var container = document.getElementById("doctor-offices-container");
+        const container = document.getElementById("doctor-offices-container");
         if (!container) return;
 
         container.innerHTML = "";
 
-        for (var i = 0; i < existingOffices.length; i++) {
-            var office = existingOffices[i];
+        for (let i = 0; i < existingOffices.length; i++) {
+            const office = existingOffices[i];
 
-            var specialties = [];
-            for (var j = 0; j < office.specialties.length; j++) {
+            const specialties = [];
+            for (let j = 0; j < office.specialties.length; j++) {
                 specialties.push(office.specialties[j].id.toString());
             }
 
@@ -535,9 +731,9 @@
                 specialties: specialties
             });
 
-            var officeEntry = document.createElement("div");
+            const officeEntry = document.createElement("div");
             officeEntry.className = "office-entry";
-            officeEntry.setAttribute('data-index', officeCounter);
+            officeEntry.setAttribute('data-index', officeCounter.toString());
 
             officeEntry.innerHTML = createOfficeHTML(officeCounter, office.name, office.neighborhoodId);
 
@@ -556,37 +752,64 @@
         updateRemoveButtons();
     }
 
-    // Form submission
+    // Form submission with validation
     document.addEventListener('DOMContentLoaded', function() {
-        var form = document.getElementById('officesForm');
+        const form = document.getElementById('officesForm');
         if (form) {
             form.addEventListener('submit', function(e) {
+                // Validate all offices before submission
+                let isValid = true;
+                for (let i = 0; i < doctorOffices.length; i++) {
+                    const office = doctorOffices[i];
+                    const nameValid = validateOfficeName(office.index);
+                    const neighborhoodValid = validateOfficeNeighborhood(office.index);
+                    const specialtiesValid = validateOfficeSpecialties(office.index);
+
+                    if (!nameValid || !neighborhoodValid || !specialtiesValid) {
+                        isValid = false;
+                    }
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    // Scroll to first error
+                    const firstError = document.querySelector('.error-message.visible, .custom-multi-select.error');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return false;
+                }
+
                 e.preventDefault();
 
-                // Create hidden inputs
-                var existingInputs = document.querySelectorAll('input[name^="doctorOfficeForm["]');
-                for (var i = 0; i < existingInputs.length; i++) {
+                // Remove existing hidden inputs
+                const existingInputs = document.querySelectorAll('input[name^="doctorOfficeForm["]');
+                for (let i = 0; i < existingInputs.length; i++) {
                     existingInputs[i].parentNode.removeChild(existingInputs[i]);
                 }
 
-                for (var i = 0; i < doctorOffices.length; i++) {
-                    var office = doctorOffices[i];
+                // Create hidden inputs matching OfficeForm structure
+                for (let i = 0; i < doctorOffices.length; i++) {
+                    const office = doctorOffices[i];
                     if (!office.name || !office.neighborhoodId) continue;
 
-                    var nameInput = document.createElement("input");
+                    // Office name
+                    const nameInput = document.createElement("input");
                     nameInput.type = "hidden";
                     nameInput.name = "doctorOfficeForm[" + i + "].officeName";
                     nameInput.value = office.name;
                     form.appendChild(nameInput);
 
-                    var neighborhoodInput = document.createElement("input");
+                    // Neighborhood ID
+                    const neighborhoodInput = document.createElement("input");
                     neighborhoodInput.type = "hidden";
                     neighborhoodInput.name = "doctorOfficeForm[" + i + "].neighborhoodId";
                     neighborhoodInput.value = office.neighborhoodId;
                     form.appendChild(neighborhoodInput);
 
-                    for (var j = 0; j < office.specialties.length; j++) {
-                        var specialtyInput = document.createElement("input");
+                    // Specialty IDs
+                    for (let j = 0; j < office.specialties.length; j++) {
+                        const specialtyInput = document.createElement("input");
                         specialtyInput.type = "hidden";
                         specialtyInput.name = "doctorOfficeForm[" + i + "].specialtyIds[" + j + "]";
                         specialtyInput.value = office.specialties[j];
@@ -594,14 +817,14 @@
                     }
                 }
 
+                // Submit the form
                 this.submit();
             });
         }
     });
 
-
     document.addEventListener('DOMContentLoaded', function() {
-        var urlParams = new URLSearchParams(window.location.search);
+        const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('updated') === 'true') {
             showSuccessToast();
         }

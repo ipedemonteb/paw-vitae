@@ -96,8 +96,15 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             if (matches.isEmpty()) {
               officesToCreate.add(newOffice);
             } else {
-                DoctorOffice existing = matches.get(0);
+                DoctorOffice existing = matches.getFirst();
                 if (!existing.isActive()) {
+                    existing.setActive(true);
+                    officesToActivate.add(existing);
+                } else {
+                    existing.setActive(true);
+                    existing.setNeighborhood(newOffice.getNeighborhood());
+                    existing.setSpecialties(newOffice.getSpecialties());
+                    existing.setOfficeName(newOffice.getOfficeName());
                     officesToActivate.add(existing);
                 }
             }
