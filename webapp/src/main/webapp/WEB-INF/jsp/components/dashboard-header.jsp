@@ -90,4 +90,10 @@
       <span><spring:message code="dashboard.tab.availability" /></span>
     </a>
   </c:if>
+  <c:if test="${isDoctor}">
+    <a href="<c:url value='/doctor/dashboard/offices'/>" class="nav-tab ${activeTab == 'offices' ? 'active' : ''}">
+      <i class="fas fa-clinic-medical"></i>
+      <span><spring:message code="dashboard.tab.offices" /></span>
+    </a>
+  </c:if>
 </div>

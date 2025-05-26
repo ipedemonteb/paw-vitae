@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.form.*;
+import ar.edu.itba.paw.webapp.form.OfficeForm;
 import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +32,11 @@ public class DoctorController {
     private final RatingService ratingService;
     private final AvailabilitySlotsService availabilitySlotsService;
     private final UnavailabilitySlotsService unavailabilitySlotsService;
+    private final DoctorOfficeService doctorOfficeService;
+    private final NeighborhoodService neighborhoodService;
 
     @Autowired
-    public DoctorController(DoctorService doctorService, AppointmentService appointmentService, CoverageService coverageService, SpecialtyService specialtyService, AppointmentFileService appointmentFileService, RatingService ratingService, AvailabilitySlotsService availabilitySlotsService, UnavailabilitySlotsService unavailabilitySlotsService) {
+    public DoctorController(DoctorService doctorService, AppointmentService appointmentService, CoverageService coverageService, SpecialtyService specialtyService, AppointmentFileService appointmentFileService, RatingService ratingService, AvailabilitySlotsService availabilitySlotsService, UnavailabilitySlotsService unavailabilitySlotsService, DoctorOfficeService doctorOfficeService, NeighborhoodService neighborhoodService) {
         this.doctorService = doctorService;
         this.appointmentService = appointmentService;
         this.coverageService = coverageService;
@@ -42,6 +45,8 @@ public class DoctorController {
         this.ratingService = ratingService;
         this.availabilitySlotsService = availabilitySlotsService;
         this.unavailabilitySlotsService = unavailabilitySlotsService;
+        this.doctorOfficeService = doctorOfficeService;
+        this.neighborhoodService = neighborhoodService;
     }
 
     @RequestMapping(value = "/doctor/dashboard")
@@ -56,7 +61,7 @@ public class DoctorController {
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-upcoming");
         mav.addObject("doctor", doctor);
-        Page<Appointment> appointmentsPage = appointmentService.getAppointments(doctor.getId(), true,(int) page.getValue(), 10, dateRange);
+        Page<Appointment> appointmentsPage = appointmentService.getAppointments(doctor.getId(), true, (int) page.getValue(), 10, dateRange);
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page.getValue());
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
@@ -71,7 +76,7 @@ public class DoctorController {
                                               @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-history");
-        Page<Appointment> appointmentsPage = appointmentService.getAppointments(doctor.getId(), false,(int) page.getValue(), 10, status);
+        Page<Appointment> appointmentsPage = appointmentService.getAppointments(doctor.getId(), false, (int) page.getValue(), 10, status);
         mav.addObject("pastAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page.getValue());
         mav.addObject("doctor", doctor);
@@ -124,7 +129,6 @@ public class DoctorController {
     }
 
 
-
     @PostMapping(value = "/doctor/dashboard/appointment/cancel", produces = "application/json")
     @ResponseBody
     public ModelAndView cancelAppointment(@ParamCustomizer(paramName = "appointmentId") QueryParam appointmentId,
@@ -157,7 +161,7 @@ public class DoctorController {
             @PathVariable("month") int month,
             @ModelAttribute("loggedUser") final Doctor doctor
     ) {
-            Map<String,Object> response = unavailabilitySlotsService.getUnavailabilityByDoctorIdAndMonthAndYear(doctor.getId(), month, year);
+        Map<String, Object> response = unavailabilitySlotsService.getUnavailabilityByDoctorIdAndMonthAndYear(doctor.getId(), month, year);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
@@ -192,5 +196,33 @@ public class DoctorController {
         appointmentFileService.create(doctorFileForm.getFiles(), "doctor", id);
         appointmentService.updateAppointmentReport(id, doctorFileForm.getReport());
         return new ModelAndView("redirect:/doctor/dashboard/appointment-details/" + id);
+    }
+
+    @RequestMapping(value = "doctor/dashboard/offices", method = RequestMethod.GET)
+    public ModelAndView getDoctorOffices(@ModelAttribute("loggedUser") final Doctor doctor,
+                                         @ModelAttribute("doctorOfficeForm") final OfficeForm officeForm) {
+        ModelAndView mav = new ModelAndView("doctor/dashboard-offices");
+        mav.addObject("doctor", doctor);
+        mav.addObject("doctorOffices", doctorOfficeService.getByDoctorId(doctor.getId()));
+        mav.addObject("neighborhoodList", neighborhoodService.getAll());
+        mav.addObject("specialtyList", specialtyService.getAll());
+        return mav;
+    }
+
+    @RequestMapping(value = "doctor/dashboard/offices/update", method = RequestMethod.POST)
+    public ModelAndView createDoctorOffice(@Valid @ModelAttribute("doctorOfficeForm") final OfficeForm officeForm,
+                                           BindingResult errors,
+                                           @ModelAttribute("loggedUser") final Doctor doctor) {
+        if (errors.hasErrors()) {
+            return getDoctorOffices(doctor, officeForm);
+        }
+
+        doctorOfficeService.update(officeForm.getDoctorOfficeForm(),doctor);
+        officeForm.getDoctorOfficeForm().forEach(office -> {
+            System.out.println("Office Name: " + office.getOfficeName() +
+                               ", Neighborhood ID: " + office.getNeighborhoodId() +
+                               ", Specialty IDs: " + office.getSpecialtyIds());
+        });
+        return new ModelAndView("redirect:/doctor/dashboard/offices?updated=true");
     }
 }

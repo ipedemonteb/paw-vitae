@@ -400,7 +400,205 @@ body {
 .btn-load-more i {
     font-size: 1rem;
 }
+.offices-content {
+    animation: fadeIn 0.5s ease;
+}
 
+.offices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.office-card {
+    background-color: var(--white);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #e2e8f0;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.office-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+.office-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.office-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.office-info {
+    flex: 1;
+}
+
+.office-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.office-name i {
+    color: var(--primary-color);
+}
+
+.office-location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.office-location i {
+    color: var(--secondary-color);
+}
+
+.office-specialties {
+    border-top: 1px dashed #e2e8f0;
+    padding-top: 1rem;
+}
+
+.specialties-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+.specialties-label i {
+    color: var(--accent-color);
+}
+
+.specialties-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Office Entry Styles */
+.office-entry {
+    background-color: var(--background-light);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--primary-color);
+    position: relative;
+    transition: var(--transition);
+}
+
+.office-entry:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-sm);
+}
+
+.office-actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.btn-remove {
+    background-color: transparent;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: var(--transition);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.btn-remove:hover {
+    color: var(--danger-color);
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.search-results-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--white);
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.search-result-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.search-result-item:hover {
+    background-color: var(--background-light);
+    color: var(--primary-color);
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item i {
+    color: var(--text-light);
+    font-size: 0.8rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .offices-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .office-card-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .office-entry {
+        padding: 2.5rem 1rem 1rem;
+    }
+
+    .office-actions {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+}
 /* Animación de carga */
 @keyframes spin {
     0% {
@@ -557,6 +755,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    margin-left: 0px;
 }
 
 .section-title i {

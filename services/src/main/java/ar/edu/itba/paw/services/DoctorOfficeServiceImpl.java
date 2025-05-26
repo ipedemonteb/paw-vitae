@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DoctorOfficeServiceImpl implements DoctorOfficeService {
@@ -69,5 +71,37 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     @Override
     public List<DoctorOffice> getByDoctorId(long doctorId) {
         return doctorOfficeDao.getByDoctorId(doctorId);
+    }
+    @Transactional
+    @Override
+    public void update(List<DoctorOfficeForm> officeForms,Doctor doctor) {
+        List<DoctorOffice> currentOffices = doctorOfficeDao.getByDoctorId(doctor.getId());
+        List <DoctorOffice> newOffices = transformToDoctorOffice(doctor, officeForms);
+        List <DoctorOffice> disabledOffices = new ArrayList<>();
+        List<DoctorOffice> officesToCreate = new ArrayList<>();
+        List<DoctorOffice> officesToActivate = new ArrayList<>();
+        Set<String> newOfficeKeys = newOffices.stream()
+                .map(o -> o.getOfficeName().trim().toLowerCase() + "|" + o.getNeighborhood().getId())
+                .collect(Collectors.toSet());
+
+        for (DoctorOffice current : currentOffices) {
+            String key = current.getOfficeName().trim().toLowerCase() + "|" + current.getNeighborhood().getId();
+            if (!newOfficeKeys.contains(key)) {
+                current.setActive(false);
+                disabledOffices.add(current);
+            }
+        }
+        for (DoctorOffice newOffice : newOffices){
+            List <DoctorOffice> matches = doctorOfficeDao.getByNameAndNeighborhoodId(newOffice.getOfficeName(), newOffice.getNeighborhood().getId(), doctor.getId());
+            if (matches.isEmpty()) {
+              officesToCreate.add(newOffice);
+            } else {
+                DoctorOffice existing = matches.get(0);
+                if (!existing.isActive()) {
+                    officesToActivate.add(existing);
+                }
+            }
+        }
+        doctorOfficeDao.update( doctor.getId(), disabledOffices, officesToCreate, officesToActivate);
     }
 }
