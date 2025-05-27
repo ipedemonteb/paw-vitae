@@ -2,20 +2,15 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorOfficeDao;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
-import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.NeighborhoodService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,45 +65,66 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     @Transactional(readOnly = true)
     @Override
     public List<DoctorOffice> getByDoctorId(long doctorId) {
-        return doctorOfficeDao.getByDoctorId(doctorId);
+        return doctorOfficeDao.getActiveByDoctorId(doctorId);
     }
+
     @Transactional
     @Override
-    public void update(List<DoctorOfficeForm> officeForms,Doctor doctor) {
-        List<DoctorOffice> currentOffices = doctorOfficeDao.getByDoctorId(doctor.getId());
-        List <DoctorOffice> newOffices = transformToDoctorOffice(doctor, officeForms);
-        List <DoctorOffice> disabledOffices = new ArrayList<>();
-        List<DoctorOffice> officesToCreate = new ArrayList<>();
-        List<DoctorOffice> officesToActivate = new ArrayList<>();
-        Set<String> newOfficeKeys = newOffices.stream()
-                .map(o -> o.getOfficeName().trim().toLowerCase() + "|" + o.getNeighborhood().getId())
-                .collect(Collectors.toSet());
+    public void update(List<DoctorOfficeForm> officeForms, Doctor doctor) {
+        // 1) load *all* offices for this doctor (active + inactive if you ever want to re-activate)
+        List<DoctorOffice> existing = doctorOfficeDao.getAllByDoctorId(doctor.getId());
+        Map<Long,DoctorOffice> existingById =
+                existing.stream().collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
 
-        for (DoctorOffice current : currentOffices) {
-            String key = current.getOfficeName().trim().toLowerCase() + "|" + current.getNeighborhood().getId();
-            if (!newOfficeKeys.contains(key)) {
-                current.setActive(false);
-                disabledOffices.add(current);
-            }
-        }
-        for (DoctorOffice newOffice : newOffices){
-            List <DoctorOffice> matches = doctorOfficeDao.getByNameAndNeighborhoodId(newOffice.getOfficeName(), newOffice.getNeighborhood().getId(), doctor.getId());
-            if (matches.isEmpty()) {
-              officesToCreate.add(newOffice);
-            } else {
-                DoctorOffice existing = matches.getFirst();
-                if (!existing.isActive()) {
-                    existing.setActive(true);
-                    officesToActivate.add(existing);
+        Set<Long> keepIds = new HashSet<>();
+
+        // 2) create new or update existing (and set active=true)
+        for (DoctorOfficeForm form : officeForms) {
+            if (form.getId() == null) {
+                DoctorOffice match = existingById.values().stream().filter(d -> d.getNeighborhood().getId() == form.getNeighborhoodId() && d.getOfficeName().equalsIgnoreCase(form.getOfficeName().trim())).findFirst().orElse(null);
+                if (match == null) {
+                    DoctorOffice created = new DoctorOffice();
+                    applyForm(created, form, doctor);
+                    created.setActive(true);
+                    doctorOfficeDao.create(created);
+                    keepIds.add(created.getId());
                 } else {
-                    existing.setActive(true);
-                    existing.setNeighborhood(newOffice.getNeighborhood());
-                    existing.setSpecialties(newOffice.getSpecialties());
-                    existing.setOfficeName(newOffice.getOfficeName());
-                    officesToActivate.add(existing);
+                    applyForm(match, form, doctor);
+                    match.setActive(true);
+                    doctorOfficeDao.update(match);
+                    keepIds.add(match.getId());
                 }
+            } else {
+                DoctorOffice toUpdate = existingById.get(form.getId());
+                if (toUpdate == null)
+                    throw new IllegalArgumentException("Invalid office id "+form.getId());
+
+                applyForm(toUpdate, form, doctor);
+                toUpdate.setActive(true);
+                doctorOfficeDao.update(toUpdate);
+                keepIds.add(toUpdate.getId());
             }
         }
-        doctorOfficeDao.update( doctor.getId(), disabledOffices, officesToCreate, officesToActivate);
+
+        // 3) any office *not* in keepIds → soft-delete
+        for (DoctorOffice o : existing) {
+            if (!keepIds.contains(o.getId()) && o.isActive()) {
+                doctorOfficeDao.softDelete(o.getId());
+            }
+        }
     }
+
+    private void applyForm(DoctorOffice office, DoctorOfficeForm form, Doctor doctor) {
+        office.setDoctor(doctor);
+        office.setOfficeName(form.getOfficeName());
+        office.setActive(form.getActive());
+        office.setNeighborhood(neighborhoodService.getById(form.getNeighborhoodId())
+                .orElseThrow(() -> new IllegalArgumentException("Neighborhood not found")));
+        List<Specialty> specs = form.getSpecialtyIds().stream()
+                .map(id -> specialtyService.getById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("Specialty "+id)))
+                .collect(Collectors.toList());
+        office.setSpecialties(specs);
+    }
+
 }
