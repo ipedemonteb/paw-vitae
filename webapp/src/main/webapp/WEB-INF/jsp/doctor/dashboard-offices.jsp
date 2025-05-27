@@ -200,7 +200,6 @@
     const existingOffices = [
         <c:forEach items="${doctorOffices}" var="office" varStatus="status">
         {
-            id: ${office.id},
             index: ${status.index},
             name: "<c:out value='${office.officeName}'/>",
             neighborhoodId: ${office.neighborhood.id},
@@ -250,7 +249,6 @@
         officeEntry.innerHTML = createOfficeHTML(officeCounter);
 
         doctorOffices.push({
-            id: null, // New office, no ID yet
             index: officeCounter,
             name: "",
             neighborhoodId: "",
@@ -728,7 +726,6 @@
             }
 
             doctorOffices.push({
-                id: office.id || null, // Use existing ID if available
                 index: officeCounter,
                 name: office.name,
                 neighborhoodId: office.neighborhoodId.toString(),
@@ -810,13 +807,6 @@
                     neighborhoodInput.name = "doctorOfficeForm[" + i + "].neighborhoodId";
                     neighborhoodInput.value = office.neighborhoodId;
                     form.appendChild(neighborhoodInput);
-
-                    // Office id
-                    const officeIdInput = document.createElement("input");
-                    officeIdInput.type = "hidden";
-                    officeIdInput.name = "doctorOfficeForm[" + i + "].id";
-                    officeIdInput.value = office.id || '';
-                    form.appendChild(officeIdInput);
 
                     // Specialty IDs
                     for (let j = 0; j < office.specialties.length; j++) {
