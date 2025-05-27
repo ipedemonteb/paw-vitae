@@ -200,6 +200,7 @@
     const existingOffices = [
         <c:forEach items="${doctorOffices}" var="office" varStatus="status">
         {
+            id: ${office.id},
             index: ${status.index},
             name: "<c:out value='${office.officeName}'/>",
             neighborhoodId: ${office.neighborhood.id},
@@ -249,6 +250,7 @@
         officeEntry.innerHTML = createOfficeHTML(officeCounter);
 
         doctorOffices.push({
+            id: null, // New office, no ID yet
             index: officeCounter,
             name: "",
             neighborhoodId: "",
@@ -261,8 +263,9 @@
         officeCounter++;
     }
 
-    function createOfficeHTML(index, name, neighborhoodId) {
+    function createOfficeHTML(index, name, neighborhoodId, id) {
         name = name || '';
+        id = id || '';
         neighborhoodId = neighborhoodId || '';
 
         let neighborhoodName = '';
@@ -725,6 +728,7 @@
             }
 
             doctorOffices.push({
+                id: office.id || null, // Use existing ID if available
                 index: officeCounter,
                 name: office.name,
                 neighborhoodId: office.neighborhoodId.toString(),
@@ -735,7 +739,7 @@
             officeEntry.className = "office-entry";
             officeEntry.setAttribute('data-index', officeCounter.toString());
 
-            officeEntry.innerHTML = createOfficeHTML(officeCounter, office.name, office.neighborhoodId);
+            officeEntry.innerHTML = createOfficeHTML(officeCounter, office.name, office.neighborhoodId, office.id);
 
             container.appendChild(officeEntry);
             initializeOffice(officeCounter);
@@ -791,7 +795,7 @@
                 // Create hidden inputs matching OfficeForm structure
                 for (let i = 0; i < doctorOffices.length; i++) {
                     const office = doctorOffices[i];
-                    if (!office.name || !office.neighborhoodId) continue;
+                    if (!office.name || !office.neighborhoodId || !office.specialties) continue;
 
                     // Office name
                     const nameInput = document.createElement("input");
@@ -806,6 +810,13 @@
                     neighborhoodInput.name = "doctorOfficeForm[" + i + "].neighborhoodId";
                     neighborhoodInput.value = office.neighborhoodId;
                     form.appendChild(neighborhoodInput);
+
+                    // Office id
+                    const officeIdInput = document.createElement("input");
+                    officeIdInput.type = "hidden";
+                    officeIdInput.name = "doctorOfficeForm[" + i + "].id";
+                    officeIdInput.value = office.id || '';
+                    form.appendChild(officeIdInput);
 
                     // Specialty IDs
                     for (let j = 0; j < office.specialties.length; j++) {

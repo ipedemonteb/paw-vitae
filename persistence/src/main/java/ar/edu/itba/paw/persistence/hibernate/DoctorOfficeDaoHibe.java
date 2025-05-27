@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -20,6 +21,10 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
     @Override
     public DoctorOffice create(DoctorOffice doctorOffice) {
         doctorOffice.setNeighborhood(em.getReference(Neighborhood.class, doctorOffice.getNeighborhood().getId()));
+        List<Specialty> specialtiesRefs = doctorOffice.getSpecialties().stream()
+                .map(specialty -> em.getReference(Specialty.class, specialty.getId()))
+                .toList();
+        doctorOffice.setSpecialties(specialtiesRefs);
         em.persist(doctorOffice);
         return doctorOffice;
     }
@@ -30,8 +35,15 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
     }
 
     @Override
-    public List<DoctorOffice> getByDoctorId(long doctorId) {
-        return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId AND d.active = TRUE ", DoctorOffice.class)
+    public List<DoctorOffice> getAllByDoctorId(long doctorId) {
+        return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId", DoctorOffice.class)
+                .setParameter("doctorId", doctorId)
+                .getResultList();
+    }
+
+    @Override
+    public List<DoctorOffice> getActiveByDoctorId(long doctorId) {
+        return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId AND d.active = true", DoctorOffice.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
     }
@@ -53,12 +65,27 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
             em.persist(newOffice);
         }
         for (DoctorOffice officeToActivate : officesToActivate) {
-            em.getReference(Neighborhood.class, officeToActivate.getNeighborhood().getId());
-            em.getReference(Doctor.class, doctorId);
-            officeToActivate.getSpecialties().forEach(specialty -> em.getReference(Specialty.class, specialty.getId()));
+            officeToActivate.setNeighborhood(em.getReference(Neighborhood.class, officeToActivate.getNeighborhood().getId()));
+            officeToActivate.setDoctor(em.getReference(Doctor.class, officeToActivate.getDoctor().getId()));
+            List<Specialty> specialties = new ArrayList<>();
+            officeToActivate.getSpecialties().forEach(specialty -> specialties.add(em.getReference(Specialty.class, specialty.getId())));
+            officeToActivate.setSpecialties(specialties);
             em.merge(officeToActivate);
         }
     }
+
+    public DoctorOffice update(DoctorOffice o) {
+        return em.merge(o);
+    }
+
+    public void softDelete(long id) {
+        DoctorOffice o = em.find(DoctorOffice.class, id);
+        if (o != null && o.isActive()) {
+            o.setActive(false);
+            em.merge(o);
+        }
+    }
+
     @Override
     public List<DoctorOffice> getByNameAndNeighborhoodId(String officeName, long neighborhoodId, long doctorId){
         return em.createQuery(

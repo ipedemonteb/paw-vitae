@@ -2,8 +2,6 @@ package ar.edu.itba.paw.webapp.validation;
 
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
 import ar.edu.itba.paw.models.DoctorOffice;
-import ar.edu.itba.paw.models.DoctorOfficeForm;
-import ar.edu.itba.paw.models.DoctorOfficeId;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
