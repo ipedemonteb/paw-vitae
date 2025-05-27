@@ -80,29 +80,18 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
         // 2) create new or update existing (and set active=true)
         for (DoctorOfficeForm form : officeForms) {
-            if (form.getId() == null) {
-                DoctorOffice match = existingById.values().stream().filter(d -> d.getNeighborhood().getId() == form.getNeighborhoodId() && d.getOfficeName().equalsIgnoreCase(form.getOfficeName().trim())).findFirst().orElse(null);
-                if (match == null) {
-                    DoctorOffice created = new DoctorOffice();
-                    applyForm(created, form, doctor);
-                    created.setActive(true);
-                    doctorOfficeDao.create(created);
-                    keepIds.add(created.getId());
-                } else {
-                    applyForm(match, form, doctor);
-                    match.setActive(true);
-                    doctorOfficeDao.update(match);
-                    keepIds.add(match.getId());
-                }
+            DoctorOffice match = existingById.values().stream().filter(d -> d.getNeighborhood().getId() == form.getNeighborhoodId() && d.getOfficeName().equalsIgnoreCase(form.getOfficeName().trim())).findFirst().orElse(null);
+            if (match == null) {
+                DoctorOffice created = new DoctorOffice();
+                applyForm(created, form, doctor);
+                created.setActive(true);
+                doctorOfficeDao.create(created);
+                keepIds.add(created.getId());
             } else {
-                DoctorOffice toUpdate = existingById.get(form.getId());
-                if (toUpdate == null)
-                    throw new IllegalArgumentException("Invalid office id "+form.getId());
-
-                applyForm(toUpdate, form, doctor);
-                toUpdate.setActive(true);
-                doctorOfficeDao.update(toUpdate);
-                keepIds.add(toUpdate.getId());
+                applyForm(match, form, doctor);
+                match.setActive(true);
+                doctorOfficeDao.update(match);
+                keepIds.add(match.getId());
             }
         }
 
@@ -117,7 +106,6 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     private void applyForm(DoctorOffice office, DoctorOfficeForm form, Doctor doctor) {
         office.setDoctor(doctor);
         office.setOfficeName(form.getOfficeName());
-        office.setActive(form.getActive());
         office.setNeighborhood(neighborhoodService.getById(form.getNeighborhoodId())
                 .orElseThrow(() -> new IllegalArgumentException("Neighborhood not found")));
         List<Specialty> specs = form.getSpecialtyIds().stream()

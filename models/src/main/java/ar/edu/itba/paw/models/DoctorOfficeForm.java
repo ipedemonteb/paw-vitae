@@ -3,23 +3,14 @@ package ar.edu.itba.paw.models;
 import java.util.List;
 
 public class DoctorOfficeForm {
-    private Long id;
     private Long neighborhoodId;
     private String officeName;
     private List<Long> specialtyIds;
-    private Boolean active = true;
 
     public DoctorOfficeForm(Long neighborhoodId, List<Long> specialtyIds, String officeName) {
         this.neighborhoodId = neighborhoodId;
         this.specialtyIds = specialtyIds;
         this.officeName = officeName;
-    }
-
-    public DoctorOfficeForm(Long id, Long neighborhoodId, String officeName, List<Long> specialtyIds) {
-        this.id = id;
-        this.neighborhoodId = neighborhoodId;
-        this.officeName = officeName;
-        this.specialtyIds = specialtyIds;
     }
 
     public DoctorOfficeForm() {
@@ -53,19 +44,4 @@ public class DoctorOfficeForm {
         return new DoctorOffice(doctor, neighborhood, specialties, officeName);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
 }
