@@ -221,13 +221,14 @@ body {
 }
 
 .specialty-tag {
-    background-color: var(--primary-light);
-    color: var(--primary-dark);
-    padding: 0.25rem 0.6rem;
-    border-radius: 2rem;
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    border-radius: 12px;
     font-size: 0.8rem;
     font-weight: 500;
-    transition: var(--transition);
+    margin: 0.125rem;
 }
 
 .specialty-tag:hover {
@@ -838,16 +839,14 @@ body {
 }
 
 .specialty-badge {
-    background-color: var(--primary-light);
-    color: var(--primary-dark);
+    display: inline-block;
     padding: 0.25rem 0.5rem;
-    border-radius: 2rem;
-    font-size: 0.75rem;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    border-radius: 12px;
+    font-size: 0.8rem;
     font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    transition: var(--transition);
+    margin: 0.125rem;
 }
 
 .specialty-badge:hover {

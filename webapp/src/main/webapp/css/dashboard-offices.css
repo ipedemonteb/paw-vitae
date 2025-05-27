@@ -44,7 +44,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.2rem;
 }
 
 .form-group {
@@ -194,7 +194,7 @@
 .office-entry {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 20px;
+    padding: 30px 20px 20px;
     margin-bottom: 20px;
     background: #fafafa;
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -209,7 +209,6 @@
 .office-actions {
     display: flex;
     justify-content: flex-end;
-    margin-top: 15px;
 }
 
 .btn-remove {
@@ -238,8 +237,8 @@
 
 .office-remove {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    top: 0;
+    right: 0;
     width: 30px;
     height: 30px;
     border-radius: 50%;
