@@ -52,6 +52,21 @@
                         <c:out value="Dr. ${doctor.name} ${doctor.lastName}" />
                     </h1>
 
+                    <!-- Bio Section -->
+                    <div class="bio-section">
+                        <c:choose>
+                            <c:when test="${not empty doctor.profile.bio}">
+                                <p class="bio-text"><c:out value="${doctor.profile.bio}" /></p>
+                            </c:when>
+                            <c:otherwise>
+                                <p class="bio-text">
+<%--                                    <spring:message code="doctor.profile.default.bio" arguments="${doctor.name},${doctor.lastName}" />--%>
+                                    Bio
+                                </p>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
                     <!-- Rating Section -->
                     <div class="rating-section">
                         <c:choose>
@@ -105,20 +120,34 @@
                             <a href="tel:${doctor.phone}"><c:out value="${doctor.phone}" /></a>
                         </div>
                     </div>
-
-                    <!-- Action Buttons -->
-                    <div class="action-buttons">
-                        <a href="<c:url value='/appointment?doctorId=${doctor.id}'/>" class="btn btn-primary btn-large">
-                            <i class="fas fa-calendar-check"></i>
-                            <spring:message code="doctor.profile.schedule.appointment" />
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Doctor Details Grid -->
         <div class="details-grid">
+            <!-- About/Description Section -->
+            <div class="detail-card full-width">
+                <div class="detail-card-header">
+                    <h3><i class="fas fa-user"></i>About</h3>
+                </div>
+                <div class="detail-card-content">
+                    <c:choose>
+                        <c:when test="${not empty doctor.profile.description}">
+                            <div class="description-content">
+                                <p><c:out value="${doctor.profile.description}" /></p>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="description-content">
+<%--                                <p><spring:message code="doctor.profile.default.description" arguments="${doctor.name},${doctor.lastName}" /></p>--%>
+                            Description
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+
             <!-- Specialties Section -->
             <div class="detail-card">
                 <div class="detail-card-header">
@@ -130,7 +159,6 @@
                             <div class="specialty-list">
                                 <c:forEach var="specialty" items="${doctor.specialtyList}">
                                     <div class="specialty-item">
-                                        <i class="fas fa-check-circle"></i>
                                         <spring:message code="${specialty.key}" />
                                     </div>
                                 </c:forEach>
@@ -154,7 +182,6 @@
                             <div class="coverage-list">
                                 <c:forEach var="coverage" items="${doctor.coverageList}">
                                     <div class="coverage-item">
-                                        <i class="fas fa-check-circle"></i>
                                         <c:out value="${coverage.name}" />
                                     </div>
                                 </c:forEach>
@@ -162,6 +189,69 @@
                         </c:when>
                         <c:otherwise>
                             <p class="no-data"><spring:message code="doctor.profile.no.coverages" /></p>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+
+            <!-- Career Path Section -->
+            <div class="detail-card full-width">
+                <div class="detail-card-header">
+                    <h3><i class="fas fa-briefcase"></i> Path</h3>
+                </div>
+                <div class="detail-card-content">
+                    <c:choose>
+                        <c:when test="${not empty doctor.experiences}">
+                            <div class="career-timeline">
+                                <c:forEach var="career" items="${doctor.experiences}">
+                                    <div class="career-item">
+                                        <div class="career-timeline-dot"></div>
+                                        <div class="career-content">
+                                            <h4 class="career-position"><c:out value="${career.positionTitle}" /></h4>
+                                            <div class="career-organization"><c:out value="${career.organizationName}" /></div>
+                                            <div class="career-period">
+                                                    ${career.startDate} - ${career.endDate}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="no-data">Carreer</p>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+
+            <!-- Certificates Section -->
+            <div class="detail-card full-width">
+                <div class="detail-card-header">
+                    <h3><i class="fas fa-certificate"></i> Certificates</h3>
+                </div>
+                <div class="detail-card-content">
+                    <c:choose>
+                        <c:when test="${not empty doctor.coverageList}">
+                            <div class="certificates-grid">
+                                <c:forEach var="certificate" items="${doctor.certifications}">
+                                    <div class="certificate-item">
+                                        <div class="certificate-icon">
+                                            <i class="fas fa-award"></i>
+                                        </div>
+                                        <div class="certificate-info">
+                                            <h4 class="certificate-name"><c:out value="${certificate.certificateName}" /></h4>
+                                            <div class="certificate-issuer"><c:out value="${certificate.issuingEntity}" /></div>
+                                            <div class="certificate-date">
+                                                <i class="fas fa-calendar"></i>
+                                                ${certificate.issueDate}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="no-data">No certificates</p>
                         </c:otherwise>
                     </c:choose>
                 </div>
@@ -206,26 +296,6 @@
                     </c:choose>
                 </div>
             </div>
-
-            <!-- Availability Section -->
-            <div class="detail-card full-width">
-                <div class="detail-card-header">
-                    <h3><i class="fas fa-calendar-alt"></i> <spring:message code="doctor.profile.availability" /></h3>
-                </div>
-                <div class="detail-card-content">
-                    <div class="availability-info">
-                        <div class="availability-status">
-                            <i class="fas fa-calendar-check"></i>
-                            <span class="status-text available">
-                                    <spring:message code="doctor.profile.accepting.appointments" />
-                                </span>
-                        </div>
-                        <p class="availability-note">
-                            <spring:message code="doctor.profile.availability.note" />
-                        </p>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Call to Action -->
@@ -243,7 +313,6 @@
         </div>
     </div>
 </main>
-
 
 </body>
 </html>
