@@ -16,6 +16,8 @@
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     --border-radius: 0.5rem;
     --border-radius-lg: 1rem;
+    --linkedin-blue: #0077b5;
+    --linkedin-hover: #005885;
 }
 
 * {
@@ -132,6 +134,26 @@ body {
     margin: 0;
 }
 
+/* Professional Title */
+.professional-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+/* Bio Section */
+.bio-section {
+    margin-bottom: 1rem;
+}
+
+.bio-text {
+    font-size: 1rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+}
+
 /* Rating Section */
 .rating-section {
     display: flex;
@@ -234,6 +256,19 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+.btn-secondary {
+    background-color: transparent;
+    color: var(--linkedin-blue);
+    border: 2px solid var(--linkedin-blue);
+}
+
+.btn-secondary:hover {
+    background-color: var(--linkedin-blue);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
 .btn-large {
     padding: 1rem 2rem;
     font-size: 1rem;
@@ -275,6 +310,146 @@ body {
 
 .detail-card-content {
     padding: 1.5rem;
+}
+
+/* Description Content */
+.description-content {
+    line-height: 1.7;
+}
+
+.description-content p {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+/* Career Timeline */
+.career-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.career-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.career-item {
+    position: relative;
+    margin-bottom: 2rem;
+    padding-left: 1.5rem;
+}
+
+.career-item:last-child {
+    margin-bottom: 0;
+}
+
+.career-timeline-dot {
+    position: absolute;
+    left: -2.25rem;
+    top: 0.5rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: 3px solid var(--card-background);
+    box-shadow: 0 0 0 3px var(--border-color);
+}
+
+.career-position {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.career-organization {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--linkedin-blue);
+    margin-bottom: 0.5rem;
+}
+
+.career-period {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.career-description {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Certificates Grid */
+.certificates-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.certificate-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--background-color);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--warning-color);
+}
+
+.certificate-icon {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    background: var(--warning-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.certificate-icon i {
+    font-size: 1.25rem;
+}
+
+.certificate-info {
+    flex: 1;
+}
+
+.certificate-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.certificate-issuer {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.certificate-date,
+.certificate-credential {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.certificate-date i,
+.certificate-credential i {
+    width: 1rem;
+    color: var(--primary-color);
 }
 
 /* Specialty List */
@@ -462,6 +637,23 @@ body {
     .cta-content p {
         font-size: 1rem;
     }
+
+    .career-timeline {
+        padding-left: 1.5rem;
+    }
+
+    .career-timeline::before {
+        left: 0.5rem;
+    }
+
+    .career-timeline-dot {
+        left: -1.75rem;
+    }
+
+    .certificate-item {
+        flex-direction: column;
+        text-align: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -484,5 +676,13 @@ body {
 
     .office-item {
         padding: 1rem;
+    }
+
+    .certificate-item {
+        padding: 1rem;
+    }
+
+    .career-item {
+        padding-left: 1rem;
     }
 }
