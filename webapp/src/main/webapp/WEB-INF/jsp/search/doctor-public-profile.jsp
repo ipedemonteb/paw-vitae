@@ -127,26 +127,18 @@
         <!-- Doctor Details Grid -->
         <div class="details-grid">
             <!-- About/Description Section -->
+            <c:if test="${not empty doctor.profile.description}">
             <div class="detail-card full-width">
                 <div class="detail-card-header">
                     <h3><i class="fas fa-user"></i>About</h3>
                 </div>
                 <div class="detail-card-content">
-                    <c:choose>
-                        <c:when test="${not empty doctor.profile.description}">
                             <div class="description-content">
                                 <p><c:out value="${doctor.profile.description}" /></p>
                             </div>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="description-content">
-<%--                                <p><spring:message code="doctor.profile.default.description" arguments="${doctor.name},${doctor.lastName}" /></p>--%>
-                            Description
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
                 </div>
             </div>
+            </c:if>
 
             <div class="specialty-coverage-row">
             <!-- Specialties Section -->
@@ -197,13 +189,12 @@
             </div>
 
             <!-- Career Path Section -->
+            <c:if test="${not empty doctor.experiences}">
             <div class="detail-card full-width">
                 <div class="detail-card-header">
                     <h3><i class="fas fa-briefcase"></i> Path</h3>
                 </div>
                 <div class="detail-card-content">
-                    <c:choose>
-                        <c:when test="${not empty doctor.experiences}">
                             <div class="career-timeline">
                                 <c:forEach var="career" items="${doctor.experiences}">
                                     <div class="career-item">
@@ -218,22 +209,17 @@
                                     </div>
                                 </c:forEach>
                             </div>
-                        </c:when>
-                        <c:otherwise>
-                            <p class="no-data">Carreer</p>
-                        </c:otherwise>
-                    </c:choose>
                 </div>
             </div>
+            </c:if>
 
             <!-- Certificates Section -->
+            <c:if test="${not empty doctor.certifications}">
             <div class="detail-card full-width">
                 <div class="detail-card-header">
                     <h3><i class="fas fa-certificate"></i> Certificates</h3>
                 </div>
                 <div class="detail-card-content">
-                    <c:choose>
-                        <c:when test="${not empty doctor.coverageList}">
                             <div class="certificates-grid">
                                 <c:forEach var="certificate" items="${doctor.certifications}">
                                     <div class="certificate-item">
@@ -251,13 +237,9 @@
                                     </div>
                                 </c:forEach>
                             </div>
-                        </c:when>
-                        <c:otherwise>
-                            <p class="no-data">No certificates</p>
-                        </c:otherwise>
-                    </c:choose>
                 </div>
             </div>
+            </c:if>
 
             <!-- Office Locations Section -->
             <div class="detail-card full-width">
