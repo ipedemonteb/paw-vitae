@@ -6,6 +6,7 @@ public class AvailabilitySlotForm {
     private int dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
+
     public AvailabilitySlotForm(int dayOfWeek, LocalTime startTime, LocalTime endTime) {
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
