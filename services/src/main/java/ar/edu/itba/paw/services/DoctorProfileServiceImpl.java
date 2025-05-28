@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfacePersistence.AvailabilitySlotsDao;
 import ar.edu.itba.paw.interfacePersistence.DoctorCertificationDao;
 import ar.edu.itba.paw.interfacePersistence.DoctorExperienceDao;
 import ar.edu.itba.paw.interfacePersistence.DoctorProfileDao;
+import ar.edu.itba.paw.interfaceServices.DoctorProfileService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DoctorProfileServiceImpl {
+public class DoctorProfileServiceImpl implements DoctorProfileService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoctorProfileServiceImpl.class);
     private final DoctorProfileDao doctorProfileDao;
