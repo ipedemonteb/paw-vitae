@@ -400,14 +400,14 @@ body {
     padding: 1.5rem;
     background: var(--background-color);
     border-radius: var(--border-radius);
-    border-left: 4px solid var(--warning-color);
+    border-left: 4px solid var(--success-color);
 }
 
 .certificate-icon {
     flex-shrink: 0;
     width: 3rem;
     height: 3rem;
-    background: var(--warning-color);
+    background: var(--success-color);
     border-radius: 50%;
     display: flex;
     align-items: center;
