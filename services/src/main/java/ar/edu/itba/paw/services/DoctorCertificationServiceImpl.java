@@ -3,21 +3,50 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.DoctorCertificationDao;
 import ar.edu.itba.paw.interfacePersistence.DoctorExperienceDao;
 import ar.edu.itba.paw.interfacePersistence.DoctorProfileDao;
+import ar.edu.itba.paw.interfaceServices.DoctorCertificationService;
+import ar.edu.itba.paw.interfaceServices.DoctorService;
+import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.DoctorCertification;
+import ar.edu.itba.paw.models.DoctorProfile;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Service
-public class DoctorCertificationServiceImpl {
+public class DoctorCertificationServiceImpl implements DoctorCertificationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoctorCertificationServiceImpl.class);
     private final DoctorCertificationDao doctorCertificationDao;
+    private final DoctorService doctorService;
 
     @Autowired
-    public DoctorCertificationServiceImpl( DoctorCertificationDao doctorCertificationDao) {
+    public DoctorCertificationServiceImpl( DoctorCertificationDao doctorCertificationDao, DoctorService doctorService) {
         this.doctorCertificationDao = doctorCertificationDao;
+        this.doctorService = doctorService;
+    }
+
+    @Transactional
+    @Override
+    public DoctorCertification create(long doctorId, String certificateName, String issuingEntity, LocalDate issueDate) {
+        LOGGER.debug("Creating doctor profile for doctor with ID: {}", doctorId);
+        Doctor doctor = doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new);
+        DoctorCertification certification = doctorCertificationDao.create(doctor, certificateName, issuingEntity, issueDate);
+        LOGGER.info("Doctor profile created for doctor with ID: {}", doctorId);
+        return certification;
     }
 
 
+    @Transactional(readOnly = true)
+    @Override
+    public DoctorCertification findByDoctorId(long id) {
+        if(doctorCertificationDao.getByDoctorId(id).isEmpty()) {
+            throw new UserNotFoundException("Doctor profile not found for doctor ID: " + id);
+        }
+        return doctorCertificationDao.getByDoctorId(id).getFirst();
+    }
 }
