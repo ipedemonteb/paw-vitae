@@ -148,6 +148,7 @@
                 </div>
             </div>
 
+            <div class="specialty-coverage-row">
             <!-- Specialties Section -->
             <div class="detail-card">
                 <div class="detail-card-header">
@@ -192,6 +193,7 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
+            </div>
             </div>
 
             <!-- Career Path Section -->
