@@ -31,8 +31,6 @@ public class Doctor extends User {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
 
-
-
     @Column(name = "rating")
     private Double rating = 1.0;
 
@@ -41,6 +39,17 @@ public class Doctor extends User {
 
     @Column(name = "image_id")
     private Long imageId = -1L;
+
+    //WHY NOT LAZY
+    @OneToOne(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private DoctorProfile profile;
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<DoctorExperience> experiences = new ArrayList<>();
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<DoctorCertification> certifications = new ArrayList<>();
+
 
     public Doctor() {
         // For Hibernate use
@@ -100,9 +109,7 @@ public class Doctor extends User {
         return availabilitySlots;
     }
 
-    public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) {
-        this.availabilitySlots = availabilitySlots;
-    }
+    public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) { this.availabilitySlots = availabilitySlots; }
 
     public Double getRating() {
         return rating;
@@ -127,5 +134,17 @@ public class Doctor extends User {
     public void setImageId(Long imageId) {
         this.imageId = imageId;
     }
+
+    public DoctorProfile getProfile() { return profile; }
+
+    public void setProfile(DoctorProfile profile) { this.profile = profile;}
+
+    public List<DoctorExperience> getExperiences() { return experiences; }
+
+    public void setExperiences(List<DoctorExperience> experiences) { this.experiences = experiences; }
+
+    public List<DoctorCertification> getCertifications() { return certifications; }
+
+    public void setCertifications(List<DoctorCertification> certifications) { this.certifications = certifications; }
 
 }
