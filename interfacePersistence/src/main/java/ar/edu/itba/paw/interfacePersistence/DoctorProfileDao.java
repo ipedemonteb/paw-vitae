@@ -10,4 +10,6 @@ public interface DoctorProfileDao {
     DoctorProfile create(Doctor doctor, String bio, String description);
 
     Optional<DoctorProfile> getByDoctorId(long id);
+
+    void update(DoctorProfile doctorProfile);
 }
