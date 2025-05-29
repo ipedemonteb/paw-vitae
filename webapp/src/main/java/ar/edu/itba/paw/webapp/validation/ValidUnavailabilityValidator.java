@@ -15,7 +15,6 @@ public class ValidUnavailabilityValidator implements ConstraintValidator<ValidUn
         if (unavailabilitySlotFormList == null || unavailabilitySlotFormList.isEmpty()) {
             return true;
         }
-
         List<UnavailabilitySlotForm> validSlots = unavailabilitySlotFormList.stream()
                 .filter(slot -> slot.getStartDate() != null && slot.getEndDate() != null)
                 .toList();
@@ -30,9 +29,7 @@ public class ValidUnavailabilityValidator implements ConstraintValidator<ValidUn
             }
 
 
-            if (end.isBefore(LocalDate.now(ZoneId.of("UTC-3")))) {
-                return false;
-            }
+
         }
         return true;
     }
