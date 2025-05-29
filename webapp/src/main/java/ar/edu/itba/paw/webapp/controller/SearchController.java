@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
+import ar.edu.itba.paw.interfaceServices.RatingService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
@@ -18,12 +19,14 @@ public class SearchController {
     private final DoctorService doctorService;
     private final SpecialtyService specialtyService;
     private final CoverageService coverageService;
+    private final RatingService ratingService;
 
     @Autowired
-    public SearchController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService) {
+    public SearchController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, RatingService ratingService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
+        this.ratingService = ratingService;
     }
 
 
@@ -59,6 +62,7 @@ public class SearchController {
         ModelAndView mav = new ModelAndView("search/doctor-public-profile");
         mav.addObject("doctor", doctor);
         mav.addObject("loggedUser", loggedUser);
+        mav.addObject("doctorRatings", ratingService.getRatingsByDoctorId(doctorId));
         return mav;
     }
 

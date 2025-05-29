@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,6 +60,17 @@ public class RatingDaoHibeImpl implements RatingDao {
     @Override
     public List<Rating> getFiveTopRatings() {
         TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.comment <> '' ORDER BY r.rating DESC", Rating.class);
+        query.setMaxResults(5);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Rating> getFiveTopRatingsByDoctorId(long doctorId) {
+        TypedQuery<Rating> query = em.createQuery(
+                "FROM Rating AS r WHERE r.doctor.id = :doctorId AND r.comment <> '' ORDER BY r.rating DESC",
+                Rating.class
+        );
+        query.setParameter("doctorId", doctorId);
         query.setMaxResults(5);
         return query.getResultList();
     }
