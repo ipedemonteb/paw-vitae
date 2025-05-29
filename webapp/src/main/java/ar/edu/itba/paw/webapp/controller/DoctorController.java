@@ -156,13 +156,12 @@ public class DoctorController {
 
     @RequestMapping(value = "/doctor/dashboard/unavailability/{year}/{month}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> getUnavailabilityByMonth(
+    public String getUnavailabilityByMonth(
             @PathVariable("year") int year,
             @PathVariable("month") int month,
             @ModelAttribute("loggedUser") final Doctor doctor
     ) {
-        Map<String, Object> response = unavailabilitySlotsService.getUnavailabilityByDoctorIdAndMonthAndYear(doctor.getId(), month, year);
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
+        return unavailabilitySlotsService.getUnavailabilityByDoctorIdAndMonthAndYear(doctor.getId(), month, year);
     }
 
     @RequestMapping(value = "doctor/dashboard/appointment-details/{id}", method = RequestMethod.GET)
