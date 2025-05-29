@@ -12,5 +12,5 @@ public interface DoctorCertificationDao {
 
         List<DoctorCertification> getByDoctorId(long doctorId);
 
-
+        void delete(long id);
 }

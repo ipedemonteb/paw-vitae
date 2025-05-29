@@ -32,4 +32,9 @@ public class DoctorProfileDaoHibeImpl implements DoctorProfileDao {
         }
         return Optional.of(query.getResultList().getFirst());
     }
+
+    @Override
+    public void update(DoctorProfile doctorProfile) {
+        em.merge(doctorProfile);
+    }
 }

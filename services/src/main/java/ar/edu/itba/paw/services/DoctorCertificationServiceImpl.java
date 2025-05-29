@@ -1,13 +1,9 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorCertificationDao;
-import ar.edu.itba.paw.interfacePersistence.DoctorExperienceDao;
-import ar.edu.itba.paw.interfacePersistence.DoctorProfileDao;
 import ar.edu.itba.paw.interfaceServices.DoctorCertificationService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.DoctorCertification;
-import ar.edu.itba.paw.models.DoctorProfile;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class DoctorCertificationServiceImpl implements DoctorCertificationService {
@@ -48,5 +47,36 @@ public class DoctorCertificationServiceImpl implements DoctorCertificationServic
             throw new UserNotFoundException("Doctor profile not found for doctor ID: " + id);
         }
         return doctorCertificationDao.getByDoctorId(id).getFirst();
+    }
+
+    @Transactional
+    @Override
+    public void update(Doctor doctor, List<CertificateForm> certificates) {
+        List<DoctorCertification> existing = doctor.getCertifications();
+
+        Map<Long, DoctorCertification> existingById =
+                existing.stream().collect(Collectors.toMap(DoctorCertification::getId, Function.identity()));
+
+        Set<Long> keepIds = new HashSet<>();
+
+        for(CertificateForm form : certificates) {
+            DoctorCertification match = existingById.values().stream().filter(c ->
+                    c.getCertificateName().equals(form.getCertificateName()) &&
+                    c.getIssuingEntity().equals(form.getIssuingEntity()) &&
+                    c.getIssueDate().equals(form.getIssueDate())
+            ).findFirst().orElse(null);
+            if(match == null) {
+                DoctorCertification created = doctorCertificationDao.create(doctor, form.getCertificateName(), form.getIssuingEntity(), form.getIssueDate());
+                keepIds.add(created.getId());
+            } else {
+                keepIds.add(match.getId());
+            }
+        }
+
+        for(DoctorCertification certification : existing) {
+            if(!keepIds.contains(certification.getId())) {
+                doctorCertificationDao.delete(certification.getId());
+            }
+        }
     }
 }

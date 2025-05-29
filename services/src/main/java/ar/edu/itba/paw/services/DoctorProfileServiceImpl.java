@@ -1,8 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfacePersistence.AvailabilitySlotsDao;
-import ar.edu.itba.paw.interfacePersistence.DoctorCertificationDao;
-import ar.edu.itba.paw.interfacePersistence.DoctorExperienceDao;
 import ar.edu.itba.paw.interfacePersistence.DoctorProfileDao;
 import ar.edu.itba.paw.interfaceServices.DoctorProfileService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
@@ -11,15 +8,8 @@ import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DoctorProfileServiceImpl implements DoctorProfileService {
@@ -54,5 +44,16 @@ public class DoctorProfileServiceImpl implements DoctorProfileService {
             throw new UserNotFoundException("Doctor profile not found for doctor ID: " + id);
         }
         return doctorProfileDao.getByDoctorId(id).get();
+    }
+
+    @Transactional
+    @Override
+    public void update(long doctorId, String bio, String description) {
+        LOGGER.debug("Updating doctor profile for doctor with ID: {}", doctorId);
+        DoctorProfile profile = findByDoctorId(doctorId);
+        profile.setBio(bio);
+        profile.setDescription(description);
+        doctorProfileDao.update(profile);
+        LOGGER.info("Doctor profile updated for doctor with ID: {}", doctorId);
     }
 }

@@ -12,4 +12,6 @@ public interface DoctorExperienceDao {
      DoctorExperience create(Doctor doctor, String title, String description, LocalDate startDate, LocalDate endDate);
 
      List<DoctorExperience> getByDoctorId(long doctorId);
+
+     void delete(long id);
 }
