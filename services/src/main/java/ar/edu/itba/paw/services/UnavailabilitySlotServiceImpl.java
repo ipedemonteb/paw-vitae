@@ -136,7 +136,6 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
         }
         LOGGER.debug("Getting unavailability slots for doctor {} in month {} and year {}", doctorId, month, year);
         List<UnavailabilitySlotForm> unavailabilitySlotForms = transformToUnavailabilitySlotForms(unavailabilitySlotsDao.getUnavailabilityByDoctorIdAndMonthAndYear(doctorId, month, year));
-        unavailabilitySlotForms.forEach(slot -> System.out.println(slot.getStartDate() + " " + slot.getEndDate()));
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("unavailabilitySlots", unavailabilitySlotForms);
