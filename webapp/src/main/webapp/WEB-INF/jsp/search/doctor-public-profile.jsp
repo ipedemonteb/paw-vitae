@@ -280,7 +280,49 @@
                     </c:choose>
                 </div>
             </div>
-        </div>
+
+        <c:if test="${not empty doctorRatings}">
+            <div class="detail-card full-width">
+                <div class="detail-card-header">
+                    <h3><i class="fas fa-star"></i> <spring:message code="landing.doctor.ratings.tag" /></h3>
+                </div>
+
+                    <div class="testimonials-slider">
+                        <c:forEach items="${doctorRatings}" var="entry" varStatus="status">
+                            <div class="testimonial-card doctor-rating-card">
+                                <div class="testimonial-content">
+                                    <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                                    <p class="testimonial-text"><c:out value="${entry.comment}"/></p>
+                                    <div class="testimonial-rating">
+                                        <c:forEach begin="1" end="5" var="star">
+                                            <c:choose>
+                                                <c:when test="${star <= entry.rating}">
+                                                    <i class="fas fa-star"></i>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <i class="far fa-star"></i>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:forEach>
+                                    </div>
+                                </div>
+                                <div class="testimonial-author">
+                                    <div class="author-info">
+                                        <h4 class="author-name">${entry.patient.name} ${entry.patient.lastName}</h4>
+                                        <p class="author-title"><spring:message code="landing.doctor.ratings.patient" text="Paciente" /></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+
+                    <div class="testimonial-controls">
+                        <button class="testimonial-prev"><i class="fas fa-arrow-left"></i></button>
+                        <button class="testimonial-next"><i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </c:if>
 
         <!-- Call to Action -->
         <div class="cta-section">
@@ -297,6 +339,41 @@
         </div>
     </div>
 </main>
+
+<script>
+
+    // Doctor ratings slider controls
+    const prevButton = document.querySelector('.testimonial-prev');
+    const nextButton = document.querySelector('.testimonial-next');
+    const doctorRatings = document.querySelectorAll('.doctor-rating-card');
+    let currentRating = 0;
+
+    if (doctorRatings.length > 0) {
+        function showRating(index) {
+            doctorRatings.forEach((rating, i) => {
+                rating.style.display = i === index ? 'flex' : 'none';
+            });
+        }
+
+        prevButton.addEventListener('click', () => {
+            currentRating = (currentRating - 1 + doctorRatings.length) % doctorRatings.length;
+            showRating(currentRating);
+        });
+
+        nextButton.addEventListener('click', () => {
+            currentRating = (currentRating + 1) % doctorRatings.length;
+            showRating(currentRating);
+        });
+
+        // Initialize rating display
+        showRating(currentRating);
+    }
+
+    // Set current year for copyright
+    document.addEventListener('DOMContentLoaded', function() {
+        window.currentYear = new Date().getFullYear();
+    });
+</script>
 
 </body>
 </html>

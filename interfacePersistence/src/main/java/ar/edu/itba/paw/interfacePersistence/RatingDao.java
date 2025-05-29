@@ -21,4 +21,6 @@ public interface RatingDao {
      List<Rating> getRatingsByPatientId(long patientId);
 
      List<Rating> getFiveTopRatings();
+
+     List<Rating> getFiveTopRatingsByDoctorId(long doctorId);
 }

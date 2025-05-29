@@ -86,4 +86,10 @@ public class RatingServiceImpl implements RatingService {
                 rating -> rating,
                 rating -> patientService.getById(rating.getPatient().getId()).orElseThrow(UserNotFoundException::new)));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Rating> getFiveTopRatingsByDoctorId(long doctorId) {
+        return ratingDao.getFiveTopRatingsByDoctorId(doctorId);
+    }
 }
