@@ -218,11 +218,6 @@ public class DoctorController {
         }
 
         doctorOfficeService.update(officeForm.getDoctorOfficeForm(),doctor);
-        officeForm.getDoctorOfficeForm().forEach(office -> {
-            System.out.println("Office Name: " + office.getOfficeName() +
-                               ", Neighborhood ID: " + office.getNeighborhoodId() +
-                               ", Specialty IDs: " + office.getSpecialtyIds());
-        });
         return new ModelAndView("redirect:/doctor/dashboard/offices?updated=true");
     }
 }
