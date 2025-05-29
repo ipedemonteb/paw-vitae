@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.UnavailabilitySlotsDao;
 import ar.edu.itba.paw.interfaceServices.UnavailabilitySlotsService;
 import ar.edu.itba.paw.models.Doctor;
+import ar.edu.itba.paw.models.JsonUtils;
 import ar.edu.itba.paw.models.UnavailabilitySlot;
 import ar.edu.itba.paw.models.UnavailabilitySlotForm;
 import org.slf4j.Logger;
@@ -126,7 +127,7 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
     }
     @Transactional(readOnly = true)
     @Override
-    public Map<String,Object> getUnavailabilityByDoctorIdAndMonthAndYear(long doctorId, int month, int year) {
+    public String getUnavailabilityByDoctorIdAndMonthAndYear(long doctorId, int month, int year) {
         if (month < 1 || month > 12) {
             month = LocalDate.now().getMonthValue();
         }
@@ -141,6 +142,6 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
         response.put("unavailabilitySlots", unavailabilitySlotForms);
         response.put("month", month);
         response.put("year", year);
-        return response;
+        return JsonUtils.toJson(response);
     }
 }
