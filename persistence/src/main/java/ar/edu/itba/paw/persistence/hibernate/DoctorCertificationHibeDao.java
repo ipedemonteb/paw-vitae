@@ -35,4 +35,12 @@ public class DoctorCertificationHibeDao implements DoctorCertificationDao {
         }
         return query.getResultList();
     }
+
+    @Override
+    public void delete(long id) {
+        DoctorCertification certification = em.find(DoctorCertification.class, id);
+        if (certification != null) {
+            em.remove(certification);
+        }
+    }
 }

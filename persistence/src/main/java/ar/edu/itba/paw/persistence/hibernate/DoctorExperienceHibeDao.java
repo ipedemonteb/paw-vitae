@@ -34,6 +34,13 @@ public class DoctorExperienceHibeDao implements DoctorExperienceDao {
             return List.of();
         }
         return query.getResultList();
+    }
 
+    @Override
+    public void delete(long id) {
+        DoctorExperience experience = em.find(DoctorExperience.class, id);
+        if (experience != null) {
+            em.remove(experience);
+        }
     }
 }

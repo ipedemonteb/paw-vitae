@@ -3,9 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.DoctorExperienceDao;
 import ar.edu.itba.paw.interfaceServices.DoctorExperienceService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.DoctorExperience;
-import ar.edu.itba.paw.models.DoctorProfile;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class DoctorExperienceServiceImpl implements DoctorExperienceService {
@@ -45,5 +49,37 @@ public class DoctorExperienceServiceImpl implements DoctorExperienceService {
             throw new UserNotFoundException("Doctor profile not found for doctor ID: " + doctorId);
         }
         return doctorExperienceDao.getByDoctorId(doctorId).getFirst();
+    }
+
+    @Transactional
+    @Override
+    public void update(Doctor doctor, List<ExperienceForm> experiences) {
+        List<DoctorExperience> existing = doctor.getExperiences();
+
+        Map<Long, DoctorExperience> existingById =
+                existing.stream().collect(Collectors.toMap(DoctorExperience::getId, Function.identity()));
+
+        Set<Long> keepIds = new HashSet<>();
+
+        for(ExperienceForm form : experiences) {
+            DoctorExperience match = existingById.values().stream().filter(e ->
+                    e.getPositionTitle().equals(form.getPositionTitle()) &&
+                    e.getOrganizationName().equals(form.getOrganizationName()) &&
+                    e.getStartDate().equals(form.getStartDate()) &&
+                    e.getEndDate().equals(form.getEndDate())
+            ).findFirst().orElse(null);
+            if(match == null) {
+                DoctorExperience created = doctorExperienceDao.create(doctor, form.getPositionTitle(), form.getOrganizationName(), form.getStartDate(), form.getEndDate());
+                keepIds.add(created.getId());
+            } else {
+                keepIds.add(match.getId());
+            }
+        }
+
+        for(DoctorExperience certification : existing) {
+            if(!keepIds.contains(certification.getId())) {
+                doctorExperienceDao.delete(certification.getId());
+            }
+        }
     }
 }
