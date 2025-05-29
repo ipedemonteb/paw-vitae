@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -68,34 +70,35 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         return doctorOfficeDao.getActiveByDoctorId(doctorId);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorOffice> getAllByDoctorId(long doctorId) {
+        return doctorOfficeDao.getAllByDoctorId(doctorId);
+    }
+
     @Transactional
     @Override
     public void update(List<DoctorOfficeForm> officeForms, Doctor doctor) {
-        // 1) load *all* offices for this doctor (active + inactive if you ever want to re-activate)
         List<DoctorOffice> existing = doctorOfficeDao.getAllByDoctorId(doctor.getId());
         Map<Long,DoctorOffice> existingById =
                 existing.stream().collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
 
         Set<Long> keepIds = new HashSet<>();
 
-        // 2) create new or update existing (and set active=true)
         for (DoctorOfficeForm form : officeForms) {
-            DoctorOffice match = existingById.values().stream().filter(d -> d.getNeighborhood().getId() == form.getNeighborhoodId() && d.getOfficeName().equalsIgnoreCase(form.getOfficeName().trim())).findFirst().orElse(null);
+            DoctorOffice match = existingById.get(form.getId());
             if (match == null) {
                 DoctorOffice created = new DoctorOffice();
                 applyForm(created, form, doctor);
-                created.setActive(true);
                 doctorOfficeDao.create(created);
                 keepIds.add(created.getId());
             } else {
                 applyForm(match, form, doctor);
-                match.setActive(true);
                 doctorOfficeDao.update(match);
                 keepIds.add(match.getId());
             }
         }
 
-        // 3) any office *not* in keepIds → soft-delete
         for (DoctorOffice o : existing) {
             if (!keepIds.contains(o.getId()) && o.isActive()) {
                 doctorOfficeDao.softDelete(o.getId());
@@ -106,6 +109,10 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     private void applyForm(DoctorOffice office, DoctorOfficeForm form, Doctor doctor) {
         office.setDoctor(doctor);
         office.setOfficeName(form.getOfficeName());
+        if (form.getRemoved()) {
+            office.setRemoved(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
+        }
+        office.setActive(form.getActive());
         office.setNeighborhood(neighborhoodService.getById(form.getNeighborhoodId())
                 .orElseThrow(() -> new IllegalArgumentException("Neighborhood not found")));
         List<Specialty> specs = form.getSpecialtyIds().stream()

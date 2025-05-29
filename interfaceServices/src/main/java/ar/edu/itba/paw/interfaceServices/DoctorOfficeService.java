@@ -13,5 +13,6 @@ public interface DoctorOfficeService {
     List<DoctorOffice> transformToDoctorOffice(Doctor doctor, List<DoctorOfficeForm> officeForms);
     Optional<DoctorOffice> getById(long id);
     List<DoctorOffice> getByDoctorId(long doctorId);
+    List<DoctorOffice> getAllByDoctorId(long doctorId);
     void update(List<DoctorOfficeForm> officeForms,Doctor doctor);
 }

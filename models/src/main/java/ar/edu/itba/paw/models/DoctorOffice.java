@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,8 +35,13 @@ public class DoctorOffice {
 
     @Column(name = "office_name", length = 50)
     private String officeName;
+
     @Column(name = "active")
     private boolean active = true;
+
+    @Column(name = "removed")
+    private LocalDateTime removed;
+
     public DoctorOffice() { }
 
     public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName) {
@@ -43,6 +49,15 @@ public class DoctorOffice {
         this.neighborhood = neighborhood;
         this.specialties = specialties;
         this.officeName = officeName;
+    }
+
+    public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName, boolean active, LocalDateTime removed) {
+        this.doctor = doctor;
+        this.neighborhood = neighborhood;
+        this.specialties = specialties;
+        this.officeName = officeName;
+        this.active = active;
+        this.removed = removed;
     }
 
     public long getId() {
@@ -87,6 +102,14 @@ public class DoctorOffice {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public LocalDateTime getRemoved() {
+        return removed;
+    }
+
+    public void setRemoved(LocalDateTime removed) {
+        this.removed = removed;
     }
 
     @Override

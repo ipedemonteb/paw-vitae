@@ -201,9 +201,10 @@ public class DoctorController {
     @RequestMapping(value = "doctor/dashboard/offices", method = RequestMethod.GET)
     public ModelAndView getDoctorOffices(@ModelAttribute("loggedUser") final Doctor doctor,
                                          @ModelAttribute("doctorOfficeForm") final OfficeForm officeForm) {
+        officeForm.setDoctorId(doctor.getId());
         ModelAndView mav = new ModelAndView("doctor/dashboard-offices");
         mav.addObject("doctor", doctor);
-        mav.addObject("doctorOffices", doctorOfficeService.getByDoctorId(doctor.getId()));
+        mav.addObject("doctorOffices", doctorOfficeService.getAllByDoctorId(doctor.getId()));
         mav.addObject("neighborhoodList", neighborhoodService.getAll());
         mav.addObject("specialtyList", specialtyService.getAll());
         return mav;

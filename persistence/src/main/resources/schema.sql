@@ -119,7 +119,8 @@ CREATE TABLE IF NOT EXISTS Doctor_Offices (
                                               neighborhood_id INT NOT NULL,
                                               office_name VARCHAR(50) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
-    UNIQUE (doctor_id, neighborhood_id, office_name),
+    removed TIMESTAMP,
+    UNIQUE (doctor_id, neighborhood_id, office_name, removed),
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
     FOREIGN KEY (neighborhood_id) REFERENCES Neighborhoods(id) ON DELETE RESTRICT
     );

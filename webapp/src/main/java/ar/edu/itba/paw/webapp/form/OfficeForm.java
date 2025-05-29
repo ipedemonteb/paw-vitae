@@ -1,22 +1,22 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.DoctorOfficeForm;
-import ar.edu.itba.paw.webapp.validation.UniqueOffices;
-import ar.edu.itba.paw.webapp.validation.ValidOfficeNames;
-import ar.edu.itba.paw.webapp.validation.ValidOfficeNeighborhood;
-import ar.edu.itba.paw.webapp.validation.ValidOfficeSpecialties;
+import ar.edu.itba.paw.webapp.validation.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+@ValidOfficeId
 public class OfficeForm {
 
+    @NotNull
+    private Long doctorId;
 
     @NotEmpty
     @NotNull
-    @Size(min = 1, max = 7)
+    @Size(min = 1, max = 20)
     @UniqueOffices(message = "{offices.duplicate}")
     @ValidOfficeNames(message = "{offices.invalid.name}")
     @ValidOfficeSpecialties(message = "{offices.invalid.specialties}")
@@ -30,5 +30,13 @@ public class OfficeForm {
 
     public void setDoctorOfficeForm(List<DoctorOfficeForm> doctorOfficeForm) {
         this.doctorOfficeForm = doctorOfficeForm;
+    }
+
+    public Long getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
     }
 }
