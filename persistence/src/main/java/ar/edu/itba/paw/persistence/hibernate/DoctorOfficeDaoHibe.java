@@ -36,7 +36,7 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
 
     @Override
     public List<DoctorOffice> getAllByDoctorId(long doctorId) {
-        return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId", DoctorOffice.class)
+        return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId AND d.removed IS NULL", DoctorOffice.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
     }
@@ -49,32 +49,12 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
     }
 
     @Override
-    public void update( long doctorId,List<DoctorOffice> disabledOffices, List<DoctorOffice> officesToCreate, List<DoctorOffice> officesToActivate) {
-        for (DoctorOffice current : disabledOffices) {
-                em.merge(current);
-        }
-
-        for (DoctorOffice newOffice : officesToCreate) {
-            Long neighborhoodId = newOffice.getNeighborhood().getId();
-
-            Doctor doctorRef = em.getReference(Doctor.class, doctorId);
-            Neighborhood neighborhoodRef = em.getReference(Neighborhood.class, neighborhoodId);
-            newOffice.setDoctor(doctorRef);
-            newOffice.setNeighborhood(neighborhoodRef);
-            newOffice.setActive(true);
-            em.persist(newOffice);
-        }
-        for (DoctorOffice officeToActivate : officesToActivate) {
-            officeToActivate.setNeighborhood(em.getReference(Neighborhood.class, officeToActivate.getNeighborhood().getId()));
-            officeToActivate.setDoctor(em.getReference(Doctor.class, officeToActivate.getDoctor().getId()));
-            List<Specialty> specialties = new ArrayList<>();
-            officeToActivate.getSpecialties().forEach(specialty -> specialties.add(em.getReference(Specialty.class, specialty.getId())));
-            officeToActivate.setSpecialties(specialties);
-            em.merge(officeToActivate);
-        }
-    }
-
     public DoctorOffice update(DoctorOffice o) {
+        o.setNeighborhood(em.getReference(Neighborhood.class, o.getNeighborhood().getId()));
+        List<Specialty> specialtiesRefs = o.getSpecialties().stream()
+                .map(specialty -> em.getReference(Specialty.class, specialty.getId()))
+                .collect(Collectors.toCollection(ArrayList::new));
+        o.setSpecialties(specialtiesRefs);
         return em.merge(o);
     }
 

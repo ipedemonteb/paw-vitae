@@ -10,7 +10,6 @@ public interface DoctorOfficeDao {
     Optional<DoctorOffice> getById(long id);
     List<DoctorOffice> getAllByDoctorId(long doctorId);
     List<DoctorOffice> getActiveByDoctorId(long doctorId);
-    void update( long doctorId,List<DoctorOffice> disableOffices, List<DoctorOffice> officesToCreate, List<DoctorOffice> officesToActivate);
     List<DoctorOffice> getByNameAndNeighborhoodId(String officeName, long neighborhoodId, long doctorId);
     DoctorOffice update(DoctorOffice o);
     void softDelete(long id);

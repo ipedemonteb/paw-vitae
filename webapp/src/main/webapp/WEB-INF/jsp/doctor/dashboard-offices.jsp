@@ -39,6 +39,36 @@
     </button>
 </div>
 
+<!-- Remove Office Confirmation Modal -->
+<div id="removeOfficeModal" class="confirmation-modal" style="display: none;">
+    <div class="modal-overlay" onclick="hideRemoveConfirmation()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle text-warning"></i> <spring:message code="offices.remove.confirm.title" /></h3>
+        </div>
+        <div class="modal-body">
+            <p><spring:message code="offices.remove.confirm.message" /></p>
+            <div class="office-info-preview">
+                <strong id="officeNamePreview"></strong>
+            </div>
+            <div class="warning-note">
+                <i class="fas fa-info-circle"></i>
+                <span><spring:message code="offices.remove.confirm.warning" /></span>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" onclick="hideRemoveConfirmation()">
+                <i class="fas fa-times"></i>
+                <spring:message code="logout.confirmation.cancel" />
+            </button>
+            <button type="button" class="btn btn-danger" onclick="confirmRemoveOffice()">
+                <i class="fas fa-trash"></i>
+                <spring:message code="offices.remove.confirm.delete" />
+            </button>
+        </div>
+    </div>
+</div>
+
 <main class="dashboard-container">
     <c:set var="activeTab" value="offices" scope="request" />
     <c:set var="user" value="${doctor}" scope="request"/>
@@ -81,33 +111,35 @@
                     <c:otherwise>
                         <div class="offices-grid">
                             <c:forEach items="${doctorOffices}" var="office" varStatus="status">
-                                <div class="office-card">
-                                    <div class="office-card-header">
-                                        <div class="office-info">
-                                            <h3 class="office-name">
-                                                <i class="fas fa-building"></i>
-                                                <c:out value="${office.officeName}" />
-                                            </h3>
-                                            <div class="office-location">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                                <c:out value="${office.neighborhood.name}" />
+                                <c:if test="${office.active}">
+                                    <div class="office-card">
+                                        <div class="office-card-header">
+                                            <div class="office-info">
+                                                <h3 class="office-name">
+                                                    <i class="fas fa-building"></i>
+                                                    <c:out value="${office.officeName}" />
+                                                </h3>
+                                                <div class="office-location">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                    <c:out value="${office.neighborhood.name}" />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="office-specialties">
-                                        <div class="specialties-label">
-                                            <i class="fas fa-stethoscope"></i>
-                                            <spring:message code="offices.specialties" />:
-                                        </div>
-                                        <div class="specialties-list">
-                                            <c:forEach items="${office.specialties}" var="specialty">
+                                        <div class="office-specialties">
+                                            <div class="specialties-label">
+                                                <i class="fas fa-stethoscope"></i>
+                                                <spring:message code="offices.specialties" />:
+                                            </div>
+                                            <div class="specialties-list">
+                                                <c:forEach items="${office.specialties}" var="specialty">
                                                 <span class="specialty-tag">
                                                     <spring:message code="${specialty.key}" />
                                                 </span>
-                                            </c:forEach>
+                                                </c:forEach>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </c:if>
                             </c:forEach>
                         </div>
                     </c:otherwise>
@@ -121,9 +153,29 @@
                     <spring:message code="offices.manage.title" />
                 </h3>
 
+                <!-- Office Filter Tabs -->
+                <div class="office-filter-tabs">
+                    <button class="filter-tab" data-filter="active" onclick="filterOffices('active')">
+                        <i class="fas fa-check-circle"></i>
+                        <spring:message code="offices.filter.active" />
+                        <span class="tab-count" id="count-active">0</span>
+                    </button>
+                    <button class="filter-tab" data-filter="disabled" onclick="filterOffices('disabled')">
+                        <i class="fas fa-pause-circle"></i>
+                        <spring:message code="offices.filter.disabled" />
+                        <span class="tab-count" id="count-disabled">0</span>
+                    </button>
+<%--                    <button type="button" class="btn btn-primary add-slot-button" id="add-office-btn" onclick="addNewOffice()">--%>
+<%--                        <i class="fas fa-plus"></i>--%>
+<%--                        <spring:message code="register.addOffice"/>--%>
+<%--                    </button>--%>
+                </div>
+
                 <form:form id="officesForm" modelAttribute="doctorOfficeForm" method="post"
                            action="${pageContext.request.contextPath}/doctor/dashboard/offices/update"
                            cssClass="edit-profile-form">
+
+                    <form:hidden path="doctorId" id="doctorId"/>
 
                     <div class="form-group">
                         <label class="form-label required-field">
@@ -163,6 +215,8 @@
     // Global variables
     let officeCounter = 0;
     let doctorOffices = [];
+    let currentFilter = 'active';
+    let pendingRemoveIndex = null;
 
     // Track if fields have been touched for validation
     const officeNameTouched = {};
@@ -201,8 +255,11 @@
         <c:forEach items="${doctorOffices}" var="office" varStatus="status">
         {
             index: ${status.index},
+            id: ${office.id},
             name: "<c:out value='${office.officeName}'/>",
             neighborhoodId: ${office.neighborhood.id},
+            active: ${office.active},
+            removed: false,
             specialties: [
                 <c:forEach items="${office.specialties}" var="specialty" varStatus="sidStatus">
                 {
@@ -216,20 +273,74 @@
     ];
     </c:if>
 
+    // Modal functions
+    function showRemoveConfirmation(index) {
+        const office = doctorOffices.find(o => o.index === parseInt(index));
+        if (!office) return;
+
+        pendingRemoveIndex = index;
+
+        if (office.id == null) {
+            confirmRemoveOffice();
+            return;
+        }
+
+        document.getElementById('officeNamePreview').textContent = office.name || 'Unnamed Office';
+        document.getElementById('removeOfficeModal').style.display = 'flex';
+    }
+
+    function hideRemoveConfirmation() {
+        pendingRemoveIndex = null;
+        document.getElementById('removeOfficeModal').style.display = 'none';
+    }
+
+    function confirmRemoveOffice() {
+        if (pendingRemoveIndex !== null) {
+            const office = doctorOffices.find(o => o.index === parseInt(pendingRemoveIndex));
+            if (!office) return;
+
+            if (office.id) {
+                // Existing office - mark as removed for backend processing
+                office.removed = true;
+                office.active = false;
+
+                // Hide the office from view
+                const officeEntry = document.querySelector('.office-entry[data-index="' + pendingRemoveIndex + '"]');
+                if (officeEntry) {
+                    officeEntry.style.display = 'none';
+                }
+            } else {
+                // New office - completely remove from DOM and array
+                const officeEntry = document.querySelector('.office-entry[data-index="' + pendingRemoveIndex + '"]');
+                if (officeEntry) {
+                    officeEntry.parentNode.removeChild(officeEntry);
+                }
+
+                const officeArrayIndex = doctorOffices.findIndex(o => o.index === parseInt(pendingRemoveIndex));
+                if (officeArrayIndex !== -1) {
+                    doctorOffices.splice(officeArrayIndex, 1);
+                }
+            }
+
+            updateFilterCounts();
+            applyCurrentFilter();
+            hideRemoveConfirmation();
+        }
+    }
+
     // Simple functions using onclick
     function showOfficesForm() {
         document.getElementById('offices-display').style.display = 'none';
         document.getElementById('offices-form-container').style.display = 'block';
         document.querySelector('.tab-header').style.display = 'none';
 
-        // Initialize offices if not done yet
-        if (document.getElementById('doctor-offices-container').children.length === 0) {
-            if (typeof existingOffices !== 'undefined' && existingOffices.length > 0) {
-                renderExistingOffices();
-            } else {
-                addNewOffice();
-            }
+        if (typeof existingOffices !== 'undefined' && existingOffices.length > 0) {
+            renderExistingOffices();
+        } else {
+            addNewOffice();
         }
+        applyCurrentFilter();
+        updateFilterCounts();
     }
 
     function hideOfficesForm() {
@@ -250,21 +361,27 @@
 
         doctorOffices.push({
             index: officeCounter,
+            id: null,
             name: "",
             neighborhoodId: "",
-            specialties: []
+            specialties: [],
+            active: true,
+            removed: false
         });
 
+        // container.insertBefore(officeEntry, container.firstChild);
         container.appendChild(officeEntry);
         initializeOffice(officeCounter);
-        updateRemoveButtons();
+        updateOfficeStatus(officeCounter);
+        updateFilterCounts();
         officeCounter++;
     }
 
-    function createOfficeHTML(index, name, neighborhoodId, id) {
+    function createOfficeHTML(index, name, neighborhoodId, id, active) {
         name = name || '';
         id = id || '';
         neighborhoodId = neighborhoodId || '';
+        active = active !== undefined ? active : true;
 
         let neighborhoodName = '';
         if (neighborhoodId) {
@@ -276,7 +393,27 @@
             }
         }
 
-        let html = '<div class="form-row">';
+        let html = '';
+
+        // Status indicator
+        html += '<div class="office-status-indicator" id="status-indicator-' + index + '">';
+        html += '<i class="fas fa-circle"></i>';
+        html += '<span id="status-text-' + index + '">Active</span>';
+        html += '</div>';
+
+        // Action buttons
+        html += '<div class="office-actions">';
+        html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';
+        html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="Disable">';
+        html += '<i class="fas fa-pause"></i>';
+        html += '</button>';
+        html += '<button type="button" class="office-action-btn btn-remove" id="remove-btn-' + index + '" ';
+        html += 'onclick="showRemoveConfirmation(' + index + ')" data-tooltip="Remove">';
+        html += '<i class="fas fa-trash"></i>';
+        html += '</button>';
+        html += '</div>';
+
+        html += '<div class="form-row">';
 
         // Office name with validation
         html += '<div class="form-group">';
@@ -315,12 +452,6 @@
         html += '<div class="selected-options" id="office-specialties-selected-' + index + '"></div>';
         html += '<small class="form-text text-muted">Seleccione las especialidades para este consultorio</small>';
         html += '<div id="office-specialties-' + index + '-validation-message" class="error-message"></div>';
-        html += '</div>';
-
-        html += '<div class="office-actions">';
-        html += '<button type="button" class="btn-remove office-remove" onclick="removeOffice(' + index + ')">';
-        html += '<i class="fas fa-times"></i>';
-        html += '</button>';
         html += '</div>';
 
         return html;
@@ -365,7 +496,117 @@
         return html;
     }
 
+    function toggleOfficeStatus(index) {
+        const office = doctorOffices.find(o => o.index === parseInt(index));
+        if (!office || office.removed) return;
+
+        office.active = !office.active;
+        updateOfficeStatus(index);
+        updateFilterCounts();
+        applyCurrentFilter();
+    }
+
+    function updateOfficeStatus(index) {
+        const office = doctorOffices.find(o => o.index === parseInt(index));
+        if (!office) return;
+
+        const officeEntry = document.querySelector('.office-entry[data-index="' + index + '"]');
+        const statusIndicator = document.getElementById('status-indicator-' + index);
+        const statusText = document.getElementById('status-text-' + index);
+        const toggleBtn = document.getElementById('toggle-btn-' + index);
+
+        if (!officeEntry || !statusIndicator || !statusText || !toggleBtn) return;
+
+        // Remove all status classes
+        officeEntry.classList.remove('disabled');
+        statusIndicator.classList.remove('active', 'disabled');
+        toggleBtn.classList.remove('disabled');
+
+        if (!office.active) {
+            // Disabled state
+            officeEntry.classList.add('disabled');
+            statusIndicator.classList.add('disabled');
+            statusText.textContent = "<spring:message code='offices.status.disabled' />";
+
+            toggleBtn.classList.add('disabled');
+            toggleBtn.innerHTML = '<i class="fas fa-play"></i>';
+            toggleBtn.setAttribute('data-tooltip', 'Enable');
+        } else {
+            // Active state
+            statusIndicator.classList.add('active');
+            statusText.textContent = "<spring:message code='offices.status.active' />";
+
+            toggleBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            toggleBtn.setAttribute('data-tooltip', 'Disable');
+        }
+    }
+
+    function filterOffices(filter) {
+        currentFilter = filter;
+
+        // Update active tab
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelector('.filter-tab[data-filter="' + filter + '"]').classList.add('active');
+
+        applyCurrentFilter();
+    }
+
+    function applyCurrentFilter() {
+        const offices = document.querySelectorAll('.office-entry');
+        const addButton = document.getElementById('add-office-btn');
+
+        offices.forEach(officeElement => {
+            const index = parseInt(officeElement.getAttribute('data-index'));
+            const office = doctorOffices.find(o => o.index === index);
+
+            if (!office || office.removed) {
+                officeElement.style.display = 'none';
+                return;
+            }
+
+            let shouldShow = false;
+
+            switch (currentFilter) {
+                case 'active':
+                    shouldShow = office.active;
+                    addButton.style.display = 'block';
+                    break;
+                case 'disabled':
+                    shouldShow = !office.active;
+                    addButton.style.display = 'none';
+                    break;
+            }
+
+            officeElement.style.display = shouldShow ? 'block' : 'none';
+        });
+    }
+
+    function updateFilterCounts() {
+        const counts = {
+            active: 0,
+            disabled: 0
+        };
+
+        doctorOffices.forEach(office => {
+            if (!office.removed) {
+                if (office.active) {
+                    counts.active++;
+                } else {
+                    counts.disabled++;
+                }
+            }
+        });
+
+        document.getElementById('count-active').textContent = counts.active;
+        document.getElementById('count-disabled').textContent = counts.disabled;
+    }
+
     function toggleOfficeSpecialtyOption(element, officeIndex) {
+        const office = doctorOffices.find(o => o.index === parseInt(officeIndex));
+        if (!office || office.removed) return;
+
         const specialtyId = element.getAttribute('data-value');
         const isSelected = element.classList.contains('selected');
 
@@ -686,36 +927,12 @@
         }
     }
 
-    function removeOffice(index) {
-        const officeEntry = document.querySelector('.office-entry[data-index="' + index + '"]');
-        if (!officeEntry) return;
-
-        officeEntry.parentNode.removeChild(officeEntry);
-
-        for (let i = 0; i < doctorOffices.length; i++) {
-            if (doctorOffices[i].index === parseInt(index)) {
-                doctorOffices.splice(i, 1);
-                break;
-            }
-        }
-
-        updateRemoveButtons();
-    }
-
-    function updateRemoveButtons() {
-        const offices = document.querySelectorAll(".office-entry");
-        const removeButtons = document.querySelectorAll(".office-remove");
-
-        for (let i = 0; i < removeButtons.length; i++) {
-            removeButtons[i].style.display = offices.length > 1 ? "block" : "none";
-        }
-    }
-
     function renderExistingOffices() {
         const container = document.getElementById("doctor-offices-container");
         if (!container) return;
 
         container.innerHTML = "";
+        doctorOffices = [];
 
         for (let i = 0; i < existingOffices.length; i++) {
             const office = existingOffices[i];
@@ -727,19 +944,23 @@
 
             doctorOffices.push({
                 index: officeCounter,
+                id: office.id,
                 name: office.name,
                 neighborhoodId: office.neighborhoodId.toString(),
-                specialties: specialties
+                specialties: specialties,
+                active: office.active,
+                removed: office.removed
             });
 
             const officeEntry = document.createElement("div");
             officeEntry.className = "office-entry";
             officeEntry.setAttribute('data-index', officeCounter.toString());
 
-            officeEntry.innerHTML = createOfficeHTML(officeCounter, office.name, office.neighborhoodId, office.id);
+            officeEntry.innerHTML = createOfficeHTML(officeCounter, office.name, office.neighborhoodId, office.id, office.active);
 
             container.appendChild(officeEntry);
             initializeOffice(officeCounter);
+            updateOfficeStatus(officeCounter);
 
             (function(currentCounter) {
                 setTimeout(function() {
@@ -749,19 +970,20 @@
 
             officeCounter++;
         }
-
-        updateRemoveButtons();
     }
 
     // Form submission with validation
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('officesForm');
+
         if (form) {
             form.addEventListener('submit', function(e) {
-                // Validate all offices before submission
+                // Validate all non-removed offices before submission
                 let isValid = true;
                 for (let i = 0; i < doctorOffices.length; i++) {
                     const office = doctorOffices[i];
+                    if (office.removed) continue; // Skip validation for removed offices
+
                     const nameValid = validateOfficeName(office.index);
                     const neighborhoodValid = validateOfficeNeighborhood(office.index);
                     const specialtiesValid = validateOfficeSpecialties(office.index);
@@ -790,38 +1012,69 @@
                 }
 
                 // Create hidden inputs matching OfficeForm structure
+                let formIndex = 0;
                 for (let i = 0; i < doctorOffices.length; i++) {
                     const office = doctorOffices[i];
                     if (!office.name || !office.neighborhoodId || !office.specialties) continue;
 
+                    // Office ID (for existing offices)
+                    const idInput = document.createElement("input");
+                    idInput.type = "hidden";
+                    idInput.name = "doctorOfficeForm[" + formIndex + "].id";
+                    idInput.value = office.id || '';
+                    form.appendChild(idInput);
+
                     // Office name
                     const nameInput = document.createElement("input");
                     nameInput.type = "hidden";
-                    nameInput.name = "doctorOfficeForm[" + i + "].officeName";
+                    nameInput.name = "doctorOfficeForm[" + formIndex + "].officeName";
                     nameInput.value = office.name;
                     form.appendChild(nameInput);
 
                     // Neighborhood ID
                     const neighborhoodInput = document.createElement("input");
                     neighborhoodInput.type = "hidden";
-                    neighborhoodInput.name = "doctorOfficeForm[" + i + "].neighborhoodId";
+                    neighborhoodInput.name = "doctorOfficeForm[" + formIndex + "].neighborhoodId";
                     neighborhoodInput.value = office.neighborhoodId;
                     form.appendChild(neighborhoodInput);
+
+                    // Active status
+                    const activeInput = document.createElement("input");
+                    activeInput.type = "hidden";
+                    activeInput.name = "doctorOfficeForm[" + formIndex + "].active";
+                    activeInput.value = office.active;
+                    form.appendChild(activeInput);
+
+                    // Removed status
+                    const removedInput = document.createElement("input");
+                    removedInput.type = "hidden";
+                    removedInput.name = "doctorOfficeForm[" + formIndex + "].removed";
+                    removedInput.value = office.removed;
+                    form.appendChild(removedInput);
 
                     // Specialty IDs
                     for (let j = 0; j < office.specialties.length; j++) {
                         const specialtyInput = document.createElement("input");
                         specialtyInput.type = "hidden";
-                        specialtyInput.name = "doctorOfficeForm[" + i + "].specialtyIds[" + j + "]";
+                        specialtyInput.name = "doctorOfficeForm[" + formIndex + "].specialtyIds[" + j + "]";
                         specialtyInput.value = office.specialties[j];
                         form.appendChild(specialtyInput);
                     }
+
+                    formIndex++;
                 }
 
                 // Submit the form
                 this.submit();
             });
         }
+
+        // Handle ESC key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideRemoveConfirmation();
+            }
+        });
     });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -831,5 +1084,134 @@
         }
     });
 </script>
+
+<style>
+    /* Confirmation Modal Styles */
+    .confirmation-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        position: relative;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-header {
+        padding: 1.5rem 1.5rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .modal-header h3 {
+        margin: 0 0 1rem;
+        color: #1f2937;
+        font-size: 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-body p {
+        margin: 0 0 1rem;
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    .office-info-preview {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin: 1rem 0;
+        font-family: monospace;
+    }
+
+    .warning-note {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        border-radius: 6px;
+        padding: 0.75rem;
+        margin-top: 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .warning-note i {
+        color: #d97706;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .modal-actions {
+        padding: 1rem 1.5rem 1.5rem;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+    }
+
+    .text-warning {
+        color: #f59e0b;
+    }
+
+    /* Responsive modal */
+    @media (max-width: 640px) {
+        .modal-content {
+            margin: 1rem;
+            width: calc(100% - 2rem);
+        }
+
+        .modal-actions {
+            flex-direction: column;
+        }
+
+        .modal-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
 </body>
 </html>
