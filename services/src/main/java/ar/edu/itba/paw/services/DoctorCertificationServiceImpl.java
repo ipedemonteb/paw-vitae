@@ -73,10 +73,13 @@ public class DoctorCertificationServiceImpl implements DoctorCertificationServic
             }
         }
 
-        for(DoctorCertification certification : existing) {
-            if(!keepIds.contains(certification.getId())) {
-                doctorCertificationDao.delete(certification.getId());
-            }
+        List<DoctorCertification> toDelete = existing.stream()
+                .filter(certification -> !keepIds.contains(certification.getId()))
+                .toList();
+
+        for (DoctorCertification certification : toDelete) {
+            doctorCertificationDao.delete(certification.getId());
+            existing.remove(certification);
         }
     }
 }
