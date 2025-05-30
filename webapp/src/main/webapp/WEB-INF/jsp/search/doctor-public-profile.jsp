@@ -60,8 +60,7 @@
                             </c:when>
                             <c:otherwise>
                                 <p class="bio-text">
-<%--                                    <spring:message code="doctor.profile.default.bio" arguments="${doctor.name},${doctor.lastName}" />--%>
-                                    Bio
+                                    <spring:message code="doctor.profile.default.bio"/>
                                 </p>
                             </c:otherwise>
                         </c:choose>
@@ -130,7 +129,7 @@
             <c:if test="${not empty doctor.profile.description}">
             <div class="detail-card full-width">
                 <div class="detail-card-header">
-                    <h3><i class="fas fa-user"></i>About</h3>
+                    <h3><i class="fas fa-user"></i><spring:message code="doctor.profile.about"/></h3>
                 </div>
                 <div class="detail-card-content">
                             <div class="description-content">
@@ -192,7 +191,7 @@
             <c:if test="${not empty doctor.experiences}">
             <div class="detail-card full-width">
                 <div class="detail-card-header">
-                    <h3><i class="fas fa-briefcase"></i> Path</h3>
+                    <h3><i class="fas fa-briefcase"></i> <spring:message code="doctor.profile.path"/></h3>
                 </div>
                 <div class="detail-card-content">
                             <div class="career-timeline">
@@ -217,7 +216,7 @@
             <c:if test="${not empty doctor.certifications}">
             <div class="detail-card full-width">
                 <div class="detail-card-header">
-                    <h3><i class="fas fa-certificate"></i> Certificates</h3>
+                    <h3><i class="fas fa-certificate"></i> <spring:message code="doctor.profile.certificates"/></h3>
                 </div>
                 <div class="detail-card-content">
                             <div class="certificates-grid">
