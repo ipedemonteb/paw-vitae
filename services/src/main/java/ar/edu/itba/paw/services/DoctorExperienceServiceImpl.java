@@ -66,7 +66,7 @@ public class DoctorExperienceServiceImpl implements DoctorExperienceService {
                     e.getPositionTitle().equals(form.getPositionTitle()) &&
                     e.getOrganizationName().equals(form.getOrganizationName()) &&
                     e.getStartDate().equals(form.getStartDate()) &&
-                    e.getEndDate().equals(form.getEndDate())
+                            (e.getEndDate() == null || e.getEndDate().equals(form.getEndDate()))
             ).findFirst().orElse(null);
             if(match == null) {
                 DoctorExperience created = doctorExperienceDao.create(doctor, form.getPositionTitle(), form.getOrganizationName(), form.getStartDate(), form.getEndDate());
