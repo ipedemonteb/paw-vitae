@@ -76,10 +76,13 @@ public class DoctorExperienceServiceImpl implements DoctorExperienceService {
             }
         }
 
-        for(DoctorExperience certification : existing) {
-            if(!keepIds.contains(certification.getId())) {
-                doctorExperienceDao.delete(certification.getId());
-            }
+        List<DoctorExperience> toDelete = existing.stream()
+                .filter(experience -> !keepIds.contains(experience.getId()))
+                .toList();
+
+        for (DoctorExperience experience : toDelete) {
+            doctorExperienceDao.delete(experience.getId());
+            existing.remove(experience);
         }
     }
 }

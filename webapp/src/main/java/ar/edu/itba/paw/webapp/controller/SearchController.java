@@ -83,12 +83,10 @@ public class SearchController {
             return searchByDoctorId(doctor.getId(), doctor, doctorProfileForm);
         }
 
-        doctorProfileService.update(doctor.getId(), doctorProfileForm.getBiography(), doctorProfileForm.getDescription());
+        doctorProfileService.update(doctor, doctorProfileForm.getBiography(), doctorProfileForm.getDescription());
         doctorCertificationService.update(doctor, doctorProfileForm.getCertificates());
         doctorExperienceService.update(doctor, doctorProfileForm.getExperiences());
 
-        // Update doctor profile using the service
-        //doctorProfileService.updateDoctorProfile(doctor.getId(), doctorProfileForm);
 
         return new ModelAndView("redirect:/search/" + doctor.getId() + "?updated=true");
     }

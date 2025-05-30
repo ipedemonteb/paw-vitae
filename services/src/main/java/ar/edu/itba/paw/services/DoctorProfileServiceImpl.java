@@ -47,13 +47,12 @@ public class DoctorProfileServiceImpl implements DoctorProfileService {
     }
 
     @Transactional
-    @Override
-    public void update(long doctorId, String bio, String description) {
-        LOGGER.debug("Updating doctor profile for doctor with ID: {}", doctorId);
-        DoctorProfile profile = findByDoctorId(doctorId);
+    public void update(Doctor doctor, String bio, String description) {
+        LOGGER.debug("Updating doctor profile for doctor with ID: {}", doctor.getId());
+        DoctorProfile profile = findByDoctorId(doctor.getId());
         profile.setBio(bio);
         profile.setDescription(description);
         doctorProfileDao.update(profile);
-        LOGGER.info("Doctor profile updated for doctor with ID: {}", doctorId);
+        LOGGER.info("Doctor profile updated for doctor with ID: {}", doctor.getId());
     }
 }
