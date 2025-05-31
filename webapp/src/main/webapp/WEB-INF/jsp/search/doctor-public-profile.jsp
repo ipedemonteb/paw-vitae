@@ -139,26 +139,6 @@
             </div>
         </div>
 
-        <!-- Global Edit Controls -->
-        <c:if test="${isOwnProfile}">
-            <div class="global-edit-controls">
-                <div id="edit-mode-controls" class="edit-controls-container">
-                    <button type="button" id="edit-btn" class="btn btn-primary" onclick="enterEditMode()">
-                        <i class="fas fa-edit"></i> <spring:message code="dashboard.profile.edit" />
-                    </button>
-                </div>
-
-                <div id="save-mode-controls" class="edit-controls-container" style="display: none;">
-                    <button type="button" id="save-btn" class="btn btn-success" onclick="saveAllChanges()">
-                        <i class="fas fa-save"></i> <spring:message code="appointment.form.save" />
-                    </button>
-                    <button type="button" id="cancel-btn" class="btn btn-secondary" onclick="cancelAllChanges()">
-                        <i class="fas fa-times"></i> <spring:message code="appointment.cancel" />
-                    </button>
-                </div>
-            </div>
-        </c:if>
-
         <!-- Doctor Details Grid -->
         <div class="details-grid">
             <!-- About/Description Section with Edit Capability -->
@@ -300,8 +280,8 @@
                                     </div>
                                 </c:forEach>
                             </div>
-                            <button type="button" class="btn btn-secondary" onclick="addExperience()">
-                                <i class="fas fa-plus"></i> add experience (s)
+                            <button type="button" class="btn-add-new" onclick="addExperience()">
+                                <i class="fas fa-plus"></i> <spring:message code="dashboard.availability.addTimeSlot" />
                             </button>
                         </div>
                     </c:if>
@@ -368,8 +348,8 @@
                                     </div>
                                 </c:forEach>
                             </div>
-                            <button type="button" class="btn btn-secondary" onclick="addCertificate()">
-                                <i class="fas fa-plus"></i> add certificate (s)
+                            <button type="button" class="btn-add-new" onclick="addCertificate()">
+                                <i class="fas fa-plus"></i> <spring:message code="dashboard.availability.addTimeSlot" />
                             </button>
                         </div>
                     </c:if>
@@ -473,6 +453,25 @@
             </div>
             </sec:authorize>
         </div>
+
+        <c:if test="${isOwnProfile}">
+            <div class="global-edit-controls">
+                <div id="edit-mode-controls" class="edit-controls-container">
+                    <button type="button" id="edit-btn" class="btn btn-primary" onclick="enterEditMode()">
+                        <i class="fas fa-edit"></i> <spring:message code="dashboard.profile.edit" />
+                    </button>
+                </div>
+
+                <div id="save-mode-controls" class="edit-controls-container" style="display: none;">
+                    <button type="button" id="save-btn" class="btn btn-success" onclick="saveAllChanges()">
+                        <i class="fas fa-save"></i> <spring:message code="appointment.form.save" />
+                    </button>
+                    <button type="button" id="cancel-btn" class="btn btn-secondary" onclick="cancelAllChanges()">
+                        <i class="fas fa-times"></i> <spring:message code="appointment.cancel" />
+                    </button>
+                </div>
+            </div>
+        </c:if>
     </div>
 </main>
 
