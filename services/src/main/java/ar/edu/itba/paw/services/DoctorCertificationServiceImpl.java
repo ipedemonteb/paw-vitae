@@ -59,6 +59,10 @@ public class DoctorCertificationServiceImpl implements DoctorCertificationServic
 
         Set<Long> keepIds = new HashSet<>();
 
+        if (certificates == null) {
+            certificates = Collections.emptyList();
+        }
+
         for(CertificateForm form : certificates) {
             DoctorCertification match = existingById.values().stream().filter(c ->
                     c.getCertificateName().equals(form.getCertificateName()) &&

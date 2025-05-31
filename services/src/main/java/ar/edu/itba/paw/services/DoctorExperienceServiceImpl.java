@@ -61,6 +61,10 @@ public class DoctorExperienceServiceImpl implements DoctorExperienceService {
 
         Set<Long> keepIds = new HashSet<>();
 
+        if (experiences == null) {
+            experiences = List.of();
+        }
+
         for(ExperienceForm form : experiences) {
             DoctorExperience match = existingById.values().stream().filter(e ->
                     e.getPositionTitle().equals(form.getPositionTitle()) &&
