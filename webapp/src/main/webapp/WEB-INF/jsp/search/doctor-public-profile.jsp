@@ -4,6 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html lang="${pageContext.response.locale}">
@@ -457,7 +458,7 @@
                 </div>
             </c:if>
 
-            <!-- Call to Action -->
+            <sec:authorize access="hasRole('ROLE_PATIENT')">>
             <div class="cta-section">
                 <div class="cta-content">
                     <h3><spring:message code="doctor.profile.ready.to.book" /></h3>
@@ -470,6 +471,7 @@
                     </a>
                 </div>
             </div>
+            </sec:authorize>
         </div>
     </div>
 </main>
