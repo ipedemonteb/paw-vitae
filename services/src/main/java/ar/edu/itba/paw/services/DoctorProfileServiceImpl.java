@@ -37,13 +37,10 @@ public class DoctorProfileServiceImpl implements DoctorProfileService {
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public DoctorProfile findByDoctorId(long id) {
-        if(doctorProfileDao.getByDoctorId(id).isEmpty()) {
-            throw new UserNotFoundException("Doctor profile not found for doctor ID: " + id);
-        }
-        return doctorProfileDao.getByDoctorId(id).get();
+        return doctorProfileDao.getByDoctorId(id).orElseGet(() -> create(id, "", ""));
     }
 
     @Transactional
