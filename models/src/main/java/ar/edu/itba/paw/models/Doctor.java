@@ -147,4 +147,15 @@ public class Doctor extends User {
 
     public void setCertifications(List<DoctorCertification> certifications) { this.certifications = certifications; }
 
+
+    //ASK IF VALID
+//    public List<DoctorExperience> getExperiences() {
+//        return experiences.stream()
+//                .sorted(Comparator
+//                        .comparing((DoctorExperience e) -> e.getEndDate() == null ? 0 : 1)
+//                        .thenComparing(DoctorExperience::getEndDate, Comparator.nullsLast(Comparator.reverseOrder()))
+//                        .thenComparing(DoctorExperience::getStartDate, Comparator.reverseOrder()))
+//                .toList();
+//    }
+
 }
