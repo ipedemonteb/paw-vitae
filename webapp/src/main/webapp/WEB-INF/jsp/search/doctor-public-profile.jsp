@@ -89,7 +89,8 @@
 
                         <c:if test="${isOwnProfile}">
                             <div id="bio-edit" class="edit-form" style="display: none;">
-                                <textarea id="bio-input" class="form-control" maxlength="220" placeholder="placeholder"><c:out value="${doctor.profile.bio}" /></textarea>
+                                <label for="bio-input"></label><textarea id="bio-input" class="form-control" maxlength="220"
+                                                                         placeholder="<spring:message code='doctor.profile.default.bio.ph'/>"><c:out value="${doctor.profile.bio}" /></textarea>
                                 <div class="char-counter">
                                     <span id="bio-char-count">0</span>/220
                                 </div>
@@ -166,14 +167,14 @@
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <p class="no-data"><spring:message code="doctor.profile.default.bio" /></p>
+                                <p class="no-data"><spring:message code="doctor.profile.default.about" /></p>
                             </c:otherwise>
                         </c:choose>
                     </div>
 
                     <c:if test="${isOwnProfile}">
                         <div id="description-edit" class="edit-form" style="display: none;">
-                            <textarea id="description-input" class="form-control" maxlength="2600" rows="6" placeholder="placeholder"><c:out value="${doctor.profile.description}" /></textarea>
+                            <textarea id="description-input" class="form-control" maxlength="2600" rows="6" placeholder="<spring:message code="doctor.profile.default.about.ph"/>"><c:out value="${doctor.profile.description}" /></textarea>
                             <div class="char-counter">
                                 <span id="description-char-count">0</span>/2600
                             </div>
