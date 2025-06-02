@@ -407,7 +407,7 @@
         html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="Disable">';
         html += '<i class="fas fa-pause"></i>';
         html += '</button>';
-        html += '<button type="button" class="office-action-btn btn-remove" id="remove-btn-' + index + '" ';
+        html += '<button type="button" class="office-action-btn btn-remove-office" id="remove-btn-' + index + '" ';
         html += 'onclick="showRemoveConfirmation(' + index + ')" data-tooltip="Remove">';
         html += '<i class="fas fa-trash"></i>';
         html += '</button>';
