@@ -21,7 +21,6 @@
 
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<!-- Main Content -->
 <main class="main-content">
     <div class="container">
         <!-- Back Button -->
@@ -32,10 +31,8 @@
             </a>
         </div>
 
-        <!-- Check if logged user is the same as the profile doctor -->
         <c:set var="isOwnProfile" value="${loggedUser != null && loggedUser.id == doctor.id}" />
 
-        <!-- Doctor Profile Header -->
         <div class="profile-header">
             <div class="profile-header-content">
                 <div class="doctor-avatar-section">
@@ -50,6 +47,25 @@
                             <span><spring:message code="doctor.profile.verified" /></span>
                         </div>
                     </c:if>
+
+                    <c:if test="${isOwnProfile}">
+                        <div class="header-edit-section">
+                            <div id="header-edit-mode-controls" class="header-edit-controls">
+                                <button type="button" id="header-edit-btn" class="btn btn-primary btn-edit-header" onclick="enterEditMode()">
+                                    <i class="fas fa-edit"></i> <spring:message code="dashboard.profile.edit" />
+                                </button>
+                            </div>
+
+                            <div id="header-save-mode-controls" class="header-edit-controls" style="display: none;">
+                                <button type="button" id="header-save-btn" class="btn btn-success" onclick="saveAllChanges()">
+                                    <i class="fas fa-save"></i> <spring:message code="appointment.form.save" />
+                                </button>
+                                <button type="button" id="header-cancel-btn" class="btn btn-secondary" onclick="cancelAllChanges()">
+                                    <i class="fas fa-times"></i> <spring:message code="appointment.cancel" />
+                                </button>
+                            </div>
+                        </div>
+                    </c:if>
                 </div>
 
                 <div class="doctor-info-section">
@@ -57,7 +73,6 @@
                         <c:out value="Dr. ${doctor.name} ${doctor.lastName}" />
                     </h1>
 
-                    <!-- Bio Section -->
                     <div class="bio-section">
                         <div id="bio-display" class="editable-content">
                             <c:choose>
@@ -82,7 +97,6 @@
                         </c:if>
                     </div>
 
-                    <!-- Rating Section -->
                     <div class="rating-section">
                         <c:choose>
                             <c:when test="${doctor.ratingCount > 0}">
@@ -91,17 +105,14 @@
                                     <c:set var="hasHalfStar" value="${doctor.rating - fullStars >= 0.5}" />
                                     <c:set var="emptyStars" value="${5 - fullStars - (hasHalfStar ? 1 : 0)}" />
 
-                                    <!-- Render full stars -->
                                     <c:forEach begin="1" end="${fullStars}" var="i">
                                         <i class="fas fa-star"></i>
                                     </c:forEach>
 
-                                    <!-- Render half star if applicable -->
                                     <c:if test="${hasHalfStar}">
                                         <i class="fas fa-star-half-alt"></i>
                                     </c:if>
 
-                                    <!-- Render empty stars -->
                                     <c:forEach begin="1" end="${emptyStars}" var="i">
                                         <i class="far fa-star"></i>
                                     </c:forEach>
@@ -195,7 +206,6 @@
                     </div>
                 </div>
 
-                <!-- Coverage Section -->
                 <div class="detail-card">
                     <div class="detail-card-header">
                         <h3><i class="fas fa-shield-alt"></i> <spring:message code="doctor.profile.coverages" /></h3>
@@ -219,7 +229,6 @@
                 </div>
             </div>
 
-            <!-- Career Path Section with Edit Capability -->
             <div class="detail-card full-width">
                 <div class="detail-card-header">
                     <h3><i class="fas fa-briefcase"></i> <spring:message code="doctor.profile.path"/></h3>
@@ -256,21 +265,21 @@
                                     <div class="experience-form-item" data-index="${status.index}">
                                         <div class="form-row">
                                             <div class="form-group">
-                                                <label>postion (s)</label>
+                                                <spring:message code="doctor.profile.position" />
                                                 <input type="text" class="form-control" name="experiences[${status.index}].positionTitle" value="<c:out value='${experience.positionTitle}' />" />
                                             </div>
                                             <div class="form-group">
-                                                <label>org (s)</label>
+                                                <spring:message code="doctor.profile.organization" />
                                                 <input type="text" class="form-control" name="experiences[${status.index}].organizationName" value="<c:out value='${experience.organizationName}' />" />
                                             </div>
                                         </div>
                                         <div class="form-row">
                                             <div class="form-group">
-                                                <label>start date (s)</label>
+                                                <spring:message code="doctor.profile.startDate" />
                                                 <input type="date" class="form-control" name="experiences[${status.index}].startDate" value="${experience.startDate}" />
                                             </div>
                                             <div class="form-group">
-                                                <label>end date (s)</label>
+                                                <spring:message code="doctor.profile.endDate" />
                                                 <input type="date" class="form-control" name="experiences[${status.index}].endDate" value="${experience.endDate}" />
                                             </div>
                                         </div>
@@ -281,14 +290,13 @@
                                 </c:forEach>
                             </div>
                             <button type="button" class="btn-add-new" onclick="addExperience()">
-                                <i class="fas fa-plus"></i> <spring:message code="dashboard.availability.addTimeSlot" />
+                                <i class="fas fa-plus"></i> <spring:message code="doctor.profile.addExperience" />
                             </button>
                         </div>
                     </c:if>
                 </div>
             </div>
 
-            <!-- Certificates Section with Edit Capability -->
             <div class="detail-card full-width">
                 <div class="detail-card-header">
                     <h3><i class="fas fa-certificate"></i> <spring:message code="doctor.profile.certificates"/></h3>
@@ -328,17 +336,17 @@
                                     <div class="certificate-form-item" data-index="${status.index}">
                                         <div class="form-row">
                                             <div class="form-group">
-                                                <label>name (s)</label>
+                                                <spring:message code="doctor.profile.certificateDescription" />
                                                 <input type="text" class="form-control" name="certificates[${status.index}].certificateName" value="<c:out value='${certificate.certificateName}' />" />
                                             </div>
                                             <div class="form-group">
-                                                <label>entity (s)</label>
+                                                <spring:message code="doctor.profile.entity" />
                                                 <input type="text" class="form-control" name="certificates[${status.index}].issuingEntity" value="<c:out value='${certificate.issuingEntity}' />" />
                                             </div>
                                         </div>
                                         <div class="form-row">
                                             <div class="form-group">
-                                                <label>issue date (s)</label>
+                                                <spring:message code="doctor.profile.issueDate" />
                                                 <input type="date" class="form-control" name="certificates[${status.index}].issueDate" value="${certificate.issueDate}" />
                                             </div>
                                         </div>
@@ -349,14 +357,13 @@
                                 </c:forEach>
                             </div>
                             <button type="button" class="btn-add-new" onclick="addCertificate()">
-                                <i class="fas fa-plus"></i> <spring:message code="dashboard.availability.addTimeSlot" />
+                                <i class="fas fa-plus"></i> <spring:message code="doctor.profile.addCertificate" />
                             </button>
                         </div>
                     </c:if>
                 </div>
             </div>
 
-            <!-- Office Locations Section -->
             <div class="detail-card full-width">
                 <div class="detail-card-header">
                     <h3><i class="fas fa-map-marker-alt"></i> <spring:message code="doctor.profile.offices" /></h3>
@@ -439,43 +446,23 @@
             </c:if>
 
             <sec:authorize access="hasRole('ROLE_PATIENT')">>
-            <div class="cta-section">
-                <div class="cta-content">
-                    <h3><spring:message code="doctor.profile.ready.to.book" /></h3>
-                    <p>
-                        <spring:message code="doctor.profile.book.description" arguments="${doctor.name},${doctor.lastName}" />
-                    </p>
-                    <a href="<c:url value='/appointment?doctorId=${doctor.id}'/>" class="btn btn-primary btn-large">
-                        <i class="fas fa-calendar-plus"></i>
-                        <spring:message code="doctor.profile.book.now" />
-                    </a>
+                <div class="cta-section">
+                    <div class="cta-content">
+                        <h3><spring:message code="doctor.profile.ready.to.book" /></h3>
+                        <p>
+                            <spring:message code="doctor.profile.book.description" arguments="${doctor.name},${doctor.lastName}" />
+                        </p>
+                        <a href="<c:url value='/appointment?doctorId=${doctor.id}'/>" class="btn btn-primary btn-large">
+                            <i class="fas fa-calendar-plus"></i>
+                            <spring:message code="doctor.profile.book.now" />
+                        </a>
+                    </div>
                 </div>
-            </div>
             </sec:authorize>
         </div>
-
-        <c:if test="${isOwnProfile}">
-            <div class="global-edit-controls">
-                <div id="edit-mode-controls" class="edit-controls-container">
-                    <button type="button" id="edit-btn" class="btn btn-primary" onclick="enterEditMode()">
-                        <i class="fas fa-edit"></i> <spring:message code="dashboard.profile.edit" />
-                    </button>
-                </div>
-
-                <div id="save-mode-controls" class="edit-controls-container" style="display: none;">
-                    <button type="button" id="save-btn" class="btn btn-success" onclick="saveAllChanges()">
-                        <i class="fas fa-save"></i> <spring:message code="appointment.form.save" />
-                    </button>
-                    <button type="button" id="cancel-btn" class="btn btn-secondary" onclick="cancelAllChanges()">
-                        <i class="fas fa-times"></i> <spring:message code="appointment.cancel" />
-                    </button>
-                </div>
-            </div>
-        </c:if>
     </div>
 </main>
 
-<!-- Hidden form for submitting updates -->
 <c:if test="${isOwnProfile}">
     <form:form id="updateProfileForm" method="POST" action="/doctor/profile/update" modelAttribute="doctorProfileForm" style="display: none;">
         <form:hidden path="biography" id="hiddenBio" />
@@ -490,7 +477,6 @@
     let certificateIndex = ${fn:length(doctor.certifications)};
     let isEditMode = false;
 
-    // Store original values for cancel functionality
     let originalValues = {
         bio: '${doctor.profile.bio}',
         description: '${doctor.profile.description}',
@@ -498,7 +484,6 @@
         certificates: []
     };
 
-    // Doctor ratings slider controls
     const prevButton = document.querySelector('.testimonial-prev');
     const nextButton = document.querySelector('.testimonial-next');
     const doctorRatings = document.querySelectorAll('.doctor-rating-card');
@@ -521,18 +506,14 @@
             showRating(currentRating);
         });
 
-        // Initialize rating display
         showRating(currentRating);
     }
 
-    // Global edit functionality
     function enterEditMode() {
         isEditMode = true;
 
-        // Store original values
         storeOriginalValues();
 
-        // Show edit forms and hide display content
         const editableSections = ['bio', 'description', 'experiences', 'certificates'];
         editableSections.forEach(section => {
             const displayDiv = document.getElementById(section + '-display');
@@ -544,22 +525,18 @@
             }
         });
 
-        // Update character counters
         updateCharCount('bio');
         updateCharCount('description');
 
-        // Switch control buttons
-        document.getElementById('edit-mode-controls').style.display = 'none';
-        document.getElementById('save-mode-controls').style.display = 'flex';
+        document.getElementById('header-edit-mode-controls').style.display = 'none';
+        document.getElementById('header-save-mode-controls').style.display = 'flex';
     }
 
     function cancelAllChanges() {
         isEditMode = false;
 
-        // Restore original values
         restoreOriginalValues();
 
-        // Hide edit forms and show display content
         const editableSections = ['bio', 'description', 'experiences', 'certificates'];
         editableSections.forEach(section => {
             const displayDiv = document.getElementById(section + '-display');
@@ -571,23 +548,19 @@
             }
         });
 
-        // Switch control buttons
-        document.getElementById('edit-mode-controls').style.display = 'flex';
-        document.getElementById('save-mode-controls').style.display = 'none';
+        document.getElementById('header-edit-mode-controls').style.display = 'flex';
+        document.getElementById('header-save-mode-controls').style.display = 'none';
     }
 
     function saveAllChanges() {
         const form = document.getElementById('updateProfileForm');
 
-        // Save bio
         const bioValue = document.getElementById('bio-input').value;
         document.getElementById('hiddenBio').value = bioValue;
 
-        // Save description
         const descValue = document.getElementById('description-input').value;
         document.getElementById('hiddenDescription').value = descValue;
 
-        // Save experiences and certificates
         saveExperiences();
         saveCertificates();
 
@@ -595,7 +568,6 @@
     }
 
     function storeOriginalValues() {
-        // Store experiences
         originalValues.experiences = [];
         const experienceItems = document.querySelectorAll('.experience-form-item');
         experienceItems.forEach((item, index) => {
@@ -608,7 +580,6 @@
             originalValues.experiences.push(experience);
         });
 
-        // Store certificates
         originalValues.certificates = [];
         const certificateItems = document.querySelectorAll('.certificate-form-item');
         certificateItems.forEach((item, index) => {
@@ -672,21 +643,21 @@
         newExperience.innerHTML = `
         <div class="form-row">
             <div class="form-group">
-                <label>position (S)</label>
+                <spring:message code="doctor.profile.position" />
                 <input type="text" class="form-control" name="experiences[` + index + `].positionTitle" value="` + (data.positionTitle || '') + `" />
             </div>
             <div class="form-group">
-                <label>organizatioon (s)</label>
+                <spring:message code="doctor.profile.organization" />
                 <input type="text" class="form-control" name="experiences[` + index + `].organizationName" value="` + (data.organizationName || '') + `" />
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label>start (s)</label>
+                <spring:message code="doctor.profile.startDate" />
                 <input type="date" class="form-control" name="experiences[` + index + `].startDate" value="` + (data.startDate || '') + `" />
             </div>
             <div class="form-group">
-                <label>end (s)</label>
+                <spring:message code="doctor.profile.endDate" />
                 <input type="date" class="form-control" name="experiences[` + index + `].endDate" value="` + (data.endDate || '') + `" />
             </div>
         </div>
@@ -719,17 +690,17 @@
         newCertificate.innerHTML = `
         <div class="form-row">
             <div class="form-group">
-                <label>name (S)</label>
+                <spring:message code="doctor.profile.certificateDescription" />
                 <input type="text" class="form-control" name="certificates[` + index + `].certificateName" value="` + (data.certificateName || '') + `" />
             </div>
             <div class="form-group">
-                <label>entity (s)</label>
+                <spring:message code="doctor.profile.entity" />
                 <input type="text" class="form-control" name="certificates[` + index + `].issuingEntity" value="` + (data.issuingEntity || '') + `" />
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label>issue date (S)</label>
+                <spring:message code="doctor.profile.issueDate" />
                 <input type="date" class="form-control" name="certificates[` + index + `].issueDate" value="` + (data.issueDate || '') + `" />
             </div>
         </div>
@@ -789,26 +760,60 @@
 </script>
 
 <style>
-    /* Global edit controls */
-    .global-edit-controls {
-        margin-bottom: 2rem;
-        padding: 1.5rem;
-        background: var(--card-background);
-        border-radius: var(--border-radius-lg);
-        box-shadow: var(--shadow-md);
-        border-left: 4px solid var(--primary-color);
+    /* Doctor Avatar Section Layout */
+    .doctor-avatar-section {
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        gap: 1rem;
+        margin-bottom: 16px;
     }
 
-    .edit-controls-container {
+    /* Header Edit Section positioned at bottom right */
+    .header-edit-section {
+        position: absolute;
+        bottom: 0;
+        right: 0;
         display: flex;
-        gap: 1rem;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.5rem;
+    }
+
+    .header-edit-controls {
+        display: flex;
+        gap: 0.75rem;
         align-items: center;
+    }
+
+    .btn-edit-header {
+        background-color: var(--linkedin-blue);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-edit-header:hover {
+        background-color: var(--linkedin-blue-hover);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
     }
 
     .btn-success {
         background-color: var(--success-color);
         color: white;
         border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-shadow: var(--shadow-sm);
     }
 
     .btn-success:hover {
@@ -817,16 +822,25 @@
         box-shadow: var(--shadow-md);
     }
 
-    /* Remove individual edit button styles */
-    .btn-edit, .btn-edit-header {
-        display: none;
+    .btn-secondary {
+        background-color: transparent;
+        color: var(--linkedin-blue);
+        border: 2px solid var(--linkedin-blue);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
     }
 
-    .detail-card-header {
-        display: flex;
-        align-items: center;
+    .btn-secondary:hover {
+        background-color: var(--linkedin-blue);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
     }
 
+    /* Edit Form Styles */
     .edit-form {
         margin-top: 1rem;
     }
@@ -901,13 +915,61 @@
         margin-top: 0.5rem;
     }
 
+    .btn-add-new {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.75rem;
+        background-color: var(--white);
+        border: 1px dashed var(--primary-color);
+        border-radius: var(--border-radius);
+        color: var(--primary-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .btn-add-new:hover {
+        background-color: rgba(59, 130, 246, 0.1);
+    }
+
+    /* Responsive Design */
     @media (max-width: 768px) {
+        .doctor-avatar-section {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .header-edit-section {
+            position: static;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .header-edit-controls {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
         .form-row {
             grid-template-columns: 1fr;
         }
+    }
 
-        .edit-controls-container {
+    @media (max-width: 480px) {
+        .header-edit-controls {
             flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .btn-edit-header,
+        .btn-success,
+        .btn-secondary {
+            padding: 6px 12px;
+            font-size: 12px;
         }
     }
 </style>

@@ -8,10 +8,10 @@ import java.util.List;
 
 public class DoctorProfileForm {
 
-    @Size(min = 1, max = 220)
+    @Size(max = 220)
     private String biography;
 
-    @Size(min = 1, max = 2600)
+    @Size(max = 2600)
     private String description;
 
     private List<ExperienceForm> experiences;
