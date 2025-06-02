@@ -245,7 +245,20 @@
                                                 <h4 class="career-position"><c:out value="${career.positionTitle}" /></h4>
                                                 <div class="career-organization"><c:out value="${career.organizationName}" /></div>
                                                 <div class="career-period">
-                                                        ${career.startDate} - ${career.endDate}
+                                                    <c:if test="${not empty career.startDate}">
+                                                        <c:set var="start" value="${career.startDate}" />
+                                                        <c:out value="${fn:substring(start,8,10)}/${fn:substring(start,5,7)}/${fn:substring(start,0,4)}" />
+                                                    </c:if>
+                                                    -
+                                                    <c:choose>
+                                                        <c:when test="${not empty career.endDate}">
+                                                            <c:set var="end" value="${career.endDate}" />
+                                                            <c:out value="${fn:substring(end,8,10)}/${fn:substring(end,5,7)}/${fn:substring(end,0,4)}" />
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <spring:message code="now" />
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </div>
                                             </div>
                                         </div>
@@ -316,7 +329,10 @@
                                                 <div class="certificate-issuer"><c:out value="${certificate.issuingEntity}" /></div>
                                                 <div class="certificate-date">
                                                     <i class="fas fa-calendar"></i>
-                                                        ${certificate.issueDate}
+                                                    <c:if test="${not empty certificate.issueDate}">
+                                                        <c:set var="issue" value="${certificate.issueDate}" />
+                                                        <c:out value="${fn:substring(issue,8,10)}/${fn:substring(issue,5,7)}/${fn:substring(issue,0,4)}" />
+                                                    </c:if>
                                                 </div>
                                             </div>
                                         </div>
