@@ -14,12 +14,27 @@
     <title><spring:message code="doctor.profile.title" arguments="${doctor.name},${doctor.lastName}" /></title>
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/V-logo.svg/2048px-V-logo.svg.png" />
     <link rel="stylesheet" href="<c:url value='/css/doctor-profile.css' />" />
+    <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
+
+<!-- Success Notification Toast -->
+<div id="successToast" class="success-toast">
+    <div class="success-toast-icon">
+        <i class="fas fa-check"></i>
+    </div>
+    <div class="success-toast-content">
+        <div class="success-toast-title"><spring:message code="profile.update.success.title" /></div>
+        <div class="success-toast-message"><spring:message code="profile.update.success.message" /></div>
+    </div>
+    <button class="success-toast-close" onclick="hideSuccessToast()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
 
 <main class="main-content">
     <div class="container">
@@ -488,6 +503,8 @@
         <div id="hiddenCertificates"></div>
     </form:form>
 </c:if>
+
+<script src="<c:url value='/js/toast-notification.js' />"></script>
 
 <script>
     let experienceIndex = ${fn:length(doctor.experiences)};
