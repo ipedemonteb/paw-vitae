@@ -7,10 +7,7 @@ import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -54,6 +51,13 @@ public class SearchController {
         mav.addObject("totalPages", doctorPage.getTotalPages());
         mav.addObject("view", view);
         return mav;
+    }
+
+    @RequestMapping(value = "/search/doctors/{keyword}", method = RequestMethod.GET)
+    @ResponseBody
+    public String searchByKeyword(
+            @PathVariable("keyword") String keyword ){
+        return doctorService.search(keyword, 10);
     }
 
     @RequestMapping(value = "/search/{doctorId}", method = RequestMethod.GET)

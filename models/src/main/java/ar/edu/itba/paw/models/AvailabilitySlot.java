@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.time.LocalTime;
 import java.util.Objects;
@@ -14,6 +16,7 @@ public class AvailabilitySlot {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
+    @JsonBackReference
     @MapsId("doctorId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)

@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +27,11 @@ public class Doctor extends User {
     )
     private List<Coverage> coverageList = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<DoctorOffice> doctorOffices = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
 
@@ -69,6 +73,12 @@ public class Doctor extends User {
         this.specialtyList = specialtyList;
         this.coverageList = coverageList;
 
+    }
+
+    // Views definition
+    public static class Views {
+        public static class Public {}
+        public static class Private extends Public {}
     }
 
 

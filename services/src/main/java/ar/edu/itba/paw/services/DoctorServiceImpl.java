@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.NumberUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -168,6 +167,21 @@ public class DoctorServiceImpl implements DoctorService {
         } else {
             return String.valueOf(count / 1000) + "k+";
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public String search(String keyword, int results) {
+        LOGGER.debug("Searching for doctors with keyword: {}", keyword);
+        List<Doctor> doctors = doctorDao.search(keyword, results);
+        if (doctors.isEmpty()) {
+            LOGGER.warn("No doctors found for keyword: {}", keyword);
+            return "{\"doctors\": []}";
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("doctors", doctors);
+        return JsonUtils.toJson(response, Doctor.Views.Public.class);
     }
 
 

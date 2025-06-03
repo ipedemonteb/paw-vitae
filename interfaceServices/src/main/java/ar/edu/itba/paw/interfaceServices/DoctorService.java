@@ -24,4 +24,6 @@ public interface DoctorService {
 
     String getAllDoctorsDisplayCount();
 
+    String search(String keyword, int results);
+
 }
