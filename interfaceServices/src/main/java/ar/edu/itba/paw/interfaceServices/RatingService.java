@@ -20,4 +20,6 @@ public interface RatingService {
      List<Rating> getRatingsByPatientId(long patientId);
 
      Map<Rating, Patient> getFiveTopRatings();
+
+    List<Rating> getFiveTopRatingsByDoctorId(long doctorId);
 }

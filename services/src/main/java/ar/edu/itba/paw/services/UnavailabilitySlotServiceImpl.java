@@ -63,14 +63,6 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
         LOGGER.debug("Updating unavailability for doctor {}: {} slots", doctor.getId(), unavailabilitySlots.size());
         List<UnavailabilitySlotForm> filteredSlots = unavailabilitySlots.stream()
                 .filter(slot -> slot.getStartDate() != null && slot.getEndDate() != null)
-                .peek(slot -> {
-                    if (slot.getStartDate().isAfter(slot.getEndDate())) {
-                        throw new IllegalArgumentException("Start date must be before or equal to end date");
-                    }
-                     if (slot.getEndDate().isBefore(LocalDate.now())) {
-                         throw new IllegalArgumentException("Unavailability slot cannot be in the past");
-                     }
-                })
                 .toList();
 
         unavailabilitySlotsDao.updateDoctorUnavailability(doctor.getId(), transformToUnavailabilitySlots(doctor, filteredSlots));

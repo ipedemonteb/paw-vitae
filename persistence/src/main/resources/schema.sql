@@ -140,3 +140,31 @@ CREATE TABLE IF NOT EXISTS Doctor_Office_Specialties (
     FOREIGN KEY (office_id) REFERENCES Doctor_Offices(id) ON DELETE CASCADE,
     FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS Doctor_Profile (
+                                              doctor_id INT PRIMARY KEY,
+                                              bio TEXT,
+                                              description TEXT,
+                                              FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS Doctor_Experience (
+                                                 id SERIAL PRIMARY KEY,
+                                                 doctor_id INT NOT NULL,
+                                                 position_title VARCHAR(100) NOT NULL,
+    organization_name VARCHAR(100) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    description TEXT,
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS Doctor_Certifications (
+                                                     id SERIAL PRIMARY KEY,
+                                                     doctor_id INT NOT NULL,
+                                                     certificate_name VARCHAR(100) NOT NULL,
+    issuing_entity VARCHAR(100) NOT NULL,
+    issue_date DATE NOT NULL,
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
+    );

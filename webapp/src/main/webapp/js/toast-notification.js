@@ -65,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('updated') === 'true') {
         showSuccessToast();
-
         // Remove the query parameter without refreshing the page
         const newUrl = window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);

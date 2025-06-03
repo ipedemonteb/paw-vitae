@@ -1,15 +1,18 @@
 package ar.edu.itba.paw.webapp.controller;
-import ar.edu.itba.paw.interfaceServices.CoverageService;
-import ar.edu.itba.paw.interfaceServices.DoctorService;
-import ar.edu.itba.paw.interfaceServices.SpecialtyService;
+import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.DoctorProfileForm;
+import ar.edu.itba.paw.webapp.form.UpdateDoctorForm;
 import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @Controller
@@ -18,14 +21,21 @@ public class SearchController {
     private final DoctorService doctorService;
     private final SpecialtyService specialtyService;
     private final CoverageService coverageService;
+    private final RatingService ratingService;
+    private final DoctorProfileService doctorProfileService;
+    private final DoctorCertificationService doctorCertificationService;
+    private final DoctorExperienceService doctorExperienceService;
 
     @Autowired
-    public SearchController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService) {
+    public SearchController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, RatingService ratingService, DoctorProfileService doctorProfileService, DoctorCertificationService doctorCertificationService, DoctorExperienceService doctorExperienceService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
+        this.ratingService = ratingService;
+        this.doctorProfileService = doctorProfileService;
+        this.doctorCertificationService = doctorCertificationService;
+        this.doctorExperienceService = doctorExperienceService;
     }
-
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ModelAndView searchBySpecialty(
@@ -61,11 +71,31 @@ public class SearchController {
     }
 
     @RequestMapping(value = "/search/{doctorId}", method = RequestMethod.GET)
-    public ModelAndView searchByDoctorId(@PathVariable("doctorId") Long doctorId) {
+    public ModelAndView searchByDoctorId(@PathVariable("doctorId") Long doctorId,
+                                         @ModelAttribute("loggedUser") User loggedUser,
+                                         @ModelAttribute("doctorProfileForm") final DoctorProfileForm doctorProfileForm) {
         Doctor doctor = doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new);
         ModelAndView mav = new ModelAndView("search/doctor-public-profile");
         mav.addObject("doctor", doctor);
+        mav.addObject("loggedUser", loggedUser);
+        mav.addObject("doctorRatings", ratingService.getRatingsByDoctorId(doctorId));
         return mav;
     }
 
+    @RequestMapping(value = "/doctor/profile/update", method = RequestMethod.POST)
+    public ModelAndView updateDoctor(@Valid @ModelAttribute("doctorProfileForm") final DoctorProfileForm doctorProfileForm,
+                                     final BindingResult errors,
+                                     @ModelAttribute("loggedUser") final Doctor doctor
+    ) {
+        if (errors.hasErrors()) {
+            return searchByDoctorId(doctor.getId(), doctor, doctorProfileForm);
+        }
+
+        doctorProfileService.update(doctor, doctorProfileForm.getBiography(), doctorProfileForm.getDescription());
+        doctorCertificationService.update(doctor, doctorProfileForm.getCertificates());
+        doctorExperienceService.update(doctor, doctorProfileForm.getExperiences());
+
+
+        return new ModelAndView("redirect:/search/" + doctor.getId() + "?updated=true");
+    }
 }
