@@ -33,4 +33,7 @@ public interface DoctorDao {
     Optional<Doctor> getByResetToken(String token);
 
     int countAll();
+
+    List<Doctor> search(String keyword, int results);
+
 }

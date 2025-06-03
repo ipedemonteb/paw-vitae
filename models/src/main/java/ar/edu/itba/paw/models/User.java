@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.models;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
+import javax.swing.text.View;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +13,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "users")
 public abstract class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
     @SequenceGenerator(allocationSize = 1, sequenceName = "users_id_seq", name = "users_id_seq")
@@ -24,6 +28,7 @@ public abstract class User {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
+    @JsonView(Doctor.Views.Private.class)
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -33,15 +38,19 @@ public abstract class User {
     @Column(name = "language", length = 10)
     private String language;
 
+    @JsonView(Doctor.Views.Private.class)
     @Column(name = "verification_token")
     private String verificationToken;
 
+    @JsonView(Doctor.Views.Private.class)
     @Column(name = "is_verified")
     private boolean verified = false;
 
+    @JsonView(Doctor.Views.Private.class)
     @Column(name = "reset_token")
     private String resetPasswordToken;
 
+    @JsonView(Doctor.Views.Private.class)
     @Column(name = "token_expiration_date")
     private LocalDateTime tokenExpiration;
 

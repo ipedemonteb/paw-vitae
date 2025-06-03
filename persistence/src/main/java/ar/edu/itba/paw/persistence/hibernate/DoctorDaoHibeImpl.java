@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.persistence.hibernate;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorDao;
-import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.DoctorOffice;
-import ar.edu.itba.paw.models.Specialty;
+import ar.edu.itba.paw.models.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -218,6 +215,18 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return query.getSingleResult().intValue();
     }
 
+    @Override
+    public List<Doctor> search(String keyword, int results) {
+        String queryString = "SELECT d FROM Doctor d WHERE d.verified = true AND (LOWER(d.name) LIKE LOWER(:keyword) OR LOWER(d.lastName) LIKE LOWER(:keyword))";
+        TypedQuery<Doctor> query = em.createQuery(queryString, Doctor.class);
+        query.setParameter("keyword", "%" + keyword + "%");
+        query.setMaxResults(results);
+        List<Doctor> doctors = query.getResultList();
+        // Sort the results by name
+        doctors.sort(Comparator.comparing(Doctor::getName, String.CASE_INSENSITIVE_ORDER)
+                .thenComparing(Doctor::getLastName, String.CASE_INSENSITIVE_ORDER));
+        return doctors;
+    }
 
     // -------------------------------------
     //  DEPRECATED METHODS

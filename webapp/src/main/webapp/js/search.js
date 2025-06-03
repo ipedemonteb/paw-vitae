@@ -27,6 +27,202 @@ function initializeViewToggle() {
     }
 }
 
+// Enhanced search functionality with suggestions dropdown
+function initializeSearchInput() {
+    const searchInput = document.getElementById("doctorSearch")
+    const searchContainer = document.querySelector(".search-bar-container")
+    let debounceTimer = null
+    let suggestionsContainer = null
+
+    if (searchInput) {
+        // Create suggestions container
+        createSuggestionsContainer()
+
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.trim()
+
+            // Clear the previous timer
+            clearTimeout(debounceTimer)
+
+            // Set a new timer for debounce
+            debounceTimer = setTimeout(async () => {
+                if (query.length >= 1) {
+                    // Fetch search results
+                    await fetchSearchResults(query)
+                    if (searchResults && searchResults.length > 0) {
+                        displaySuggestions(searchResults)
+                    } else {
+                        hideSuggestions()
+                    }
+                } else {
+                    hideSuggestions()
+                }
+            }, 300)
+        })
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!searchContainer.contains(event.target)) {
+                hideSuggestions()
+            }
+        })
+
+        // Handle keyboard navigation
+        searchInput.addEventListener('keydown', function(event) {
+            handleKeyboardNavigation(event)
+        })
+    }
+
+    function createSuggestionsContainer() {
+        suggestionsContainer = document.createElement('div')
+        suggestionsContainer.className = 'search-suggestions'
+        suggestionsContainer.style.display = 'none'
+        searchContainer.appendChild(suggestionsContainer)
+    }
+
+    function displaySuggestions(doctors) {
+        if (!suggestionsContainer) return
+
+        // Clear previous suggestions
+        suggestionsContainer.innerHTML = ''
+
+        // Limit to 8 suggestions for better UX
+        const limitedDoctors = doctors.slice(0, 8)
+
+        limitedDoctors.forEach((doctor, index) => {
+            const suggestionItem = document.createElement('div')
+            suggestionItem.className = 'suggestion-item'
+            suggestionItem.setAttribute('data-index', index)
+
+            suggestionItem.innerHTML = `
+                <div class="suggestion-avatar">
+                    <img src="${contextPath}/image/${doctor.imageId || -1}" 
+                         alt="${doctor.name} ${doctor.lastName}" 
+                         class="suggestion-avatar-img">
+                </div>
+                <div class="suggestion-content">
+                    <div class="suggestion-name">${doctor.name} ${doctor.lastName}</div>
+                    <div class="suggestion-specialty">
+                        <i class="fas fa-stethoscope"></i>
+                        <span>Doctor</span>
+                    </div>
+                </div>
+                <div class="suggestion-action">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            `
+
+            // Add click handler
+            suggestionItem.addEventListener('click', function() {
+                selectDoctor(doctor)
+            })
+
+            // Add hover handler for keyboard navigation
+            suggestionItem.addEventListener('mouseenter', function() {
+                clearActiveSelection()
+                this.classList.add('active')
+            })
+
+            suggestionsContainer.appendChild(suggestionItem)
+        })
+
+        // Show suggestions
+        suggestionsContainer.style.display = 'block'
+    }
+
+    function hideSuggestions() {
+        if (suggestionsContainer) {
+            suggestionsContainer.style.display = 'none'
+        }
+    }
+
+    function selectDoctor(doctor) {
+        // Fill the search input with the selected doctor's name
+        searchInput.value = `${doctor.name} ${doctor.lastName}`
+
+        // Hide suggestions
+        hideSuggestions()
+
+        // Optionally redirect to doctor's profile or appointment page
+        window.location.href = `${contextPath}/search/${doctor.id}`
+    }
+
+    function handleKeyboardNavigation(event) {
+        if (!suggestionsContainer || suggestionsContainer.style.display === 'none') {
+            return
+        }
+
+        const suggestions = suggestionsContainer.querySelectorAll('.suggestion-item')
+        const currentActive = suggestionsContainer.querySelector('.suggestion-item.active')
+        let currentIndex = currentActive ? parseInt(currentActive.getAttribute('data-index')) : -1
+
+        switch(event.key) {
+            case 'ArrowDown':
+                event.preventDefault()
+                currentIndex = currentIndex < suggestions.length - 1 ? currentIndex + 1 : 0
+                setActiveSelection(currentIndex)
+                break
+
+            case 'ArrowUp':
+                event.preventDefault()
+                currentIndex = currentIndex > 0 ? currentIndex - 1 : suggestions.length - 1
+                setActiveSelection(currentIndex)
+                break
+
+            case 'Enter':
+                event.preventDefault()
+                if (currentActive) {
+                    const doctorIndex = parseInt(currentActive.getAttribute('data-index'))
+                    selectDoctor(searchResults[doctorIndex])
+                }
+                break
+
+            case 'Escape':
+                hideSuggestions()
+                searchInput.blur()
+                break
+        }
+    }
+
+    function setActiveSelection(index) {
+        clearActiveSelection()
+        const suggestions = suggestionsContainer.querySelectorAll('.suggestion-item')
+        if (suggestions[index]) {
+            suggestions[index].classList.add('active')
+        }
+    }
+
+    function clearActiveSelection() {
+        const activeItems = suggestionsContainer.querySelectorAll('.suggestion-item.active')
+        activeItems.forEach(item => item.classList.remove('active'))
+    }
+}
+
+let searchResults = [];
+
+// Enhanced fetch function with better error handling
+async function fetchSearchResults(query) {
+    try {
+        const response = await fetch(`/search/doctors/${encodeURIComponent(query)}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const data = await response.json()
+        searchResults = data.doctors || []
+    } catch (error) {
+        console.error("Error fetching search results:", error)
+        searchResults = []
+    }
+}
+
 // Quick Filters Functionality
 function initializeQuickFilters() {
     const quickFilterBtns = document.querySelectorAll(".quick-filter-btn")

@@ -24,4 +24,17 @@ public final class JsonUtils {
             throw new RuntimeException("Error serializando a JSON", e);
         }
     }
+    public static String toJson(Object obj, Class<?> view) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.configure(
+                SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        try {
+            return mapper.writerWithView(view).writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error serializando a JSON", e);
+        }
+    }
 }

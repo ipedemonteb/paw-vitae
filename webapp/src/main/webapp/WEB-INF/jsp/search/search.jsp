@@ -73,7 +73,7 @@
       <div class="search-bar-container">
         <div class="search-bar">
           <i class="fas fa-search search-icon"></i>
-          <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input">
+          <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input" autocomplete="off">
         </div>
       </div>
     </div>
@@ -570,6 +570,7 @@
     initializeCoverageFilter();
     initializeSpecialtyFilter();
     initializeWeekdaysFilter();
+    initializeSearchInput();
 
     // Add event listener for filter button
     const applyFiltersBtn = document.getElementById('applyFiltersBtn');
