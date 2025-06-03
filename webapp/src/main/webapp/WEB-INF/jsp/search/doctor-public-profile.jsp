@@ -209,7 +209,7 @@
                     <div class="detail-card-content">
                         <c:choose>
                             <c:when test="${not empty doctor.specialtyList}">
-                                <div class="specialty-list">
+                                <div class="specialty-list scrollable-list">
                                     <c:forEach var="specialty" items="${doctor.specialtyList}">
                                         <div class="specialty-item">
                                             <spring:message code="${specialty.key}" />
@@ -231,7 +231,7 @@
                     <div class="detail-card-content">
                         <c:choose>
                             <c:when test="${not empty doctor.coverageList}">
-                                <div class="coverage-list">
+                                <div class="coverage-list scrollable-list">
                                     <c:forEach var="coverage" items="${doctor.coverageList}">
                                         <div class="coverage-item">
                                             <c:out value="${coverage.name}" />
@@ -1007,6 +1007,17 @@
             padding: 6px 12px;
             font-size: 12px;
         }
+    }
+
+    .scrollable-list {
+        max-height: 180px; /* Adjust as needed */
+        overflow-y: auto;
+        padding-right: 8px; /* Optional: space for scrollbar */
+    }
+    .specialty-list, .coverage-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
     }
 </style>
 
