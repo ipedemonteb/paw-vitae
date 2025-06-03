@@ -110,7 +110,7 @@ function initializeSearchInput() {
                     <div class="suggestion-name">${escapedDoctorName}</div>
                     <div class="suggestion-specialty">
                         <i class="fas fa-stethoscope"></i>
-                        <span>Doctor</span>
+                        <span>${doctorMessage}</span>
                     </div>
                 </div>
                 <div class="suggestion-action">

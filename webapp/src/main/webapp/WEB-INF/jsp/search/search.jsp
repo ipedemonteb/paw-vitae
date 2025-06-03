@@ -541,6 +541,8 @@
   <%--  window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;--%>
   <%--}--%>
 
+  const doctorMessage = '<spring:message code="appointment.form.doctor"/>';
+
   function clearWeekdaysFilter() {
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.delete('weekdays');
