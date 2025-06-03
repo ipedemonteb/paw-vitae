@@ -339,7 +339,7 @@
         } else {
             addNewOffice();
         }
-        applyCurrentFilter();
+        filterOffices('active');
         updateFilterCounts();
     }
 
@@ -398,17 +398,17 @@
         // Status indicator
         html += '<div class="office-status-indicator" id="status-indicator-' + index + '">';
         html += '<i class="fas fa-circle"></i>';
-        html += '<span id="status-text-' + index + '">Active</span>';
+        html += '<span id="status-text-' + index + '"><spring:message code='offices.status.active' /></span>';
         html += '</div>';
 
         // Action buttons
         html += '<div class="office-actions">';
         html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';
-        html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="Disable">';
+        html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';
         html += '<i class="fas fa-pause"></i>';
         html += '</button>';
         html += '<button type="button" class="office-action-btn btn-remove-office" id="remove-btn-' + index + '" ';
-        html += 'onclick="showRemoveConfirmation(' + index + ')" data-tooltip="Remove">';
+        html += 'onclick="showRemoveConfirmation(' + index + ')" data-tooltip="<spring:message code='offices.remove' />">';
         html += '<i class="fas fa-trash"></i>';
         html += '</button>';
         html += '</div>';
@@ -417,7 +417,7 @@
 
         // Office name with validation
         html += '<div class="form-group">';
-        html += '<label for="office-name-' + index + '" class="form-label required-field">Nombre del Consultorio</label>';
+        html += '<label for="office-name-' + index + '" class="form-label required-field"><spring:message code='register.officeName'/></label>';
         html += '<div class="input-wrapper">';
         html += '<input type="text" id="office-name-' + index + '" class="form-control office-name" ';
         html += 'placeholder="Ingrese el nombre del consultorio" value="' + name + '" required/>';
@@ -429,10 +429,10 @@
 
         // Neighborhood with validation
         html += '<div class="form-group">';
-        html += '<label for="office-neighborhood-search-' + index + '" class="form-label required-field">Barrio</label>';
+        html += '<label for="office-neighborhood-search-' + index + '" class="form-label required-field"><spring:message code='register.neighborhood'/></label>';
         html += '<div class="input-wrapper neighborhood-search-wrapper">';
         html += '<input type="text" id="office-neighborhood-search-' + index + '" class="form-control office-neighborhood-search" ';
-        html += 'placeholder="Buscar barrio" value="' + neighborhoodName + '" autocomplete="off" required/>';
+        html += 'placeholder="<spring:message code='neighborhood.placeholder'/>" value="' + neighborhoodName + '" autocomplete="off" required/>';
         html += '<input type="hidden" id="office-neighborhood-id-' + index + '" class="office-neighborhood-id" value="' + neighborhoodId + '"/>';
         html += '<div class="validation-icon valid"><i class="fas fa-check-circle"></i></div>';
         html += '<div class="validation-icon error"><i class="fas fa-exclamation-circle"></i></div>';
@@ -445,12 +445,12 @@
 
         // Specialties with validation - only show doctor's specialties
         html += '<div class="form-group">';
-        html += '<label class="form-label required-field">Especialidades del Consultorio</label>';
+        html += '<label class="form-label required-field"><spring:message code='register.officeSpecialties'/></label>';
         html += '<div class="custom-multi-select" id="office-specialties-container-' + index + '">';
         html += generateSpecialtyOptions(index);
         html += '</div>';
         html += '<div class="selected-options" id="office-specialties-selected-' + index + '"></div>';
-        html += '<small class="form-text text-muted">Seleccione las especialidades para este consultorio</small>';
+        html += '<small class="form-text text-muted"><spring:message code='register.selectOfficeSpecialties'/></small>';
         html += '<div id="office-specialties-' + index + '-validation-message" class="error-message"></div>';
         html += '</div>';
 
@@ -530,14 +530,14 @@
 
             toggleBtn.classList.add('disabled');
             toggleBtn.innerHTML = '<i class="fas fa-play"></i>';
-            toggleBtn.setAttribute('data-tooltip', 'Enable');
+            toggleBtn.setAttribute('data-tooltip', '<spring:message code='offices.enable' />');
         } else {
             // Active state
             statusIndicator.classList.add('active');
             statusText.textContent = "<spring:message code='offices.status.active' />";
 
             toggleBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            toggleBtn.setAttribute('data-tooltip', 'Disable');
+            toggleBtn.setAttribute('data-tooltip', '<spring:message code='offices.disable' />');
         }
     }
 
