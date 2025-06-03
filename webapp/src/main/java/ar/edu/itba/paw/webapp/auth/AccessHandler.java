@@ -28,6 +28,17 @@ public class AccessHandler {
      * @return true if the currently authenticated user is
      * either the patient or the doctor on that appointment
      */
+
+    public boolean canAccessDoctorProfile(Authentication auth, Long doctorId) {
+        Object principal = auth.getPrincipal();
+        if (!(principal instanceof AuthUserDetails)) {
+            return false;
+        }
+
+        long userId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
+        return userId == doctorId;
+    }
+
     public boolean canHandleAppointment(Authentication auth, String appointmentId) {
         Object principal = auth.getPrincipal();
         if (!(principal instanceof AuthUserDetails)) {

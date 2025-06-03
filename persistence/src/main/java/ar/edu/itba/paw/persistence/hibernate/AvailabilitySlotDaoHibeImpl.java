@@ -21,6 +21,8 @@ public class AvailabilitySlotDaoHibeImpl implements AvailabilitySlotsDao {
         return slot;
     }
 
+
+    //capaz se puede hacer desde service
     @Override
     public void updateDoctorAvailability(long id, List<AvailabilitySlot> availabilitySlots) {
        em.createQuery("DELETE FROM AvailabilitySlot a WHERE a.doctor.id = :doctorId")
