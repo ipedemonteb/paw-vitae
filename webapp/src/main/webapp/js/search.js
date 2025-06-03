@@ -223,7 +223,6 @@ async function fetchSearchResults(query) {
 
         const data = await response.json()
         searchResults = data.doctors || []
-        console.log(searchResults)
     } catch (error) {
         console.error("Error fetching search results:", error)
         searchResults = []
