@@ -704,14 +704,14 @@
 
         if (!value) {
             if (officeNameTouched[index]) {
-                setFieldError(nameField, errorElement, "Office name is required");
+                setFieldError(nameField, errorElement, "<spring:message code='offices.invalid.name'/>");
             } else {
                 clearFieldValidation(nameField, errorElement);
             }
             return false;
         } else if (value.length < 2) {
             if (officeNameTouched[index]) {
-                setFieldError(nameField, errorElement, "Name must be at least 2 characters");
+                setFieldError(nameField, errorElement, "<spring:message code='offices.invalid.name.length'/>");
             } else {
                 clearFieldValidation(nameField, errorElement);
             }
@@ -735,7 +735,7 @@
 
         if (!neighborhood) {
             if (officeNeighborhoodTouched[index]) {
-                setFieldError(searchField, errorElement, "Please select a valid neighborhood");
+                setFieldError(searchField, errorElement, "<spring:message code='offices.invalid.neighborhood'/>");
             } else {
                 clearFieldValidation(searchField, errorElement);
             }
@@ -771,7 +771,7 @@
 
         if (selectedSpecialties.length === 0) {
             if (officeSpecialtiesTouched[index]) {
-                setContainerError(container, errorElement, "Please select at least one specialty for this office");
+                setContainerError(container, errorElement, "<spring:message code='offices.invalid.specialties.length'/>");
             } else {
                 clearContainerValidation(container, errorElement);
             }
