@@ -217,7 +217,8 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public List<Doctor> search(String keyword, int results) {
-        String queryString = "SELECT d FROM Doctor d WHERE d.verified = true AND (LOWER(d.name) LIKE LOWER(:keyword) OR LOWER(d.lastName) LIKE LOWER(:keyword))";
+        String queryString = "SELECT d FROM Doctor d WHERE d.verified = true AND " +
+                "(LOWER(CONCAT(d.name, ' ', d.lastName)) LIKE LOWER(:keyword))";
         TypedQuery<Doctor> query = em.createQuery(queryString, Doctor.class);
         query.setParameter("keyword", "%" + keyword + "%");
         query.setMaxResults(results);
