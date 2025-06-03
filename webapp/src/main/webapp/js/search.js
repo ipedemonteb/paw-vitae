@@ -27,6 +27,12 @@ function initializeViewToggle() {
     }
 }
 
+function escapeHTML(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 // Enhanced search functionality with suggestions dropdown
 function initializeSearchInput() {
     const searchInput = document.getElementById("doctorSearch")
@@ -86,22 +92,22 @@ function initializeSearchInput() {
         // Clear previous suggestions
         suggestionsContainer.innerHTML = ''
 
-        // Limit to 8 suggestions for better UX
-        const limitedDoctors = doctors.slice(0, 8)
-
-        limitedDoctors.forEach((doctor, index) => {
+        doctors.forEach((doctor, index) => {
             const suggestionItem = document.createElement('div')
             suggestionItem.className = 'suggestion-item'
             suggestionItem.setAttribute('data-index', index)
 
+            const doctorName = `${doctor.name} ${doctor.lastName}`;
+            const escapedDoctorName = escapeHTML(doctorName);
+
             suggestionItem.innerHTML = `
                 <div class="suggestion-avatar">
                     <img src="${contextPath}/image/${doctor.imageId || -1}" 
-                         alt="${doctor.name} ${doctor.lastName}" 
+                         alt="${escapedDoctorName}" 
                          class="suggestion-avatar-img">
                 </div>
                 <div class="suggestion-content">
-                    <div class="suggestion-name">${doctor.name} ${doctor.lastName}</div>
+                    <div class="suggestion-name">${escapedDoctorName}</div>
                     <div class="suggestion-specialty">
                         <i class="fas fa-stethoscope"></i>
                         <span>Doctor</span>
@@ -217,6 +223,7 @@ async function fetchSearchResults(query) {
 
         const data = await response.json()
         searchResults = data.doctors || []
+        console.log(searchResults)
     } catch (error) {
         console.error("Error fetching search results:", error)
         searchResults = []
