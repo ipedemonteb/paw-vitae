@@ -284,7 +284,7 @@
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <p class="no-data"><spring:message code="doctor.profile.default.bio" /></p>
+                                <p class="no-data"><spring:message code="doctor.profile.default.experience" /></p>
                             </c:otherwise>
                         </c:choose>
                     </div>
@@ -358,7 +358,7 @@
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <p class="no-data"><spring:message code="doctor.profile.default.bio" /></p>
+                                <p class="no-data"><spring:message code="doctor.profile.default.certificates" /></p>
                             </c:otherwise>
                         </c:choose>
                     </div>

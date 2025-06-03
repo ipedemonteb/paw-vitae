@@ -45,6 +45,7 @@ public class Doctor extends User {
     private DoctorProfile profile;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("startDate DESC")
     private List<DoctorExperience> experiences = new ArrayList<>();
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

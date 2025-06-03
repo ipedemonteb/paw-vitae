@@ -28,11 +28,12 @@ public class DoctorExperienceHibeDao implements DoctorExperienceDao {
 
     @Override
     public List<DoctorExperience> getByDoctorId(long doctorId) {
-        TypedQuery<DoctorExperience> query = em.createQuery("FROM DoctorExperience AS e WHERE e.doctor.id = :id", DoctorExperience.class);
+        TypedQuery<DoctorExperience> query = em.createQuery(
+                "FROM DoctorExperience AS e WHERE e.doctor.id = :id " +
+                        "ORDER BY CASE WHEN e.endDate IS NULL THEN 0 ELSE 1 END, e.endDate DESC",
+                DoctorExperience.class
+        );
         query.setParameter("id", doctorId);
-        if (query.getResultList().isEmpty()) {
-            return List.of();
-        }
         return query.getResultList();
     }
 
