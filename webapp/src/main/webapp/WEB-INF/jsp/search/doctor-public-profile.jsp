@@ -410,9 +410,9 @@
                 </div>
                 <div class="detail-card-content">
                     <c:choose>
-                        <c:when test="${not empty doctor.doctorOffices}">
+                        <c:when test="${not empty offices}">
                             <div class="office-list">
-                                <c:forEach var="office" items="${doctor.doctorOffices}">
+                                <c:forEach var="office" items="${offices}">
                                     <div class="office-item">
                                         <div class="office-info">
                                             <h4 class="office-name">
