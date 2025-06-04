@@ -335,7 +335,7 @@ body {
     background: var(--card-background);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
-    overflow: hidden;
+    overflow: visible;
 }
 
 .detail-card.full-width {

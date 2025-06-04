@@ -18,13 +18,10 @@ public class DoctorProfileForm {
     @Size(max = 2600)
     private String description;
     @ValidExperience(message = "{experiences.invalid}")
-    @NotEmpty
-    @NotNull
+
     @Size(max = 10)
     private List<ExperienceForm> experiences;
     @ValidCertificate(message = "{certificates.invalid}")
-    @NotEmpty
-    @NotNull
     @Size(max = 8)
     private List<CertificateForm> certificates;
 
