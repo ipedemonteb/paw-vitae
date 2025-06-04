@@ -417,7 +417,7 @@
 
 /* ===== BUTTON STYLES ===== */
 .btn-add-slot {
-    display: flex;
+    display: none !important;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;

@@ -46,12 +46,15 @@ public class Doctor extends User {
 
     //WHY NOT LAZY
     @OneToOne(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private DoctorProfile profile;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("startDate DESC")
     private List<DoctorExperience> experiences = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<DoctorCertification> certifications = new ArrayList<>();
 

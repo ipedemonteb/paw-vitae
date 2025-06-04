@@ -160,14 +160,10 @@
                         <spring:message code="offices.filter.active" />
                         <span class="tab-count" id="count-active">0</span>
                     </button>
-                    <button class="filter-tab" data-filter="disabled" onclick="filterOffices('disabled')">
-                        <i class="fas fa-pause-circle"></i>
-                        <spring:message code="offices.filter.disabled" />
-                        <span class="tab-count" id="count-disabled">0</span>
-                    </button>
-<%--                    <button type="button" class="btn btn-primary add-slot-button" id="add-office-btn" onclick="addNewOffice()">--%>
-<%--                        <i class="fas fa-plus"></i>--%>
-<%--                        <spring:message code="register.addOffice"/>--%>
+<%--                    <button class="filter-tab" data-filter="disabled" onclick="filterOffices('disabled')">--%>
+<%--                        <i class="fas fa-pause-circle"></i>--%>
+<%--                        <spring:message code="offices.filter.disabled" />--%>
+<%--                        <span class="tab-count" id="count-disabled">0</span>--%>
 <%--                    </button>--%>
                 </div>
 
@@ -396,22 +392,22 @@
         let html = '';
 
         // Status indicator
-        html += '<div class="office-status-indicator" id="status-indicator-' + index + '">';
-        html += '<i class="fas fa-circle"></i>';
-        html += '<span id="status-text-' + index + '"><spring:message code='offices.status.active' /></span>';
-        html += '</div>';
+        <%--html += '<div class="office-status-indicator" id="status-indicator-' + index + '">';--%>
+        <%--html += '<i class="fas fa-circle"></i>';--%>
+        <%--html += '<span id="status-text-' + index + '"><spring:message code='offices.status.active' /></span>';--%>
+        <%--html += '</div>';--%>
 
         // Action buttons
-        html += '<div class="office-actions">';
-        html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';
-        html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';
-        html += '<i class="fas fa-pause"></i>';
-        html += '</button>';
-        html += '<button type="button" class="office-action-btn btn-remove-office" id="remove-btn-' + index + '" ';
-        html += 'onclick="showRemoveConfirmation(' + index + ')" data-tooltip="<spring:message code='offices.remove' />">';
-        html += '<i class="fas fa-trash"></i>';
-        html += '</button>';
-        html += '</div>';
+        // html += '<div class="office-actions">';
+        <%--html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';--%>
+        <%--html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';--%>
+        <%--html += '<i class="fas fa-pause"></i>';--%>
+        <%--html += '</button>';--%>
+        <%--html += '<button type="button" class="office-action-btn btn-remove-office" id="remove-btn-' + index + '" ';--%>
+        <%--html += 'onclick="showRemoveConfirmation(' + index + ')" data-tooltip="<spring:message code='offices.remove' />">';--%>
+        <%--html += '<i class="fas fa-trash"></i>';--%>
+        <%--html += '</button>';--%>
+        // html += '</div>';
 
         html += '<div class="form-row">';
 
