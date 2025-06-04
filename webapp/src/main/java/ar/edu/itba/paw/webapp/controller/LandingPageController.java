@@ -32,12 +32,12 @@ public class LandingPageController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView mav(@ModelAttribute("loggedUser") final User user) {
         List<Specialty> specialties = specialtyService.getAll();
-        return new ModelAndView("landingPage/home").addObject("specialties", specialties).addObject("imageId", userService.getImageId(user)).addObject("ratings", ratingService.getFiveTopRatings()).addObject("doctorCount", doctorService.getAllDoctorsDisplayCount()).addObject("patientsCount", patientService.getAllPatientsDisplayCount());
+        return new ModelAndView("landingPage/home").addObject("userId", user.getId()).addObject("specialties", specialties).addObject("imageId", userService.getImageId(user)).addObject("ratings", ratingService.getFiveTopRatings()).addObject("doctorCount", doctorService.getAllDoctorsDisplayCount()).addObject("patientsCount", patientService.getAllPatientsDisplayCount());
     }
 
     @RequestMapping(value = "/about-us")
     public ModelAndView aboutUs(@ModelAttribute("loggedUser") final User user) {
-        return new ModelAndView("landingPage/about-us").addObject("imageId", userService.getImageId(user));
+        return new ModelAndView("landingPage/about-us").addObject("userId", user.getId()).addObject("imageId", userService.getImageId(user));
     }
 
 }

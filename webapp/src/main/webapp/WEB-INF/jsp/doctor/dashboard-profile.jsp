@@ -53,9 +53,9 @@
             <div class="tab-header">
                 <h2><spring:message code="dashboard.profile.title" /></h2>
                 <div class="tab-actions">
-                    <a href="<c:url value='/search/${doctor.id}'/>" class="btn btn-primary">
-                        <spring:message code="dashboard.profile.public.edit" />
-                    </a>
+<%--                    <a href="<c:url value='/search/${doctor.id}'/>" class="btn btn-primary">--%>
+<%--                        <spring:message code="dashboard.profile.public.edit" />--%>
+<%--                    </a>--%>
                     <button id="edit-profile-btn" class="btn btn-primary">
                         <i class="fas fa-edit"></i>
                         <spring:message code="dashboard.profile.edit" />
