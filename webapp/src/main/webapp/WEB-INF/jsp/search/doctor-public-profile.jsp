@@ -485,7 +485,7 @@
                 </div>
             </c:if>
 
-            <sec:authorize access="hasRole('ROLE_PATIENT')">>
+            <sec:authorize access="not hasRole('ROLE_DOCTOR')">>
                 <div class="cta-section">
                     <div class="cta-content">
                         <h3><spring:message code="doctor.profile.ready.to.book" /></h3>
