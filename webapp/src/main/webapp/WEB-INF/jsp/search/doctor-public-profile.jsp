@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
+    <link rel="stylesheet" href="<c:url value='/css/date-picker-multiple.css' />" /></head>
 <body>
 
 <jsp:include page="/WEB-INF/jsp/components/header.jsp">
@@ -307,11 +307,15 @@
                                         <div class="form-row">
                                             <div class="form-group">
                                                 <spring:message code="doctor.profile.startDate" />
-                                                <input type="date" class="form-control" name="experiences[${status.index}].startDate" value="${experience.startDate}" />
+                                                <div class="date-picker-container">
+                                                    <input type="text" class="form-control date-picker-input" name="experiences[${status.index}].startDate" value="${experience.startDate}" readonly />
+                                                </div>
                                             </div>
                                             <div class="form-group">
                                                 <spring:message code="doctor.profile.endDate" />
-                                                <input type="date" class="form-control" name="experiences[${status.index}].endDate" value="${experience.endDate}" />
+                                                <div class="date-picker-container">
+                                                    <input type="text" class="form-control date-picker-input" name="experiences[${status.index}].endDate" value="${experience.endDate}" readonly />
+                                                </div>
                                             </div>
                                         </div>
                                         <button type="button" class="btn-remove" onclick="removeExperience(${status.index})">
@@ -381,7 +385,9 @@
                                         <div class="form-row">
                                             <div class="form-group">
                                                 <spring:message code="doctor.profile.issueDate" />
-                                                <input type="date" class="form-control" name="certificates[${status.index}].issueDate" value="${certificate.issueDate}" />
+                                                <div class="date-picker-container">
+                                                    <input type="text" class="form-control date-picker-input" name="certificates[${status.index}].issueDate" value="${certificate.issueDate}" readonly />
+                                                </div>
                                             </div>
                                         </div>
                                         <button type="button" class="btn-remove" onclick="removeCertificate(${status.index})">
@@ -677,31 +683,38 @@
         newExperience.setAttribute('data-index', index);
 
         newExperience.innerHTML = `
-        <div class="form-row">
-            <div class="form-group">
-                <spring:message code="doctor.profile.position" />
-                <input type="text" class="form-control" name="experiences[` + index + `].positionTitle" value="` + (data.positionTitle || '') + `" />
-            </div>
-            <div class="form-group">
-                <spring:message code="doctor.profile.organization" />
-                <input type="text" class="form-control" name="experiences[` + index + `].organizationName" value="` + (data.organizationName || '') + `" />
+    <div class="form-row">
+        <div class="form-group">
+            <spring:message code="doctor.profile.position" />
+            <input type="text" class="form-control" name="experiences[` + index + `].positionTitle" value="` + (data.positionTitle || '') + `" />
+        </div>
+        <div class="form-group">
+            <spring:message code="doctor.profile.organization" />
+            <input type="text" class="form-control" name="experiences[` + index + `].organizationName" value="` + (data.organizationName || '') + `" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <spring:message code="doctor.profile.startDate" />
+            <div class="date-picker-container">
+                <input type="text" class="form-control date-picker-input" name="experiences[` + index + `].startDate" value="` + (data.startDate || '') + `" readonly />
             </div>
         </div>
-        <div class="form-row">
-            <div class="form-group">
-                <spring:message code="doctor.profile.startDate" />
-                <input type="date" class="form-control" name="experiences[` + index + `].startDate" value="` + (data.startDate || '') + `" />
-            </div>
-            <div class="form-group">
-                <spring:message code="doctor.profile.endDate" />
-                <input type="date" class="form-control" name="experiences[` + index + `].endDate" value="` + (data.endDate || '') + `" />
+        <div class="form-group">
+            <spring:message code="doctor.profile.endDate" />
+            <div class="date-picker-container">
+                <input type="text" class="form-control date-picker-input" name="experiences[` + index + `].endDate" value="` + (data.endDate || '') + `" readonly />
             </div>
         </div>
-        <button type="button" class="btn-remove" onclick="removeExperience(` + index + `)">
-            <i class="fas fa-trash"></i>
-        </button>
-    `;
+    </div>
+    <button type="button" class="btn-remove" onclick="removeExperience(` + index + `)">
+        <i class="fas fa-trash"></i>
+    </button>
+`;
 
+        setTimeout(() => {
+            initializeDatePickersForContainer(newExperience);
+        }, 100);
         container.appendChild(newExperience);
     }
 
@@ -724,26 +737,33 @@
         newCertificate.setAttribute('data-index', index);
 
         newCertificate.innerHTML = `
-        <div class="form-row">
-            <div class="form-group">
-                <spring:message code="doctor.profile.certificateDescription" />
-                <input type="text" class="form-control" name="certificates[` + index + `].certificateName" value="` + (data.certificateName || '') + `" />
-            </div>
-            <div class="form-group">
-                <spring:message code="doctor.profile.entity" />
-                <input type="text" class="form-control" name="certificates[` + index + `].issuingEntity" value="` + (data.issuingEntity || '') + `" />
+    <div class="form-row">
+        <div class="form-group">
+            <spring:message code="doctor.profile.certificateDescription" />
+            <input type="text" class="form-control" name="certificates[` + index + `].certificateName" value="` + (data.certificateName || '') + `" />
+        </div>
+        <div class="form-group">
+            <spring:message code="doctor.profile.entity" />
+            <input type="text" class="form-control" name="certificates[` + index + `].issuingEntity" value="` + (data.issuingEntity || '') + `" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <spring:message code="doctor.profile.issueDate" />
+            <div class="date-picker-container">
+                <input type="text" class="form-control date-picker-input" name="certificates[` + index + `].issueDate" value="` + (data.issueDate || '') + `" readonly />
             </div>
         </div>
-        <div class="form-row">
-            <div class="form-group">
-                <spring:message code="doctor.profile.issueDate" />
-                <input type="date" class="form-control" name="certificates[` + index + `].issueDate" value="` + (data.issueDate || '') + `" />
-            </div>
-        </div>
-        <button type="button" class="btn-remove" onclick="removeCertificate(` + index + `)">
-            <i class="fas fa-trash"></i>
-        </button>
-    `;
+    </div>
+    <button type="button" class="btn-remove" onclick="removeCertificate(` + index + `)">
+        <i class="fas fa-trash"></i>
+    </button>
+`;
+
+
+        setTimeout(() => {
+            initializeDatePickersForContainer(newCertificate);
+        }, 100);
 
         container.appendChild(newCertificate);
     }
@@ -1020,6 +1040,44 @@
         gap: 0.5rem;
     }
 </style>
-
+<script>
+    // Create a messages object to be used by the JavaScript
+    window.appointmentMessages = {
+        months: [
+            '<spring:message code="calendar.month.january" />',
+            '<spring:message code="calendar.month.february" />',
+            '<spring:message code="calendar.month.march" />',
+            '<spring:message code="calendar.month.april" />',
+            '<spring:message code="calendar.month.may" />',
+            '<spring:message code="calendar.month.june" />',
+            '<spring:message code="calendar.month.july" />',
+            '<spring:message code="calendar.month.august" />',
+            '<spring:message code="calendar.month.september" />',
+            '<spring:message code="calendar.month.october" />',
+            '<spring:message code="calendar.month.november" />',
+            '<spring:message code="calendar.month.december" />'
+        ],
+        weekdays: [
+            '<spring:message code="calendar.day.sunday" />',
+            '<spring:message code="calendar.day.monday" />',
+            '<spring:message code="calendar.day.tuesday" />',
+            '<spring:message code="calendar.day.wednesday" />',
+            '<spring:message code="calendar.day.thursday" />',
+            '<spring:message code="calendar.day.friday" />',
+            '<spring:message code="calendar.day.saturday" />'
+        ],
+        weekdaysShort: [
+            '<spring:message code="calendar.day.short.sun" />',
+            '<spring:message code="calendar.day.short.mon" />',
+            '<spring:message code="calendar.day.short.tue" />',
+            '<spring:message code="calendar.day.short.wed" />',
+            '<spring:message code="calendar.day.short.thu" />',
+            '<spring:message code="calendar.day.short.fri" />',
+            '<spring:message code="calendar.day.short.sat" />'
+        ]
+    };
+</script>
+<script
+        src="<c:url value='/js/date-time-picker-multiple.js'/>"></script>
 </body>
 </html>

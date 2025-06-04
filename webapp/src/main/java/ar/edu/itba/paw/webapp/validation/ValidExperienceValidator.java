@@ -21,7 +21,7 @@ public class ValidExperienceValidator implements ConstraintValidator<ValidExperi
         for (ExperienceForm experience : experienceFormList) {
             if (experience.getOrganizationName() == null || experience.getOrganizationName().isEmpty() ||
                 experience.getPositionTitle() == null || experience.getPositionTitle().isEmpty() ||
-                experience.getStartDate() == null || experience.getEndDate() == null ) {
+                experience.getStartDate() == null) {
                 return false;
             }
             if (experience.getEndDate() != null) {
