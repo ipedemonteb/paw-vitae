@@ -26,10 +26,9 @@
         <sec:authorize access="isAnonymous() or hasRole('ROLE_PATIENT')">
           <li><a href="<c:url value='/search' />" class="nav-link"><spring:message code="nav.doctors" /></a></li>
         </sec:authorize>
-<%--        <li><a href="<c:url value='#' />" class="nav-link"><spring:message code="nav.services" /></a></li>--%>
+        <%--        <li><a href="<c:url value='#' />" class="nav-link"><spring:message code="nav.services" /></a></li>--%>
         <li><a href="<c:url value='/about-us' />" class="nav-link"><spring:message code="nav.about" /></a></li>
 
-        <!-- Mobile-only auth buttons -->
         <sec:authorize access="isAnonymous()">
           <li class="mobile-auth-item">
             <a href="<c:url value='/login' />" class="nav-link mobile-auth-link">
@@ -64,6 +63,12 @@
               <a href="<c:url value='/doctor/dashboard' />" class="nav-link mobile-auth-link">
                 <i class="fas fa-stethoscope"></i>
                 <spring:message code="header.dropdown.doctorDashboard" />
+              </a>
+            </li>
+            <li class="mobile-auth-item">
+              <a href="<c:url value='/search/${userId}' />" class="nav-link mobile-auth-link">
+                <i class="fas fa-user-circle"></i>
+                <spring:message code="header.dropdown.profile" />
               </a>
             </li>
           </sec:authorize>
@@ -109,15 +114,15 @@
         <div class="user-dropdown">
           <button class="user-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
 
-        <sec:authorize access="hasRole('ROLE_PATIENT')">
+            <sec:authorize access="hasRole('ROLE_PATIENT')">
           <span class="user-avatar">
           <sec:authentication property="principal.username" var="username" />
           <span>${username.charAt(0)}</span>
             </span>
-        </sec:authorize>
-        <sec:authorize access="hasRole('ROLE_DOCTOR')">
-          <img src="<c:url value='/image/${empty param.id ? -1 : param.id}' />" alt="Doctor Avatar" class="doctor-avatar-small" />
-        </sec:authorize>
+            </sec:authorize>
+            <sec:authorize access="hasRole('ROLE_DOCTOR')">
+              <img src="<c:url value='/image/${empty param.id ? -1 : param.id}' />" alt="Doctor Avatar" class="doctor-avatar-small" />
+            </sec:authorize>
             <span class="user-name">
         <sec:authentication property="principal.username" var="username" />
         ${username}
@@ -129,6 +134,10 @@
               <a href="<c:url value='/doctor/dashboard' />" class="dropdown-item">
                 <i class="fas fa-stethoscope"></i>
                 <spring:message code="header.dropdown.doctorDashboard" />
+              </a>
+              <a href="<c:url value='/search/${userId}' />" class="dropdown-item">
+                <i class="fas fa-user-circle"></i>
+                <spring:message code="header.dropdown.profile" />
               </a>
             </sec:authorize>
             <sec:authorize access="hasRole('ROLE_PATIENT')">
