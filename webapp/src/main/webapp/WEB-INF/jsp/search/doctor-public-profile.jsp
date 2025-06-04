@@ -40,15 +40,15 @@
 
 <main class="main-content">
     <div class="container">
-        <!-- Back Button -->
-        <div class="back-navigation">
-            <a href="javascript:history.back()" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                <spring:message code="doctor.profile.back" />
-            </a>
-        </div>
-
         <c:set var="isOwnProfile" value="${loggedUser != null && loggedUser.id == doctor.id}" />
+        <c:if test="${!isOwnProfile}">
+            <div class="back-navigation">
+                <a href="javascript:history.back()" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <spring:message code="doctor.profile.back" />
+                </a>
+            </div>
+        </c:if>
 
         <div class="profile-header">
             <div class="profile-header-content">
