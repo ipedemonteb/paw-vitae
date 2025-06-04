@@ -44,7 +44,7 @@
         <c:set var="isOwnProfile" value="${loggedUser != null && loggedUser.id == doctor.id}" />
         <c:if test="${!isOwnProfile}">
             <div class="back-navigation">
-                <a href="javascript:history.back()" class="back-btn">
+                <a href="/search" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
                     <spring:message code="doctor.profile.back" />
                 </a>
