@@ -4,6 +4,8 @@ import ar.edu.itba.paw.models.CertificateForm;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 public class ValidCertificateValidator implements ConstraintValidator<ValidCertificate, List<CertificateForm>> {
@@ -19,6 +21,9 @@ public class ValidCertificateValidator implements ConstraintValidator<ValidCerti
             if (certificate.getCertificateName() == null || certificate.getCertificateName().isEmpty() ||
                 certificate.getIssuingEntity() == null|| certificate.getIssuingEntity().isEmpty() ||
                 certificate.getIssueDate() == null) {
+                return false;
+            }
+            if (certificate.getIssueDate().isAfter(LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires")))) {
                 return false;
             }
         }
