@@ -242,7 +242,7 @@ let searchResults = [];
 // Enhanced fetch function with better error handling
 async function fetchSearchResults(query) {
     try {
-        const response = await fetch(`/search/doctors/${encodeURIComponent(query)}`, {
+        const response = await fetch(`${contextPath}/search/doctors/${encodeURIComponent(query)}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/",
