@@ -68,17 +68,17 @@
                     <c:if test="${isOwnProfile}">
                         <div class="header-edit-section">
                             <div id="header-edit-mode-controls" class="header-edit-controls">
-                                <button type="button" id="header-edit-btn" class="btn btn-primary btn-edit-header" onclick="enterEditMode()">
-                                    <i class="fas fa-edit"></i> <spring:message code="dashboard.profile.edit" />
+                                <button type="button" id="header-edit-btn" class="btn btn-primary" onclick="enterEditMode()">
+                                     <spring:message code="dashboard.profile.edit" />
                                 </button>
                             </div>
 
                             <div id="header-save-mode-controls" class="header-edit-controls" style="display: none;">
-                                <button type="button" id="header-save-btn" class="btn btn-success" onclick="saveAllChanges()">
-                                    <i class="fas fa-save"></i> <spring:message code="appointment.form.save" />
+                                <button type="button" id="header-save-btn" class="btn btn-primary" onclick="saveAllChanges()">
+                                    <spring:message code="appointment.form.save" />
                                 </button>
                                 <button type="button" id="header-cancel-btn" class="btn btn-secondary" onclick="cancelAllChanges()">
-                                    <i class="fas fa-times"></i> <spring:message code="appointment.cancel" />
+                                     <spring:message code="appointment.cancel" />
                                 </button>
                             </div>
                         </div>
@@ -874,24 +874,6 @@
 
     .btn-success:hover {
         background-color: #059669;
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-    }
-
-    .btn-secondary {
-        background-color: transparent;
-        color: var(--linkedin-blue);
-        border: 2px solid var(--linkedin-blue);
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-
-    .btn-secondary:hover {
-        background-color: var(--linkedin-blue);
-        color: white;
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
     }
