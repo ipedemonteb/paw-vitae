@@ -25,9 +25,10 @@ public class SearchController {
     private final DoctorProfileService doctorProfileService;
     private final DoctorCertificationService doctorCertificationService;
     private final DoctorExperienceService doctorExperienceService;
+    private final DoctorOfficeService doctorOfficeService;
 
     @Autowired
-    public SearchController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, RatingService ratingService, DoctorProfileService doctorProfileService, DoctorCertificationService doctorCertificationService, DoctorExperienceService doctorExperienceService) {
+    public SearchController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, RatingService ratingService, DoctorProfileService doctorProfileService, DoctorCertificationService doctorCertificationService, DoctorExperienceService doctorExperienceService, DoctorOfficeService doctorOfficeService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
@@ -35,6 +36,7 @@ public class SearchController {
         this.doctorProfileService = doctorProfileService;
         this.doctorCertificationService = doctorCertificationService;
         this.doctorExperienceService = doctorExperienceService;
+        this.doctorOfficeService = doctorOfficeService;
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -79,6 +81,7 @@ public class SearchController {
         mav.addObject("doctor", doctor);
         mav.addObject("loggedUser", loggedUser);
         mav.addObject("doctorRatings", ratingService.getRatingsByDoctorId(doctorId));
+        mav.addObject("offices", doctorOfficeService.getByDoctorId(doctorId));
         return mav;
     }
 
