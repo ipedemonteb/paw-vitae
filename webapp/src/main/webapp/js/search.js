@@ -68,7 +68,7 @@ function initializeSearchInput() {
 
         searchInput.addEventListener("keydown", function (event) {
             if (event.key === "Enter") {
-                event.preventDefault(); // Prevent default form submission if inside a form
+                // event.preventDefault(); // Prevent default form submission if inside a form
                 const keywordValue = this.value
 
                 // Update URL with coverage parameter
