@@ -17,8 +17,8 @@ public class DoctorProfileForm {
 
     @Size(max = 2600)
     private String description;
-    @ValidExperience(message = "{experiences.invalid}")
 
+    @ValidExperience(message = "{experiences.invalid}")
     @Size(max = 10)
     private List<ExperienceForm> experiences;
     @ValidCertificate(message = "{certificates.invalid}")
