@@ -66,6 +66,39 @@ function initializeSearchInput() {
             }, 300)
         })
 
+        searchInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent default form submission if inside a form
+                const keywordValue = this.value
+
+                // Update URL with coverage parameter
+                const currentUrl = new URL(window.location.href)
+                if (keywordValue.trim() === "") {
+                    currentUrl.searchParams.delete("keyword")
+                } else {
+                    currentUrl.searchParams.set("keyword", keywordValue)
+                }
+                currentUrl.searchParams.set("page", "1")
+
+                // Redirect to the updated URL
+                window.location.href = currentUrl.toString()
+            }
+        });
+
+        searchInput.addEventListener('focus', function () {
+            const query = searchInput.value.trim()
+            if (query.length >= 1) {
+                // Fetch search results when input is focused
+                fetchSearchResults(query).then(() => {
+                    if (searchResults && searchResults.length > 0) {
+                        displaySuggestions(searchResults)
+                    } else {
+                        hideSuggestions()
+                    }
+                })
+            }
+        })
+
         // Hide suggestions when clicking outside
         document.addEventListener('click', function(event) {
             if (!searchContainer.contains(event.target)) {
@@ -430,6 +463,7 @@ function applyWeekdaysFilter() {
 function applyAllFilters() {
     const specialtyId = document.getElementById("specialtySelect").value
     const coverageId = document.getElementById("coverageSelect").value
+    const keywordValue = document.getElementById("doctorSearch").value.trim()
     const sortValue = document.getElementById("sortSelect").value
     const lastUnderscoreIndex = sortValue.lastIndexOf("_");
     const orderBy = sortValue.substring(0, lastUnderscoreIndex);
@@ -452,6 +486,13 @@ function applyAllFilters() {
         currentUrl.searchParams.delete("coverage")
     } else {
         currentUrl.searchParams.set("coverage", coverageId)
+    }
+
+    // Handle keyword parameter
+    if (keywordValue === "") {
+        currentUrl.searchParams.delete("keyword")
+    } else {
+        currentUrl.searchParams.set("keyword", keywordValue)
     }
 
     currentUrl.searchParams.set("orderBy", orderBy || "name")
