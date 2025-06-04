@@ -34,6 +34,12 @@
                     <div class="search-container">
                         <form action="<c:url value='/search' />" method="get" class="search-form" id="searchForm">
                             <div class="search-bar">
+                                <div class="keyword-input-wrapper">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" name="keyword" class="keyword-input"
+                                           placeholder="<spring:message code='landing.search.placeholder'/>" autocomplete="off"
+                                           value="${param.keyword}">
+                                </div>
                                 <div class="specialty-select-wrapper">
                                     <i class="fas fa-stethoscope"></i>
                                     <select name="specialty" class="specialty-select" id="specialtyDropdown">
@@ -246,8 +252,16 @@
     if (searchForm) {
         searchForm.addEventListener('submit', function(event) {
             const specialtyDropdown = document.getElementById('specialtyDropdown');
+            const keywordInput = document.querySelector('input[name="keyword"]');
+
+            // Remove specialty parameter if "All Specialties" is selected
             if (specialtyDropdown.value === '0') {
                 specialtyDropdown.name = '';
+            }
+
+            // Remove keyword parameter if empty
+            if (keywordInput && keywordInput.value.trim() === '') {
+                keywordInput.name = '';
             }
         });
     }

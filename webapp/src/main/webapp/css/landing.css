@@ -116,8 +116,8 @@ img {
 }
 
 .hero-content {
-    flex: 1;
-    max-width: 600px;
+    flex: 1.5;
+    max-width: 700px;
 }
 
 .hero-title {
@@ -136,6 +136,7 @@ img {
 
 .search-container {
     margin-bottom: 40px;
+    width: 100%;
 }
 
 .search-bar {
@@ -153,6 +154,44 @@ img {
     align-items: center;
     padding: 0 20px;
     border-right: 1px solid #e2e8f0;
+}
+
+/* Keyword input wrapper styles */
+.keyword-input-wrapper {
+    position: relative;
+    flex: 1.5;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.keyword-input-wrapper i {
+    color: var(--text-light);
+    margin-right: 10px;
+}
+
+.keyword-input {
+    width: 100%;
+    padding: 16px 0;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    color: var(--text-color);
+    outline: none;
+}
+
+.keyword-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.keyword-input::placeholder {
+    color: var(--text-light);
+}
+
+.keyword-input:focus {
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 .specialty-select-wrapper i {
@@ -725,6 +764,10 @@ section {
         font-size: 36px;
     }
 
+    .keyword-input-wrapper {
+        flex: 1;
+    }
+
     .section-title {
         font-size: 28px;
     }
@@ -745,6 +788,10 @@ section {
         font-size: 32px;
     }
 
+    .search-button {
+        min-height: 40px;
+    }
+
     .hero-stats {
         flex-direction: column;
         gap: 20px;
@@ -752,6 +799,11 @@ section {
 
     .search-bar {
         flex-direction: column;
+    }
+
+    .keyword-input-wrapper {
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
     }
 
     .specialty-select-wrapper {
