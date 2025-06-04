@@ -66,7 +66,7 @@
               </a>
             </li>
             <li class="mobile-auth-item">
-              <a href="<c:url value='/search/${userId}' />" class="nav-link mobile-auth-link">
+              <a href="<c:url value='/search/${param.doctorId}' />" class="nav-link mobile-auth-link">
                 <i class="fas fa-user-circle"></i>
                 <spring:message code="header.dropdown.profile" />
               </a>
@@ -135,7 +135,7 @@
                 <i class="fas fa-stethoscope"></i>
                 <spring:message code="header.dropdown.doctorDashboard" />
               </a>
-              <a href="<c:url value='/search/${userId}' />" class="dropdown-item">
+              <a href="<c:url value='/search/${param.doctorId}' />" class="dropdown-item">
                 <i class="fas fa-user-circle"></i>
                 <spring:message code="header.dropdown.profile" />
               </a>

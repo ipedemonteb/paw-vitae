@@ -82,7 +82,6 @@ public class SearchController {
         mav.addObject("loggedUser", loggedUser);
         mav.addObject("doctorRatings", ratingService.getRatingsByDoctorId(doctorId));
         mav.addObject("offices", doctorOfficeService.getByDoctorId(doctorId));
-        mav.addObject("userId", doctorId);
         return mav;
     }
 
