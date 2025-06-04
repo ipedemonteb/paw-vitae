@@ -212,7 +212,7 @@ async function fetchSearchResults(query) {
         const response = await fetch(`/search/doctors/${encodeURIComponent(query)}`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/",
                 "X-Requested-With": "XMLHttpRequest",
             },
         })
