@@ -11,7 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><spring:message code="doctor.profile.title" arguments="${doctor.name},${doctor.lastName}" /></title>
+    <title><spring:message code="doctor.profile.title" arguments="${fn:escapeXml(doctor.name)},${fn:escapeXml(doctor.lastName)}" /></title>
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/V-logo.svg/2048px-V-logo.svg.png" />
     <link rel="stylesheet" href="<c:url value='/css/doctor-profile.css' />" />
     <link rel="stylesheet" href="<c:url value='/css/toast-notification.css' />" />
@@ -491,7 +491,7 @@
                     <div class="cta-content">
                         <h3><spring:message code="doctor.profile.ready.to.book" /></h3>
                         <p>
-                            <spring:message code="doctor.profile.book.description" arguments="${doctor.name},${doctor.lastName}" />
+                            <spring:message code="doctor.profile.book.description" arguments="${fn:escapeXml(doctor.name)},${fn:escapeXml(doctor.lastName)}" />
                         </p>
                         <a href="<c:url value='/appointment?doctorId=${doctor.id}'/>" class="btn btn-primary btn-large">
                             <i class="fas fa-calendar-plus"></i>
