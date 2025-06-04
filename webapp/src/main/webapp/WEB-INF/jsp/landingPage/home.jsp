@@ -34,9 +34,9 @@
                     <div class="search-container">
                         <form action="<c:url value='/search' />" method="get" class="search-form" id="searchForm">
                             <div class="search-bar">
-                                <div class="keyword-input-wrapper">
+                                <div class="search-bar-container">
                                     <i class="fas fa-search"></i>
-                                    <input type="text" name="keyword" class="keyword-input"
+                                    <input type="text" id="doctorSearch" name="keyword" class="keyword-input"
                                            placeholder="<spring:message code='landing.search.placeholder'/>" autocomplete="off"
                                            value="${param.keyword}">
                                 </div>
@@ -246,8 +246,13 @@
 </main>
 
 <!-- Scripts -->
+<script src="<c:url value='/js/search.js' />"></script>
 <script>
-
+    const contextPath = "${pageContext.request.contextPath}";
+    const doctorMessage = '<spring:message code="appointment.form.doctor"/>';
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeSearchInput();
+    });
     const searchForm = document.getElementById('searchForm');
     if (searchForm) {
         searchForm.addEventListener('submit', function(event) {
