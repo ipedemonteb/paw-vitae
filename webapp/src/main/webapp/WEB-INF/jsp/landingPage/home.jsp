@@ -36,7 +36,7 @@
                             <div class="search-bar">
                                 <div class="search-bar-container">
                                     <i class="fas fa-search"></i>
-                                    <input type="text" id="doctorSearch" name="keyword" class="keyword-input"
+                                    <input form="searchForm" type="text" id="doctorSearch" name="keyword" class="keyword-input"
                                            placeholder="<spring:message code='landing.search.placeholder'/>" autocomplete="off"
                                            value="${param.keyword}">
                                 </div>
