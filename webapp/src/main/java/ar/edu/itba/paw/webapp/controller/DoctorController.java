@@ -65,7 +65,6 @@ public class DoctorController {
         mav.addObject("upcomingAppointments", appointmentsPage.getContent());
         mav.addObject("currentPage", page.getValue());
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
-        mav.addObject("userId", doctor.getId());
         LOGGER.debug("Loading dashboard and upcoming appointments for doctor ID: {}", doctor.getId());
         return mav;
     }
@@ -82,7 +81,6 @@ public class DoctorController {
         mav.addObject("currentPage", page.getValue());
         mav.addObject("doctor", doctor);
         mav.addObject("totalPages", appointmentsPage.getTotalPages());
-        mav.addObject("userId", doctor.getId());
         return mav;
     }
 
@@ -96,7 +94,6 @@ public class DoctorController {
         mav.addObject("coverageList", coverageService.getAll());
         mav.addObject("specialtyList", specialtyService.getAll());
         mav.addObject("display", "none");
-        mav.addObject("userId", doctor.getId());
         return mav;
     }
 
@@ -108,7 +105,6 @@ public class DoctorController {
         updateAvailabilityForm.setAvailabilitySlots(availabilitySlotsService.getDoctorAvailabilitySlots(doctor));
         updateAvailabilityForm.setUnavailabilitySlots(unavailabilitySlotsService.getDoctorUnavailabilitySlots(doctor));
         mav.addObject("doctor", doctor);
-        mav.addObject("userId", doctor.getId());
         return mav;
     }
 
@@ -182,7 +178,6 @@ public class DoctorController {
         mav.addObject("existingRating", ratingService.getRatingByAppointmentId(appointment.getId()).orElse(null));
         mav.addObject("isCancelled", appointment.getStatus().equals(AppointmentStatus.CANCELADO.getValue()));
         mav.addObject("office", appointment.getDoctorOffice());
-        mav.addObject("userId", doctor.getId());
         doctorFileForm.setAppointmentId(id);
         return mav;
     }
@@ -211,7 +206,6 @@ public class DoctorController {
         mav.addObject("doctorOffices", doctorOfficeService.getAllByDoctorId(doctor.getId()));
         mav.addObject("neighborhoodList", neighborhoodService.getAll());
         mav.addObject("specialtyList", specialtyService.getAll());
-        mav.addObject("userId", doctor.getId());
         return mav;
     }
 

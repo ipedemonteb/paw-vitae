@@ -19,6 +19,7 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/components/header.jsp">
     <jsp:param name="id" value="${imageId}" />
+    <jsp:param name="doctorId" value="${loggedUser == null ? 0 : loggedUser.id}"/>
 </jsp:include>
 
 <main class="landing-container">
