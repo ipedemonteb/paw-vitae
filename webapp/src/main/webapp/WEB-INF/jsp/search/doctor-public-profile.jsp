@@ -470,7 +470,7 @@
                                 </div>
                                 <div class="testimonial-author">
                                     <div class="author-info">
-                                        <h4 class="author-name">${entry.patient.name} ${entry.patient.lastName}</h4>
+                                        <h4 class="author-name"><c:out value="${entry.patient.name} ${entry.patient.lastName}"/></h4>
                                         <p class="author-title"><spring:message code="landing.doctor.ratings.patient" text="Paciente" /></p>
                                     </div>
                                 </div>
