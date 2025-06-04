@@ -24,9 +24,9 @@ public interface DoctorDao {
 
     void updateDoctor(long id, List<Long> specialties, List<Long> coverages);
 
-    List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize);
+    List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction, int page, int pageSize);
 
-    int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction);
+    int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction);
 
     Optional<Doctor> getByVerificationToken(String token);
 

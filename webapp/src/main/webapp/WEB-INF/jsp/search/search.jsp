@@ -73,7 +73,7 @@
       <div class="search-bar-container">
         <div class="search-bar">
           <i class="fas fa-search search-icon"></i>
-          <input type="text" id="doctorSearch" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input" autocomplete="off">
+          <input type="text" id="doctorSearch" value="${param.keyword}" placeholder="<spring:message code="search.placeholder.doctor" />" class="search-input" autocomplete="off">
         </div>
       </div>
     </div>
@@ -217,6 +217,13 @@
               <i class="fas fa-calendar-week"></i>
               <span><spring:message code="search.filter.weekdays" /></span>
               <button class="filter-tag-remove" onclick="clearWeekdaysFilter()">×</button>
+            </div>
+          </c:if>
+          <c:if test="${not empty param.keyword}">
+            <div class="filter-tag">
+              <i class="fas fa-search"></i>
+              <span><c:out value="${param.keyword}"/></span>
+              <button class="filter-tag-remove" onclick="clearSearchInput()">×</button>
             </div>
           </c:if>
         </div>
@@ -453,6 +460,9 @@
                   <c:if test="${not empty param.view}">
                     <c:param name="view" value="${param.view}" />
                   </c:if>
+                  <c:if test="${not empty param.keyword}">
+                    <c:param name="keyword" value="${param.keyword}" />
+                  </c:if>
                 </c:url>
                 <a href="${prevUrl}" class="pagination-btn prev">
                   <i class="fas fa-chevron-left"></i>
@@ -487,6 +497,9 @@
                         <c:if test="${not empty param.view}">
                           <c:param name="view" value="${param.view}" />
                         </c:if>
+                        <c:if test="${not empty param.keyword}">
+                          <c:param name="keyword" value="${param.keyword}" />
+                        </c:if>
                       </c:url>
                       <a href="${pageUrl}" class="pagination-number">${pageNum}</a>
                     </c:otherwise>
@@ -515,6 +528,9 @@
                   </c:if>
                   <c:if test="${not empty param.view}">
                     <c:param name="view" value="${param.view}" />
+                  </c:if>
+                  <c:if test="${not empty param.keyword}">
+                    <c:param name="keyword" value="${param.keyword}" />
                   </c:if>
                 </c:url>
                 <a href="${nextUrl}" class="pagination-btn next">
@@ -560,6 +576,13 @@
   function clearSpecialtyFilter() {
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.delete('specialty');
+    currentUrl.searchParams.set('page', '1');
+    window.location.href = currentUrl.toString();
+  }
+
+  function clearSearchInput() {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('keyword');
     currentUrl.searchParams.set('page', '1');
     window.location.href = currentUrl.toString();
   }

@@ -3,13 +3,11 @@ import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.DoctorProfileForm;
-import ar.edu.itba.paw.webapp.form.UpdateDoctorForm;
 import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -45,12 +43,13 @@ public class SearchController {
             @ParamCustomizer( defaultValue = 1) QueryParam page,
             @ParamCustomizer(defaultValue = 0,paramName = "coverage") QueryParam coverageId,
             @ParamCustomizer(paramName = "weekdays") List<QueryParam> weekdays,
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestParam(value = "view", required = false, defaultValue = "grid") String view
     ) {
         List<Coverage> coverages = coverageService.getAll();
-        Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId.getValue(), coverageId.getValue(), weekdays, orderBy, direction, (int) page.getValue(), 9);
+        Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId.getValue(), coverageId.getValue(), weekdays, keyword, orderBy, direction, (int) page.getValue(), 9);
         List<Specialty> allSpecialties = specialtyService.getAll();
         ModelAndView mav = new ModelAndView("search/search");
         mav.addObject("coverages", coverages);

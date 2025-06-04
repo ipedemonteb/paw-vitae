@@ -34,7 +34,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
-        Query nativeQuery = getNativeQuery(specialtyId, 0, null, "name", "asc",  false); //TODO aggalan said not to remove this unused method, therefore i need to pass placeholders as arguments, any objections you may have take them up with him
+        Query nativeQuery = getNativeQuery(specialtyId, 0, null, null, "name", "asc",  false); //TODO aggalan said not to remove this unused method, therefore i need to pass placeholders as arguments, any objections you may have take them up with him
         nativeQuery.setFirstResult((page-1) * pageSize);
         nativeQuery.setMaxResults(pageSize);
 
@@ -51,7 +51,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public int countBySpecialty(long specialtyId) {
-        Query nativeQuery = getNativeQuery(specialtyId, 0, null, "name", "asc",true);
+        Query nativeQuery = getNativeQuery(specialtyId, 0, null, null, "name", "asc",true);
         return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
@@ -86,8 +86,8 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     }
 
     @Override
-    public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, int page, int pageSize) {
-        Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, orderBy, direction, false);
+    public List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction, int page, int pageSize) {
+        Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, keyword, orderBy, direction, false);
         nativeQuery.setFirstResult((page-1) * pageSize);
         nativeQuery.setMaxResults(pageSize);
         //supresswarnings
@@ -100,8 +100,8 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     }
 
     @Override
-    public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction) {
-        Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, orderBy, direction, true);
+    public int countWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction) {
+        Query nativeQuery = getNativeQuery(specialtyId, coverageId, weekdays, keyword, orderBy, direction, true);
         return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
@@ -110,6 +110,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
             long specialtyId,
             long coverageId,
             List<Integer> weekdays,
+            String keyword,
             String orderBy,
             String direction,
             boolean isCount
@@ -142,6 +143,9 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         }
         if (weekdays != null && !weekdays.isEmpty()) {
             sql.append(" AND a.day_of_week   IN (:weekdays)");
+        }
+        if (keyword != null && !keyword.isBlank()) {
+            sql.append(" AND (LOWER(CONCAT(u.name, ' ', u.last_name)) LIKE LOWER(:keyword))");
         }
 
         if (!isCount) {
@@ -177,8 +181,8 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return sql;
     }
 
-    private Query getNativeQuery(long specialtyId, long coverageId, List<Integer> weekdays, String orderBy, String direction, boolean isCount) {
-        StringBuilder sql = getSql(specialtyId, coverageId, weekdays, orderBy, direction, isCount);
+    private Query getNativeQuery(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction, boolean isCount) {
+        StringBuilder sql = getSql(specialtyId, coverageId, weekdays, keyword, orderBy, direction, isCount);
         Query nativeQuery = em.createNativeQuery(sql.toString());
 
         if (specialtyId > 0) {
@@ -189,6 +193,9 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         }
         if (weekdays != null && !weekdays.isEmpty()) {
             nativeQuery.setParameter("weekdays", weekdays.stream().filter(w -> w >= 0 && w < 7).collect(Collectors.toList()));
+        }
+        if (keyword != null && !keyword.isBlank()) {
+            nativeQuery.setParameter("keyword", "%" + keyword + "%");
         }
         return nativeQuery;
     }
@@ -224,7 +231,10 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         query.setMaxResults(results);
         List<Doctor> doctors = query.getResultList();
         // Sort the results by name
-        doctors.sort(Comparator.comparing(Doctor::getName, String.CASE_INSENSITIVE_ORDER)
+        doctors.sort(Comparator.comparing((Doctor doctor) -> {
+                    String fullName = (doctor.getName() + " " + doctor.getLastName()).toLowerCase();
+                    return fullName.startsWith(keyword.toLowerCase()) ? 0 : 1;
+                }).thenComparing(Doctor::getName, String.CASE_INSENSITIVE_ORDER)
                 .thenComparing(Doctor::getLastName, String.CASE_INSENSITIVE_ORDER));
         return doctors;
     }
