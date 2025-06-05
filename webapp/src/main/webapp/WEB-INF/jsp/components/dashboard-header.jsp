@@ -84,6 +84,12 @@
     <i class="fas fa-user"></i>
     <span><spring:message code="dashboard.tab.profile" /></span>
   </a>
+  <c:if test="${!isDoctor}">
+    <a href="<c:url value='/patient/dashboard/medical-history'/>" class="nav-tab ${activeTab == 'medicalHistory' ? 'active' : ''}">
+      <i class="fas fa-notes-medical"></i>
+      <span><spring:message code="dashboard.tab.medical.history" /></span>
+    </a>
+  </c:if>
   <c:if test="${isDoctor}">
     <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab ${activeTab == 'availability' ? 'active' : ''}">
       <i class="fas fa-calendar-check"></i>

@@ -4,10 +4,7 @@ import ar.edu.itba.paw.interfacePersistence.AppointmentFileDao;
 import ar.edu.itba.paw.interfaceServices.AppointmentFileService;
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.MailService;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.AppointmentFile;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AppointmentFileServiceImpl implements AppointmentFileService {
@@ -97,6 +93,29 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         }
         LOGGER.info("File {} authorized for appointment {} and user {}", file, appointment, username);
         return Optional.of(file);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AppointmentFile> getAllFilesForPatient(long patientId, int pageNumber, int pageSize) {
+        LOGGER.debug("Getting files for patient {} on page {}", patientId, pageNumber);
+        int totalFiles = appointmentFileDao.getAllFilesForPatientCount(patientId);
+        List<AppointmentFile> files = appointmentFileDao.getAllFilesForPatient(patientId, pageNumber, pageSize);
+        return new Page<>(files, pageNumber, pageSize, totalFiles);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Map.Entry<Appointment, List<AppointmentFile>>> getGroupedFilesForPatient(long patientId, int page, int pageSize) {
+        int totalFiles = appointmentFileDao.getAllFilesForPatientCount(patientId);
+        List<AppointmentFile> files = appointmentFileDao.getAllFilesForPatient(patientId, page, pageSize);
+
+        // Group by Appointment
+        Map<Appointment, List<AppointmentFile>> grouped = files.stream()
+                .collect(Collectors.groupingBy(AppointmentFile::getAppointment, LinkedHashMap::new, Collectors.toList()));
+
+        List<Map.Entry<Appointment, List<AppointmentFile>>> groupedList = new ArrayList<>(grouped.entrySet());
+
+        return new Page<>(groupedList, page, pageSize, totalFiles);
     }
 
 }
