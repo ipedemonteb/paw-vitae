@@ -17,6 +17,7 @@ public class OfficeForm {
     @NotEmpty
     @NotNull
     @Size(min = 1, max = 20)
+    @ActiveOffice(message = "{offices.active}")
     @UniqueOffices(message = "{offices.duplicate}")
     @ValidOfficeNames(message = "{offices.invalid.name}")
     @ValidOfficeSpecialties(message = "{offices.invalid.specialties}")
