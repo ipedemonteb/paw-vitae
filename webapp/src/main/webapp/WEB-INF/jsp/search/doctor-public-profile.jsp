@@ -44,7 +44,7 @@
         <c:set var="isOwnProfile" value="${loggedUser != null && loggedUser.id == doctor.id}" />
         <c:if test="${!isOwnProfile}">
             <div class="back-navigation">
-                <a href="javascript:history.back()" class="back-btn">
+                <a href="<c:url value='/search'/>" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
                     <spring:message code="doctor.profile.back" />
                 </a>
@@ -59,12 +59,12 @@
                              alt="<c:out value='${doctor.name} ${doctor.lastName}'/>"
                              class="avatar-img">
                     </div>
-                    <c:if test="${doctor.verified}">
-                        <div class="verified-badge">
-                            <i class="fas fa-check-circle"></i>
-                            <span><spring:message code="doctor.profile.verified" /></span>
-                        </div>
-                    </c:if>
+<%--                    <c:if test="${doctor.verified}">--%>
+<%--                        <div class="verified-badge">--%>
+<%--                            <i class="fas fa-check-circle"></i>--%>
+<%--                            <span><spring:message code="doctor.profile.verified" /></span>--%>
+<%--                        </div>--%>
+<%--                    </c:if>--%>
 
                     <c:if test="${isOwnProfile}">
                         <div class="header-edit-section">
@@ -505,7 +505,7 @@
 </main>
 
 <c:if test="${isOwnProfile}">
-    <form:form id="updateProfileForm" method="POST" action="/doctor/profile/update" modelAttribute="doctorProfileForm" style="display: none;">
+    <form:form id="updateProfileForm" method="POST" action="${pageContext.request.contextPath}/doctor/profile/update" modelAttribute="doctorProfileForm" style="display: none;">
         <form:hidden path="biography" id="hiddenBio" />
         <form:hidden path="description" id="hiddenDescription" />
         <div id="hiddenExperiences"></div>
