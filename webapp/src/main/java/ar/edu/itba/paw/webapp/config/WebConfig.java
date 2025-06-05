@@ -246,8 +246,8 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
 
         // Si ponen esto en prod, hay tabla!!!
         //@TODO: BORRAR
-        properties.setProperty("hibernate.show_sql", "true");
-        properties.setProperty("format_sql", "true");
+//        properties.setProperty("hibernate.show_sql", "true");
+//        properties.setProperty("format_sql", "true");
 
         factoryBean.setJpaProperties(properties);
         return factoryBean;
