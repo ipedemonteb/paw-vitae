@@ -161,11 +161,11 @@
                         <spring:message code="offices.filter.active" />
                         <span class="tab-count" id="count-active">0</span>
                     </button>
-<%--                    <button class="filter-tab" data-filter="disabled" onclick="filterOffices('disabled')">--%>
-<%--                        <i class="fas fa-pause-circle"></i>--%>
-<%--                        <spring:message code="offices.filter.disabled" />--%>
-<%--                        <span class="tab-count" id="count-disabled">0</span>--%>
-<%--                    </button>--%>
+                    <button class="filter-tab" data-filter="disabled" onclick="filterOffices('disabled')">
+                        <i class="fas fa-pause-circle"></i>
+                        <spring:message code="offices.filter.disabled" />
+                        <span class="tab-count" id="count-disabled">0</span>
+                    </button>
                 </div>
 
                 <form:form id="officesForm" modelAttribute="doctorOfficeForm" method="post"
@@ -322,6 +322,10 @@
             updateFilterCounts();
             applyCurrentFilter();
             hideRemoveConfirmation();
+            if (doctorOffices.filter(o => o.active).length === 0) {
+                // If all offices are removed, add a new office
+                addNewOffice();
+            }
         }
     }
 
@@ -393,22 +397,22 @@
         let html = '';
 
         // Status indicator
-        <%--html += '<div class="office-status-indicator" id="status-indicator-' + index + '">';--%>
-        <%--html += '<i class="fas fa-circle"></i>';--%>
-        <%--html += '<span id="status-text-' + index + '"><spring:message code='offices.status.active' /></span>';--%>
-        <%--html += '</div>';--%>
+        html += '<div class="office-status-indicator" id="status-indicator-' + index + '">';
+        html += '<i class="fas fa-circle"></i>';
+        html += '<span id="status-text-' + index + '"><spring:message code='offices.status.active' /></span>';
+        html += '</div>';
 
         // Action buttons
-        // html += '<div class="office-actions">';
-        <%--html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';--%>
-        <%--html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';--%>
-        <%--html += '<i class="fas fa-pause"></i>';--%>
-        <%--html += '</button>';--%>
-        <%--html += '<button type="button" class="office-action-btn btn-remove-office" id="remove-btn-' + index + '" ';--%>
-        <%--html += 'onclick="showRemoveConfirmation(' + index + ')" data-tooltip="<spring:message code='offices.remove' />">';--%>
-        <%--html += '<i class="fas fa-trash"></i>';--%>
-        <%--html += '</button>';--%>
-        // html += '</div>';
+        html += '<div class="office-actions">';
+        html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';
+        html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';
+        html += '<i class="fas fa-pause"></i>';
+        html += '</button>';
+        html += '<button type="button" class="office-action-btn btn-remove-office" id="remove-btn-' + index + '" ';
+        html += 'onclick="showRemoveConfirmation(' + index + ')" data-tooltip="<spring:message code='offices.remove' />">';
+        html += '<i class="fas fa-trash"></i>';
+        html += '</button>';
+        html += '</div>';
 
         html += '<div class="form-row">';
 
@@ -501,6 +505,10 @@
         updateOfficeStatus(index);
         updateFilterCounts();
         applyCurrentFilter();
+        if (doctorOffices.filter(o => o.active).length === 0) {
+            // If all offices are removed, add a new office
+            addNewOffice();
+        }
     }
 
     function updateOfficeStatus(index) {
@@ -971,6 +979,12 @@
 
     // Form submission with validation
     document.addEventListener('DOMContentLoaded', function() {
+
+        const hasErrors = ${not empty doctorOfficeForm.doctorOfficeForm ? 'true' : 'false'};
+        if (hasErrors) {
+            showOfficesForm();
+        }
+
         const form = document.getElementById('officesForm');
 
         if (form) {
