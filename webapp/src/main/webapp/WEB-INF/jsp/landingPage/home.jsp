@@ -156,11 +156,13 @@
                 </div>
             </div>
 
-            <div class="cta-container">
-                <a href="<c:url value='/register' />" class="btn btn-primary btn-large">
-                    <spring:message code="landing.cta.button" />
-                </a>
-            </div>
+            <sec:authorize access="isAnonymous()">
+                <div class="cta-container">
+                    <a href="<c:url value='/register' />" class="btn btn-primary btn-large">
+                        <spring:message code="landing.cta.button" />
+                    </a>
+                </div>
+            </sec:authorize>
         </div>
     </section>
 
