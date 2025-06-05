@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence.hibernate;
 import ar.edu.itba.paw.interfacePersistence.AppointmentFileDao;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentFile;
+import ar.edu.itba.paw.models.Page;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -33,4 +34,26 @@ public class AppointmentFileDaoHibeImpl implements AppointmentFileDao {
                 .setParameter("appointment_id", appointment_id)
                 .getResultList();
     }
+
+    @Override
+    public List<AppointmentFile> getAllFilesForPatient(long patientId, int pageNumber, int pageSize) {
+        int firstResult = (pageNumber - 1) * pageSize;
+        return em.createQuery("FROM AppointmentFile af WHERE af.appointment.patient.id = :patientId", AppointmentFile.class)
+                .setParameter("patientId", patientId)
+                .setFirstResult(firstResult)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+
+
+
+    @Override
+    public int getAllFilesForPatientCount(long patientId) {
+        return ((Number) em.createQuery("SELECT COUNT(af) FROM AppointmentFile af WHERE af.appointment.patient.id = :patientId")
+                .setParameter("patientId", patientId)
+                .getSingleResult()).intValue();
+    }
+
+
 }
