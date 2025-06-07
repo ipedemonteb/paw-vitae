@@ -39,6 +39,25 @@ public class AccessHandler {
         return userId == doctorId;
     }
 
+    public boolean canSeeMedicalHistory(Authentication auth, long patientId) {
+        Object principal = auth.getPrincipal();
+        if (!(principal instanceof AuthUserDetails)) {
+            return false;
+        }
+
+        long doctorId = userService.getByEmail(((AuthUserDetails) principal).getUsername())
+                .orElseThrow(UserNotFoundException::new)
+                .getId();
+
+        // Check if the authenticated user is the patient themselves
+        if (doctorId == patientId) {
+            return true; // Patients can always view their own history
+        }
+
+        // Check if the user is a doctor and has permission
+        return appointmentService.hasAllowedAppointmentBetweenDoctorAndPatient(doctorId, patientId);
+    }
+
     public boolean canHandleAppointment(Authentication auth, String appointmentId) {
         Object principal = auth.getPrincipal();
         if (!(principal instanceof AuthUserDetails)) {

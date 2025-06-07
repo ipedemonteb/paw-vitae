@@ -208,6 +208,12 @@
                             <form:errors path="files" cssClass="error-message" />
                         </div>
                     </div>
+                <div class="form-group">
+                    <label class="flex items-center space-x-2">
+                        <form:checkbox path="allowFullHistory" />
+                        <span><spring:message code="allow.full.history" /></span>
+                    </label>
+                </div>
 
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block" >

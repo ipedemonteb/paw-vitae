@@ -769,6 +769,29 @@
     word-break: break-word;
     line-height: 1.4;
 }
+.back-button-container {
+    margin-top: 2rem;
+    text-align: left;
+    width: 100%; /* Ensure full width */
+}
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: var(--transition);
+}
+.back-button:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+}
 
 .file-meta {
     margin-bottom: 1rem;

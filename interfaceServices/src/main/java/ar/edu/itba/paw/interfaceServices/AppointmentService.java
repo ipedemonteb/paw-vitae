@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface AppointmentService {
 
-    Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId);
+    Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId, boolean allowFullHistory);
 
     void sendDailyReminders();
 
@@ -27,4 +27,6 @@ public interface AppointmentService {
     Map<LocalDate, List<Integer>> getFutureAppointmentsByUserAndDate(long userId);
 
     void updateAppointmentReport(long appointmentId, String report);
+
+    boolean hasAllowedAppointmentBetweenDoctorAndPatient(long doctorId, long patientId);
 }

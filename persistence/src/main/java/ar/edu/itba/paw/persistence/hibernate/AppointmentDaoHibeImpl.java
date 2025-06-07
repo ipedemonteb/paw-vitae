@@ -25,8 +25,8 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     private EntityManager em;
 
     @Override
-    public Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice) {
-        Appointment appointment = new Appointment(date, status, reason, specialty, doctor, patient, report, doctorOffice);
+    public Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice, boolean allowFullHistory) {
+        Appointment appointment = new Appointment(date, status, reason, specialty, doctor, patient, report, doctorOffice, allowFullHistory);
         em.persist(appointment);
         return appointment;
     }
@@ -146,12 +146,24 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return sql;
     }
 
+    @Override
+    public boolean hasAllowedAppointmentBetweenDoctorAndPatient(long doctorId, long patientId){
+        Long count = em.createQuery(
+                "SELECT COUNT(a) FROM Appointment a WHERE a.doctor.id = :doctorId AND a.patient.id = :patientId AND a.allowFullHistory = true", Long.class)
+                .setParameter("doctorId", doctorId)
+                .setParameter("patientId", patientId)
+                .getSingleResult();
+        return count > 0;
+    }
+
     private Query getNativeQuery(long userId, boolean isFuture, String filter, boolean isCount) {
         StringBuilder sql = getSql(isFuture, filter, isCount);
         Query nativeQuery = em.createNativeQuery(sql.toString());
         nativeQuery.setParameter("userId", userId);
         return nativeQuery;
     }
+
+
 
     // -------------------------------------
     //  DEPRECATED METHODS
