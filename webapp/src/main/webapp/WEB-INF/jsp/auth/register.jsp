@@ -65,7 +65,7 @@
                         </div>
                         <div class="progress-step" data-step="3">
                             <div class="step-indicator">3</div>
-                            <div class="step-label"><spring:message code="register.step.availability"/></div>
+                            <div class="step-label"><spring:message code="register.step.offices"/></div>
                         </div>
                     </div>
 
@@ -336,6 +336,19 @@
                                 </div>
                             </div>
 
+                            <div class="form-navigation">
+                                <button type="button" class="btn-prev" onclick="prevSection(2)">
+                                    <i class="fas fa-arrow-left"></i> <spring:message code="register.previous"/>
+                                </button>
+                                <button type="button" class="btn-next" onclick="nextSection(2)">
+                                    <spring:message code="register.next"/> <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-section" data-section="3">
+                            <h2><spring:message code="register.step.offices"/></h2>
+
                             <div class="form-group">
                                 <label class="form-label required-field"><spring:message code="register.doctorOffices"/></label>
                                 <div id="doctor-offices-container">
@@ -398,7 +411,10 @@
                                         </div>
 
                                         <div class="office-actions">
-                                            <button type="button" class="btn-remove office-remove" onclick="removeOffice(0)" style="display: none;">
+                                            <button type="button" class="btn-edit-availability" onclick="openOfficeAvailabilityModal(0)">
+                                                <i class="fas fa-clock"></i> <spring:message code="register.editAvailability"/>
+                                            </button>
+                                            <button type="button" class="btn-remove office-remove" onclick="removeOffice(0)">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         </div>
@@ -410,59 +426,6 @@
                                 <button type="button" class="btn-add-slot" id="add-office-btn">
                                     <i class="fas fa-plus"></i> <spring:message code="register.addOffice"/>
                                 </button>
-                            </div>
-
-                            <div class="form-navigation">
-                                <button type="button" class="btn-prev" onclick="prevSection(2)">
-                                    <i class="fas fa-arrow-left"></i> <spring:message code="register.previous"/>
-                                </button>
-                                <button type="button" class="btn-next" onclick="nextSection(2)">
-                                    <spring:message code="register.next"/> <i class="fas fa-arrow-right"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-section" data-section="3">
-                            <h2><spring:message code="register.availability"/></h2>
-
-                            <div class="form-group">
-
-                                <label for="password" class="form-label">
-                                    <spring:message code="register.availabilitySlots"/>
-                                    <span class="required-mark">*</span>
-                                    <div class="tooltip">
-                                        <i class="fas fa-info-circle tooltip-icon"></i>
-                                        <span class="tooltip-content"><spring:message
-                                                code="register.timeSlotHelp"/></span>
-                                    </div>
-                                </label>
-                                <div id="timeslots-container" class="timeslots-container">
-                                    <div id="no-slots-message" class="no-slots-message">
-                                        <p><spring:message code="register.noTimeSlots"/></p>
-                                    </div>
-
-                                    <div id="time-slot-inputs">
-                                        <c:if test="${not empty registerForm.availabilitySlots}">
-                                            <c:forEach items="${registerForm.availabilitySlots}" var="slot"
-                                                       varStatus="status">
-                                                <div class="time-slot-row" id="slot-row-${status.index}"
-                                                     data-index="${status.index}">
-                                                </div>
-                                            </c:forEach>
-                                        </c:if>
-                                    </div>
-
-                                    <div id="time-slot-error" class="error-message" style="display: none;"></div>
-                                    <div class="error-container">
-                                    </div>
-                                    <div class="error-container-server-availabilitySlots">
-                                        <form:errors path="availabilitySlots" cssClass="error-message visible"/>
-                                    </div>
-
-                                    <button type="button" class="btn-add-slot" id="add-slot-btn">
-                                        <i class="fas fa-plus"></i> <spring:message code="register.addTimeSlot"/>
-                                    </button>
-                                </div>
                             </div>
 
                             <div class="form-group terms-checkbox">
@@ -485,6 +448,42 @@
                     </form:form>
                 </c:otherwise>
             </c:choose>
+        </div>
+    </div>
+    <!-- Office Availability Modal -->
+    <div id="office-availability-modal" class="modal-overlay-slots" style="display: none;">
+        <div class="modal-container-slots">
+            <div class="modal-header-slots">
+                <h3 id="modal-office-title"><spring:message code="register.editOfficeAvailability"/></h3>
+                <button type="button" class="modal-close" onclick="closeOfficeAvailabilityModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body-slots">
+                <div class="modal-info-slots">
+                    <p><spring:message code="register.officeAvailabilityHelp"/></p>
+                </div>
+                <div id="office-availability-slots" class="office-availability-container">
+                    <div id="office-no-slots-message" class="no-slots-message" style="display: none;">
+                        <p><spring:message code="register.noOfficeTimeSlots"/></p>
+                    </div>
+                    <div id="office-slot-inputs">
+                        <!-- Office-specific slots will be rendered here -->
+                    </div>
+                    <div id="office-slot-error" class="error-message" style="display: none;"></div>
+                    <button type="button" class="btn-add-slot" id="add-office-slot-btn">
+                        <i class="fas fa-plus"></i> <spring:message code="register.addTimeSlot"/>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeOfficeAvailabilityModal()">
+                    <spring:message code="register.cancel"/>
+                </button>
+                <button type="button" class="btn-save" onclick="saveOfficeAvailability()">
+                    <spring:message code="register.save"/>
+                </button>
+            </div>
         </div>
     </div>
 </main>
@@ -535,22 +534,9 @@
         officeRequired: '<spring:message code="register.officeRequired" javaScriptEscape="true" />',
         officeSpecialties: '<spring:message code="register.officeSpecialties" javaScriptEscape="true" />',
         selectOfficeSpecialties: '<spring:message code="register.selectOfficeSpecialties" javaScriptEscape="true" />',
-        officeSpecialtiesRequired: '<spring:message code="register.officeSpecialtiesRequired" javaScriptEscape="true" />'
+        officeSpecialtiesRequired: '<spring:message code="register.officeSpecialtiesRequired" javaScriptEscape="true" />',
+        editAvailability: '<spring:message code="register.editAvailability" javaScriptEscape="true" />'
     };
-
-
-    <c:if test="${not empty registerForm.availabilitySlots}">
-    window.existingSlots = [
-        <c:forEach items="${registerForm.availabilitySlots}" var="slot" varStatus="status">
-        {
-            index: ${status.index},
-            day: ${slot.dayOfWeek},
-            startTime: '${slot.startTime}',
-            endTime: '${slot.endTime}'
-        }<c:if test="${!status.last}">, </c:if>
-        </c:forEach>
-    ];
-    </c:if>
 
     window.specialtyList = [<c:forEach items="${specialtyList}" var="specialty" varStatus="status">
         {
