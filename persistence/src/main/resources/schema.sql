@@ -168,3 +168,13 @@ CREATE TABLE IF NOT EXISTS Doctor_Certifications (
     issue_date DATE NOT NULL,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
     );
+
+CREATE TABLE IF NOT EXISTS Doctor_Office_Availability_Slots (
+                                                                  id SERIAL NOT NULL PRIMARY KEY,
+                                                                  office_id INT NOT NULL,
+                                                                  day_of_week INT NOT NULL,
+                                                                  start_time TIME NOT NULL,
+                                                                  end_time TIME NOT NULL,
+                                                                  UNIQUE (office_id, day_of_week, start_time),
+    FOREIGN KEY (office_id) REFERENCES Doctor_Offices(id) ON DELETE CASCADE
+);

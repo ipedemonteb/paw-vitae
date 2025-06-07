@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DoctorOfficeForm {
@@ -10,19 +11,23 @@ public class DoctorOfficeForm {
     private boolean active;
     private boolean removed;
 
-    public DoctorOfficeForm(Long id, Long neighborhoodId, List<Long> specialtyIds, String officeName, boolean active, boolean removed) {
+    private List<DoctorOfficeAvailabilitySlotForm> officeAvailabilitySlotForms;
+
+    public DoctorOfficeForm(Long id, Long neighborhoodId, List<Long> specialtyIds, String officeName, List<DoctorOfficeAvailabilitySlotForm> officeAvailabilitySlotForms,boolean active, boolean removed) {
         this.id = id;
         this.neighborhoodId = neighborhoodId;
         this.specialtyIds = specialtyIds;
         this.officeName = officeName;
+        this.officeAvailabilitySlotForms = officeAvailabilitySlotForms;
         this.active = active;
         this.removed = removed;
     }
 
-    public DoctorOfficeForm(Long neighborhoodId, String officeName, List<Long> specialtyIds) {
+    public DoctorOfficeForm(Long neighborhoodId, String officeName, List<Long> specialtyIds, List<DoctorOfficeAvailabilitySlotForm> officeAvailabilitySlotForms) {
         this.neighborhoodId = neighborhoodId;
         this.officeName = officeName;
         this.specialtyIds = specialtyIds;
+        this.officeAvailabilitySlotForms = officeAvailabilitySlotForms;
     }
 
     public DoctorOfficeForm() {
@@ -74,6 +79,14 @@ public class DoctorOfficeForm {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<DoctorOfficeAvailabilitySlotForm> getOfficeAvailabilitySlotForms() {
+        return officeAvailabilitySlotForms;
+    }
+
+    public void setOfficeAvailabilitySlotForms(List<DoctorOfficeAvailabilitySlotForm> officeAvailabilitySlotForms) {
+        this.officeAvailabilitySlotForms = officeAvailabilitySlotForms;
     }
 
     public DoctorOffice toEntity(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties) {
