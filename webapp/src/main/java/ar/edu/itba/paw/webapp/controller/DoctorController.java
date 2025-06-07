@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -220,4 +221,23 @@ public class DoctorController {
         doctorOfficeService.update(officeForm.getDoctorOfficeForm(),doctor);
         return new ModelAndView("redirect:/doctor/dashboard/offices?updated=true");
     }
+
+    @RequestMapping("/doctor/appointments/{patientId}/history")
+    public ModelAndView getPatientHistory(@PathVariable long patientId,
+                                          @RequestParam(defaultValue = "1") int page, @ModelAttribute("loggedUser") final Doctor doctor) {
+        final int pageSize = 10;
+
+        Page<Map.Entry<Appointment, List<AppointmentFile>>> history =
+                appointmentFileService.getGroupedFilesForPatient(patientId, page, pageSize);
+
+        ModelAndView mav = new ModelAndView("doctor/patient-history");
+        mav.addObject("appointmentFiles", history.getContent());
+        mav.addObject("currentPage", history.getPageNumber());
+        mav.addObject("totalPages", history.getTotalPages());
+        mav.addObject("doctor" , doctor);
+        mav.addObject("patientId", patientId);
+        return mav;
+    }
+
+
 }

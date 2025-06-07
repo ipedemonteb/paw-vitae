@@ -51,7 +51,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional
     @Override
-    public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId) {
+    public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId, boolean allowFullHistory) {
         LOGGER.debug("Creating appointment for patientId: {}, doctorId: {}, date: {}, time: {}, reason: {}, specialtyId: {}", patientId, doctorId, date, time, reason, specialtyId);
 
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
@@ -60,7 +60,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(() -> new IllegalArgumentException("Doctor office not found")); // TODO: MAKE CUSTOM EXCEPTION
 
         //Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
-        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice);
+        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice, allowFullHistory);
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
         LOGGER.info("New appointment created with id: {}", appointment.getId());
@@ -171,6 +171,13 @@ public class AppointmentServiceImpl implements AppointmentService {
             appointmentsByDate.computeIfAbsent(date, k -> new ArrayList<>()).add(appointment.getDate().getHour());
         }
         return appointmentsByDate;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public boolean hasAllowedAppointmentBetweenDoctorAndPatient(long doctorId, long patientId){
+        LOGGER.debug("Checking if doctor with id: {} has allowed appointment with patient with id: {}", doctorId, patientId);
+        return appointmentDao.hasAllowedAppointmentBetweenDoctorAndPatient(doctorId, patientId);
     }
 
 }

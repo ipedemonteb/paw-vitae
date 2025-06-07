@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface AppointmentDao {
 
-    Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice);
+    Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice, boolean allowFullHistory);
 
     void cancelAppointment(long appointmentId);
 
@@ -30,4 +30,6 @@ public interface AppointmentDao {
     int countAppointments(long userId, boolean isFuture, String filter);
 
     void updateReport(long appointmentId, String report);
+
+    boolean hasAllowedAppointmentBetweenDoctorAndPatient(long doctorId, long patientId);
 }

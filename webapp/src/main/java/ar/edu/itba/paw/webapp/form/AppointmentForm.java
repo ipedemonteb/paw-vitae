@@ -47,6 +47,9 @@ public class AppointmentForm {
     @NotNull
     private long patientId;
 
+    private boolean allowFullHistory = true; // default true
+
+
     public long getPatientId() {
         return patientId;
     }
@@ -116,6 +119,14 @@ public class AppointmentForm {
 
     public void setOfficeId(long officeId) {
         this.officeId = officeId;
+    }
+
+    public boolean isAllowFullHistory() {
+        return allowFullHistory;
+    }
+
+    public void setAllowFullHistory(boolean allowFullHistory) {
+        this.allowFullHistory = allowFullHistory;
     }
 }
 

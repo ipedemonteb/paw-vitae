@@ -213,6 +213,21 @@
                             </div>
                         </c:if>
                     </div>
+                    <c:if test="${appointment.allowFullHistory}">
+                        <a href="<c:url value='/doctor/appointments/${appointment.patient.id}/history'/>" class="btn btn-primary">
+                            <spring:message code="appointment.details.files.see.all"/>
+                        </a>
+                    </c:if>
+                    <c:if test="${not appointment.allowFullHistory}">
+                        <div class="no-files-message">
+                            <div class="no-files-content">
+                                <i class="fas fa-info-circle"></i>
+                                <spring:message code="appointment.details.files.see.all.no"/>
+                            </div>
+                        </div>
+                    </c:if>
+
+
                 </div>
 
                 <c:choose>
@@ -445,7 +460,7 @@
                     </c:otherwise>
                 </c:choose>
                 <div class="back-button-container">
-                    <a href="${pageContext.request.contextPath}/doctor/dashboard" class="back-button">
+                    <a href="<c:url value='${pageContext.request.contextPath}/doctor/dashboard'/>" class="back-button">
                         <i class="fas fa-arrow-left"></i>
                         <span><spring:message code="appointment.details.back"/></span>
                     </a>
