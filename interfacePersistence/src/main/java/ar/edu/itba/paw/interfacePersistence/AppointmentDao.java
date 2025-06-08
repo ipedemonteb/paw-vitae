@@ -30,6 +30,4 @@ public interface AppointmentDao {
     int countAppointments(long userId, boolean isFuture, String filter);
 
     void updateReport(long appointmentId, String report);
-
-    boolean hasAllowedAppointmentBetweenDoctorAndPatient(long doctorId, long patientId);
 }

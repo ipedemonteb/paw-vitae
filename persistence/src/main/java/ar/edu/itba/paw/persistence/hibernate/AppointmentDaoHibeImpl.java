@@ -146,16 +146,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return sql;
     }
 
-    @Override
-    public boolean hasAllowedAppointmentBetweenDoctorAndPatient(long doctorId, long patientId){
-        Long count = em.createQuery(
-                "SELECT COUNT(a) FROM Appointment a WHERE a.doctor.id = :doctorId AND a.patient.id = :patientId AND a.allowFullHistory = true", Long.class)
-                .setParameter("doctorId", doctorId)
-                .setParameter("patientId", patientId)
-                .getSingleResult();
-        return count > 0;
-    }
-
     private Query getNativeQuery(long userId, boolean isFuture, String filter, boolean isCount) {
         StringBuilder sql = getSql(isFuture, filter, isCount);
         Query nativeQuery = em.createNativeQuery(sql.toString());

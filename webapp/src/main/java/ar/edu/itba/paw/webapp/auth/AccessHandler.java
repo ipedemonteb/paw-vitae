@@ -2,13 +2,10 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.UserService;
-import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,23 +36,14 @@ public class AccessHandler {
         return userId == doctorId;
     }
 
-    public boolean canSeeMedicalHistory(Authentication auth, long patientId) {
+    public boolean canSeeMedicalHistory(Authentication auth, long appointmentId) {
         Object principal = auth.getPrincipal();
         if (!(principal instanceof AuthUserDetails)) {
             return false;
         }
 
-        long doctorId = userService.getByEmail(((AuthUserDetails) principal).getUsername())
-                .orElseThrow(UserNotFoundException::new)
-                .getId();
-
-        // Check if the authenticated user is the patient themselves
-        if (doctorId == patientId) {
-            return true; // Patients can always view their own history
-        }
-
-        // Check if the user is a doctor and has permission
-        return appointmentService.hasAllowedAppointmentBetweenDoctorAndPatient(doctorId, patientId);
+        long doctorId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
+        return appointmentService.hasHistoryAllowedByAppointmentId(appointmentId, doctorId);
     }
 
     public boolean canHandleAppointment(Authentication auth, String appointmentId) {
