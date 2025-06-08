@@ -175,9 +175,17 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional(readOnly = true)
     @Override
-    public boolean hasAllowedAppointmentBetweenDoctorAndPatient(long doctorId, long patientId){
-        LOGGER.debug("Checking if doctor with id: {} has allowed appointment with patient with id: {}", doctorId, patientId);
-        return appointmentDao.hasAllowedAppointmentBetweenDoctorAndPatient(doctorId, patientId);
+    public boolean hasHistoryAllowedByAppointmentId(long appointmentId, long doctorId) {
+        LOGGER.debug("Checking history permission for appointment with id: {}", appointmentId);
+        Optional<Appointment> appointment = appointmentDao.getById(appointmentId);
+        return appointment.isPresent() && appointment.get().isAllowFullHistory() && appointment.get().getDoctor().getId() == doctorId;
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Patient getPatientByAppointmentId(long appointmentId) {
+        LOGGER.debug("Getting patient by appointmentId: {}", appointmentId);
+        Appointment appointment = getById(appointmentId).orElseThrow(() -> new IllegalArgumentException("Appointment not found with id: " + appointmentId));
+        return appointment.getPatient();
+    }
 }

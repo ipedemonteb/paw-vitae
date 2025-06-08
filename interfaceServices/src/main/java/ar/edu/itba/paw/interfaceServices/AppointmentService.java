@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaceServices;
 
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Page;
+import ar.edu.itba.paw.models.Patient;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,5 +29,7 @@ public interface AppointmentService {
 
     void updateAppointmentReport(long appointmentId, String report);
 
-    boolean hasAllowedAppointmentBetweenDoctorAndPatient(long doctorId, long patientId);
+    boolean hasHistoryAllowedByAppointmentId(long appointmentId, long doctorId);
+
+    Patient getPatientByAppointmentId(long appointmentId);
 }

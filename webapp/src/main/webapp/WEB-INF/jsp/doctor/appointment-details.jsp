@@ -214,7 +214,7 @@
                         </c:if>
                     </div>
                     <c:if test="${appointment.allowFullHistory}">
-                        <a href="<c:url value='/doctor/appointments/${appointment.patient.id}/history'/>" class="btn btn-primary">
+                        <a href="<c:url value='/doctor/appointments/${appointment.id}/history'/>" class="btn btn-primary">
                             <spring:message code="appointment.details.files.see.all"/>
                         </a>
                     </c:if>
