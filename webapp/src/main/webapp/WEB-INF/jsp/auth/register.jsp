@@ -405,7 +405,7 @@
                                     </div>
                                 </div>
                                 <div class="error-container-server-doctorOfficeFormAvailabilitySlots">
-                                    <form:errors path="doctorOfficeForm" cssClass="error-message visible"/>
+                                    <form:errors path="officeAvailabilitySlotForms" cssClass="error-message visible"/>
                                 </div>
                                 <button type="button" class="btn-add-slot" id="add-office-btn">
                                     <i class="fas fa-plus"></i> <spring:message code="register.addOffice"/>
