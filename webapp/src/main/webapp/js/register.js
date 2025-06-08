@@ -50,21 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     }
 
-    const helpme = document.querySelector(".register-container");
-    if (helpme) {
-        helpme.addEventListener("click", function () {
-            console.log(doctorOffices)
-        })
-    }
-
-    const godplease = document.querySelector(".card-title-register")
-    if (godplease) {
-        godplease.addEventListener("click", function () {
-            console.log("NOW NOW NOW: ")
-            createDoctorOfficeHiddenInputs();
-        })
-    }
-
     // Add event listeners
     const addSlotBtn = document.getElementById("add-slot-btn")
     if (addSlotBtn) {
@@ -238,6 +223,7 @@ function initializeOffice(index) {
             if (officeIndex !== -1) {
                 doctorOffices[officeIndex].name = this.value;
             }
+            updateAvailabilitySlotsForOffice(index);
             updateNextButtonState(2);
         });
     }
@@ -252,6 +238,19 @@ function initializeOffice(index) {
             }
         }
     });
+}
+
+// Update availability slots when the office name changes
+function updateAvailabilitySlotsForOffice(officeIndex) {
+    availabilitySlots.forEach(slot => {
+        if (slot.officeIndex === officeIndex) {
+            // Perform any necessary updates to the slot
+            slot.officeName = doctorOffices.find(office => office.index === officeIndex)?.name || "";
+        }
+    });
+
+    // Re-render the time slots to reflect the changes
+    renderAllTimeSlots();
 }
 
 function renderOffices() {
@@ -2555,7 +2554,7 @@ function validateTimeSlots() {
             if (otherSlot.day !== slot.day) return false
 
             // Check for time overlap
-            return !(slot.endTime <= otherSlot.startTime || slot.startTime >= otherSlot.endTime)
+            return !(slot.endTime < otherSlot.startTime || slot.startTime > otherSlot.endTime)
         })
 
         if (overlaps.length > 0) {
