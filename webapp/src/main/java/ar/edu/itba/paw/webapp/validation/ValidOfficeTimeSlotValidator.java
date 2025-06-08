@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.validation;
 
+import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlotForm;
 import ar.edu.itba.paw.models.DoctorOfficeForm;
 
 import javax.validation.ConstraintValidator;
@@ -11,17 +12,27 @@ public class ValidOfficeTimeSlotValidator implements ConstraintValidator<ValidOf
         if (officeForms == null || officeForms.isEmpty()) {
             return false; // Invalid if the list is null or empty
         }
-        for (DoctorOfficeForm form : officeForms) {
+        for (int i = 0; i < officeForms.size(); i++) {
+            DoctorOfficeForm form = officeForms.get(i);
             if (form.getOfficeAvailabilitySlotForms() == null || form.getOfficeAvailabilitySlotForms().isEmpty()) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("{office.timeSlot.empty")
+                        .addPropertyNode("officeAvailabilitySlotForms")
+                        .inIterable().atIndex(i)
+                        .addConstraintViolation();
                 return false; // Invalid if any office has no time slots
             }
-            for (var slot : form.getOfficeAvailabilitySlotForms()) {
-                if (slot.getOfficeId() != null || slot.getId() != null) {
+            for (int j = 0; j < form.getOfficeAvailabilitySlotForms().size(); j++) {
+                DoctorOfficeAvailabilitySlotForm slot = form.getOfficeAvailabilitySlotForms().get(j);
+                if (slot.getOfficeId() != null || slot.getId() != null || slot.getStartTime() == null || slot.getEndTime() == null || slot.getStartTime().isAfter(slot.getEndTime()) || slot.getStartTime().getHour() < 8 || slot.getEndTime().getHour() > 21) {
+                    context.disableDefaultConstraintViolation();
+                    context.buildConstraintViolationWithTemplate("{office.invalid.timeSlot}")
+                            .addPropertyNode("officeAvailabilitySlotForms")
+                            .inIterable().atIndex(i)
+                            .addPropertyNode("startTime")
+                            .inIterable().atIndex(j)
+                            .addConstraintViolation();
                     return false;
-                } else if (slot.getStartTime() == null || slot.getEndTime() == null || slot.getStartTime().isAfter(slot.getEndTime())) {
-                    return false; // Invalid if any time slot is malformed
-                } else if (slot.getStartTime().getHour() < 8 || slot.getEndTime().getHour() > 20) {
-                    return false; // Invalid if any time slot is outside of office hours
                 }
             }
         }
