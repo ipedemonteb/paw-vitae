@@ -325,6 +325,7 @@
                                     </div>
                                 </c:forEach>
                             </div>
+                            <form:errors path="experiences" cssClass="form-error" />
                             <button type="button" class="btn-add-new" onclick="addExperience()">
                                 <i class="fas fa-plus"></i> <spring:message code="doctor.profile.addExperience" />
                             </button>
@@ -397,6 +398,7 @@
                                     </div>
                                 </c:forEach>
                             </div>
+                            <form:errors path="certificates" cssClass="form-error" />
                             <button type="button" class="btn-add-new" onclick="addCertificate()">
                                 <i class="fas fa-plus"></i> <spring:message code="doctor.profile.addCertificate" />
                             </button>
@@ -507,8 +509,11 @@
 <c:if test="${isOwnProfile}">
     <form:form id="updateProfileForm" method="POST" action="${pageContext.request.contextPath}/doctor/profile/update" modelAttribute="doctorProfileForm" style="display: none;">
         <form:hidden path="biography" id="hiddenBio" />
+        <form:errors path="biography" cssClass="form-error" />
         <form:hidden path="description" id="hiddenDescription" />
+        <form:errors path="description" cssClass="form-error" />
         <div id="hiddenExperiences"></div>
+
         <div id="hiddenCertificates"></div>
     </form:form>
 </c:if>
@@ -968,6 +973,17 @@
         font-weight: 500;
         cursor: pointer;
         transition: var(--transition);
+    }
+
+    .form-error {
+        color: var(--danger);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: none;
+    }
+
+    .form-error.visible {
+        display: block;
     }
 
     .btn-add-new:hover {
