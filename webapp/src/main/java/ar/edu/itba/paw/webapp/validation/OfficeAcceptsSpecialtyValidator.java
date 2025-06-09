@@ -40,7 +40,14 @@ public class OfficeAcceptsSpecialtyValidator implements ConstraintValidator<Offi
             if (doctorOffice == null) {
                 return true;
             }
-            return doctorOffice.getSpecialties().stream().anyMatch(specialty -> specialty.getId() == specialtyIdValue);
+            if (doctorOffice.getSpecialties().stream().noneMatch(specialty -> specialty.getId() == specialtyIdValue)) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("{appointment.office.specialty.valid}")
+                        .addPropertyNode(specialtyId)
+                        .addConstraintViolation();
+                return false;
+            }
+            return true;
         } catch (Exception e) {
             return false;
         }

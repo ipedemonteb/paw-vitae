@@ -37,7 +37,14 @@ public class OfficeOwnedByDoctorValidator implements ConstraintValidator<OfficeO
             long doctorIdValue = (long) doctorIdField.get(value);
 
             List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(doctorIdValue);
-            return offices.stream().anyMatch(office -> office.getId() == officeIdValue);
+            if (offices.stream().noneMatch(office -> office.getId() == officeIdValue)) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("{appointment.office.valid}")
+                        .addPropertyNode(officeId)
+                        .addConstraintViolation();
+                return false;
+            }
+            return true;
         } catch (Exception e) {
             return false;
         }
