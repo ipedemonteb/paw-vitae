@@ -9,14 +9,26 @@ VALUES
 INSERT INTO Coverages (id, coverage_name)
 VALUES (1, 'Coverage A'), (2, 'Coverage B');
 
-INSERT INTO patients (patient_id, coverage_id)
-VALUES (1, 1),
-       (3, 2);
+INSERT INTO neighborhoods (id, name)
+VALUES (1, 'Recoleta'),
+       (2, 'Belgrano');
+
+INSERT INTO patients (patient_id, coverage_id, neighborhood_id)
+VALUES (1, 1, 1),
+       (3, 2, 2);
 
 INSERT INTO Doctors (doctor_id, rating, rating_count, image_id)
 VALUES (2, 4.5, 10, NULL),
        (4, 4.0, 5, NULL),
        (5, 3.0, 4, NULL);
+
+INSERT INTO doctor_profile (doctor_id, bio, description)
+VALUES (2, 'Cardiologo con mas de 10 años de experiencia', 'Especializado en cardiología y enfermedades del corazón'),
+       (4, 'Neurólogo con enfoque en trastornos neurológicos', 'Experto en neurología y trastornos del sistema nervioso');
+
+INSERT INTO doctor_offices (id, doctor_id, neighborhood_id, office_name, active, removed)
+VALUES (1, 2, 1, 'Consultorio Recoleta', true, NULL),
+       (2, 4, 2, 'Consultorio Belgrano', true, NULL);
 
 INSERT INTO Doctor_Coverages (doctor_id, coverage_id)
 VALUES (2, 1),
@@ -36,6 +48,10 @@ VALUES (2, 1),
        (4, 3),
        (5, 1);
 
+INSERT INTO Doctor_Office_Specialties(office_id, specialty_id)
+VALUES (1, 1),
+       (2, 2);
+
 INSERT INTO Doctor_Availability (doctor_id, day_of_week, start_time, end_time)
 VALUES (2, 0, '09:00:00', '12:00:00'),
        (4, 0, '09:00:00', '12:00:00'),
@@ -48,17 +64,22 @@ VALUES (2, 0, '09:00:00', '12:00:00'),
        (5, 0, '09:00:00', '12:00:00'),
        (5, 1, '09:00:00', '12:00:00');
 
-INSERT INTO Appointments (id, doctor_id, patient_id, specialty_id, date, status, reason)
-VALUES (1, 2, 1, 1, '2025-04-29 10:00:00', 'confirmado', 'Consulta general'),
-       (2, 2, 1, 1, '2025-04-30 10:00:00', 'confirmado', 'Consulta particluar'),
-       (3, 4, 3, 2, '2025-04-30 10:00:00', 'confirmado', 'Consulta'),
-       (4, 4, 3, 2, '2025-05-01 10:00:00', 'confirmado', 'Consulta'),
-       (5, 4, 3, 2, '2025-05-02 10:00:00', 'confirmado', 'Consulta'),
-       (6, 4, 3, 2, '2025-05-03 10:00:00', 'confirmado', 'Consulta'),
-       (7, 4, 3, 2, '2025-05-04 10:00:00', 'confirmado', 'Consulta'),
-       (8, 4, 3, 2, '2025-05-05 10:00:00', 'confirmado', 'Consulta'),
-       (9, 4, 3, 2, '2025-05-06 10:00:00', 'confirmado', 'Consulta'),
-       (10, 4, 3, 2, '2025-05-07 10:00:00', 'confirmado', 'Consulta');
+INSERT INTO Doctor_Unavailability (doctor_id, start_date, end_date)
+VALUES (2, DATEADD('DAY', 60, CURRENT_TIMESTAMP), DATEADD('DAY', 65, CURRENT_TIMESTAMP)),
+       (4, DATEADD('DAY', 10, CURRENT_TIMESTAMP), DATEADD('DAY', 15, CURRENT_TIMESTAMP)),
+       (4, '2026-01-01', '2026-01-05');
+
+INSERT INTO Appointments (id, doctor_id, patient_id, specialty_id, date, status, reason, office_id)
+VALUES (1, 2, 1, 1, '2025-04-29 10:00:00', 'confirmado', 'Consulta general', 1),
+       (2, 2, 1, 1, '2025-04-30 10:00:00', 'confirmado', 'Consulta particluar', 1),
+       (3, 4, 3, 2, '2025-04-30 10:00:00', 'confirmado', 'Consulta', 2),
+       (4, 4, 3, 2, '2025-05-01 10:00:00', 'confirmado', 'Consulta', 2),
+       (5, 4, 3, 2, '2025-05-02 10:00:00', 'confirmado', 'Consulta', 2),
+       (6, 4, 3, 2, '2025-05-03 10:00:00', 'confirmado', 'Consulta', 2),
+       (7, 4, 3, 2, '2025-05-04 10:00:00', 'confirmado', 'Consulta', 2),
+       (8, 4, 3, 2, '2025-05-05 10:00:00', 'confirmado', 'Consulta', 2),
+       (9, 4, 3, 2, '2025-05-06 10:00:00', 'confirmado', 'Consulta', 2),
+       (10, 4, 3, 2, '2025-05-07 10:00:00', 'confirmado', 'Consulta', 2);
 
 INSERT INTO Images (id, image)
 VALUES (1, X'0102030405');
@@ -77,6 +98,9 @@ VALUES (1, 2, 1, 1, 5, 'Excelente atención'),
 INSERT INTO appointment_files (id, appointment_id, uploader_role, file_name, file_data)
 VALUES (1, 1, 'doctor', 'informe.pdf', X'0102030405');
 
+INSERT INTO doctor_experience (id, doctor_id, position_title, organization_name, start_date, end_date, description)
+VALUES (1, 2, 'Residente', 'Hospital Aleman', '2010-01-01', '2016-01-01', 'Residencia en especialidad'),
+       (2, 4, 'Cirujano', 'Hospital Italiano', '2015-01-01', '2020-01-01', 'Cirugía general');
 
 ALTER SEQUENCE users_id_seq RESTART WITH 6;
 ALTER SEQUENCE coverages_id_seq RESTART WITH 3;
@@ -85,3 +109,7 @@ ALTER SEQUENCE appointments_id_seq RESTART WITH 11;
 ALTER SEQUENCE ratings_id_seq RESTART WITH 10;
 ALTER SEQUENCE appointment_files_id_seq RESTART WITH 2;
 ALTER SEQUENCE images_id_seq RESTART WITH 2;
+ALTER SEQUENCE neighborhoods_id_seq RESTART WITH 3;
+ALTER SEQUENCE doctor_offices_id_seq RESTART WITH 3;
+ALTER SEQUENCE doctor_experience_id_seq RESTART WITH 3;
+ALTER SEQUENCE doctor_certification_id_seq RESTART WITH 3;
