@@ -49,6 +49,17 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
+    @Scheduled(cron = "0 0 0 * * ?") // Every day at 01:00 AM
+    @Transactional
+    public void revokeHistoryPermissionForOldAppointments() {
+        LocalDateTime oneWeekAgo = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).minusWeeks(1);
+        List<Appointment> oldAppointments = appointmentDao.getAppointmentsWithHistoryAllowedBefore(oneWeekAgo);
+        for (Appointment appointment : oldAppointments) {
+            appointment.setAllowFullHistory(false);
+        }
+        LOGGER.info("Revoked history permission for {} appointments older than one week", oldAppointments.size());
+    }
+
     @Transactional
     @Override
     public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId, boolean allowFullHistory) {

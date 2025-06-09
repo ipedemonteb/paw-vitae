@@ -32,4 +32,6 @@ public interface AppointmentService {
     boolean hasHistoryAllowedByAppointmentId(long appointmentId, long doctorId);
 
     Patient getPatientByAppointmentId(long appointmentId);
+
+    void revokeHistoryPermissionForOldAppointments();
 }
