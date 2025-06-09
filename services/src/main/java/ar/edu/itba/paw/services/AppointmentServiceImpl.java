@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional(readOnly = true)
     @Scheduled(cron = "0 0 0 * * ?") // Todos los días a las 00:00
+    @Async
     public void sendDailyReminders() {
         LocalDate today = LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"));
         List<Appointment> appointments = appointmentDao.getAppointmentsByDate(today);
@@ -49,7 +51,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * ?") // Every day at 01:00 AM
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Async// Every day at 01:00 AM
     @Transactional
     public void revokeHistoryPermissionForOldAppointments() {
         LocalDateTime oneWeekAgo = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).minusWeeks(1);
