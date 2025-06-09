@@ -30,6 +30,7 @@ public class DoctorOfficeAvailabilitySlotServiceImpl implements DoctorOfficeAvai
         this.doctorOfficeAvailabilityDao = doctorOfficeAvailabilityDao;
     }
 
+    @Transactional
     @Override
     public DoctorOfficeAvailabilitySlot create(DoctorOfficeAvailabilitySlotForm slot, DoctorOffice doctorOffice) {
         LOGGER.debug("Creating availability slot for office : {}",  slot);
@@ -38,12 +39,14 @@ public class DoctorOfficeAvailabilitySlotServiceImpl implements DoctorOfficeAvai
         return toReturn;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<DoctorOfficeAvailabilitySlot> getByOfficeId(long officeId) {
         LOGGER.debug("Retrieving availability slots for office with id: {}", officeId);
         return doctorOfficeAvailabilityDao.getByOfficeId(officeId);
     }
 
+    @Transactional
     @Override
     public List<DoctorOfficeAvailabilitySlot> create(List<DoctorOfficeAvailabilitySlotForm> slots, DoctorOffice doctorOffice) {
         List<DoctorOfficeAvailabilitySlot> toReturn = new ArrayList<>();
@@ -51,11 +54,12 @@ public class DoctorOfficeAvailabilitySlotServiceImpl implements DoctorOfficeAvai
         return toReturn;
     }
 
+    @Transactional
     @Override
     public void update(List<DoctorOfficeAvailabilitySlotForm> slots, DoctorOffice doctorOffice) {
 
     }
-     //uses Jackson to convert the list of slots to a JSON string
+
     @Transactional(readOnly = true)
     @Override
     public String getByDoctorId(long doctorId) {
@@ -80,10 +84,11 @@ public class DoctorOfficeAvailabilitySlotServiceImpl implements DoctorOfficeAvai
         return JsonUtils.toJson(responseMap, DoctorOfficeAvailabilitySlot.Views.Public.class);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public boolean isAvailableAtDayAndTime(long officeId, LocalDate date, Integer hour) {
         LOGGER.debug("Checking availability for office with id: {}, date: {}, startTime: {}", officeId, date, hour);
-        List<DoctorOfficeAvailabilitySlot> slots = doctorOfficeAvailabilityDao.getByOfficeId(officeId);
+        List<DoctorOfficeAvailabilitySlot> slots = doctorOfficeAvailabilityDao.getActiveByOfficeId(officeId);
         return slots.stream().anyMatch(slot -> slot.getDayOfWeek() == (date.getDayOfWeek().getValue() -1) &&
                slot.getStartTime().getHour() <= hour &&
                slot.getEndTime().getHour() > hour);
