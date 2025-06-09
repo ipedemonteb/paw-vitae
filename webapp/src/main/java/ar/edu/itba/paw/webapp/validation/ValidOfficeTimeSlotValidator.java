@@ -24,7 +24,7 @@ public class ValidOfficeTimeSlotValidator implements ConstraintValidator<ValidOf
                 return false; // Invalid if any office has no time slots
             }
             for (DoctorOfficeAvailabilitySlotForm slot : form.getOfficeAvailabilitySlotForms()) {
-                if (slot.getOfficeId() != null || slot.getId() != null || slot.getStartTime() == null || slot.getEndTime() == null || slot.getStartTime().isAfter(slot.getEndTime()) || slot.getStartTime().getHour() < 8 || slot.getEndTime().getHour() > 21) {
+                if (slot.getOfficeId() != null || slot.getId() != null || slot.getStartTime() == null || slot.getEndTime() == null || slot.getStartTime().isAfter(slot.getEndTime()) || slot.getStartTime().getHour() < 8 || slot.getEndTime().getHour() > 20) {
                     context.disableDefaultConstraintViolation();
                     context.buildConstraintViolationWithTemplate("{office.invalid.timeSlot}")
                             .addPropertyNode("officeAvailabilitySlotForms")
