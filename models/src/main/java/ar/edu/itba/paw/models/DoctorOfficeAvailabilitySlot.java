@@ -8,8 +8,8 @@ import java.time.LocalTime;
 public class DoctorOfficeAvailabilitySlot {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_office_availability_slot_id_seq")
-    @SequenceGenerator(allocationSize = 1, sequenceName = "doctor_office_availability_slot_id_seq", name = "doctor_office_availability_slot_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_office_availability_slots_id_seq")
+    @SequenceGenerator(allocationSize = 1, sequenceName = "doctor_office_availability_slots_id_seq", name = "doctor_office_availability_slots_id_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
