@@ -1,5 +1,11 @@
 package ar.edu.itba.paw.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 import javax.persistence.*;
 import java.time.LocalTime;
 
@@ -14,12 +20,15 @@ public class DoctorOfficeAvailabilitySlot {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "office_id", nullable = false)
+    @JsonView(Views.Private.class)
     private DoctorOffice office;
 
     @Column(name = "end_time", nullable = false)
+    @JsonSerialize(using = JsonUtils.LocalTimeHourSerializer.class)
     private LocalTime endTime;
 
     @Column(name = "start_time", nullable = false)
+    @JsonSerialize(using = JsonUtils.LocalTimeHourSerializer.class)
     private LocalTime startTime;
 
     @Column(name = "day_of_week", nullable = false)
@@ -32,6 +41,12 @@ public class DoctorOfficeAvailabilitySlot {
         this.endTime = endTime;
         this.startTime = startTime;
         this.dayOfWeek = dayOfWeek;
+    }
+
+    // Views definition
+    public static class Views {
+        public static class Public {}
+        public static class Private extends Doctor.Views.Public {}
     }
 
     public DoctorOffice getOffice() {

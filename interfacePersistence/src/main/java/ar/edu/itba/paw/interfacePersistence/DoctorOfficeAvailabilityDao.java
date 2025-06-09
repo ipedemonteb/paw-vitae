@@ -13,4 +13,6 @@ public interface DoctorOfficeAvailabilityDao {
     void delete(DoctorOfficeAvailabilitySlot slot);
 
     List<DoctorOfficeAvailabilitySlot> getByOfficeId(long officeId);
+
+    List<DoctorOfficeAvailabilitySlot> getByDoctorId(long doctorId);
 }

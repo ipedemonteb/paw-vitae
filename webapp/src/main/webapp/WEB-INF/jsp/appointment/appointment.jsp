@@ -224,6 +224,9 @@
 </main>
 
 <script src="<c:url value="/js/toast-notification.js"/>"></script>
+<!-- Include the external JavaScript file -->
+<script src="<c:url value='/js/date-time-picker.js'/>"></script>
+<script src="<c:url value='/js/file-upload.js'/>"></script>
 
 <script>
     // Create a messages object to be used by the JavaScript
@@ -275,6 +278,8 @@
         officeRequired: '<spring:message code="appointment.form.officeRequired" javaScriptEscape="true" />'
     };
     const contextPath = "${pageContext.request.contextPath}";
+    const doctorId = "${doctor.id}";
+    let currentOfficeId = "0";
 
 
     const unavailabilitySlots = [
@@ -360,6 +365,7 @@
         // Handle office selection
         if (officeSelect) {
             officeSelect.addEventListener('change', function() {
+                currentOfficeId = this.value;
                 handleOfficeSelection(this.value);
             });
         }
@@ -481,9 +487,5 @@
     }
 
 </script>
-
-<!-- Include the external JavaScript file -->
-<script src="<c:url value='/js/date-time-picker.js'/>"></script>
-<script src="<c:url value='/js/file-upload.js'/>"></script>
 </body>
 </html>
