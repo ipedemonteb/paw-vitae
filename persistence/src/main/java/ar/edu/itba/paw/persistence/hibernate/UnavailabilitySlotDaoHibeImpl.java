@@ -51,6 +51,7 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
                 .getSingleResult();
         return count > 0;
     }
+
     @Override
     public List<UnavailabilitySlot> getUnavailabilityByDoctorIdCurrentAndNextMonth(long doctorId) {
         LocalDate now = LocalDate.now();
