@@ -44,6 +44,14 @@ public class DoctorOfficeAvailabilityDaoHibeImpl implements DoctorOfficeAvailabi
     }
 
     @Override
+    public List<DoctorOfficeAvailabilitySlot> getActiveByOfficeId(long officeId) {
+        return em.createQuery("SELECT d FROM DoctorOfficeAvailabilitySlot d JOIN d.office o WHERE o.id = :officeId AND o.active = true AND o.removed IS NULL ORDER BY d.dayOfWeek, d.startTime",
+                DoctorOfficeAvailabilitySlot.class)
+                .setParameter("officeId", officeId)
+                .getResultList();
+    }
+
+    @Override
     public List<DoctorOfficeAvailabilitySlot> getByDoctorId(long doctorId) {
         return em.createQuery("SELECT d FROM DoctorOfficeAvailabilitySlot d JOIN d.office o WHERE o.doctor.id = :doctorId AND o.active = true AND o.removed IS NULL ORDER BY d.dayOfWeek, d.startTime",
                 DoctorOfficeAvailabilitySlot.class)

@@ -14,5 +14,7 @@ public interface DoctorOfficeAvailabilityDao {
 
     List<DoctorOfficeAvailabilitySlot> getByOfficeId(long officeId);
 
+    List<DoctorOfficeAvailabilitySlot> getActiveByOfficeId(long officeId);
+
     List<DoctorOfficeAvailabilitySlot> getByDoctorId(long doctorId);
 }
