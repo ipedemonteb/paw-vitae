@@ -3,7 +3,6 @@ package ar.edu.itba.paw.persistence.hibernate;
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.models.*;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -13,7 +12,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -151,6 +149,17 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         Query nativeQuery = em.createNativeQuery(sql.toString());
         nativeQuery.setParameter("userId", userId);
         return nativeQuery;
+    }
+
+    //make it look between a range back
+    @Override
+    public List<Appointment> getAppointmentsWithHistoryAllowedBefore(LocalDateTime dateTime) {
+        TypedQuery<Appointment> query = em.createQuery(
+                "SELECT a FROM Appointment a WHERE a.allowFullHistory = true AND a.date < :dateTime",
+                Appointment.class
+        );
+        query.setParameter("dateTime", dateTime);
+        return query.getResultList();
     }
 
 
