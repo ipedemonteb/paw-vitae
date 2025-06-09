@@ -24,6 +24,8 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     @PersistenceContext
     private EntityManager em;
 
+    LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).withMinute(5).withSecond(0).withNano(0);
+
     @Override
     public Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice, boolean allowFullHistory) {
         Appointment appointment = new Appointment(date, status, reason, specialty, doctor, patient, report, doctorOffice, allowFullHistory);
@@ -33,7 +35,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
 
     @Override
     public List<Appointment> getPastConfirmedAppointments() {
-        LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).withMinute(5).withSecond(0).withNano(0);
         LocalDateTime fiveDaysAgo = now.minusDays(5);
         TypedQuery<Appointment> query = em.createQuery("FROM Appointment a WHERE a.status = 'CONFIRMADO' AND a.date BETWEEN :start AND :end", Appointment.class);
         query.setParameter("start", fiveDaysAgo);
@@ -83,7 +84,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
 
     @Override
     public List<Appointment> getFutureAppointmentsByUser(long userId) {
-        LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).withMinute(5).withSecond(0).withNano(0);
         TypedQuery<Appointment> query = em.createQuery("SELECT a FROM Appointment a WHERE (a.doctor.id = :userId OR a.patient.id = :userId) AND a.date > :now", Appointment.class);
         query.setParameter("userId", userId);
         query.setParameter("now", now);
