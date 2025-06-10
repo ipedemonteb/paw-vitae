@@ -4,17 +4,23 @@ import ar.edu.itba.paw.models.AvailabilitySlotForm;
 import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlotForm;
 import ar.edu.itba.paw.models.DoctorOfficeForm;
 import ar.edu.itba.paw.models.UnavailabilitySlotForm;
-import ar.edu.itba.paw.webapp.validation.UnavailabilityIntersection;
-import ar.edu.itba.paw.webapp.validation.ValidUnavailability;
+import ar.edu.itba.paw.webapp.validation.*;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
-
+@OfficeOwnedByDoctor(message = "{office.invalid}")
 public class UpdateAvailabilityForm {
 
     @NotEmpty
+    @NotNull
+    @ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
+    @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
     private List<DoctorOfficeAvailabilitySlotForm> doctorOfficeAvailabilitySlots;
+
+    @NotNull
+    private Long doctorId;
 
     @ValidUnavailability(message = "{unavailable.slots.invalid}")
     @UnavailabilityIntersection(message = "{unavailable.slots.overlap}")
@@ -34,5 +40,13 @@ public class UpdateAvailabilityForm {
 
     public void setDoctorOfficeAvailabilitySlots(List<DoctorOfficeAvailabilitySlotForm> doctorOfficeAvailabilitySlots) {
         this.doctorOfficeAvailabilitySlots = doctorOfficeAvailabilitySlots;
+    }
+
+    public Long getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
     }
 }

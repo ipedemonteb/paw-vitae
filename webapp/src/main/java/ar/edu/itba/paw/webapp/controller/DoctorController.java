@@ -100,6 +100,7 @@ public class DoctorController {
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-availability");
         updateAvailabilityForm.setUnavailabilitySlots(unavailabilitySlotsService.getDoctorUnavailabilitySlots(doctor));
+        updateAvailabilityForm.setDoctorId(doctor.getId());
         mav.addObject("doctor", doctor);
         mav.addObject("doctorOfficesAvailability", doctorOfficeAvailabilityService.getByDoctorId(doctor.getId()));
         mav.addObject("doctorOffices", doctorOfficeService.getByDoctorId(doctor.getId()));

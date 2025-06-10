@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
-@OfficeOwnedByDoctor(officeId = "officeId", doctorId = "doctorId")
+@OfficeOwnedByDoctor(message = "{office.invalid}")
 @OfficeAcceptsSpecialty(officeId = "officeId", specialtyId = "specialtyId")
 @OfficeAvailableAtDayAndTime(officeId = "officeId", date = "appointmentDate", appointmentHour = "appointmentHour")
 @AppointmentExistence(userId = "doctorId", date = "appointmentDate", startTime = "appointmentHour")

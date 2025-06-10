@@ -56,7 +56,7 @@
             <div class="profile-content">
                 <!-- Unified Form for both Availability and Unavailability -->
                 <form:form id="updateAvailabilityForm" modelAttribute="updateAvailabilityForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/availability/update" cssClass="edit-profile-form">
-
+                    <form:hidden path="doctorId"/>
                     <!-- Availability Slots Section -->
                     <div class="profile-section">
                         <h3 class="section-title">
@@ -630,7 +630,7 @@
                 if (otherSlot.day !== slot.day) return false;
 
                 // Check for time overlap
-                return !(slot.endTime <= otherSlot.startTime || slot.startTime >= otherSlot.endTime);
+                return !(slot.endTime < otherSlot.startTime || slot.startTime > otherSlot.endTime);
             });
 
             if (overlaps.length > 0) {

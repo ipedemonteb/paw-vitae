@@ -5,8 +5,10 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = {OfficeAvailabilitySlotIntersectionValidator.class})
-@Target({ElementType.TYPE})
+@Constraint(validatedBy = { OfficeAvailabilitySlotIntersectionValidator.ForDoctorOfficeAvailabilitySlotForm.class,
+                            OfficeAvailabilitySlotIntersectionValidator.ForDoctorOfficeForm.class
+                            })
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OfficeAvailabilitySlotIntersection {
     String message() default "Office availability slots intersect.";
