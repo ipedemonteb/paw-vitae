@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorProfileDao;
-import ar.edu.itba.paw.interfacePersistence.RatingDao;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.DoctorProfile;
 import org.junit.Before;
@@ -57,7 +56,7 @@ public class DoctorProfileDaoTest {
 
         //Exercise
         DoctorProfile newDoctor = doctorProfileDao.create(doctor, bio, description);
-        em.clear();
+        em.flush();
 
         //Postconditions
         assertNotNull(newDoctor);

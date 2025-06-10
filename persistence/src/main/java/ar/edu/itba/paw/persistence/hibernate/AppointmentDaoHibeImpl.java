@@ -34,7 +34,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     @Override
     public List<Appointment> getPastConfirmedAppointments() {
         LocalDateTime fiveDaysAgo = now.minusDays(5);
-        TypedQuery<Appointment> query = em.createQuery("FROM Appointment a WHERE a.status = 'CONFIRMADO' AND a.date BETWEEN :start AND :end", Appointment.class);
+        TypedQuery<Appointment> query = em.createQuery("FROM Appointment a WHERE a.status = 'confirmado' AND a.date BETWEEN :start AND :end", Appointment.class);
         query.setParameter("start", fiveDaysAgo);
         query.setParameter("end", now);
         return query.getResultList();
@@ -93,7 +93,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         Query nativeQuery = getNativeQuery(userId, isFuture, filter, true);
         return ((Number) nativeQuery.getSingleResult()).intValue();
     }
-
 
     //TODO: CHECK
     private static StringBuilder getSql(boolean isFuture, String filter, boolean isCount) {
