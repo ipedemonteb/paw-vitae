@@ -366,6 +366,7 @@
         if (officeSelect) {
             officeSelect.addEventListener('change', function() {
                 currentOfficeId = this.value;
+                clearDateTimePicker();
                 handleOfficeSelection(this.value);
             });
         }
@@ -376,6 +377,36 @@
             appointmentForm.action = contextPath + `/appointment?doctorId=`+ doctorId;
         }
     });
+
+    function clearDateTimePicker() {
+        const datePickerInput = document.getElementById('datePickerInput');
+        const appointmentDate = document.getElementById('appointmentDate');
+        const appointmentHour = document.getElementById('appointmentHour');
+        const timeSlotsContainer = document.getElementById('timeSlotsContainer');
+        const timeSlots = document.getElementById('timeSlots');
+        const appointmentSummary = document.getElementById('appointmentSummary');
+        const appointmentSummaryText = document.getElementById('appointmentSummaryText');
+
+        if (datePickerInput) {
+            datePickerInput.value = '';
+        }
+        if (appointmentDate) {
+            appointmentDate.value = '';
+        }
+        if (appointmentHour) {
+            appointmentHour.value = '';
+        }
+        if (timeSlotsContainer) {
+            timeSlotsContainer.style.display = 'none';
+        }
+        if (timeSlots) {
+            timeSlots.innerHTML = '';
+        }
+        if (appointmentSummary) {
+            appointmentSummary.classList.add('hidden');
+            appointmentSummaryText.textContent = '';
+        }
+    }
     function submitOnce(form) {
         if (form.getAttribute('data-submitting') === 'true') {
             return false;
@@ -484,6 +515,8 @@
         if (officeSelect) {
             officeSelect.value = '';
         }
+        currentOfficeId = "0";
+        clearDateTimePicker();
     }
 
 </script>

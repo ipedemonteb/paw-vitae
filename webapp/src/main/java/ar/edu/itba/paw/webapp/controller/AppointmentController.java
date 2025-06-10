@@ -86,6 +86,6 @@ public class AppointmentController {
     @GetMapping("appointment/doctor/{id}/availability")
     @ResponseBody
     public String getDoctorAvailability(@PathVariable(value = "id") long doctorId) {
-        return  doctorOfficeAvailabilityService.getByDoctorId(doctorId);
+        return  doctorOfficeAvailabilityService.getJsonByDoctorId(doctorId);
     }
 }

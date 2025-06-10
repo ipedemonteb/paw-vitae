@@ -13,12 +13,14 @@ public interface DoctorOfficeAvailabilityService {
 
     List<DoctorOfficeAvailabilitySlot> create(List<DoctorOfficeAvailabilitySlotForm> slots, DoctorOffice doctorOffice);
 
-    void update(List<DoctorOfficeAvailabilitySlotForm> slots, DoctorOffice doctorOffice);
+    void update(List<DoctorOfficeAvailabilitySlotForm> slots, Long doctorId);
 
     List<DoctorOfficeAvailabilitySlot> getByOfficeId(long officeId);
 
     boolean isAvailableAtDayAndTime(long officeId, LocalDate date, Integer hour);
 
-    String getByDoctorId(long doctorId);
+    String getJsonByDoctorId(long doctorId);
+
+    List<DoctorOfficeAvailabilitySlot> getByDoctorId(long doctorId);
 
 }

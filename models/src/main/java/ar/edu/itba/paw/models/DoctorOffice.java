@@ -36,7 +36,7 @@ public class DoctorOffice {
     )
     private List<Specialty> specialties;
 
-    @OneToMany(mappedBy = "office", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "office", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DoctorOfficeAvailabilitySlot> doctorOfficeAvailabilitySlots;
 
     @Column(name = "office_name", length = 50)
