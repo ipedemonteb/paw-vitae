@@ -110,7 +110,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         office.setDoctor(doctor);
         office.setOfficeName(form.getOfficeName());
         if (form.getRemoved()) {
-            office.setRemoved(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
+            office.setRemoved(LocalDateTime.now());
         }
         office.setActive(form.getActive());
         office.setNeighborhood(neighborhoodService.getById(form.getNeighborhoodId())
