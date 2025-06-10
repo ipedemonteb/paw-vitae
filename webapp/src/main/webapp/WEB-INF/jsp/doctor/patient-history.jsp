@@ -78,35 +78,35 @@
                 </div>
             </div>
 
-            <!-- Search and Filter Section -->
-            <div class="search-filter-section">
-                <div class="search-container">
-                    <div class="search-input-wrapper">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" id="searchInput" class="search-input"
-                               placeholder="<spring:message code='dashboard.medicalHistory.search.placeholder' />" />
-                        <button type="button" id="clearSearch" class="clear-search" style="display: none;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
+<%--            <!-- Search and Filter Section -->--%>
+<%--            <div class="search-filter-section">--%>
+<%--                <div class="search-container">--%>
+<%--                    <div class="search-input-wrapper">--%>
+<%--                        <i class="fas fa-search search-icon"></i>--%>
+<%--                        <input type="text" id="searchInput" class="search-input"--%>
+<%--                               placeholder="<spring:message code='dashboard.medicalHistory.search.placeholder' />" />--%>
+<%--                        <button type="button" id="clearSearch" class="clear-search" style="display: none;">--%>
+<%--                            <i class="fas fa-times"></i>--%>
+<%--                        </button>--%>
+<%--                    </div>--%>
+<%--                </div>--%>
 
-                <div class="filter-container">
-                    <div class="filter-group">
-                        <label for="dateFilter" class="filter-label">
-                            <i class="fas fa-calendar-alt"></i>
-                            <spring:message code="dashboard.medicalHistory.filter.date" />
-                        </label>
-                        <select id="dateFilter" class="filter-select">
-                            <option value="all"><spring:message code="dashboard.medicalHistory.filter.allDates" /></option>
-                            <option value="thisMonth"><spring:message code="dashboard.medicalHistory.filter.thisMonth" /></option>
-                            <option value="lastMonth"><spring:message code="dashboard.medicalHistory.filter.lastMonth" /></option>
-                            <option value="last3Months"><spring:message code="dashboard.medicalHistory.filter.last3Months" /></option>
-                            <option value="thisYear"><spring:message code="dashboard.medicalHistory.filter.thisYear" /></option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+<%--                <div class="filter-container">--%>
+<%--                    <div class="filter-group">--%>
+<%--                        <label for="dateFilter" class="filter-label">--%>
+<%--                            <i class="fas fa-calendar-alt"></i>--%>
+<%--                            <spring:message code="dashboard.medicalHistory.filter.date" />--%>
+<%--                        </label>--%>
+<%--                        <select id="dateFilter" class="filter-select">--%>
+<%--                            <option value="all"><spring:message code="dashboard.medicalHistory.filter.allDates" /></option>--%>
+<%--                            <option value="thisMonth"><spring:message code="dashboard.medicalHistory.filter.thisMonth" /></option>--%>
+<%--                            <option value="lastMonth"><spring:message code="dashboard.medicalHistory.filter.lastMonth" /></option>--%>
+<%--                            <option value="last3Months"><spring:message code="dashboard.medicalHistory.filter.last3Months" /></option>--%>
+<%--                            <option value="thisYear"><spring:message code="dashboard.medicalHistory.filter.thisYear" /></option>--%>
+<%--                        </select>--%>
+<%--                    </div>--%>
+<%--                </div>--%>
+<%--            </div>--%>
 
             <!-- Medical History Content -->
             <div class="medical-history-content">
@@ -191,6 +191,17 @@
                                                 <span class="files-total">${fn:length(appointmentEntry.value)} <spring:message code="dashboard.medicalHistory.totalFiles" /></span>
                                             </div>
                                         </div>
+                                        <c:if test="${not empty appointmentEntry.key.report}">
+                                            <div class="report-section">
+                                                <div class="report-header">
+                                                    <i class="fas fa-file-alt"></i>
+                                                    <span><spring:message code="appointment.form.report" /></span>
+                                                </div>
+                                                <div class="report-content">
+                                                    <c:out value="${appointmentEntry.key.report}" />
+                                                </div>
+                                            </div>
+                                        </c:if>
 
                                         <div class="files-grid">
                                             <c:choose>
@@ -271,7 +282,7 @@
                     <div class="pagination-container">
                         <div class="pagination">
                             <c:if test="${currentPage > 1}">
-                                <a href="<c:url value='/doctor/appointments/${patientId}/history?page=${currentPage - 1}' />"
+                                <a href="<c:url value='/doctor/appointments/${appointmentId}/history?page=${currentPage - 1}' />"
                                    class="pagination-btn pagination-prev">
                                     <i class="fas fa-chevron-left"></i>
                                         <%--                                    <span><spring:message code="pagination.previous" /></span>--%>
@@ -284,7 +295,7 @@
                             </div>
 
                             <c:if test="${currentPage < totalPages}">
-                                <a href="<c:url value='/doctor/appointments/${patientId}/history?page=${currentPage + 1}' />"
+                                <a href="<c:url value='/doctor/appointments/${appointmentId}/history?page=${currentPage + 1}' />"
                                    class="pagination-btn pagination-next">
                                         <%--                                    <span><spring:message code="pagination.next" /></span>--%>
                                     <i class="fas fa-chevron-right"></i>

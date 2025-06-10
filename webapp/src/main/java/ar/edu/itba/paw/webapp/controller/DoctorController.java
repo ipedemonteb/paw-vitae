@@ -227,9 +227,10 @@ public class DoctorController {
                                           @RequestParam(defaultValue = "1") int page, @ModelAttribute("loggedUser") final Doctor doctor) {
         final int pageSize = 10;
 
-        Page<Map.Entry<Appointment, List<AppointmentFile>>> history = appointmentFileService.getGroupedFilesForPatient(appointmentId, page, pageSize);
 
         Patient patient = appointmentService.getPatientByAppointmentId(appointmentId);
+        Page<Map.Entry<Appointment, List<AppointmentFile>>> history = appointmentFileService.getGroupedFilesForPatient(patient.getId(), page, pageSize);
+
 
         ModelAndView mav = new ModelAndView("doctor/patient-history");
         mav.addObject("appointmentFiles", history.getContent());
