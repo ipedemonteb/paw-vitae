@@ -96,6 +96,51 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
+    @Override
+    public List<Appointment> getAppointmentsByPatient(long patientId, int page, int size) {
+        int firstResult = (page - 1) * size;
+        return em.createQuery("FROM Appointment a WHERE a.patient.id = :patientId ORDER BY a.date ASC", Appointment.class)
+                .setParameter("patientId", patientId)
+                .setFirstResult(firstResult)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    public List<Appointment> getAppointmentsByPatientWithFilesOrReport(long patientId, int page, int size) {
+        int firstResult = (page - 1) * size;
+        return em.createQuery(
+                        "SELECT DISTINCT a FROM Appointment a " +
+                                "LEFT JOIN a.appointmentFiles af " +
+                                "WHERE a.patient.id = :patientId " +
+                                "AND (af.id IS NOT NULL OR (a.report IS NOT NULL AND a.report <> '')) " +
+                                "ORDER BY a.date DESC",
+                        Appointment.class)
+                .setParameter("patientId", patientId)
+                .setFirstResult(firstResult)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+
+    public int countAppointmentsByPatientWithFilesOrReport(long patientId) {
+        return ((Number) em.createQuery(
+                        "SELECT COUNT(DISTINCT a) FROM Appointment a " +
+                                "LEFT JOIN a.appointmentFiles af " +
+                                "WHERE a.patient.id = :patientId " +
+                                "AND (af.id IS NOT NULL OR (a.report IS NOT NULL AND a.report <> ''))")
+                .setParameter("patientId", patientId)
+                .getSingleResult()).intValue();
+    }
+
+
+    @Override
+    public int countAppointmentsByPatient(long patientId) {
+        return ((Number) em.createQuery("SELECT COUNT(a) FROM Appointment a WHERE a.patient.id = :patientId")
+                .setParameter("patientId", patientId)
+                .getSingleResult()).intValue();
+    }
+
+
 
     //TODO: CHECK
     private static StringBuilder getSql(boolean isFuture, String filter, boolean isCount) {

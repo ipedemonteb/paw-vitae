@@ -1054,3 +1054,34 @@
         padding: 1rem;
     }
 }
+
+.report-section {
+    background: #f8fafc;
+    border: 1px solid #e0e7ef;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 8px rgba(60, 72, 88, 0.04);
+}
+
+.report-header {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.1em;
+    color: #2563eb;
+    margin-bottom: 10px;
+}
+
+.report-header i {
+    margin-right: 8px;
+    font-size: 1.3em;
+}
+
+.report-content {
+    color: #334155;
+    font-size: 1em;
+    line-height: 1.6;
+    padding-left: 28px;
+    white-space: pre-line;
+}

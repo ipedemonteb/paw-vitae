@@ -198,6 +198,17 @@
                                                 <span class="files-total">${fn:length(appointmentEntry.value)} <spring:message code="dashboard.medicalHistory.totalFiles" /></span>
                                             </div>
                                         </div>
+                                        <c:if test="${not empty appointmentEntry.key.report}">
+                                            <div class="report-section">
+                                                <div class="report-header">
+                                                    <i class="fas fa-file-alt"></i>
+                                                    <span><spring:message code="appointment.form.report" /></span>
+                                                </div>
+                                                <div class="report-content">
+                                                    <c:out value="${appointmentEntry.key.report}" />
+                                                </div>
+                                            </div>
+                                        </c:if>
 
                                         <div class="files-grid">
                                             <c:choose>

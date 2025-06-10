@@ -188,4 +188,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = getById(appointmentId).orElseThrow(() -> new IllegalArgumentException("Appointment not found with id: " + appointmentId));
         return appointment.getPatient();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Appointment> getAppointmentsForPatientWithFilesOrReport(long patientId, int page, int pageSize) {
+        List<Appointment> appointments = appointmentDao.getAppointmentsByPatientWithFilesOrReport(patientId, page, pageSize);
+        int total = appointmentDao.countAppointmentsByPatientWithFilesOrReport(patientId);
+        return new Page<>(appointments, page, pageSize, total);
+    }
+
+
 }

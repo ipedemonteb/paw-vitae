@@ -32,4 +32,10 @@ public interface AppointmentService {
     boolean hasHistoryAllowedByAppointmentId(long appointmentId, long doctorId);
 
     Patient getPatientByAppointmentId(long appointmentId);
+
+    Page<Appointment> getAppointmentsForPatientWithFilesOrReport(long patientId, int page, int pageSize);
+
+
+
+//    Page<Appointment> getAppointmentsWithFilesForPatient(long patientId, int page, int pageSize);
 }

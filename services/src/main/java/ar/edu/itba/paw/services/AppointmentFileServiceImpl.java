@@ -106,16 +106,28 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
 
     @Transactional(readOnly = true)
     public Page<Map.Entry<Appointment, List<AppointmentFile>>> getGroupedFilesForPatient(long patientId, int page, int pageSize) {
-        int totalFiles = appointmentFileDao.getAllFilesForPatientCount(patientId);
-        List<AppointmentFile> files = appointmentFileDao.getAllFilesForPatient(patientId, page, pageSize);
+        Page<Appointment> appointmentPage = appointmentService.getAppointmentsForPatientWithFilesOrReport(patientId, page, pageSize);
+        List<Appointment> appointments = appointmentPage.getContent();
 
-        // Group by Appointment
-        Map<Appointment, List<AppointmentFile>> grouped = files.stream()
-                .collect(Collectors.groupingBy(AppointmentFile::getAppointment, LinkedHashMap::new, Collectors.toList()));
+        if (appointments.isEmpty()) {
+            return new Page<>(Collections.emptyList(), page, pageSize, 0);
+        }
 
-        List<Map.Entry<Appointment, List<AppointmentFile>>> groupedList = new ArrayList<>(grouped.entrySet());
+        List<Long> appointmentIds = appointments.stream().map(Appointment::getId).collect(Collectors.toList());
+        List<AppointmentFile> files = appointmentFileDao.getFilesByAppointmentIds(appointmentIds);
 
-        return new Page<>(groupedList, page, pageSize, totalFiles);
+        Map<Long, List<AppointmentFile>> filesByAppointmentId = files.stream()
+                .collect(Collectors.groupingBy(f -> f.getAppointment().getId()));
+
+        List<Map.Entry<Appointment, List<AppointmentFile>>> groupedList = appointments.stream()
+                .map(appt -> Map.entry(appt, filesByAppointmentId.getOrDefault(appt.getId(), Collections.emptyList())))
+                .collect(Collectors.toList());
+
+        return new Page<>(groupedList, page, pageSize, appointmentPage.getTotalElements());
     }
+
+
+
+
 
 }
