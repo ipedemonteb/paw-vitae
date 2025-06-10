@@ -57,103 +57,66 @@ public class DoctorOfficeAvailabilitySlotServiceImpl implements DoctorOfficeAvai
         return toReturn;
     }
 
-//    @Transactional
-//    @Override
-//    public void update(List<DoctorOfficeForm> slots, Long doctorId) {
-//        List<DoctorOfficeAvailabilitySlotForm> flatSlots = new ArrayList<>();
-//        slots.forEach(slot -> flatSlots.addAll(slot.getOfficeAvailabilitySlotForms()));
-//
-//        List<DoctorOfficeAvailabilitySlot> allSlots = doctorOfficeAvailabilityDao.getByDoctorId(doctorId);
-//        List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(doctorId);
-//
-//        Map<Long, DoctorOfficeAvailabilitySlot> slotMap = allSlots.stream()
-//                .collect(Collectors.toMap(DoctorOfficeAvailabilitySlot::getId, slot -> slot));
-//
-//        Set<Long> keepIds = new HashSet<>();
-//
-//        for (DoctorOfficeAvailabilitySlotForm slotForm : flatSlots) {
-//            DoctorOffice doctorOffice = offices.stream()
-//                    .filter(o -> o.getId() == slotForm.getOfficeId())
-//                    .findFirst()
-//                    .orElseThrow(() -> new IllegalArgumentException("Office with id " + slotForm.getOfficeId() + " not found"));
-//
-//            if (slotForm.getId() != null) {
-//                DoctorOfficeAvailabilitySlot existingSlot = slotMap.get(slotForm.getId());
-//                if (existingSlot == null) {
-//                    throw new IllegalArgumentException("Slot with id " + slotForm.getId() + " not found");
-//                }
-//                existingSlot.setStartTime(slotForm.getStartTime());
-//                existingSlot.setEndTime(slotForm.getEndTime());
-//                existingSlot.setDayOfWeek(slotForm.getDayOfWeek());
-//                existingSlot.setOffice(doctorOffice);
-//                doctorOfficeAvailabilityDao.update(existingSlot);
-//                keepIds.add(existingSlot.getId());
-//            } else {
-//                DoctorOfficeAvailabilitySlot newSlot = slotForm.toEntity(doctorOffice);
-//                doctorOfficeAvailabilityDao.create(newSlot);
-//            }
-//        }
-//        // Delete slots not in keepIds
-//        allSlots.stream()
-//                .filter(slot -> !keepIds.contains(slot.getId()))
-//                .forEach(doctorOfficeAvailabilityDao::delete);
-//    }
-
     @Transactional
     @Override
     public void update(
-            List<DoctorOfficeAvailabilitySlotForm> slotForms,
+            List<DoctorOfficeAvailabilitySlotForm> forms,
             Long doctorId
     ) {
-        // 1) load offices + slots
-        List<DoctorOffice> offices =
-                doctorOfficeService.getByDoctorId(doctorId);
+        // 1) Load all existing slots for this doctor
+        List<DoctorOfficeAvailabilitySlot> allSlots =
+                doctorOfficeAvailabilityDao.getByDoctorId(doctorId);
 
-        // 3) group incoming forms by officeId
-        Map<Long,List<DoctorOfficeAvailabilitySlotForm>> formsByOffice =
-                slotForms.stream()
-                        .collect(groupingBy(DoctorOfficeAvailabilitySlotForm::getOfficeId));
+        // 2) Build lookup maps
+        Map<Long,DoctorOfficeAvailabilitySlot> existingById = allSlots.stream()
+                .collect(Collectors.toMap(DoctorOfficeAvailabilitySlot::getId, slot -> slot));
 
-        // 4) for each office, build its new slot list
-        for (DoctorOffice office : offices) {
-            List<DoctorOfficeAvailabilitySlotForm> incoming =
-                    formsByOffice.getOrDefault(office.getId(), Collections.emptyList());
+        List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(doctorId);
+        Map<Long,DoctorOffice> officeById = offices.stream()
+                .collect(Collectors.toMap(DoctorOffice::getId, office -> office));
 
-            // map existing slots by their ID
-            Map<Long,DoctorOfficeAvailabilitySlot> existingById =
-                    office.getDoctorOfficeAvailabilitySlots().stream()
-                            .collect(toMap(DoctorOfficeAvailabilitySlot::getId, s->s));
+        Set<Long> processedIds = new HashSet<>();
 
-            // build the “new” list of entities
-            List<DoctorOfficeAvailabilitySlot> newSlots = incoming.stream()
-                    .map(form -> {
-                        if (form.getId() != null) {
-                            // update existing
-                            var slot = existingById.get(form.getId());
-                            if (slot == null) throw new IllegalArgumentException(
-                                    "Slot id=" + form.getId() + " not found");
-                            slot.setStartTime(form.getStartTime());
-                            slot.setEndTime(  form.getEndTime());
-                            slot.setDayOfWeek(form.getDayOfWeek());
-                            slot.setOffice(office);
-                            return slot;
-                        } else {
-                            // brand-new slot
-                            return form.toEntity(office);
-                        }
-                    })
-                    .collect(toList());
+        // 3) Iterate incoming forms
+        for (DoctorOfficeAvailabilitySlotForm form : forms) {
+            Long formId = form.getId();
+            DoctorOffice targetOffice = officeById.get(form.getOfficeId());
+            if (targetOffice == null) {
+                throw new IllegalArgumentException(
+                        "Unknown officeId: " + form.getOfficeId());
+            }
 
-            // 5) replace the collection
-            office.getDoctorOfficeAvailabilitySlots().clear();
-            office.getDoctorOfficeAvailabilitySlots().addAll(newSlots);
+            if (formId != null && existingById.containsKey(formId)) {
+                // — UPDATE (and possibly MOVE) an existing slot
+                DoctorOfficeAvailabilitySlot slot = existingById.get(formId);
+
+                // update times
+                slot.setStartTime(form.getStartTime());
+                slot.setEndTime(  form.getEndTime()  );
+                slot.setDayOfWeek(form.getDayOfWeek());
+
+                // allow office‐move
+                if (!(slot.getOffice().getId() == targetOffice.getId())) {
+                    slot.setOffice(targetOffice);
+                }
+
+                doctorOfficeAvailabilityDao.update(slot);
+                processedIds.add(formId);
+
+            } else {
+                // — CREATE a brand-new slot
+                DoctorOfficeAvailabilitySlot newSlot = form.toEntity(targetOffice);
+                doctorOfficeAvailabilityDao.create(newSlot);
+                // no need to add to processedIds, since it's new
+            }
         }
 
-        // 6) flush – because of CascadeType.ALL + orphanRemoval=true,
-        //    Hibernate will INSERT newSlots without IDs,
-        //    UPDATE the ones you modified,
-        //    and DELETE any orphans you removed.
+        // 4) DELETE any slots that weren’t in the incoming list
+        allSlots.stream()
+                .filter(slot -> !processedIds.contains(slot.getId()))
+                .forEach(doctorOfficeAvailabilityDao::delete);
     }
+
 
 
 
