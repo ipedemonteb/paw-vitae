@@ -47,8 +47,16 @@ public class DoctorAvailableAtDayAndTimeValidator implements ConstraintValidator
             if (date == null || startTime == null) {
                 return true;
             }
-            return availabilitySlotsService.isAvailableAtDateAndTime(doctorId, date, startTime)
+            boolean flag = availabilitySlotsService.isAvailableAtDateAndTime(doctorId, date, startTime)
                     && !unavailabilitySlotsService.isUnavailableAtDate(doctorId, date);
+            if (!flag) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("{doctor.available.at.day.and.time.invalid}")
+                        .addPropertyNode(dateFieldName
+                        )
+                        .addConstraintViolation();
+            }
+            return flag;
         }catch (Exception e) {
             return false;
         }
