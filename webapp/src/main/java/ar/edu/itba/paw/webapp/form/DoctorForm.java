@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.*;
 import java.util.List;
 
-@ValidOfficeTimeSlot(message = "{offices.invalid.timeSlot}")
+@ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
 @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
 @AcceptedSpecialties(specialties = "specialties", offices = "doctorOfficeForm", message = "{specialties.not.accepted}")
 @RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "{register.passwordsDoNotMatch}")

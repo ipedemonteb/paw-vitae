@@ -5,8 +5,10 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = {ValidOfficeTimeSlotValidator.class})
-@Target({ElementType.TYPE})
+@Constraint(validatedBy = { ValidOfficeTimeSlotValidator.ForDoctorOfficeForm.class,
+                            ValidOfficeTimeSlotValidator.ForDoctorOfficeAvailabilitySlotForm.class
+                            })
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidOfficeTimeSlot {
     String message() default "Invalid office time slot.";

@@ -2,51 +2,66 @@ package ar.edu.itba.paw.webapp.validation;
 
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
 import ar.edu.itba.paw.models.DoctorOffice;
+import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlotForm;
+import ar.edu.itba.paw.webapp.form.AppointmentForm;
+import ar.edu.itba.paw.webapp.form.UpdateAvailabilityForm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class OfficeOwnedByDoctorValidator implements ConstraintValidator<OfficeOwnedByDoctor, Object> {
-    private String officeId;
-    private String doctorId;
-    private final DoctorOfficeService doctorOfficeService;
+public class OfficeOwnedByDoctorValidator {
 
-    @Autowired
-    public OfficeOwnedByDoctorValidator(DoctorOfficeService doctorOfficeService) {
-        this.doctorOfficeService = doctorOfficeService;
-    }
+    public static class ForDoctorOfficeForm implements ConstraintValidator<OfficeOwnedByDoctor, AppointmentForm> {
 
-    @Override
-    public void initialize(OfficeOwnedByDoctor constraintAnnotation) {
-        this.officeId = constraintAnnotation.officeId();
-        this.doctorId = constraintAnnotation.doctorId();
-    }
+        private final DoctorOfficeService doctorOfficeService;
 
-    @Override
-    public boolean isValid(Object value, javax.validation.ConstraintValidatorContext context) {
-        try {
-            Field officeIdField = value.getClass().getDeclaredField(officeId);
-            Field doctorIdField = value.getClass().getDeclaredField(doctorId);
+        @Autowired
+        public ForDoctorOfficeForm(DoctorOfficeService doctorOfficeService) {
+            this.doctorOfficeService = doctorOfficeService;
+        }
 
-            officeIdField.setAccessible(true);
-            doctorIdField.setAccessible(true);
-
-            long officeIdValue = (long) officeIdField.get(value);
-            long doctorIdValue = (long) doctorIdField.get(value);
-
-            List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(doctorIdValue);
-            if (offices.stream().noneMatch(office -> office.getId() == officeIdValue)) {
+        @Override
+        public boolean isValid(AppointmentForm form, javax.validation.ConstraintValidatorContext context) {
+            List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(form.getDoctorId());
+            if (offices.stream().noneMatch(office -> office.getId() == form.getOfficeId())) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("{appointment.office.valid}")
-                        .addPropertyNode(officeId)
+                        .addPropertyNode("officeId")
                         .addConstraintViolation();
                 return false;
             }
             return true;
-        } catch (Exception e) {
-            return false;
+        }
+
+    }
+
+    public static class ForDoctorOfficeAvailabilitySlotForm implements ConstraintValidator<OfficeOwnedByDoctor, UpdateAvailabilityForm> {
+
+        private final DoctorOfficeService doctorOfficeService;
+
+        @Autowired
+        public ForDoctorOfficeAvailabilitySlotForm(DoctorOfficeService doctorOfficeService) {
+            this.doctorOfficeService = doctorOfficeService;
+        }
+
+        @Override
+        public boolean isValid(UpdateAvailabilityForm form, javax.validation.ConstraintValidatorContext context) {
+            List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(form.getDoctorId());
+            if (form.getDoctorOfficeAvailabilitySlots() != null) {
+                for (DoctorOfficeAvailabilitySlotForm slot : form.getDoctorOfficeAvailabilitySlots()) {
+                    if (offices.stream().noneMatch(office -> office.getId() == slot.getOfficeId())) {
+                        context.disableDefaultConstraintViolation();
+                        context.buildConstraintViolationWithTemplate("{appointment.office.valid}")
+                                .addPropertyNode("doctorOfficeAvailabilitySlots")
+                                .addConstraintViolation();
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
+
 }
