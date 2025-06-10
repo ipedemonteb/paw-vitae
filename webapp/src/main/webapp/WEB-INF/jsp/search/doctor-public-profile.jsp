@@ -25,6 +25,7 @@
     <jsp:param name="doctorId" value="${doctor.id}" />
 </jsp:include>
 
+<c:set var="isEditMode" value="${not empty editMode and editMode}" />
 <!-- Success Notification Toast -->
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
@@ -325,6 +326,7 @@
                                     </div>
                                 </c:forEach>
                             </div>
+
                             <button type="button" class="btn-add-new" onclick="addExperience()">
                                 <i class="fas fa-plus"></i> <spring:message code="doctor.profile.addExperience" />
                             </button>
@@ -397,6 +399,7 @@
                                     </div>
                                 </c:forEach>
                             </div>
+
                             <button type="button" class="btn-add-new" onclick="addCertificate()">
                                 <i class="fas fa-plus"></i> <spring:message code="doctor.profile.addCertificate" />
                             </button>
@@ -507,9 +510,16 @@
 <c:if test="${isOwnProfile}">
     <form:form id="updateProfileForm" method="POST" action="${pageContext.request.contextPath}/doctor/profile/update" modelAttribute="doctorProfileForm" style="display: none;">
         <form:hidden path="biography" id="hiddenBio" />
+        <form:errors path="biography" cssClass="form-error" id="bioErrors" />
+
         <form:hidden path="description" id="hiddenDescription" />
+        <form:errors path="description" cssClass="form-error" id="descriptionErrors" />
+
         <div id="hiddenExperiences"></div>
+        <form:errors path="experiences" cssClass="form-error" id="experiencesErrors" />
+
         <div id="hiddenCertificates"></div>
+        <form:errors path="certificates" cssClass="form-error" id="certificatesErrors" />
     </form:form>
 </c:if>
 
@@ -570,11 +580,59 @@
 
         updateCharCount('bio');
         updateCharCount('description');
-
+        showFormErrors();
         document.getElementById('header-edit-mode-controls').style.display = 'none';
         document.getElementById('header-save-mode-controls').style.display = 'flex';
     }
+    function showFormErrors() {
+        // Mostrar errores de biografía
+        const bioErrors = document.getElementById('bioErrors');
+        if (bioErrors && bioErrors.textContent.trim()) {
+            const bioSection = document.getElementById('bio-edit');
+            if (bioSection) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'form-error visible';
+                errorDiv.innerHTML = bioErrors.innerHTML;
+                bioSection.appendChild(errorDiv);
+            }
+        }
 
+        // Mostrar errores de descripción
+        const descErrors = document.getElementById('descriptionErrors');
+        if (descErrors && descErrors.textContent.trim()) {
+            const descSection = document.getElementById('description-edit');
+            if (descSection) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'form-error visible';
+                errorDiv.innerHTML = descErrors.innerHTML;
+                descSection.appendChild(errorDiv);
+            }
+        }
+
+        // Mostrar errores de experiencias
+        const expErrors = document.getElementById('experiencesErrors');
+        if (expErrors && expErrors.textContent.trim()) {
+            const expSection = document.getElementById('experiences-edit');
+            if (expSection) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'form-error visible';
+                errorDiv.innerHTML = expErrors.innerHTML;
+                expSection.appendChild(errorDiv);
+            }
+        }
+
+
+        const certErrors = document.getElementById('certificatesErrors');
+        if (certErrors && certErrors.textContent.trim()) {
+            const certSection = document.getElementById('certificates-edit');
+            if (certSection) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'form-error visible';
+                errorDiv.innerHTML = certErrors.innerHTML;
+                certSection.appendChild(errorDiv);
+            }
+        }
+    }
     function cancelAllChanges() {
         isEditMode = false;
 
@@ -813,6 +871,10 @@
     // Set current year for copyright
     document.addEventListener('DOMContentLoaded', function() {
         window.currentYear = new Date().getFullYear();
+        const isEditMode = ${editMode}
+        if (isEditMode) {
+            enterEditMode();
+        }
     });
 </script>
 
@@ -968,6 +1030,17 @@
         font-weight: 500;
         cursor: pointer;
         transition: var(--transition);
+    }
+
+    .form-error {
+        color: var(--danger);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: none;
+    }
+
+    .form-error.visible {
+        display: block;
     }
 
     .btn-add-new:hover {

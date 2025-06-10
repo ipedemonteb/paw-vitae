@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -41,12 +42,25 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional(readOnly = true)
     @Scheduled(cron = "0 0 0 * * ?") // Todos los días a las 00:00
+    @Async
     public void sendDailyReminders() {
-        LocalDate today = LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+        LocalDate today = LocalDate.now();
         List<Appointment> appointments = appointmentDao.getAppointmentsByDate(today);
         for (Appointment appointment : appointments) {
             mailService.sendReminderEmail(appointment);
         }
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Async// Every day at 01:00 AM
+    @Transactional
+    public void revokeHistoryPermissionForOldAppointments() {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        List<Appointment> oldAppointments = appointmentDao.getAppointmentsWithHistoryAllowedBefore(oneWeekAgo);
+        for (Appointment appointment : oldAppointments) {
+            appointment.setAllowFullHistory(false);
+        }
+        LOGGER.info("Revoked history permission for {} appointments older than one week", oldAppointments.size());
     }
 
     @Transactional
@@ -107,7 +121,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         LOGGER.debug("Getting appointment with id: {}", appointmentId);
         Optional<Appointment> appointment = appointmentDao.getById(appointmentId);
         appointment.ifPresent(a -> {
-            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            Boolean isCancellable = LocalDateTime.now().plusHours(2).isBefore(a.getDate());
             a.setCancellable(isCancellable);
         });
         return appointment;
@@ -122,7 +136,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, filter);
         appointments.forEach(a -> {
-            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            Boolean isCancellable = LocalDateTime.now().plusHours(2).isBefore(a.getDate());
             a.setCancellable(isCancellable);
         });
         return new Page<>(appointments, page, size, appointmentDao.countAppointments(userId, isFuture, filter));
@@ -154,7 +168,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         List<Appointment> appointments = appointmentDao.getAppointmentsByUserAndDate(userId, date, time);
         appointments.forEach(a -> {
-            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            Boolean isCancellable = LocalDateTime.now().plusHours(2).isBefore(a.getDate());
             a.setCancellable(isCancellable);
         });
         return appointments;

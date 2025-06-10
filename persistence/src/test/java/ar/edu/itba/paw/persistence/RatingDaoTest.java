@@ -60,9 +60,9 @@ public class RatingDaoTest {
     public void testCreate() {
         // Preconditions
         long score = 4;
-        Doctor mangedDoctor = em.find(Doctor.class, DOC_ID);
-        Patient mangedPatient = em.find(Patient.class, PAT_ID);
-        Appointment mangedAppointment = em.find(Appointment.class, INS_APP_ID);
+        Doctor mangedDoctor = em.getReference(Doctor.class, DOC_ID);
+        Patient mangedPatient = em.getReference(Patient.class, PAT_ID);
+        Appointment mangedAppointment = em.getReference(Appointment.class, INS_APP_ID);
         String comment = "Great doctor!";
 
         // Exercise
@@ -205,6 +205,33 @@ public class RatingDaoTest {
         assertFalse(results.isEmpty());
         assertEquals(5, results.size());
         assertTrue(results.getFirst().getRating() >= results.getLast().getRating());
+        for (int i = 0; i < results.size() - 1; i++) {
+            assertTrue(results.get(i).getRating() >= results.get(i + 1).getRating());
+        }
+    }
+
+    @Test
+    public void testGetFiveTopRatingsByDoctorIdDoesNotExist() {
+        //Preconditions
+
+        //Exercise
+        List<Rating> results = ratingDao.getFiveTopRatingsByDoctorId(1000L);
+
+        //Postconditions
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    public void testGetFiveTopRatingsByDoctorIdExists() {
+        //Preconditions
+        long doctorId = 4L;
+
+        //Exercise
+        List<Rating> results = ratingDao.getFiveTopRatingsByDoctorId(doctorId);
+
+        //Postconditions
+        assertFalse(results.isEmpty());
+        assertEquals(5, results.size());
         for (int i = 0; i < results.size() - 1; i++) {
             assertTrue(results.get(i).getRating() >= results.get(i + 1).getRating());
         }

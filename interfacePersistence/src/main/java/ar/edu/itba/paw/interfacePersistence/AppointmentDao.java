@@ -11,6 +11,9 @@ public interface AppointmentDao {
 
     Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice, boolean allowFullHistory);
 
+    //make it look between a range back
+    List<Appointment> getAppointmentsWithHistoryAllowedBefore(LocalDateTime dateTime);
+
     void cancelAppointment(long appointmentId);
 
     void completeAppointments();

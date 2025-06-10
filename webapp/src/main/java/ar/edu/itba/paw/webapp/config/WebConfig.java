@@ -58,10 +58,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 @EnableCaching
 @EnableAsync
@@ -74,7 +71,11 @@ import java.util.Properties;
 public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigurer {
 
     private final Environment env;
-
+    @Bean
+    public Object timeZoneInitializer() {
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Argentina/Buenos_Aires"));
+        return new Object();
+    }
     @Value("classpath:schema.sql")
     private Resource schemaSql;
 
