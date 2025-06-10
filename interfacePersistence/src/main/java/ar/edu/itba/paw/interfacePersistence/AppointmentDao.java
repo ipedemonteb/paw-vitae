@@ -30,4 +30,17 @@ public interface AppointmentDao {
     int countAppointments(long userId, boolean isFuture, String filter);
 
     void updateReport(long appointmentId, String report);
+
+    List<Appointment> getAppointmentsByPatient(long patientId, int page, int size);
+
+    int countAppointmentsByPatient(long patientId);
+
+    int countAppointmentsByPatientWithFilesOrReport(long patientId);
+
+    List<Appointment> getAppointmentsByPatientWithFilesOrReport(long patientId, int page, int size);
+//
+//    List<Appointment> getAppointmentsWithFilesByPatient(long patientId, int page, int size);
+//
+//    int countAppointmentsWithFilesByPatient(long patientId);
+
 }

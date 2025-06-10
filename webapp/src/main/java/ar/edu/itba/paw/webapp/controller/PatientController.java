@@ -154,7 +154,7 @@ public class PatientController {
         final ModelAndView mav = new ModelAndView("patient/dashboard-medical-history");
 
         Page<Map.Entry<Appointment, List<AppointmentFile>>> groupedPage =
-                appointmentFileService.getGroupedFilesForPatient(patient.getId(), (int) page.getValue(), 10);
+                appointmentFileService.getGroupedFilesForPatient(patient.getId(), (int) page.getValue(), 10 );
 
         mav.addObject("appointmentFiles", groupedPage.getContent());
         mav.addObject("currentPage", page.getValue());

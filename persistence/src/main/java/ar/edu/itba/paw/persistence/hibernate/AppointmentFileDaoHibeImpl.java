@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +46,15 @@ public class AppointmentFileDaoHibeImpl implements AppointmentFileDao {
                 .getResultList();
     }
 
+    @Override
+    public List<AppointmentFile> getFilesByAppointmentIds(List<Long> appointmentIds) {
+        if (appointmentIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return em.createQuery("FROM AppointmentFile af WHERE af.appointment.id IN :appointmentIds", AppointmentFile.class)
+                .setParameter("appointmentIds", appointmentIds)
+                .getResultList();
+    }
 
 
 

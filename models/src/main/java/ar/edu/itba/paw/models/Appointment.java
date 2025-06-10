@@ -2,6 +2,7 @@ package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "appointments")
@@ -41,6 +42,8 @@ public class Appointment {
     @JoinColumn(name = "office_id", nullable = false)
     private DoctorOffice doctorOffice;
 
+    @OneToMany(mappedBy = "appointment")
+    private List<AppointmentFile> appointmentFiles;
     @Column
     private String report;
 
