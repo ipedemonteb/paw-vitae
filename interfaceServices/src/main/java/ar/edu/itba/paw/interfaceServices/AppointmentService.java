@@ -38,4 +38,6 @@ public interface AppointmentService {
 
 
 //    Page<Appointment> getAppointmentsWithFilesForPatient(long patientId, int page, int pageSize);
+
+    void revokeHistoryPermissionForOldAppointments();
 }

@@ -36,6 +36,7 @@ public class AppointmentDaoTest {
     private static final long DOC_ID = 2L;
     private static final long PAT_ID = 1L;
     private static final long SPEC_ID = 1L;
+    private static final long OFFICE_ID = 1L;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -68,9 +69,11 @@ public class AppointmentDaoTest {
         Doctor managedDoctor = em.getReference(Doctor.class, DOC_ID);
         Patient managedPatient = em.getReference(Patient.class, PAT_ID);
         String report = "Report content";
+        DoctorOffice office = em.getReference(DoctorOffice.class, OFFICE_ID);
+        boolean allow = true;
 
         //Exercise
-        Appointment appointment = appointmentDao.create(dateTime, status, reason, managedSpecialty, managedDoctor, managedPatient, report);
+        Appointment appointment = appointmentDao.create(dateTime, status, reason, managedSpecialty, managedDoctor, managedPatient, report, office, allow);
         em.flush();
 
         //Postconditions
@@ -112,19 +115,28 @@ public class AppointmentDaoTest {
         int page = 1;
         int size = 2;
         String status = "confirmado";
+        String reason = "General checking";
+        long officeId = 1L;
+        boolean allow = true;
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
                 "date", LocalDateTime.now().plusDays(6),
-                "status", status
+                "status", status,
+                "reason", reason,
+                "office_id", officeId,
+                "allow_full_history", allow
         ));
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
                 "date", LocalDateTime.now().plusDays(8),
-                "status", status
+                "status", status,
+                "reason", reason,
+                "office_id", officeId,
+                "allow_full_history", allow
         ));
 
         //Exercise
@@ -188,19 +200,28 @@ public class AppointmentDaoTest {
         //Preconditions
         long specialtyId = 1L;
         String status = "confirmado";
+        String reason = "General checking";
+        long officeId = 1L;
+        boolean allow = true;
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
                 "date", LocalDateTime.now().plusDays(6),
-                "status", status
+                "status", status,
+                "reason", reason,
+                "office_id", officeId,
+                "allow_full_history", allow
         ));
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
                 "date", LocalDateTime.now().plusDays(8),
-                "status", status
+                "status", status,
+                "reason", reason,
+                "office_id", officeId,
+                "allow_full_history", allow
         ));
 
         //Exercise
@@ -220,6 +241,31 @@ public class AppointmentDaoTest {
 
         //Postconditions
         assertTrue(appointments.isEmpty());
+    }
+
+    @Test
+    public void testGetPastConfirmedAppointments() {
+        //Preconditions
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getPastConfirmedAppointments();
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(1, appointments.size());
+    }
+
+    @Test
+    public void testGetAppointmentsWithHistoryAllowedBefore() {
+        //Preconditions
+        LocalDateTime dateTime = LocalDateTime.of(2025, 5, 1, 10, 0);
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getAppointmentsWithHistoryAllowedBefore(dateTime);
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(3, appointments.size());
     }
 
 //  DEPRECATED METHODS

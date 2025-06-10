@@ -24,7 +24,7 @@ public class ValidExperienceValidator implements ConstraintValidator<ValidExperi
                 experience.getStartDate() == null) {
                 return false;
             }
-            if ((experience.getEndDate() != null && experience.getEndDate().isBefore(experience.getStartDate())) || (experience.getEndDate() == null && experience.getStartDate().isAfter(LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"))))) {
+            if ((experience.getEndDate() != null && experience.getEndDate().isBefore(experience.getStartDate())) || (experience.getEndDate() == null && experience.getStartDate().isAfter(LocalDate.now()))) {
                 return false;
             }
         }

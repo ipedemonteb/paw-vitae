@@ -127,6 +127,20 @@ public class UserDaoTest {
         assertEquals("en", language);
     }
 
+    @Test
+    public void testTokenExpirationDate() {
+        //Preconditions
+        String token = "VERIFTOKEN";
+
+        //Exercise
+        LocalDateTime expiration = userDao.tokenExpirationDate(token);
+
+        //Postconditions
+        assertNotNull(expiration);
+        assertEquals(expirationDate.getDayOfYear(), expiration.getDayOfYear());
+        assertEquals(expirationDate.getYear(), expiration.getYear());
+    }
+
     @Rollback
     @Test
     public void testChangeLanguage() {

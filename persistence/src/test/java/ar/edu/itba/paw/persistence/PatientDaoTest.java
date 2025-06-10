@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfacePersistence.CoverageDao;
 import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.models.Coverage;
+import ar.edu.itba.paw.models.Neighborhood;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.persistence.hibernate.PatientDaoHibeImpl;
 import org.junit.Before;
@@ -46,7 +47,6 @@ public class PatientDaoTest {
     private static final String TEST_PHONE = "123456789";
     private static final String TEST_LANGUAGE = "en";
     private static final long TEST_COVERAGE_ID = 1L;
-    private static final String TEST_COVERAGE_NAME = "Coverage A";
 
     @Autowired
     private PatientDaoHibeImpl patientDao;
@@ -73,10 +73,11 @@ public class PatientDaoTest {
         String password = "hashedpassword";
         String phone = "123456789";
         String language = "es";
-        Coverage coverage = em.getReference(Coverage.class, TEST_COVERAGE_ID);
+        Coverage coverage = em.find(Coverage.class, TEST_COVERAGE_ID);
+        Neighborhood neighborhood = em.find(Neighborhood.class, 1L);
 
         //Exercise
-        Patient patient = patientDao.create(name, lastname, email, password, phone, language, coverage);
+        Patient patient = patientDao.create(name, lastname, email, password, phone, language, coverage, neighborhood);
         em.flush();
 
         //Postconditions

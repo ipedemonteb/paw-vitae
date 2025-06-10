@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfacePersistence.AvailabilitySlotsDao;
 import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.persistence.hibernate.DoctorDaoHibeImpl;
@@ -9,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -20,14 +18,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -176,7 +169,18 @@ public class DoctorDaoTest {
     }
 
     @Test
-    public void testCountBySpecialty() {
+    public void testCountBySpecialtyDoesNotExist() {
+        //Preconditions
+
+        //Exercise
+        int count = doctorDao.countBySpecialty(1000L);
+
+        //Postconditions
+        assertEquals(0, count);
+    }
+
+    @Test
+    public void testCountBySpecialtyExists() {
         //Preconditions
 
         //Exercise
@@ -192,9 +196,10 @@ public class DoctorDaoTest {
         List<Integer> days = List.of(0, 1);
         String order = "name";
         String direction = "asc";
+        String keyword = "";
 
         //Exercise
-        List<Doctor> doctors = doctorDao.getWithFilters(SPEC_ID, COV_ID, days, order, direction, 1, 4);
+        List<Doctor> doctors = doctorDao.getWithFilters(SPEC_ID, COV_ID, days, keyword, order, direction, 1, 4);
 
         //Postconditions
         assertFalse(doctors.isEmpty());
@@ -210,16 +215,28 @@ public class DoctorDaoTest {
         List<Integer> days = List.of(0, 1);
         String order = "name";
         String direction = "asc";
+        String keyword = "";
 
         //Exercise
-        int count = doctorDao.countWithFilters(SPEC_ID, COV_ID, days, order, direction);
+        int count = doctorDao.countWithFilters(SPEC_ID, COV_ID, days, keyword, order, direction);
 
         //Postconditions
         assertEquals(2, count);
     }
 
     @Test
-    public void testGetByVerificationToken() {
+    public void testGetByVerificationTokenDoesNotExist() {
+        //Preconditions
+
+        //Exercise
+        Optional<Doctor> maybeDoctor = doctorDao.getByVerificationToken("NONVERIFTOKEN");
+
+        //Postconditions
+        assertFalse(maybeDoctor.isPresent());
+    }
+
+    @Test
+    public void testGetByVerificationTokenExists() {
         //Preconditions
         String verification_token = "VERIFTOKEN2";
 
@@ -237,7 +254,18 @@ public class DoctorDaoTest {
     }
 
     @Test
-    public void testGetByResetToken() {
+    public void testGetByResetTokenDoesNotExist() {
+        //Preconditions
+
+        //Exercise
+        Optional<Doctor> maybeDoctor = doctorDao.getByResetToken("NONRESETTOKEN");
+
+        //Postconditions
+        assertFalse(maybeDoctor.isPresent());
+    }
+
+    @Test
+    public void testGetByResetTokenExists() {
         //Preconditions
         String verification_token = "RESTOKEN2";
 
@@ -263,6 +291,34 @@ public class DoctorDaoTest {
 
         //Postconditions
         assertEquals(3, count);
+    }
+
+    @Test
+    public void testSearchEmpty() {
+        //Preconditions
+        String keyword = "NonExistentDoctor";
+        int results = 10;
+
+        //Exercise
+        List<Doctor> doctors = doctorDao.search(keyword, results);
+
+        //Postconditions
+        assertTrue(doctors.isEmpty());
+    }
+
+    @Test
+    public void testSearchNotEmpty() {
+        //Preconditions
+        String keyword = "Jane Smith";
+        int results = 10;
+
+        //Exercise
+        List<Doctor> doctors = doctorDao.search(keyword, results);
+
+        //Postconditions
+        assertFalse(doctors.isEmpty());
+        assertEquals(1, doctors.size());
+        assertEquals(TEST_ID, doctors.getFirst().getId());
     }
 
 //    DEPRECATED METHODS

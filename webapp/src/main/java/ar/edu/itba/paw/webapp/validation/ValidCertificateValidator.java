@@ -23,7 +23,7 @@ public class ValidCertificateValidator implements ConstraintValidator<ValidCerti
                 certificate.getIssueDate() == null) {
                 return false;
             }
-            if (certificate.getIssueDate().isAfter(LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires")))) {
+            if (certificate.getIssueDate().isAfter(LocalDate.now())) {
                 return false;
             }
         }

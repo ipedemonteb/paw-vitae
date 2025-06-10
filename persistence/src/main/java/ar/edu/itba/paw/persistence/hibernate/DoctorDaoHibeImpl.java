@@ -105,7 +105,6 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
-
     private static StringBuilder getSql(
             long specialtyId,
             long coverageId,

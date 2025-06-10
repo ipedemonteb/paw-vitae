@@ -47,7 +47,7 @@ public class AppointmentForm {
     @NotNull
     private long patientId;
 
-    private boolean allowFullHistory = true; // default true
+    private boolean allowFullHistory = true;
 
 
     public long getPatientId() {
