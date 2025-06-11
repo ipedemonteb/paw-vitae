@@ -48,6 +48,7 @@ public class OfficeAvailableAtDayAndTimeValidator implements ConstraintValidator
             if (date == null || hour == null) {
                 return true;
             }
+
             if (!doctorOfficeAvailabilityService.isAvailableAtDayAndTime(officeId, date, hour)
                     && !unavailabilitySlotsService.isUnavailableAtDate(officeId, date)) {
                 context.disableDefaultConstraintViolation();

@@ -196,6 +196,13 @@
                                     <div class="file-info">
                                         <div class="file-name"><c:out value="${file.fileName}"/></div>
                                     </div>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file-view/${file.id}' />"
+                                       class="btn-view-file"
+                                       target="_blank"
+                                       title="<spring:message code='dashboard.medicalHistory.viewFile' />">
+                                        <i class="fas fa-eye"></i>
+                                        <span><spring:message code="dashboard.medicalHistory.view" /></span>
+                                    </a>
                                     <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>"
                                        class="file-download" download>
                                         <i class="fas fa-download"></i>
@@ -321,6 +328,13 @@
                                                 <div class="file-info">
                                                     <div class="file-name"><c:out value="${file.fileName}"/></div>
                                                 </div>
+                                                <a href="<c:url value='/appointment/${appointment.id}/file-view/${file.id}' />"
+                                                   class="btn-view-file"
+                                                   target="_blank"
+                                                   title="<spring:message code='dashboard.medicalHistory.viewFile' />">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span><spring:message code="dashboard.medicalHistory.view" /></span>
+                                                </a>
                                                 <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>"
                                                    class="file-download" download>
                                                     <i class="fas fa-download"></i>
@@ -357,7 +371,7 @@
                                         <form:input type="file" path="files" id="files" multiple="true" accept=".pdf" class="file-upload-input-hidden" />
                                     </div>
                                     <div id="filePreview" class="file-upload-preview"></div>
-                                    <form:errors path="files" cssClass="error-message" />
+                                    <form:errors path="patientFiles" cssClass="error-message" />
                                 </div>
                             </div>
                             <div class="form-group">

@@ -80,10 +80,6 @@
     <i class="fas fa-history"></i>
     <span><spring:message code="dashboard.tab.history" /></span>
   </a>
-  <a href="<c:url value='/${isDoctor ? "doctor" : "patient"}/dashboard/profile'/>" class="nav-tab ${activeTab == 'profile' ? 'active' : ''}">
-    <i class="fas fa-user"></i>
-    <span><spring:message code="dashboard.tab.profile" /></span>
-  </a>
   <c:if test="${!isDoctor}">
     <a href="<c:url value='/patient/dashboard/medical-history'/>" class="nav-tab ${activeTab == 'medicalHistory' ? 'active' : ''}">
       <i class="fas fa-notes-medical"></i>
@@ -102,4 +98,8 @@
       <span><spring:message code="dashboard.tab.offices" /></span>
     </a>
   </c:if>
+  <a href="<c:url value='/${isDoctor ? "doctor" : "patient"}/dashboard/profile'/>" class="nav-tab ${activeTab == 'profile' ? 'active' : ''}">
+    <i class="fas fa-user"></i>
+    <span><spring:message code="dashboard.tab.profile" /></span>
+  </a>
 </div>
