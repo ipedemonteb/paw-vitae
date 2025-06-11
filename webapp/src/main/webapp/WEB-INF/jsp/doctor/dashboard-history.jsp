@@ -187,9 +187,9 @@
 </main>
 
 <!-- Modales comunes -->
-<div id="confirmAppointmentModal" class="modal-overlay">
+<div id="confirmAppointmentModal" class="remove-modal-overlay">
     <div class="modal-container">
-        <div class="modal-header">
+        <div class="remove-modal-header">
             <div class="modal-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
@@ -197,7 +197,7 @@
             </div>
             <h3 class="modal-title"><spring:message code="appointment.confirm.title" /></h3>
         </div>
-        <div class="modal-body">
+        <div class="remove-modal-body">
             <p class="modal-message"><spring:message code="appointment.confirm.message" /></p>
         </div>
         <div class="modal-footer">
@@ -211,9 +211,9 @@
     </div>
 </div>
 
-<div id="cancelAppointmentModal" class="modal-overlay">
+<div id="cancelAppointmentModal" class="remove-modal-overlay">
     <div class="modal-container">
-        <div class="modal-header">
+        <div class="remove-modal-header">
             <div class="modal-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
@@ -221,7 +221,7 @@
             </div>
             <h3 class="modal-title"><spring:message code="appointment.cancel.title" /></h3>
         </div>
-        <div class="modal-body">
+        <div class="remove-modal-body">
             <p class="modal-message"><spring:message code="appointment.cancel.message" /></p>
         </div>
         <div class="modal-footer">

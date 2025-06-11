@@ -36,6 +36,9 @@ public class DoctorOffice {
     )
     private List<Specialty> specialties;
 
+    @OneToMany(mappedBy = "office", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DoctorOfficeAvailability> doctorOfficeAvailability;
+
     @Column(name = "office_name", length = 50)
     private String officeName;
 
@@ -54,7 +57,7 @@ public class DoctorOffice {
         this.officeName = officeName;
     }
 
-    public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName, boolean active, LocalDateTime removed) {
+    public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName, boolean active, LocalDateTime removed, List<DoctorOfficeAvailability> doctorOfficeAvailability) {
         this.doctor = doctor;
         this.neighborhood = neighborhood;
         this.specialties = specialties;
@@ -113,6 +116,14 @@ public class DoctorOffice {
 
     public void setRemoved(LocalDateTime removed) {
         this.removed = removed;
+    }
+
+    public List<DoctorOfficeAvailability> getDoctorOfficeAvailability() {
+        return doctorOfficeAvailability;
+    }
+
+    public void setDoctorOfficeAvailability(List<DoctorOfficeAvailability> doctorOfficeAvailabilities) {
+        this.doctorOfficeAvailability = doctorOfficeAvailabilities;
     }
 
     @Override

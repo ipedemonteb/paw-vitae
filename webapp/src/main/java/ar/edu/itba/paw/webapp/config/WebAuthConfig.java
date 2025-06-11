@@ -76,6 +76,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/appointment").access("hasRole('PATIENT') ")
 //                .antMatchers("/patient/dashboard/medical-history").access("hasRole('PATIENT')")
                 .antMatchers("/doctor/dashboard/unavailability/**").access("hasRole('DOCTOR') and @accessHandler.canHandleUnavailability(request)")
+                .antMatchers("appointment/doctor/*/availability").access("hasRole('PATIENT')")
                 .antMatchers("/doctor/**").hasRole("DOCTOR")
                 .antMatchers("/patient/**").hasRole("PATIENT")
                 .antMatchers("/appointment/*/file/*").authenticated()

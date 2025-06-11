@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorOfficeDao;
+import ar.edu.itba.paw.interfaceServices.DoctorOfficeAvailabilityService;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
 import ar.edu.itba.paw.interfaceServices.NeighborhoodService;
 import ar.edu.itba.paw.interfaceServices.SpecialtyService;
@@ -19,14 +20,16 @@ import java.util.stream.Collectors;
 public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
     private final DoctorOfficeDao doctorOfficeDao;
+    private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
     private final NeighborhoodService neighborhoodService;
     private final SpecialtyService specialtyService;
 
     @Autowired
-    public DoctorOfficeServiceImpl(DoctorOfficeDao doctorOfficeDao, NeighborhoodService neighborhoodService, SpecialtyService specialtyService) {
+    public DoctorOfficeServiceImpl(DoctorOfficeDao doctorOfficeDao, NeighborhoodService neighborhoodService, SpecialtyService specialtyService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService) {
         this.doctorOfficeDao = doctorOfficeDao;
         this.neighborhoodService = neighborhoodService;
         this.specialtyService = specialtyService;
+        this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
     }
 
     @Transactional
@@ -53,7 +56,9 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             Neighborhood neighborhood = neighborhoodService.getById(officeForm.getNeighborhoodId()).orElseThrow(() -> new IllegalArgumentException("Neighborhood not found")); //TODO MAKE CUSTOM EXCEPTION AND MAKE EFFICIENT (THERE CAN BE REPEATED NEIGHBORHOODS)
             List<Specialty> specialties = specialtyService.getByIds(officeForm.getSpecialtyIds());
             DoctorOffice doctorOffice = officeForm.toEntity(doctor, neighborhood, specialties);
-            doctorOffices.add(doctorOffice);
+            DoctorOffice created = create(doctorOffice);
+            doctorOffice.setDoctorOfficeAvailability(doctorOfficeAvailabilityService.create(officeForm.getOfficeAvailabilitySlotForms(), created));
+            doctorOffices.add(created);
         }
         return doctorOffices;
     }
@@ -73,13 +78,13 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     @Transactional(readOnly = true)
     @Override
     public List<DoctorOffice> getAllByDoctorId(long doctorId) {
-        return doctorOfficeDao.getAllByDoctorId(doctorId);
+        return doctorOfficeDao.getByDoctorId(doctorId);
     }
 
     @Transactional
     @Override
     public void update(List<DoctorOfficeForm> officeForms, Doctor doctor) {
-        List<DoctorOffice> existing = doctorOfficeDao.getAllByDoctorId(doctor.getId());
+        List<DoctorOffice> existing = doctorOfficeDao.getByDoctorId(doctor.getId());
         Map<Long,DoctorOffice> existingById =
                 existing.stream().collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
 

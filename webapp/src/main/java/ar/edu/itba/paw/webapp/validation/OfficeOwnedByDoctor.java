@@ -6,7 +6,9 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = {OfficeOwnedByDoctorValidator.class})
+@Constraint(validatedBy = { OfficeOwnedByDoctorValidator.ForDoctorOfficeForm.class,
+                            OfficeOwnedByDoctorValidator.ForDoctorOfficeAvailabilityForm.class
+                            })
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OfficeOwnedByDoctor {
@@ -15,8 +17,4 @@ public @interface OfficeOwnedByDoctor {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    String officeId();
-
-    String doctorId();
 }
