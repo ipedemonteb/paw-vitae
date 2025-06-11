@@ -178,6 +178,15 @@
                         <label class="form-label required-field" id="offices-label">
                             <spring:message code="register.doctorOffices" />
                         </label>
+
+                        <div class="empty-state-office">
+                            <div class="empty-icon">
+                                <i class="fas fa-building" style="font-size: 4rem;"></i>
+                            </div>
+                            <h3><spring:message code="offices.empty.title" /></h3>
+                            <p><spring:message code="offices.empty.disabled.message" /></p>
+                        </div>
+
                         <div id="doctor-offices-container">
                             <!-- Offices will be rendered here by JavaScript -->
                         </div>
@@ -274,7 +283,7 @@
     // Modal functions
     function showRemoveConfirmation(index) {
         const office = doctorOffices.find(o => o.index === parseInt(index));
-        if (!office) return;
+        if (!office || (office.active && doctorOffices.filter(o => o.active).length === 1)) return;
 
         pendingRemoveIndex = index;
 
@@ -323,10 +332,6 @@
             updateFilterCounts();
             applyCurrentFilter();
             hideRemoveConfirmation();
-            if (doctorOffices.filter(o => o.active).length === 0) {
-                // If all offices are removed, add a new office
-                addNewOffice();
-            }
         }
     }
 
@@ -513,15 +518,18 @@
 
     function toggleOfficeStatus(index) {
         const office = doctorOffices.find(o => o.index === parseInt(index));
-        if (!office || office.removed) return;
+        if (!office || office.removed || doctorOffices.filter(o => o.active).length === 1) return;
 
         office.active = !office.active;
         updateOfficeStatus(index);
         updateFilterCounts();
         applyCurrentFilter();
-        if (doctorOffices.filter(o => o.active).length === 0) {
-            // If all offices are removed, add a new office
-            addNewOffice();
+
+        if (doctorOffices.filter(o => !o.active && !o.removed).length === 0) {
+            const emptyState = document.querySelector('.empty-state-office');
+            if (emptyState) {
+                emptyState.style.display = 'flex';
+            }
         }
     }
 
@@ -573,6 +581,16 @@
 
     function applyCurrentFilter() {
         const offices = document.querySelectorAll('.office-entry');
+
+        const emptyState = document.querySelector('.empty-state-office');
+
+        if (emptyState) {
+            if (currentFilter === 'disabled' && doctorOffices.filter(o => !o.active && !o.removed).length === 0) {
+                emptyState.style.display = 'flex';
+            } else {
+                emptyState.style.display = 'none';
+            }
+        }
 
         offices.forEach(officeElement => {
             const index = parseInt(officeElement.getAttribute('data-index'));

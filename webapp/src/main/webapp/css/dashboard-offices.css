@@ -150,8 +150,8 @@
 }
 
 /* Empty State */
-.empty-state {
-    display: flex;
+.empty-state-office {
+    display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
