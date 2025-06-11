@@ -1,17 +1,14 @@
 package ar.edu.itba.paw.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import javax.persistence.*;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "doctor_office_availability_slots")
-public class DoctorOfficeAvailabilitySlot {
+public class DoctorOfficeAvailability {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_office_availability_slots_id_seq")
@@ -34,9 +31,9 @@ public class DoctorOfficeAvailabilitySlot {
     @Column(name = "day_of_week", nullable = false)
     private Integer dayOfWeek;
 
-    public DoctorOfficeAvailabilitySlot() {}
+    public DoctorOfficeAvailability() {}
 
-    public DoctorOfficeAvailabilitySlot(DoctorOffice office, LocalTime endTime, LocalTime startTime, Integer dayOfWeek) {
+    public DoctorOfficeAvailability(DoctorOffice office, LocalTime endTime, LocalTime startTime, Integer dayOfWeek) {
         this.office = office;
         this.endTime = endTime;
         this.startTime = startTime;
