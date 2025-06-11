@@ -5,19 +5,19 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = {DoctorAvailableAtDayAndTimeValidator.class})
+@Constraint(validatedBy = {OfficeAvailableAtDayAndTimeValidator.class})
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DoctorAvailableAtDayAndTime {
+public @interface OfficeAvailableAtDayAndTime {
     String message() default "Doctor is not available at this time.";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    String doctorId();
+    String officeId();
 
     String date();
 
-    String startTime();
+    String appointmentHour();
 }

@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedTimeSlot = null
 
 
-    initDatePicker();
+    fetchOfficesAvailability();
 
     /**
      * Initialize the date picker component
@@ -74,6 +74,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 datePickerCalendar.style.display = "none"
             }
         })
+    }
+
+    /**
+     * Fetch the availability for all the offices
+     */
+    let officeAvailability = [];
+    function fetchOfficesAvailability() {
+        const url = `${contextPath}/appointment/doctor/${doctorId}/availability`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                officeAvailability = data || [];
+                initDatePicker();
+            })
+            .catch(error => {
+                console.error("Error fetching availability:", error);
+            });
     }
 
     /**
@@ -103,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         messages.weekdaysShort.forEach((day) => {
             const dayElement = document.createElement("div")
             dayElement.className = "date-picker-weekday"
-            dayElement.textContent = day
+            dayElement.textContent = day.toString()
             calendarWeekdays.appendChild(dayElement)
         })
     }
@@ -150,9 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const dayElement = document.createElement("div");
             dayElement.className = "date-picker-day";
-            dayElement.textContent = day;
+            dayElement.textContent = day.toString();
 
-            let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() + 6) % 7));
+            let available = officeAvailability[currentOfficeId]?.filter(slot => slot.dayOfWeek.toString() === ((date.getDay() + 6) % 7).toString());
             let flag = true;
 
             const isUnavailable = unavailabilitySlots.some(slot => {
@@ -170,7 +187,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (isToday(date)) {
                     const passedSlots = available.reduce((sum, slot) => {
                         const passed = Math.max(0, currentHour - slot.startTime + 1);
-                        return sum + Math.min(passed, slot.slots);
+                        const slots = slot.endTime.hour - slot.startTime.hour + 1;
+                        return sum + Math.min(passed, slots);
                     }, 0);
 
                     flag = FutureAppointments.some(entry =>
@@ -280,10 +298,8 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedDate = date
 
         // Format date for display
-        const formattedDate = formatDate(date)
-
         // Update input field
-        datePickerInput.value = formattedDate
+        datePickerInput.value = formatDate(date)
 
         // Update hidden input
         appointmentDateInput.value = formatDateForSubmission(date)
@@ -304,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Format date for display (e.g., "Monday, January 1, 2023")
+     * Format date for display (e.g., "Sunday, January 1, 2023")
      * @param {Date} date - The date to format
      * @returns {string} Formatted date string
      */
@@ -344,8 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const allSlots = Array.from({ length: 13 }, (_, i) => `${8 + i}`);
 
-        let available = availabilitySlots.filter(slot => slot.dayOfWeek == ((date.getDay() + 6) % 7)); //js getDate works in mysterious ways, 0 is Sunday and 1 is Mondays. I have saved you all from debugging hell
-
+        let available = officeAvailability[currentOfficeId]?.filter(slot => slot.dayOfWeek.toString() === ((date.getDay() + 6) % 7).toString()); //js getDate works in mysterious ways, 0 is Sunday and 1 is Mondays. I have saved you all from debugging hell
         // Find the fully booked hours for the selected date
         const formattedDate = formatDateForSubmission(date);
         const fullyBookedEntry = FutureAppointments.find(entry => entry.date === formattedDate);

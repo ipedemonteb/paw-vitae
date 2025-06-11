@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @ValidOfficeId
+@ActiveOfficeAvailability
 public class OfficeForm {
 
     @NotNull

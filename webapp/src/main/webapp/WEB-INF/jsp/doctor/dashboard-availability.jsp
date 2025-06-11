@@ -56,7 +56,7 @@
             <div class="profile-content">
                 <!-- Unified Form for both Availability and Unavailability -->
                 <form:form id="updateAvailabilityForm" modelAttribute="updateAvailabilityForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/availability/update" cssClass="edit-profile-form">
-
+                    <form:hidden path="doctorId"/>
                     <!-- Availability Slots Section -->
                     <div class="profile-section">
                         <h3 class="section-title">
@@ -70,63 +70,17 @@
                         </div>
 
                         <div id="timeslots-container" class="timeslots-container">
-                            <div id="no-slots-message" class="no-slots-message" style="${empty updateAvailabilityForm.availabilitySlots ? '' : 'display: none;'}">
+                            <div id="no-slots-message" class="no-slots-message" style="${empty doctorOfficesAvailability ? '' : 'display: none;'}">
                                 <p><spring:message code="dashboard.availability.noTimeSlots" /></p>
                             </div>
 
                             <div id="time-slot-inputs">
-                                <c:forEach items="${updateAvailabilityForm.availabilitySlots}" var="slot" varStatus="status">
-                                    <div class="time-slot-row" id="slot-row-${status.index}">
-                                        <div class="day-select">
-                                            <label class="time-label"><spring:message code="register.dayOfWeek" /></label>
-                                            <select name="availabilitySlots[${status.index}].dayOfWeek" class="form-control" data-index="${status.index}" onchange="checkOverlap(this)">
-                                                <option value="0" <c:if test="${slot.dayOfWeek == 0}">selected</c:if>><spring:message code="register.monday" /></option>
-                                                <option value="1" <c:if test="${slot.dayOfWeek == 1}">selected</c:if>><spring:message code="register.tuesday" /></option>
-                                                <option value="2" <c:if test="${slot.dayOfWeek == 2}">selected</c:if>><spring:message code="register.wednesday" /></option>
-                                                <option value="3" <c:if test="${slot.dayOfWeek == 3}">selected</c:if>><spring:message code="register.thursday" /></option>
-                                                <option value="4" <c:if test="${slot.dayOfWeek == 4}">selected</c:if>><spring:message code="register.friday" /></option>
-                                                <option value="5" <c:if test="${slot.dayOfWeek == 5}">selected</c:if>><spring:message code="register.saturday" /></option>
-                                                <option value="6" <c:if test="${slot.dayOfWeek == 6}">selected</c:if>><spring:message code="register.sunday" /></option>
-                                            </select>
-                                        </div>
-                                        <div class="time-select">
-                                            <label class="time-label"><spring:message code="register.startTime" /></label>
-                                            <select name="availabilitySlots[${status.index}].startTime" class="form-control" data-index="${status.index}" onchange="checkOverlap(this)">
-                                                <c:forEach var="hour" begin="8" end="20">
-                                                    <c:set var="formattedHour" value="${hour < 10 ? '0' : ''}${hour}:00" />
-                                                    <option value="${formattedHour}" <c:if test="${slot.startTime.hour == hour}">selected</c:if>>
-                                                        <c:choose>
-                                                            <c:when test="${hour > 12}">${hour-12}:00 PM</c:when>
-                                                            <c:when test="${hour == 12}">12:00 PM</c:when>
-                                                            <c:otherwise>${hour}:00 AM</c:otherwise>
-                                                        </c:choose>
-                                                    </option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                        <div class="time-select">
-                                            <label class="time-label"><spring:message code="register.endTime" /></label>
-                                            <select name="availabilitySlots[${status.index}].endTime" class="form-control" data-index="${status.index}" onchange="checkOverlap(this)">
-                                                <c:forEach var="hour" begin="8" end="20">
-                                                    <c:set var="formattedHour" value="${hour < 10 ? '0' : ''}${hour}:00" />
-                                                    <option value="${formattedHour}" <c:if test="${slot.endTime.hour == hour}">selected</c:if>>
-                                                        <c:choose>
-                                                            <c:when test="${hour > 12}">${hour-12}:00 PM</c:when>
-                                                            <c:when test="${hour == 12}">12:00 PM</c:when>
-                                                            <c:otherwise>${hour}:00 AM</c:otherwise>
-                                                        </c:choose>
-                                                    </option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                        <button type="button" class="btn-remove" data-index="${status.index}" onclick="removeTimeSlotRow(${status.index})">×</button>
-                                    </div>
-                                </c:forEach>
+                                <!-- Time slots will be dynamically generated by JavaScript -->
                             </div>
 
                             <div id="time-slot-error" class="error-message" style="display: none; margin-bottom: 10px;"></div>
                             <div class="error-container">
-                                <form:errors path="availabilitySlots" cssClass="error-message" element="div" />
+                                <form:errors path="doctorOfficeAvailabilities" cssClass="error-message" element="div" />
                             </div>
 
                             <button type="button" class="btn-add-slot" onclick="addTimeSlotRow()">
@@ -244,9 +198,20 @@
 <script src="<c:url value='/js/unavailability-calendar.js' />"></script>
 
 <script>
-    // Initialize counters with proper fallback values
-    let slotCounter = ${fn:length(updateAvailabilityForm.availabilitySlots)};
-    let timeSlots = [];
+    // Global variables for office-dependent time slots
+    let timeSlotCounter = 0;
+    let availabilitySlots = [];
+
+    // Load doctor offices data
+    const doctorOffices = [
+        <c:forEach items="${doctorOffices}" var="office" varStatus="status">
+        {
+            id: ${office.id},
+            name: "${office.officeName}",
+            index: ${status.index}
+        }<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    ];
 
     // Localized month names from server
     const monthNames = [
@@ -274,7 +239,22 @@
         selectEndDate: '<spring:message code="dashboard.availability.selectEndDate" javaScriptEscape="true" />',
         selectedRange: '<spring:message code="dashboard.availability.selectedRange" javaScriptEscape="true" />',
         deleteTitle: '<spring:message code="dashboard.availability.deleteTitle" javaScriptEscape="true" />',
-        until: '<spring:message code="dashboard.availability.until" javaScriptEscape="true" />'
+        until: '<spring:message code="dashboard.availability.until" javaScriptEscape="true" />',
+        office: '<spring:message code="register.office" javaScriptEscape="true" />',
+        dayOfWeek: '<spring:message code="register.dayOfWeek" javaScriptEscape="true" />',
+        startTime: '<spring:message code="register.startTime" javaScriptEscape="true" />',
+        endTime: '<spring:message code="register.endTime" javaScriptEscape="true" />',
+        monday: '<spring:message code="register.monday" javaScriptEscape="true" />',
+        tuesday: '<spring:message code="register.tuesday" javaScriptEscape="true" />',
+        wednesday: '<spring:message code="register.wednesday" javaScriptEscape="true" />',
+        thursday: '<spring:message code="register.thursday" javaScriptEscape="true" />',
+        friday: '<spring:message code="register.friday" javaScriptEscape="true" />',
+        saturday: '<spring:message code="register.saturday" javaScriptEscape="true" />',
+        sunday: '<spring:message code="register.sunday" javaScriptEscape="true" />',
+        timeSlotInvalidTime: '<spring:message code="register.timeSlotInvalidTime" javaScriptEscape="true" />',
+        timeSlotOverlap: '<spring:message code="register.timeSlotOverlap" javaScriptEscape="true" />',
+        timeSlotRequired: '<spring:message code="register.timeSlotRequired" javaScriptEscape="true" />',
+        noOfficesForSlot: '<spring:message code="register.noOfficesForSlot" javaScriptEscape="true" />'
     };
 
     // Context path for AJAX requests
@@ -286,7 +266,7 @@
         initializeTimeSlots();
 
         // Initial validation of slots
-        validateAllSlots();
+        validateTimeSlots();
 
         // Check if availability was updated successfully
         const urlParams = new URLSearchParams(window.location.search);
@@ -298,261 +278,385 @@
             window.history.replaceState({}, document.title, newUrl);
         }
 
-        // Add form submission handler to prevent submission with errors
+        // Add form submission handler
         const availabilityForm = document.getElementById('updateAvailabilityForm');
         if (availabilityForm) {
-            availabilityForm.addEventListener('submit', function(e) {
-                if (!validateAllSlots()) {
+            availabilityForm.addEventListener('submit', (e) => {
+                if (!areTimeSlotsValid()) {
                     e.preventDefault();
                     return false;
                 }
+
+                // Create hidden inputs for office-dependent slots
+                createTimeSlotHiddenInputs();
                 return true;
             });
         }
 
-        console.log('Initialization complete. SlotCounter:', slotCounter);
+        console.log('Initialization complete. TimeSlotCounter:', timeSlotCounter);
     });
 
+    // Initialize time slots from existing office availability data
     function initializeTimeSlots() {
         console.log('Initializing time slots...');
-        // Initialize the timeSlots array with existing slots
-        <c:forEach items="${updateAvailabilityForm.availabilitySlots}" var="slot" varStatus="status">
-        timeSlots.push({
-            index: ${status.index},
-            day: ${slot.dayOfWeek},
-            startTime: '${slot.startTime}',
-            endTime: '${slot.endTime}'
+        availabilitySlots = [];
+
+        // Load existing slots from doctorOfficeAvailability
+        <c:forEach items="${doctorOfficesAvailability}" var="officeSlot" varStatus="status">
+        availabilitySlots.push({
+            id: timeSlotCounter++,
+            slotId: ${officeSlot.id},
+            officeId: ${officeSlot.office.id},
+            day: ${officeSlot.dayOfWeek},
+            startTime: '${officeSlot.startTime}',
+            endTime: '${officeSlot.endTime}'
         });
         </c:forEach>
 
-        // Update no slots message
+        // Render all existing slots
+        renderAllTimeSlots();
+
+        // Update UI
         updateNoSlotsMessage();
-        console.log('Time slots initialized:', timeSlots);
+        console.log('Time slots initialized:', availabilitySlots);
     }
 
-    // Generate hours for select options (8 AM to 8 PM)
-    function getHourOptions() {
-        const hours = [];
-        for (let i = 8; i <= 20; i++) {
-            const hour = i % 12 || 12;
-            const ampm = i < 12 ? 'AM' : 'PM';
-            const value = (i < 10 ? '0' + i : i) + ':00';
-            const display = hour + ':00 ' + ampm;
-            hours.push({ value: value, display: display });
+    // Render all time slots
+    function renderAllTimeSlots() {
+        const container = document.getElementById('time-slot-inputs');
+        if (container) {
+            container.innerHTML = '';
         }
-        return hours;
+
+        availabilitySlots.forEach(slot => {
+            renderTimeSlot(slot);
+        });
+
+        validateTimeSlots();
     }
 
+    // Add a new time slot (like in register)
     function addTimeSlotRow() {
         console.log('Adding time slot row...');
-        const container = document.getElementById('time-slot-inputs');
-        if (!container) {
-            console.error('Container not found');
+
+        // Check if we have at least one office
+        if (doctorOffices.length === 0) {
+            showTimeSlotError(messages.noOfficesForSlot || "Please add at least one office before creating time slots");
             return;
         }
 
-        // Create a new row
+        // Create new slot with default values
+        const newSlot = {
+            id: timeSlotCounter++,
+            slotId: null, // New slot, no ID yet
+            officeId: doctorOffices[0].id, // Default to first office
+            day: 0, // Monday
+            startTime: "09:00",
+            endTime: "17:00"
+        };
+
+        // Add to array
+        availabilitySlots.push(newSlot);
+
+        // Render the new slot
+        renderTimeSlot(newSlot);
+
+        // Update UI
+        updateNoSlotsMessage();
+
+        // Check for overlaps
+        validateTimeSlots();
+    }
+
+    // Render a single time slot (following register pattern)
+    function renderTimeSlot(slot) {
+        const container = document.getElementById('time-slot-inputs');
+        if (!container) return;
+
+        // Create row
         const row = document.createElement('div');
         row.className = 'time-slot-row';
-        row.id = 'slot-row-' + slotCounter;
+        row.id = `time-slot-` + slot.id;
+        row.dataset.slotId = slot.id;
 
-        // Create day select container with label
+        // Create office select container
+        const officeContainer = document.createElement('div');
+        officeContainer.className = 'office-select';
+
+        const officeLabel = document.createElement('label');
+        officeLabel.className = 'time-label';
+        officeLabel.textContent = messages.office || 'Office';
+        officeContainer.appendChild(officeLabel);
+
+        const officeSelect = document.createElement('select');
+        officeSelect.className = 'form-control slot-office';
+        officeSelect.dataset.slotId = slot.id;
+
+        // Add office options
+        doctorOffices.forEach(office => {
+            const option = document.createElement('option');
+            option.value = office.id;
+            option.textContent = office.name || `Office `+ (office.index + 1);
+            officeSelect.appendChild(option);
+        });
+
+        // Set selected office
+        officeSelect.value = slot.officeId;
+
+        // Add change event
+        officeSelect.addEventListener('change', function() {
+            updateTimeSlot(slot.id, 'officeId', Number.parseInt(this.value, 10));
+        });
+
+        officeContainer.appendChild(officeSelect);
+
+        // Create day select container
         const dayContainer = document.createElement('div');
         dayContainer.className = 'day-select';
 
         const dayLabel = document.createElement('label');
         dayLabel.className = 'time-label';
-        dayLabel.textContent = '<spring:message code="register.dayOfWeek" javaScriptEscape="true" />';
+        dayLabel.textContent = messages.dayOfWeek || 'Day of Week';
         dayContainer.appendChild(dayLabel);
 
-        // Day select
         const daySelect = document.createElement('select');
-        daySelect.name = 'availabilitySlots[' + slotCounter + '].dayOfWeek';
-        daySelect.className = 'form-control';
-        daySelect.setAttribute('data-index', slotCounter);
-        daySelect.onchange = function() { checkOverlap(this); };
+        daySelect.className = 'form-control slot-day';
+        daySelect.dataset.slotId = slot.id;
 
         const days = [
-            { value: '0', text: '<spring:message code="register.monday" javaScriptEscape="true" />' },
-            { value: '1', text: '<spring:message code="register.tuesday" javaScriptEscape="true" />' },
-            { value: '2', text: '<spring:message code="register.wednesday" javaScriptEscape="true" />' },
-            { value: '3', text: '<spring:message code="register.thursday" javaScriptEscape="true" />' },
-            { value: '4', text: '<spring:message code="register.friday" javaScriptEscape="true" />' },
-            { value: '5', text: '<spring:message code="register.saturday" javaScriptEscape="true" />' },
-            { value: '6', text: '<spring:message code="register.sunday" javaScriptEscape="true" />' }
+            { value: 0, text: messages.monday || 'Monday' },
+            { value: 1, text: messages.tuesday || 'Tuesday' },
+            { value: 2, text: messages.wednesday || 'Wednesday' },
+            { value: 3, text: messages.thursday || 'Thursday' },
+            { value: 4, text: messages.friday || 'Friday' },
+            { value: 5, text: messages.saturday || 'Saturday' },
+            { value: 6, text: messages.sunday || 'Sunday' }
         ];
 
-        days.forEach(function(day) {
+        days.forEach(day => {
             const option = document.createElement('option');
             option.value = day.value;
             option.textContent = day.text;
             daySelect.appendChild(option);
         });
 
+        // Set selected day
+        daySelect.value = slot.day;
+
+        // Add change event
+        daySelect.addEventListener('change', function() {
+            updateTimeSlot(slot.id, 'day', Number.parseInt(this.value, 10));
+        });
+
         dayContainer.appendChild(daySelect);
 
-        // Start time container with label
+        // Create start time select container
         const startContainer = document.createElement('div');
         startContainer.className = 'time-select';
 
         const startLabel = document.createElement('label');
         startLabel.className = 'time-label';
-        startLabel.textContent = '<spring:message code="register.startTime" javaScriptEscape="true" />';
+        startLabel.textContent = messages.startTime || 'Start Time';
         startContainer.appendChild(startLabel);
 
-        // Start time select
         const startSelect = document.createElement('select');
-        startSelect.name = 'availabilitySlots[' + slotCounter + '].startTime';
-        startSelect.className = 'form-control';
-        startSelect.setAttribute('data-index', slotCounter);
-        startSelect.onchange = function() { checkOverlap(this); };
+        startSelect.className = 'form-control slot-start';
+        startSelect.dataset.slotId = slot.id;
 
-        // End time container with label
+        // Create end time select container
         const endContainer = document.createElement('div');
         endContainer.className = 'time-select';
 
         const endLabel = document.createElement('label');
         endLabel.className = 'time-label';
-        endLabel.textContent = '<spring:message code="register.endTime" javaScriptEscape="true" />';
+        endLabel.textContent = messages.endTime || 'End Time';
         endContainer.appendChild(endLabel);
 
-        // End time select
         const endSelect = document.createElement('select');
-        endSelect.name = 'availabilitySlots[' + slotCounter + '].endTime';
-        endSelect.className = 'form-control';
-        endSelect.setAttribute('data-index', slotCounter);
-        endSelect.onchange = function() { checkOverlap(this); };
+        endSelect.className = 'form-control slot-end';
+        endSelect.dataset.slotId = slot.id;
 
-        // Add hour options
-        const hours = getHourOptions();
+        // Add time options to both selects
+        const timeOptions = getTimeOptions();
 
-        hours.forEach(function(hour) {
+        timeOptions.forEach(time => {
             const startOption = document.createElement('option');
-            startOption.value = hour.value;
-            startOption.textContent = hour.display;
+            startOption.value = time.value;
+            startOption.textContent = time.display;
             startSelect.appendChild(startOption);
 
             const endOption = document.createElement('option');
-            endOption.value = hour.value;
-            endOption.textContent = hour.display;
+            endOption.value = time.value;
+            endOption.textContent = time.display;
             endSelect.appendChild(endOption);
         });
 
-        // Set default values (9 AM for start, 5 PM for end)
-        startSelect.value = '09:00';
-        endSelect.value = '17:00';
+        // Set selected times
+        startSelect.value = slot.startTime;
+        endSelect.value = slot.endTime;
+
+        // Add change events
+        startSelect.addEventListener('change', function() {
+            updateTimeSlot(slot.id, 'startTime', this.value);
+        });
+
+        endSelect.addEventListener('change', function() {
+            updateTimeSlot(slot.id, 'endTime', this.value);
+        });
 
         startContainer.appendChild(startSelect);
         endContainer.appendChild(endSelect);
 
-        // Remove button
+        // Create remove button
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.className = 'btn-remove';
         removeBtn.textContent = '×';
-        removeBtn.setAttribute('data-index', slotCounter);
-        removeBtn.onclick = function() {
-            const index = parseInt(this.getAttribute('data-index'));
-            removeTimeSlotRow(index);
-        };
+        removeBtn.setAttribute('aria-label', 'Remove time slot');
+        removeBtn.dataset.slotId = slot.id;
 
-        // Add elements to row
+        removeBtn.addEventListener('click', () => {
+            removeTimeSlot(slot.id);
+        });
+
+        // Add all elements to row (office first, like in register)
+        row.appendChild(officeContainer);
         row.appendChild(dayContainer);
         row.appendChild(startContainer);
         row.appendChild(endContainer);
         row.appendChild(removeBtn);
 
-        // Add row to container
+        // Add row to container with animation
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(10px)';
         container.appendChild(row);
 
-        // Add to slots array
-        timeSlots.push({
-            index: slotCounter,
-            day: 0,
-            startTime: '09:00',
-            endTime: '17:00'
-        });
-
-        // Check for overlaps
-        checkOverlap(daySelect);
-
-        // Update no slots message
-        updateNoSlotsMessage();
-
-        // Increment counter
-        slotCounter++;
-
-        console.log('Time slot row added. New counter:', slotCounter);
+        // Trigger animation
+        setTimeout(() => {
+            row.style.opacity = '1';
+            row.style.transform = 'translateY(0)';
+        }, 10);
     }
 
-    // Check for overlapping time slots
-    function checkOverlap(changedElement) {
-        // Clear previous errors
-        clearSlotErrors();
+    // Get time options for selects (8 AM to 8 PM)
+    function getTimeOptions() {
+        const options = [];
+        for (let hour = 8; hour <= 20; hour++) {
+            const hourFormatted = hour < 10 ? `0`+hour : hour.toString();
+            const hourDisplay = hour % 12 || 12;
+            const ampm = hour < 12 ? 'AM' : 'PM';
 
-        const index = parseInt(changedElement.getAttribute('data-index'));
-        const row = document.getElementById('slot-row-' + index);
+            options.push({
+                value: hourFormatted+`:00`,
+                display: hourDisplay+`:00 `+ampm
+            });
+        }
+        return options;
+    }
 
-        if (!row) return false;
+    // Update a time slot property
+    function updateTimeSlot(slotId, property, value) {
+        const slotIndex = availabilitySlots.findIndex(slot => slot.id === slotId);
 
-        // Get values from the row
-        const daySelect = row.querySelector('select[name$=".dayOfWeek"]');
-        const startSelect = row.querySelector('select[name$=".startTime"]');
-        const endSelect = row.querySelector('select[name$=".endTime"]');
-
-        const day = parseInt(daySelect.value);
-        const startTime = startSelect.value;
-        const endTime = endSelect.value;
-
-        // Update the slot in our array
-        const slotIndex = timeSlots.findIndex(slot => slot.index === index);
         if (slotIndex !== -1) {
-            timeSlots[slotIndex].day = day;
-            timeSlots[slotIndex].startTime = startTime;
-            timeSlots[slotIndex].endTime = endTime;
+            availabilitySlots[slotIndex][property] = value;
+            validateTimeSlots();
         }
+    }
 
-        // Check if end time is after start time
-        if (startTime >= endTime) {
-            row.classList.add('slot-error');
-            showSlotError('<spring:message code="register.timeSlotInvalidTime" javaScriptEscape="true" />');
-            updateSaveButtonState();
-            return false;
+    // Remove a time slot
+    function removeTimeSlot(slotId) {
+        const slotIndex = availabilitySlots.findIndex(slot => slot.id === slotId);
+
+        if (slotIndex !== -1) {
+            const row = document.getElementById(`time-slot-`+slotId);
+
+            if (row) {
+                // Animate removal
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(-10px)';
+
+                setTimeout(() => {
+                    // Remove from DOM
+                    if (row.parentNode) {
+                        row.parentNode.removeChild(row);
+                    }
+
+                    // Remove from array
+                    availabilitySlots.splice(slotIndex, 1);
+
+                    // Update UI
+                    updateNoSlotsMessage();
+
+                    // Validate remaining slots
+                    validateTimeSlots();
+
+                    // Show warning
+                    const warningElement = document.getElementById('trash-warning-availability');
+                    if (warningElement) {
+                        warningElement.style.display = 'block';
+                    }
+                }, 300);
+            }
         }
+    }
 
-        // Check for overlaps with other slots
-        const overlaps = timeSlots.filter((slot, i) => {
-            if (slot.index === index) return false; // Skip the current slot
+    // Validate all time slots for overlaps (same office + same day)
+    function validateTimeSlots() {
+        // Clear previous errors
+        clearTimeSlotErrors();
 
-            // Only check slots on the same day
-            if (slot.day !== day) return false;
+        let hasErrors = false;
 
-            // Check for time overlap
-            return !(endTime <= slot.startTime || startTime >= slot.endTime);
-        });
+        // Check each slot
+        availabilitySlots.forEach(slot => {
+            const row = document.getElementById(`time-slot-`+slot.id);
+            if (!row) return;
 
-        if (overlaps.length > 0) {
-            // Mark overlapping slots with error
-            row.classList.add('slot-error');
-            overlaps.forEach(overlap => {
-                const overlapRow = document.getElementById('slot-row-' + overlap.index);
-                if (overlapRow) {
-                    overlapRow.classList.add('slot-error');
-                }
+            // Check if end time is after start time
+            if (slot.startTime >= slot.endTime) {
+                markSlotError(row);
+                showTimeSlotError(messages.timeSlotInvalidTime || 'End time must be after start time');
+                hasErrors = true;
+                return;
+            }
+
+            // Check for overlaps with other slots in the SAME office and SAME day
+            const overlaps = availabilitySlots.filter(otherSlot => {
+                // Skip comparing with self
+                if (otherSlot.id === slot.id) return false;
+
+                // Only check slots in the same day
+                if (otherSlot.day !== slot.day) return false;
+
+                // Check for time overlap
+                return !(slot.endTime < otherSlot.startTime || slot.startTime > otherSlot.endTime);
             });
 
-            showSlotError('<spring:message code="register.timeSlotOverlap" javaScriptEscape="true" />');
-            updateSaveButtonState();
-            return false;
-        }
+            if (overlaps.length > 0) {
+                // Mark this slot as error
+                markSlotError(row);
 
-        // Validate all slots to ensure we catch any other overlaps
-        validateAllSlots();
-        return true;
+                // Mark overlapping slots as error
+                overlaps.forEach(overlapSlot => {
+                    const overlapRow = document.getElementById(`time-slot-`+overlapSlot.id);
+                    if (overlapRow) {
+                        markSlotError(overlapRow);
+                    }
+                });
+
+                showTimeSlotError(messages.timeSlotOverlap || 'Time slots cannot overlap in the same office on the same day');
+                hasErrors = true;
+            }
+        });
+
+        // Update submit button state
+        updateSaveButtonState();
+        return !hasErrors;
     }
 
-    // Show error message for time slots
-    function showSlotError(message) {
+    // Show time slot error
+    function showTimeSlotError(message) {
         const errorElement = document.getElementById('time-slot-error');
         if (errorElement) {
             errorElement.textContent = message;
@@ -564,8 +668,13 @@
         }
     }
 
-    // Clear all slot errors
-    function clearSlotErrors() {
+    // Mark a slot row as having an error
+    function markSlotError(row) {
+        row.classList.add('slot-error');
+    }
+
+    // Clear all time slot errors
+    function clearTimeSlotErrors() {
         const errorElement = document.getElementById('time-slot-error');
         if (errorElement) {
             errorElement.style.display = 'none';
@@ -578,105 +687,142 @@
         });
     }
 
-    // Remove a time slot row
-    function removeTimeSlotRow(index) {
-        console.log('Removing time slot row:', index);
-        const row = document.getElementById('slot-row-' + index);
-
-        if (row) {
-            // Create a hidden input to mark this slot for deletion
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'deletedSlots';
-            hiddenInput.value = index;
-            const form = document.getElementById('updateAvailabilityForm');
-            if (form) {
-                form.appendChild(hiddenInput);
-            }
-
-            // Remove from DOM
-            row.parentNode.removeChild(row);
-
-            // Remove from array
-            const slotIndex = timeSlots.findIndex(slot => slot.index === index);
-            if (slotIndex !== -1) {
-                timeSlots.splice(slotIndex, 1);
-            }
-
-            // Validate remaining slots
-            validateAllSlots();
-
-            // Update no slots message
-            updateNoSlotsMessage();
-
-            const warningElement = document.getElementById('trash-warning-availability');
-            if (warningElement) {
-                warningElement.style.display = 'block';
-            }
-        }
-    }
-
     // Update the no slots message visibility
     function updateNoSlotsMessage() {
-        const container = document.getElementById('time-slot-inputs');
         const noSlotsMessage = document.getElementById('no-slots-message');
-
-        if (container && noSlotsMessage) {
-            if (container.children.length === 0) {
-                noSlotsMessage.style.display = 'block';
-            } else {
-                noSlotsMessage.style.display = 'none';
-            }
-        }
-    }
-
-    // Add a function to validate all slots
-    function validateAllSlots() {
-        // Clear all errors first
-        clearSlotErrors();
-
-        let hasErrors = false;
-
-        // Check each slot against all others
-        for (let i = 0; i < timeSlots.length; i++) {
-            const slot = timeSlots[i];
-            const row = document.getElementById('slot-row-' + slot.index);
-
-            if (!row) continue;
-
-            // Check if end time is after start time
-            if (slot.startTime >= slot.endTime) {
-                row.classList.add('slot-error');
-                showSlotError('<spring:message code="register.timeSlotInvalidTime" javaScriptEscape="true" />');
-                hasErrors = true;
-                continue;
-            }
-
-            // Check for overlaps with other slots
-            for (let j = i + 1; j < timeSlots.length; j++) {
-                const otherSlot = timeSlots[j];
-
-                // Only check slots on the same day
-                if (slot.day !== otherSlot.day) continue;
-
-                // Check for time overlap
-                if (!(slot.endTime <= otherSlot.startTime || slot.startTime >= otherSlot.endTime)) {
-                    const row1 = document.getElementById('slot-row-' + slot.index);
-                    const row2 = document.getElementById('slot-row-' + otherSlot.index);
-
-                    if (row1) row1.classList.add('slot-error');
-                    if (row2) row2.classList.add('slot-error');
-
-                    showSlotError('<spring:message code="register.timeSlotOverlap" javaScriptEscape="true" />');
-                    hasErrors = true;
-                }
-            }
+        if (noSlotsMessage) {
+            noSlotsMessage.style.display = availabilitySlots.length === 0 ? 'block' : 'none';
         }
 
         updateSaveButtonState();
-        return !hasErrors;
     }
 
+    // Create hidden inputs for time slots before form submission (grouped by office)
+    function createTimeSlotHiddenInputs() {
+        const form = document.getElementById('updateAvailabilityForm');
+        if (!form) return;
+
+        // Remove any existing hidden inputs for office availability slots
+        const existingInputs = document.querySelectorAll('input[name*="doctorOfficeAvailabilities"]');
+        existingInputs.forEach(input => {
+            input.parentNode.removeChild(input);
+        });
+
+        // Group slots by office
+        // const slotsByOffice = {};
+        // availabilitySlots.forEach(slot => {
+        //     if (!slotsByOffice[slot.officeId]) {
+        //         slotsByOffice[slot.officeId] = [];
+        //     }
+        //     slotsByOffice[slot.officeId].push(slot);
+        // });
+
+        let index = 0;
+        availabilitySlots.forEach(slot => {
+            if (slot.slotId) {
+                const slotIdInput = document.createElement('input');
+                slotIdInput.type = 'hidden';
+                slotIdInput.name = `doctorOfficeAvailabilities[`+index+`].id`;
+                slotIdInput.value = slot.slotId;
+                form.appendChild(slotIdInput);
+            }
+
+            // Create office ID input
+            const officeIdInput = document.createElement('input');
+            officeIdInput.type = 'hidden';
+            officeIdInput.name = `doctorOfficeAvailabilities[`+index+`].officeId`;
+            officeIdInput.value = slot.officeId;
+            form.appendChild(officeIdInput);
+
+
+            // Create day input
+            const dayInput = document.createElement('input');
+            dayInput.type = 'hidden';
+            dayInput.name = `doctorOfficeAvailabilities[`+index+`].dayOfWeek`;
+            dayInput.value = slot.day;
+            form.appendChild(dayInput);
+
+            // Create start time input
+            const startInput = document.createElement('input');
+            startInput.type = 'hidden';
+            startInput.name = `doctorOfficeAvailabilities[`+index+`].startTime`;
+            startInput.value = slot.startTime;
+            form.appendChild(startInput);
+
+            // Create end time input
+            const endInput = document.createElement('input');
+            endInput.type = 'hidden';
+            endInput.name = `doctorOfficeAvailabilities[`+index+`].endTime`;
+            endInput.value = slot.endTime;
+            form.appendChild(endInput);
+
+            index++;
+        })
+
+        // Create hidden inputs for each office's slots
+        // let officeIndex = 0;
+        // Object.keys(slotsByOffice).forEach(officeId => {
+        //     const slots = slotsByOffice[officeId];
+        //
+        //     slots.forEach((slot, slotIndex) => {
+        //
+        //         // Create slot ID input if exists
+        //         if (slot.slotId) {
+        //             const slotIdInput = document.createElement('input');
+        //             slotIdInput.type = 'hidden';
+        //             slotIdInput.name = `doctorOfficeAvailabilities[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].id`;
+        //             slotIdInput.value = slot.slotId;
+        //             form.appendChild(slotIdInput);
+        //         }
+        //
+        //         // Create office ID input
+        //         const officeIdInput = document.createElement('input');
+        //         officeIdInput.type = 'hidden';
+        //         officeIdInput.name = `doctorOfficeAvailabilities[`+officeIndex+`].officeId`;
+        //         officeIdInput.value = officeId;
+        //         form.appendChild(officeIdInput);
+        //
+        //
+        //         // Create day input
+        //         const dayInput = document.createElement('input');
+        //         dayInput.type = 'hidden';
+        //         dayInput.name = `doctorOfficeAvailabilities[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].dayOfWeek`;
+        //         dayInput.value = slot.day;
+        //         form.appendChild(dayInput);
+        //
+        //         // Create start time input
+        //         const startInput = document.createElement('input');
+        //         startInput.type = 'hidden';
+        //         startInput.name = `doctorOfficeAvailabilities[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].startTime`;
+        //         startInput.value = slot.startTime;
+        //         form.appendChild(startInput);
+        //
+        //         // Create end time input
+        //         const endInput = document.createElement('input');
+        //         endInput.type = 'hidden';
+        //         endInput.name = `doctorOfficeAvailabilities[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].endTime`;
+        //         endInput.value = slot.endTime;
+        //         form.appendChild(endInput);
+        //     });
+        //
+        //     officeIndex++;
+        // });
+    }
+
+    // Check if time slots are valid for form submission
+    function areTimeSlotsValid() {
+        // Must have at least one time slot
+        if (availabilitySlots.length === 0) {
+            showTimeSlotError(messages.timeSlotRequired || 'At least one time slot is required');
+            return false;
+        }
+
+        // No slots should have errors
+        const errorSlots = document.querySelectorAll('.slot-error');
+        return errorSlots.length === 0;
+    }
+
+    // Update save button state
     function updateSaveButtonState() {
         const saveButton = document.getElementById('unified-save-button');
         const hasErrors = document.querySelectorAll('.slot-error').length > 0;

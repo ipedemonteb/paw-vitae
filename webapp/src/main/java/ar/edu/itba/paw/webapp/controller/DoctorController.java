@@ -9,8 +9,6 @@ import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -31,23 +29,23 @@ public class DoctorController {
     private final SpecialtyService specialtyService;
     private final AppointmentFileService appointmentFileService;
     private final RatingService ratingService;
-    private final AvailabilitySlotsService availabilitySlotsService;
     private final UnavailabilitySlotsService unavailabilitySlotsService;
     private final DoctorOfficeService doctorOfficeService;
     private final NeighborhoodService neighborhoodService;
+    private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
 
     @Autowired
-    public DoctorController(DoctorService doctorService, AppointmentService appointmentService, CoverageService coverageService, SpecialtyService specialtyService, AppointmentFileService appointmentFileService, RatingService ratingService, AvailabilitySlotsService availabilitySlotsService, UnavailabilitySlotsService unavailabilitySlotsService, DoctorOfficeService doctorOfficeService, NeighborhoodService neighborhoodService) {
+    public DoctorController(DoctorService doctorService, AppointmentService appointmentService, CoverageService coverageService, SpecialtyService specialtyService, AppointmentFileService appointmentFileService, RatingService ratingService, UnavailabilitySlotsService unavailabilitySlotsService, DoctorOfficeService doctorOfficeService, NeighborhoodService neighborhoodService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService) {
         this.doctorService = doctorService;
         this.appointmentService = appointmentService;
         this.coverageService = coverageService;
         this.specialtyService = specialtyService;
         this.appointmentFileService = appointmentFileService;
         this.ratingService = ratingService;
-        this.availabilitySlotsService = availabilitySlotsService;
         this.unavailabilitySlotsService = unavailabilitySlotsService;
         this.doctorOfficeService = doctorOfficeService;
         this.neighborhoodService = neighborhoodService;
+        this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
     }
 
     @RequestMapping(value = "/doctor/dashboard")
@@ -103,9 +101,11 @@ public class DoctorController {
                                         @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         final ModelAndView mav = new ModelAndView("doctor/dashboard-availability");
-        updateAvailabilityForm.setAvailabilitySlots(availabilitySlotsService.getDoctorAvailabilitySlots(doctor));
         updateAvailabilityForm.setUnavailabilitySlots(unavailabilitySlotsService.getDoctorUnavailabilitySlots(doctor));
+        updateAvailabilityForm.setDoctorId(doctor.getId());
         mav.addObject("doctor", doctor);
+        mav.addObject("doctorOfficesAvailability", doctorOfficeAvailabilityService.getByDoctorId(doctor.getId()));
+        mav.addObject("doctorOffices", doctorOfficeService.getAllByDoctorId(doctor.getId()));
         return mav;
     }
 
@@ -151,7 +151,7 @@ public class DoctorController {
         }
 
         unavailabilitySlotsService.updateDoctorUnavailability(doctor, form.getUnavailabilitySlots());
-        availabilitySlotsService.updateDoctorAvailability(doctor, form.getAvailabilitySlots());
+        doctorOfficeAvailabilityService.update(form.getDoctorOfficeAvailabilities(), doctor.getId());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
 

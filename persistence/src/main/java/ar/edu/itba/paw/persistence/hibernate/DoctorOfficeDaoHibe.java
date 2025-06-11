@@ -35,7 +35,7 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
     }
 
     @Override
-    public List<DoctorOffice> getAllByDoctorId(long doctorId) {
+    public List<DoctorOffice> getByDoctorId(long doctorId) {
         return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId AND d.removed IS NULL", DoctorOffice.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
@@ -43,7 +43,7 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
 
     @Override
     public List<DoctorOffice> getActiveByDoctorId(long doctorId) {
-        return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId AND d.active = true", DoctorOffice.class)
+        return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId AND d.active = true AND d.removed IS NULL", DoctorOffice.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
     }

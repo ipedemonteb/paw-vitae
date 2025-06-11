@@ -50,21 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     }
 
-    const helpme = document.querySelector(".register-container");
-    if (helpme) {
-        helpme.addEventListener("click", function () {
-            console.log(doctorOffices)
-        })
-    }
-
-    const godplease = document.querySelector(".card-title-register")
-    if (godplease) {
-        godplease.addEventListener("click", function () {
-            console.log("NOW NOW NOW: ")
-            createDoctorOfficeHiddenInputs();
-        })
-    }
-
     // Add event listeners
     const addSlotBtn = document.getElementById("add-slot-btn")
     if (addSlotBtn) {
@@ -238,6 +223,7 @@ function initializeOffice(index) {
             if (officeIndex !== -1) {
                 doctorOffices[officeIndex].name = this.value;
             }
+            updateAvailabilitySlotsForOffice(index);
             updateNextButtonState(2);
         });
     }
@@ -252,6 +238,19 @@ function initializeOffice(index) {
             }
         }
     });
+}
+
+// Update availability slots when the office name changes
+function updateAvailabilitySlotsForOffice(officeIndex) {
+    availabilitySlots.forEach(slot => {
+        if (slot.officeIndex === officeIndex) {
+            // Perform any necessary updates to the slot
+            slot.officeName = doctorOffices.find(office => office.index === officeIndex)?.name || "";
+        }
+    });
+
+    // Re-render the time slots to reflect the changes
+    renderAllTimeSlots();
 }
 
 function renderOffices() {
@@ -685,6 +684,8 @@ function removeOffice(index) {
 
     // Remove server error if any
     removeContainerServerError("doctorOfficeForm");
+    // Add this line at the end of the removeOffice function, before the closing brace:
+    updateTimeSlotsAfterOfficeRemoval(parseInt(index));
 }
 
 // Search neighborhoods for an office
@@ -2198,12 +2199,13 @@ function initializeTimeSlots() {
         // Process existing slots
         window.existingSlots.forEach((slot) => {
             if (isValidSlotData(slot)) {
-                // Add to our array with clean data
+                // Add to our array with clean data including office index
                 availabilitySlots.push({
                     id: slot.index,
                     day: Number.parseInt(slot.day, 10),
                     startTime: slot.startTime,
                     endTime: slot.endTime,
+                    officeIndex: slot.officeIndex // Add office association
                 })
 
                 // Update counter to be higher than any existing ID
@@ -2216,13 +2218,17 @@ function initializeTimeSlots() {
         // Render all slots
         renderAllTimeSlots()
     } else {
-        // Add a default time slot if none exist
-        addNewTimeSlot()
+        // Add a default time slot if none exist and we have at least one office
+        if (doctorOffices.length > 0) {
+            addNewTimeSlot()
+        }
     }
 
     // Update UI
     updateNoSlotsMessage()
 }
+
+
 
 // Validate slot data
 function isValidSlotData(slot) {
@@ -2246,12 +2252,19 @@ function renderAllTimeSlots() {
 
 // Add a new time slot
 function addNewTimeSlot() {
+    // Check if we have at least one office
+    if (doctorOffices.length === 0) {
+        showTimeSlotError(window.messages?.noOfficesForSlot || "Please add at least one office before creating time slots");
+        return;
+    }
+
     // Create new slot with default values
     const newSlot = {
         id: timeSlotCounter++,
         day: 0, // Monday
         startTime: "09:00",
         endTime: "17:00",
+        officeIndex: doctorOffices[0].index // Default to first office
     }
 
     // Add to array
@@ -2277,6 +2290,37 @@ function renderTimeSlot(slot) {
     row.className = "time-slot-row"
     row.id = `time-slot-${slot.id}`
     row.dataset.slotId = slot.id
+
+    // Create office select
+    const officeContainer = document.createElement("div")
+    officeContainer.className = "office-select"
+
+    const officeLabel = document.createElement("label")
+    officeLabel.className = "time-label"
+    officeLabel.textContent = window.messages?.office || "Office"
+    officeContainer.appendChild(officeLabel)
+
+    const officeSelect = document.createElement("select")
+    officeSelect.className = "form-control slot-office"
+    officeSelect.dataset.slotId = slot.id
+
+    // Add office options
+    doctorOffices.forEach((office) => {
+        const option = document.createElement("option")
+        option.value = office.index
+        option.textContent = office.name || `Office ${office.index + 1}`
+        officeSelect.appendChild(option)
+    })
+
+    // Set selected office
+    officeSelect.value = slot.officeIndex
+
+    // Add change event
+    officeSelect.addEventListener("change", function () {
+        updateTimeSlot(slot.id, "officeIndex", Number.parseInt(this.value, 10))
+    })
+
+    officeContainer.appendChild(officeSelect)
 
     // Create day select
     const dayContainer = document.createElement("div")
@@ -2388,6 +2432,7 @@ function renderTimeSlot(slot) {
     })
 
     // Add all elements to row
+    row.appendChild(officeContainer)
     row.appendChild(dayContainer)
     row.appendChild(startContainer)
     row.appendChild(endContainer)
@@ -2403,6 +2448,19 @@ function renderTimeSlot(slot) {
         row.style.opacity = "1"
         row.style.transform = "translateY(0)"
     }, 10)
+}
+
+// Update time slots when an office is removed
+function updateTimeSlotsAfterOfficeRemoval(removedOfficeIndex) {
+    // Remove all slots associated with the removed office
+    availabilitySlots = availabilitySlots.filter(slot => slot.officeIndex !== removedOfficeIndex)
+
+    // Re-render all time slots
+    renderAllTimeSlots()
+
+    // Update validation
+    validateTimeSlots()
+    updateNoSlotsMessage()
 }
 
 // Get time options for selects (8 AM to 8 PM)
@@ -2487,16 +2545,16 @@ function validateTimeSlots() {
             return
         }
 
-        // Check for overlaps with other slots
+        // Check for overlaps with other slots in the SAME office
         const overlaps = availabilitySlots.filter((otherSlot) => {
             // Skip comparing with self
             if (otherSlot.id === slot.id) return false
 
-            // Only check slots on the same day
+            // Only check slots in the same office and same day
             if (otherSlot.day !== slot.day) return false
 
             // Check for time overlap
-            return !(slot.endTime <= otherSlot.startTime || slot.startTime >= otherSlot.endTime)
+            return !(slot.endTime < otherSlot.startTime || slot.startTime > otherSlot.endTime)
         })
 
         if (overlaps.length > 0) {
@@ -2511,9 +2569,9 @@ function validateTimeSlots() {
                 }
             })
 
-            showTimeSlotError(window.messages?.timeSlotOverlap || "Time slots cannot overlap")
+            showTimeSlotError(window.messages?.timeSlotOverlap || "Time slots cannot overlap in the same office")
         }
-        removeContainerServerError("availabilitySlots")
+        removeContainerServerError("doctorOfficeFormAvailabilitySlots")
     })
 
     // Update submit button state
@@ -2570,34 +2628,46 @@ function createTimeSlotHiddenInputs() {
     const form = document.querySelector(".register-form")
     if (!form) return
 
-    // Remove any existing hidden inputs
-    const existingInputs = document.querySelectorAll('input[name^="availabilitySlots["]')
+    // Remove any existing hidden inputs for office availability slots
+    const existingInputs = document.querySelectorAll('input[name*="officeAvailabilitySlotForms"]')
     existingInputs.forEach((input) => {
         input.parentNode.removeChild(input)
     })
 
-    // Create new hidden inputs for each slot
-    availabilitySlots.forEach((slot, index) => {
-        // Create day input
-        const dayInput = document.createElement("input")
-        dayInput.type = "hidden"
-        dayInput.name = `availabilitySlots[${index}].dayOfWeek`
-        dayInput.value = slot.day
-        form.appendChild(dayInput)
+    // Group slots by office
+    const slotsByOffice = {}
+    availabilitySlots.forEach((slot) => {
+        if (!slotsByOffice[slot.officeIndex]) {
+            slotsByOffice[slot.officeIndex] = []
+        }
+        slotsByOffice[slot.officeIndex].push(slot)
+    })
 
-        // Create start time input
-        const startInput = document.createElement("input")
-        startInput.type = "hidden"
-        startInput.name = `availabilitySlots[${index}].startTime`
-        startInput.value = slot.startTime
-        form.appendChild(startInput)
+    // Create hidden inputs for each office's slots
+    Object.keys(slotsByOffice).forEach((officeIndex) => {
+        const slots = slotsByOffice[officeIndex]
+        slots.forEach((slot, slotIndex) => {
+            // Create day input
+            const dayInput = document.createElement("input")
+            dayInput.type = "hidden"
+            dayInput.name = `doctorOfficeForm[${officeIndex}].officeAvailabilitySlotForms[${slotIndex}].dayOfWeek`
+            dayInput.value = slot.day
+            form.appendChild(dayInput)
 
-        // Create end time input
-        const endInput = document.createElement("input")
-        endInput.type = "hidden"
-        endInput.name = `availabilitySlots[${index}].endTime`
-        endInput.value = slot.endTime
-        form.appendChild(endInput)
+            // Create start time input
+            const startInput = document.createElement("input")
+            startInput.type = "hidden"
+            startInput.name = `doctorOfficeForm[${officeIndex}].officeAvailabilitySlotForms[${slotIndex}].startTime`
+            startInput.value = slot.startTime
+            form.appendChild(startInput)
+
+            // Create end time input
+            const endInput = document.createElement("input")
+            endInput.type = "hidden"
+            endInput.name = `doctorOfficeForm[${officeIndex}].officeAvailabilitySlotForms[${slotIndex}].endTime`
+            endInput.value = slot.endTime
+            form.appendChild(endInput)
+        })
     })
 }
 

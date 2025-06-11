@@ -23,14 +23,16 @@ public class AppointmentController {
     private final AppointmentFileService appointmentFileService;
     private final UnavailabilitySlotsService unavailabilitySlotsService;
     private final DoctorOfficeService doctorOfficeService;
+    private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService, DoctorService doctorService, AppointmentFileService appointmentFileService, UnavailabilitySlotsService unavailabilitySlotsService, DoctorOfficeService doctorOfficeService) {
+    public AppointmentController(AppointmentService appointmentService, DoctorService doctorService, AppointmentFileService appointmentFileService, UnavailabilitySlotsService unavailabilitySlotsService, DoctorOfficeService doctorOfficeService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService) {
         this.appointmentService = appointmentService;
         this.doctorService = doctorService;
         this.appointmentFileService = appointmentFileService;
         this.unavailabilitySlotsService = unavailabilitySlotsService;
         this.doctorOfficeService = doctorOfficeService;
+        this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
     }
 
 
@@ -79,5 +81,11 @@ public class AppointmentController {
         mav.addObject("specialty", appointment.getSpecialty());
         mav.addObject("office", appointment.getDoctorOffice());
         return mav;
+    }
+
+    @GetMapping("appointment/doctor/{id}/availability")
+    @ResponseBody
+    public String getDoctorAvailability(@PathVariable(value = "id") long doctorId) {
+        return  doctorOfficeAvailabilityService.getJsonByDoctorId(doctorId);
     }
 }
