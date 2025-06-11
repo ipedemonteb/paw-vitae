@@ -264,7 +264,8 @@
                 }
                 <c:if test="${!sidStatus.last}">,</c:if>
                 </c:forEach>
-            ]
+            ],
+            hasAvailability: ${office.doctorOfficeAvailabilitySlots.size() > 0}
         }<c:if test="${!status.last}">, </c:if>
         </c:forEach>
     ];
@@ -382,7 +383,7 @@
 
     }
 
-    function createOfficeHTML(index, name, neighborhoodId, id, active) {
+    function createOfficeHTML(index, name, neighborhoodId, id, active, hasAvailability) {
         name = name || '';
         id = id || '';
         neighborhoodId = neighborhoodId || '';
@@ -409,7 +410,7 @@
         // Action buttons
         html += '<div class="office-actions">';
 
-        if (id) {
+        if (id && hasAvailability) {
             html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';
             html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';
             html += '<i class="fas fa-pause"></i>';
@@ -965,7 +966,7 @@
             officeEntry.className = "office-entry";
             officeEntry.setAttribute('data-index', officeCounter.toString());
 
-            officeEntry.innerHTML = createOfficeHTML(officeCounter, office.name, office.neighborhoodId, office.id, office.active);
+            officeEntry.innerHTML = createOfficeHTML(officeCounter, office.name, office.neighborhoodId, office.id, office.active, office.hasAvailability);
 
             container.appendChild(officeEntry);
             initializeOffice(officeCounter);
