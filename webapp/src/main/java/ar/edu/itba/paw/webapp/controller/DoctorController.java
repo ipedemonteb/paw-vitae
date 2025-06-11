@@ -103,7 +103,7 @@ public class DoctorController {
         updateAvailabilityForm.setDoctorId(doctor.getId());
         mav.addObject("doctor", doctor);
         mav.addObject("doctorOfficesAvailability", doctorOfficeAvailabilityService.getByDoctorId(doctor.getId()));
-        mav.addObject("doctorOffices", doctorOfficeService.getByDoctorId(doctor.getId()));
+        mav.addObject("doctorOffices", doctorOfficeService.getAllByDoctorId(doctor.getId()));
         return mav;
     }
 

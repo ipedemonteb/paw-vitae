@@ -71,7 +71,7 @@ public class DoctorOfficeAvailabilitySlotServiceImpl implements DoctorOfficeAvai
         Map<Long,DoctorOfficeAvailabilitySlot> existingById = allSlots.stream()
                 .collect(Collectors.toMap(DoctorOfficeAvailabilitySlot::getId, slot -> slot));
 
-        List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(doctorId);
+        List<DoctorOffice> offices = doctorOfficeService.getAllByDoctorId(doctorId);
         Map<Long,DoctorOffice> officeById = offices.stream()
                 .collect(Collectors.toMap(DoctorOffice::getId, office -> office));
 
