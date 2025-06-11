@@ -998,7 +998,7 @@ body {
 }
 
 /* Modal Styles */
-.modal-overlay {
+.remove-modal-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -1013,7 +1013,7 @@ body {
     backdrop-filter: blur(4px);
 }
 
-.modal-overlay.show {
+.remove-modal-overlay.show {
     display: flex;
     animation: fadeIn 0.3s ease;
 }
@@ -1039,7 +1039,7 @@ body {
     }
 }
 
-.modal-header {
+.remove-modal-header {
     display: flex;
     align-items: center;
     padding: 1.25rem;
@@ -1071,7 +1071,7 @@ body {
     margin: 0;
 }
 
-.modal-body {
+.remove-modal-body {
     padding: 1.25rem;
 }
 
