@@ -401,17 +401,21 @@
         let html = '';
 
         // Status indicator
-        html += '<div class="office-status-indicator" id="status-indicator-' + index + '">';
+        html += '<div class="office-status-indicator disabled" id="status-indicator-' + index + '">';
         html += '<i class="fas fa-circle"></i>';
-        html += '<span id="status-text-' + index + '"><spring:message code='offices.status.active' /></span>';
+        html += '<span id="status-text-' + index + '"><spring:message code='offices.status.disabled' /></span>';
         html += '</div>';
 
         // Action buttons
         html += '<div class="office-actions">';
-        html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';
-        html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';
-        html += '<i class="fas fa-pause"></i>';
-        html += '</button>';
+
+        if (id) {
+            html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';
+            html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';
+            html += '<i class="fas fa-pause"></i>';
+            html += '</button>';
+        }
+
         html += '<button type="button" class="office-action-btn btn-remove-office" id="remove-btn-' + index + '" ';
         html += 'onclick="showRemoveConfirmation(' + index + ')" data-tooltip="<spring:message code='offices.remove' />">';
         html += '<i class="fas fa-trash"></i>';
