@@ -37,7 +37,7 @@ public class DoctorOfficeAvailabilityDaoHibeImpl implements DoctorOfficeAvailabi
 
     @Override
     public List<DoctorOfficeAvailabilitySlot> getByOfficeId(long officeId) {
-        return em.createQuery("FROM DoctorOfficeAvailabilitySlot d WHERE d.office.id = :officeId ORDER BY d.dayOfWeek, d.startTime",
+        return em.createQuery("FROM DoctorOfficeAvailabilitySlot d WHERE d.office.id = :officeId ORDER BY d.office.id, d.dayOfWeek, d.startTime",
                 DoctorOfficeAvailabilitySlot.class)
                 .setParameter("officeId", officeId)
                 .getResultList();
@@ -45,7 +45,7 @@ public class DoctorOfficeAvailabilityDaoHibeImpl implements DoctorOfficeAvailabi
 
     @Override
     public List<DoctorOfficeAvailabilitySlot> getActiveByOfficeId(long officeId) {
-        return em.createQuery("SELECT d FROM DoctorOfficeAvailabilitySlot d JOIN d.office o WHERE o.id = :officeId AND o.active = true AND o.removed IS NULL ORDER BY d.dayOfWeek, d.startTime",
+        return em.createQuery("SELECT d FROM DoctorOfficeAvailabilitySlot d JOIN d.office o WHERE o.id = :officeId AND o.active = true AND o.removed IS NULL ORDER BY o.id, d.dayOfWeek, d.startTime",
                 DoctorOfficeAvailabilitySlot.class)
                 .setParameter("officeId", officeId)
                 .getResultList();
@@ -53,7 +53,7 @@ public class DoctorOfficeAvailabilityDaoHibeImpl implements DoctorOfficeAvailabi
 
     @Override
     public List<DoctorOfficeAvailabilitySlot> getByDoctorId(long doctorId) {
-        return em.createQuery("SELECT d FROM DoctorOfficeAvailabilitySlot d JOIN d.office o WHERE o.doctor.id = :doctorId AND o.active = true AND o.removed IS NULL ORDER BY d.dayOfWeek, d.startTime",
+        return em.createQuery("SELECT d FROM DoctorOfficeAvailabilitySlot d JOIN d.office o WHERE o.doctor.id = :doctorId AND o.active = true AND o.removed IS NULL ORDER BY o.id, d.dayOfWeek, d.startTime",
                 DoctorOfficeAvailabilitySlot.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
