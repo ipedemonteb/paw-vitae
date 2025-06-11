@@ -174,8 +174,8 @@
 
                     <form:hidden path="doctorId" id="doctorId"/>
 
-                    <div class="form-group">
-                        <label class="form-label required-field">
+                    <div class="form-group" id="offices-form-group">
+                        <label class="form-label required-field" id="offices-label">
                             <spring:message code="register.doctorOffices" />
                         </label>
                         <div id="doctor-offices-container">
@@ -366,7 +366,7 @@
             name: "",
             neighborhoodId: "",
             specialties: [],
-            active: true,
+            active: false,
             removed: false
         });
 
@@ -376,6 +376,10 @@
         updateOfficeStatus(officeCounter);
         updateFilterCounts();
         officeCounter++;
+
+        filterOffices('disabled');
+        officeEntry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
     }
 
     function createOfficeHTML(index, name, neighborhoodId, id, active) {
@@ -529,7 +533,6 @@
 
         if (!office.active) {
             // Disabled state
-            officeEntry.classList.add('disabled');
             statusIndicator.classList.add('disabled');
             statusText.textContent = "<spring:message code='offices.status.disabled' />";
 
@@ -560,7 +563,6 @@
 
     function applyCurrentFilter() {
         const offices = document.querySelectorAll('.office-entry');
-        const addButton = document.getElementById('add-office-btn');
 
         offices.forEach(officeElement => {
             const index = parseInt(officeElement.getAttribute('data-index'));
@@ -576,11 +578,9 @@
             switch (currentFilter) {
                 case 'active':
                     shouldShow = office.active;
-                    addButton.style.display = 'block';
                     break;
                 case 'disabled':
                     shouldShow = !office.active;
-                    addButton.style.display = 'none';
                     break;
             }
 
