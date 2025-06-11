@@ -53,7 +53,7 @@ public class DoctorOfficeAvailabilityDaoHibeImpl implements DoctorOfficeAvailabi
 
     @Override
     public List<DoctorOfficeAvailabilitySlot> getByDoctorId(long doctorId) {
-        return em.createQuery("SELECT d FROM DoctorOfficeAvailabilitySlot d JOIN d.office o WHERE o.doctor.id = :doctorId AND o.active = true AND o.removed IS NULL ORDER BY o.officeName, d.dayOfWeek, d.startTime",
+        return em.createQuery("SELECT d FROM DoctorOfficeAvailabilitySlot d JOIN d.office o WHERE o.doctor.id = :doctorId AND o.removed IS NULL ORDER BY o.officeName, d.dayOfWeek, d.startTime",
                 DoctorOfficeAvailabilitySlot.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
