@@ -357,7 +357,7 @@
                                         <form:input type="file" path="files" id="files" multiple="true" accept=".pdf" class="file-upload-input-hidden" />
                                     </div>
                                     <div id="filePreview" class="file-upload-preview"></div>
-                                    <form:errors path="files" cssClass="error-message" />
+                                    <form:errors path="patientFiles" cssClass="error-message" />
                                 </div>
                             </div>
                             <div class="form-group">
