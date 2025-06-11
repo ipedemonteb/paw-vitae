@@ -252,7 +252,7 @@
                                                             </div>
 
                                                             <div class="file-actions">
-                                                                <a href="<c:url value='/file/${file.id}' />"
+                                                                <a href="<c:url value='/appointment/${appointmentEntry.key.id}/file-view/${file.id}' />"
                                                                    class="btn-view-file"
                                                                    target="_blank"
                                                                    title="<spring:message code='dashboard.medicalHistory.viewFile' />">
