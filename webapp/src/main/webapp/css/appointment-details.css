@@ -782,6 +782,55 @@ textarea.form-control {
     text-align: left;
     width: 100%; /* Ensure full width */
 }
+.file-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+.file-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: auto;
+    width: 100%;
+}
+.btn-view-file {
+    flex: 0.1;
+    background: #4361ee;
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+.btn-view-file{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.btn-view-file {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    flex: 0.1;
+}
+
+.btn-view-file:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    text-decoration: none;
+    color: var(--white);
+}
 
 .back-button {
     display: inline-flex;
@@ -1067,6 +1116,11 @@ textarea.form-control {
     .rating-display {
         font-size: 1.5rem;
     }
+
+    .file-actions {
+        flex-direction: column;
+    }
+
 
     .file-name {
         max-width: 150px;

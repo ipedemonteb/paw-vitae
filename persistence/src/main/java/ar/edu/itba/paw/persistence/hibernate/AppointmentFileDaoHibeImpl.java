@@ -25,6 +25,13 @@ public class AppointmentFileDaoHibeImpl implements AppointmentFileDao {
     }
 
     @Override
+    public List<AppointmentFile> getByAppointmentIdForDoctor(long appointment_id) {
+        return em.createQuery("FROM AppointmentFile af WHERE af.appointment.id = :appointment_id AND af.uploaderRole = 'doctor'", AppointmentFile.class)
+                .setParameter("appointment_id", appointment_id)
+                .getResultList();
+    }
+
+    @Override
     public Optional<AppointmentFile> getById(long id) {
         return Optional.ofNullable(em.find(AppointmentFile.class, id));
     }
