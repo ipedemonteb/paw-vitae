@@ -283,7 +283,7 @@
     // Modal functions
     function showRemoveConfirmation(index) {
         const office = doctorOffices.find(o => o.index === parseInt(index));
-        if (!office || (office.active && doctorOffices.filter(o => o.active).length === 1)) return;
+        if (!office || (currentFilter === 'active' && office.active && doctorOffices.filter(o => o.active).length === 1)) return;
 
         pendingRemoveIndex = index;
 
@@ -518,7 +518,7 @@
 
     function toggleOfficeStatus(index) {
         const office = doctorOffices.find(o => o.index === parseInt(index));
-        if (!office || office.removed || doctorOffices.filter(o => o.active).length === 1) return;
+        if (!office || office.removed || (currentFilter === 'active' && doctorOffices.filter(o => o.active).length === 1)) return;
 
         office.active = !office.active;
         updateOfficeStatus(index);
