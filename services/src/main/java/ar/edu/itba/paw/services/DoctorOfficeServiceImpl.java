@@ -78,13 +78,13 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     @Transactional(readOnly = true)
     @Override
     public List<DoctorOffice> getAllByDoctorId(long doctorId) {
-        return doctorOfficeDao.getAllByDoctorId(doctorId);
+        return doctorOfficeDao.getByDoctorId(doctorId);
     }
 
     @Transactional
     @Override
     public void update(List<DoctorOfficeForm> officeForms, Doctor doctor) {
-        List<DoctorOffice> existing = doctorOfficeDao.getAllByDoctorId(doctor.getId());
+        List<DoctorOffice> existing = doctorOfficeDao.getByDoctorId(doctor.getId());
         Map<Long,DoctorOffice> existingById =
                 existing.stream().collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
 

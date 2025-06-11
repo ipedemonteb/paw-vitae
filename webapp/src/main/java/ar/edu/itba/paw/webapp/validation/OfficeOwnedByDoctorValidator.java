@@ -48,7 +48,7 @@ public class OfficeOwnedByDoctorValidator {
 
         @Override
         public boolean isValid(UpdateAvailabilityForm form, javax.validation.ConstraintValidatorContext context) {
-            List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(form.getDoctorId());
+            List<DoctorOffice> offices = doctorOfficeService.getAllByDoctorId(form.getDoctorId());
             if (form.getDoctorOfficeAvailabilitySlots() != null) {
                 for (DoctorOfficeAvailabilitySlotForm slot : form.getDoctorOfficeAvailabilitySlots()) {
                     if (offices.stream().noneMatch(office -> office.getId() == slot.getOfficeId())) {
