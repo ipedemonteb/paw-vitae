@@ -3,15 +3,15 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<div class="modal-overlay" id="${param.id}">
+<div class="remove-modal-overlay" id="${param.id}">
     <div class="modal-container">
-        <div class="modal-header">
+        <div class="remove-modal-header">
             <h3><spring:message code="${param.title}" /></h3>
             <button class="modal-close" aria-label="Close modal">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="modal-body">
+        <div class="remove-modal-body">
             <p><spring:message code="${param.message}" /></p>
         </div>
         <div class="modal-footer" id="${param.divId}">

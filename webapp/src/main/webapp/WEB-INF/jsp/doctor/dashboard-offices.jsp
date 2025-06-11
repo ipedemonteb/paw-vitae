@@ -41,13 +41,13 @@
 </div>
 
 <!-- Remove Office Confirmation Modal -->
-<div id="removeOfficeModal" class="confirmation-modal" style="display: none;">
-    <div class="modal-overlay" onclick="hideRemoveConfirmation()"></div>
-    <div class="modal-content">
-        <div class="modal-header">
+<div id="removeOfficeModal" class="remove-confirmation-modal" style="display: none;">
+    <div class="remove-modal-overlay" onclick="hideRemoveConfirmation()"></div>
+    <div class="remove-modal-content">
+        <div class="remove-modal-header">
             <h3><i class="fas fa-exclamation-triangle text-warning"></i> <spring:message code="offices.remove.confirm.title" /></h3>
         </div>
-        <div class="modal-body">
+        <div class="remove-modal-body">
             <p><spring:message code="offices.remove.confirm.message" /></p>
             <div class="office-info-preview">
                 <strong id="officeNamePreview"></strong>
@@ -57,7 +57,7 @@
                 <span><spring:message code="offices.remove.confirm.warning" /></span>
             </div>
         </div>
-        <div class="modal-actions">
+        <div class="remove-modal-actions">
             <button type="button" class="btn btn-secondary" onclick="hideRemoveConfirmation()">
                 <i class="fas fa-times"></i>
                 <spring:message code="logout.confirmation.cancel" />
@@ -1095,134 +1095,5 @@
         }
     });
 </script>
-
-<style>
-    /* Confirmation Modal Styles */
-    .confirmation-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-    }
-
-    .modal-content {
-        position: relative;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        max-width: 500px;
-        width: 90%;
-        max-height: 90vh;
-        overflow-y: auto;
-        animation: modalSlideIn 0.3s ease;
-    }
-
-    @keyframes modalSlideIn {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .modal-header {
-        padding: 1.5rem 1.5rem 0;
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-    .modal-header h3 {
-        margin: 0 0 1rem;
-        color: #1f2937;
-        font-size: 1.25rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .modal-body {
-        padding: 1.5rem;
-    }
-
-    .modal-body p {
-        margin: 0 0 1rem;
-        color: #6b7280;
-        line-height: 1.6;
-    }
-
-    .office-info-preview {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        padding: 0.75rem;
-        margin: 1rem 0;
-        font-family: monospace;
-    }
-
-    .warning-note {
-        background: #fef3c7;
-        border: 1px solid #f59e0b;
-        border-radius: 6px;
-        padding: 0.75rem;
-        margin-top: 1rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .warning-note i {
-        color: #d97706;
-        margin-top: 2px;
-        flex-shrink: 0;
-    }
-
-    .modal-actions {
-        padding: 1rem 1.5rem 1.5rem;
-        border-top: 1px solid #e5e7eb;
-        display: flex;
-        gap: 0.75rem;
-        justify-content: flex-end;
-    }
-
-    .text-warning {
-        color: #f59e0b;
-    }
-
-    /* Responsive modal */
-    @media (max-width: 640px) {
-        .modal-content {
-            margin: 1rem;
-            width: calc(100% - 2rem);
-        }
-
-        .modal-actions {
-            flex-direction: column;
-        }
-
-        .modal-actions .btn {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-</style>
 </body>
 </html>
