@@ -80,7 +80,7 @@
 
                             <div id="time-slot-error" class="error-message" style="display: none; margin-bottom: 10px;"></div>
                             <div class="error-container">
-                                <form:errors path="doctorOfficeAvailabilitySlots" cssClass="error-message" element="div" />
+                                <form:errors path="doctorOfficeAvailabilities" cssClass="error-message" element="div" />
                             </div>
 
                             <button type="button" class="btn-add-slot" onclick="addTimeSlotRow()">
@@ -703,7 +703,7 @@
         if (!form) return;
 
         // Remove any existing hidden inputs for office availability slots
-        const existingInputs = document.querySelectorAll('input[name*="doctorOfficeAvailabilitySlots"]');
+        const existingInputs = document.querySelectorAll('input[name*="doctorOfficeAvailabilities"]');
         existingInputs.forEach(input => {
             input.parentNode.removeChild(input);
         });
@@ -722,7 +722,7 @@
             if (slot.slotId) {
                 const slotIdInput = document.createElement('input');
                 slotIdInput.type = 'hidden';
-                slotIdInput.name = `doctorOfficeAvailabilitySlots[`+index+`].id`;
+                slotIdInput.name = `doctorOfficeAvailabilities[`+index+`].id`;
                 slotIdInput.value = slot.slotId;
                 form.appendChild(slotIdInput);
             }
@@ -730,7 +730,7 @@
             // Create office ID input
             const officeIdInput = document.createElement('input');
             officeIdInput.type = 'hidden';
-            officeIdInput.name = `doctorOfficeAvailabilitySlots[`+index+`].officeId`;
+            officeIdInput.name = `doctorOfficeAvailabilities[`+index+`].officeId`;
             officeIdInput.value = slot.officeId;
             form.appendChild(officeIdInput);
 
@@ -738,21 +738,21 @@
             // Create day input
             const dayInput = document.createElement('input');
             dayInput.type = 'hidden';
-            dayInput.name = `doctorOfficeAvailabilitySlots[`+index+`].dayOfWeek`;
+            dayInput.name = `doctorOfficeAvailabilities[`+index+`].dayOfWeek`;
             dayInput.value = slot.day;
             form.appendChild(dayInput);
 
             // Create start time input
             const startInput = document.createElement('input');
             startInput.type = 'hidden';
-            startInput.name = `doctorOfficeAvailabilitySlots[`+index+`].startTime`;
+            startInput.name = `doctorOfficeAvailabilities[`+index+`].startTime`;
             startInput.value = slot.startTime;
             form.appendChild(startInput);
 
             // Create end time input
             const endInput = document.createElement('input');
             endInput.type = 'hidden';
-            endInput.name = `doctorOfficeAvailabilitySlots[`+index+`].endTime`;
+            endInput.name = `doctorOfficeAvailabilities[`+index+`].endTime`;
             endInput.value = slot.endTime;
             form.appendChild(endInput);
 
@@ -770,7 +770,7 @@
         //         if (slot.slotId) {
         //             const slotIdInput = document.createElement('input');
         //             slotIdInput.type = 'hidden';
-        //             slotIdInput.name = `doctorOfficeAvailabilitySlots[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].id`;
+        //             slotIdInput.name = `doctorOfficeAvailabilities[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].id`;
         //             slotIdInput.value = slot.slotId;
         //             form.appendChild(slotIdInput);
         //         }
@@ -778,7 +778,7 @@
         //         // Create office ID input
         //         const officeIdInput = document.createElement('input');
         //         officeIdInput.type = 'hidden';
-        //         officeIdInput.name = `doctorOfficeAvailabilitySlots[`+officeIndex+`].officeId`;
+        //         officeIdInput.name = `doctorOfficeAvailabilities[`+officeIndex+`].officeId`;
         //         officeIdInput.value = officeId;
         //         form.appendChild(officeIdInput);
         //
@@ -786,21 +786,21 @@
         //         // Create day input
         //         const dayInput = document.createElement('input');
         //         dayInput.type = 'hidden';
-        //         dayInput.name = `doctorOfficeAvailabilitySlots[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].dayOfWeek`;
+        //         dayInput.name = `doctorOfficeAvailabilities[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].dayOfWeek`;
         //         dayInput.value = slot.day;
         //         form.appendChild(dayInput);
         //
         //         // Create start time input
         //         const startInput = document.createElement('input');
         //         startInput.type = 'hidden';
-        //         startInput.name = `doctorOfficeAvailabilitySlots[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].startTime`;
+        //         startInput.name = `doctorOfficeAvailabilities[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].startTime`;
         //         startInput.value = slot.startTime;
         //         form.appendChild(startInput);
         //
         //         // Create end time input
         //         const endInput = document.createElement('input');
         //         endInput.type = 'hidden';
-        //         endInput.name = `doctorOfficeAvailabilitySlots[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].endTime`;
+        //         endInput.name = `doctorOfficeAvailabilities[`+officeIndex+`].officeAvailabilitySlotForms[`+slotIndex+`].endTime`;
         //         endInput.value = slot.endTime;
         //         form.appendChild(endInput);
         //     });

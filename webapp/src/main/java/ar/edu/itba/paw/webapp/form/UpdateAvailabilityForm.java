@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.models.AvailabilitySlotForm;
-import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlotForm;
-import ar.edu.itba.paw.models.DoctorOfficeForm;
+import ar.edu.itba.paw.models.DoctorOfficeAvailabilityForm;
 import ar.edu.itba.paw.models.UnavailabilitySlotForm;
 import ar.edu.itba.paw.webapp.validation.*;
 
@@ -17,7 +15,7 @@ public class UpdateAvailabilityForm {
     @NotNull
     @ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
     @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
-    private List<DoctorOfficeAvailabilitySlotForm> doctorOfficeAvailabilitySlots;
+    private List<DoctorOfficeAvailabilityForm> doctorOfficeAvailabilities;
 
     @NotNull
     private Long doctorId;
@@ -34,12 +32,12 @@ public class UpdateAvailabilityForm {
         this.unavailabilitySlots = unavailabilitySlots;
     }
 
-    public List<DoctorOfficeAvailabilitySlotForm> getDoctorOfficeAvailabilitySlots() {
-        return doctorOfficeAvailabilitySlots;
+    public List<DoctorOfficeAvailabilityForm> getDoctorOfficeAvailabilities() {
+        return doctorOfficeAvailabilities;
     }
 
-    public void setDoctorOfficeAvailabilitySlots(List<DoctorOfficeAvailabilitySlotForm> doctorOfficeAvailabilitySlots) {
-        this.doctorOfficeAvailabilitySlots = doctorOfficeAvailabilitySlots;
+    public void setDoctorOfficeAvailabilities(List<DoctorOfficeAvailabilityForm> doctorOfficeAvailabilities) {
+        this.doctorOfficeAvailabilities = doctorOfficeAvailabilities;
     }
 
     public Long getDoctorId() {

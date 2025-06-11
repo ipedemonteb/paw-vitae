@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.validation;
 
-import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlotForm;
+import ar.edu.itba.paw.models.DoctorOfficeAvailabilityForm;
 import ar.edu.itba.paw.models.DoctorOfficeForm;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 
@@ -19,10 +19,10 @@ public class OfficeAvailabilitySlotIntersectionValidator {
             }
 
             // Combine all slots into a single map
-            Map<Integer, List<DoctorOfficeAvailabilitySlotForm>> slotsByDay = new TreeMap<>();
+            Map<Integer, List<DoctorOfficeAvailabilityForm>> slotsByDay = new TreeMap<>();
             for (DoctorOfficeForm office : offices) {
                 if (office.getOfficeAvailabilitySlotForms() != null) {
-                    for (DoctorOfficeAvailabilitySlotForm slot : office.getOfficeAvailabilitySlotForms()) {
+                    for (DoctorOfficeAvailabilityForm slot : office.getOfficeAvailabilitySlotForms()) {
                         slotsByDay
                                 .computeIfAbsent(slot.getDayOfWeek(), k -> new ArrayList<>())
                                 .add(slot);
@@ -31,12 +31,12 @@ public class OfficeAvailabilitySlotIntersectionValidator {
             }
 
             // Validate slots for each day
-            for (List<DoctorOfficeAvailabilitySlotForm> slots : slotsByDay.values()) {
-                slots.sort(Comparator.comparing(DoctorOfficeAvailabilitySlotForm::getStartTime));
+            for (List<DoctorOfficeAvailabilityForm> slots : slotsByDay.values()) {
+                slots.sort(Comparator.comparing(DoctorOfficeAvailabilityForm::getStartTime));
 
                 for (int i = 0; i < slots.size() - 1; i++) {
-                    DoctorOfficeAvailabilitySlotForm current = slots.get(i);
-                    DoctorOfficeAvailabilitySlotForm next = slots.get(i + 1);
+                    DoctorOfficeAvailabilityForm current = slots.get(i);
+                    DoctorOfficeAvailabilityForm next = slots.get(i + 1);
 
                     if (current.getEndTime().plusHours(1).isAfter(next.getStartTime())) {
                         context.disableDefaultConstraintViolation();
@@ -52,26 +52,26 @@ public class OfficeAvailabilitySlotIntersectionValidator {
         }
     }
 
-    public static class ForDoctorOfficeAvailabilitySlotForm implements ConstraintValidator<OfficeAvailabilitySlotIntersection, List<DoctorOfficeAvailabilitySlotForm>> {
+    public static class ForDoctorOfficeAvailabilityForm implements ConstraintValidator<OfficeAvailabilitySlotIntersection, List<DoctorOfficeAvailabilityForm>> {
         @Override
-        public boolean isValid(List<DoctorOfficeAvailabilitySlotForm> officeAvailabilitySlotForms, ConstraintValidatorContext context) {
+        public boolean isValid(List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms, ConstraintValidatorContext context) {
             if (officeAvailabilitySlotForms == null || officeAvailabilitySlotForms.isEmpty()) {
                 return true; // No slots to validate
             }
 
-            Map<Integer, List<DoctorOfficeAvailabilitySlotForm>> slotsByDay = new TreeMap<>();
-            for (DoctorOfficeAvailabilitySlotForm slot : officeAvailabilitySlotForms) {
+            Map<Integer, List<DoctorOfficeAvailabilityForm>> slotsByDay = new TreeMap<>();
+            for (DoctorOfficeAvailabilityForm slot : officeAvailabilitySlotForms) {
                 slotsByDay
                         .computeIfAbsent(slot.getDayOfWeek(), k -> new ArrayList<>())
                         .add(slot);
             }
 
-            for (List<DoctorOfficeAvailabilitySlotForm> slots : slotsByDay.values()) {
-                slots.sort(Comparator.comparing(DoctorOfficeAvailabilitySlotForm::getStartTime));
+            for (List<DoctorOfficeAvailabilityForm> slots : slotsByDay.values()) {
+                slots.sort(Comparator.comparing(DoctorOfficeAvailabilityForm::getStartTime));
 
                 for (int i = 0; i < slots.size() - 1; i++) {
-                    DoctorOfficeAvailabilitySlotForm current = slots.get(i);
-                    DoctorOfficeAvailabilitySlotForm next = slots.get(i + 1);
+                    DoctorOfficeAvailabilityForm current = slots.get(i);
+                    DoctorOfficeAvailabilityForm next = slots.get(i + 1);
 
                     if (current.getEndTime().plusHours(1).isAfter(next.getStartTime())) {
                         return false; // Intersection found

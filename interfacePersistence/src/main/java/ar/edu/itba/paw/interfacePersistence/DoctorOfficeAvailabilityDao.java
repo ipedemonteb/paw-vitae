@@ -1,20 +1,20 @@
 package ar.edu.itba.paw.interfacePersistence;
 
-import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlot;
+import ar.edu.itba.paw.models.DoctorOfficeAvailability;
 
 import java.util.List;
 
 public interface DoctorOfficeAvailabilityDao {
 
-    DoctorOfficeAvailabilitySlot create(DoctorOfficeAvailabilitySlot slot);
+    DoctorOfficeAvailability create(DoctorOfficeAvailability slot);
 
-    void update(DoctorOfficeAvailabilitySlot slot);
+    void update(DoctorOfficeAvailability slot);
 
-    void delete(DoctorOfficeAvailabilitySlot slot);
+    void delete(DoctorOfficeAvailability slot);
 
-    List<DoctorOfficeAvailabilitySlot> getByOfficeId(long officeId);
+    List<DoctorOfficeAvailability> getByOfficeId(long officeId);
 
-    List<DoctorOfficeAvailabilitySlot> getActiveByOfficeId(long officeId);
+    List<DoctorOfficeAvailability> getActiveByOfficeId(long officeId);
 
-    List<DoctorOfficeAvailabilitySlot> getByDoctorId(long doctorId);
+    List<DoctorOfficeAvailability> getByDoctorId(long doctorId);
 }

@@ -1,12 +1,9 @@
 package ar.edu.itba.paw.webapp.validation;
 
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeAvailabilityService;
-import ar.edu.itba.paw.models.DoctorOffice;
-import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlot;
-import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlotForm;
+import ar.edu.itba.paw.models.DoctorOfficeAvailability;
 import ar.edu.itba.paw.models.DoctorOfficeForm;
 import ar.edu.itba.paw.webapp.form.OfficeForm;
-import ar.edu.itba.paw.webapp.form.UpdateAvailabilityForm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
@@ -28,7 +25,7 @@ public class ActiveOfficeAvailabilityValidator implements ConstraintValidator<Ac
             return true; // validated elsewhere
         }
 
-        List<DoctorOfficeAvailabilitySlot> existingSlots = doctorOfficeAvailabilityService.getByDoctorId(officeForm.getDoctorId());
+        List<DoctorOfficeAvailability> existingSlots = doctorOfficeAvailabilityService.getByDoctorId(officeForm.getDoctorId());
 
         for (DoctorOfficeForm form : officeForm.getDoctorOfficeForm()) {
              if ((form.getId() == null && form.getActive()) || (form.getId() != null && form.getActive() && existingSlots.stream().noneMatch(s -> s.getOffice().getId() == form.getId()))) {

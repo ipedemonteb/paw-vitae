@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = { OfficeOwnedByDoctorValidator.ForDoctorOfficeForm.class,
-                            OfficeOwnedByDoctorValidator.ForDoctorOfficeAvailabilitySlotForm.class
+                            OfficeOwnedByDoctorValidator.ForDoctorOfficeAvailabilityForm.class
                             })
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

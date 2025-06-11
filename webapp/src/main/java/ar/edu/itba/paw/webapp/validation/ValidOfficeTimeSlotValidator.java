@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.validation;
 
-import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlot;
-import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlotForm;
+import ar.edu.itba.paw.models.DoctorOfficeAvailabilityForm;
 import ar.edu.itba.paw.models.DoctorOfficeForm;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
 
@@ -27,7 +26,7 @@ public class ValidOfficeTimeSlotValidator {
                             .addConstraintViolation();
                     return false; // Invalid if any office has no time slots
                 }
-                for (DoctorOfficeAvailabilitySlotForm slot : form.getOfficeAvailabilitySlotForms()) {
+                for (DoctorOfficeAvailabilityForm slot : form.getOfficeAvailabilitySlotForms()) {
                     if (slot.getOfficeId() != null || slot.getId() != null || slot.getStartTime() == null || slot.getEndTime() == null || slot.getStartTime().isAfter(slot.getEndTime()) || slot.getStartTime().getHour() < 8 || slot.getEndTime().getHour() > 20) {
                         context.disableDefaultConstraintViolation();
                         context.buildConstraintViolationWithTemplate("{office.invalid.timeSlot}")
@@ -41,13 +40,13 @@ public class ValidOfficeTimeSlotValidator {
         }
     }
 
-    public static class ForDoctorOfficeAvailabilitySlotForm implements ConstraintValidator<ValidOfficeTimeSlot, List<DoctorOfficeAvailabilitySlotForm>> {
+    public static class ForDoctorOfficeAvailabilitySlotForm implements ConstraintValidator<ValidOfficeTimeSlot, List<DoctorOfficeAvailabilityForm>> {
         @Override
-        public boolean isValid(List<DoctorOfficeAvailabilitySlotForm> officeAvailabilitySlotForms, ConstraintValidatorContext context) {
+        public boolean isValid(List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms, ConstraintValidatorContext context) {
             if (officeAvailabilitySlotForms == null || officeAvailabilitySlotForms.isEmpty()) {
                 return true; //validated elsewhere
             }
-            for (DoctorOfficeAvailabilitySlotForm slot : officeAvailabilitySlotForms) {
+            for (DoctorOfficeAvailabilityForm slot : officeAvailabilitySlotForms) {
                 if (slot.getOfficeId() == null || slot.getStartTime() == null || slot.getEndTime() == null || slot.getStartTime().isAfter(slot.getEndTime()) || slot.getStartTime().getHour() < 8 || slot.getEndTime().getHour() > 20) {
                     return false;
                 }

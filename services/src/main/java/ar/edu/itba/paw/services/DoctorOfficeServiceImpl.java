@@ -57,7 +57,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             List<Specialty> specialties = specialtyService.getByIds(officeForm.getSpecialtyIds());
             DoctorOffice doctorOffice = officeForm.toEntity(doctor, neighborhood, specialties);
             DoctorOffice created = create(doctorOffice);
-            doctorOffice.setDoctorOfficeAvailabilitySlots(doctorOfficeAvailabilityService.create(officeForm.getOfficeAvailabilitySlotForms(), created));
+            doctorOffice.setDoctorOfficeAvailability(doctorOfficeAvailabilityService.create(officeForm.getOfficeAvailabilitySlotForms(), created));
             doctorOffices.add(created);
         }
         return doctorOffices;

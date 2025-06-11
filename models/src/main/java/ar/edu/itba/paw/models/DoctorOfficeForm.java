@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DoctorOfficeForm {
@@ -11,9 +10,9 @@ public class DoctorOfficeForm {
     private boolean active;
     private boolean removed;
 
-    private List<DoctorOfficeAvailabilitySlotForm> officeAvailabilitySlotForms;
+    private List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms;
 
-    public DoctorOfficeForm(Long id, Long neighborhoodId, List<Long> specialtyIds, String officeName, List<DoctorOfficeAvailabilitySlotForm> officeAvailabilitySlotForms,boolean active, boolean removed) {
+    public DoctorOfficeForm(Long id, Long neighborhoodId, List<Long> specialtyIds, String officeName, List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms, boolean active, boolean removed) {
         this.id = id;
         this.neighborhoodId = neighborhoodId;
         this.specialtyIds = specialtyIds;
@@ -23,7 +22,7 @@ public class DoctorOfficeForm {
         this.removed = removed;
     }
 
-    public DoctorOfficeForm(Long neighborhoodId, String officeName, List<Long> specialtyIds, List<DoctorOfficeAvailabilitySlotForm> officeAvailabilitySlotForms) {
+    public DoctorOfficeForm(Long neighborhoodId, String officeName, List<Long> specialtyIds, List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms) {
         this.neighborhoodId = neighborhoodId;
         this.officeName = officeName;
         this.specialtyIds = specialtyIds;
@@ -81,11 +80,11 @@ public class DoctorOfficeForm {
         this.id = id;
     }
 
-    public List<DoctorOfficeAvailabilitySlotForm> getOfficeAvailabilitySlotForms() {
+    public List<DoctorOfficeAvailabilityForm> getOfficeAvailabilitySlotForms() {
         return officeAvailabilitySlotForms;
     }
 
-    public void setOfficeAvailabilitySlotForms(List<DoctorOfficeAvailabilitySlotForm> officeAvailabilitySlotForms) {
+    public void setOfficeAvailabilitySlotForms(List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms) {
         this.officeAvailabilitySlotForms = officeAvailabilitySlotForms;
     }
 

@@ -149,7 +149,7 @@ public class DoctorController {
         }
 
         unavailabilitySlotsService.updateDoctorUnavailability(doctor, form.getUnavailabilitySlots());
-        doctorOfficeAvailabilityService.update(form.getDoctorOfficeAvailabilitySlots(), doctor.getId());
+        doctorOfficeAvailabilityService.update(form.getDoctorOfficeAvailabilities(), doctor.getId());
         return new ModelAndView("redirect:/doctor/dashboard/availability?updated=true");
     }
 

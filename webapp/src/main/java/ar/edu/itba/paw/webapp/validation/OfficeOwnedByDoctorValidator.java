@@ -2,13 +2,12 @@ package ar.edu.itba.paw.webapp.validation;
 
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
 import ar.edu.itba.paw.models.DoctorOffice;
-import ar.edu.itba.paw.models.DoctorOfficeAvailabilitySlotForm;
+import ar.edu.itba.paw.models.DoctorOfficeAvailabilityForm;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.UpdateAvailabilityForm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
-import java.lang.reflect.Field;
 import java.util.List;
 
 public class OfficeOwnedByDoctorValidator {
@@ -37,20 +36,20 @@ public class OfficeOwnedByDoctorValidator {
 
     }
 
-    public static class ForDoctorOfficeAvailabilitySlotForm implements ConstraintValidator<OfficeOwnedByDoctor, UpdateAvailabilityForm> {
+    public static class ForDoctorOfficeAvailabilityForm implements ConstraintValidator<OfficeOwnedByDoctor, UpdateAvailabilityForm> {
 
         private final DoctorOfficeService doctorOfficeService;
 
         @Autowired
-        public ForDoctorOfficeAvailabilitySlotForm(DoctorOfficeService doctorOfficeService) {
+        public ForDoctorOfficeAvailabilityForm(DoctorOfficeService doctorOfficeService) {
             this.doctorOfficeService = doctorOfficeService;
         }
 
         @Override
         public boolean isValid(UpdateAvailabilityForm form, javax.validation.ConstraintValidatorContext context) {
             List<DoctorOffice> offices = doctorOfficeService.getAllByDoctorId(form.getDoctorId());
-            if (form.getDoctorOfficeAvailabilitySlots() != null) {
-                for (DoctorOfficeAvailabilitySlotForm slot : form.getDoctorOfficeAvailabilitySlots()) {
+            if (form.getDoctorOfficeAvailabilities() != null) {
+                for (DoctorOfficeAvailabilityForm slot : form.getDoctorOfficeAvailabilities()) {
                     if (offices.stream().noneMatch(office -> office.getId() == slot.getOfficeId())) {
                         context.disableDefaultConstraintViolation();
                         context.buildConstraintViolationWithTemplate("{appointment.office.valid}")

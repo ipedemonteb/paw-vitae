@@ -2,20 +2,20 @@ package ar.edu.itba.paw.models;
 
 import java.time.LocalTime;
 
-public class DoctorOfficeAvailabilitySlotForm {
+public class DoctorOfficeAvailabilityForm {
     private Long id;
     private Long officeId;
     private Integer dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
 
-    public DoctorOfficeAvailabilitySlotForm(Integer dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    public DoctorOfficeAvailabilityForm(Integer dayOfWeek, LocalTime startTime, LocalTime endTime) {
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public DoctorOfficeAvailabilitySlotForm(Long id, Long officeId, Integer dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    public DoctorOfficeAvailabilityForm(Long id, Long officeId, Integer dayOfWeek, LocalTime startTime, LocalTime endTime) {
         this.id = id;
         this.officeId = officeId;
         this.dayOfWeek = dayOfWeek;
@@ -23,7 +23,7 @@ public class DoctorOfficeAvailabilitySlotForm {
         this.endTime = endTime;
     }
 
-    public DoctorOfficeAvailabilitySlotForm() {
+    public DoctorOfficeAvailabilityForm() {
     }
 
     public Integer getDayOfWeek() {
@@ -66,7 +66,7 @@ public class DoctorOfficeAvailabilitySlotForm {
         this.endTime = endTime;
     }
 
-    public DoctorOfficeAvailabilitySlot toEntity(DoctorOffice office) {
-        return new DoctorOfficeAvailabilitySlot(office, endTime, startTime, dayOfWeek);
+    public DoctorOfficeAvailability toEntity(DoctorOffice office) {
+        return new DoctorOfficeAvailability(office, endTime, startTime, dayOfWeek);
     }
 }

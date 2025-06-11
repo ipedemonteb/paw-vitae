@@ -265,7 +265,7 @@
                 <c:if test="${!sidStatus.last}">,</c:if>
                 </c:forEach>
             ],
-            hasAvailability: ${office.doctorOfficeAvailabilitySlots.size() > 0}
+            hasAvailability: ${office.doctorOfficeAvailability.size() > 0}
         }<c:if test="${!status.last}">, </c:if>
         </c:forEach>
     ];
@@ -415,6 +415,11 @@
             html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';
             html += '<i class="fas fa-pause"></i>';
             html += '</button>';
+        } else {
+            html += '<div class="tooltip">'
+            html += '<i class="fas fa-info-circle tooltip-icon"></i>'
+            html += '<span class="tooltip-content"><spring:message code="office.active.criteria"/></span>'
+            html += '</div>'
         }
 
         html += '<button type="button" class="office-action-btn btn-remove-office" id="remove-btn-' + index + '" ';
