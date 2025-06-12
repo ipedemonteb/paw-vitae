@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.form;
 import ar.edu.itba.paw.models.DoctorOfficeForm;
 import ar.edu.itba.paw.webapp.validation.*;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -10,6 +11,8 @@ import java.util.List;
 
 @ValidOfficeId
 @ActiveOfficeAvailability
+@MaxNumberOfOffices
+@ValidNewOffice
 public class OfficeForm {
 
     @NotNull
@@ -17,7 +20,6 @@ public class OfficeForm {
 
     @NotEmpty
     @NotNull
-    @Size(min = 1, max = 20)
     @ActiveOffice(message = "{offices.active}")
     @UniqueOffices(message = "{offices.duplicate}")
     @ValidOfficeNames(message = "{offices.invalid.name}")

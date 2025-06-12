@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.*;
 import java.util.List;
 
+@ValidNewOffice
 @ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
 @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
 @AcceptedSpecialties(specialties = "specialties", offices = "doctorOfficeForm", message = "{specialties.not.accepted}")
