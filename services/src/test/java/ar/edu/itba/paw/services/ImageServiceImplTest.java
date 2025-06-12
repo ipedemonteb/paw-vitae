@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,5 +59,17 @@ public class ImageServiceImplTest {
         assertNotNull(image);
         assertEquals(1L, image.getId());
         assertArrayEquals(imageBytes, image.getImage());
+    }
+
+    @Test
+    public void testFindByIdNotExits() {
+        //Preconditions
+        when(imageDao.findById(1000L)).thenReturn(Optional.empty());
+
+        //Exercise
+        Optional<Images> maybeImage = imageService.findById(1000L);
+
+        //Postconditions
+        assertFalse(maybeImage.isPresent());
     }
 }

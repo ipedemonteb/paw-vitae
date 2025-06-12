@@ -151,7 +151,6 @@ public class UserServiceImpl implements UserService {
         return ((Doctor) user).getImageId();
     }
 
-
     // USELESS
     @Transactional
     @Override
