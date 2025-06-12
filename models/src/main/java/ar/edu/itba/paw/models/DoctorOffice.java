@@ -21,11 +21,11 @@ public class DoctorOffice {
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL) //TODO find out where cascade types are necessary
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "neighborhood_id")
     private Neighborhood neighborhood;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "doctor_office_specialties",
             joinColumns = {
                     @JoinColumn(name = "office_id")
@@ -55,6 +55,14 @@ public class DoctorOffice {
         this.neighborhood = neighborhood;
         this.specialties = specialties;
         this.officeName = officeName;
+    }
+
+    public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName, boolean active) {
+        this.doctor = doctor;
+        this.neighborhood = neighborhood;
+        this.specialties = specialties;
+        this.officeName = officeName;
+        this.active = active;
     }
 
     public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName, boolean active, LocalDateTime removed, List<DoctorOfficeAvailability> doctorOfficeAvailability) {

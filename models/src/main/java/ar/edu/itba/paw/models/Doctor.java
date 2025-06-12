@@ -28,7 +28,7 @@ public class Doctor extends User {
     private List<Coverage> coverageList = new ArrayList<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //orphan removal MUST be false
     private List<DoctorOffice> doctorOffices = new ArrayList<>();
 
     @JsonManagedReference

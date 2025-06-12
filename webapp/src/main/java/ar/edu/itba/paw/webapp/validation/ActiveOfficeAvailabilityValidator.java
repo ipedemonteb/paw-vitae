@@ -28,7 +28,7 @@ public class ActiveOfficeAvailabilityValidator implements ConstraintValidator<Ac
         List<DoctorOfficeAvailability> existingSlots = doctorOfficeAvailabilityService.getByDoctorId(officeForm.getDoctorId());
 
         for (DoctorOfficeForm form : officeForm.getDoctorOfficeForm()) {
-             if ((form.getId() == null && form.getActive()) || (form.getId() != null && form.getActive() && existingSlots.stream().noneMatch(s -> s.getOffice().getId() == form.getId()))) {
+             if ((form.getId() == null && form.getActive()) || (form.getId() != null && form.getActive() && existingSlots.stream().noneMatch(s -> s.getOffice().getId().equals(form.getId())))) {
                  context.disableDefaultConstraintViolation();
                     context.buildConstraintViolationWithTemplate("{offices.active.availability}")
                             .addPropertyNode("doctorOfficeForm")

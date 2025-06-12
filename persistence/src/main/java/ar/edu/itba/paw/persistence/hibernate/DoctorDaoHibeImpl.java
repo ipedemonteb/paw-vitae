@@ -33,6 +33,14 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     }
 
     @Override
+    public Optional<Doctor> getByIdWithAvailableOffices(long id) {
+        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d LEFT JOIN FETCH d.doctorOffices o WHERE d.id = :id AND o.removed IS NULL", Doctor.class);
+        query.setParameter("id", id);
+        List<Doctor> result = query.getResultList();
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
+    }
+
+    @Override
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
         Query nativeQuery = getNativeQuery(specialtyId, 0, null, null, "name", "asc",  false); //TODO aggalan said not to remove this unused method, therefore i need to pass placeholders as arguments, any objections you may have take them up with him
         nativeQuery.setFirstResult((page-1) * pageSize);
