@@ -17,7 +17,7 @@ public class DoctorOffice {
     private Long id;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
