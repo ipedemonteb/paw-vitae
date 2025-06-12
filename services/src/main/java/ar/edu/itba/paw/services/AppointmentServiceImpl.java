@@ -211,5 +211,12 @@ public class AppointmentServiceImpl implements AppointmentService {
         return new Page<>(appointments, page, pageSize, total);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean hasFullMedicalHistoryEnabled(long patientId, long doctorId) {
+        LOGGER.debug("Checking if full medical history is enabled for patientId: {}, doctorId: {}", patientId, doctorId);
+        return appointmentDao.hasFullMedicalHistoryEnabled(patientId, doctorId);
+    }
+
 
 }

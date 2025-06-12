@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.UserService;
+import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -64,9 +66,24 @@ public class AccessHandler {
                         || a.getDoctor().getId() == userId)
                 .orElse(true);
     }
- public boolean canHandleUnavailability( HttpServletRequest request) {
-     String requestedWith = request.getHeader("X-Requested-With");
-     return "XMLHttpRequest".equalsIgnoreCase(requestedWith);
+     public boolean canHandleUnavailability( HttpServletRequest request) {
+         String requestedWith = request.getHeader("X-Requested-With");
+         return "XMLHttpRequest".equalsIgnoreCase(requestedWith);
+    }
+    public boolean hasEnabledFullMedicalHistory(Authentication auth, long appointmentId) {
+        Object principal = auth.getPrincipal();
+        if (!(principal instanceof AuthUserDetails)) {
+            return false;
+        }
+        Appointment appointment = appointmentService.getById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
+        if(auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"))){
+            long doctorId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
+            long patientId = appointment.getPatient().getId();
+            return appointmentService.hasFullMedicalHistoryEnabled(patientId, doctorId) || appointment.getDoctor().getId() == doctorId;
+        } else {
+            long patientId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
+            return appointment.getPatient().getId() == patientId;
+        }
     }
 }
 

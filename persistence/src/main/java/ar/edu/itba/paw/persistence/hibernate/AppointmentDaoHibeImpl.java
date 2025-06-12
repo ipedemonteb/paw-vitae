@@ -139,6 +139,16 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     }
 
 
+    @Override
+    public boolean hasFullMedicalHistoryEnabled(long patientId, long doctorId) {
+        TypedQuery<Appointment> query = em.createQuery(
+                "SELECT a FROM Appointment a WHERE a.patient.id = :patientId AND a.doctor.id = :doctorId AND a.allowFullHistory = true",
+                Appointment.class);
+        query.setParameter("patientId", patientId);
+        query.setParameter("doctorId", doctorId);
+        return !query.getResultList().isEmpty();
+    }
+
 
     //TODO: CHECK
     private static StringBuilder getSql(boolean isFuture, String filter, boolean isCount) {
