@@ -43,7 +43,7 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
 
     @Override
     public List<DoctorOffice> getByDoctorIdWithAvailability(long doctorId) {
-        return em.createQuery("FROM DoctorOffice d LEFT JOIN FETCH d.doctorOfficeAvailability WHERE d.doctor.id = :doctorId AND d.removed IS NULL", DoctorOffice.class)
+        return em.createQuery("SELECT DISTINCT d FROM DoctorOffice d LEFT JOIN FETCH d.doctorOfficeAvailability WHERE d.doctor.id = :doctorId AND d.removed IS NULL", DoctorOffice.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
     }
