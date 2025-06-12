@@ -377,7 +377,7 @@
         });
 
         // container.insertBefore(officeEntry, container.firstChild);
-        container.appendChild(officeEntry);
+        container.insertBefore(officeEntry, container.firstChild);
         initializeOffice(officeCounter);
         updateOfficeStatus(officeCounter);
         updateFilterCounts();
