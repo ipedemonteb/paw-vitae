@@ -12,6 +12,8 @@ public interface DoctorService {
 
     Optional<Doctor> getById(final long id);
 
+    Optional<Doctor> getByIdWithAvailableOffices(final long id);
+
     Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize);
 
     Optional<Doctor> getByEmail(String email);

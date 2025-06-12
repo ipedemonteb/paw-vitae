@@ -1,12 +1,13 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorOfficeDao;
-import ar.edu.itba.paw.interfaceServices.DoctorOfficeAvailabilityService;
-import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
-import ar.edu.itba.paw.interfaceServices.NeighborhoodService;
-import ar.edu.itba.paw.interfaceServices.SpecialtyService;
+import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.NeighborhoodNotFoundException;
+import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +24,15 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
     private final NeighborhoodService neighborhoodService;
     private final SpecialtyService specialtyService;
+    private final DoctorService doctorService;
 
     @Autowired
-    public DoctorOfficeServiceImpl(DoctorOfficeDao doctorOfficeDao, NeighborhoodService neighborhoodService, SpecialtyService specialtyService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService) {
+    public DoctorOfficeServiceImpl(DoctorOfficeDao doctorOfficeDao, NeighborhoodService neighborhoodService, SpecialtyService specialtyService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, @Lazy DoctorService doctorService) {
         this.doctorOfficeDao = doctorOfficeDao;
         this.neighborhoodService = neighborhoodService;
         this.specialtyService = specialtyService;
         this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
+        this.doctorService = doctorService;
     }
 
     @Transactional
@@ -89,48 +92,77 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
     @Transactional
     @Override
-    public void update(List<DoctorOfficeForm> officeForms, Doctor doctor) {
-        List<DoctorOffice> existing = doctorOfficeDao.getByDoctorId(doctor.getId());
-        Map<Long,DoctorOffice> existingById =
-                existing.stream().collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
+    public void update(
+            List<DoctorOfficeForm> forms,
+            Doctor inputDoctor
+    ) {
+        // 1) Load the managed Doctor + its offices
+        Doctor doctor = doctorService.getByIdWithAvailableOffices(inputDoctor.getId()).orElseThrow(UserNotFoundException::new);
 
-        Set<Long> keepIds = new HashSet<>();
+        // 2) Index existing offices by ID
+        Map<Long, DoctorOffice> existingById = doctor.getDoctorOffices().stream()
+                .collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
 
-        for (DoctorOfficeForm form : officeForms) {
-            DoctorOffice match = existingById.get(form.getId());
-            if (match == null) {
-                DoctorOffice created = new DoctorOffice();
-                applyForm(created, form, doctor);
-                doctorOfficeDao.create(created);
-                keepIds.add(created.getId());
+        // 3) Prepare the new list and keep-set
+        List<DoctorOffice> newOffices = new ArrayList<>();
+
+        for (DoctorOfficeForm form : forms) {
+            Long id = form.getId();
+            if (id != null && existingById.containsKey(id)) {
+                // ── UPDATE existing ──
+                DoctorOffice office = existingById.get(id);
+                applyFormToEntity(office, form, doctor);
+                newOffices.add(office);
+
             } else {
-                applyForm(match, form, doctor);
-                doctorOfficeDao.update(match);
-                keepIds.add(match.getId());
+                // ── CREATE new ──
+                Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
+                        .orElseThrow(NeighborhoodNotFoundException::new);
+                List<Specialty> specs = form.getSpecialtyIds().stream()
+                        .map(sid -> specialtyService.getById(sid)
+                                .orElseThrow(SpecialtyNotFoundException::new))
+                        .toList();
+
+                DoctorOffice created = form.toEntity(doctor, nb, specs);
+                newOffices.add(created);
             }
         }
 
-        for (DoctorOffice o : existing) {
-            if (!keepIds.contains(o.getId()) && o.isActive()) {
-                doctorOfficeDao.softDelete(o.getId());
-            }
-        }
+        // 5) Replace the collection in one go
+        doctor.getDoctorOffices().clear();
+        doctor.getDoctorOffices().addAll(newOffices);
+
+        // 6) On transaction commit, Hibernate will:
+        //    • INSERT any new DoctorOffice (via cascade)
+        //    • UPDATE any existing ones (times, active, removed flag)
+        //    • NOT DELETE anything (orphanRemoval=false)
+        //
+        // No explicit dao.create/update/softDelete calls needed.
     }
 
-    private void applyForm(DoctorOffice office, DoctorOfficeForm form, Doctor doctor) {
+    // reuse your applyFormToEntity or inline:
+    private void applyFormToEntity(
+            DoctorOffice office,
+            DoctorOfficeForm form,
+            Doctor doctor
+    ) {
         office.setDoctor(doctor);
         office.setOfficeName(form.getOfficeName());
+        office.setActive(form.getActive());
+        // set removedTime based on form.getRemoved()
         if (form.getRemoved()) {
             office.setRemoved(LocalDateTime.now());
         }
-        office.setActive(form.getActive());
-        office.setNeighborhood(neighborhoodService.getById(form.getNeighborhoodId())
-                .orElseThrow(() -> new IllegalArgumentException("Neighborhood not found")));
+        Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
+                .orElseThrow(NeighborhoodNotFoundException::new);
+        office.setNeighborhood(nb);
         List<Specialty> specs = form.getSpecialtyIds().stream()
-                .map(id -> specialtyService.getById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Specialty "+id)))
-                .collect(Collectors.toList());
+                .map(sid -> specialtyService.getById(sid)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException("Specialty "+sid+" not found")))
+                .toList();
         office.setSpecialties(specs);
     }
+
 
 }

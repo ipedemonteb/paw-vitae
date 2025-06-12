@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class DoctorOfficeForm {
@@ -89,7 +90,7 @@ public class DoctorOfficeForm {
     }
 
     public DoctorOffice toEntity(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties) {
-        return new DoctorOffice(doctor, neighborhood, specialties, officeName);
+        return new DoctorOffice(doctor, neighborhood, specialties, officeName, active);
     }
 
 }

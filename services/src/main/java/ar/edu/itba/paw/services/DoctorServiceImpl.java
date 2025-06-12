@@ -80,6 +80,16 @@ public class DoctorServiceImpl implements DoctorService {
         return doctor;
     }
 
+    @Override
+    public Optional<Doctor> getByIdWithAvailableOffices(long id) {
+        LOGGER.debug("Getting doctor with id {} with available offices", id);
+        Optional<Doctor> doctor = this.doctorDao.getByIdWithAvailableOffices(id);
+        if (doctor.isEmpty()) {
+            LOGGER.warn("No doctor found with id {}", id);
+        }
+        return doctor;
+    }
+
     @Transactional(readOnly = true)
     @Override
     public Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
