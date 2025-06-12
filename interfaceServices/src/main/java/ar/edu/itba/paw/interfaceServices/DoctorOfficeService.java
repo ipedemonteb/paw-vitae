@@ -14,5 +14,6 @@ public interface DoctorOfficeService {
     Optional<DoctorOffice> getById(long id);
     List<DoctorOffice> getByDoctorId(long doctorId);
     List<DoctorOffice> getAllByDoctorId(long doctorId);
+    List<DoctorOffice> getAllByDoctorIdWithAvailability(long doctorId);
     void update(List<DoctorOfficeForm> officeForms,Doctor doctor);
 }
