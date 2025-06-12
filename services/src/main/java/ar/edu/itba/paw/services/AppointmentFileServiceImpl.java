@@ -87,10 +87,6 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         if (appointmentOpt.isEmpty()) return Optional.empty();
 
         Appointment appointment = appointmentOpt.get();
-        if (!appointment.getDoctor().getEmail().equals(username) &&
-                !appointment.getPatient().getEmail().equals(username)) {
-            return Optional.empty();
-        }
         LOGGER.info("File {} authorized for appointment {} and user {}", file, appointment, username);
         return Optional.of(file);
     }
@@ -128,7 +124,6 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
     @Transactional(readOnly = true)
     @Override
     public List<AppointmentFile> getByAppointmentIdForDoctor(long appointmentId) {
-        System.out.println("holaaa");
         return appointmentFileDao.getByAppointmentIdForDoctor( appointmentId);
     }
 
