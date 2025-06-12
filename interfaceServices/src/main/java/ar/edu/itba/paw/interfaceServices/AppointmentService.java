@@ -35,7 +35,7 @@ public interface AppointmentService {
 
     Page<Appointment> getAppointmentsForPatientWithFilesOrReport(long patientId, int page, int pageSize);
 
-
+    boolean hasFullMedicalHistoryEnabled(long patientId, long doctorId);
 
 //    Page<Appointment> getAppointmentsWithFilesForPatient(long patientId, int page, int pageSize);
 
