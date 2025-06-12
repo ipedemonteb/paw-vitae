@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -30,11 +31,15 @@ public class RatingServiceImplTest {
     private static final Doctor DOCTOR = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
             1L, 4.5, 10, true);
     private static final long PATIENT_ID = 1L;
+    private static final Neighborhood NEIGHBORHOOD = new Neighborhood(1L, "Neighborhood A");
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
-            new Coverage(1L, "Coverage A"), true);
+            new Coverage(1L, "Coverage A"), NEIGHBORHOOD, true);
     private static final long APPOINTMENT_ID = 1L;
     private static final Appointment APPOINTMENT = new Appointment(LocalDateTime.now(), "Confirmed", "Consultation",
-            new Specialty(3L, "Cardiology"), DOCTOR, PATIENT,"Report"
+            new Specialty(3L, "Cardiology"), DOCTOR, PATIENT, "Report",
+            new DoctorOffice(DOCTOR, NEIGHBORHOOD, List.of(new Specialty(1L, "Specialty A")),
+                    "Office A", true, null,
+                    List.of(new DoctorOfficeAvailability())), true
     );
     private static final String COMMENT = "Great doctor!";
 
