@@ -15,6 +15,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.*;
+
 @Service
 public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabilityService {
 
@@ -60,59 +63,57 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
             List<DoctorOfficeAvailabilityForm> forms,
             Long doctorId
     ) {
-        // 1) Load all existing slots for this doctor
-        List<DoctorOfficeAvailability> allSlots =
-                doctorOfficeAvailabilityDao.getByDoctorId(doctorId);
+        // 1) Load offices + current slots
+        List<DoctorOffice> offices =
+                doctorOfficeService.getAllByDoctorIdWithAvailability(doctorId);
 
-        // 2) Build lookup maps
-        Map<Long, DoctorOfficeAvailability> existingById = allSlots.stream()
-                .collect(Collectors.toMap(DoctorOfficeAvailability::getId, slot -> slot));
+        // 2) Index existing slots by ID
+        Map<Long,DoctorOfficeAvailability> existingById =
+                offices.stream()
+                        .flatMap(o -> o.getDoctorOfficeAvailability().stream())
+                        .collect(Collectors.toMap(DoctorOfficeAvailability::getId, s -> s));
 
-        List<DoctorOffice> offices = doctorOfficeService.getAllByDoctorId(doctorId);
-        Map<Long,DoctorOffice> officeById = offices.stream()
-                .collect(Collectors.toMap(DoctorOffice::getId, office -> office));
+        // 3) Group incoming forms by their target office
+        Map<Long,List<DoctorOfficeAvailabilityForm>> formsByOffice =
+                forms.stream()
+                        .collect(Collectors.groupingBy(DoctorOfficeAvailabilityForm::getOfficeId));
 
-        Set<Long> processedIds = new HashSet<>();
+        // 4) For each office, build its *new* slot list
+        for (DoctorOffice office : offices) {
+            List<DoctorOfficeAvailabilityForm> incoming =
+                    formsByOffice.getOrDefault(office.getId(), List.of());
 
-        // 3) Iterate incoming forms
-        for (DoctorOfficeAvailabilityForm form : forms) {
-            Long formId = form.getId();
-            DoctorOffice targetOffice = officeById.get(form.getOfficeId());
-            if (targetOffice == null) {
-                throw new IllegalArgumentException(
-                        "Unknown officeId: " + form.getOfficeId());
-            }
-
-            if (formId != null && existingById.containsKey(formId)) {
-                // — UPDATE (and possibly MOVE) an existing slot
-                DoctorOfficeAvailability slot = existingById.get(formId);
-
-                // update times
-                slot.setStartTime(form.getStartTime());
-                slot.setEndTime(  form.getEndTime()  );
-                slot.setDayOfWeek(form.getDayOfWeek());
-
-                // allow office‐move
-                if (!(slot.getOffice().getId() == targetOffice.getId())) {
-                    slot.setOffice(targetOffice);
+            List<DoctorOfficeAvailability> newSlots = new ArrayList<>();
+            for (var form : incoming) {
+                if (form.getId() != null) {
+                    var existing = existingById.get(form.getId());
+                    if (existing != null && existing.getOffice().getId().equals(office.getId())) {
+                        // — same office: update in place
+                        existing.setStartTime(form.getStartTime());
+                        existing.setEndTime(  form.getEndTime());
+                        existing.setDayOfWeek(form.getDayOfWeek());
+                        newSlots.add(existing);
+                    } else {
+                        // — either moved here or brand-new: create new entity
+                        newSlots.add(form.toEntity(office));
+                    }
+                } else {
+                    // — brand-new slot
+                    newSlots.add(form.toEntity(office));
                 }
-
-                doctorOfficeAvailabilityDao.update(slot);
-                processedIds.add(formId);
-
-            } else {
-                // — CREATE a brand-new slot
-                DoctorOfficeAvailability newSlot = form.toEntity(targetOffice);
-                doctorOfficeAvailabilityDao.create(newSlot);
-                // no need to add to processedIds, since it's new
             }
+
+            // 5) Replace the collection in one go
+            office.replaceAvailability(newSlots);
         }
 
-        // 4) DELETE any slots that weren’t in the incoming list
-        allSlots.stream()
-                .filter(slot -> !processedIds.contains(slot.getId()))
-                .forEach(doctorOfficeAvailabilityDao::delete);
+        // 6) flush on commit; Hibernate issues:
+        //   • DELETE for any slot cleared out of its old office
+        //   • UPDATE for the ones you mutated in-place
+        //   • INSERT for every newSlots without an ID
     }
+
+
 
 
 

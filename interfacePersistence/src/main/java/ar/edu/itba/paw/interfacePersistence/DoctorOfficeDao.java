@@ -9,6 +9,7 @@ public interface DoctorOfficeDao {
     DoctorOffice create(DoctorOffice doctorOffice);
     Optional<DoctorOffice> getById(long id);
     List<DoctorOffice> getByDoctorId(long doctorId);
+    List<DoctorOffice> getByDoctorIdWithAvailability(long doctorId);
     List<DoctorOffice> getActiveByDoctorId(long doctorId);
     List<DoctorOffice> getByNameAndNeighborhoodId(String officeName, long neighborhoodId, long doctorId);
     DoctorOffice update(DoctorOffice o);

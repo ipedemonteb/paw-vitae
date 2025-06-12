@@ -14,7 +14,7 @@ public class DoctorOffice {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_offices_id_seq")
     @SequenceGenerator(allocationSize = 1, sequenceName = "doctor_offices_id_seq", name = "doctor_offices_id_seq")
-    private long id;
+    private Long id;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
@@ -66,7 +66,7 @@ public class DoctorOffice {
         this.removed = removed;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -124,6 +124,16 @@ public class DoctorOffice {
 
     public void setDoctorOfficeAvailability(List<DoctorOfficeAvailability> doctorOfficeAvailabilities) {
         this.doctorOfficeAvailability = doctorOfficeAvailabilities;
+    }
+
+    public void replaceAvailability(List<DoctorOfficeAvailability> newSlots) {
+        // orphanRemoval = true will delete everything you clear here
+        this.doctorOfficeAvailability.clear();
+        // add back both updated *and* newly created slots
+        newSlots.forEach(s -> {
+            s.setOffice(this);
+            this.doctorOfficeAvailability.add(s);
+        });
     }
 
     @Override

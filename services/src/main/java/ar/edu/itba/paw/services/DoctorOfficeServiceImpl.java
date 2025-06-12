@@ -81,6 +81,12 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         return doctorOfficeDao.getByDoctorId(doctorId);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorOffice> getAllByDoctorIdWithAvailability(long doctorId) {
+        return doctorOfficeDao.getByDoctorIdWithAvailability(doctorId);
+    }
+
     @Transactional
     @Override
     public void update(List<DoctorOfficeForm> officeForms, Doctor doctor) {

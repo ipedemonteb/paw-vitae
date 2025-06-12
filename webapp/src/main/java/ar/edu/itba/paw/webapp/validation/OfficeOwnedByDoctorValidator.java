@@ -50,10 +50,10 @@ public class OfficeOwnedByDoctorValidator {
             List<DoctorOffice> offices = doctorOfficeService.getAllByDoctorId(form.getDoctorId());
             if (form.getDoctorOfficeAvailabilities() != null) {
                 for (DoctorOfficeAvailabilityForm slot : form.getDoctorOfficeAvailabilities()) {
-                    if (offices.stream().noneMatch(office -> office.getId() == slot.getOfficeId())) {
+                    if (offices.stream().noneMatch(office -> office.getId().equals(slot.getOfficeId()))) {
                         context.disableDefaultConstraintViolation();
                         context.buildConstraintViolationWithTemplate("{appointment.office.valid}")
-                                .addPropertyNode("doctorOfficeAvailabilitySlots")
+                                .addPropertyNode("doctorOfficeAvailabilities")
                                 .addConstraintViolation();
                         return false;
                     }
