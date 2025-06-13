@@ -226,12 +226,8 @@ public class DoctorController {
     public ModelAndView getPatientHistory(@PathVariable long appointmentId,
                                           @RequestParam(defaultValue = "1") int page, @ModelAttribute("loggedUser") final Doctor doctor) {
         final int pageSize = 10;
-
-
         Patient patient = appointmentService.getPatientByAppointmentId(appointmentId);
         Page<Map.Entry<Appointment, List<AppointmentFile>>> history = appointmentFileService.getGroupedFilesForPatient(patient.getId(), page, pageSize);
-
-
         ModelAndView mav = new ModelAndView("doctor/patient-history");
         mav.addObject("appointmentFiles", history.getContent());
         mav.addObject("currentPage", history.getPageNumber());

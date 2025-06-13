@@ -47,7 +47,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Optional<Images> findById(long id) {
         LOGGER.debug("Finding image with id {}", id);
-        if (id == -1) {
+        if (id <= -1) {
             return Optional.empty();
         }
         return imageDao.findById(id);
