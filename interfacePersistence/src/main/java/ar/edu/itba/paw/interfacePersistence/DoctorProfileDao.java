@@ -11,5 +11,5 @@ public interface DoctorProfileDao {
 
     Optional<DoctorProfile> getByDoctorId(long id);
 
-    void update(DoctorProfile doctorProfile);
+
 }

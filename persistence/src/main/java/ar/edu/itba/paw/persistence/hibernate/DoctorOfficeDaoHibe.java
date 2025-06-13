@@ -65,13 +65,7 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
         return em.merge(o);
     }
 
-    public void softDelete(long id) {
-        DoctorOffice o = em.find(DoctorOffice.class, id);
-        if (o != null && o.isActive()) {
-            o.setActive(false);
-            em.merge(o);
-        }
-    }
+
 
     @Override
     public List<DoctorOffice> getByNameAndNeighborhoodId(String officeName, long neighborhoodId, long doctorId){

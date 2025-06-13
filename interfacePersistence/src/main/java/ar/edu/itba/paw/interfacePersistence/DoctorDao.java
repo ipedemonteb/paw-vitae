@@ -17,13 +17,11 @@ public interface DoctorDao {
 
     int countBySpecialty(long specialtyId);
 
-    void updateImage(long id, Long imageId);
+
 
     Optional<Doctor> getByEmail(String email);
 
-    void UpdateDoctorRating(long id, long rating);
 
-    void updateDoctor(long id, List<Long> specialties, List<Long> coverages);
 
     List<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction, int page, int pageSize);
 
