@@ -42,7 +42,7 @@ public class Doctor extends User {
     private int ratingCount = 0;
 
     @Column(name = "image_id")
-    private Long imageId = -1L;
+    private Long imageId = null;
 
     //WHY NOT LAZY
     @OneToOne(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)

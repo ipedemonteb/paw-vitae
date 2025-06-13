@@ -123,9 +123,12 @@ public class DoctorServiceImpl implements DoctorService {
 
             if (image != null && !image.isEmpty()) {
                 Long newImage = imageService.create(image).getId();
-                Images oldImage = doctor.getImageId() != null ? imageService.findById(doctor.getImageId()).orElse(null) : null;
+                Images oldImage = null;
+                if (doctor.getImageId() != null) {
+                    oldImage = imageService.findById(doctor.getImageId()).orElse(null);
+                }
                 doctor.setImageId(newImage);
-                if (oldImage != null && oldImage.getId() != -1) {
+                if (oldImage != null) {
                     imageService.deleteImage(oldImage.getId());
                 }
             }

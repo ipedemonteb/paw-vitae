@@ -6,7 +6,15 @@
 <div class="dashboard-header">
   <div class="doctor-info">
     <div class="doctor-avatar">
-      <img src="<c:url value="/image/${isDoctor ? (empty user.imageId ? -1 : user.imageId ): -1}"/>" alt="<c:out value="${user.name} ${user.lastName}"/>"/>
+      <c:choose>
+        <c:when test="${isDoctor == true && user.imageId != null}">
+          <img src='<c:url value="/image/${user.imageId}"/>' onerror="this.src='/img/default_picture.png'" alt="${user.name}" class="doctor-avatar-small" />
+        </c:when>
+        <c:otherwise>
+          <img src="/img/default_picture.png" alt="default"  class="doctor-avatar"/>
+        </c:otherwise>
+      </c:choose>
+
     </div>
     <div class="doctor-details">
       <h1 class="doctor-name"><c:out value="${user.name}" /> <c:out value="${user.lastName}" /></h1>
