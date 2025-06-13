@@ -59,7 +59,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void changeLanguage(long id, String language) {
-        userDao.changeLanguage(id, language);
+        User user = getById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        user.setLanguage(language);
+//        userDao.changeLanguage(id, language);
         LOGGER.info("Language changed to '{}' for user with id={}", language, id);
     }
 
@@ -71,7 +73,9 @@ public class UserServiceImpl implements UserService {
         String token = UUID.randomUUID().toString();
         String verificationLink = BASE_URL + "/verify-confirmation?token=" + token;
         mailService.sendVerificationRegisterEmail(user, verificationLink);
-        userDao.setVerificationToken(user.getId(), token, LocalDateTime.now().plusDays(30));
+        user.setVerificationToken(token);
+        user.setTokenExpiration(LocalDateTime.now().plusDays(30));
+//        userDao.setVerificationToken(user.getId(), token, LocalDateTime.now().plusDays(30));
         LOGGER.info("Verification token set and email sent for user id={}", user.getId());
     }
 
@@ -79,7 +83,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setVerificationStatus(User user, boolean status) {
         LOGGER.debug("Setting verification for user id={}", user.getId());
-        userDao.setVerificationStatus(user.getId(), status);
+        user.setVerified(status);
+//        userDao.setVerificationStatus(user.getId(), status);
         LOGGER.info("Verification status updated to {} for user id={}", status, user.getId());
     }
 
@@ -99,7 +104,9 @@ public class UserServiceImpl implements UserService {
         }
         String token = UUID.randomUUID().toString();
         String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
-        userDao.setResetPasswordToken(user.getId(), token, LocalDateTime.now().plusHours(1));
+        user.setResetPasswordToken(token);
+        user.setTokenExpiration(LocalDateTime.now().plusHours(1));
+        //userDao.setResetPasswordToken(user.getId(), token, LocalDateTime.now().plusHours(1));
         mailService.sendRecoverPasswordEmail(user, resetPasswordLink);
         LOGGER.info("Password reset token set and email sent for user id={}", user.getId());
     }
@@ -129,13 +136,16 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public boolean changePassword(String token, String password) {
-        Optional<? extends User> user = getByResetToken(token);
-        if (user.isPresent()) {
-                LOGGER.debug("Changing password for user id={}", user.get().getId());
+        Optional<? extends User> userOpt = getByResetToken(token);
+        if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                LOGGER.debug("Changing password for user id={}", user.getId());
                 String newPassword = passwordEncoder.encode(password);
-                userDao.changePassword(user.get().getId(), newPassword);
-                userDao.removeResetToken(token);
-                LOGGER.info("Password changed successfully for user id={}", user.get().getId());
+                user.setPassword(newPassword);
+                user.setResetPasswordToken(null);
+                //userDao.changePassword(user.getId(), newPassword);
+//                userDao.removeResetToken(token);
+                LOGGER.info("Password changed successfully for user id={}", user.getId());
                 return true;
         }
             LOGGER.warn("User not found for valid token");
