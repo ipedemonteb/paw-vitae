@@ -85,14 +85,6 @@ public class PatientDaoHibeImpl implements PatientDao {
     // -------------------------------------
 
 
-    //DEPRECATED
-    @Override
-    public void updatePatient(long id, Long coverageId) {
-    }
 
-    //DEPRECATED
-    @Override
-    public void changeLanguage(long id, String language) {
-    }
 
 }

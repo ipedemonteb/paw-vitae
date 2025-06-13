@@ -250,19 +250,5 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     //  DEPRECATED METHODS
     // -------------------------------------
 
-    //DEPRECATED
-    @Override
-    public void UpdateDoctorRating(long id, long rating) {
-    }
-
-    //DEPRECATED
-    @Override
-    public void updateDoctor(long id, List<Long> specialties, List<Long> coverages) {
-    }
-
-    // DEPRECATED
-    @Override
-    public void updateImage(long id, Long imageId) {
-    }
 
 }

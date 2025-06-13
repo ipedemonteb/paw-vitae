@@ -13,5 +13,5 @@ public interface DoctorOfficeDao {
     List<DoctorOffice> getActiveByDoctorId(long doctorId);
     List<DoctorOffice> getByNameAndNeighborhoodId(String officeName, long neighborhoodId, long doctorId);
     DoctorOffice update(DoctorOffice o);
-    void softDelete(long id);
+
 }
