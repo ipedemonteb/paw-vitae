@@ -121,8 +121,14 @@
             </span>
             </sec:authorize>
             <sec:authorize access="hasRole('ROLE_DOCTOR')">
-              <img src="<c:url value='/image/${empty param.id ? -1 : param.id}' />" alt="Doctor Avatar" class="doctor-avatar-small" />
-            </sec:authorize>
+              <c:choose>
+                <c:when test="${param.id != null}">
+                  <img src='<c:url value="/image/${param.id}"/>' onerror="this.src='/img/default_picture.png'" alt="doctor" class="doctor-avatar-small"/>
+                </c:when>
+                <c:otherwise>
+                  <img src="/img/default_picture.png" alt="default" class="doctor-avatar"/>
+                </c:otherwise>
+              </c:choose>                   </sec:authorize>
             <span class="user-name">
         <sec:authentication property="principal.username" var="username" />
         ${username}

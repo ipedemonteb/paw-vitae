@@ -20,11 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.format.Formatter;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.DatabasePopulator;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -119,6 +115,10 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
         registry.addResourceHandler("/js/**").addResourceLocations("/js/")
                 .setCachePeriod(0)
                 .resourceChain(false);
+        registry
+                .addResourceHandler("/img/**")
+                .addResourceLocations("/img/")
+                .resourceChain(true);
     }
 
     @Bean

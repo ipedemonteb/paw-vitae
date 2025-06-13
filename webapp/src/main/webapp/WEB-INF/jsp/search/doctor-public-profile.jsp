@@ -56,9 +56,14 @@
             <div class="profile-header-content">
                 <div class="doctor-avatar-section">
                     <div class="doctor-avatar-large">
-                        <img src="<c:url value='/image/${empty doctor.imageId || doctor.imageId == -1 ? -1 : doctor.imageId}'/>"
-                             alt="<c:out value='${doctor.name} ${doctor.lastName}'/>"
-                             class="avatar-img">
+                        <c:choose>
+                            <c:when test="${doctor.imageId != null}">
+                                <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='/img/default_picture.png'" alt="${doctor.name}" class="doctor-avatar" />
+                            </c:when>
+                            <c:otherwise>
+                                <img src="/img/default_picture.png" alt="default" class="doctor-avatar-large" />
+                            </c:otherwise>
+                        </c:choose>
                     </div>
 <%--                    <c:if test="${doctor.verified}">--%>
 <%--                        <div class="verified-badge">--%>

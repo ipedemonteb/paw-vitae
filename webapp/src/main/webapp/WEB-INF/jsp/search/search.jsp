@@ -347,8 +347,14 @@
               <div class="doctor-card">
                 <div class="doctor-card-header">
                   <div class="doctor-avatar">
-                    <img src="<c:url value='/image/${empty doctor.imageId ? -1 : doctor.imageId}'/>" alt="<c:out value='${doctor.name} ${doctor.lastName}'/>" class="avatar-img">
-                  </div>
+                    <c:choose>
+                      <c:when test="${doctor.imageId != null}">
+                        <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='/img/default_picture.png'" alt="${doctor.name}" class="doctor-avatar" />
+                      </c:when>
+                      <c:otherwise>
+                        <img src="/img/default_picture.png" alt="default"  class="doctor-avatar"/>
+                      </c:otherwise>
+                    </c:choose>                         </div>
                   <div class="doctor-rating">
                     <c:if test="${doctor.ratingCount > 0}">
                       <div class="stars">

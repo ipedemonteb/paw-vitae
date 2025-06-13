@@ -46,8 +46,14 @@
                 <c:if test="${not empty doctor}">
                     <div class="doctor-info">
                         <div class="doctor-image">
-                            <img src="<c:url value='/image/${empty doctor.imageId ? -1 : doctor.imageId}'/>" alt="<c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/>" class="doctor-avatar">
-                        </div>
+                            <c:choose>
+                                <c:when test="${doctor.imageId != null}">
+                                    <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='/img/default_picture.png'" alt="${doctor.name}"class="doctor-avatar" />
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="/img/default_picture.png" alt="default" class="doctor-avatar"/>
+                                </c:otherwise>
+                            </c:choose>                               </div>
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/></h3>
                             <div class="card-specialty-list">

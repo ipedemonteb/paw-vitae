@@ -80,8 +80,14 @@
                                 <div class="appointment-right">
                                     <div class="patient-info">
                                         <div class="patient-avatar">
-                                            <img src="<c:url value="/image/${empty appointment.doctor.imageId ? -1 : appointment.doctor.imageId}"/>" alt="<c:out value="${patient.name} ${patient.lastName}"/>'">
-                                        </div>
+                                            <c:choose>
+                                                <c:when test="${appointment.doctor.imageId != null}">
+                                                    <img src='<c:url value="/image/${appointment.doctor.imageId}"/>' onerror="this.src='/img/default_picture.png'" alt="${appointment.doctor.name}" class="doctor-avatar" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <img src="/img/default_picture.png" alt="default" class="doctor-avatar" />
+                                                </c:otherwise>
+                                            </c:choose>                                               </div>
                                         <div>
                                             <div class="patient-name">
                                                 <c:out value="${appointment.doctor.name}" /> <c:out value="${appointment.doctor.lastName}" />

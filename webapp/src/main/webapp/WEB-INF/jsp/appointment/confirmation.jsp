@@ -115,8 +115,14 @@
                 <c:if test="${not empty appointment.doctor}">
                     <div class="doctor-info">
                         <div class="doctor-image">
-                            <img src="<c:url value='/image/${empty appointment.doctor.imageId ? -1 : appointment.doctor.imageId}'/>" alt="<c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/> " class="doctor-avatar">
-                        </div>
+                            <c:choose>
+                                <c:when test="${appointment.doctor.imageId != null}">
+                                    <img src='<c:url value="/image/${appointment.doctor.imageId}"/>' onerror="this.src='/img/default_picture.png'" alt="${appointment.doctor.name}" class="doctor-avatar"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="/img/default_picture.png" alt="default" class="doctor-avatar"/>
+                                </c:otherwise>
+                            </c:choose>                               </div>
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/> </h3>
                             <p class="doctor-specialty"><spring:message code="${specialty.key}" /></p>
