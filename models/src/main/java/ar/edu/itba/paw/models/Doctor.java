@@ -33,7 +33,7 @@ public class Doctor extends User {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
+    private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();  //limited size no problem
 
     @Column(name = "rating")
     private Double rating = 1.0;

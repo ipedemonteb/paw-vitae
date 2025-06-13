@@ -95,12 +95,9 @@ public class SearchController {
             mav.addObject("editMode", true);
             return mav;
         }
-
         doctorProfileService.update(doctor, doctorProfileForm.getBiography(), doctorProfileForm.getDescription());
         doctorCertificationService.update(doctor, doctorProfileForm.getCertificates());
         doctorExperienceService.update(doctor, doctorProfileForm.getExperiences());
-
-
         return new ModelAndView("redirect:/search/" + doctor.getId() + "?updated=true");
     }
 }
