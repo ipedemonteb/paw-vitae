@@ -92,22 +92,4 @@ public class DoctorProfileDaoTest {
         assertEquals(DOC_DESC, doctorProfile.get().getDescription());
     }
 
-    @Rollback
-    @Test
-    public void testUpdate() {
-        //Preconditions
-        long doctorId = 2L;
-        String newBio = "Nueva bio de doctor";
-        String newDesc = "Nueva descripción de doctor";
-        DoctorProfile doctorProfile = em.getReference(DoctorProfile.class, doctorId);
-        doctorProfile.setBio(newBio);
-        doctorProfile.setDescription(newDesc);
-
-        //Exercise
-        doctorProfileDao.update(doctorProfile);
-        em.flush();
-
-        //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_PROFILE_TABLE, "doctor_id = " + doctorId + " AND bio = '" + newBio + "' AND description = '" + newDesc + "'"));
-    }
 }

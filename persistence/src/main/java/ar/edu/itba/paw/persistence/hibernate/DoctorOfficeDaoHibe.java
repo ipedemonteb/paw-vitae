@@ -65,8 +65,6 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
         return em.merge(o);
     }
 
-
-
     @Override
     public List<DoctorOffice> getByNameAndNeighborhoodId(String officeName, long neighborhoodId, long doctorId){
         return em.createQuery(

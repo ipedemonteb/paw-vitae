@@ -40,7 +40,6 @@ public class PatientDaoHibeImpl implements PatientDao {
         return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
     }
 
-
     @Override
     public List<Patient> getByIds(Set<Long> ids) {
         if (ids == null || ids.isEmpty()) {
@@ -64,7 +63,6 @@ public class PatientDaoHibeImpl implements PatientDao {
         List<Patient> result = query.getResultList();
         return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
     }
-
 
     @Override
     public Optional<Patient> getByResetToken(String token) {

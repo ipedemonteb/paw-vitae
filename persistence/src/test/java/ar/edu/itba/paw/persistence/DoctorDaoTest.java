@@ -119,27 +119,28 @@ public class DoctorDaoTest {
     }
 
     @Test
-    public void testGetByEmailDoesNotExist() {
+    public void testGetByIdWithAvailableOfficesDoesNotExist() {
         //Preconditions
 
-        //Excercise
-        Optional<Doctor> maybeDoctor = doctorDao.getByEmail("notexists@gmail.com");
+        //Exercise
+        Optional<Doctor> maybeDoctor = doctorDao.getByIdWithAvailableOffices(1000L);
 
         //Postconditions
         assertFalse(maybeDoctor.isPresent());
     }
 
     @Test
-    public void testGetByEmailExists() {
+    public void testGetByIdWithAvailableOfficesExists() {
         //Preconditions
+        long doctorId = 4L;
 
         //Exercise
-        Optional<Doctor> maybeDoctor = doctorDao.getByEmail(TEST_EMAIL);
+        Optional<Doctor> maybeDoctor = doctorDao.getByIdWithAvailableOffices(doctorId);
 
         //Postconditions
         assertTrue(maybeDoctor.isPresent());
         Doctor doctor = maybeDoctor.get();
-        assertEquals(TEST_EMAIL, doctor.getEmail());
+        assertEquals(doctorId, doctor.getId());
     }
 
     @Test
@@ -188,6 +189,30 @@ public class DoctorDaoTest {
 
         //Postconditions
         assertEquals(2, count);
+    }
+
+    @Test
+    public void testGetByEmailDoesNotExist() {
+        //Preconditions
+
+        //Excercise
+        Optional<Doctor> maybeDoctor = doctorDao.getByEmail("notexists@gmail.com");
+
+        //Postconditions
+        assertFalse(maybeDoctor.isPresent());
+    }
+
+    @Test
+    public void testGetByEmailExists() {
+        //Preconditions
+
+        //Exercise
+        Optional<Doctor> maybeDoctor = doctorDao.getByEmail(TEST_EMAIL);
+
+        //Postconditions
+        assertTrue(maybeDoctor.isPresent());
+        Doctor doctor = maybeDoctor.get();
+        assertEquals(TEST_EMAIL, doctor.getEmail());
     }
 
     @Test

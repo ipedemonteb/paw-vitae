@@ -268,6 +268,84 @@ public class AppointmentDaoTest {
         assertEquals(3, appointments.size());
     }
 
+    @Test
+    public void testGetAppointmentsByPatientDoesNotExist() {
+        //Preconditions
+        long patientId = 1000L;
+        int page = 1;
+        int size = 10;
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getAppointmentsByPatient(patientId, page, size);
+
+        //Postconditions
+        assertTrue(appointments.isEmpty());
+    }
+
+    @Test
+    public void testGetAppointmentsByPatientExists() {
+        //Preconditions
+        int page = 1;
+        int size = 10;
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getAppointmentsByPatient(PAT_ID, page, size);
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(2, appointments.size());
+    }
+
+    @Test
+    public void testGetAppointmentsByPatientWithFilesOrReport() {
+        //Preconditions
+        int page = 1;
+        int size = 10;
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getAppointmentsByPatientWithFilesOrReport(PAT_ID, page, size);
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(2, appointments.size());
+    }
+
+    @Test
+    public void testCountAppointmentsByPatientWithFilesOrReport() {
+        //Preconditions
+
+        //Exercise
+        int count = appointmentDao.countAppointmentsByPatientWithFilesOrReport(PAT_ID);
+
+        //Postconditions
+        assertEquals(2, count);
+    }
+
+    @Test
+    public void testHasFullMedicalHistoryEnabled() {
+        //Preconditions
+        long patientId = 1L;
+        long doctorId = 2L;
+
+        //Exercise
+        boolean hasFullHistory = appointmentDao.hasFullMedicalHistoryEnabled(patientId, doctorId);
+
+        //Postconditions
+        assertTrue(hasFullHistory);
+    }
+
+    @Test
+    public void testCountAppointmentsByPatient() {
+        //Preconditions
+        long patientId = 3L;
+
+        //Exercise
+        int count = appointmentDao.countAppointmentsByPatient(patientId);
+
+        //Postconditions
+        assertEquals(8, count);
+    }
+
 //  DEPRECATED METHODS
 
 //    @Rollback

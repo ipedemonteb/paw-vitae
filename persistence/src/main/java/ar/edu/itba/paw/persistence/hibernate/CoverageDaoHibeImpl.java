@@ -60,7 +60,6 @@ public class CoverageDaoHibeImpl implements CoverageDao {
         return query.getResultList();
     }
 
-
     //TODO: CHECK
     @Override
     public List<Coverage> findByDoctorId(long id) {

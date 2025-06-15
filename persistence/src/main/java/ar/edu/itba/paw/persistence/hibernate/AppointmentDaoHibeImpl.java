@@ -119,7 +119,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
                 .getResultList();
     }
 
-
     public int countAppointmentsByPatientWithFilesOrReport(long patientId) {
         return ((Number) em.createQuery(
                         "SELECT COUNT(DISTINCT a) FROM Appointment a " +
@@ -130,14 +129,12 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
                 .getSingleResult()).intValue();
     }
 
-
     @Override
     public int countAppointmentsByPatient(long patientId) {
         return ((Number) em.createQuery("SELECT COUNT(a) FROM Appointment a WHERE a.patient.id = :patientId")
                 .setParameter("patientId", patientId)
                 .getSingleResult()).intValue();
     }
-
 
     @Override
     public boolean hasFullMedicalHistoryEnabled(long patientId, long doctorId) {
@@ -148,7 +145,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         query.setParameter("doctorId", doctorId);
         return !query.getResultList().isEmpty();
     }
-
 
     //TODO: CHECK
     private static StringBuilder getSql(boolean isFuture, String filter, boolean isCount) {
