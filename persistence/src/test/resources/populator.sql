@@ -107,6 +107,12 @@ INSERT INTO doctor_certifications (id, doctor_id, certificate_name, issuing_enti
 VALUES (1, 2, 'Certificación en Cardiología', 'Sociedad Argentina de Cardiología', '2016-01-01'),
        (2, 4, 'Certificación en Neurología', 'Sociedad Argentina de Neurología', '2017-01-01');
 
+INSERT INTO doctor_office_availability_slots (id, office_id, day_of_week, start_time, end_time)
+VALUES (1, 1, 0, '09:00:00', '12:00:00'),
+       (2, 1, 1, '09:00:00', '12:00:00');
+       --(3, 2, 0, '09:00:00', '12:00:00'),
+       --(4, 2, 1, '09:00:00', '12:00:00');
+
 ALTER SEQUENCE users_id_seq RESTART WITH 6;
 ALTER SEQUENCE coverages_id_seq RESTART WITH 3;
 ALTER SEQUENCE specialties_id_seq RESTART WITH 5;
@@ -118,3 +124,4 @@ ALTER SEQUENCE neighborhoods_id_seq RESTART WITH 3;
 ALTER SEQUENCE doctor_offices_id_seq RESTART WITH 3;
 ALTER SEQUENCE doctor_experience_id_seq RESTART WITH 3;
 ALTER SEQUENCE doctor_certification_id_seq RESTART WITH 3;
+ALTER SEQUENCE doctor_office_availability_slots_id_seq RESTART WITH 5;

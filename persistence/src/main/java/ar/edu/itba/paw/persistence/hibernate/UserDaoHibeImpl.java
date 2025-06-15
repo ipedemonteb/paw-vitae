@@ -61,6 +61,7 @@ public class UserDaoHibeImpl implements UserDao {
                 .getSingleResult();
     }
 
+    //@TODO: Check if language is null
     @Override
     public String getLanguageById(long id) {
         return (String) em.createQuery("SELECT u.language FROM User u WHERE u.id = :id")

@@ -63,8 +63,6 @@ public class AppointmentFileDaoHibeImpl implements AppointmentFileDao {
                 .getResultList();
     }
 
-
-
     @Override
     public int getAllFilesForPatientCount(long patientId) {
         return ((Number) em.createQuery("SELECT COUNT(af) FROM AppointmentFile af WHERE af.appointment.patient.id = :patientId")
