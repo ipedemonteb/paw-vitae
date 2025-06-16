@@ -64,6 +64,8 @@ public class MailServiceImpl implements MailService {
         templateModel.put("appointmentDate", date.toLocalDate().toString());
         templateModel.put("appointmentTime", date.getHour());
         templateModel.put("appointmentId", appointment.getId());
+        templateModel.put("appointmentOffice", appointment.getDoctorOffice().getOfficeName());
+        templateModel.put("appointmentOfficeNeighborhood", appointment.getDoctorOffice().getNeighborhood().getName());
         templateModel.put("reason", (appointment.getReason() != null && !appointment.getReason().isEmpty()) ? appointment.getReason() : "-");
         templateModel.put("linkUrlPatient", BASE_URL + "/patient/dashboard/appointment-details/" + appointment.getId());
         templateModel.put("linkUrlDoctor", BASE_URL + "/doctor/dashboard/appointment-details/" + appointment.getId());
@@ -128,6 +130,8 @@ public class MailServiceImpl implements MailService {
         LocalDateTime date = appointment.getDate();
         templateModel.put("appointmentDate", date.toLocalDate().toString());
         templateModel.put("appointmentTime", date.getHour());
+        templateModel.put("appointmentOffice", appointment.getDoctorOffice().getOfficeName());
+        templateModel.put("appointmentOfficeNeighborhood", appointment.getDoctorOffice().getNeighborhood().getName());
         templateModel.put("reason", appointment.getReason() != null ? appointment.getReason() : "-");
         templateModel.put("linkUrl", BASE_URL + "/patient/dashboard/appointment-details/" + appointment.getId());
 
@@ -211,6 +215,8 @@ public class MailServiceImpl implements MailService {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         context.setVariable("appointmentDate", appointment.getDate().format(dateFormatter));
         context.setVariable("appointmentTime", appointment.getDate().format(timeFormatter));
+        context.setVariable("appointmentOffice", appointment.getDoctorOffice().getOfficeName());
+        context.setVariable("appointmentOfficeNeighborhood", appointment.getDoctorOffice().getNeighborhood().getName());
         context.setVariable("doctorName", doctor.getName() + " " + doctor.getLastName());
         context.setVariable("patientName", patient.getName() + " " + patient.getLastName());
         context.setVariable("rating", rating);
@@ -247,6 +253,9 @@ public class MailServiceImpl implements MailService {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         context.setVariable("appointmentDate", appointment.getDate().format(dateFormatter));
         context.setVariable("appointmentTime", appointment.getDate().format(timeFormatter));
+        context.setVariable("appointmentOffice", appointment.getDoctorOffice().getOfficeName());
+        context.setVariable("appointmentOfficeNeighborhood", appointment.getDoctorOffice().getNeighborhood().getName());
+
         context.setVariable("doctorName", doctor.getName() + " " + doctor.getLastName());
         context.setVariable("patientName", patient.getName() + " " + patient.getLastName());
         context.setVariable("doctor", doctor);
@@ -285,6 +294,8 @@ public class MailServiceImpl implements MailService {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         context.setVariable("appointmentDate", appointment.getDate().format(dateFormatter));
         context.setVariable("appointmentTime", appointment.getDate().format(timeFormatter));
+        context.setVariable("appointmentOffice", appointment.getDoctorOffice().getOfficeName());
+        context.setVariable("appointmentOfficeNeighborhood", appointment.getDoctorOffice().getNeighborhood().getName());
         context.setVariable("doctor", doctor);
         context.setVariable("patient", patient);
         context.setVariable("doctorName", doctor.getName() + " " + doctor.getLastName());
