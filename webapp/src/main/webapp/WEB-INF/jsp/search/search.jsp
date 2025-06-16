@@ -349,10 +349,10 @@
                   <div class="doctor-avatar">
                     <c:choose>
                       <c:when test="${doctor.imageId != null}">
-                        <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='/img/default_picture.png'" alt="${doctor.name}" class="doctor-avatar" />
+                        <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="${doctor.name}" class="doctor-avatar" />
                       </c:when>
                       <c:otherwise>
-                        <img src="/img/default_picture.png" alt="default"  class="doctor-avatar"/>
+                        <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default"  class="doctor-avatar"/>
                       </c:otherwise>
                     </c:choose>                         </div>
                   <div class="doctor-rating">

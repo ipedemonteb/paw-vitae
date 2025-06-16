@@ -81,7 +81,7 @@
                 <c:if test="${not empty appointment.patient}">
                     <div class="doctor-info">
                         <div class="doctor-image">
-                            <img src="/img/default_picture.png" alt="default" class="doctor-avatar"/>
+                            <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default" class="doctor-avatar"/>
                         </div>
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${appointment.patient.name}"/> <c:out

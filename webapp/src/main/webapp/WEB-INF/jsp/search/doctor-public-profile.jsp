@@ -58,10 +58,10 @@
                     <div class="doctor-avatar-large">
                         <c:choose>
                             <c:when test="${doctor.imageId != null}">
-                                <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='/img/default_picture.png'" alt="${doctor.name}" class="doctor-avatar-large" />
+                                <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="${doctor.name}" class="doctor-avatar-large" />
                             </c:when>
                             <c:otherwise>
-                                <img src="/img/default_picture.png" alt="default" class="doctor-avatar-large" />
+                                <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default" class="doctor-avatar-large" />
                             </c:otherwise>
                         </c:choose>
                     </div>
