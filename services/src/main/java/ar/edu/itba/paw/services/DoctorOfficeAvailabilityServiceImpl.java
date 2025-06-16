@@ -63,22 +63,18 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
             List<DoctorOfficeAvailabilityForm> forms,
             Long doctorId
     ) {
-        // 1) Load offices + current slots
         List<DoctorOffice> offices =
                 doctorOfficeService.getAllByDoctorIdWithAvailability(doctorId);
 
-        // 2) Index existing slots by ID
         Map<Long,DoctorOfficeAvailability> existingById =
                 offices.stream()
                         .flatMap(o -> o.getDoctorOfficeAvailability().stream())
                         .collect(Collectors.toMap(DoctorOfficeAvailability::getId, s -> s));
 
-        // 3) Group incoming forms by their target office
         Map<Long,List<DoctorOfficeAvailabilityForm>> formsByOffice =
                 forms.stream()
                         .collect(Collectors.groupingBy(DoctorOfficeAvailabilityForm::getOfficeId));
 
-        // 4) For each office, build its *new* slot list
         for (DoctorOffice office : offices) {
             List<DoctorOfficeAvailabilityForm> incoming =
                     formsByOffice.getOrDefault(office.getId(), List.of());
@@ -88,35 +84,20 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
                 if (form.getId() != null) {
                     var existing = existingById.get(form.getId());
                     if (existing != null && existing.getOffice().getId().equals(office.getId())) {
-                        // — same office: update in place
                         existing.setStartTime(form.getStartTime());
                         existing.setEndTime(  form.getEndTime());
                         existing.setDayOfWeek(form.getDayOfWeek());
                         newSlots.add(existing);
                     } else {
-                        // — either moved here or brand-new: create new entity
                         newSlots.add(form.toEntity(office));
                     }
                 } else {
-                    // — brand-new slot
                     newSlots.add(form.toEntity(office));
                 }
             }
-
-            // 5) Replace the collection in one go
             office.replaceAvailability(newSlots);
         }
-
-        // 6) flush on commit; Hibernate issues:
-        //   • DELETE for any slot cleared out of its old office
-        //   • UPDATE for the ones you mutated in-place
-        //   • INSERT for every newSlots without an ID
     }
-
-
-
-
-
 
     @Transactional(readOnly = true)
     @Override
@@ -124,8 +105,9 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
         List<DoctorOfficeAvailability> slots = doctorOfficeAvailabilityDao.getByDoctorId(doctorId);
         if (slots.isEmpty()) {
             LOGGER.debug("No availability slots found for doctor with id: {}", doctorId);
-            return "[]"; // Return an empty JSON array if no slots are found
+            return "[]";
         }
+
         Map<Long, List<DoctorOfficeAvailability>> officeSlotsMap = new HashMap<>();
         for (DoctorOfficeAvailability slot : slots) {
             long officeId = slot.getOffice().getId();

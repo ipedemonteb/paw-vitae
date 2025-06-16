@@ -266,4 +266,18 @@ public class DoctorOfficeDaoTest {
         assertEquals(OFFICE_NEIGHBORHOOD_ID, results.getFirst().getNeighborhood().getId());
         assertEquals(OFFICE_DOCTOR_ID, results.getFirst().getDoctor().getId());
     }
+
+    @Rollback
+    @Test
+    public void testRemove() {
+        //Preconditions
+        long officeId = 1L;
+
+        //Exercise
+        doctorOfficeDao.remove(officeId);
+        em.flush();
+
+        //Postconditions
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_OFFICES_TABLE, "id = " + officeId));
+    }
 }

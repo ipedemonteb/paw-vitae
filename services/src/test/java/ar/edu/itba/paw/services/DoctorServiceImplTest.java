@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -103,5 +102,56 @@ public class DoctorServiceImplTest {
         assertEquals(NAME, createdDoctor.getName());
         assertEquals(LAST_NAME, createdDoctor.getLastName());
         assertEquals(EMAIL, createdDoctor.getEmail());
+    }
+
+    @Test
+    public void testGetAllDoctorsDisplayCountBelowTenThousand() {
+        //Preconditions
+        when(doctorDao.countAll()).thenReturn(100);
+
+        //Exercise
+        String count = doctorService.getAllDoctorsDisplayCount();
+
+        //Postconditions
+        assertEquals("100", count);
+    }
+
+    @Test
+    public void testGetAllDoctorsDisplayCountAboveTenThousand() {
+        //Preconditions
+        when(doctorDao.countAll()).thenReturn(100000);
+
+        //Exercise
+        String count = doctorService.getAllDoctorsDisplayCount();
+
+        //Postconditions
+        assertEquals("100k+", count);
+    }
+
+    @Test
+    public void testSearchEmpty() {
+        //Preconditions
+        when(doctorDao.search(anyString(), anyInt())).thenReturn(List.of());
+
+        //Exercise
+        String search = doctorService.search("keyword", 2);
+
+        //Postconditions
+        assertNotNull(search);
+        assertEquals("{\"doctors\": []}", search);
+    }
+
+    @Test
+    public void testSearch() {
+        //Preconditions
+        when(doctorDao.search(anyString(), anyInt())).thenReturn(List.of(DOCTOR));
+        String expectedResult = "{\"doctors\":[{\"id\":0,\"email\":\"jane@test.com\",\"name\":\"Jane\",\"lastName\":\"Smith\",\"phone\":\"987654321\",\"language\":\"es\",\"specialtyList\":[],\"coverageList\":[],\"doctorOffices\":[],\"availabilitySlots\":[],\"rating\":4.5,\"ratingCount\":10,\"imageId\":1,\"experiences\":[],\"certifications\":[]}]}";
+
+        //Exercise
+        String search = doctorService.search("keyword", 2);
+
+        //Postconditions
+        assertNotNull(search);
+        assertEquals(expectedResult, search);
     }
 }
