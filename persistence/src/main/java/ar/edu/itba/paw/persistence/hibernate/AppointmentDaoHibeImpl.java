@@ -32,6 +32,13 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     }
 
     @Override
+    public boolean officeHasAppointments(long officeId) {
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(a) FROM Appointment a WHERE a.doctorOffice.id = :officeId", Long.class);
+        query.setParameter("officeId", officeId);
+        return query.getSingleResult() > 0;
+    }
+
+    @Override
     public List<Appointment> getPastConfirmedAppointments() {
         LocalDateTime fiveDaysAgo = now.minusDays(5);
         TypedQuery<Appointment> query = em.createQuery("FROM Appointment a WHERE a.status = 'confirmado' AND a.date BETWEEN :start AND :end", Appointment.class);

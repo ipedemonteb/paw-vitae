@@ -25,14 +25,16 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     private final NeighborhoodService neighborhoodService;
     private final SpecialtyService specialtyService;
     private final DoctorService doctorService;
+    private final AppointmentService appointmentService;
 
     @Autowired
-    public DoctorOfficeServiceImpl(DoctorOfficeDao doctorOfficeDao, NeighborhoodService neighborhoodService, SpecialtyService specialtyService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, @Lazy DoctorService doctorService) {
+    public DoctorOfficeServiceImpl(DoctorOfficeDao doctorOfficeDao, NeighborhoodService neighborhoodService, SpecialtyService specialtyService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, @Lazy DoctorService doctorService,@Lazy AppointmentService appointmentService) {
         this.doctorOfficeDao = doctorOfficeDao;
         this.neighborhoodService = neighborhoodService;
         this.specialtyService = specialtyService;
         this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
         this.doctorService = doctorService;
+        this.appointmentService = appointmentService;
     }
 
     @Transactional
@@ -111,8 +113,11 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             if (id != null && existingById.containsKey(id)) {
                 // ── UPDATE existing ──
                 DoctorOffice office = existingById.get(id);
-                applyFormToEntity(office, form, doctor);
-                newOffices.add(office);
+                boolean deleted = applyFormToEntity(office, form, doctor);
+                if (!deleted) {
+                    newOffices.add(office);
+                }
+
 
             } else {
                 // ── CREATE new ──
@@ -141,7 +146,8 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     }
 
     // reuse your applyFormToEntity or inline:
-    private void applyFormToEntity(
+
+    private boolean applyFormToEntity(
             DoctorOffice office,
             DoctorOfficeForm form,
             Doctor doctor
@@ -149,10 +155,17 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         office.setDoctor(doctor);
         office.setOfficeName(form.getOfficeName());
         office.setActive(form.getActive());
-        // set removedTime based on form.getRemoved()
+
         if (form.getRemoved()) {
-            office.setRemoved(LocalDateTime.now());
+            if (appointmentService.officeHasAppointments(office.getId())) {
+                office.setRemoved(LocalDateTime.now());
+            } else {
+                office.getSpecialties().clear();
+                doctorOfficeDao.remove(office.getId());
+                return true;
+            }
         }
+
         Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
                 .orElseThrow(NeighborhoodNotFoundException::new);
         office.setNeighborhood(nb);
@@ -162,7 +175,8 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
                                 new IllegalArgumentException("Specialty "+sid+" not found")))
                 .toList();
         office.setSpecialties(specs);
-    }
 
+        return false;
+    }
 
 }
