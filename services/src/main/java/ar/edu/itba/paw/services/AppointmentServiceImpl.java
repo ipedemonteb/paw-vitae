@@ -218,5 +218,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentDao.hasFullMedicalHistoryEnabled(patientId, doctorId);
     }
 
+    @Override
+    public boolean officeHasAppointments(long officeId) {
+        return appointmentDao.officeHasAppointments(officeId);
+    }
+
 
 }

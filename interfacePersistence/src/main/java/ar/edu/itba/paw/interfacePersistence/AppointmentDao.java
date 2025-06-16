@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface AppointmentDao {
 
     Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice, boolean allowFullHistory);
-
+    boolean officeHasAppointments(long officeId);
     //make it look between a range back
     List<Appointment> getAppointmentsWithHistoryAllowedBefore(LocalDateTime dateTime);
 
