@@ -102,7 +102,7 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
     @Transactional(readOnly = true)
     @Override
     public String getJsonByDoctorId(long doctorId) {
-        List<DoctorOfficeAvailability> slots = doctorOfficeAvailabilityDao.getByDoctorId(doctorId);
+        List<DoctorOfficeAvailability> slots = doctorOfficeAvailabilityDao.getActiveByDoctorId(doctorId);
         if (slots.isEmpty()) {
             LOGGER.debug("No availability slots found for doctor with id: {}", doctorId);
             return "[]";
