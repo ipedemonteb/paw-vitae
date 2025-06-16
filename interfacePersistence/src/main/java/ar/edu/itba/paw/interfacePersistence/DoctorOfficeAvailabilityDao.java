@@ -17,4 +17,6 @@ public interface DoctorOfficeAvailabilityDao {
     List<DoctorOfficeAvailability> getActiveByOfficeId(long officeId);
 
     List<DoctorOfficeAvailability> getByDoctorId(long doctorId);
+
+    List<DoctorOfficeAvailability> getActiveByDoctorId(long doctorId);
 }

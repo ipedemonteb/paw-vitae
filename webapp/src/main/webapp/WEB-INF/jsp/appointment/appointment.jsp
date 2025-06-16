@@ -303,17 +303,6 @@
         </c:forEach>
     ];
 
-    const availabilitySlots = [
-        <c:forEach var="slot" items="${doctor.availabilitySlots}" varStatus="status">
-        {
-            dayOfWeek: ${slot.dayOfWeek},
-            startTime: ${slot.startTime.hour},
-            endTime: ${slot.endTime.hour},
-            slots: ${slot.endTime.hour - slot.startTime.hour + 1}
-        }<c:if test="${!status.last}">,</c:if>
-        </c:forEach>
-    ];
-
     const argDate = new Date().toLocaleString("en-US", {
         timeZone: "America/Argentina/Buenos_Aires",
     });
