@@ -58,7 +58,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     public List<DoctorOffice> transformToDoctorOffice(Doctor doctor, List<DoctorOfficeForm> officeForms) {
         List<DoctorOffice> doctorOffices = new ArrayList<>();
         for (DoctorOfficeForm officeForm : officeForms) {
-            Neighborhood neighborhood = neighborhoodService.getById(officeForm.getNeighborhoodId()).orElseThrow(() -> new IllegalArgumentException("Neighborhood not found")); //TODO MAKE CUSTOM EXCEPTION AND MAKE EFFICIENT (THERE CAN BE REPEATED NEIGHBORHOODS)
+            Neighborhood neighborhood = neighborhoodService.getById(officeForm.getNeighborhoodId()).orElseThrow(() -> new NeighborhoodNotFoundException("Neighborhood not found")); //TODO MAKE CUSTOM EXCEPTION AND MAKE EFFICIENT (THERE CAN BE REPEATED NEIGHBORHOODS)
             List<Specialty> specialties = specialtyService.getByIds(officeForm.getSpecialtyIds());
             DoctorOffice doctorOffice = officeForm.toEntity(doctor, neighborhood, specialties);
             DoctorOffice created = create(doctorOffice);
@@ -172,7 +172,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         List<Specialty> specs = form.getSpecialtyIds().stream()
                 .map(sid -> specialtyService.getById(sid)
                         .orElseThrow(() ->
-                                new IllegalArgumentException("Specialty "+sid+" not found")))
+                                new SpecialtyNotFoundException("Specialty "+sid+" not found")))
                 .toList();
         office.setSpecialties(specs);
 

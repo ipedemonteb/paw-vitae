@@ -185,11 +185,10 @@ public class DoctorServiceImpl implements DoctorService {
             LOGGER.warn("No doctors found for keyword: {}", keyword);
             return "{\"doctors\": []}";
         }
-
         Map<String, Object> response = new HashMap<>();
         response.put("doctors", doctors);
+        String temp = JsonUtils.toJson(response, Doctor.Views.Public.class);
+        System.out.println(temp);
         return JsonUtils.toJson(response, Doctor.Views.Public.class);
     }
-
-
 }

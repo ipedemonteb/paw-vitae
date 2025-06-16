@@ -121,11 +121,10 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
 
         return new Page<>(groupedList, page, pageSize, appointmentPage.getTotalElements());
     }
+
     @Transactional(readOnly = true)
     @Override
     public List<AppointmentFile> getByAppointmentIdForDoctor(long appointmentId) {
         return appointmentFileDao.getByAppointmentIdForDoctor( appointmentId);
     }
-
-
 }

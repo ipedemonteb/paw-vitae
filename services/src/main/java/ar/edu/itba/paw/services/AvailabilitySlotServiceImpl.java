@@ -73,6 +73,7 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
         LOGGER.debug("Getting availability slots for doctor {}", doctorId);
         return availabilitySlotsDao.getAvailabilityByDoctorId(doctorId);
     }
+
     @Transactional
     @Override
     public List<AvailabilitySlotForm> getDoctorAvailabilitySlots(Doctor doctor) {
@@ -86,6 +87,7 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
                         .thenComparing(AvailabilitySlotForm::getStartTime))
                 .toList();
     }
+
     @Transactional
     @Override
     public List<AvailabilitySlot> transformToAvailabilitySlots(Doctor doctor,List<AvailabilitySlotForm> availabilitySlots) {
@@ -96,6 +98,7 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
         }
         return slots;
     }
+
     @Transactional
     @Override
     public List<AvailabilitySlotForm> transformToAvailabilitySlotForms(List<AvailabilitySlot> availabilitySlots) {
@@ -106,5 +109,4 @@ public class AvailabilitySlotServiceImpl implements AvailabilitySlotsService {
         }
         return slots;
     }
-
 }

@@ -346,6 +346,17 @@ public class AppointmentDaoTest {
         assertEquals(8, count);
     }
 
+    @Test
+    public void testOfficeHasAppointments() {
+        //Preconditions
+
+        //Exercise
+        boolean hasAppointments = appointmentDao.officeHasAppointments(OFFICE_ID);
+
+        //Postconditions
+        assertTrue(hasAppointments);
+    }
+
 //  DEPRECATED METHODS
 
 //    @Rollback
