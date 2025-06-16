@@ -113,6 +113,8 @@
             <ul>
                 <li><strong th:text="#{email.date.label}"></strong> <span th:text="${appointmentDate}"></span></li>
                 <li><strong th:text="#{email.time.label}"></strong> <span th:text="${appointmentTime + ' hs'}"></span></li>
+                <li><strong th:text="#{email.officeName.label}"></strong> <span th:text="${appointmentOffice}"></span></li>
+                <li><strong th:text="#{email.officeNeighborhood.label}"></strong> <span th:text="${appointmentOfficeNeighborhood}"></span></li>
                 <li><strong th:text="#{email.patient.label}"></strong> <span th:text="${patient.name}"></span></li>
             </ul>
 
