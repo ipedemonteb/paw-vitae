@@ -123,10 +123,10 @@
             <sec:authorize access="hasRole('ROLE_DOCTOR')">
               <c:choose>
                 <c:when test="${param.id != null}">
-                  <img src='<c:url value="/image/${param.id}"/>' onerror="this.src='/img/default_picture.png'" alt="doctor" class="doctor-avatar-small"/>
+                  <img src='<c:url value="/image/${param.id}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="doctor" class="doctor-avatar-small"/>
                 </c:when>
                 <c:otherwise>
-                  <img src="/img/default_picture.png" alt="default" class="doctor-avatar"/>
+                  <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default" class="doctor-avatar"/>
                 </c:otherwise>
               </c:choose>                   </sec:authorize>
             <span class="user-name">
