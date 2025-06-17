@@ -138,7 +138,8 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         JOIN users u            ON d.doctor_id = u.id
         JOIN doctor_specialties ds ON d.doctor_id = ds.doctor_id
         JOIN doctor_coverages dc ON d.doctor_id = dc.doctor_id
-        JOIN doctor_availability a ON d.doctor_id = a.doctor_id
+        JOIN doctor_offices o ON d.doctor_id = o.doctor_id AND o.removed IS NULL AND o.active = true
+        JOIN doctor_office_availability_slots a ON o.id = a.office_id
         WHERE u.is_verified = true
         """);
 
