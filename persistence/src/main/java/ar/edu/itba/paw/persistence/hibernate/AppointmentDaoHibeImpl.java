@@ -60,7 +60,8 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
 
         List<?> appointmentIdsRaw = nativeQuery.getResultList();
         List<Long> appointmentIds = appointmentIdsRaw.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toList());
-        TypedQuery<Appointment> query = em.createQuery("FROM Appointment a WHERE a.id IN (:appointmentIds) order by a.date asc", Appointment.class);
+        String direction = isFuture ? "asc" : "desc";
+        TypedQuery<Appointment> query = em.createQuery("FROM Appointment a WHERE a.id IN (:appointmentIds) order by a.date " + direction, Appointment.class);
         query.setParameter("appointmentIds", appointmentIds);
 
         return query.getResultList();
@@ -196,8 +197,9 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
                     break;
             }
         }
+        String direction = isFuture ? "asc" : "desc";
         if (!isCount) {
-            sql.append("ORDER BY a.date ASC ) AS a ");
+            sql.append("ORDER BY a.date ").append(direction).append(") AS a ");
         }
 
         return sql;
