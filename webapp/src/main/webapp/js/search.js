@@ -54,12 +54,13 @@ function initializeSearchInput() {
             debounceTimer = setTimeout(async () => {
                 if (query.length >= 1) {
                     // Fetch search results
-                    await fetchSearchResults(query)
-                    if (searchResults && searchResults.length > 0) {
-                        displaySuggestions(searchResults)
-                    } else {
-                        hideSuggestions()
-                    }
+                    await fetchSearchResults(query).then(() => {
+                        if (searchResults && searchResults.length > 0) {
+                            displaySuggestions(searchResults)
+                        } else {
+                            hideSuggestions()
+                        }
+                    })
                 } else {
                     hideSuggestions()
                 }
@@ -120,53 +121,59 @@ function initializeSearchInput() {
     }
 
     function displaySuggestions(doctors) {
-        if (!suggestionsContainer) return
+        if (!suggestionsContainer) return;
 
         // Clear previous suggestions
-        suggestionsContainer.innerHTML = ''
+        suggestionsContainer.innerHTML = '';
 
         doctors.forEach((doctor, index) => {
-            const suggestionItem = document.createElement('div')
-            suggestionItem.className = 'suggestion-item'
-            suggestionItem.setAttribute('data-index', index)
+            const suggestionItem = document.createElement('div');
+            suggestionItem.className = 'suggestion-item';
+            suggestionItem.setAttribute('data-index', index);
 
             const doctorName = `${doctor.name} ${doctor.lastName}`;
             const escapedDoctorName = escapeHTML(doctorName);
 
+            // Determinar ruta de imagen
+            const imageSrc = doctor.imageId
+                ? `${contextPath}/image/${doctor.imageId}`
+                : `${contextPath}/img/default_picture.png`;
+
             suggestionItem.innerHTML = `
-                <div class="suggestion-avatar">
-                    <img src="${contextPath}/image/${doctor.imageId || -1}" 
-                         alt="${escapedDoctorName}" 
-                         class="suggestion-avatar-img">
+            <div class="suggestion-avatar">
+                <img src="${imageSrc}" 
+                     onerror="this.src='${contextPath}/img/default_picture.png'" 
+                     alt="${escapedDoctorName}" 
+                     class="suggestion-avatar-img" />
+            </div>
+            <div class="suggestion-content">
+                <div class="suggestion-name">${escapedDoctorName}</div>
+                <div class="suggestion-specialty">
+                    <i class="fas fa-stethoscope"></i>
+                    <span>${doctorMessage}</span>
                 </div>
-                <div class="suggestion-content">
-                    <div class="suggestion-name">${escapedDoctorName}</div>
-                    <div class="suggestion-specialty">
-                        <i class="fas fa-stethoscope"></i>
-                        <span>${doctorMessage}</span>
-                    </div>
-                </div>
-                <div class="suggestion-action">
-                    <i class="fas fa-arrow-right"></i>
-                </div>
-            `
+            </div>
+            <div class="suggestion-action">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+        `;
 
             // Add click handler
             suggestionItem.addEventListener('click', function() {
-                selectDoctor(doctor)
-            })
+                selectDoctor(doctor);
+            });
 
             // Add hover handler for keyboard navigation
             suggestionItem.addEventListener('mouseenter', function() {
-                clearActiveSelection()
-                this.classList.add('active')
-            })
+                clearActiveSelection();
+                this.classList.add('active');
+            });
 
-            suggestionsContainer.appendChild(suggestionItem)
-        })
+            suggestionsContainer.appendChild(suggestionItem);
+        });
 
         // Show suggestions
-        suggestionsContainer.style.display = 'block'
+        suggestionsContainer.style.display = 'block';
     }
 
     function hideSuggestions() {

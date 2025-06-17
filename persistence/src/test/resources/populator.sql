@@ -28,10 +28,12 @@ VALUES (2, 'Cardiologo con mas de 10 años de experiencia', 'Especializado en ca
 
 INSERT INTO doctor_offices (id, doctor_id, neighborhood_id, office_name, active, removed)
 VALUES (1, 2, 1, 'Consultorio Recoleta', true, NULL),
-       (2, 4, 2, 'Consultorio Belgrano', true, NULL);
+       (2, 4, 2, 'Consultorio Belgrano', true, NULL),
+       (3, 5, 1, 'Consultorio Palermo', true, NULL);
 
 INSERT INTO Doctor_Coverages (doctor_id, coverage_id)
 VALUES (2, 1),
+       (4, 1),
        (4, 2),
        (5, 1),
        (5, 2);
@@ -44,13 +46,15 @@ VALUES (1, 'Cardiology'),
 
 INSERT INTO Doctor_Specialties (doctor_id, specialty_id)
 VALUES (2, 1),
+       (4, 1),
        (4, 2),
        (4, 3),
        (5, 1);
 
 INSERT INTO Doctor_Office_Specialties(office_id, specialty_id)
 VALUES (1, 1),
-       (2, 2);
+       (2, 2),
+       (2, 1);
 
 INSERT INTO Doctor_Availability (doctor_id, day_of_week, start_time, end_time)
 VALUES (2, 0, '09:00:00', '12:00:00'),
@@ -109,7 +113,8 @@ VALUES (1, 2, 'Certificación en Cardiología', 'Sociedad Argentina de Cardiolog
 
 INSERT INTO doctor_office_availability_slots (id, office_id, day_of_week, start_time, end_time)
 VALUES (1, 1, 0, '09:00:00', '12:00:00'),
-       (2, 1, 1, '09:00:00', '12:00:00');
+       (2, 1, 1, '09:00:00', '12:00:00'),
+       (3, 2, 1, '09:00:00', '12:00:00');
        --(3, 2, 0, '09:00:00', '12:00:00'),
        --(4, 2, 1, '09:00:00', '12:00:00');
 
@@ -121,7 +126,7 @@ ALTER SEQUENCE ratings_id_seq RESTART WITH 10;
 ALTER SEQUENCE appointment_files_id_seq RESTART WITH 3;
 ALTER SEQUENCE images_id_seq RESTART WITH 2;
 ALTER SEQUENCE neighborhoods_id_seq RESTART WITH 3;
-ALTER SEQUENCE doctor_offices_id_seq RESTART WITH 3;
+ALTER SEQUENCE doctor_offices_id_seq RESTART WITH 4;
 ALTER SEQUENCE doctor_experience_id_seq RESTART WITH 3;
 ALTER SEQUENCE doctor_certification_id_seq RESTART WITH 3;
-ALTER SEQUENCE doctor_office_availability_slots_id_seq RESTART WITH 5;
+ALTER SEQUENCE doctor_office_availability_slots_id_seq RESTART WITH 4;

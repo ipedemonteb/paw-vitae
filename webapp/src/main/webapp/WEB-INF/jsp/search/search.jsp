@@ -558,7 +558,6 @@
 
 <script>
   contextPath = "${pageContext.request.contextPath}";
-
   <%--function viewDoctorProfile(doctorId) {--%>
   <%--  window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;--%>
   <%--}--%>

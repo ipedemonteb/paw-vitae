@@ -160,13 +160,13 @@ public class DoctorDaoTest {
         //Preconditions
 
         //Exercise
-        List<Doctor> doctors = doctorDao.getBySpecialty(SPEC_ID, 1, 1);
+        List<Doctor> doctors = doctorDao.getBySpecialty(SPEC_ID, 1, 2);
 
         //Postconditions
         assertFalse(doctors.isEmpty());
-        assertEquals(1, doctors.size());
+        assertEquals(2, doctors.size());
         assertEquals(TEST_ID, doctors.getFirst().getId());
-
+        assertEquals(4L, doctors.get(1).getId());
     }
 
     @Test
@@ -220,23 +220,22 @@ public class DoctorDaoTest {
         //Preconditions
         List<Integer> days = List.of(0, 1);
         String order = "name";
-        String direction = "asc";
+        String direction = "desc";
         String keyword = "";
 
         //Exercise
-        List<Doctor> doctors = doctorDao.getWithFilters(SPEC_ID, COV_ID, days, keyword, order, direction, 1, 4);
+        List<Doctor> doctors = doctorDao.getWithFilters(SPEC_ID, COV_ID, days, keyword, order, direction, 1, 6);
 
         //Postconditions
         assertFalse(doctors.isEmpty());
         assertEquals(2, doctors.size());
         assertEquals(TEST_ID, doctors.getFirst().getId());
-        assertEquals(5L, doctors.getLast().getId());
+        assertEquals(4L, doctors.getLast().getId());
     }
 
     @Test
     public void testCountWithFilters() {
         //Preconditions
-        //al populator
         List<Integer> days = List.of(0, 1);
         String order = "name";
         String direction = "asc";
