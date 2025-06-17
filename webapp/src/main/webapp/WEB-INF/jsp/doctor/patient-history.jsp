@@ -80,26 +80,26 @@
 
             <!-- Sort Filter Section -->
             <div class="sort-filter-section">
-                <div class="filter-container">
-                    <div class="filter-group">
-                        <label for="sortDirection" class="filter-label">
-                            <i class="fas fa-sort"></i>
-                            <spring:message code="search.sort" text="Sort by Date" />
-                        </label>
-                        <form method="GET" action="<c:url value='/patient/dashboard/medical-history' />" id="sortForm">
-                            <input type="hidden" name="page" value="${currentPage}" />
-                            <select id="sortDirection" name="direction" class="filter-select" onchange="document.getElementById('sortForm').submit();">
-                                <option value="asc" ${currentDirection == 'asc' ? 'selected' : ''}>
-                                    <spring:message code="dashboard.medicalHistory.sort.oldest" />
-                                </option>
-                                <option value="desc" ${currentDirection == 'desc' ? 'selected' : ''}>
-                                    <spring:message code="dashboard.medicalHistory.sort.newest" />
-                                </option>
-                            </select>
-                        </form>
-                    </div>
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label for="sortDirection" class="filter-label">
+                        <i class="fas fa-sort"></i>
+                        <spring:message code="search.sort" text="Sort by Date" />
+                    </label>
+                    <form method="GET" action="<c:url value='/doctor/appointments/${appointmentId}/history' />" id="sortForm">
+                        <input type="hidden" name="page" value="${currentPage}" />
+                        <select id="sortDirection" name="direction" class="filter-select" onchange="document.getElementById('sortForm').submit();">
+                            <option value="asc" ${currentDirection == 'asc' ? 'selected' : ''}>
+                                <spring:message code="dashboard.medicalHistory.sort.oldest" />
+                            </option>
+                            <option value="desc" ${currentDirection == 'desc' ? 'selected' : ''}>
+                                <spring:message code="dashboard.medicalHistory.sort.newest" />
+                            </option>
+                        </select>
+                    </form>
                 </div>
             </div>
+        </div>
 
             <!-- Medical History Content -->
             <div class="medical-history-content">
@@ -273,7 +273,7 @@
                     <div class="pagination-container">
                         <div class="pagination">
                             <c:if test="${currentPage > 1}">
-                                <a href="<c:url value='/patient/dashboard/medical-history?page=${currentPage - 1}&direction=${currentDirection}' />"
+                                <a href="<c:url value='/doctor/appointments/${appointmentId}/history?page=${currentPage - 1}&direction=${currentDirection}' />"
                                    class="pagination-btn pagination-prev">
                                     <i class="fas fa-chevron-left"></i>
                                 </a>
@@ -284,7 +284,7 @@
                             </div>
 
                             <c:if test="${currentPage < totalPages}">
-                                <a href="<c:url value='/patient/dashboard/medical-history?page=${currentPage + 1}&direction=${currentDirection}' />"
+                                <a href="<c:url value='/doctor/appointments/${appointmentId}/history?page=${currentPage + 1}&direction=${currentDirection}' />"
                                    class="pagination-btn pagination-next">
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
