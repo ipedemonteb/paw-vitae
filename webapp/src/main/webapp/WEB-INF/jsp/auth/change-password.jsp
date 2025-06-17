@@ -41,10 +41,6 @@
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
-                            <div id="password-length-message" class="validation-message"></div>
-                            <form:errors path="password" cssClass="error-message" />
-
-                            <!-- Password Strength Meter -->
                             <div id="pass-validations" class="password-validations">
                                 <div class="password-strength">
                                     <div class="strength-meter">
@@ -53,6 +49,10 @@
                                     <span class="strength-text"></span>
                                 </div>
                             </div>
+                            <div id="password-length-message" class="validation-message"></div>
+                            <form:errors path="password" cssClass="error-message" />
+
+                            <!-- Password Strength Meter -->
                         </div>
 
                         <!-- Repeat Password Field -->
@@ -169,14 +169,13 @@
             let strength = 0;
 
             // Length check
-            if (password.length >= 8) strength += 1;
-            if (password.length >= 12) strength += 1;
+            if (password.length >= 8) strength += 1
+            if (password.length >= 12) strength += 1
 
             // Character variety check
-            if (/[A-Z]/.test(password)) strength += 1;
-            if (/[a-z]/.test(password)) strength += 1;
-            if (/[0-9]/.test(password)) strength += 1;
-            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1
+            if (/[0-9]/.test(password)) strength += 1
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1
 
             // Set strength level
             let strengthClass = "";
@@ -187,27 +186,20 @@
             if (strength < 3) {
                 strengthClass = "strength-weak";
                 strengthLabel = window.messages?.passwordWeak || "Weak";
-                strengthIcon = '<i class="fas fa-exclamation-circle"></i>';
-                strengthPercentage = 25;
-            } else if (strength < 4) {
+
+                strengthPercentage = 30;
+            } else if (strength < 5) {
                 strengthClass = "strength-medium";
                 strengthLabel = window.messages?.passwordMedium || "Medium";
-                strengthIcon = '<i class="fas fa-info-circle"></i>';
-                strengthPercentage = 50;
-            } else if (strength < 6) {
+                strengthPercentage = 60;
+            } else {
                 strengthClass = "strength-strong";
                 strengthLabel = window.messages?.passwordStrong || "Strong";
-                strengthIcon = '<i class="fas fa-check-circle"></i>';
-                strengthPercentage = 75;
-            } else {
-                strengthClass = "strength-very-strong";
-                strengthLabel = window.messages?.passwordVeryStrong || "Very Strong";
-                strengthIcon = '<i class="fas fa-shield-alt"></i>';
                 strengthPercentage = 100;
             }
 
             passwordStrength.classList.add(strengthClass);
-            strengthText.innerHTML = strengthIcon + " " + strengthLabel;
+            strengthText.innerHTML = strengthLabel;
             strengthMeterFill.style.width = strengthPercentage + "%";
         }
 
@@ -250,6 +242,11 @@
         function checkPasswordMatch() {
             const password = passwordField?.value || "";
             const repeatPassword = repeatPasswordField?.value || "";
+
+            if(!repeatPassword && !password) {
+                clearFieldValidation(repeatPasswordField, passwordMatchMessage);
+                return true;
+            }
 
             if (!repeatPasswordField) return false;
 
