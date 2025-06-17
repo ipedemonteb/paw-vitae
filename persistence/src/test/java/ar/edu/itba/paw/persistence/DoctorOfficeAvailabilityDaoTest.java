@@ -192,4 +192,30 @@ public class DoctorOfficeAvailabilityDaoTest {
         assertEquals(doctorId, availability.getFirst().getOffice().getDoctor().getId());
         assertEquals(doctorId, availability.get(1).getOffice().getDoctor().getId());
     }
+
+    @Test
+    public void testGetActiveByDoctorIdDoesNotExist() {
+        // Preconditions
+
+        // Exercise
+        List<DoctorOfficeAvailability> availability = doctorOfficeAvailabilityDao.getActiveByDoctorId(1000L);
+
+        // Postconditions
+        assertTrue(availability.isEmpty());
+    }
+
+    @Test
+    public void testGetActiveByDoctorIdExists() {
+        // Preconditions
+        long doctorId = 2L;
+
+        // Exercise
+        List<DoctorOfficeAvailability> availability = doctorOfficeAvailabilityDao.getActiveByDoctorId(doctorId);
+
+        // Postconditions
+        assertFalse(availability.isEmpty());
+        assertEquals(2, availability.size());
+        assertEquals(doctorId, availability.getFirst().getOffice().getDoctor().getId());
+        assertEquals(doctorId, availability.get(1).getOffice().getDoctor().getId());
+    }
 }
