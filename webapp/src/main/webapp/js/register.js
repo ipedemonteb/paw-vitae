@@ -648,8 +648,7 @@ function getSpecialtyName(specialtyId) {
     const specialtyOption = document.querySelector(`[data-value="${specialtyId}"] .option-text`);
     return specialtyOption ? specialtyOption.textContent : `Specialty ${specialtyId}`;
 }
-
-// Remove an office
+// Replace the removeOffice function with this corrected version:
 function removeOffice(index) {
     const officeEntry = document.querySelector(`.office-entry[data-index="${index}"]`);
     if (!officeEntry) return;
@@ -670,6 +669,8 @@ function removeOffice(index) {
             doctorOffices.splice(officeIndex, 1);
         }
 
+        reindexOffices();
+
         // Hide remove button for the first office if it's the only one left
         if (document.querySelectorAll(".office-entry").length === 1) {
             const firstRemoveBtn = document.querySelector(".office-remove");
@@ -684,8 +685,152 @@ function removeOffice(index) {
 
     // Remove server error if any
     removeContainerServerError("doctorOfficeForm");
-    // Add this line at the end of the removeOffice function, before the closing brace:
     updateTimeSlotsAfterOfficeRemoval(parseInt(index));
+}
+
+function reindexOffices() {
+    const officeEntries = document.querySelectorAll(".office-entry");
+
+    // Create a mapping of old indices to new indices
+    const indexMapping = {};
+
+    // First pass: collect current office data and create mapping
+    const updatedOffices = [];
+    officeEntries.forEach((entry, newIndex) => {
+        const oldIndex = parseInt(entry.dataset.index);
+
+        // Create mapping from old index to new index
+        indexMapping[oldIndex] = newIndex;
+
+        // Get current office data
+        const nameField = entry.querySelector(`#office-name-${oldIndex}`);
+        const neighborhoodIdField = entry.querySelector(`#office-neighborhood-id-${oldIndex}`);
+
+        const currentName = nameField ? nameField.value.trim() : '';
+        const currentNeighborhoodId = neighborhoodIdField ? neighborhoodIdField.value : '';
+
+        // Find existing office data
+        const existingOffice = doctorOffices.find(office => office.index === oldIndex);
+        const specialties = existingOffice ? existingOffice.specialties : [];
+
+        // Create updated office object
+        updatedOffices.push({
+            index: newIndex,
+            name: currentName,
+            neighborhoodId: currentNeighborhoodId,
+            specialties: specialties
+        });
+    });
+
+    // Replace the doctorOffices array with updated data
+    doctorOffices = updatedOffices;
+
+    // Second pass: update DOM elements
+    officeEntries.forEach((entry, newIndex) => {
+        const oldIndex = parseInt(entry.dataset.index);
+
+        // Update data-index attribute
+        entry.dataset.index = newIndex;
+
+        // Update all IDs and related attributes
+        updateOfficeElementIds(entry, oldIndex, newIndex);
+    });
+
+    // Update officeCounter
+    officeCounter = officeEntries.length;
+
+    availabilitySlots.forEach(slot => {
+        const oldOfficeIndex = slot.officeIndex;
+        const newOfficeIndex = indexMapping[oldOfficeIndex];
+
+        if (newOfficeIndex !== undefined) {
+            slot.officeIndex = newOfficeIndex;
+        } else {
+            // If mapping doesn't exist, default to first office
+            slot.officeIndex = doctorOffices.length > 0 ? 0 : null;
+        }
+    });
+
+    // Re-render time slots with updated office indices
+    renderAllTimeSlots();
+}
+
+function updateOfficeElementIds(officeEntry, oldIndex, newIndex) {
+    // Update office name field
+    const nameField = officeEntry.querySelector(`#office-name-${oldIndex}`);
+    if (nameField) {
+        nameField.id = `office-name-${newIndex}`;
+        const nameLabel = officeEntry.querySelector(`label[for="office-name-${oldIndex}"]`);
+        if (nameLabel) nameLabel.setAttribute('for', `office-name-${newIndex}`);
+    }
+
+    // Update neighborhood search field
+    const neighborhoodField = officeEntry.querySelector(`#office-neighborhood-search-${oldIndex}`);
+    if (neighborhoodField) {
+        neighborhoodField.id = `office-neighborhood-search-${newIndex}`;
+        const neighborhoodLabel = officeEntry.querySelector(`label[for="office-neighborhood-search-${oldIndex}"]`);
+        if (neighborhoodLabel) neighborhoodLabel.setAttribute('for', `office-neighborhood-search-${newIndex}`);
+    }
+
+    // Update neighborhood hidden field
+    const neighborhoodIdField = officeEntry.querySelector(`#office-neighborhood-id-${oldIndex}`);
+    if (neighborhoodIdField) {
+        neighborhoodIdField.id = `office-neighborhood-id-${newIndex}`;
+    }
+
+    // Update neighborhood results container
+    const resultsContainer = officeEntry.querySelector(`#office-neighborhood-results-${oldIndex}`);
+    if (resultsContainer) {
+        resultsContainer.id = `office-neighborhood-results-${newIndex}`;
+    }
+
+    // Update specialty containers
+    const specialtyContainer = officeEntry.querySelector(`#office-specialties-container-${oldIndex}`);
+    if (specialtyContainer) {
+        specialtyContainer.id = `office-specialties-container-${newIndex}`;
+    }
+
+    const specialtyOptions = officeEntry.querySelector(`#office-specialties-options-${oldIndex}`);
+    if (specialtyOptions) {
+        specialtyOptions.id = `office-specialties-options-${newIndex}`;
+        // Update onclick handlers for specialty options
+        const optionElements = specialtyOptions.querySelectorAll('.custom-multi-select-option');
+        optionElements.forEach(option => {
+            option.setAttribute('onclick', `toggleOfficeSpecialty(this, ${newIndex})`);
+        });
+    }
+
+    const specialtySelected = officeEntry.querySelector(`#office-specialties-selected-${oldIndex}`);
+    if (specialtySelected) {
+        specialtySelected.id = `office-specialties-selected-${newIndex}`;
+    }
+
+    // Update validation message containers
+    const nameValidation = officeEntry.querySelector(`#office-name-${oldIndex}-validation-message`);
+    if (nameValidation) {
+        nameValidation.id = `office-name-${newIndex}-validation-message`;
+    }
+
+    const neighborhoodValidation = officeEntry.querySelector(`#office-neighborhood-${oldIndex}-validation-message`);
+    if (neighborhoodValidation) {
+        neighborhoodValidation.id = `office-neighborhood-${newIndex}-validation-message`;
+    }
+
+    const specialtyValidation = officeEntry.querySelector(`#office-specialties-${oldIndex}-validation-message`);
+    if (specialtyValidation) {
+        specialtyValidation.id = `office-specialties-${newIndex}-validation-message`;
+    }
+
+    // Update remove button onclick
+    const removeButton = officeEntry.querySelector('.office-remove');
+    if (removeButton) {
+        removeButton.setAttribute('onclick', `removeOffice(${newIndex})`);
+    }
+
+    // Re-initialize event listeners for the updated office
+    setTimeout(() => {
+        initializeOffice(newIndex);
+    }, 0);
 }
 
 // Search neighborhoods for an office
@@ -863,8 +1008,6 @@ function validateOfficeName(index) {
         return true;
     }
 }
-
-// Create hidden inputs for doctor offices before form submission
 function createDoctorOfficeHiddenInputs() {
     const form = document.querySelector(".register-form");
     if (!form) return;
@@ -875,41 +1018,42 @@ function createDoctorOfficeHiddenInputs() {
         input.parentNode.removeChild(input);
     });
 
-    // Create new hidden inputs for each office
-    doctorOffices.forEach((office, index) => {
+    // Create new hidden inputs for each office with CONSECUTIVE indices
+    doctorOffices.forEach((office, consecutiveIndex) => {
         // Skip invalid offices
-
         if (!office.name || !office.neighborhoodId || !office.specialties) return;
+
+        // Use consecutiveIndex instead of office.index to ensure 0,1,2,3... sequence
+        const formIndex = consecutiveIndex;
 
         // Create neighborhood ID input
         const neighborhoodInput = document.createElement("input");
         neighborhoodInput.type = "hidden";
-        neighborhoodInput.name = `doctorOfficeForm[${index}].neighborhoodId`;
+        neighborhoodInput.name = `doctorOfficeForm[${formIndex}].neighborhoodId`;
         neighborhoodInput.value = office.neighborhoodId;
         form.appendChild(neighborhoodInput);
 
         // Create office name input
         const nameInput = document.createElement("input");
         nameInput.type = "hidden";
-        nameInput.name = `doctorOfficeForm[${index}].officeName`;
+        nameInput.name = `doctorOfficeForm[${formIndex}].officeName`;
         nameInput.value = office.name;
         form.appendChild(nameInput);
 
         // Create specialties input
-
         for (let index2 = 0; index2 < office.specialties.length; index2++) {
             const id = office.specialties[index2];
             const specialtyInput = document.createElement("input");
             specialtyInput.type = "hidden";
-            specialtyInput.name = `doctorOfficeForm[${index}].specialtyIds[${index2}]`;
+            specialtyInput.name = `doctorOfficeForm[${formIndex}].specialtyIds[${index2}]`;
             specialtyInput.value = id;
             form.appendChild(specialtyInput);
         }
 
-        //active office
+        // Active office
         const activeInput = document.createElement("input");
         activeInput.type = "hidden";
-        activeInput.name = `doctorOfficeForm[${index}].active`;
+        activeInput.name = `doctorOfficeForm[${formIndex}].active`;
         activeInput.value = "true";
         form.appendChild(activeInput);
     });
@@ -1648,7 +1792,6 @@ function validateForm() {
         return false
     }
 
-    // ✅ Validate time slots
     if (!areTimeSlotsValid()) {
         showSection(3)
         return false
@@ -2245,6 +2388,8 @@ function isValidSlotData(slot) {
 // Render all time slots
 function renderAllTimeSlots() {
     // Clear the container first
+    cleanupDoctorOffices();
+
     const container = document.getElementById("time-slot-inputs")
     if (container) {
         container.innerHTML = ""
@@ -2257,7 +2402,6 @@ function renderAllTimeSlots() {
     validateTimeSlots()
 }
 
-// Add a new time slot
 function addNewTimeSlot() {
     // Check if we have at least one office
     if (doctorOffices.length === 0) {
@@ -2265,13 +2409,15 @@ function addNewTimeSlot() {
         return;
     }
 
+    const firstOffice = doctorOffices[0];
+
     // Create new slot with default values
     const newSlot = {
         id: timeSlotCounter++,
         day: 0, // Monday
         startTime: "09:00",
         endTime: "17:00",
-        officeIndex: doctorOffices[0].index // Default to first office
+        officeIndex: firstOffice.index // Use the office's actual index
     }
 
     // Add to array
@@ -2287,7 +2433,6 @@ function addNewTimeSlot() {
     validateTimeSlots()
 }
 
-// Render a single time slot
 function renderTimeSlot(slot) {
     const container = document.getElementById("time-slot-inputs")
     if (!container) return
@@ -2311,24 +2456,61 @@ function renderTimeSlot(slot) {
     officeSelect.className = "form-control slot-office"
     officeSelect.dataset.slotId = slot.id
 
-    // Add office options
+    officeSelect.innerHTML = '';
+
+    const addedOfficeIndices = new Set();
+    let validOfficeFound = false;
+
+    // Add office options - only add each office once
     doctorOffices.forEach((office) => {
+        // Skip if office is invalid or already added
+        if (!office || typeof office.index === 'undefined' || addedOfficeIndices.has(office.index)) {
+            return;
+        }
+
+        // Get office name from DOM input field (most current source)
+        const nameField = document.getElementById(`office-name-${office.index}`);
+        let officeName = '';
+
+        if (nameField && nameField.value.trim()) {
+            officeName = nameField.value.trim();
+        } else if (office.name && office.name.trim()) {
+            officeName = office.name.trim();
+        } else {
+            officeName = `Office ${office.index + 1}`;
+        }
+
+        // Create and add option
         const option = document.createElement("option")
         option.value = office.index
-        option.textContent = office.name || `Office ${office.index + 1}`
+        option.textContent = officeName
         officeSelect.appendChild(option)
-    })
 
-    // Set selected office
-    officeSelect.value = slot.officeIndex
+        // Track that we added this office
+        addedOfficeIndices.add(office.index);
 
-    // Add change event
+        // Check if this matches the slot's office
+        if (office.index === slot.officeIndex) {
+            validOfficeFound = true;
+        }
+    });
+
+    if (!validOfficeFound && doctorOffices.length > 0) {
+        slot.officeIndex = doctorOffices[0].index;
+    }
+
+    // Set the selected value
+    officeSelect.value = slot.officeIndex;
+
+    // Add change event listener
     officeSelect.addEventListener("change", function () {
-        updateTimeSlot(slot.id, "officeIndex", Number.parseInt(this.value, 10))
-    })
+        const newOfficeIndex = parseInt(this.value);
+        updateTimeSlot(slot.id, "officeIndex", newOfficeIndex);
+    });
 
-    officeContainer.appendChild(officeSelect)
+    officeContainer.appendChild(officeSelect);
 
+    // Rest of the function remains the same...
     // Create day select
     const dayContainer = document.createElement("div")
     dayContainer.className = "day-select"
@@ -2359,10 +2541,8 @@ function renderTimeSlot(slot) {
         daySelect.appendChild(option)
     })
 
-    // Set selected day
     daySelect.value = slot.day
 
-    // Add change event
     daySelect.addEventListener("change", function () {
         updateTimeSlot(slot.id, "day", Number.parseInt(this.value, 10))
     })
@@ -2410,11 +2590,9 @@ function renderTimeSlot(slot) {
         endSelect.appendChild(endOption)
     })
 
-    // Set selected times
     startSelect.value = slot.startTime
     endSelect.value = slot.endTime
 
-    // Add change events
     startSelect.addEventListener("change", function () {
         updateTimeSlot(slot.id, "startTime", this.value)
     })
@@ -2450,11 +2628,24 @@ function renderTimeSlot(slot) {
     row.style.transform = "translateY(10px)"
     container.appendChild(row)
 
-    // Trigger animation
     setTimeout(() => {
         row.style.opacity = "1"
         row.style.transform = "translateY(0)"
     }, 10)
+}
+
+function cleanupDoctorOffices() {
+    const seenIndices = new Set();
+    const cleanedOffices = [];
+
+    doctorOffices.forEach(office => {
+        if (office && typeof office.index !== 'undefined' && !seenIndices.has(office.index)) {
+            seenIndices.add(office.index);
+            cleanedOffices.push(office);
+        }
+    });
+
+    doctorOffices = cleanedOffices;
 }
 
 // Update time slots when an office is removed
