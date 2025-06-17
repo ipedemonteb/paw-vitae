@@ -14,11 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -197,12 +197,34 @@ public class AppointmentFileServiceImplTest {
         assertEquals(0L, file.get().getAppointment().getId());
     }
 
-    //@TODO: Check if testing
     @Test
     public void testGetGroupedFilesForPatient() {
         //Preconditions
+        long patientId = 1L;
+        int page = 0, pageSize = 2;
+        String direction = "desc";
+        Appointment appointment1 = mock(Appointment.class);
+        when(appointment1.getId()).thenReturn(1L);
+        Appointment appointment2 = mock(Appointment.class);
+        when(appointment2.getId()).thenReturn(2L);
+        List<Appointment> appointments = List.of(appointment1, appointment2);
+        Page<Appointment> appointmentPage = new Page<>(appointments, page, pageSize, 2);
+        AppointmentFile file1 = new AppointmentFile("file1", new byte[]{1}, "doctor", appointment1);
+        AppointmentFile file2 = new AppointmentFile("file2", new byte[]{2}, "doctor", appointment2);
+        when(appointmentService.getAppointmentsForPatientWithFilesOrReport(patientId, page, pageSize, direction))
+                .thenReturn(appointmentPage);
+        when(appointmentFileDao.getFilesByAppointmentIds(anyList()))
+                .thenReturn(List.of(file1, file2));
 
         //Exercise
+        Page<Map.Entry<Appointment, List<AppointmentFile>>> result = appointmentFileService.getGroupedFilesForPatient(patientId, page, pageSize, direction);
 
+        //Postconditions
+        assertNotNull(result);
+        assertEquals(2, result.getContent().size());
+        assertEquals(appointment1.getId(), result.getContent().getFirst().getKey().getId());
+        assertEquals(appointment2.getId(), result.getContent().getLast().getKey().getId());
+        assertArrayEquals(file1.getFileData(), result.getContent().getFirst().getValue().getFirst().getFileData());
+        assertArrayEquals(file2.getFileData(), result.getContent().getLast().getValue().getFirst().getFileData());
     }
 }
