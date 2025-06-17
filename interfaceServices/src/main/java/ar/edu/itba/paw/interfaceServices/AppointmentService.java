@@ -33,7 +33,7 @@ public interface AppointmentService {
 
     Patient getPatientByAppointmentId(long appointmentId);
 
-    Page<Appointment> getAppointmentsForPatientWithFilesOrReport(long patientId, int page, int pageSize);
+    Page<Appointment> getAppointmentsForPatientWithFilesOrReport(long patientId, int page, int pageSize, String direction);
 
     boolean hasFullMedicalHistoryEnabled(long patientId, long doctorId);
 

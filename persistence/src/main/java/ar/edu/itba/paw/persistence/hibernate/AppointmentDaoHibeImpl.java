@@ -111,14 +111,15 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
                 .getResultList();
     }
 
-    public List<Appointment> getAppointmentsByPatientWithFilesOrReport(long patientId, int page, int size) {
+    public List<Appointment> getAppointmentsByPatientWithFilesOrReport(long patientId, int page, int size, String direction) {
         int firstResult = (page - 1) * size;
+        String order = direction.equalsIgnoreCase("asc") ? "ASC" : "DESC";
         return em.createQuery(
                         "SELECT DISTINCT a FROM Appointment a " +
                                 "LEFT JOIN a.appointmentFiles af " +
                                 "WHERE a.patient.id = :patientId " +
                                 "AND (af.id IS NOT NULL OR (a.report IS NOT NULL AND a.report <> '')) " +
-                                "ORDER BY a.date DESC",
+                                "ORDER BY a.date " + order,
                         Appointment.class)
                 .setParameter("patientId", patientId)
                 .setFirstResult(firstResult)

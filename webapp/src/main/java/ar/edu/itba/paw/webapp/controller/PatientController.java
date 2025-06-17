@@ -150,12 +150,14 @@ public class PatientController {
 
     @RequestMapping("/patient/dashboard/medical-history")
     public ModelAndView getMedicalHistory(@ParamCustomizer(defaultValue = 1) QueryParam page,
-                                          @ModelAttribute("loggedUser") Patient patient) {
+                                          @ModelAttribute("loggedUser") Patient patient,
+                                          @RequestParam(value = "direction", defaultValue = "asc") String direction) {
         final ModelAndView mav = new ModelAndView("patient/dashboard-medical-history");
 
         Page<Map.Entry<Appointment, List<AppointmentFile>>> groupedPage =
-                appointmentFileService.getGroupedFilesForPatient(patient.getId(), (int) page.getValue(), 10 );
+                appointmentFileService.getGroupedFilesForPatient(patient.getId(), (int) page.getValue(), 10, direction );
 
+        mav.addObject("currentDirection", direction);
         mav.addObject("appointmentFiles", groupedPage.getContent());
         mav.addObject("currentPage", page.getValue());
         mav.addObject("totalPages", groupedPage.getTotalPages());

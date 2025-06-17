@@ -208,8 +208,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Appointment> getAppointmentsForPatientWithFilesOrReport(long patientId, int page, int pageSize) {
-        List<Appointment> appointments = appointmentDao.getAppointmentsByPatientWithFilesOrReport(patientId, page, pageSize);
+    public Page<Appointment> getAppointmentsForPatientWithFilesOrReport(long patientId, int page, int pageSize, String direction) {
+        List<Appointment> appointments = appointmentDao.getAppointmentsByPatientWithFilesOrReport(patientId, page, pageSize, direction);
         int total = appointmentDao.countAppointmentsByPatientWithFilesOrReport(patientId);
         return new Page<>(appointments, page, pageSize, total);
     }
