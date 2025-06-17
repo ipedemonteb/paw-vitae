@@ -404,8 +404,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="error-container-server-doctorOfficeFormAvailabilitySlots">
-                                    <form:errors path="officeAvailabilitySlotForms" cssClass="error-message visible"/>
+                                <div class="error-container-server-doctorOfficeForm">
+                                    <form:errors path="doctorOfficeForm" cssClass="error-message visible"/>
                                 </div>
                                 <button type="button" class="btn-add-slot" id="add-office-btn">
                                     <i class="fas fa-plus"></i> <spring:message code="register.addOffice"/>
@@ -448,6 +448,10 @@
                                     <div class="error-container">
                                     </div>
                                     <!-- Remove the old availabilitySlots error container -->
+
+                                    <div class="error-container-server-doctorOfficeFormAvailabilitySlots">
+                                        <form:errors path="officeAvailabilitySlotForms" cssClass="error-message visible"/>
+                                    </div>
 
                                     <button type="button" class="btn-add-slot" id="add-slot-btn">
                                         <i class="fas fa-plus"></i> <spring:message code="register.addTimeSlot"/>

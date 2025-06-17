@@ -905,6 +905,13 @@ function createDoctorOfficeHiddenInputs() {
             specialtyInput.value = id;
             form.appendChild(specialtyInput);
         }
+
+        //active office
+        const activeInput = document.createElement("input");
+        activeInput.type = "hidden";
+        activeInput.name = `doctorOfficeForm[${index}].active`;
+        activeInput.value = "true";
+        form.appendChild(activeInput);
     });
 }
 
