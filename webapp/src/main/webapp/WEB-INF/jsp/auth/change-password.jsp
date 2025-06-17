@@ -37,14 +37,16 @@
                             <label for="password" class="form-label"><spring:message code="change.password.new.password" /></label>
                             <div class="password-input-wrapper">
                                 <form:password path="password" id="password" class="form-control" required="true" />
+                                <div class="validation-icon valid">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="validation-icon error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
                                 <button type="button" class="toggle-password" aria-label="Toggle password visibility">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
-                            <div id="password-length-message" class="validation-message"></div>
-                            <form:errors path="password" cssClass="error-message" />
-
-                            <!-- Password Strength Meter -->
                             <div id="pass-validations" class="password-validations">
                                 <div class="password-strength">
                                     <div class="strength-meter">
@@ -53,6 +55,10 @@
                                     <span class="strength-text"></span>
                                 </div>
                             </div>
+                            <div id="password-length-message" class="validation-message"></div>
+                            <form:errors path="password" cssClass="error-message" />
+
+                            <!-- Password Strength Meter -->
                         </div>
 
                         <!-- Repeat Password Field -->
@@ -60,6 +66,12 @@
                             <label for="repeatPassword" class="form-label"><spring:message code="change.password.confirm.password" /></label>
                             <div class="password-input-wrapper">
                                 <form:password path="repeatPassword" id="repeatPassword" class="form-control" required="true" />
+                                <div class="validation-icon valid">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="validation-icon error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
                                 <button type="button" class="toggle-password" aria-label="Toggle password visibility">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -169,14 +181,13 @@
             let strength = 0;
 
             // Length check
-            if (password.length >= 8) strength += 1;
-            if (password.length >= 12) strength += 1;
+            if (password.length >= 8) strength += 1
+            if (password.length >= 12) strength += 1
 
             // Character variety check
-            if (/[A-Z]/.test(password)) strength += 1;
-            if (/[a-z]/.test(password)) strength += 1;
-            if (/[0-9]/.test(password)) strength += 1;
-            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1
+            if (/[0-9]/.test(password)) strength += 1
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1
 
             // Set strength level
             let strengthClass = "";
@@ -187,27 +198,20 @@
             if (strength < 3) {
                 strengthClass = "strength-weak";
                 strengthLabel = window.messages?.passwordWeak || "Weak";
-                strengthIcon = '<i class="fas fa-exclamation-circle"></i>';
-                strengthPercentage = 25;
-            } else if (strength < 4) {
+
+                strengthPercentage = 30;
+            } else if (strength < 5) {
                 strengthClass = "strength-medium";
                 strengthLabel = window.messages?.passwordMedium || "Medium";
-                strengthIcon = '<i class="fas fa-info-circle"></i>';
-                strengthPercentage = 50;
-            } else if (strength < 6) {
+                strengthPercentage = 60;
+            } else {
                 strengthClass = "strength-strong";
                 strengthLabel = window.messages?.passwordStrong || "Strong";
-                strengthIcon = '<i class="fas fa-check-circle"></i>';
-                strengthPercentage = 75;
-            } else {
-                strengthClass = "strength-very-strong";
-                strengthLabel = window.messages?.passwordVeryStrong || "Very Strong";
-                strengthIcon = '<i class="fas fa-shield-alt"></i>';
                 strengthPercentage = 100;
             }
 
             passwordStrength.classList.add(strengthClass);
-            strengthText.innerHTML = strengthIcon + " " + strengthLabel;
+            strengthText.innerHTML = strengthLabel;
             strengthMeterFill.style.width = strengthPercentage + "%";
         }
 
@@ -251,6 +255,11 @@
             const password = passwordField?.value || "";
             const repeatPassword = repeatPasswordField?.value || "";
 
+            if(!repeatPassword && !password) {
+                clearFieldValidation(repeatPasswordField, passwordMatchMessage);
+                return true;
+            }
+
             if (!repeatPasswordField) return false;
 
             if (!repeatPassword && repeatPasswordField.hasAttribute("required")) {
@@ -276,6 +285,15 @@
             field.classList.add("error");
             field.classList.remove("valid");
 
+            const wrapper = field.closest(".password-input-wrapper")
+            if (wrapper) {
+                const validIcon = wrapper.querySelector(".validation-icon.valid")
+                const errorIcon = wrapper.querySelector(".validation-icon.error")
+
+                if (validIcon) validIcon.style.opacity = "0"
+                if (errorIcon) errorIcon.style.opacity = "1"
+            }
+
             if (errorElement) {
                 errorElement.textContent = message;
                 errorElement.classList.add("visible");
@@ -287,7 +305,14 @@
 
             field.classList.remove("error");
             field.classList.add("valid");
+            const wrapper = field.closest(".password-input-wrapper")
 
+            if(wrapper) {
+                const validIcon = wrapper.querySelector(".validation-icon.valid")
+                const errorIcon = wrapper.querySelector(".validation-icon.error")
+
+                if (validIcon) validIcon.style.opacity = "1"
+                if (errorIcon) errorIcon.style.opacity = "0"            }
             if (errorElement) {
                 errorElement.classList.remove("visible");
             }
@@ -295,6 +320,15 @@
 
         function clearFieldValidation(field, errorElement) {
             if (!field) return;
+
+            const wrapper = field.closest(".password-input-wrapper")
+            if (wrapper) {
+                const validIcon = wrapper.querySelector(".validation-icon.valid")
+                const errorIcon = wrapper.querySelector(".validation-icon.error")
+
+                if (validIcon) validIcon.style.opacity = "0"
+                if (errorIcon) errorIcon.style.opacity = "0"
+            }
 
             field.classList.remove("error");
             field.classList.remove("valid");

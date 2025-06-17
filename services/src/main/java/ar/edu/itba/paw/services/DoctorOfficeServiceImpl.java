@@ -98,20 +98,16 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             List<DoctorOfficeForm> forms,
             Doctor inputDoctor
     ) {
-        // 1) Load the managed Doctor + its offices
         Doctor doctor = doctorService.getByIdWithAvailableOffices(inputDoctor.getId()).orElseThrow(UserNotFoundException::new);
 
-        // 2) Index existing offices by ID
         Map<Long, DoctorOffice> existingById = doctor.getDoctorOffices().stream()
                 .collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
 
-        // 3) Prepare the new list and keep-set
         List<DoctorOffice> newOffices = new ArrayList<>();
 
         for (DoctorOfficeForm form : forms) {
             Long id = form.getId();
             if (id != null && existingById.containsKey(id)) {
-                // ── UPDATE existing ──
                 DoctorOffice office = existingById.get(id);
                 boolean deleted = applyFormToEntity(office, form, doctor);
                 if (!deleted) {
@@ -120,7 +116,6 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
 
             } else {
-                // ── CREATE new ──
                 Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
                         .orElseThrow(NeighborhoodNotFoundException::new);
                 List<Specialty> specs = form.getSpecialtyIds().stream()
@@ -133,19 +128,10 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             }
         }
 
-        // 5) Replace the collection in one go
         doctor.getDoctorOffices().clear();
         doctor.getDoctorOffices().addAll(newOffices);
-
-        // 6) On transaction commit, Hibernate will:
-        //    • INSERT any new DoctorOffice (via cascade)
-        //    • UPDATE any existing ones (times, active, removed flag)
-        //    • NOT DELETE anything (orphanRemoval=false)
-        //
-        // No explicit dao.create/update/softDelete calls needed.
     }
 
-    // reuse your applyFormToEntity or inline:
 
     private boolean applyFormToEntity(
             DoctorOffice office,
