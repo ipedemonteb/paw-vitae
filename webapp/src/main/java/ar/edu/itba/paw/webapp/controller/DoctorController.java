@@ -224,12 +224,12 @@ public class DoctorController {
 
     @RequestMapping("/doctor/appointments/{appointmentId}/history")
     public ModelAndView getPatientHistory(@PathVariable long appointmentId,
-                                          @RequestParam(defaultValue = "1") int page,
+                                          @ParamCustomizer(defaultValue = 1) QueryParam page,
                                           @ModelAttribute("loggedUser") final Doctor doctor,
                                           @RequestParam(value = "direction", defaultValue = "asc") String direction) {
         final int pageSize = 10;
         Patient patient = appointmentService.getPatientByAppointmentId(appointmentId);
-        Page<Map.Entry<Appointment, List<AppointmentFile>>> history = appointmentFileService.getGroupedFilesForPatient(patient.getId(), page, pageSize, direction);
+        Page<Map.Entry<Appointment, List<AppointmentFile>>> history = appointmentFileService.getGroupedFilesForPatient(patient.getId(),(int) page.getValue(), pageSize, direction);
         ModelAndView mav = new ModelAndView("doctor/patient-history");
 
         mav.addObject("currentDirection", direction);
