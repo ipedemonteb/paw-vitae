@@ -101,8 +101,8 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Map.Entry<Appointment, List<AppointmentFile>>> getGroupedFilesForPatient(long patientId, int page, int pageSize) {
-        Page<Appointment> appointmentPage = appointmentService.getAppointmentsForPatientWithFilesOrReport(patientId, page, pageSize);
+    public Page<Map.Entry<Appointment, List<AppointmentFile>>> getGroupedFilesForPatient(long patientId, int page, int pageSize, String direction) {
+        Page<Appointment> appointmentPage = appointmentService.getAppointmentsForPatientWithFilesOrReport(patientId, page, pageSize, direction);
         List<Appointment> appointments = appointmentPage.getContent();
 
         if (appointments.isEmpty()) {

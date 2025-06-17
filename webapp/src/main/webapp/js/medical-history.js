@@ -6,7 +6,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Check for success messages
     checkForSuccessMessages()
+    formatAppointmentDates()
 })
+
+function formatAppointmentDates() {
+    document.querySelectorAll(".appointment-card").forEach(card => {
+        const rawDate = card.dataset.date
+        if (rawDate) {
+            const formatted = formatDate(rawDate)
+            const dateDisplayElement = card.querySelector(".appointment-date-format")
+            if (dateDisplayElement) {
+                dateDisplayElement.textContent = formatted
+            }
+        }
+    })
+}
+
 
 // Search functionality
 function initializeSearch() {
@@ -205,3 +220,54 @@ function hideSuccessToast() {
         toast.classList.remove("show")
     }
 }
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr)
+    const day = String(date.getDate()).padStart(2, '0')
+    const month = String(date.getMonth() + 1).padStart(2, '0') // months are 0-indexed
+    const year = date.getFullYear()
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${day}/${month}/${year} - ${hours}:${minutes}`
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Custom select functionality
+    const selectTrigger = document.querySelector('.custom-select-trigger');
+    const selectOptions = document.querySelector('.custom-select-options');
+    const selectOptionItems = document.querySelectorAll('.custom-select-option');
+
+    if (selectTrigger) {
+        selectTrigger.addEventListener('click', function() {
+            this.classList.toggle('active');
+            selectOptions.classList.toggle('active');
+        });
+
+        selectOptionItems.forEach(option => {
+            option.addEventListener('click', function() {
+                const value = this.dataset.value;
+                const text = this.textContent;
+
+                // Update trigger text
+                selectTrigger.querySelector('.select-text').textContent = text;
+
+                // Update form and submit
+                document.querySelector('input[name="direction"]').value = value;
+                document.getElementById('sortForm').submit();
+
+                // Close dropdown
+                selectTrigger.classList.remove('active');
+                selectOptions.classList.remove('active');
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!selectTrigger.contains(e.target)) {
+                selectTrigger.classList.remove('active');
+                selectOptions.classList.remove('active');
+            }
+        });
+    }
+});
+

@@ -187,8 +187,6 @@ public class DoctorServiceImpl implements DoctorService {
         }
         Map<String, Object> response = new HashMap<>();
         response.put("doctors", doctors);
-        String temp = JsonUtils.toJson(response, Doctor.Views.Public.class);
-        System.out.println(temp);
         return JsonUtils.toJson(response, Doctor.Views.Public.class);
     }
 }

@@ -40,7 +40,7 @@ public interface AppointmentDao {
 
     int countAppointmentsByPatientWithFilesOrReport(long patientId);
 
-    List<Appointment> getAppointmentsByPatientWithFilesOrReport(long patientId, int page, int size);
+    List<Appointment> getAppointmentsByPatientWithFilesOrReport(long patientId, int page, int size, String direction);
 
     boolean hasFullMedicalHistoryEnabled(long appointmentId, long doctorId);
 //
