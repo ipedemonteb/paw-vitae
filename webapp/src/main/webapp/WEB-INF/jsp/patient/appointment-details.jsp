@@ -410,7 +410,7 @@
                 </c:choose>
 
                 <div class="back-button-container">
-                    <a href="${pageContext.request.contextPath}/patient/dashboard" class="back-button">
+                 <a href="<c:url value='/patient/dashboard'/>" class="back-button">
                         <i class="fas fa-arrow-left"></i>
                         <span><spring:message code="appointment.details.back" text="Back to My Appointments" /></span>
                     </a>
