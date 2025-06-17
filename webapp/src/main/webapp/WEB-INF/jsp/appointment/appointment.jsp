@@ -267,13 +267,13 @@
             '<spring:message code="calendar.day.saturday" />'
         ],
         weekdaysShort: [
-            '<spring:message code="calendar.day.short.sun" />',
             '<spring:message code="calendar.day.short.mon" />',
             '<spring:message code="calendar.day.short.tue" />',
             '<spring:message code="calendar.day.short.wed" />',
             '<spring:message code="calendar.day.short.thu" />',
             '<spring:message code="calendar.day.short.fri" />',
-            '<spring:message code="calendar.day.short.sat" />'
+            '<spring:message code="calendar.day.short.sat" />',
+            '<spring:message code="calendar.day.short.sun" />'
         ],
         appointmentAt: '<spring:message code="appointment.at" />',
         noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />',

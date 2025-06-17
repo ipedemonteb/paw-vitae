@@ -50,7 +50,7 @@ public class OfficeAvailableAtDayAndTimeValidator implements ConstraintValidator
             }
 
             if (!doctorOfficeAvailabilityService.isAvailableAtDayAndTime(officeId, date, hour)
-                    && !unavailabilitySlotsService.isUnavailableAtDate(officeId, date)) {
+                    || unavailabilitySlotsService.isUnavailableAtDate(officeId, date)) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("{appointment.office.date.valid}")
                         .addPropertyNode(dateFieldName)
@@ -59,6 +59,7 @@ public class OfficeAvailableAtDayAndTimeValidator implements ConstraintValidator
             }
             return true;
         }catch (Exception e) {
+            System.out.println("NO PUEDE SER");
             return false;
         }
     }

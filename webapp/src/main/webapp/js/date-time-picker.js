@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const lastDay = new Date(year, month + 1, 0);
 
         // Get the day of the week for the first day (0-6)
-        const firstDayOfWeek = firstDay.getDay();
+        const firstDayOfWeek = (firstDay.getDay() + 6) % 7;
 
         const argDate = new Date().toLocaleString("en-US", {
             timeZone: "America/Argentina/Buenos_Aires",
