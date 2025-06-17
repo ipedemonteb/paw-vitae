@@ -13,7 +13,7 @@ import java.util.List;
 @ValidNewOffice
 @ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
 @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
-@AcceptedSpecialties(specialties = "specialties", offices = "doctorOfficeForm", message = "{specialties.not.accepted}")
+@AcceptedSpecialties(specialties = "specialties", offices = "doctorOfficeForm")
 @RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "{register.passwordsDoNotMatch}")
 public class DoctorForm {
 
