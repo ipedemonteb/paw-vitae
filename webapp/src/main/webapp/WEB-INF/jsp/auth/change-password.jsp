@@ -37,6 +37,12 @@
                             <label for="password" class="form-label"><spring:message code="change.password.new.password" /></label>
                             <div class="password-input-wrapper">
                                 <form:password path="password" id="password" class="form-control" required="true" />
+                                <div class="validation-icon valid">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="validation-icon error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
                                 <button type="button" class="toggle-password" aria-label="Toggle password visibility">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -60,6 +66,12 @@
                             <label for="repeatPassword" class="form-label"><spring:message code="change.password.confirm.password" /></label>
                             <div class="password-input-wrapper">
                                 <form:password path="repeatPassword" id="repeatPassword" class="form-control" required="true" />
+                                <div class="validation-icon valid">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="validation-icon error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
                                 <button type="button" class="toggle-password" aria-label="Toggle password visibility">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -273,6 +285,15 @@
             field.classList.add("error");
             field.classList.remove("valid");
 
+            const wrapper = field.closest(".password-input-wrapper")
+            if (wrapper) {
+                const validIcon = wrapper.querySelector(".validation-icon.valid")
+                const errorIcon = wrapper.querySelector(".validation-icon.error")
+
+                if (validIcon) validIcon.style.opacity = "0"
+                if (errorIcon) errorIcon.style.opacity = "1"
+            }
+
             if (errorElement) {
                 errorElement.textContent = message;
                 errorElement.classList.add("visible");
@@ -284,7 +305,14 @@
 
             field.classList.remove("error");
             field.classList.add("valid");
+            const wrapper = field.closest(".password-input-wrapper")
 
+            if(wrapper) {
+                const validIcon = wrapper.querySelector(".validation-icon.valid")
+                const errorIcon = wrapper.querySelector(".validation-icon.error")
+
+                if (validIcon) validIcon.style.opacity = "1"
+                if (errorIcon) errorIcon.style.opacity = "0"            }
             if (errorElement) {
                 errorElement.classList.remove("visible");
             }
@@ -292,6 +320,15 @@
 
         function clearFieldValidation(field, errorElement) {
             if (!field) return;
+
+            const wrapper = field.closest(".password-input-wrapper")
+            if (wrapper) {
+                const validIcon = wrapper.querySelector(".validation-icon.valid")
+                const errorIcon = wrapper.querySelector(".validation-icon.error")
+
+                if (validIcon) validIcon.style.opacity = "0"
+                if (errorIcon) errorIcon.style.opacity = "0"
+            }
 
             field.classList.remove("error");
             field.classList.remove("valid");
