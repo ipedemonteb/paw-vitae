@@ -301,13 +301,16 @@ public class AppointmentDaoTest {
         //Preconditions
         int page = 1;
         int size = 10;
+        String order = "desc";
 
         //Exercise
-        List<Appointment> appointments = appointmentDao.getAppointmentsByPatientWithFilesOrReport(PAT_ID, page, size);
+        List<Appointment> appointments = appointmentDao.getAppointmentsByPatientWithFilesOrReport(PAT_ID, page, size, order);
 
         //Postconditions
         assertFalse(appointments.isEmpty());
         assertEquals(2, appointments.size());
+        assertEquals(2L, appointments.getFirst().getId());
+        assertEquals(1L, appointments.get(1).getId());
     }
 
     @Test
