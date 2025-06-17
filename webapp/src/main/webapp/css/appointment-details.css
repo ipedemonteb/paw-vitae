@@ -865,6 +865,7 @@ textarea.form-control {
     font-weight: 500;
     transition: var(--transition);
     margin-left: 10px;
+    cursor: pointer;
 }
 
 .back-button-cancel:hover {

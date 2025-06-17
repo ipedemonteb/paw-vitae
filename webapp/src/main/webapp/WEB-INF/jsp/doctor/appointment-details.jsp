@@ -472,7 +472,7 @@
                     </c:otherwise>
                 </c:choose>
                 <div class="back-button-container">
-                    <a href="<c:url value='${pageContext.request.contextPath}/doctor/dashboard'/>" class="back-button">
+                    <a href="<c:url value='/doctor/dashboard'/>" class="back-button">
                         <i class="fas fa-arrow-left"></i>
                         <span><spring:message code="appointment.details.back"/></span>
                     </a>
