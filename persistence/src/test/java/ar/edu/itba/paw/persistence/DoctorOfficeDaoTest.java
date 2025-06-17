@@ -71,7 +71,7 @@ public class DoctorOfficeDaoTest {
         assertEquals(neighborhood.getId(), doctorOffice.getNeighborhood().getId());
         assertEquals(specialties.getFirst().getId(), specialty.getId());
         assertEquals(officeName, doctorOffice.getOfficeName());
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_OFFICES_TABLE, "doctor_id = " + doctor.getId()));
+        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_OFFICES_TABLE, "doctor_id = " + doctor.getId()));
     }
 
     @Test
@@ -156,7 +156,7 @@ public class DoctorOfficeDaoTest {
     @Test
     public void testGetByDoctorIdWithAvailabilityNoAvailability() {
         //Preconditions
-        long doctorId = 4L;
+        long doctorId = 5L;
 
         //Exercise
         List<DoctorOffice> doctorOffices = doctorOfficeDao.getByDoctorIdWithAvailability(doctorId);
