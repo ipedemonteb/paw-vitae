@@ -44,7 +44,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    @Scheduled(cron = "0 0 0 * * ?") // Todos los días a las 00:00
+    @Scheduled(cron = "0 0 0 * * ?")
     @Async
     public void sendDailyReminders() {
         LocalDate today = LocalDate.now();

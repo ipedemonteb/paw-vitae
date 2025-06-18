@@ -23,7 +23,7 @@ public class DoctorOfficeAvailabilityDaoHibeImpl implements DoctorOfficeAvailabi
 
     @Override
     public void update(DoctorOfficeAvailability slot) {
-        slot.setOffice(em.getReference(DoctorOffice.class, slot.getOffice().getId())); //check if necessary (I am traumatized)
+        slot.setOffice(em.getReference(DoctorOffice.class, slot.getOffice().getId()));
         em.merge(slot);
     }
 

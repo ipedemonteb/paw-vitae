@@ -16,7 +16,6 @@ public class Coverage {
     private String name;
 
     public Coverage() {
-        // For Hibernate use
     }
 
     public Coverage(String name) {

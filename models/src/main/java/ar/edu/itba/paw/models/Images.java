@@ -15,7 +15,6 @@ public class Images {
     private byte[] image;
 
     public Images() {
-        // For Hibernate use
     }
 
     public Images(byte[] image) {

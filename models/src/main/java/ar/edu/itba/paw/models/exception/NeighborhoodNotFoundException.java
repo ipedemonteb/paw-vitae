@@ -15,6 +15,6 @@ public class NeighborhoodNotFoundException extends RuntimeException {
     }
 
     public NeighborhoodNotFoundException() {
-        super("Neighborhood not found"); //TODO check
+        super("Neighborhood not found");
     }
 }

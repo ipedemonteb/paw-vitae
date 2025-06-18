@@ -37,7 +37,7 @@ public class DoctorOffice {
     private List<Specialty> specialties;
 
     @OneToMany(mappedBy = "office", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DoctorOfficeAvailability> doctorOfficeAvailability;  //limited size no problem
+    private List<DoctorOfficeAvailability> doctorOfficeAvailability;
 
     @Column(name = "office_name", length = 50)
     private String officeName;

@@ -28,12 +28,12 @@ public class Doctor extends User {
     private List<Coverage> coverageList = new ArrayList<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //orphan removal MUST be false
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DoctorOffice> doctorOffices = new ArrayList<>();
 
     @JsonManagedReference
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();  //limited size no problem
+    private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
 
     @Column(name = "rating")
     private Double rating = 1.0;
@@ -44,7 +44,6 @@ public class Doctor extends User {
     @Column(name = "image_id")
     private Long imageId = null;
 
-    //WHY NOT LAZY
     @OneToOne(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private DoctorProfile profile;
@@ -60,7 +59,6 @@ public class Doctor extends User {
 
 
     public Doctor() {
-        // For Hibernate use
     }
 
     public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, Double rating, int ratingCount, boolean verified) {
