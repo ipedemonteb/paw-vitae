@@ -59,7 +59,6 @@ public class OfficeAvailableAtDayAndTimeValidator implements ConstraintValidator
             }
             return true;
         }catch (Exception e) {
-            System.out.println("NO PUEDE SER");
             return false;
         }
     }

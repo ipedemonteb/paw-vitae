@@ -261,7 +261,6 @@
     const contextPath = '${pageContext.request.contextPath}';
 
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded, initializing...');
 
         initializeTimeSlots();
 
@@ -293,12 +292,10 @@
             });
         }
 
-        console.log('Initialization complete. TimeSlotCounter:', timeSlotCounter);
     });
 
     // Initialize time slots from existing office availability data
     function initializeTimeSlots() {
-        console.log('Initializing time slots...');
         availabilitySlots = [];
 
         // Load existing slots from doctorOfficeAvailability
@@ -318,7 +315,6 @@
 
         // Update UI
         updateNoSlotsMessage();
-        console.log('Time slots initialized:', availabilitySlots);
     }
 
     // Render all time slots
@@ -337,7 +333,6 @@
 
     // Add a new time slot (like in register)
     function addTimeSlotRow() {
-        console.log('Adding time slot row...');
 
         // Check if we have at least one office
         if (doctorOffices.length === 0) {
