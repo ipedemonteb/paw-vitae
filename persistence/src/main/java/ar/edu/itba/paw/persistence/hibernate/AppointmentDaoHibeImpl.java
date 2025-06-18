@@ -155,7 +155,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return !query.getResultList().isEmpty();
     }
 
-    //TODO: CHECK
     private static StringBuilder getSql(boolean isFuture, String filter, boolean isCount) {
         StringBuilder sql = new StringBuilder();
         if (isCount) {
@@ -212,7 +211,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return nativeQuery;
     }
 
-    //make it look between a range back
     @Override
     public List<Appointment> getAppointmentsWithHistoryAllowedBefore(LocalDateTime dateTime) {
         TypedQuery<Appointment> query = em.createQuery(
@@ -222,24 +220,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         query.setParameter("dateTime", dateTime);
         return query.getResultList();
     }
-
-
-
-    // -------------------------------------
-    //  DEPRECATED METHODS
-    // -------------------------------------
-
-    //DEPRECATED
-    @Override
-    public void cancelAppointment(long appointmentId) {}
-
-    //DEPRECATED
-    @Override
-    public void completeAppointments() {}
-
-    //DEPRECATED
-    @Override
-    public void updateReport(long appointmentId, String report) {}
 
 }
 

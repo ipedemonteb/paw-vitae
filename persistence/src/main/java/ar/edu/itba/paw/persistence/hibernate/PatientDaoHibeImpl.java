@@ -77,12 +77,4 @@ public class PatientDaoHibeImpl implements PatientDao {
         TypedQuery<Long> query = em.createQuery("SELECT COUNT(p) FROM Patient p", Long.class);
         return query.getSingleResult().intValue();
     }
-
-    // -------------------------------------
-    //  DEPRECATED METHODS
-    // -------------------------------------
-
-
-
-
 }
