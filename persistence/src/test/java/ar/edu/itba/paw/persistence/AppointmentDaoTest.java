@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -122,7 +123,7 @@ public class AppointmentDaoTest {
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
-                "date", LocalDateTime.now().plusDays(6),
+                "date", LocalDateTime.now(ZoneId.systemDefault()).plusDays(6),
                 "status", status,
                 "reason", reason,
                 "office_id", officeId,
@@ -132,7 +133,7 @@ public class AppointmentDaoTest {
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
-                "date", LocalDateTime.now().plusDays(8),
+                "date", LocalDateTime.now(ZoneId.systemDefault()).plusDays(8),
                 "status", status,
                 "reason", reason,
                 "office_id", officeId,
@@ -207,7 +208,7 @@ public class AppointmentDaoTest {
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
-                "date", LocalDateTime.now().plusDays(6),
+                "date", LocalDateTime.now(ZoneId.systemDefault()).plusDays(6),
                 "status", status,
                 "reason", reason,
                 "office_id", officeId,
@@ -217,7 +218,7 @@ public class AppointmentDaoTest {
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
-                "date", LocalDateTime.now().plusDays(8),
+                "date", LocalDateTime.now(ZoneId.systemDefault()).plusDays(8),
                 "status", status,
                 "reason", reason,
                 "office_id", officeId,

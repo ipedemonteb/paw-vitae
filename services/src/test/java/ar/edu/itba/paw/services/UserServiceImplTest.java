@@ -15,6 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -165,7 +166,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyValidationTokenReturnsPatient() {
         //Preconditions
-        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
+        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).plusDays(1));
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(PATIENT));
 
         //Exercise
@@ -180,7 +181,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyValidationTokenReturnsPatientExpiredToken() {
         //Preconditions
-        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().minusDays(1));
+        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(PATIENT));
         when(patientDao.getByEmail("john@test.com")).thenReturn(Optional.of(PATIENT));
 
@@ -195,7 +196,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyValidationTokenReturnsDoctor() {
         //Preconditions
-        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
+        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).plusDays(1));
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.empty());
         when(doctorDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(DOCTOR));
 
@@ -223,7 +224,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyRecoveryTokenExists() {
         //Preconditions
-        when(userDao.tokenExpirationDate("RECOVERYTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
+        when(userDao.tokenExpirationDate("RECOVERYTOKEN")).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).plusDays(1));
         when(patientDao.getByResetToken("RECOVERYTOKEN")).thenReturn(Optional.of(PATIENT));
 
         //Exercise
@@ -312,7 +313,7 @@ public class UserServiceImplTest {
         String token = "TOKEN";
         boolean isVerification = true;
         when(patientDao.getByVerificationToken(anyString())).thenReturn(Optional.of(PATIENT));
-        when(userDao.tokenExpirationDate(anyString())).thenReturn(LocalDateTime.now().minusDays(1));
+        when(userDao.tokenExpirationDate(anyString())).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
         when(patientDao.getByEmail(anyString())).thenReturn(Optional.of(PATIENT));
 
         //Exercise
@@ -329,7 +330,7 @@ public class UserServiceImplTest {
         String token = "TOKEN";
         boolean isVerification = false;
         when(patientDao.getByResetToken(token)).thenReturn(Optional.of(PATIENT));
-        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now().minusDays(1));
+        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
 
         //Exercise
         Optional<? extends User> result = userService.checkToken(token, isVerification);
@@ -344,7 +345,7 @@ public class UserServiceImplTest {
         String token = "TOKEN";
         boolean isVerification = true;
         when(patientDao.getByVerificationToken(token)).thenReturn(Optional.of(PATIENT));
-        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now().plusDays(2));
+        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).plusDays(2));
 
         //Exercise
         Optional<? extends User> result = userService.checkToken(token, isVerification);
@@ -360,7 +361,7 @@ public class UserServiceImplTest {
         String token = "TOKEN";
         boolean isVerification = true;
         when(doctorDao.getByVerificationToken(anyString())).thenReturn(Optional.of(DOCTOR));
-        when(userDao.tokenExpirationDate(anyString())).thenReturn(LocalDateTime.now().minusDays(1));
+        when(userDao.tokenExpirationDate(anyString())).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
         when(doctorDao.getByEmail(anyString())).thenReturn(Optional.of(DOCTOR));
 
         //Exercise
@@ -377,7 +378,7 @@ public class UserServiceImplTest {
         String token = "TOKEN";
         boolean isVerification = false;
         when(doctorDao.getByResetToken(token)).thenReturn(Optional.of(DOCTOR));
-        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now().minusDays(1));
+        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
 
         //Exercise
         Optional<? extends User> result = userService.checkToken(token, isVerification);
@@ -392,7 +393,7 @@ public class UserServiceImplTest {
         String token = "TOKEN";
         boolean isVerification = true;
         when(doctorDao.getByVerificationToken(token)).thenReturn(Optional.of(DOCTOR));
-        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now().plusDays(2));
+        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).plusDays(2));
         //Exercise
         Optional<? extends User> result = userService.checkToken(token, isVerification);
 

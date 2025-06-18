@@ -144,7 +144,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
         if (form.getRemoved()) {
             if (appointmentService.officeHasAppointments(office.getId())) {
-                office.setRemoved(LocalDateTime.now());
+                office.setRemoved(LocalDateTime.now(ZoneId.systemDefault()));
             } else {
                 office.getSpecialties().clear();
                 doctorOfficeDao.remove(office.getId());

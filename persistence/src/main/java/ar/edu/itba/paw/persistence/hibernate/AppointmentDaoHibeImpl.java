@@ -22,7 +22,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     @PersistenceContext
     private EntityManager em;
 
-    LocalDateTime now = LocalDateTime.now().withMinute(5).withSecond(0).withNano(0);
+    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault()).withMinute(5).withSecond(0).withNano(0);
 
     @Override
     public Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice, boolean allowFullHistory) {

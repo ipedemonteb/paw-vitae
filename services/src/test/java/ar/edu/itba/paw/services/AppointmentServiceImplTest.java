@@ -15,6 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +36,7 @@ public class AppointmentServiceImplTest {
     private static final String REASON = "Checkup";
     private static final String STATUS = "Confirmado";
     private static final String REPORT = "Report";
-    private static final LocalDateTime DATE = LocalDateTime.now().plusDays(1);
+    private static final LocalDateTime DATE = LocalDateTime.now(ZoneId.systemDefault()).plusDays(1);
     private static final boolean ALLOW = true;
 
     private static final Specialty SPECIALTY = new Specialty(1L, "Cardiology");
@@ -57,7 +58,7 @@ public class AppointmentServiceImplTest {
             ALLOW
     );
     private static final Appointment APPOINTMENT_CANC = new Appointment(
-            LocalDateTime.now(),
+            LocalDateTime.now(ZoneId.systemDefault()),
             STATUS,
             REASON,
             SPECIALTY,

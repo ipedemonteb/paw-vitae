@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         String verificationLink = BASE_URL + "/verify-confirmation?token=" + token;
         mailService.sendVerificationRegisterEmail(user, verificationLink);
         user.setVerificationToken(token);
-        user.setTokenExpiration(LocalDateTime.now().plusDays(30));
+        user.setTokenExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusDays(30));
         LOGGER.info("Verification token set and email sent for user id={}", user.getId());
     }
 
@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService {
         String token = UUID.randomUUID().toString();
         String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
         user.setResetPasswordToken(token);
-        user.setTokenExpiration(LocalDateTime.now().plusHours(1));
+        user.setTokenExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusHours(1));
         mailService.sendRecoverPasswordEmail(user, resetPasswordLink);
         LOGGER.info("Password reset token set and email sent for user id={}", user.getId());
     }
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Optional<? extends User> checkToken(String token,boolean isVerification) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 
         Optional<Patient> patient = isVerification
                 ? patientDao.getByVerificationToken(token)

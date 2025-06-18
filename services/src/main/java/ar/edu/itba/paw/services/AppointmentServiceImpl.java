@@ -58,7 +58,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Async// Every day at 01:00 AM
     @Transactional
     public void revokeHistoryPermissionForOldAppointments() {
-        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        LocalDateTime oneWeekAgo = LocalDateTime.now(ZoneId.systemDefault()).minusWeeks(1);
         List<Appointment> oldAppointments = appointmentDao.getAppointmentsWithHistoryAllowedBefore(oneWeekAgo);
         for (Appointment appointment : oldAppointments) {
             appointment.setAllowFullHistory(false);
@@ -87,7 +87,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional
     @Async
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void completeAppointments() {
         LOGGER.debug("Completing past appointments that are confirmed and have passed the date");
         List<Appointment> appointments= appointmentDao.getPastConfirmedAppointments();
@@ -125,7 +125,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         LOGGER.debug("Getting appointment with id: {}", appointmentId);
         Optional<Appointment> appointment = appointmentDao.getById(appointmentId);
         appointment.ifPresent(a -> {
-            Boolean isCancellable = LocalDateTime.now().plusHours(2).isBefore(a.getDate());
+            Boolean isCancellable = LocalDateTime.now(ZoneId.systemDefault()).plusHours(2).isBefore(a.getDate());
             a.setCancellable(isCancellable);
         });
         return appointment;
@@ -140,7 +140,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, filter);
         appointments.forEach(a -> {
-            Boolean isCancellable = LocalDateTime.now().plusHours(2).isBefore(a.getDate());
+            Boolean isCancellable = LocalDateTime.now(ZoneId.systemDefault()).plusHours(2).isBefore(a.getDate());
             a.setCancellable(isCancellable);
         });
         return new Page<>(appointments, page, size, appointmentDao.countAppointments(userId, isFuture, filter));
@@ -172,7 +172,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         List<Appointment> appointments = appointmentDao.getAppointmentsByUserAndDate(userId, date, time);
         appointments.forEach(a -> {
-            Boolean isCancellable = LocalDateTime.now().plusHours(2).isBefore(a.getDate());
+            Boolean isCancellable = LocalDateTime.now(ZoneId.systemDefault()).plusHours(2).isBefore(a.getDate());
             a.setCancellable(isCancellable);
         });
         return appointments;
