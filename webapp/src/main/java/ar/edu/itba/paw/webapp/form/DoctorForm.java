@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.form;
 
 
 
-import ar.edu.itba.paw.models.AvailabilitySlotForm;
 import ar.edu.itba.paw.models.DoctorOfficeForm;
 import ar.edu.itba.paw.webapp.validation.*;
 import org.springframework.web.multipart.MultipartFile;

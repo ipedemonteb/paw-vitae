@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.validation;
 
-import ar.edu.itba.paw.interfaceServices.AvailabilitySlotsService;
+
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeAvailabilityService;
 import ar.edu.itba.paw.interfaceServices.UnavailabilitySlotsService;
 import org.springframework.beans.factory.annotation.Autowired;
