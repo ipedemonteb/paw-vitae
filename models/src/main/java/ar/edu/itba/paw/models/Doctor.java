@@ -31,9 +31,7 @@ public class Doctor extends User {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DoctorOffice> doctorOffices = new ArrayList<>();
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
+
 
     @Column(name = "rating")
     private Double rating = 1.0;
@@ -107,11 +105,6 @@ public class Doctor extends User {
         this.doctorOffices = doctorOffices;
     }
 
-    public List<AvailabilitySlot> getAvailabilitySlots() {
-        return availabilitySlots;
-    }
-
-    public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) { this.availabilitySlots = availabilitySlots; }
 
     public Double getRating() {
         return rating;

@@ -145,7 +145,7 @@ public class DoctorServiceImplTest {
     public void testSearch() {
         //Preconditions
         when(doctorDao.search(anyString(), anyInt())).thenReturn(List.of(DOCTOR));
-        String expectedResult = "{\"doctors\":[{\"id\":0,\"email\":\"jane@test.com\",\"name\":\"Jane\",\"lastName\":\"Smith\",\"phone\":\"987654321\",\"language\":\"es\",\"specialtyList\":[],\"coverageList\":[],\"doctorOffices\":[],\"availabilitySlots\":[],\"rating\":4.5,\"ratingCount\":10,\"imageId\":1,\"experiences\":[],\"certifications\":[]}]}";
+        String expectedResult = "{\"doctors\":[{\"id\":0,\"email\":\"jane@test.com\",\"name\":\"Jane\",\"lastName\":\"Smith\",\"phone\":\"987654321\",\"language\":\"es\",\"specialtyList\":[],\"coverageList\":[],\"doctorOffices\":[],\"rating\":4.5,\"ratingCount\":10,\"imageId\":1,\"experiences\":[],\"certifications\":[]}]}";
 
         //Exercise
         String search = doctorService.search("keyword", 2);
