@@ -61,7 +61,6 @@ public class UserServiceImpl implements UserService {
     public void changeLanguage(long id, String language) {
         User user = getById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
         user.setLanguage(language);
-//        userDao.changeLanguage(id, language);
         LOGGER.info("Language changed to '{}' for user with id={}", language, id);
     }
 
@@ -75,7 +74,6 @@ public class UserServiceImpl implements UserService {
         mailService.sendVerificationRegisterEmail(user, verificationLink);
         user.setVerificationToken(token);
         user.setTokenExpiration(LocalDateTime.now().plusDays(30));
-//        userDao.setVerificationToken(user.getId(), token, LocalDateTime.now().plusDays(30));
         LOGGER.info("Verification token set and email sent for user id={}", user.getId());
     }
 
@@ -84,7 +82,6 @@ public class UserServiceImpl implements UserService {
     public void setVerificationStatus(User user, boolean status) {
         LOGGER.debug("Setting verification for user id={}", user.getId());
         user.setVerified(status);
-//        userDao.setVerificationStatus(user.getId(), status);
         LOGGER.info("Verification status updated to {} for user id={}", status, user.getId());
     }
 
@@ -106,7 +103,6 @@ public class UserServiceImpl implements UserService {
         String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
         user.setResetPasswordToken(token);
         user.setTokenExpiration(LocalDateTime.now().plusHours(1));
-        //userDao.setResetPasswordToken(user.getId(), token, LocalDateTime.now().plusHours(1));
         mailService.sendRecoverPasswordEmail(user, resetPasswordLink);
         LOGGER.info("Password reset token set and email sent for user id={}", user.getId());
     }
@@ -143,8 +139,6 @@ public class UserServiceImpl implements UserService {
                 String newPassword = passwordEncoder.encode(password);
                 user.setPassword(newPassword);
                 user.setResetPasswordToken(null);
-                //userDao.changePassword(user.getId(), newPassword);
-//                userDao.removeResetToken(token);
                 LOGGER.info("Password changed successfully for user id={}", user.getId());
                 return true;
         }
@@ -159,13 +153,6 @@ public class UserServiceImpl implements UserService {
         }
         LOGGER.debug("Getting image id for user id={}", user.getId());
         return ((Doctor) user).getImageId();
-    }
-
-    // USELESS
-    @Transactional
-    @Override
-    public void update(long id, String name, String lastName, String phone) {
-        LOGGER.debug("Updating user with id: {}, name: {}, lastName: {}, phone: {}", id, name, lastName, phone);
     }
 
     @Transactional

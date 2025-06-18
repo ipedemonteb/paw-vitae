@@ -24,21 +24,17 @@ public class DoctorServiceImpl implements DoctorService {
     private final DoctorDao doctorDao;
 
     private final ImageService imageService;
-    private final AvailabilitySlotsService availabilitySlotsService;
     private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
     private final SpecialtyService specialtyService;
     private final CoverageService coverageService;
     private final DoctorOfficeService doctorOfficeService;
 
     @Autowired
-    public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder, ImageService imageService, AvailabilitySlotsService availabilitySlotsService, UserService userService,
+    public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder, ImageService imageService,
                              SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService) {
         this.doctorDao = doctorDao;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
-        this.availabilitySlotsService = availabilitySlotsService;
-        this.userService = userService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
         this.doctorOfficeService = doctorOfficeService;
@@ -63,7 +59,6 @@ public class DoctorServiceImpl implements DoctorService {
         }
         Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, (img == null ? null : img.getId()), specialtiesList, coveragesList);
         List<DoctorOffice> doctorOffices = doctorOfficeService.transformToDoctorOffice(doctor, doctorOfficeForm);
-//        doctorOfficeService.create(doctorOffices);
         doctor.setDoctorOffices(doctorOffices);
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
         return doctor;

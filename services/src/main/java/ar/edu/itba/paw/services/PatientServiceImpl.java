@@ -4,7 +4,6 @@ import ar.edu.itba.paw.interfacePersistence.PatientDao;
 import ar.edu.itba.paw.interfaceServices.NeighborhoodService;
 import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
-import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Neighborhood;
 import ar.edu.itba.paw.models.Patient;
@@ -26,15 +25,13 @@ public class PatientServiceImpl implements PatientService {
     private final PasswordEncoder passwordEncoder;
     private final CoverageService coverageService;
     private final NeighborhoodService neighborhoodService;
-    private final UserService userService;
     Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
 
     @Autowired
-    public PatientServiceImpl(PatientDao patientDao, PasswordEncoder passwordEncoder, CoverageService coverageService, NeighborhoodService neighborhoodService,UserService userService) {
+    public PatientServiceImpl(PatientDao patientDao, PasswordEncoder passwordEncoder, CoverageService coverageService, NeighborhoodService neighborhoodService) {
         this.patientDao = patientDao;
         this.passwordEncoder = passwordEncoder;
         this.coverageService = coverageService;
-        this.userService = userService;
         this.neighborhoodService = neighborhoodService;
     }
 

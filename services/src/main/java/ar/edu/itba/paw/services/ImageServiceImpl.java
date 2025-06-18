@@ -58,7 +58,7 @@ public class ImageServiceImpl implements ImageService {
     public void deleteImage(long id) {
         LOGGER.debug("Deleting image with id {}", id);
         imageDao.deleteImage(id);
-        LOGGER.info("Image with id {} deleted", id); //If I reach this line then I can assume the image was deleted
+        LOGGER.info("Image with id {} deleted", id);
     }
 
 }
