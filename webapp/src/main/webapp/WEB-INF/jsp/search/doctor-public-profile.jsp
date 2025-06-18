@@ -530,8 +530,8 @@
     let isEditMode = false;
 
     let originalValues = {
-        bio: '${doctor.profile.bio}',
-        description: '${doctor.profile.description}',
+        bio: '<c:out value="${fn:escapeXml(doctor.profile.bio)}"/>'.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\r?\n/g, '\\n'),
+        description: '<c:out value="${fn:escapeXml(doctor.profile.description)}"/>'.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\r?\n/g, '\\n'),
         experiences: [],
         certificates: []
     };
