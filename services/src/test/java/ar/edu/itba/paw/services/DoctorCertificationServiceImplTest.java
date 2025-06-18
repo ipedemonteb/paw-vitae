@@ -31,8 +31,6 @@ public class DoctorCertificationServiceImplTest {
     @InjectMocks
     private DoctorCertificationServiceImpl doctorCertificationService;
 
-    //@TODO: Should i test update? how??
-
     @Test
     public void testCreateInvalidDoctor() {
         //Preconditions

@@ -17,10 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<!-- Main Content -->
 <div class="main-content">
     <div class="container">
         <div class="recover-password-container">
@@ -31,9 +29,7 @@
                 </div>
 
                 <div class="card-body">
-                    <!-- Check for URL parameters -->
                     <c:choose>
-                        <%-- Email sent confirmation --%>
                         <c:when test="${param.recover eq 'sent'}">
                             <div class="status-message success-message">
                                 <div class="status-icon">
@@ -53,9 +49,7 @@
                             </div>
                         </c:when>
 
-                        <%-- Default: show the form --%>
                         <c:otherwise>
-                            <!-- Success Message -->
                             <c:if test="${not empty successMessage}">
                                 <div class="alert alert-success">
                                     <i class="fas fa-check-circle"></i>
@@ -63,7 +57,6 @@
                                 </div>
                             </c:if>
 
-                            <!-- Error Message -->
                             <c:if test="${not empty errorMessage}">
                                 <div class="alert alert-danger">
                                     <i class="fas fa-exclamation-circle"></i>
@@ -103,11 +96,9 @@
     </div>
 </div>
 
-<!-- JavaScript for validation -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
-        // Email validation
         const emailField = document.getElementById("email");
         const emailValidationMessage = document.getElementById("email-validation-message");
         const recoverButton = document.getElementById("recoverButton");
@@ -169,7 +160,6 @@
             }
         }
 
-        // Initial validation
         if (emailField) {
             validateEmail(emailField);
             updateButtonState();

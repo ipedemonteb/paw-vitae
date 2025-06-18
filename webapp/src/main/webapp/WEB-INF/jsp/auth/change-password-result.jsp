@@ -27,10 +27,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<!-- Main Content -->
 <div class="main-content">
     <div class="container">
         <div class="result-container">

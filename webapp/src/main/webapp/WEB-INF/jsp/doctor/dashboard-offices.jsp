@@ -20,13 +20,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp">
     <jsp:param name="id" value="${doctor.imageId}" />
     <jsp:param name="doctorId" value="${doctor.id}" />
 </jsp:include>
 
-<!-- Success Notification Toast -->
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
         <i class="fas fa-check"></i>
@@ -40,7 +38,6 @@
     </button>
 </div>
 
-<!-- Remove Office Confirmation Modal -->
 <div id="removeOfficeModal" class="remove-confirmation-modal" style="display: none;">
     <div class="remove-modal-overlay" onclick="hideRemoveConfirmation()"></div>
     <div class="remove-modal-content">
@@ -76,9 +73,7 @@
     <c:set var="isDoctor" value="${true}" scope="request"/>
     <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp"/>
 
-    <!-- Dashboard Content Area -->
     <div class="dashboard-content">
-        <!-- Offices Tab -->
         <div class="tab-content active" id="offices-tab">
             <div class="tab-header">
                 <h2>
@@ -93,7 +88,6 @@
                 </div>
             </div>
 
-            <!-- Offices Display -->
             <div id="offices-display" class="offices-content">
                 <c:choose>
                     <c:when test="${empty doctorOffices}">
@@ -147,14 +141,12 @@
                 </c:choose>
             </div>
 
-            <!-- Offices Management Form -->
             <div id="offices-form-container" class="profile-section" style="display: none;">
                 <h3 class="section-title text-center">
                     <i class="fas fa-building"></i>
                     <spring:message code="offices.manage.title" />
                 </h3>
 
-                <!-- Office Filter Tabs -->
                 <div class="office-filter-tabs">
                     <button class="filter-tab" data-filter="active" onclick="filterOffices('active')">
                         <i class="fas fa-check-circle"></i>
@@ -188,7 +180,6 @@
                         </div>
 
                         <div id="doctor-offices-container">
-                            <!-- Offices will be rendered here by JavaScript -->
                         </div>
 
                         <form:errors path="doctorOfficeForm" cssClass="error-message visible"/>

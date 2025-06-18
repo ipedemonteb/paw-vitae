@@ -33,8 +33,6 @@ public class DoctorExperienceServiceImplTest {
     @InjectMocks
     private DoctorExperienceServiceImpl doctorExperienceService;
 
-    //@TODO: Should i test update? how??
-
     @Test
     public void testCreateInvalidUser() {
         //Preconditions

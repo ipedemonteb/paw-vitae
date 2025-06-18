@@ -196,7 +196,6 @@
         input.classList.add('has-value');
       }
 
-      // Add event listeners
       input.addEventListener('focus', function() {
         this.parentElement.classList.add('focused');
       });
@@ -230,7 +229,6 @@
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
 
-        // Toggle icon
         const icon = this.querySelector('i');
         if (type === 'password') {
           icon.classList.remove('fa-eye-slash');
@@ -242,7 +240,6 @@
       });
     }
 
-    // Form validation
     const loginForm = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const emailError = document.getElementById('email-error');
@@ -270,7 +267,6 @@
           emailInput.parentElement.classList.remove('error');
         }
 
-        // Validate password
         if (!passwordInput.value) {
           passwordError.textContent = '<spring:message code="login.validation.password.required" javaScriptEscape="true" />';
           passwordInput.classList.add('error');
@@ -285,7 +281,6 @@
         if (!isValid) {
           e.preventDefault();
         } else {
-          // Show loading state
           loginButton.classList.add('loading');
           loginButton.disabled = true;
         }

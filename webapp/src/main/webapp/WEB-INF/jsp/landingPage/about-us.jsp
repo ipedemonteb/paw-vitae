@@ -23,7 +23,6 @@
 </jsp:include>
 
 <main class="landing-container">
-    <!-- Hero Section -->
     <section class="hero-section about-hero">
         <div class="container">
             <div class="hero-content">
@@ -33,7 +32,6 @@
         </div>
     </section>
 
-    <!-- Our Story Section -->
     <section class="story-section">
         <div class="container">
             <div class="section-header">
@@ -52,7 +50,6 @@
         </div>
     </section>
 
-    <!-- Our Mission Section -->
     <section class="mission-section about-mission">
         <div class="container">
             <div class="section-header">
@@ -89,7 +86,6 @@
         </div>
     </section>
 
-    <!-- Values Section -->
     <section class="values-section">
         <div class="container">
             <div class="section-header">
@@ -134,7 +130,6 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
     <section class="contact-section">
         <div class="container">
             <div class="section-header">
@@ -183,21 +178,14 @@
         </div>
     </section>
 
-
-
-
-    <!-- Back to top button -->
     <button id="backToTop" class="back-to-top">
         <i class="fas fa-arrow-up"></i>
     </button>
 </main>
 
-<!-- Scripts -->
 <script>
-    // Mobile menu toggle
     document.addEventListener('DOMContentLoaded', function() {
 
-        // Back to top button
         const backToTopButton = document.getElementById('backToTop');
 
         window.addEventListener('scroll', () => {

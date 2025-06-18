@@ -27,8 +27,6 @@ public class DoctorOfficeAvailabilityServiceImplTest {
     @InjectMocks
     private DoctorOfficeAvailabilityServiceImpl doctorOfficeAvailabilityService;
 
-    //@TODO: Should i test update? how?
-
     @Test
     public void testGetJsonByDoctorIdEmptySlot() {
         //Preconditions

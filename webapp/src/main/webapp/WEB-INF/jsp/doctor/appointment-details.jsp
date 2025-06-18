@@ -67,7 +67,6 @@
     </button>
 </div>
 
-<!-- Main Content -->
 <main class="main-content">
     <div class="container">
         <div class="appointment-container">
@@ -77,7 +76,6 @@
             </div>
 
             <div class="appointment-body">
-                <!-- Display doctor information if available -->
                 <c:if test="${not empty appointment.patient}">
                     <div class="doctor-info">
                         <div class="doctor-image">
@@ -100,7 +98,6 @@
                     </div>
                 </c:if>
 
-                <!-- Status field - NEW -->
                 <div class="specialty-card-appointment status-card">
                     <div class="specialty-icon-appointment">
                         <i class="fas fa-clipboard-check"></i>
@@ -118,7 +115,6 @@
                     </div>
                 </div>
 
-                <!-- Improved date display -->
                 <div class="specialty-card-appointment">
                     <div class="specialty-icon-appointment">
                         <i class="fas fa-calendar"></i>
@@ -245,7 +241,6 @@
                             </h2>
                             <c:choose>
                                 <c:when test="${not empty existingRating}">
-                                    <!-- Display existing rating with title -->
                                     <div class="review-card">
                                         <div class="review-card-content">
                                             <div class="review-header">
@@ -264,7 +259,6 @@
                                     </div>
                                 </c:when>
                                 <c:otherwise>
-                                    <!-- Styled No Reviews Message -->
                                     <div class="review-card">
                                         <div class="no-reviews-message" style="border: none; box-shadow: none; margin-bottom: 0;">
                                             <div class="no-reviews-icon">
@@ -293,7 +287,6 @@
                                     <spring:message code="appointment.details.doctor.files.title"/>
                                 </h2>
 
-                                <!-- Report textarea -->
                                 <c:choose>
                                     <c:when test="${empty appointment.report}">
                                         <div class="form-group">
@@ -352,7 +345,6 @@
                                 </div>
                             </div>
 
-                            <!-- File Upload Section -->
                             <div class="form-group">
                                 <label for="files">
                                     <spring:message code="appointment.form.files"  />

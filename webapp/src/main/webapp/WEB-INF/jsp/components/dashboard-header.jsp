@@ -78,7 +78,6 @@
   </c:if>
 </div>
 
-<!-- Dashboard Navigation Tabs -->
 <div class="dashboard-nav">
   <a href="<c:url value='/${isDoctor ? "doctor" : "patient"}/dashboard/upcoming'/>" class="nav-tab ${activeTab == 'upcoming' ? 'active' : ''}">
     <i class="fas fa-calendar-alt"></i>
