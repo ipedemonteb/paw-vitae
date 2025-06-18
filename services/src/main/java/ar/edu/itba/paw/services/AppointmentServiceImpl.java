@@ -76,7 +76,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(() -> new DoctorOfficeNotFoundException("Doctor office not found"));
 
-        //Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
         Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new SpecialtyNotFoundException("Specialty not found")),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice, allowFullHistory);
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 

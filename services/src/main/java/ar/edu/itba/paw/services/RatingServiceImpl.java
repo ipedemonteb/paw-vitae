@@ -38,7 +38,6 @@ public class RatingServiceImpl implements RatingService {
         this.appointmentService = appointmentService;
     }
 
-    //@TODO: Fix
     @Transactional
     @Override
     public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
