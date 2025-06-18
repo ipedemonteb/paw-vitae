@@ -319,6 +319,7 @@
     font-size: 12px;
     transition: var(--transition);
     position: relative;
+    z-index: 10;
 }
 
 .office-action-btn:hover {
