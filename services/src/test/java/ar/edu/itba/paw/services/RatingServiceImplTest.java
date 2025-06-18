@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +36,7 @@ public class RatingServiceImplTest {
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
             new Coverage(1L, "Coverage A"), NEIGHBORHOOD, true);
     private static final long APPOINTMENT_ID = 1L;
-    private static final Appointment APPOINTMENT = new Appointment(LocalDateTime.now(), "Confirmed", "Consultation",
+    private static final Appointment APPOINTMENT = new Appointment(LocalDateTime.now(ZoneId.systemDefault()), "Confirmed", "Consultation",
             new Specialty(3L, "Cardiology"), DOCTOR, PATIENT, "Report",
             new DoctorOffice(DOCTOR, NEIGHBORHOOD, List.of(new Specialty(1L, "Specialty A")),
                     "Office A", true, null,

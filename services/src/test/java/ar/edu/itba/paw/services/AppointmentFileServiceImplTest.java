@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class AppointmentFileServiceImplTest {
 
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
             new Coverage(1L, "Coverage A"), NEIGHBORHOOD, true);
-    private static final Appointment APPOINTMENT = new Appointment(LocalDateTime.now(), "Confirmed", "Consultation",
+    private static final Appointment APPOINTMENT = new Appointment(LocalDateTime.now(ZoneId.systemDefault()), "Confirmed", "Consultation",
             new Specialty(3L, "Cardiology"), DOCTOR, PATIENT,"Report", DOCTOR_OFFICE, true
     );
     private static final AppointmentFile APPOINTMENT_FILE = new AppointmentFile(
