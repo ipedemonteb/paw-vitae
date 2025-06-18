@@ -251,7 +251,7 @@
     background: #fafafa;
     transition: opacity 0.3s ease, transform 0.3s ease;
     position: relative;
-    z-index: 9999;
+    z-index: 10;
 }
 
 .office-entry:hover {
@@ -319,7 +319,6 @@
     font-size: 12px;
     transition: var(--transition);
     position: relative;
-    z-index: 9999;
 }
 
 .office-action-btn:hover {
