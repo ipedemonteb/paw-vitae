@@ -87,10 +87,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional
     @Async
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void completeAppointments() {
+        LOGGER.debug("Completing past appointments that are confirmed and have passed the date");
         List<Appointment> appointments= appointmentDao.getPastConfirmedAppointments();
         for (Appointment appointment : appointments) {
+            LOGGER.debug("Completing appointment with id: {}", appointment.getId());
             appointment.setStatus(AppointmentStatus.COMPLETO.getValue());
         }
     }
