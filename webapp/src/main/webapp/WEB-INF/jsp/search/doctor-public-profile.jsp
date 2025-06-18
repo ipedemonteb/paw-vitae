@@ -26,7 +26,6 @@
 </jsp:include>
 
 <c:set var="isEditMode" value="${not empty editMode and editMode}" />
-<!-- Success Notification Toast -->
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
         <i class="fas fa-check"></i>
@@ -160,7 +159,6 @@
                         </c:choose>
                     </div>
 
-                    <!-- Contact Info -->
                     <div class="contact-info">
                         <div class="contact-item">
                             <i class="fas fa-envelope"></i>
@@ -175,9 +173,7 @@
             </div>
         </div>
 
-        <!-- Doctor Details Grid -->
         <div class="details-grid">
-            <!-- About/Description Section with Edit Capability -->
             <div class="detail-card full-width">
                 <div class="detail-card-header">
                     <h3><i class="fas fa-user"></i><spring:message code="doctor.profile.about"/></h3>
@@ -208,7 +204,6 @@
             </div>
 
             <div class="specialty-coverage-row">
-                <!-- Specialties Section -->
                 <div class="detail-card">
                     <div class="detail-card-header">
                         <h3><i class="fas fa-stethoscope"></i> <spring:message code="doctor.profile.specialties" /></h3>

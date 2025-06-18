@@ -26,7 +26,6 @@
     <jsp:param name="doctorId" value="${doctor.id}" />
 </jsp:include>
 
-<!-- Success Notification Toast -->
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
         <i class="fas fa-check"></i>
@@ -42,7 +41,6 @@
 <main class="dashboard-container">
 
     <div class="dashboard-content">
-        <!-- Medical History Tab -->
         <div class="tab-content active" id="medical-history-tab">
             <div class="tab-header">
                 <div class="header-content">
@@ -56,7 +54,6 @@
                                 <i class="fas fa-file-medical"></i>
                             </div>
                             <div class="stat-content">
-                                <!-- Calculate total files from grouped entries -->
                                 <c:set var="totalFiles" value="0" />
                                 <c:forEach items="${appointmentFiles}" var="appointmentEntry">
                                     <c:set var="totalFiles" value="${totalFiles + fn:length(appointmentEntry.value)}" />
@@ -78,7 +75,6 @@
                 </div>
             </div>
 
-            <!-- Sort Filter Section -->
             <div class="sort-filter-section">
             <div class="filter-container">
                 <div class="filter-group">
@@ -101,9 +97,7 @@
             </div>
         </div>
 
-            <!-- Medical History Content -->
             <div class="medical-history-content">
-                <!-- Empty State -->
                 <div id="emptyState" class="empty-state" style="display: none;">
                     <div class="empty-state-icon">
                         <i class="fas fa-folder-open"></i>
@@ -112,7 +106,6 @@
                     <p class="empty-state-message"><spring:message code="dashboard.medicalHistory.empty.message" /></p>
                 </div>
 
-                <!-- No Search Results -->
                 <div id="noResults" class="no-results" style="display: none;">
                     <div class="no-results-icon">
                         <i class="fas fa-search"></i>
@@ -121,7 +114,6 @@
                     <p class="no-results-message"><spring:message code="dashboard.medicalHistory.noResults.message" /></p>
                 </div>
 
-                <!-- Appointments with Files -->
                 <div id="appointmentsContainer" class="appointments-container">
                     <c:choose>
                         <c:when test="${empty appointmentFiles}">
@@ -137,7 +129,6 @@
                                      data-date="${appointmentEntry.key.date}"
                                      data-doctor="<c:out value='${appointmentEntry.key.doctor.name} ${appointmentEntry.key.doctor.lastName}' />">
 
-                                    <!-- Appointment Header -->
                                     <div class="appointment-header">
                                         <div class="appointment-info">
                                             <div class="appointment-title">
@@ -174,7 +165,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Files Section -->
                                     <div class="files-section" id="files-${appointmentEntry.key.id}" style="display: none;">
                                         <div class="files-header">
                                             <h4><spring:message code="dashboard.medicalHistory.attachedFiles" /></h4>
@@ -268,7 +258,6 @@
                     </c:choose>
                 </div>
 
-                <!-- Pagination -->
                 <c:if test="${totalPages > 1}">
                     <div class="pagination-container">
                         <div class="pagination">
@@ -303,7 +292,6 @@
     </div>
 </main>
 
-<!-- Include the toast notification script -->
 <script src="<c:url value='/js/toast-notification.js' />"></script>
 <script src="<c:url value='/js/medical-history.js' />"></script>
 

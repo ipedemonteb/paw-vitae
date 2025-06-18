@@ -18,7 +18,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp">
     <jsp:param name="id" value="${doctor.imageId}" />
     <jsp:param name="doctorId" value="${doctor.id}" />
@@ -31,9 +30,7 @@
     <c:set var="isDoctor" value="${true}" scope="request"/>
     <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp"/>
 
-    <!-- Dashboard Content Area -->
     <div class="dashboard-content">
-        <!-- Appointment History Tab -->
         <div class="tab-content active" id="history-tab">
             <div class="tab-header">
                 <h2><spring:message code="dashboard.history.title" /></h2>
@@ -125,7 +122,6 @@
                                 </div>
                             </div>
                         </c:forEach>
-                        <!-- Pagination -->
                         <c:if test="${totalPages > 1}">
                             <div class="pagination">
                                 <c:if test="${currentPage > 1}">
@@ -186,7 +182,6 @@
     </div>
 </main>
 
-<!-- Modales comunes -->
 <div id="confirmAppointmentModal" class="remove-modal-overlay">
     <div class="modal-container">
         <div class="remove-modal-header">

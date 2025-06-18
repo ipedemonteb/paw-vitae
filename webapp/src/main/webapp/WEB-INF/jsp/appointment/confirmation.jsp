@@ -17,10 +17,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
+
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<!-- Main Content -->
+
 <main class="main-content">
     <div class="container">
         <div class="confirmation-container">
@@ -33,7 +33,6 @@
             </div>
 
             <div class="confirmation-body">
-                <!-- Appointment Details -->
                 <div class="confirmation-details">
                     <div class="confirmation-item">
                         <div class="confirmation-label"><spring:message code="appointment.form.reason"/></div>
@@ -83,7 +82,6 @@
                     </div>
                 </div>
 
-                <!-- Attached Files Section -->
                 <c:if test="${not empty patientFiles}">
                     <div class="files-section">
                         <h3 class="files-title">
@@ -111,7 +109,6 @@
                     </div>
                 </c:if>
 
-                <!-- Doctor Information -->
                 <c:if test="${not empty appointment.doctor}">
                     <div class="doctor-info">
                         <div class="doctor-image">

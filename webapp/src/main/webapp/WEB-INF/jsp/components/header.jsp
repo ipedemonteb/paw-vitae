@@ -179,7 +179,6 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu toggle functionality
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const mainNav = document.querySelector('.main-nav');
     const body = document.body;
@@ -207,7 +206,6 @@
           e.stopPropagation();
           const expanded = this.getAttribute('aria-expanded') === 'true';
 
-          // Close all other dropdowns first
           const allToggles = document.querySelectorAll('.user-dropdown-toggle, .register-dropdown-toggle');
           const allMenus = document.querySelectorAll('.user-dropdown-menu, .register-dropdown-menu');
 
@@ -219,7 +217,6 @@
             if (m !== menu) m.classList.remove('show');
           });
 
-          // Toggle current dropdown
           this.setAttribute('aria-expanded', !expanded);
           menu.classList.toggle('show');
         });
@@ -239,7 +236,6 @@
       }
     });
 
-    // Add active class to current nav link
     const currentPath = window.location.pathname;
     const context = '${pageContext.request.contextPath}';
     const navLinks = document.querySelectorAll('.nav-link');

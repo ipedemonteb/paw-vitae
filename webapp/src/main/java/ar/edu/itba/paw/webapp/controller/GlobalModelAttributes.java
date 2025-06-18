@@ -26,5 +26,4 @@ public class GlobalModelAttributes {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userService.getByEmail(auth.getName());
     }
-
 }

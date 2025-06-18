@@ -19,10 +19,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<!-- Success Notification Toast -->
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
         <i class="fas fa-check"></i>
@@ -37,15 +35,12 @@
 </div>
 
 <main class="dashboard-container">
-    <!-- Include the dashboard header component -->
     <c:set var="activeTab" value="profile" scope="request" />
     <c:set var="user" value="${patient}" scope="request"/>
     <c:set var="isDoctor" value="${false}" scope="request"/>
     <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp"/>
 
-    <!-- Dashboard Content Area -->
     <div class="dashboard-content">
-        <!-- Profile Tab -->
         <div class="tab-content active" id="profile-tab">
             <div class="tab-header">
                 <h2><spring:message code="dashboard.profile.title" /></h2>
@@ -58,7 +53,6 @@
             </div>
 
             <div class="profile-content">
-                <!-- Visible Profile Information -->
                 <div id="profile-view" class="profile-section" style="display: <c:choose>
                 <c:when test="${display == 'none'}">block</c:when>
                 <c:otherwise>none</c:otherwise>
@@ -99,7 +93,6 @@
                     </div>
                 </div>
 
-                <!-- Edit Profile Form (Hidden by default) -->
                 <div id="edit-profile-form" class="profile-section" style="display: ${display};">
                     <h3 class="section-title text-center"><spring:message code="dashboard.profile.edit" /></h3>
 
@@ -168,7 +161,6 @@
     </div>
 </main>
 
-<!-- Include the toast notification script -->
 <script src="<c:url value='/js/toast-notification.js' />"></script>
 
 <script>

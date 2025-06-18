@@ -47,7 +47,4 @@ public class FileController {
         response.getOutputStream().write(file.getFileData());
         response.getOutputStream().flush();
     }
-
-
-
 }

@@ -17,10 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<!-- Main Content -->
 <div class="main-content">
     <div class="container">
         <div class="change-password-container">
@@ -32,7 +30,7 @@
 
                 <div class="card-body">
                     <form:form modelAttribute="ChangePasswordForm" method="post" action="${pageContext.request.contextPath}/change-password?token=${token}" class="change-password-form">
-                        <!-- Password Field -->
+
                         <div class="form-group">
                             <label for="password" class="form-label"><spring:message code="change.password.new.password" /></label>
                             <div class="password-input-wrapper">
@@ -57,11 +55,7 @@
                             </div>
                             <div id="password-length-message" class="validation-message"></div>
                             <form:errors path="password" cssClass="error-message" />
-
-                            <!-- Password Strength Meter -->
                         </div>
-
-                        <!-- Repeat Password Field -->
                         <div class="form-group">
                             <label for="repeatPassword" class="form-label"><spring:message code="change.password.confirm.password" /></label>
                             <div class="password-input-wrapper">
@@ -102,11 +96,9 @@
     </div>
 </div>
 
-<!-- JavaScript for validation -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
-        // Set up messages object for internationalization
         window.messages = {
             passwordWeak: '<spring:message code="password.weak" javaScriptEscape="true" />',
             passwordMedium: '<spring:message code="password.medium" javaScriptEscape="true" />',
@@ -117,7 +109,6 @@
             fieldRequired: '<spring:message code="field.required" javaScriptEscape="true" />'
         };
 
-        // Password toggle visibility
         const togglePasswordButtons = document.querySelectorAll('.toggle-password');
         togglePasswordButtons.forEach(button => {
             button.addEventListener('click', function() {
@@ -136,7 +127,6 @@
             });
         });
 
-        // Password validation
         const passwordField = document.getElementById("password");
         const repeatPasswordField = document.getElementById("repeatPassword");
         const passwordLengthMessage = document.getElementById("password-length-message");
@@ -165,10 +155,8 @@
             const strengthText = document.querySelector(".strength-text");
             const passwordStrength = document.querySelector(".password-strength");
 
-            // Exit if elements don't exist
             if (!passwordStrength || !strengthText || !strengthMeterFill) return;
 
-            // Remove all classes
             passwordStrength.className = "password-strength";
 
             if (!password) {
@@ -177,19 +165,15 @@
                 return;
             }
 
-            // Calculate strength
             let strength = 0;
 
-            // Length check
             if (password.length >= 8) strength += 1
             if (password.length >= 12) strength += 1
 
-            // Character variety check
             if (/[A-Z]/.test(password)) strength += 1
             if (/[0-9]/.test(password)) strength += 1
             if (/[^A-Za-z0-9]/.test(password)) strength += 1
 
-            // Set strength level
             let strengthClass = "";
             let strengthLabel = "";
             let strengthIcon = "";
@@ -216,9 +200,7 @@
         }
 
         function validatePasswordRequirements(password) {
-            // Check if password has at least 8 characters
             const hasLength = password && password.length >= 8;
-            // Check if password has at least one uppercase letter
             const hasUppercase = /[A-Z]/.test(password);
 
             if (password) {
@@ -353,7 +335,6 @@
             }
         }
 
-        // Initial validation
         if (passwordField) {
             checkPasswordStrength();
             validatePasswordRequirements(passwordField.value);

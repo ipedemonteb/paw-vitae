@@ -43,11 +43,9 @@
             if (triggerButtons && modal) {
                 triggerButtons.forEach(button => {
                     button.addEventListener('click', function () {
-                        // Open the correct modal
                         modal.classList.add('show');
                         body.classList.add('modal-open');
 
-                        // If it's a cancel modal, dynamically set the appointmentId
                         if (isCancelModal) {
                             const appointmentId = this.getAttribute('data-id');
                             const hiddenInput = modal.querySelector('input[name="appointmentId"]');
@@ -89,8 +87,6 @@
                 });
             }
         };
-
-        // Setup modals for logout and cancel appointment
         setupModal('.logout-btn', 'logoutModal', false);
         setupModal('.cancel-appointment', 'cancelAppointmentModal', true);
     })

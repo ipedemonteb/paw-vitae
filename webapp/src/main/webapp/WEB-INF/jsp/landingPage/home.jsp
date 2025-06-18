@@ -23,7 +23,6 @@
 </jsp:include>
 
 <main class="landing-container">
-    <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
             <div class="hero-content">
@@ -83,7 +82,6 @@
         </div>
     </section>
 
-    <!-- Mission Section -->
     <section class="mission-section">
         <div class="container">
             <div class="section-header">
@@ -112,7 +110,6 @@
         </div>
     </section>
 
-    <!-- How It Works Section -->
     <section class="how-it-works-section">
         <div class="container">
             <div class="section-header">
@@ -166,7 +163,6 @@
         </div>
     </section>
 
-    <!-- Features Section -->
     <section class="features-section">
         <div class="container">
             <div class="section-header">
@@ -196,7 +192,6 @@
         </div>
     </section>
 
-    <!-- Doctor Ratings Section -->
     <c:if test="${not empty ratings}">
         <section class="testimonials-section doctor-ratings-section">
             <div class="container">
@@ -239,15 +234,11 @@
         </section>
     </c:if>
 
-    <!-- Footer -->
-
-    <!-- Back to top button -->
     <button id="backToTop" class="back-to-top">
         <i class="fas fa-arrow-up"></i>
     </button>
 </main>
 
-<!-- Scripts -->
 <script src="<c:url value='/js/search.js' />"></script>
 <script>
     const contextPath = "${pageContext.request.contextPath}";

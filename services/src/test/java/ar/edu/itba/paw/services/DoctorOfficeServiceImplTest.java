@@ -47,8 +47,6 @@ public class DoctorOfficeServiceImplTest {
     @InjectMocks
     private DoctorOfficeServiceImpl doctorOfficeService;
 
-    //@TODO: should i test update? how?
-
     @Test
     public void testTransformToDoctorOfficeInvalidNeighborhood() {
         //Preconditions

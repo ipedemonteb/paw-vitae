@@ -69,15 +69,12 @@
     </c:otherwise>
 </c:choose>
 <main class="dashboard-container">
-    <!-- Include the dashboard header component -->
     <c:set var="activeTab" value="upcoming" scope="request" />
     <c:set var="user" value="${patient}" scope="request"/>
     <c:set var="isDoctor" value="${false}" scope="request"/>
     <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp"/>
 
-    <!-- Dashboard Content Area -->
     <div class="dashboard-content">
-        <!-- Upcoming Appointments Tab -->
         <div class="tab-content active" id="upcoming-tab">
             <div class="tab-header">
                 <h2><spring:message code="dashboard.upcoming.title" /></h2>
@@ -185,7 +182,6 @@
                             </div>
                         </c:forEach>
 
-                        <!-- Pagination -->
                         <c:if test="${totalPages > 1}">
                             <div class="pagination">
                                 <c:if test="${currentPage > 1}">
