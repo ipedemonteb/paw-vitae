@@ -23,5 +23,6 @@ public interface AppointmentFileService {
     Page<AppointmentFile> getAllFilesForPatient(long patientId, int pageNumber, int pageSize);
 
     Page<Map.Entry<Appointment, List<AppointmentFile>>> getGroupedFilesForPatient(long patientId, int page, int pageSize, String direction);
- List<AppointmentFile> getByAppointmentIdForDoctor(long appointmentId);
+
+    List<AppointmentFile> getByAppointmentIdForDoctor(long appointmentId);
     }

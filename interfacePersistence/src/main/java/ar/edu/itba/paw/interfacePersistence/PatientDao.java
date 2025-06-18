@@ -16,14 +16,11 @@ public interface PatientDao {
 
     Optional<Patient> getByEmail(String email);
 
-
-
     List<Patient> getByIds(Set<Long> ids);
 
     String getLanguage(long id);
 
     Optional<Patient> getByVerificationToken(String token);
-
 
     Optional<Patient> getByResetToken(String token);
 

@@ -23,11 +23,6 @@ public class AccessHandler {
         this.userService = userService;
     }
 
-    /**
-     * @return true if the currently authenticated user is
-     * either the patient or the doctor on that appointment
-     */
-
     public boolean canAccessDoctorProfile(Authentication auth, Long doctorId) {
         Object principal = auth.getPrincipal();
         if (!(principal instanceof AuthUserDetails)) {
