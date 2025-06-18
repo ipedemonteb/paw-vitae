@@ -69,15 +69,12 @@
     </c:otherwise>
 </c:choose>
 <main class="dashboard-container">
-    <!-- Include the dashboard header component -->
     <c:set var="activeTab" value="upcoming" scope="request" />
     <c:set var="user" value="${patient}" scope="request"/>
     <c:set var="isDoctor" value="${false}" scope="request"/>
     <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp"/>
 
-    <!-- Dashboard Content Area -->
     <div class="dashboard-content">
-        <!-- Upcoming Appointments Tab -->
         <div class="tab-content active" id="upcoming-tab">
             <div class="tab-header">
                 <h2><spring:message code="dashboard.upcoming.title" /></h2>
@@ -123,8 +120,14 @@
                                 <div class="appointment-right">
                                     <div class="patient-info">
                                         <div class="patient-avatar">
-                                            <img src="<c:url value="/image/${empty appointment.doctor.imageId ? -1 : appointment.doctor.imageId}"/>" alt="<c:out value="${appointment.doctor.name} ${appointment.doctor.lastName}"/>"/>
-                                        </div>
+                                            <c:choose>
+                                                <c:when test="${appointment.doctor.imageId != null}">
+                                                    <img src='<c:url value="/image/${appointment.doctor.imageId}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="${appointment.doctor.name}" class="doctor-avatar" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default" class="doctor-avatar" />
+                                                </c:otherwise>
+                                            </c:choose>                                                </div>
                                         <div>
                                             <div class="patient-name">
                                                 <c:out value="${appointment.doctor.name}" /> <c:out value="${appointment.doctor.lastName}" />
@@ -179,7 +182,6 @@
                             </div>
                         </c:forEach>
 
-                        <!-- Pagination -->
                         <c:if test="${totalPages > 1}">
                             <div class="pagination">
                                 <c:if test="${currentPage > 1}">

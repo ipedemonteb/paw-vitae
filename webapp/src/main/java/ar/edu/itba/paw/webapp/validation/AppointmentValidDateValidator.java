@@ -38,7 +38,7 @@ public class AppointmentValidDateValidator implements ConstraintValidator<Appoin
             }
 
             LocalDateTime appointmentDateTime = LocalDateTime.of(date, LocalTime.of(hour, 0));
-            LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+            LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 
 
             if (!appointmentDateTime.isAfter(now)) {

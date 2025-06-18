@@ -16,7 +16,6 @@ public class Specialty {
     private String key;
 
     public Specialty() {
-        // For Hibernate use
     }
 
     public Specialty(long id, String key) {

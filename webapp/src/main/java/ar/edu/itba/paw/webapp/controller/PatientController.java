@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -30,16 +32,14 @@ public class PatientController {
     private final CoverageService coverageService;
     private final AppointmentFileService appointmentFileService;
     private final RatingService ratingService;
-    private final DoctorOfficeService doctorOfficeService;
 
     @Autowired
-    public PatientController(PatientService patientService, AppointmentService appointmentService, CoverageService coverageService, AppointmentFileService appointmentFileService, RatingService ratingService, DoctorOfficeService doctorOfficeService) {
+    public PatientController(PatientService patientService, AppointmentService appointmentService, CoverageService coverageService, AppointmentFileService appointmentFileService, RatingService ratingService) {
         this.patientService = patientService;
         this.appointmentService = appointmentService;
         this.coverageService = coverageService;
         this.appointmentFileService = appointmentFileService;
         this.ratingService = ratingService;
-        this.doctorOfficeService = doctorOfficeService;
     }
 
     @RequestMapping(value = "/patient/dashboard")
@@ -145,4 +145,21 @@ public class PatientController {
         );
         return new ModelAndView("redirect:/patient/dashboard/appointment-details/" + form.getAppointmentId() + "?rated=true");
     }
+
+    @RequestMapping("/patient/dashboard/medical-history")
+    public ModelAndView getMedicalHistory(@ParamCustomizer(defaultValue = 1) QueryParam page,
+                                          @ModelAttribute("loggedUser") Patient patient,
+                                          @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+        final ModelAndView mav = new ModelAndView("patient/dashboard-medical-history");
+
+        Page<Map.Entry<Appointment, List<AppointmentFile>>> groupedPage =
+                appointmentFileService.getGroupedFilesForPatient(patient.getId(), (int) page.getValue(), 10, direction );
+
+        mav.addObject("currentDirection", direction);
+        mav.addObject("appointmentFiles", groupedPage.getContent());
+        mav.addObject("currentPage", page.getValue());
+        mav.addObject("totalPages", groupedPage.getTotalPages());
+        return mav;
+    }
+
 }

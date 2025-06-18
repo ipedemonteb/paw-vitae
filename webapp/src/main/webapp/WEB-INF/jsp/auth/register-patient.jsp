@@ -61,7 +61,6 @@
                 <input type="hidden" id="repeatPasswordValue" name="repeatPasswordValue"
                        value="${patientForm.repeatPassword}"/>
 
-                <!-- Personal Information Section -->
                 <div class="form-section">
                     <div class="section-header">
                         <h2 class="section-title"><spring:message code="register.personalInfo"/></h2>
@@ -131,7 +130,6 @@
                                 <form:hidden path="neighborhoodId" id="neighborhoodId"/>
                             </div>
                             <div id="neighborhood-results" class="search-results-container" style="display: none;">
-                                <!-- Search results will be populated here -->
                             </div>
                             <div id="neighborhood-validation-message" class="error-text" style="display: none;"></div>
                             <div class="server-error-neighborhoodId">
@@ -158,7 +156,6 @@
                     </div>
                 </div>
 
-                <!-- Security Section -->
                 <div class="form-section">
                     <div class="section-header">
                         <h2 class="section-title"><spring:message code="register.security"/></h2>
@@ -216,7 +213,6 @@
                     </div>
                 </div>
 
-                <!-- Coverage Section -->
                 <div class="form-section">
                     <div class="section-header">
                         <h2 class="section-title"><spring:message code="register.coverage"/></h2>
@@ -239,7 +235,6 @@
                     </div>
                 </div>
 
-                <!-- Terms and Conditions -->
                 <div class="terms-section">
                     <div class="checkbox-container">
                         <input type="checkbox" id="terms" class="checkbox-input" required/>
@@ -253,7 +248,6 @@
                     </div>
                 </div>
 
-                <!-- Form Actions -->
                 <div class="form-actions">
                     <button type="submit" id="registerButton" class="submit-button"
                             onclick="this.disabled = true ; this.form.submit();">

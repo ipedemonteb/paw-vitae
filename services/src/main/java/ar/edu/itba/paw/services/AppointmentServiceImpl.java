@@ -3,10 +3,14 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
+import ar.edu.itba.paw.models.exception.DoctorOfficeNotFoundException;
+import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -40,27 +44,39 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    @Scheduled(cron = "0 0 0 * * ?") // Todos los días a las 00:00
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Async
     public void sendDailyReminders() {
-        LocalDate today = LocalDate.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+        LocalDate today = LocalDate.now();
         List<Appointment> appointments = appointmentDao.getAppointmentsByDate(today);
         for (Appointment appointment : appointments) {
             mailService.sendReminderEmail(appointment);
         }
     }
 
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Async// Every day at 01:00 AM
+    @Transactional
+    public void revokeHistoryPermissionForOldAppointments() {
+        LocalDateTime oneWeekAgo = LocalDateTime.now(ZoneId.systemDefault()).minusWeeks(1);
+        List<Appointment> oldAppointments = appointmentDao.getAppointmentsWithHistoryAllowedBefore(oneWeekAgo);
+        for (Appointment appointment : oldAppointments) {
+            appointment.setAllowFullHistory(false);
+        }
+        LOGGER.info("Revoked history permission for {} appointments older than one week", oldAppointments.size());
+    }
+
     @Transactional
     @Override
-    public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId) {
+    public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId, boolean allowFullHistory) {
         LOGGER.debug("Creating appointment for patientId: {}, doctorId: {}, date: {}, time: {}, reason: {}, specialtyId: {}", patientId, doctorId, date, time, reason, specialtyId);
 
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
 
-        DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(() -> new IllegalArgumentException("Doctor office not found")); // TODO: MAKE CUSTOM EXCEPTION
+        DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(() -> new DoctorOfficeNotFoundException("Doctor office not found"));
 
-        //Appointment appointment = appointmentDao.create(patientId, doctorId, localDateTime, reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")));
-        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new IllegalArgumentException("Specialty not found")),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice);
+        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new SpecialtyNotFoundException("Specialty not found")),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice, allowFullHistory);
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
         LOGGER.info("New appointment created with id: {}", appointment.getId());
@@ -73,8 +89,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Async
     @Scheduled(cron = "0 0 * * * *")
     public void completeAppointments() {
+        LOGGER.debug("Completing past appointments that are confirmed and have passed the date");
         List<Appointment> appointments= appointmentDao.getPastConfirmedAppointments();
         for (Appointment appointment : appointments) {
+            LOGGER.debug("Completing appointment with id: {}", appointment.getId());
             appointment.setStatus(AppointmentStatus.COMPLETO.getValue());
         }
     }
@@ -107,7 +125,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         LOGGER.debug("Getting appointment with id: {}", appointmentId);
         Optional<Appointment> appointment = appointmentDao.getById(appointmentId);
         appointment.ifPresent(a -> {
-            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            Boolean isCancellable = LocalDateTime.now(ZoneId.systemDefault()).plusHours(2).isBefore(a.getDate());
             a.setCancellable(isCancellable);
         });
         return appointment;
@@ -122,7 +140,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, filter);
         appointments.forEach(a -> {
-            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            Boolean isCancellable = LocalDateTime.now(ZoneId.systemDefault()).plusHours(2).isBefore(a.getDate());
             a.setCancellable(isCancellable);
         });
         return new Page<>(appointments, page, size, appointmentDao.countAppointments(userId, isFuture, filter));
@@ -154,7 +172,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         List<Appointment> appointments = appointmentDao.getAppointmentsByUserAndDate(userId, date, time);
         appointments.forEach(a -> {
-            Boolean isCancellable = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2).isBefore(a.getDate());
+            Boolean isCancellable = LocalDateTime.now(ZoneId.systemDefault()).plusHours(2).isBefore(a.getDate());
             a.setCancellable(isCancellable);
         });
         return appointments;
@@ -172,5 +190,42 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         return appointmentsByDate;
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public boolean hasHistoryAllowedByAppointmentId(long appointmentId, long doctorId) {
+        LOGGER.debug("Checking history permission for appointment with id: {}", appointmentId);
+        Optional<Appointment> appointment = appointmentDao.getById(appointmentId);
+        return appointment.isPresent() && appointment.get().isAllowFullHistory() && appointment.get().getDoctor().getId() == doctorId;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Patient getPatientByAppointmentId(long appointmentId) {
+        LOGGER.debug("Getting patient by appointmentId: {}", appointmentId);
+        Appointment appointment = getById(appointmentId).orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id: " + appointmentId));
+        return appointment.getPatient();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Appointment> getAppointmentsForPatientWithFilesOrReport(long patientId, int page, int pageSize, String direction) {
+        List<Appointment> appointments = appointmentDao.getAppointmentsByPatientWithFilesOrReport(patientId, page, pageSize, direction);
+        int total = appointmentDao.countAppointmentsByPatientWithFilesOrReport(patientId);
+        return new Page<>(appointments, page, pageSize, total);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean hasFullMedicalHistoryEnabled(long patientId, long doctorId) {
+        LOGGER.debug("Checking if full medical history is enabled for patientId: {}, doctorId: {}", patientId, doctorId);
+        return appointmentDao.hasFullMedicalHistoryEnabled(patientId, doctorId);
+    }
+
+    @Override
+    public boolean officeHasAppointments(long officeId) {
+        return appointmentDao.officeHasAppointments(officeId);
+    }
+
 
 }

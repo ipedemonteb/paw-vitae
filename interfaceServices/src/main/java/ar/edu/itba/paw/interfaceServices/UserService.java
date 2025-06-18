@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.interfaceServices;
 
-import ar.edu.itba.paw.models.AvailabilitySlot;
+
 import ar.edu.itba.paw.models.User;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,10 +30,6 @@ public interface UserService {
     boolean verifyRecoveryToken(String token);
 
     Long getImageId(User user);
-
-
-
-    void update(long id, String name, String lastName, String phone);
 
     Optional<? extends User> checkToken (String token, boolean isVerification);
 }

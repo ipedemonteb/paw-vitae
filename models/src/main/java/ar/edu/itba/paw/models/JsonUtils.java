@@ -1,10 +1,16 @@
 package ar.edu.itba.paw.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import java.io.IOException;
+import java.time.LocalTime;
 
 public final class JsonUtils {
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -35,6 +41,15 @@ public final class JsonUtils {
             return mapper.writerWithView(view).writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error serializando a JSON", e);
+        }
+    }
+
+    public static class LocalTimeHourSerializer extends JsonSerializer<LocalTime> {
+        @Override
+        public void serialize(LocalTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            if (value != null) {
+                gen.writeNumber(value.getHour());
+            }
         }
     }
 }

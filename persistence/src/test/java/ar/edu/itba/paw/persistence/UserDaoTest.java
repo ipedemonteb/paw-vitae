@@ -116,8 +116,20 @@ public class UserDaoTest {
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = 1 AND password = '" + newPassword + "'"));
     }
 
+    //@TODO: Check after fixing method
+//    @Test
+//    public void testGetLanguageByIdDoesNotExist() {
+//        //Preconditions
+//
+//        //Exercise
+//        String language = userDao.getLanguageById(1000L); // Non-existent user ID
+//
+//        //Postconditions
+//        assertNull(language);
+//    }
+
     @Test
-    public void testGetLanguageById() {
+    public void testGetLanguageByIdExists() {
         //Preconditions
 
         //Exercise
@@ -125,6 +137,20 @@ public class UserDaoTest {
 
         //Postconditions
         assertEquals("en", language);
+    }
+
+    @Test
+    public void testTokenExpirationDate() {
+        //Preconditions
+        String token = "VERIFTOKEN";
+
+        //Exercise
+        LocalDateTime expiration = userDao.tokenExpirationDate(token);
+
+        //Postconditions
+        assertNotNull(expiration);
+        assertEquals(expirationDate.getDayOfYear(), expiration.getDayOfYear());
+        assertEquals(expirationDate.getYear(), expiration.getYear());
     }
 
     @Rollback

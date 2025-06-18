@@ -2,44 +2,65 @@ package ar.edu.itba.paw.webapp.validation;
 
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
 import ar.edu.itba.paw.models.DoctorOffice;
+import ar.edu.itba.paw.models.DoctorOfficeAvailabilityForm;
+import ar.edu.itba.paw.webapp.form.AppointmentForm;
+import ar.edu.itba.paw.webapp.form.UpdateAvailabilityForm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
-import java.lang.reflect.Field;
 import java.util.List;
 
-public class OfficeOwnedByDoctorValidator implements ConstraintValidator<OfficeOwnedByDoctor, Object> {
-    private String officeId;
-    private String doctorId;
-    private final DoctorOfficeService doctorOfficeService;
+public class OfficeOwnedByDoctorValidator {
 
-    @Autowired
-    public OfficeOwnedByDoctorValidator(DoctorOfficeService doctorOfficeService) {
-        this.doctorOfficeService = doctorOfficeService;
+    public static class ForDoctorOfficeForm implements ConstraintValidator<OfficeOwnedByDoctor, AppointmentForm> {
+
+        private final DoctorOfficeService doctorOfficeService;
+
+        @Autowired
+        public ForDoctorOfficeForm(DoctorOfficeService doctorOfficeService) {
+            this.doctorOfficeService = doctorOfficeService;
+        }
+
+        @Override
+        public boolean isValid(AppointmentForm form, javax.validation.ConstraintValidatorContext context) {
+            List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(form.getDoctorId());
+            if (offices.stream().noneMatch(office -> office.getId() == form.getOfficeId())) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("{appointment.office.valid}")
+                        .addPropertyNode("officeId")
+                        .addConstraintViolation();
+                return false;
+            }
+            return true;
+        }
+
     }
 
-    @Override
-    public void initialize(OfficeOwnedByDoctor constraintAnnotation) {
-        this.officeId = constraintAnnotation.officeId();
-        this.doctorId = constraintAnnotation.doctorId();
-    }
+    public static class ForDoctorOfficeAvailabilityForm implements ConstraintValidator<OfficeOwnedByDoctor, UpdateAvailabilityForm> {
 
-    @Override
-    public boolean isValid(Object value, javax.validation.ConstraintValidatorContext context) {
-        try {
-            Field officeIdField = value.getClass().getDeclaredField(officeId);
-            Field doctorIdField = value.getClass().getDeclaredField(doctorId);
+        private final DoctorOfficeService doctorOfficeService;
 
-            officeIdField.setAccessible(true);
-            doctorIdField.setAccessible(true);
+        @Autowired
+        public ForDoctorOfficeAvailabilityForm(DoctorOfficeService doctorOfficeService) {
+            this.doctorOfficeService = doctorOfficeService;
+        }
 
-            long officeIdValue = (long) officeIdField.get(value);
-            long doctorIdValue = (long) doctorIdField.get(value);
-
-            List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(doctorIdValue);
-            return offices.stream().anyMatch(office -> office.getId() == officeIdValue);
-        } catch (Exception e) {
-            return false;
+        @Override
+        public boolean isValid(UpdateAvailabilityForm form, javax.validation.ConstraintValidatorContext context) {
+            List<DoctorOffice> offices = doctorOfficeService.getAllByDoctorId(form.getDoctorId());
+            if (form.getDoctorOfficeAvailabilities() != null) {
+                for (DoctorOfficeAvailabilityForm slot : form.getDoctorOfficeAvailabilities()) {
+                    if (offices.stream().noneMatch(office -> office.getId().equals(slot.getOfficeId()))) {
+                        context.disableDefaultConstraintViolation();
+                        context.buildConstraintViolationWithTemplate("{appointment.office.valid}")
+                                .addPropertyNode("doctorOfficeAvailabilities")
+                                .addConstraintViolation();
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
+
 }

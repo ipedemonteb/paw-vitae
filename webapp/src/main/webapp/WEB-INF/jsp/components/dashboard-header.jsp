@@ -6,7 +6,15 @@
 <div class="dashboard-header">
   <div class="doctor-info">
     <div class="doctor-avatar">
-      <img src="<c:url value="/image/${isDoctor ? (empty user.imageId ? -1 : user.imageId ): -1}"/>" alt="<c:out value="${user.name} ${user.lastName}"/>"/>
+      <c:choose>
+        <c:when test="${isDoctor == true && user.imageId != null}">
+          <img src='<c:url value="/image/${user.imageId}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="${user.name}" class="doctor-avatar-small" />
+        </c:when>
+        <c:otherwise>
+          <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default"  class="doctor-avatar"/>
+        </c:otherwise>
+      </c:choose>
+
     </div>
     <div class="doctor-details">
       <h1 class="doctor-name"><c:out value="${user.name}" /> <c:out value="${user.lastName}" /></h1>
@@ -70,7 +78,6 @@
   </c:if>
 </div>
 
-<!-- Dashboard Navigation Tabs -->
 <div class="dashboard-nav">
   <a href="<c:url value='/${isDoctor ? "doctor" : "patient"}/dashboard/upcoming'/>" class="nav-tab ${activeTab == 'upcoming' ? 'active' : ''}">
     <i class="fas fa-calendar-alt"></i>
@@ -80,10 +87,12 @@
     <i class="fas fa-history"></i>
     <span><spring:message code="dashboard.tab.history" /></span>
   </a>
-  <a href="<c:url value='/${isDoctor ? "doctor" : "patient"}/dashboard/profile'/>" class="nav-tab ${activeTab == 'profile' ? 'active' : ''}">
-    <i class="fas fa-user"></i>
-    <span><spring:message code="dashboard.tab.profile" /></span>
-  </a>
+  <c:if test="${!isDoctor}">
+    <a href="<c:url value='/patient/dashboard/medical-history'/>" class="nav-tab ${activeTab == 'medicalHistory' ? 'active' : ''}">
+      <i class="fas fa-notes-medical"></i>
+      <span><spring:message code="dashboard.tab.medical.history" /></span>
+    </a>
+  </c:if>
   <c:if test="${isDoctor}">
     <a href="<c:url value='/doctor/dashboard/availability'/>" class="nav-tab ${activeTab == 'availability' ? 'active' : ''}">
       <i class="fas fa-calendar-check"></i>
@@ -96,4 +105,8 @@
       <span><spring:message code="dashboard.tab.offices" /></span>
     </a>
   </c:if>
+  <a href="<c:url value='/${isDoctor ? "doctor" : "patient"}/dashboard/profile'/>" class="nav-tab ${activeTab == 'profile' ? 'active' : ''}">
+    <i class="fas fa-user"></i>
+    <span><spring:message code="dashboard.tab.profile" /></span>
+  </a>
 </div>

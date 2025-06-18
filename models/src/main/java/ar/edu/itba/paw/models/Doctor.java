@@ -28,12 +28,10 @@ public class Doctor extends User {
     private List<Coverage> coverageList = new ArrayList<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DoctorOffice> doctorOffices = new ArrayList<>();
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<AvailabilitySlot> availabilitySlots = new ArrayList<>();
+
 
     @Column(name = "rating")
     private Double rating = 1.0;
@@ -42,9 +40,8 @@ public class Doctor extends User {
     private int ratingCount = 0;
 
     @Column(name = "image_id")
-    private Long imageId = -1L;
+    private Long imageId = null;
 
-    //WHY NOT LAZY
     @OneToOne(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private DoctorProfile profile;
@@ -60,7 +57,6 @@ public class Doctor extends User {
 
 
     public Doctor() {
-        // For Hibernate use
     }
 
     public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, Double rating, int ratingCount, boolean verified) {
@@ -70,15 +66,6 @@ public class Doctor extends User {
         this.ratingCount = ratingCount;
     }
 
-    //Deprecated
-//    public Doctor(String name, long id, String lastName, String email, String password,
-//                  String phone, String language, Long imageId, Double rating,
-//                  int ratingCount, boolean verified) {
-//        super(name, id, lastName, email, password, phone, language, verified);
-//        this.imageId = imageId;
-//        this.rating = rating;
-//        this.ratingCount = ratingCount;
-//    }
 
     public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified, List<Specialty> specialtyList, List<Coverage> coverageList) {
         super(name, lastName, email, password, phone, language, verified);
@@ -88,7 +75,6 @@ public class Doctor extends User {
 
     }
 
-    // Views definition
     public static class Views {
         public static class Public {}
         public static class Private extends Public {}
@@ -119,11 +105,6 @@ public class Doctor extends User {
         this.doctorOffices = doctorOffices;
     }
 
-    public List<AvailabilitySlot> getAvailabilitySlots() {
-        return availabilitySlots;
-    }
-
-    public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) { this.availabilitySlots = availabilitySlots; }
 
     public Double getRating() {
         return rating;
@@ -160,16 +141,5 @@ public class Doctor extends User {
     public List<DoctorCertification> getCertifications() { return certifications; }
 
     public void setCertifications(List<DoctorCertification> certifications) { this.certifications = certifications; }
-
-
-    //ASK IF VALID
-//    public List<DoctorExperience> getExperiences() {
-//        return experiences.stream()
-//                .sorted(Comparator
-//                        .comparing((DoctorExperience e) -> e.getEndDate() == null ? 0 : 1)
-//                        .thenComparing(DoctorExperience::getEndDate, Comparator.nullsLast(Comparator.reverseOrder()))
-//                        .thenComparing(DoctorExperience::getStartDate, Comparator.reverseOrder()))
-//                .toList();
-//    }
 
 }

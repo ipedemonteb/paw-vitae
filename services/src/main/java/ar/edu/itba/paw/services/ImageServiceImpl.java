@@ -47,7 +47,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Optional<Images> findById(long id) {
         LOGGER.debug("Finding image with id {}", id);
-        if (id == -1) {
+        if (id <= -1) {
             return Optional.empty();
         }
         return imageDao.findById(id);
@@ -58,7 +58,7 @@ public class ImageServiceImpl implements ImageService {
     public void deleteImage(long id) {
         LOGGER.debug("Deleting image with id {}", id);
         imageDao.deleteImage(id);
-        LOGGER.info("Image with id {} deleted", id); //If I reach this line then I can assume the image was deleted
+        LOGGER.info("Image with id {} deleted", id);
     }
 
 }

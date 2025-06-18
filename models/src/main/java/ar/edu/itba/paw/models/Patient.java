@@ -18,7 +18,6 @@ public class Patient extends User {
 
 
     public Patient() {
-        // For Hibernate use
     }
 
     public Patient(String name, String lastName, String email, String password, String phone, String language, Coverage coverage, Neighborhood neighborhood, boolean verified) {
@@ -26,12 +25,6 @@ public class Patient extends User {
         this.coverage = coverage;
         this.neighborhood = neighborhood;
     }
-
-    //Deprecated
-//    public Patient(String name, long id, String lastName, String email, String password, String phone, String language, Coverage coverage, boolean verified) {
-//        super(name, id, lastName, email, password, phone, language, verified);
-//        this.coverage = coverage;
-//    }
 
     public Coverage getCoverage() {
         return coverage;

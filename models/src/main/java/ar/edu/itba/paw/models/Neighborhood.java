@@ -15,7 +15,6 @@ public class Neighborhood {
     private String name;
 
     public Neighborhood() {
-        // For Hibernate use
     }
 
     public Neighborhood(long id, String name) {

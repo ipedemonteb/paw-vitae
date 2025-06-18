@@ -78,6 +78,7 @@ public class SearchController {
         Doctor doctor = doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new);
         ModelAndView mav = new ModelAndView("search/doctor-public-profile");
         mav.addObject("doctor", doctor);
+        mav.addObject("editMode", false);
         mav.addObject("loggedUser", loggedUser);
         mav.addObject("doctorRatings", ratingService.getRatingsByDoctorId(doctorId));
         mav.addObject("offices", doctorOfficeService.getByDoctorId(doctorId));
@@ -90,14 +91,13 @@ public class SearchController {
                                      @ModelAttribute("loggedUser") final Doctor doctor
     ) {
         if (errors.hasErrors()) {
-            return searchByDoctorId(doctor.getId(), doctor, doctorProfileForm);
+            ModelAndView  mav = searchByDoctorId(doctor.getId(), doctor, doctorProfileForm);
+            mav.addObject("editMode", true);
+            return mav;
         }
-
         doctorProfileService.update(doctor, doctorProfileForm.getBiography(), doctorProfileForm.getDescription());
         doctorCertificationService.update(doctor, doctorProfileForm.getCertificates());
         doctorExperienceService.update(doctor, doctorProfileForm.getExperiences());
-
-
         return new ModelAndView("redirect:/search/" + doctor.getId() + "?updated=true");
     }
 }

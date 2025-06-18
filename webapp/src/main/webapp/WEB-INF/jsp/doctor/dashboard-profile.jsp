@@ -20,13 +20,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp">
     <jsp:param name="id" value="${doctor.imageId}" />
     <jsp:param name="doctorId" value="${doctor.id}" />
 </jsp:include>
 
-<!-- Success Notification Toast -->
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
         <i class="fas fa-check"></i>
@@ -47,9 +45,7 @@
     <c:set var="isDoctor" value="${true}" scope="request"/>
     <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp"/>
 
-    <!-- Dashboard Content Area -->
     <div class="dashboard-content">
-        <!-- Profile Tab -->
         <div class="tab-content active" id="profile-tab">
             <div class="tab-header">
                 <h2><spring:message code="dashboard.profile.title" /></h2>
@@ -131,7 +127,6 @@
                     </div>
                 </div>
 
-                <!-- Edit Profile Form (Hidden by default) -->
                 <div id="edit-profile-form" class="profile-section" style="display: ${display};">
                     <h3 class="section-title text-center">
                         <i class="fas fa-user-edit"></i>
@@ -139,7 +134,6 @@
                     </h3>
 
                     <form:form id="updateDoctorForm" modelAttribute="updateDoctorForm" method="post" action="${pageContext.request.contextPath}/doctor/dashboard/update" cssClass="edit-profile-form" enctype="multipart/form-data">
-                        <!-- Imagen de perfil -->
                     <div class="form-group">
                         <label class="form-label"><spring:message code="register.profileImage" /></label>
                         <div class="image-upload-container">

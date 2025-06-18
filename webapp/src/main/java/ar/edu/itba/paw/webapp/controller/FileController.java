@@ -34,4 +34,17 @@ public class FileController {
         response.getOutputStream().flush();
     }
 
+    @RequestMapping("/appointment/{appointmentId}/file-view/{fileId}")
+    public void viewFileInline(@PathVariable long appointmentId,
+                               @PathVariable long fileId,
+                               HttpServletResponse response) throws IOException {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AppointmentFile file = fileService.getAuthorizedFile(fileId, appointmentId, username)
+                .orElseThrow(FileNotFoundException::new);
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "inline; filename=\"" + file.getFileName() + "\"");
+        response.getOutputStream().write(file.getFileData());
+        response.getOutputStream().flush();
+    }
 }

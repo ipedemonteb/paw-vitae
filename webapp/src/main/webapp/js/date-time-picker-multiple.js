@@ -11,6 +11,7 @@ class DatePicker {
         this.input = container.querySelector(".date-picker-input")
         this.calendar = null
         this.selectedDate = null
+        this.showingYearSelector = false
 
         // Get messages from the global object or use defaults
         this.messages = window.appointmentMessages || {
@@ -61,8 +62,19 @@ class DatePicker {
         this.calendar.innerHTML = `
             <div class="date-picker-header">
                 <button type="button" class="date-picker-nav prev-month">&lsaquo;</button>
-                <div class="date-picker-month-year"></div>
+                <div class="date-picker-month-year">
+                    <span class="month-display"></span>
+                    <span class="year-display"></span>
+                </div>
                 <button type="button" class="date-picker-nav next-month">&rsaquo;</button>
+            </div>
+            <div class="date-picker-year-selector" style="display: none;">
+                <div class="year-selector-header">
+                    <button type="button" class="year-nav prev-years">&lsaquo;</button>
+                    <span class="year-range"></span>
+                    <button type="button" class="year-nav next-years">&rsaquo;</button>
+                </div>
+                <div class="year-grid"></div>
             </div>
             <div class="date-picker-weekdays"></div>
             <div class="date-picker-days"></div>
@@ -73,10 +85,19 @@ class DatePicker {
 
         // Get calendar elements
         this.monthYearDisplay = this.calendar.querySelector(".date-picker-month-year")
+        this.monthDisplay = this.calendar.querySelector(".month-display")
+        this.yearDisplay = this.calendar.querySelector(".year-display")
         this.weekdaysContainer = this.calendar.querySelector(".date-picker-weekdays")
         this.daysContainer = this.calendar.querySelector(".date-picker-days")
         this.prevButton = this.calendar.querySelector(".prev-month")
         this.nextButton = this.calendar.querySelector(".next-month")
+
+        // Year selector elements
+        this.yearSelector = this.calendar.querySelector(".date-picker-year-selector")
+        this.yearGrid = this.calendar.querySelector(".year-grid")
+        this.yearRange = this.calendar.querySelector(".year-range")
+        this.prevYearsButton = this.calendar.querySelector(".prev-years")
+        this.nextYearsButton = this.calendar.querySelector(".next-years")
 
         this.renderCalendar()
     }
@@ -97,6 +118,23 @@ class DatePicker {
         this.nextButton.addEventListener("click", (e) => {
             e.stopPropagation()
             this.goToNextMonth()
+        })
+
+        // Year display click to show year selector
+        this.yearDisplay.addEventListener("click", (e) => {
+            e.stopPropagation()
+            this.toggleYearSelector()
+        })
+
+        // Year selector navigation
+        this.prevYearsButton.addEventListener("click", (e) => {
+            e.stopPropagation()
+            this.goToPreviousYears()
+        })
+
+        this.nextYearsButton.addEventListener("click", (e) => {
+            e.stopPropagation()
+            this.goToNextYears()
         })
 
         // Close calendar when clicking outside
@@ -124,21 +162,94 @@ class DatePicker {
         })
 
         this.calendar.style.display = "block"
+        this.showingYearSelector = false
         this.renderCalendar()
     }
 
     hideCalendar() {
         this.calendar.style.display = "none"
+        this.showingYearSelector = false
+    }
+
+    toggleYearSelector() {
+        this.showingYearSelector = !this.showingYearSelector
+        if (this.showingYearSelector) {
+            this.renderYearSelector()
+        }
+        this.updateCalendarView()
+    }
+
+    updateCalendarView() {
+        if (this.showingYearSelector) {
+            this.yearSelector.style.display = "block"
+            this.weekdaysContainer.style.display = "none"
+            this.daysContainer.style.display = "none"
+        } else {
+            this.yearSelector.style.display = "none"
+            this.weekdaysContainer.style.display = "grid"
+            this.daysContainer.style.display = "grid"
+        }
     }
 
     renderCalendar() {
         this.renderHeader()
-        this.renderWeekdays()
-        this.renderDays()
+        if (!this.showingYearSelector) {
+            this.renderWeekdays()
+            this.renderDays()
+        }
+        this.updateCalendarView()
     }
 
     renderHeader() {
-        this.monthYearDisplay.textContent = `${this.messages.months[this.displayDate.getMonth()]} ${this.displayDate.getFullYear()}`
+        this.monthDisplay.textContent = this.messages.months[this.displayDate.getMonth()]
+        this.yearDisplay.textContent = this.displayDate.getFullYear()
+    }
+
+    renderYearSelector() {
+        const currentYear = this.displayDate.getFullYear()
+        const startYear = Math.floor(currentYear / 12) * 12
+        const endYear = startYear + 11
+
+        this.yearRange.textContent = `${startYear} - ${endYear}`
+        this.yearGrid.innerHTML = ""
+
+        for (let year = startYear; year <= endYear; year++) {
+            const yearElement = document.createElement("div")
+            yearElement.className = "year-item"
+            yearElement.textContent = year
+
+            if (year === currentYear) {
+                yearElement.classList.add("current-year")
+            }
+
+            if (this.selectedDate && year === this.selectedDate.getFullYear()) {
+                yearElement.classList.add("selected-year")
+            }
+
+            yearElement.addEventListener("click", () => {
+                this.selectYear(year)
+            })
+
+            this.yearGrid.appendChild(yearElement)
+        }
+    }
+
+    selectYear(year) {
+        this.displayDate.setFullYear(year)
+        this.showingYearSelector = false
+        this.renderCalendar()
+    }
+
+    goToPreviousYears() {
+        const currentYear = this.displayDate.getFullYear()
+        this.displayDate.setFullYear(currentYear - 12)
+        this.renderYearSelector()
+    }
+
+    goToNextYears() {
+        const currentYear = this.displayDate.getFullYear()
+        this.displayDate.setFullYear(currentYear + 12)
+        this.renderYearSelector()
     }
 
     renderWeekdays() {

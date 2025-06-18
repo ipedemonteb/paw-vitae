@@ -51,7 +51,7 @@ public class AuthController {
         doctorService.create(
                 form.getName(), form.getLastName(), form.getEmail(), form.getPassword(),
                 form.getPhone(), LocaleContextHolder.getLocale().getLanguage(), form.getImage(), form.getSpecialties(),
-                form.getCoverages(), form.getAvailabilitySlots(), form.getDoctorOfficeForm()
+                form.getCoverages(), form.getDoctorOfficeForm()
         );
         Optional<User> userOpt = userService.getByEmail(form.getEmail()).map(user -> (User) user);
         if (userOpt.isEmpty()) {

@@ -368,13 +368,10 @@
                                                     </div>
                                                 </div>
                                                 <div id="office-neighborhood-results-0" class="search-results-container" style="display: none;">
-                                                    <!-- Search results will be populated here -->
                                                 </div>
                                                 <div id="office-neighborhood-0-validation-message" class="error-message"></div>
                                             </div>
                                         </div>
-
-                                        <!-- Add specialty selection for this office -->
                                         <div class="form-group">
                                             <label class="form-label required-field"><spring:message code="register.officeSpecialties"/></label>
                                             <div class="multi-select-container" id="office-specialties-container-0">
@@ -426,7 +423,6 @@
                             <h2><spring:message code="register.availability"/></h2>
 
                             <div class="form-group">
-
                                 <label for="password" class="form-label">
                                     <spring:message code="register.availabilitySlots"/>
                                     <span class="required-mark">*</span>
@@ -442,21 +438,14 @@
                                     </div>
 
                                     <div id="time-slot-inputs">
-                                        <c:if test="${not empty registerForm.availabilitySlots}">
-                                            <c:forEach items="${registerForm.availabilitySlots}" var="slot"
-                                                       varStatus="status">
-                                                <div class="time-slot-row" id="slot-row-${status.index}"
-                                                     data-index="${status.index}">
-                                                </div>
-                                            </c:forEach>
-                                        </c:if>
                                     </div>
 
                                     <div id="time-slot-error" class="error-message" style="display: none;"></div>
                                     <div class="error-container">
                                     </div>
-                                    <div class="error-container-server-availabilitySlots">
-                                        <form:errors path="availabilitySlots" cssClass="error-message visible"/>
+
+                                    <div class="error-container-server-doctorOfficeFormAvailabilitySlots">
+                                        <form:errors path="officeAvailabilitySlotForms" cssClass="error-message visible"/>
                                     </div>
 
                                     <button type="button" class="btn-add-slot" id="add-slot-btn">
@@ -495,6 +484,7 @@
         dayOfWeek: '<spring:message code="register.dayOfWeek" javaScriptEscape="true" />',
         startTime: '<spring:message code="register.startTime" javaScriptEscape="true" />',
         endTime: '<spring:message code="register.endTime" javaScriptEscape="true" />',
+        office: '<spring:message code="register.office" javaScriptEscape="true" />',
         monday: '<spring:message code="register.monday" javaScriptEscape="true" />',
         tuesday: '<spring:message code="register.tuesday" javaScriptEscape="true" />',
         wednesday: '<spring:message code="register.wednesday" javaScriptEscape="true" />',
@@ -505,6 +495,7 @@
         timeSlotInvalidTime: '<spring:message code="register.timeSlotInvalidTime" javaScriptEscape="true" />',
         timeSlotOverlap: '<spring:message code="register.timeSlotOverlap" javaScriptEscape="true" />',
         timeSlotRequired: '<spring:message code="register.timeSlotRequired" javaScriptEscape="true" />',
+        noOfficesForSlot: '<spring:message code="register.noOfficesForSlot" javaScriptEscape="true" />',
         passwordWeak: '<spring:message code="register.passwordWeak" javaScriptEscape="true" />',
         passwordMedium: '<spring:message code="register.passwordMedium" javaScriptEscape="true" />',
         passwordStrong: '<spring:message code="register.passwordStrong" javaScriptEscape="true" />',
@@ -538,18 +529,21 @@
         officeSpecialtiesRequired: '<spring:message code="register.officeSpecialtiesRequired" javaScriptEscape="true" />'
     };
 
-
-    <c:if test="${not empty registerForm.availabilitySlots}">
-    window.existingSlots = [
-        <c:forEach items="${registerForm.availabilitySlots}" var="slot" varStatus="status">
-        {
-            index: ${status.index},
-            day: ${slot.dayOfWeek},
-            startTime: '${slot.startTime}',
-            endTime: '${slot.endTime}'
-        }<c:if test="${!status.last}">, </c:if>
-        </c:forEach>
-    ];
+    <c:if test="${not empty registerForm.doctorOfficeForm}">
+    window.existingSlots = [];
+    <c:forEach items="${registerForm.doctorOfficeForm}" var="office" varStatus="officeStatus">
+    <c:if test="${not empty office.officeAvailabilitySlotForms}">
+    <c:forEach items="${office.officeAvailabilitySlotForms}" var="slot" varStatus="slotStatus">
+    window.existingSlots.push({
+        index: ${officeStatus.index * 1000 + slotStatus.index},
+        day: ${slot.dayOfWeek},
+        startTime: '${slot.startTime}',
+        endTime: '${slot.endTime}',
+        officeIndex: ${officeStatus.index}
+    });
+    </c:forEach>
+    </c:if>
+    </c:forEach>
     </c:if>
 
     window.specialtyList = [<c:forEach items="${specialtyList}" var="specialty" varStatus="status">
@@ -558,7 +552,6 @@
             name: "<spring:message code="${specialty.key}"/>"
         }<c:if test="${!status.last}">,</c:if>
         </c:forEach>];
-
 
     <c:if test="${not empty registerForm.doctorOfficeForm}">
     window.existingOffices = [
@@ -586,7 +579,6 @@
             name: "${neighborhood.name}"
         }<c:if test="${!status.last}">,</c:if>
         </c:forEach>]
-
 </script>
 
 <script src="<c:url value='/js/register.js' />" defer></script>

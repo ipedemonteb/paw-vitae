@@ -21,7 +21,6 @@ public class ImageDaoHibeImpl implements ImageDao {
         return images;
     }
 
-    //@TODO: CHECK IMPLEMENTATION
     @Override
     public void deleteImage(long id) {
         Images images = em.find(Images.class, id);

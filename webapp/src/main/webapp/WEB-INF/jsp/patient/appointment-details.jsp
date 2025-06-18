@@ -46,8 +46,14 @@
                 <c:if test="${not empty doctor}">
                     <div class="doctor-info">
                         <div class="doctor-image">
-                            <img src="<c:url value='/image/${empty doctor.imageId ? -1 : doctor.imageId}'/>" alt="<c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/>" class="doctor-avatar">
-                        </div>
+                            <c:choose>
+                                <c:when test="${doctor.imageId != null}">
+                                    <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="${doctor.name}"class="doctor-avatar" />
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default" class="doctor-avatar"/>
+                                </c:otherwise>
+                            </c:choose>                               </div>
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/></h3>
                             <div class="card-specialty-list">
@@ -160,7 +166,15 @@
                                     <div class="file-info">
                                         <div class="file-name"><c:out value="${file.fileName}" /></div>
                                     </div>
-                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file-view/${file.id}' />"
+                                       class="btn-view-file"
+                                       target="_blank"
+                                       title="<spring:message code='dashboard.medicalHistory.viewFile' />">
+                                        <i class="fas fa-eye"></i>
+                                        <span><spring:message code="dashboard.medicalHistory.view" /></span>
+                                    </a>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>"
+                                       class="file-download" download>
                                         <i class="fas fa-download"></i>
                                     </a>
                                 </div>
@@ -284,6 +298,13 @@
                                             <div class="file-info">
                                                 <div class="file-name"><c:out value="${file.fileName}" /></div>
                                             </div>
+                                            <a href="<c:url value='/appointment/${appointment.id}/file-view/${file.id}' />"
+                                               class="btn-view-file"
+                                               target="_blank"
+                                               title="<spring:message code='dashboard.medicalHistory.viewFile' />">
+                                                <i class="fas fa-eye"></i>
+                                                <span><spring:message code="dashboard.medicalHistory.view" /></span>
+                                            </a>
                                             <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>" class="file-download" download>
                                                 <i class="fas fa-download"></i>
                                             </a>
@@ -396,7 +417,7 @@
                 </c:choose>
 
                 <div class="back-button-container">
-                    <a href="${pageContext.request.contextPath}/patient/dashboard" class="back-button">
+                 <a href="<c:url value='/patient/dashboard'/>" class="back-button">
                         <i class="fas fa-arrow-left"></i>
                         <span><spring:message code="appointment.details.back" text="Back to My Appointments" /></span>
                     </a>

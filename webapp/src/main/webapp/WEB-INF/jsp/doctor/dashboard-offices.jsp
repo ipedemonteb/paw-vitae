@@ -20,13 +20,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp">
     <jsp:param name="id" value="${doctor.imageId}" />
     <jsp:param name="doctorId" value="${doctor.id}" />
 </jsp:include>
 
-<!-- Success Notification Toast -->
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
         <i class="fas fa-check"></i>
@@ -40,14 +38,13 @@
     </button>
 </div>
 
-<!-- Remove Office Confirmation Modal -->
-<div id="removeOfficeModal" class="confirmation-modal" style="display: none;">
-    <div class="modal-overlay" onclick="hideRemoveConfirmation()"></div>
-    <div class="modal-content">
-        <div class="modal-header">
+<div id="removeOfficeModal" class="remove-confirmation-modal" style="display: none;">
+    <div class="remove-modal-overlay" onclick="hideRemoveConfirmation()"></div>
+    <div class="remove-modal-content">
+        <div class="remove-modal-header">
             <h3><i class="fas fa-exclamation-triangle text-warning"></i> <spring:message code="offices.remove.confirm.title" /></h3>
         </div>
-        <div class="modal-body">
+        <div class="remove-modal-body">
             <p><spring:message code="offices.remove.confirm.message" /></p>
             <div class="office-info-preview">
                 <strong id="officeNamePreview"></strong>
@@ -57,7 +54,7 @@
                 <span><spring:message code="offices.remove.confirm.warning" /></span>
             </div>
         </div>
-        <div class="modal-actions">
+        <div class="remove-modal-actions">
             <button type="button" class="btn btn-secondary" onclick="hideRemoveConfirmation()">
                 <i class="fas fa-times"></i>
                 <spring:message code="logout.confirmation.cancel" />
@@ -76,9 +73,7 @@
     <c:set var="isDoctor" value="${true}" scope="request"/>
     <jsp:include page="/WEB-INF/jsp/components/dashboard-header.jsp"/>
 
-    <!-- Dashboard Content Area -->
     <div class="dashboard-content">
-        <!-- Offices Tab -->
         <div class="tab-content active" id="offices-tab">
             <div class="tab-header">
                 <h2>
@@ -93,7 +88,6 @@
                 </div>
             </div>
 
-            <!-- Offices Display -->
             <div id="offices-display" class="offices-content">
                 <c:choose>
                     <c:when test="${empty doctorOffices}">
@@ -147,14 +141,12 @@
                 </c:choose>
             </div>
 
-            <!-- Offices Management Form -->
             <div id="offices-form-container" class="profile-section" style="display: none;">
                 <h3 class="section-title text-center">
                     <i class="fas fa-building"></i>
                     <spring:message code="offices.manage.title" />
                 </h3>
 
-                <!-- Office Filter Tabs -->
                 <div class="office-filter-tabs">
                     <button class="filter-tab" data-filter="active" onclick="filterOffices('active')">
                         <i class="fas fa-check-circle"></i>
@@ -174,12 +166,20 @@
 
                     <form:hidden path="doctorId" id="doctorId"/>
 
-                    <div class="form-group">
-                        <label class="form-label required-field">
+                    <div class="form-group" id="offices-form-group">
+                        <label class="form-label required-field" id="offices-label">
                             <spring:message code="register.doctorOffices" />
                         </label>
+
+                        <div class="empty-state-office">
+                            <div class="empty-icon">
+                                <i class="fas fa-building" style="font-size: 4rem;"></i>
+                            </div>
+                            <h3><spring:message code="offices.empty.title" /></h3>
+                            <p><spring:message code="offices.empty.disabled.message" /></p>
+                        </div>
+
                         <div id="doctor-offices-container">
-                            <!-- Offices will be rendered here by JavaScript -->
                         </div>
 
                         <form:errors path="doctorOfficeForm" cssClass="error-message visible"/>
@@ -264,7 +264,8 @@
                 }
                 <c:if test="${!sidStatus.last}">,</c:if>
                 </c:forEach>
-            ]
+            ],
+            hasAvailability: ${office.doctorOfficeAvailability.size() > 0}
         }<c:if test="${!status.last}">, </c:if>
         </c:forEach>
     ];
@@ -273,7 +274,7 @@
     // Modal functions
     function showRemoveConfirmation(index) {
         const office = doctorOffices.find(o => o.index === parseInt(index));
-        if (!office) return;
+        if (!office || (currentFilter === 'active' && office.active && doctorOffices.filter(o => o.active).length === 1)) return;
 
         pendingRemoveIndex = index;
 
@@ -322,10 +323,6 @@
             updateFilterCounts();
             applyCurrentFilter();
             hideRemoveConfirmation();
-            if (doctorOffices.filter(o => o.active).length === 0) {
-                // If all offices are removed, add a new office
-                addNewOffice();
-            }
         }
     }
 
@@ -366,19 +363,23 @@
             name: "",
             neighborhoodId: "",
             specialties: [],
-            active: true,
+            active: false,
             removed: false
         });
 
         // container.insertBefore(officeEntry, container.firstChild);
-        container.appendChild(officeEntry);
+        container.insertBefore(officeEntry, container.firstChild);
         initializeOffice(officeCounter);
         updateOfficeStatus(officeCounter);
         updateFilterCounts();
         officeCounter++;
+
+        filterOffices('disabled');
+        officeEntry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
     }
 
-    function createOfficeHTML(index, name, neighborhoodId, id, active) {
+    function createOfficeHTML(index, name, neighborhoodId, id, active, hasAvailability) {
         name = name || '';
         id = id || '';
         neighborhoodId = neighborhoodId || '';
@@ -397,17 +398,26 @@
         let html = '';
 
         // Status indicator
-        html += '<div class="office-status-indicator" id="status-indicator-' + index + '">';
+        html += '<div class="office-status-indicator disabled" id="status-indicator-' + index + '">';
         html += '<i class="fas fa-circle"></i>';
-        html += '<span id="status-text-' + index + '"><spring:message code='offices.status.active' /></span>';
+        html += '<span id="status-text-' + index + '"><spring:message code='offices.status.disabled' /></span>';
         html += '</div>';
 
         // Action buttons
         html += '<div class="office-actions">';
-        html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';
-        html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';
-        html += '<i class="fas fa-pause"></i>';
-        html += '</button>';
+
+        if (id && hasAvailability) {
+            html += '<button type="button" class="office-action-btn btn-toggle" id="toggle-btn-' + index + '" ';
+            html += 'onclick="toggleOfficeStatus(' + index + ')" data-tooltip="<spring:message code='offices.disable' />">';
+            html += '<i class="fas fa-pause"></i>';
+            html += '</button>';
+        } else {
+            html += '<div class="tooltip">'
+            html += '<i class="fas fa-info-circle tooltip-icon"></i>'
+            html += '<span class="tooltip-content"><spring:message code="office.active.criteria"/></span>'
+            html += '</div>'
+        }
+
         html += '<button type="button" class="office-action-btn btn-remove-office" id="remove-btn-' + index + '" ';
         html += 'onclick="showRemoveConfirmation(' + index + ')" data-tooltip="<spring:message code='offices.remove' />">';
         html += '<i class="fas fa-trash"></i>';
@@ -499,15 +509,18 @@
 
     function toggleOfficeStatus(index) {
         const office = doctorOffices.find(o => o.index === parseInt(index));
-        if (!office || office.removed) return;
+        if (!office || office.removed || (currentFilter === 'active' && doctorOffices.filter(o => o.active).length === 1)) return;
 
         office.active = !office.active;
         updateOfficeStatus(index);
         updateFilterCounts();
         applyCurrentFilter();
-        if (doctorOffices.filter(o => o.active).length === 0) {
-            // If all offices are removed, add a new office
-            addNewOffice();
+
+        if (doctorOffices.filter(o => !o.active && !o.removed).length === 0) {
+            const emptyState = document.querySelector('.empty-state-office');
+            if (emptyState) {
+                emptyState.style.display = 'flex';
+            }
         }
     }
 
@@ -529,7 +542,6 @@
 
         if (!office.active) {
             // Disabled state
-            officeEntry.classList.add('disabled');
             statusIndicator.classList.add('disabled');
             statusText.textContent = "<spring:message code='offices.status.disabled' />";
 
@@ -560,7 +572,16 @@
 
     function applyCurrentFilter() {
         const offices = document.querySelectorAll('.office-entry');
-        const addButton = document.getElementById('add-office-btn');
+
+        const emptyState = document.querySelector('.empty-state-office');
+
+        if (emptyState) {
+            if (currentFilter === 'disabled' && doctorOffices.filter(o => !o.active && !o.removed).length === 0) {
+                emptyState.style.display = 'flex';
+            } else {
+                emptyState.style.display = 'none';
+            }
+        }
 
         offices.forEach(officeElement => {
             const index = parseInt(officeElement.getAttribute('data-index'));
@@ -576,11 +597,9 @@
             switch (currentFilter) {
                 case 'active':
                     shouldShow = office.active;
-                    addButton.style.display = 'block';
                     break;
                 case 'disabled':
                     shouldShow = !office.active;
-                    addButton.style.display = 'none';
                     break;
             }
 
@@ -961,7 +980,7 @@
             officeEntry.className = "office-entry";
             officeEntry.setAttribute('data-index', officeCounter.toString());
 
-            officeEntry.innerHTML = createOfficeHTML(officeCounter, office.name, office.neighborhoodId, office.id, office.active);
+            officeEntry.innerHTML = createOfficeHTML(officeCounter, office.name, office.neighborhoodId, office.id, office.active, office.hasAvailability);
 
             container.appendChild(officeEntry);
             initializeOffice(officeCounter);
@@ -1095,134 +1114,5 @@
         }
     });
 </script>
-
-<style>
-    /* Confirmation Modal Styles */
-    .confirmation-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-    }
-
-    .modal-content {
-        position: relative;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        max-width: 500px;
-        width: 90%;
-        max-height: 90vh;
-        overflow-y: auto;
-        animation: modalSlideIn 0.3s ease;
-    }
-
-    @keyframes modalSlideIn {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .modal-header {
-        padding: 1.5rem 1.5rem 0;
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-    .modal-header h3 {
-        margin: 0 0 1rem;
-        color: #1f2937;
-        font-size: 1.25rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .modal-body {
-        padding: 1.5rem;
-    }
-
-    .modal-body p {
-        margin: 0 0 1rem;
-        color: #6b7280;
-        line-height: 1.6;
-    }
-
-    .office-info-preview {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        padding: 0.75rem;
-        margin: 1rem 0;
-        font-family: monospace;
-    }
-
-    .warning-note {
-        background: #fef3c7;
-        border: 1px solid #f59e0b;
-        border-radius: 6px;
-        padding: 0.75rem;
-        margin-top: 1rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .warning-note i {
-        color: #d97706;
-        margin-top: 2px;
-        flex-shrink: 0;
-    }
-
-    .modal-actions {
-        padding: 1rem 1.5rem 1.5rem;
-        border-top: 1px solid #e5e7eb;
-        display: flex;
-        gap: 0.75rem;
-        justify-content: flex-end;
-    }
-
-    .text-warning {
-        color: #f59e0b;
-    }
-
-    /* Responsive modal */
-    @media (max-width: 640px) {
-        .modal-content {
-            margin: 1rem;
-            width: calc(100% - 2rem);
-        }
-
-        .modal-actions {
-            flex-direction: column;
-        }
-
-        .modal-actions .btn {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-</style>
 </body>
 </html>

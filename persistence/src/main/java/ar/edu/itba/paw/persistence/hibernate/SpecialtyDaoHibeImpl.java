@@ -50,7 +50,6 @@ public class SpecialtyDaoHibeImpl implements SpecialtyDao {
         return query.getResultList();
     }
 
-    //@TODO: CHECK
     @Override
     public List<Specialty> getByDoctorId(long id) {
         final TypedQuery<Specialty> query = em.createQuery(

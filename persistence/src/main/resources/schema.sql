@@ -61,14 +61,6 @@ CREATE TABLE IF NOT EXISTS Doctor_Specialties (
     FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE CASCADE
     );
 
-CREATE TABLE IF NOT EXISTS Doctor_Availability (
-                                                   doctor_id INT NOT NULL,
-                                                   day_of_week INT NOT NULL,
-                                                   start_time TIME NOT NULL,
-                                                   end_time TIME NOT NULL,
-                                                   PRIMARY KEY (doctor_id, day_of_week, start_time),
-    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
-    );
 
 CREATE TABLE IF NOT EXISTS Appointments (
                                             id SERIAL PRIMARY KEY,
@@ -80,6 +72,7 @@ CREATE TABLE IF NOT EXISTS Appointments (
     reason TEXT,
     report TEXT,
     office_id INT NOT NULL,
+    allow_full_history BOOLEAN NOT NULL DEFAULT TRUE,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE,
     FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE RESTRICT,
@@ -168,3 +161,13 @@ CREATE TABLE IF NOT EXISTS Doctor_Certifications (
     issue_date DATE NOT NULL,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
     );
+
+CREATE TABLE IF NOT EXISTS Doctor_Office_Availability_Slots (
+                                                                  id SERIAL NOT NULL PRIMARY KEY,
+                                                                  office_id INT NOT NULL,
+                                                                  day_of_week INT NOT NULL,
+                                                                  start_time TIME NOT NULL,
+                                                                  end_time TIME NOT NULL,
+                                                                  UNIQUE (office_id, day_of_week, start_time),
+    FOREIGN KEY (office_id) REFERENCES Doctor_Offices(id) ON DELETE CASCADE
+);

@@ -59,7 +59,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void changeLanguage(long id, String language) {
-        userDao.changeLanguage(id, language);
+        User user = getById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        user.setLanguage(language);
         LOGGER.info("Language changed to '{}' for user with id={}", language, id);
     }
 
@@ -71,7 +72,8 @@ public class UserServiceImpl implements UserService {
         String token = UUID.randomUUID().toString();
         String verificationLink = BASE_URL + "/verify-confirmation?token=" + token;
         mailService.sendVerificationRegisterEmail(user, verificationLink);
-        userDao.setVerificationToken(user.getId(), token, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusDays(30));
+        user.setVerificationToken(token);
+        user.setTokenExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusDays(30));
         LOGGER.info("Verification token set and email sent for user id={}", user.getId());
     }
 
@@ -79,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setVerificationStatus(User user, boolean status) {
         LOGGER.debug("Setting verification for user id={}", user.getId());
-        userDao.setVerificationStatus(user.getId(), status);
+        user.setVerified(status);
         LOGGER.info("Verification status updated to {} for user id={}", status, user.getId());
     }
 
@@ -99,7 +101,8 @@ public class UserServiceImpl implements UserService {
         }
         String token = UUID.randomUUID().toString();
         String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
-        userDao.setResetPasswordToken(user.getId(), token, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(1));
+        user.setResetPasswordToken(token);
+        user.setTokenExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusHours(1));
         mailService.sendRecoverPasswordEmail(user, resetPasswordLink);
         LOGGER.info("Password reset token set and email sent for user id={}", user.getId());
     }
@@ -129,13 +132,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public boolean changePassword(String token, String password) {
-        Optional<? extends User> user = getByResetToken(token);
-        if (user.isPresent()) {
-                LOGGER.debug("Changing password for user id={}", user.get().getId());
+        Optional<? extends User> userOpt = getByResetToken(token);
+        if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                LOGGER.debug("Changing password for user id={}", user.getId());
                 String newPassword = passwordEncoder.encode(password);
-                userDao.changePassword(user.get().getId(), newPassword);
-                userDao.removeResetToken(token);
-                LOGGER.info("Password changed successfully for user id={}", user.get().getId());
+                user.setPassword(newPassword);
+                user.setResetPasswordToken(null);
+                LOGGER.info("Password changed successfully for user id={}", user.getId());
                 return true;
         }
             LOGGER.warn("User not found for valid token");
@@ -151,18 +155,10 @@ public class UserServiceImpl implements UserService {
         return ((Doctor) user).getImageId();
     }
 
-
-    // USELESS
-    @Transactional
-    @Override
-    public void update(long id, String name, String lastName, String phone) {
-        LOGGER.debug("Updating user with id: {}, name: {}, lastName: {}, phone: {}", id, name, lastName, phone);
-    }
-
     @Transactional
     @Override
     public Optional<? extends User> checkToken(String token,boolean isVerification) {
-        LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
+        LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 
         Optional<Patient> patient = isVerification
                 ? patientDao.getByVerificationToken(token)

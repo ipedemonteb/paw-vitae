@@ -2,10 +2,12 @@ package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.validation.AppointmentFileValid;
 import ar.edu.itba.paw.webapp.validation.InvalidDoctorFileForm;
+import ar.edu.itba.paw.webapp.validation.InvalidFileQuantity;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 @InvalidDoctorFileForm(message = "{InvalidDoctorFileForm.message}")
+@InvalidFileQuantity(message = "{InvalidFileQuantity.message}")
 public class DoctorFileForm {
 
     @Size(max = 5, message = "{appointment.files.max}")

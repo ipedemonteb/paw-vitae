@@ -6,11 +6,20 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DoctorOfficeDao {
+
     DoctorOffice create(DoctorOffice doctorOffice);
+
     Optional<DoctorOffice> getById(long id);
-    List<DoctorOffice> getAllByDoctorId(long doctorId);
+
+    List<DoctorOffice> getByDoctorId(long doctorId);
+
+    List<DoctorOffice> getByDoctorIdWithAvailability(long doctorId);
+
     List<DoctorOffice> getActiveByDoctorId(long doctorId);
+
     List<DoctorOffice> getByNameAndNeighborhoodId(String officeName, long neighborhoodId, long doctorId);
+
     DoctorOffice update(DoctorOffice o);
-    void softDelete(long id);
+
+    void remove(long id);
 }

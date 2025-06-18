@@ -25,7 +25,6 @@ public class UnavailabilitySlot {
 
     }
 
-    // Getters y Setters
     public UnavailabilitySlotId getId() {
         return id;
     }

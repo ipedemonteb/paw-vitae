@@ -25,7 +25,6 @@ public class DoctorProfile {
     private String description;
 
     public DoctorProfile() {
-        // Hibernate only
     }
 
     public DoctorProfile(Doctor doctor, String bio, String description) {

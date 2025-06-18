@@ -14,18 +14,18 @@ public class DoctorOffice {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_offices_id_seq")
     @SequenceGenerator(allocationSize = 1, sequenceName = "doctor_offices_id_seq", name = "doctor_offices_id_seq")
-    private long id;
+    private Long id;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL) //TODO find out where cascade types are necessary
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "neighborhood_id")
     private Neighborhood neighborhood;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "doctor_office_specialties",
             joinColumns = {
                     @JoinColumn(name = "office_id")
@@ -35,6 +35,9 @@ public class DoctorOffice {
             }
     )
     private List<Specialty> specialties;
+
+    @OneToMany(mappedBy = "office", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DoctorOfficeAvailability> doctorOfficeAvailability;
 
     @Column(name = "office_name", length = 50)
     private String officeName;
@@ -54,7 +57,15 @@ public class DoctorOffice {
         this.officeName = officeName;
     }
 
-    public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName, boolean active, LocalDateTime removed) {
+    public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName, boolean active) {
+        this.doctor = doctor;
+        this.neighborhood = neighborhood;
+        this.specialties = specialties;
+        this.officeName = officeName;
+        this.active = active;
+    }
+
+    public DoctorOffice(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties, String officeName, boolean active, LocalDateTime removed, List<DoctorOfficeAvailability> doctorOfficeAvailability) {
         this.doctor = doctor;
         this.neighborhood = neighborhood;
         this.specialties = specialties;
@@ -63,7 +74,7 @@ public class DoctorOffice {
         this.removed = removed;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -113,6 +124,22 @@ public class DoctorOffice {
 
     public void setRemoved(LocalDateTime removed) {
         this.removed = removed;
+    }
+
+    public List<DoctorOfficeAvailability> getDoctorOfficeAvailability() {
+        return doctorOfficeAvailability;
+    }
+
+    public void setDoctorOfficeAvailability(List<DoctorOfficeAvailability> doctorOfficeAvailabilities) {
+        this.doctorOfficeAvailability = doctorOfficeAvailabilities;
+    }
+
+    public void replaceAvailability(List<DoctorOfficeAvailability> newSlots) {
+        this.doctorOfficeAvailability.clear();
+        newSlots.forEach(s -> {
+            s.setOffice(this);
+            this.doctorOfficeAvailability.add(s);
+        });
     }
 
     @Override

@@ -20,11 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.format.Formatter;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.DatabasePopulator;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -58,10 +54,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 @EnableCaching
 @EnableAsync
@@ -74,7 +67,11 @@ import java.util.Properties;
 public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigurer {
 
     private final Environment env;
-
+    @Bean
+    public Object timeZoneInitializer() {
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Argentina/Buenos_Aires"));
+        return new Object();
+    }
     @Value("classpath:schema.sql")
     private Resource schemaSql;
 
@@ -118,6 +115,10 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
         registry.addResourceHandler("/js/**").addResourceLocations("/js/")
                 .setCachePeriod(0)
                 .resourceChain(false);
+        registry
+                .addResourceHandler("/img/**")
+                .addResourceLocations("/img/")
+                .resourceChain(true);
     }
 
     @Bean
@@ -130,28 +131,10 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
         return ds;
     }
 
-//    @Bean
-//    public PlatformTransactionManager transactionManager(final DataSource ds) {
-//        return new DataSourceTransactionManager(ds);
-//    }
     @Bean
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
-
-//    @Bean
-//    public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
-//        final DataSourceInitializer dsi = new DataSourceInitializer();
-//        dsi.setDataSource(ds);
-//        dsi.setDatabasePopulator(databasePopulator());
-//        return dsi;
-//    }
-
-//    private DatabasePopulator databasePopulator() {
-//        final ResourceDatabasePopulator dbp = new ResourceDatabasePopulator();
-//        dbp.addScript(schemaSql);
-//        return dbp;
-//    }
 
     @Bean
     public MessageSource messageSource() {
@@ -173,7 +156,7 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
     @Bean
     public MultipartResolver multipartResolver() {
         CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setMaxUploadSize(5242880); // 5MB
+        resolver.setMaxUploadSize(5242880);
         return resolver;
     }
 
@@ -245,7 +228,6 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
                 "org.hibernate.dialect.PostgreSQL92Dialect");
 
         // Si ponen esto en prod, hay tabla!!!
-        //@TODO: BORRAR
 //        properties.setProperty("hibernate.show_sql", "true");
 //        properties.setProperty("format_sql", "true");
 

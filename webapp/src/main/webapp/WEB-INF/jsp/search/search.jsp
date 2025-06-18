@@ -54,13 +54,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<!-- Main Content -->
 <main class="main-content">
   <div class="container">
-    <!-- Search Header -->
     <div class="search-header">
       <div class="search-header-content">
         <h1 class="search-title"><spring:message code="search.title" /></h1>
@@ -69,7 +66,6 @@
         </p>
       </div>
 
-      <!-- Search Bar -->
       <div class="search-bar-container">
         <div class="search-bar">
           <i class="fas fa-search search-icon"></i>
@@ -78,10 +74,8 @@
       </div>
     </div>
 
-    <!-- Filters Section -->
     <div class="filters-section">
       <div class="filters-container">
-        <!-- Specialty Filter -->
         <div class="filter-group">
           <label for="specialtySelect" class="filter-label"><i class="fas fa-stethoscope"></i> <spring:message code="search.specialty" /></label>
           <div class="select-container">
@@ -96,7 +90,6 @@
           </div>
         </div>
 
-        <!-- Coverage Filter -->
         <div class="filter-group">
           <label for="coverageSelect" class="filter-label"><i class="fas fa-shield-alt"></i> <spring:message code="search.coverage" /></label>
           <div class="select-container">
@@ -111,7 +104,6 @@
           </div>
         </div>
 
-        <!-- Sort Filter -->
         <div class="filter-group">
           <label for="sortSelect" class="filter-label"><i class="fas fa-sort"></i> <spring:message code="search.sort" /></label>
           <div class="select-container">
@@ -153,7 +145,6 @@
         </div>
       </div>
 
-      <!-- Interactive Filter Tags -->
       <div class="filter-tags">
         <div class="filter-tags-label">
           <i class="fas fa-filter"></i> <spring:message code="search.active.filters" />
@@ -229,7 +220,6 @@
         </div>
       </div>
 
-      <!-- Advanced Filters -->
       <div class="advanced-filters">
         <div class="filter-section">
           <h3 class="filter-section-title"><i class="fas fa-calendar-week"></i> <spring:message code="search.availability" /></h3>
@@ -270,7 +260,6 @@
         </button>
       </div>
 
-      <!-- Quick Filters -->
       <%--      <div class="quick-filters">--%>
       <%--        <button class="quick-filter-btn active" data-filter="all">--%>
       <%--          <spring:message code="search.filter.all" />--%>
@@ -284,7 +273,6 @@
       <%--      </div>--%>
     </div>
 
-    <!-- Results Section -->
     <div class="results-section">
       <div class="results-header">
         <div class="results-count">
@@ -296,7 +284,6 @@
               <span class="results-span"><spring:message code="search.results.none" /></span>
             </c:otherwise>
           </c:choose>
-          <!-- View Toggle -->
           <div class="view-toggle">
             <button class="view-toggle-btn ${not empty param.view ?( param.view == "grid" ? "active" : "") : "active"}" data-view="grid">
               <i class="fas fa-th-large"></i>
@@ -307,7 +294,6 @@
           </div>
         </div>
 
-        <!-- Active Filters -->
         <%--        <div class="active-filters">--%>
         <%--          <c:if test="${not empty param.weekdays}">--%>
         <%--            <div class="active-filter">--%>
@@ -347,8 +333,14 @@
               <div class="doctor-card">
                 <div class="doctor-card-header">
                   <div class="doctor-avatar">
-                    <img src="<c:url value='/image/${empty doctor.imageId ? -1 : doctor.imageId}'/>" alt="<c:out value='${doctor.name} ${doctor.lastName}'/>" class="avatar-img">
-                  </div>
+                    <c:choose>
+                      <c:when test="${doctor.imageId != null}">
+                        <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="${doctor.name}" class="doctor-avatar" />
+                      </c:when>
+                      <c:otherwise>
+                        <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default"  class="doctor-avatar"/>
+                      </c:otherwise>
+                    </c:choose>                         </div>
                   <div class="doctor-rating">
                     <c:if test="${doctor.ratingCount > 0}">
                       <div class="stars">
@@ -356,17 +348,14 @@
                         <c:set var="hasHalfStar" value="${doctor.rating - fullStars >= 0.5}" />
                         <c:set var="emptyStars" value="${5 - fullStars - (hasHalfStar ? 1 : 0)}" />
 
-                        <!-- Render full stars -->
                         <c:forEach begin="1" end="${fullStars}" var="i">
                           <i class="fas fa-star"></i>
                         </c:forEach>
 
-                        <!-- Render half star if applicable -->
                         <c:if test="${hasHalfStar}">
                           <i class="fas fa-star-half-alt"></i>
                         </c:if>
 
-                        <!-- Render empty stars -->
                         <c:forEach begin="1" end="${emptyStars}" var="i">
                           <i class="far fa-star"></i>
                         </c:forEach>
@@ -434,11 +423,9 @@
             </c:forEach>
           </div>
 
-          <!-- Pagination -->
           <c:if test="${totalPages > 1}">
             <div class="pagination">
 
-              <!-- prev link -->
               <c:if test="${currentPage > 1}">
                 <c:url var="prevUrl" value="/search">
                   <c:param name="page" value="${currentPage - 1}" />
@@ -469,7 +456,6 @@
                 </a>
               </c:if>
 
-              <!-- page‐number links -->
               <div class="pagination-numbers">
                 <c:forEach begin="1" end="${totalPages}" var="pageNum">
                   <c:choose>
@@ -507,7 +493,6 @@
                 </c:forEach>
               </div>
 
-              <!-- next link -->
               <c:if test="${currentPage < totalPages}">
                 <c:url var="nextUrl" value="/search">
                   <c:param name="page" value="${currentPage + 1}" />
@@ -547,12 +532,10 @@
   </div>
 </main>
 
-<!-- Include the search script -->
 <script src="<c:url value='/js/search.js'/>"></script>
 
 <script>
   contextPath = "${pageContext.request.contextPath}";
-
   <%--function viewDoctorProfile(doctorId) {--%>
   <%--  window.location.href = "${pageContext.request.contextPath}/doctor/" + doctorId;--%>
   <%--}--%>

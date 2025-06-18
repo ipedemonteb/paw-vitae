@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public interface AppointmentDao {
 
-    Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice);
+    Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice, boolean allowFullHistory);
 
-    void cancelAppointment(long appointmentId);
+    boolean officeHasAppointments(long officeId);
 
-    void completeAppointments();
+    List<Appointment> getAppointmentsWithHistoryAllowedBefore(LocalDateTime dateTime);
 
     List<Appointment> getPastConfirmedAppointments();
 
@@ -25,9 +25,17 @@ public interface AppointmentDao {
 
     List<Appointment> getAppointmentsByDate(LocalDate today);
 
-    List<Appointment> getFutureAppointmentsByUser(long userId); //Needs no pagination, we limit how far in advance one can schedule appointments.
+    List<Appointment> getFutureAppointmentsByUser(long userId);
 
     int countAppointments(long userId, boolean isFuture, String filter);
 
-    void updateReport(long appointmentId, String report);
+    List<Appointment> getAppointmentsByPatient(long patientId, int page, int size);
+
+    int countAppointmentsByPatient(long patientId);
+
+    int countAppointmentsByPatientWithFilesOrReport(long patientId);
+
+    List<Appointment> getAppointmentsByPatientWithFilesOrReport(long patientId, int page, int size, String direction);
+
+    boolean hasFullMedicalHistoryEnabled(long appointmentId, long doctorId);
 }

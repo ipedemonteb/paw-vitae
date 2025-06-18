@@ -1,11 +1,13 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorOfficeDao;
-import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
-import ar.edu.itba.paw.interfaceServices.NeighborhoodService;
-import ar.edu.itba.paw.interfaceServices.SpecialtyService;
+import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.NeighborhoodNotFoundException;
+import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,14 +21,20 @@ import java.util.stream.Collectors;
 public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
     private final DoctorOfficeDao doctorOfficeDao;
+    private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
     private final NeighborhoodService neighborhoodService;
     private final SpecialtyService specialtyService;
+    private final DoctorService doctorService;
+    private final AppointmentService appointmentService;
 
     @Autowired
-    public DoctorOfficeServiceImpl(DoctorOfficeDao doctorOfficeDao, NeighborhoodService neighborhoodService, SpecialtyService specialtyService) {
+    public DoctorOfficeServiceImpl(DoctorOfficeDao doctorOfficeDao, NeighborhoodService neighborhoodService, SpecialtyService specialtyService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, @Lazy DoctorService doctorService,@Lazy AppointmentService appointmentService) {
         this.doctorOfficeDao = doctorOfficeDao;
         this.neighborhoodService = neighborhoodService;
         this.specialtyService = specialtyService;
+        this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
+        this.doctorService = doctorService;
+        this.appointmentService = appointmentService;
     }
 
     @Transactional
@@ -50,10 +58,12 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     public List<DoctorOffice> transformToDoctorOffice(Doctor doctor, List<DoctorOfficeForm> officeForms) {
         List<DoctorOffice> doctorOffices = new ArrayList<>();
         for (DoctorOfficeForm officeForm : officeForms) {
-            Neighborhood neighborhood = neighborhoodService.getById(officeForm.getNeighborhoodId()).orElseThrow(() -> new IllegalArgumentException("Neighborhood not found")); //TODO MAKE CUSTOM EXCEPTION AND MAKE EFFICIENT (THERE CAN BE REPEATED NEIGHBORHOODS)
+            Neighborhood neighborhood = neighborhoodService.getById(officeForm.getNeighborhoodId()).orElseThrow(() -> new NeighborhoodNotFoundException("Neighborhood not found")); //TODO MAKE CUSTOM EXCEPTION AND MAKE EFFICIENT (THERE CAN BE REPEATED NEIGHBORHOODS)
             List<Specialty> specialties = specialtyService.getByIds(officeForm.getSpecialtyIds());
             DoctorOffice doctorOffice = officeForm.toEntity(doctor, neighborhood, specialties);
-            doctorOffices.add(doctorOffice);
+            DoctorOffice created = create(doctorOffice);
+            doctorOffice.setDoctorOfficeAvailability(doctorOfficeAvailabilityService.create(officeForm.getOfficeAvailabilitySlotForms(), created));
+            doctorOffices.add(created);
         }
         return doctorOffices;
     }
@@ -73,53 +83,86 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     @Transactional(readOnly = true)
     @Override
     public List<DoctorOffice> getAllByDoctorId(long doctorId) {
-        return doctorOfficeDao.getAllByDoctorId(doctorId);
+        return doctorOfficeDao.getByDoctorId(doctorId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorOffice> getAllByDoctorIdWithAvailability(long doctorId) {
+        return doctorOfficeDao.getByDoctorIdWithAvailability(doctorId);
     }
 
     @Transactional
     @Override
-    public void update(List<DoctorOfficeForm> officeForms, Doctor doctor) {
-        List<DoctorOffice> existing = doctorOfficeDao.getAllByDoctorId(doctor.getId());
-        Map<Long,DoctorOffice> existingById =
-                existing.stream().collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
+    public void update(
+            List<DoctorOfficeForm> forms,
+            Doctor inputDoctor
+    ) {
+        Doctor doctor = doctorService.getByIdWithAvailableOffices(inputDoctor.getId()).orElseThrow(UserNotFoundException::new);
 
-        Set<Long> keepIds = new HashSet<>();
+        Map<Long, DoctorOffice> existingById = doctor.getDoctorOffices().stream()
+                .collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
 
-        for (DoctorOfficeForm form : officeForms) {
-            DoctorOffice match = existingById.get(form.getId());
-            if (match == null) {
-                DoctorOffice created = new DoctorOffice();
-                applyForm(created, form, doctor);
-                doctorOfficeDao.create(created);
-                keepIds.add(created.getId());
+        List<DoctorOffice> newOffices = new ArrayList<>();
+
+        for (DoctorOfficeForm form : forms) {
+            Long id = form.getId();
+            if (id != null && existingById.containsKey(id)) {
+                DoctorOffice office = existingById.get(id);
+                boolean deleted = applyFormToEntity(office, form, doctor);
+                if (!deleted) {
+                    newOffices.add(office);
+                }
+
+
             } else {
-                applyForm(match, form, doctor);
-                doctorOfficeDao.update(match);
-                keepIds.add(match.getId());
+                Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
+                        .orElseThrow(NeighborhoodNotFoundException::new);
+                List<Specialty> specs = form.getSpecialtyIds().stream()
+                        .map(sid -> specialtyService.getById(sid)
+                                .orElseThrow(SpecialtyNotFoundException::new))
+                        .toList();
+
+                DoctorOffice created = form.toEntity(doctor, nb, specs);
+                newOffices.add(created);
             }
         }
 
-        for (DoctorOffice o : existing) {
-            if (!keepIds.contains(o.getId()) && o.isActive()) {
-                doctorOfficeDao.softDelete(o.getId());
-            }
-        }
+        doctor.getDoctorOffices().clear();
+        doctor.getDoctorOffices().addAll(newOffices);
     }
 
-    private void applyForm(DoctorOffice office, DoctorOfficeForm form, Doctor doctor) {
+
+    private boolean applyFormToEntity(
+            DoctorOffice office,
+            DoctorOfficeForm form,
+            Doctor doctor
+    ) {
         office.setDoctor(doctor);
         office.setOfficeName(form.getOfficeName());
-        if (form.getRemoved()) {
-            office.setRemoved(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
-        }
         office.setActive(form.getActive());
-        office.setNeighborhood(neighborhoodService.getById(form.getNeighborhoodId())
-                .orElseThrow(() -> new IllegalArgumentException("Neighborhood not found")));
+
+        if (form.getRemoved()) {
+            if (appointmentService.officeHasAppointments(office.getId())) {
+                office.setRemoved(LocalDateTime.now(ZoneId.systemDefault()));
+            } else {
+                office.getSpecialties().clear();
+                doctorOfficeDao.remove(office.getId());
+                return true;
+            }
+        }
+
+        Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
+                .orElseThrow(NeighborhoodNotFoundException::new);
+        office.setNeighborhood(nb);
         List<Specialty> specs = form.getSpecialtyIds().stream()
-                .map(id -> specialtyService.getById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Specialty "+id)))
-                .collect(Collectors.toList());
+                .map(sid -> specialtyService.getById(sid)
+                        .orElseThrow(() ->
+                                new SpecialtyNotFoundException("Specialty "+sid+" not found")))
+                .toList();
         office.setSpecialties(specs);
+
+        return false;
     }
 
 }
