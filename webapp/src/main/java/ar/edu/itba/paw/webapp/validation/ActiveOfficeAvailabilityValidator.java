@@ -22,7 +22,7 @@ public class ActiveOfficeAvailabilityValidator implements ConstraintValidator<Ac
     @Override
     public boolean isValid(OfficeForm officeForm, ConstraintValidatorContext context) {
         if (officeForm.getDoctorOfficeForm() == null) {
-            return true; // validated elsewhere
+            return true;
         }
 
         List<DoctorOfficeAvailability> existingSlots = doctorOfficeAvailabilityService.getByDoctorId(officeForm.getDoctorId());
@@ -33,10 +33,10 @@ public class ActiveOfficeAvailabilityValidator implements ConstraintValidator<Ac
                     context.buildConstraintViolationWithTemplate("{offices.active.availability}")
                             .addPropertyNode("doctorOfficeForm")
                             .addConstraintViolation();
-                 return false; // Invalid if a new office is active because it will not have availability
+                 return false;
              }
         }
 
-        return true; // All slots are valid
+        return true;
     }
 }

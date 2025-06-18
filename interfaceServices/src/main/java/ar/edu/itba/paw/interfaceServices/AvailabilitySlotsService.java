@@ -20,7 +20,10 @@ public interface AvailabilitySlotsService {
     List<AvailabilitySlot> create(List<AvailabilitySlot> slots);
 
     boolean isAvailableAtDateAndTime(long doctorId, LocalDate date, int time);
+
     List<AvailabilitySlotForm> getDoctorAvailabilitySlots(Doctor doctor);
+
     List<AvailabilitySlot> transformToAvailabilitySlots(Doctor doctor,List<AvailabilitySlotForm> availabilitySlots);
+
     List<AvailabilitySlotForm> transformToAvailabilitySlotForms(List<AvailabilitySlot> availabilitySlots);
 }

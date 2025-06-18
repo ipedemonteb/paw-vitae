@@ -11,6 +11,7 @@ public interface ImageService {
     Images create(MultipartFile image);
 
     Optional<Images> findById(long id);
+
     void deleteImage(long id);
 
 }

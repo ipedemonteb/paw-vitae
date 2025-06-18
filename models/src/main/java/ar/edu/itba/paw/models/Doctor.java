@@ -70,15 +70,6 @@ public class Doctor extends User {
         this.ratingCount = ratingCount;
     }
 
-    //Deprecated
-//    public Doctor(String name, long id, String lastName, String email, String password,
-//                  String phone, String language, Long imageId, Double rating,
-//                  int ratingCount, boolean verified) {
-//        super(name, id, lastName, email, password, phone, language, verified);
-//        this.imageId = imageId;
-//        this.rating = rating;
-//        this.ratingCount = ratingCount;
-//    }
 
     public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified, List<Specialty> specialtyList, List<Coverage> coverageList) {
         super(name, lastName, email, password, phone, language, verified);
@@ -88,7 +79,6 @@ public class Doctor extends User {
 
     }
 
-    // Views definition
     public static class Views {
         public static class Public {}
         public static class Private extends Public {}
@@ -160,16 +150,5 @@ public class Doctor extends User {
     public List<DoctorCertification> getCertifications() { return certifications; }
 
     public void setCertifications(List<DoctorCertification> certifications) { this.certifications = certifications; }
-
-
-    //ASK IF VALID
-//    public List<DoctorExperience> getExperiences() {
-//        return experiences.stream()
-//                .sorted(Comparator
-//                        .comparing((DoctorExperience e) -> e.getEndDate() == null ? 0 : 1)
-//                        .thenComparing(DoctorExperience::getEndDate, Comparator.nullsLast(Comparator.reverseOrder()))
-//                        .thenComparing(DoctorExperience::getStartDate, Comparator.reverseOrder()))
-//                .toList();
-//    }
 
 }

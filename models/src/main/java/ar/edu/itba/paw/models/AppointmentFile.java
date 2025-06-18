@@ -24,9 +24,7 @@ public class AppointmentFile {
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 
-    public AppointmentFile() {
-        // For Hibernate use
-    }
+    public AppointmentFile() {}
 
     public AppointmentFile(String fileName, byte[] fileData, String uploaderRole, Appointment appointment) {
         this.fileName = fileName;

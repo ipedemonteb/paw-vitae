@@ -22,7 +22,7 @@ public class ValidOfficeIdValidator implements ConstraintValidator<ValidOfficeId
     @Override
     public boolean isValid(OfficeForm officeForm, ConstraintValidatorContext constraintValidatorContext) {
         if (officeForm.getDoctorOfficeForm() == null || officeForm.getDoctorId() == null) {
-            return true; // validated elsewhere
+            return true;
         }
         List<DoctorOffice> offices = doctorOfficeService.getAllByDoctorId(officeForm.getDoctorId());
 
@@ -34,7 +34,7 @@ public class ValidOfficeIdValidator implements ConstraintValidator<ValidOfficeId
             constraintValidatorContext.buildConstraintViolationWithTemplate("{offices.invalid.id}")
                     .addPropertyNode("doctorOfficeForm")
                     .addConstraintViolation();
-            return false; // Invalid if any office ID does not match
+            return false;
         }
         return true;
     }

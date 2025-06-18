@@ -31,9 +31,7 @@ public class DoctorExperience {
     private LocalDate endDate;
 
 
-    public DoctorExperience() {
-        // Hibernate only
-    }
+    public DoctorExperience() {}
 
     public DoctorExperience(Doctor doctor, String positionTitle, String organizationName, LocalDate startDate, LocalDate endDate) {
         this.doctor = doctor;
@@ -42,8 +40,6 @@ public class DoctorExperience {
         this.startDate = startDate;
         this.endDate = endDate;
     }
-
-    // Getters and setters...
 
     public Long getId() {
         return id;

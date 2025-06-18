@@ -135,9 +135,7 @@ public class DoctorOffice {
     }
 
     public void replaceAvailability(List<DoctorOfficeAvailability> newSlots) {
-        // orphanRemoval = true will delete everything you clear here
         this.doctorOfficeAvailability.clear();
-        // add back both updated *and* newly created slots
         newSlots.forEach(s -> {
             s.setOffice(this);
             this.doctorOfficeAvailability.add(s);

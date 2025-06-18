@@ -41,7 +41,6 @@ public class DoctorOfficeAvailability {
         this.dayOfWeek = dayOfWeek;
     }
 
-    // Views definition
     public static class Views {
         public static class Public {}
         public static class Private extends Doctor.Views.Public {}

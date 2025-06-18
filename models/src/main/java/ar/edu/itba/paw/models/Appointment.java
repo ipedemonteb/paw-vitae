@@ -50,9 +50,7 @@ public class Appointment {
     @Transient
     private Boolean cancellable = true;
 
-    public Appointment() {
-        // For Hibernate use
-    }
+    public Appointment() {}
 
     public Appointment(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice, boolean allowFullHistory) {
         this.date = date;

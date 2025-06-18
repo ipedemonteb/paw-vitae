@@ -131,28 +131,10 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
         return ds;
     }
 
-//    @Bean
-//    public PlatformTransactionManager transactionManager(final DataSource ds) {
-//        return new DataSourceTransactionManager(ds);
-//    }
     @Bean
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
-
-//    @Bean
-//    public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
-//        final DataSourceInitializer dsi = new DataSourceInitializer();
-//        dsi.setDataSource(ds);
-//        dsi.setDatabasePopulator(databasePopulator());
-//        return dsi;
-//    }
-
-//    private DatabasePopulator databasePopulator() {
-//        final ResourceDatabasePopulator dbp = new ResourceDatabasePopulator();
-//        dbp.addScript(schemaSql);
-//        return dbp;
-//    }
 
     @Bean
     public MessageSource messageSource() {
@@ -246,7 +228,6 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
                 "org.hibernate.dialect.PostgreSQL92Dialect");
 
         // Si ponen esto en prod, hay tabla!!!
-        //@TODO: BORRAR
 //        properties.setProperty("hibernate.show_sql", "true");
 //        properties.setProperty("format_sql", "true");
 

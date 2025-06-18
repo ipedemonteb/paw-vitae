@@ -32,16 +32,14 @@ public class PatientController {
     private final CoverageService coverageService;
     private final AppointmentFileService appointmentFileService;
     private final RatingService ratingService;
-    private final DoctorOfficeService doctorOfficeService;
 
     @Autowired
-    public PatientController(PatientService patientService, AppointmentService appointmentService, CoverageService coverageService, AppointmentFileService appointmentFileService, RatingService ratingService, DoctorOfficeService doctorOfficeService) {
+    public PatientController(PatientService patientService, AppointmentService appointmentService, CoverageService coverageService, AppointmentFileService appointmentFileService, RatingService ratingService) {
         this.patientService = patientService;
         this.appointmentService = appointmentService;
         this.coverageService = coverageService;
         this.appointmentFileService = appointmentFileService;
         this.ratingService = ratingService;
-        this.doctorOfficeService = doctorOfficeService;
     }
 
     @RequestMapping(value = "/patient/dashboard")

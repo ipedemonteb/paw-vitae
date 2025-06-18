@@ -14,10 +14,10 @@ public class ValidNewOfficeValidator {
     private static boolean helperFunction(List<DoctorOfficeForm> doctorOfficeForms) {
         for (DoctorOfficeForm office : doctorOfficeForms) {
             if (office.getRemoved() && office.getId() == null) {
-                return false; // Invalid office found
+                return false;
             }
         }
-        return true; // All offices are valid
+        return true;
     }
 
     public static class ForOfficeForm implements ConstraintValidator<ValidNewOffice, OfficeForm> {
@@ -25,7 +25,7 @@ public class ValidNewOfficeValidator {
         public boolean isValid(OfficeForm form, javax.validation.ConstraintValidatorContext context) {
             List<DoctorOfficeForm> doctorOfficeForms = form.getDoctorOfficeForm();
             if (doctorOfficeForms == null || doctorOfficeForms.isEmpty()) {
-                return true; // validated elsewhere
+                return true;
             }
             boolean flag = helperFunction(doctorOfficeForms);
             if (!flag) {
@@ -43,7 +43,7 @@ public class ValidNewOfficeValidator {
         public boolean isValid(DoctorForm form, javax.validation.ConstraintValidatorContext context) {
             List<DoctorOfficeForm> doctorOfficeForms = form.getDoctorOfficeForm();
             if (doctorOfficeForms == null || doctorOfficeForms.isEmpty()) {
-                return true; // validated elsewhere
+                return true;
             }
 
             boolean flag = true;

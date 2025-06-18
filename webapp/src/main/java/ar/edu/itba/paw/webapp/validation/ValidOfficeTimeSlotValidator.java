@@ -16,7 +16,7 @@ public class ValidOfficeTimeSlotValidator {
         public boolean isValid(DoctorForm doctorForm, ConstraintValidatorContext context) {
             List<DoctorOfficeForm> officeForms = doctorForm.getDoctorOfficeForm();
             if (officeForms == null || officeForms.isEmpty()) {
-                return false; // Invalid if the list is null or empty
+                return false;
             }
             for (DoctorOfficeForm form : officeForms) {
                 if (form.getOfficeAvailabilitySlotForms() == null || form.getOfficeAvailabilitySlotForms().isEmpty()) {
@@ -24,7 +24,7 @@ public class ValidOfficeTimeSlotValidator {
                     context.buildConstraintViolationWithTemplate("{office.timeSlot.empty")
                             .addPropertyNode("officeAvailabilitySlotForms")
                             .addConstraintViolation();
-                    return false; // Invalid if any office has no time slots
+                    return false;
                 }
                 for (DoctorOfficeAvailabilityForm slot : form.getOfficeAvailabilitySlotForms()) {
                     if (slot.getOfficeId() != null || slot.getId() != null || slot.getStartTime() == null || slot.getEndTime() == null || slot.getStartTime().isAfter(slot.getEndTime()) || slot.getStartTime().getHour() < 8 || slot.getEndTime().getHour() > 20) {
@@ -36,7 +36,7 @@ public class ValidOfficeTimeSlotValidator {
                     }
                 }
             }
-            return true; // All forms are valid
+            return true;
         }
     }
 
@@ -44,14 +44,14 @@ public class ValidOfficeTimeSlotValidator {
         @Override
         public boolean isValid(List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms, ConstraintValidatorContext context) {
             if (officeAvailabilitySlotForms == null || officeAvailabilitySlotForms.isEmpty()) {
-                return true; //validated elsewhere
+                return true;
             }
             for (DoctorOfficeAvailabilityForm slot : officeAvailabilitySlotForms) {
                 if (slot.getOfficeId() == null || slot.getStartTime() == null || slot.getEndTime() == null || slot.getStartTime().isAfter(slot.getEndTime()) || slot.getStartTime().getHour() < 8 || slot.getEndTime().getHour() > 20) {
                     return false;
                 }
             }
-            return true; // All forms are valid
+            return true;
         }
     }
 }
