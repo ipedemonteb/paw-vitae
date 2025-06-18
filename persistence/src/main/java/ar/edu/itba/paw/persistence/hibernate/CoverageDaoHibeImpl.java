@@ -60,7 +60,6 @@ public class CoverageDaoHibeImpl implements CoverageDao {
         return query.getResultList();
     }
 
-    //TODO: CHECK
     @Override
     public List<Coverage> findByDoctorId(long id) {
         final TypedQuery<Coverage> query = em.createQuery("SELECT c FROM Doctor d JOIN d.coverageList c WHERE d.id = :doctorId", Coverage.class);

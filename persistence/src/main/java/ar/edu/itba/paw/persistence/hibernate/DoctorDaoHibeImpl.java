@@ -42,7 +42,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
 
     @Override
     public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
-        Query nativeQuery = getNativeQuery(specialtyId, 0, null, null, "name", "asc",  false); //TODO aggalan said not to remove this unused method, therefore i need to pass placeholders as arguments, any objections you may have take them up with him
+        Query nativeQuery = getNativeQuery(specialtyId, 0, null, null, "name", "asc",  false);
         nativeQuery.setFirstResult((page-1) * pageSize);
         nativeQuery.setMaxResults(pageSize);
 
@@ -80,7 +80,7 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     }
 
     private String orderbyDirectionString(String orderBy, String direction) {
-        if (orderBy.equals("rating")) { //what this does effectively is divide the rated from the unrated so the rated doctors appear first and correctly ordered
+        if (orderBy.equals("rating")) {
             return "CASE WHEN d.ratingCount > 0 THEN 0 ELSE 1 END, d.rating " + directionSwitch(direction) + ", d.name ASC";
         }
         return orderBySwitch(orderBy) + " " + directionSwitch(direction);
@@ -125,14 +125,11 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         StringBuilder sql = new StringBuilder();
 
         if (isCount) {
-            // just count distinct IDs
             sql.append("SELECT COUNT(DISTINCT d.doctor_id) ");
         } else {
-            // return the one column you need
             sql.append("SELECT d.doctor_id ");
         }
 
-        // your joins & filters
         sql.append("""
         FROM doctors d
         JOIN users u            ON d.doctor_id = u.id
@@ -157,24 +154,19 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         }
 
         if (!isCount) {
-            // … your GROUP BY …
             sql.append(" GROUP BY d.doctor_id")
                     .append(" ORDER BY ");
 
             if ("rating".equals(orderBy)) {
-                // 1) bucket: rated doctors (rating_count>0) come first
                 sql.append("CASE WHEN MAX(d.rating_count) > 0 THEN 0 ELSE 1 END");
-                // 2) within bucket 0, sort by rating
                 sql.append(", MIN(d.rating) ");
                 if ("desc".equalsIgnoreCase(direction)) {
                     sql.append("DESC");
                 } else {
                     sql.append("ASC");
                 }
-                // 3) tie-breaker (and sort for bucket 1)
                 sql.append(", MIN(u.name) ASC");
             } else {
-                // keep your existing switch for last_name, email, name, etc.
                 switch (orderBy) {
                     case "last_name" -> sql.append("MIN(u.last_name) ");
                     case "email"     -> sql.append("MIN(u.email) ");
@@ -238,7 +230,6 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         query.setParameter("keyword", "%" + keyword + "%");
         query.setMaxResults(results);
         List<Doctor> doctors = query.getResultList();
-        // Sort the results by name
         doctors.sort(Comparator.comparing((Doctor doctor) -> {
                     String fullName = (doctor.getName() + " " + doctor.getLastName()).toLowerCase();
                     return fullName.startsWith(keyword.toLowerCase()) ? 0 : 1;
@@ -246,10 +237,5 @@ public class DoctorDaoHibeImpl implements DoctorDao {
                 .thenComparing(Doctor::getLastName, String.CASE_INSENSITIVE_ORDER));
         return doctors;
     }
-
-    // -------------------------------------
-    //  DEPRECATED METHODS
-    // -------------------------------------
-
 
 }
