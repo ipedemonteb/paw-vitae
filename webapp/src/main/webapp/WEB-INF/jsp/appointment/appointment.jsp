@@ -18,7 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
+
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
 <div id="successToast" class="success-toast">
@@ -35,7 +35,6 @@
 </div>
 
 
-<!-- Main Content -->
 <main class="main-content">
     <div class="container">
         <div class="appointment-container">
@@ -45,12 +44,17 @@
             </div>
 
             <div class="appointment-body">
-                <!-- Display doctor information if available -->
                 <c:if test="${not empty doctor}">
                     <div class="doctor-info">
                         <div class="doctor-image">
-                            <img src="<c:url value='/image/${empty doctor.imageId ? -1 : doctor.imageId}'/>" alt="<c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/>" class="doctor-avatar">
-                        </div>
+                            <c:choose>
+                                <c:when test="${doctor.imageId != null}">
+                                    <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="${doctor.name}" class="doctor-avatar" class="doctor-avatar" />
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default" class="doctor-avatar" />
+                                </c:otherwise>
+                            </c:choose>                              </div>
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/></h3>
                             <div class="card-specialty-list">
@@ -91,7 +95,6 @@
                 </c:if>
 
                 <form:form modelAttribute="appointmentForm" method="post" action="${pageContext.request.contextPath}/appointment" id="appointmentForm" class="appointment-form" enctype="multipart/form-data" onsubmit="return submitOnce(this);">
-                    <!-- Replace the existing specialty card section with this enhanced version -->
                     <div class="specialty-card-appointment">
                         <div class="specialty-icon-appointment">
                             <i class="fas fa-stethoscope"></i>
@@ -111,7 +114,6 @@
                         </div>
                     </div>
 
-                    <!-- Add Office Selection Card -->
                     <div class="office-card-appointment">
                         <div class="office-icon-appointment">
                             <i class="fas fa-building"></i>
@@ -121,7 +123,6 @@
                             <div class="office-select-container">
                                 <select id="officeSelect" class="office-select" name="officeId" required>
                                     <option value=""><spring:message code="appointment.form.selectOffice" /></option>
-                                    <!-- Options will be populated by JavaScript -->
                                 </select>
                             </div>
                             <div class="office-details" id="officeDetails" style="display: none;">
@@ -134,7 +135,6 @@
                         </div>
                     </div>
 
-                    <!-- Hidden fields for office data -->
                     <form:hidden path="officeId" id="officeId" />
                     <form:hidden path="specialtyId" id="specialtyId" />
                     <input type="hidden" name="doctorId" value="${doctor.id}" />
@@ -145,7 +145,6 @@
                             <input type="text" id="datePickerInput" class="form-control date-picker-input"
                                    placeholder="<spring:message code='appointment.placeholder.selectDate'/>" readonly>
 
-                            <!-- Custom Calendar -->
                             <div id="datePickerCalendar" class="date-picker-calendar">
                                 <div class="date-picker-header">
                                     <button type="button" id="prevMonthBtn" class="date-picker-nav">&lsaquo;</button>
@@ -157,22 +156,17 @@
                             </div>
                         </div>
 
-                        <!-- Hidden fields to store actual values -->
                         <form:hidden path="appointmentDate" id="appointmentDate" />
                         <form:hidden path="appointmentHour" id="appointmentHour" />
                         <form:hidden path="patientId" id="patientId"/>
                         <form:hidden path="doctorId" id="doctorId"/>
 
-                        <!-- Error messages for date and hour -->
 
-
-                        <!-- Time slots container -->
                         <div id="timeSlotsContainer" class="time-slots-container" style="display: none;">
                             <label><spring:message code="appointment.form.selectTime"/></label>
                             <div id="timeSlots" class="time-slots-grid"></div>
                         </div>
 
-                        <!-- Appointment summary -->
                         <div id="appointmentSummary" class="appointment-summary hidden">
                             <p class="mb-1"><strong><spring:message code="appointment.summary.title"/></strong></p>
                             <p id="appointmentSummaryText" class="mb-0"></p>
@@ -181,14 +175,12 @@
                         <form:errors path="appointmentHour" cssClass="error-message" />
                     </div>
 
-                    <!-- Reason for appointment -->
                     <div class="form-group">
                         <label for="reason"><spring:message code="appointment.form.reason"/></label>
                         <form:textarea path="reason" id="reason" class="form-control" rows="4" />
                         <form:errors path="reason" cssClass="error-message" />
                     </div>
 
-                    <!-- File Upload Section -->
                     <div class="form-group">
                         <label for="files">
                             <spring:message code="appointment.form.files"  />
@@ -208,6 +200,12 @@
                             <form:errors path="files" cssClass="error-message" />
                         </div>
                     </div>
+                <div class="form-group">
+                    <label class="flex items-center space-x-2">
+                        <form:checkbox path="allowFullHistory" />
+                        <span><spring:message code="allow.full.history" /></span>
+                    </label>
+                </div>
 
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block" >
@@ -224,9 +222,10 @@
 </main>
 
 <script src="<c:url value="/js/toast-notification.js"/>"></script>
+<script src="<c:url value='/js/date-time-picker.js'/>"></script>
+<script src="<c:url value='/js/file-upload.js'/>"></script>
 
 <script>
-    // Create a messages object to be used by the JavaScript
     window.appointmentMessages = {
         months: [
             '<spring:message code="calendar.month.january" />',
@@ -252,13 +251,13 @@
             '<spring:message code="calendar.day.saturday" />'
         ],
         weekdaysShort: [
-            '<spring:message code="calendar.day.short.sun" />',
             '<spring:message code="calendar.day.short.mon" />',
             '<spring:message code="calendar.day.short.tue" />',
             '<spring:message code="calendar.day.short.wed" />',
             '<spring:message code="calendar.day.short.thu" />',
             '<spring:message code="calendar.day.short.fri" />',
-            '<spring:message code="calendar.day.short.sat" />'
+            '<spring:message code="calendar.day.short.sat" />',
+            '<spring:message code="calendar.day.short.sun" />'
         ],
         appointmentAt: '<spring:message code="appointment.at" />',
         noAvailableSlots: '<spring:message code="appointment.noAvailableHours" />',
@@ -275,6 +274,8 @@
         officeRequired: '<spring:message code="appointment.form.officeRequired" javaScriptEscape="true" />'
     };
     const contextPath = "${pageContext.request.contextPath}";
+    const doctorId = "${doctor.id}";
+    let currentOfficeId = "0";
 
 
     const unavailabilitySlots = [
@@ -282,17 +283,6 @@
         {
             startDate: "${slot.startDate}",
             endDate: "${slot.endDate}"
-        }<c:if test="${!status.last}">,</c:if>
-        </c:forEach>
-    ];
-
-    const availabilitySlots = [
-        <c:forEach var="slot" items="${doctor.availabilitySlots}" varStatus="status">
-        {
-            dayOfWeek: ${slot.dayOfWeek},
-            startTime: ${slot.startTime.hour},
-            endTime: ${slot.endTime.hour},
-            slots: ${slot.endTime.hour - slot.startTime.hour + 1}
         }<c:if test="${!status.last}">,</c:if>
         </c:forEach>
     ];
@@ -323,33 +313,27 @@
         </c:forEach>
     ];
 
-    // Handle specialty selection
     document.addEventListener('DOMContentLoaded', function() {
         const specialtySelect = document.getElementById('specialtySelect');
         const specialtyId = document.getElementById('specialtyId');
         const officeSelect = document.getElementById('officeSelect');
         const appointmentForm = document.getElementById('appointmentForm');
 
-        // Set initial value
         if (specialtySelect && specialtyId) {
             specialtyId.value = specialtySelect.value;
             updateOfficeOptions(specialtySelect.value);
         }
 
-        // Update hidden field and form action when specialty changes
         if (specialtySelect) {
             specialtySelect.addEventListener('change', function() {
                 if (specialtyId) {
                     specialtyId.value = this.value;
                 }
 
-                // Update office options based on selected specialty
                 updateOfficeOptions(this.value);
 
-                // Clear office selection
                 clearOfficeSelection();
 
-                // Update form action with selected specialty
                 if (appointmentForm) {
                     const doctorId = ${doctor.id};
                     appointmentForm.action = contextPath + `/appointment?doctorId=` + doctorId;
@@ -357,25 +341,54 @@
             });
         }
 
-        // Handle office selection
         if (officeSelect) {
             officeSelect.addEventListener('change', function() {
+                currentOfficeId = this.value;
+                clearDateTimePicker();
                 handleOfficeSelection(this.value);
             });
         }
 
-        // Set initial form action
         if (appointmentForm && specialtySelect) {
             const doctorId = ${doctor.id};
             appointmentForm.action = contextPath + `/appointment?doctorId=`+ doctorId;
         }
     });
+
+    function clearDateTimePicker() {
+        const datePickerInput = document.getElementById('datePickerInput');
+        const appointmentDate = document.getElementById('appointmentDate');
+        const appointmentHour = document.getElementById('appointmentHour');
+        const timeSlotsContainer = document.getElementById('timeSlotsContainer');
+        const timeSlots = document.getElementById('timeSlots');
+        const appointmentSummary = document.getElementById('appointmentSummary');
+        const appointmentSummaryText = document.getElementById('appointmentSummaryText');
+
+        if (datePickerInput) {
+            datePickerInput.value = '';
+        }
+        if (appointmentDate) {
+            appointmentDate.value = '';
+        }
+        if (appointmentHour) {
+            appointmentHour.value = '';
+        }
+        if (timeSlotsContainer) {
+            timeSlotsContainer.style.display = 'none';
+        }
+        if (timeSlots) {
+            timeSlots.innerHTML = '';
+        }
+        if (appointmentSummary) {
+            appointmentSummary.classList.add('hidden');
+            appointmentSummaryText.textContent = '';
+        }
+    }
     function submitOnce(form) {
         if (form.getAttribute('data-submitting') === 'true') {
             return false;
         }
 
-        // Validate office selection
         const officeSelect = document.getElementById('officeSelect');
         const officeCard = document.querySelector('.office-card-appointment');
 
@@ -396,24 +409,20 @@
         return true;
     }
 
-    // Function to update office options based on selected specialty
     function updateOfficeOptions(selectedSpecialtyId) {
         const officeSelect = document.getElementById('officeSelect');
         if (!officeSelect) return;
 
-        // Clear existing options except the first one
         officeSelect.innerHTML = '<option value="">' +
             (window.appointmentMessages?.selectOffice || 'Select an office') + '</option>';
 
-        // Filter offices that handle the selected specialty
         const filteredOffices = doctorOffices.filter(office =>
             office.specialtyIds.includes(parseInt(selectedSpecialtyId))
         );
 
-        // Add filtered offices to the select
         filteredOffices.forEach(office => {
             const option = document.createElement('option');
-            option.value = office.id; // Use the office ID as the value
+            option.value = office.id;
             option.textContent = office.officeName + ` - ` + office.neighborhoodName;
             option.dataset.neighborhoodId = office.neighborhoodId;
             option.dataset.neighborhoodName = office.neighborhoodName;
@@ -421,7 +430,6 @@
             officeSelect.appendChild(option);
         });
 
-        // Show/hide office select based on available options
         const officeCard = document.querySelector('.office-card-appointment');
         if (officeCard) {
             if (filteredOffices.length > 0) {
@@ -434,8 +442,6 @@
         }
     }
 
-    // Function to handle office selection
-    // Function to handle office selection
     function handleOfficeSelection(selectedOfficeId) {
         const officeDetails = document.getElementById('officeDetails');
         const selectedOfficeName = document.getElementById('selectedOfficeName');
@@ -443,14 +449,12 @@
         const officeSelect = document.getElementById('officeSelect');
 
         if (selectedOfficeId) {
-            // Find the selected option to get the data attributes
             const selectedOption = officeSelect.querySelector(`option[value="` + selectedOfficeId + `"]`);
 
             if (selectedOption) {
                 const officeName = selectedOption.dataset.officeName;
                 const neighborhoodName = selectedOption.dataset.neighborhoodName;
 
-                // Update display
                 if (selectedOfficeName) {
                     selectedOfficeName.textContent = officeName;
                 }
@@ -466,8 +470,6 @@
         }
     }
 
-    // Function to clear office selection
-    // Function to clear office selection
     function clearOfficeSelection() {
         const officeDetails = document.getElementById('officeDetails');
         const officeSelect = document.getElementById('officeSelect');
@@ -478,12 +480,10 @@
         if (officeSelect) {
             officeSelect.value = '';
         }
+        currentOfficeId = "0";
+        clearDateTimePicker();
     }
 
 </script>
-
-<!-- Include the external JavaScript file -->
-<script src="<c:url value='/js/date-time-picker.js'/>"></script>
-<script src="<c:url value='/js/file-upload.js'/>"></script>
 </body>
 </html>

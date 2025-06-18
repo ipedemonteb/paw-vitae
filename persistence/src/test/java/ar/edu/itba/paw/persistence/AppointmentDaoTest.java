@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +37,7 @@ public class AppointmentDaoTest {
     private static final long DOC_ID = 2L;
     private static final long PAT_ID = 1L;
     private static final long SPEC_ID = 1L;
+    private static final long OFFICE_ID = 1L;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -68,9 +70,11 @@ public class AppointmentDaoTest {
         Doctor managedDoctor = em.getReference(Doctor.class, DOC_ID);
         Patient managedPatient = em.getReference(Patient.class, PAT_ID);
         String report = "Report content";
+        DoctorOffice office = em.getReference(DoctorOffice.class, OFFICE_ID);
+        boolean allow = true;
 
         //Exercise
-        Appointment appointment = appointmentDao.create(dateTime, status, reason, managedSpecialty, managedDoctor, managedPatient, report);
+        Appointment appointment = appointmentDao.create(dateTime, status, reason, managedSpecialty, managedDoctor, managedPatient, report, office, allow);
         em.flush();
 
         //Postconditions
@@ -112,19 +116,28 @@ public class AppointmentDaoTest {
         int page = 1;
         int size = 2;
         String status = "confirmado";
+        String reason = "General checking";
+        long officeId = 1L;
+        boolean allow = true;
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
-                "date", LocalDateTime.now().plusDays(6),
-                "status", status
+                "date", LocalDateTime.now(ZoneId.systemDefault()).plusDays(6),
+                "status", status,
+                "reason", reason,
+                "office_id", officeId,
+                "allow_full_history", allow
         ));
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
-                "date", LocalDateTime.now().plusDays(8),
-                "status", status
+                "date", LocalDateTime.now(ZoneId.systemDefault()).plusDays(8),
+                "status", status,
+                "reason", reason,
+                "office_id", officeId,
+                "allow_full_history", allow
         ));
 
         //Exercise
@@ -188,19 +201,28 @@ public class AppointmentDaoTest {
         //Preconditions
         long specialtyId = 1L;
         String status = "confirmado";
+        String reason = "General checking";
+        long officeId = 1L;
+        boolean allow = true;
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
-                "date", LocalDateTime.now().plusDays(6),
-                "status", status
+                "date", LocalDateTime.now(ZoneId.systemDefault()).plusDays(6),
+                "status", status,
+                "reason", reason,
+                "office_id", officeId,
+                "allow_full_history", allow
         ));
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
                 "patient_id", PAT_ID,
                 "specialty_id", specialtyId,
-                "date", LocalDateTime.now().plusDays(8),
-                "status", status
+                "date", LocalDateTime.now(ZoneId.systemDefault()).plusDays(8),
+                "status", status,
+                "reason", reason,
+                "office_id", officeId,
+                "allow_full_history", allow
         ));
 
         //Exercise
@@ -220,6 +242,123 @@ public class AppointmentDaoTest {
 
         //Postconditions
         assertTrue(appointments.isEmpty());
+    }
+
+    @Test
+    public void testGetPastConfirmedAppointments() {
+        //Preconditions
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getPastConfirmedAppointments();
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(1, appointments.size());
+    }
+
+    @Test
+    public void testGetAppointmentsWithHistoryAllowedBefore() {
+        //Preconditions
+        LocalDateTime dateTime = LocalDateTime.of(2025, 5, 1, 10, 0);
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getAppointmentsWithHistoryAllowedBefore(dateTime);
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(3, appointments.size());
+    }
+
+    @Test
+    public void testGetAppointmentsByPatientDoesNotExist() {
+        //Preconditions
+        long patientId = 1000L;
+        int page = 1;
+        int size = 10;
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getAppointmentsByPatient(patientId, page, size);
+
+        //Postconditions
+        assertTrue(appointments.isEmpty());
+    }
+
+    @Test
+    public void testGetAppointmentsByPatientExists() {
+        //Preconditions
+        int page = 1;
+        int size = 10;
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getAppointmentsByPatient(PAT_ID, page, size);
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(2, appointments.size());
+    }
+
+    @Test
+    public void testGetAppointmentsByPatientWithFilesOrReport() {
+        //Preconditions
+        int page = 1;
+        int size = 10;
+        String order = "desc";
+
+        //Exercise
+        List<Appointment> appointments = appointmentDao.getAppointmentsByPatientWithFilesOrReport(PAT_ID, page, size, order);
+
+        //Postconditions
+        assertFalse(appointments.isEmpty());
+        assertEquals(2, appointments.size());
+        assertEquals(2L, appointments.getFirst().getId());
+        assertEquals(1L, appointments.get(1).getId());
+    }
+
+    @Test
+    public void testCountAppointmentsByPatientWithFilesOrReport() {
+        //Preconditions
+
+        //Exercise
+        int count = appointmentDao.countAppointmentsByPatientWithFilesOrReport(PAT_ID);
+
+        //Postconditions
+        assertEquals(2, count);
+    }
+
+    @Test
+    public void testHasFullMedicalHistoryEnabled() {
+        //Preconditions
+        long patientId = 1L;
+        long doctorId = 2L;
+
+        //Exercise
+        boolean hasFullHistory = appointmentDao.hasFullMedicalHistoryEnabled(patientId, doctorId);
+
+        //Postconditions
+        assertTrue(hasFullHistory);
+    }
+
+    @Test
+    public void testCountAppointmentsByPatient() {
+        //Preconditions
+        long patientId = 3L;
+
+        //Exercise
+        int count = appointmentDao.countAppointmentsByPatient(patientId);
+
+        //Postconditions
+        assertEquals(8, count);
+    }
+
+    @Test
+    public void testOfficeHasAppointments() {
+        //Preconditions
+
+        //Exercise
+        boolean hasAppointments = appointmentDao.officeHasAppointments(OFFICE_ID);
+
+        //Postconditions
+        assertTrue(hasAppointments);
     }
 
 //  DEPRECATED METHODS

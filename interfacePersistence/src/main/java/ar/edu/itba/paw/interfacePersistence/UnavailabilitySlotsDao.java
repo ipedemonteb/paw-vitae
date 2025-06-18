@@ -14,6 +14,8 @@ public interface UnavailabilitySlotsDao {
     List<UnavailabilitySlot> getUnavailabilityByDoctorId(long doctorId);
 
     boolean isUnavailableAtDate(long doctorId, LocalDate date);
+
      List<UnavailabilitySlot> getUnavailabilityByDoctorIdCurrentAndNextMonth(long doctorId);
+
      List<UnavailabilitySlot> getUnavailabilityByDoctorIdAndMonthAndYear(long doctorId, int month, int year);
 }

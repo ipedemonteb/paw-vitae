@@ -121,8 +121,14 @@
             </span>
             </sec:authorize>
             <sec:authorize access="hasRole('ROLE_DOCTOR')">
-              <img src="<c:url value='/image/${empty param.id ? -1 : param.id}' />" alt="Doctor Avatar" class="doctor-avatar-small" />
-            </sec:authorize>
+              <c:choose>
+                <c:when test="${param.id != null}">
+                  <img src='<c:url value="/image/${param.id}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="doctor" class="doctor-avatar-small"/>
+                </c:when>
+                <c:otherwise>
+                  <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default" class="doctor-avatar"/>
+                </c:otherwise>
+              </c:choose>                   </sec:authorize>
             <span class="user-name">
         <sec:authentication property="principal.username" var="username" />
         ${username}
@@ -173,7 +179,6 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu toggle functionality
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const mainNav = document.querySelector('.main-nav');
     const body = document.body;
@@ -201,7 +206,6 @@
           e.stopPropagation();
           const expanded = this.getAttribute('aria-expanded') === 'true';
 
-          // Close all other dropdowns first
           const allToggles = document.querySelectorAll('.user-dropdown-toggle, .register-dropdown-toggle');
           const allMenus = document.querySelectorAll('.user-dropdown-menu, .register-dropdown-menu');
 
@@ -213,7 +217,6 @@
             if (m !== menu) m.classList.remove('show');
           });
 
-          // Toggle current dropdown
           this.setAttribute('aria-expanded', !expanded);
           menu.classList.toggle('show');
         });
@@ -233,7 +236,6 @@
       }
     });
 
-    // Add active class to current nav link
     const currentPath = window.location.pathname;
     const context = '${pageContext.request.contextPath}';
     const navLinks = document.querySelectorAll('.nav-link');

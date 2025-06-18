@@ -27,9 +27,7 @@ public class DoctorCertification {
     @Column(name = "issue_date", nullable = false)
     private LocalDate issueDate;
 
-    public DoctorCertification() {
-        // Hibernate only
-    }
+    public DoctorCertification() {}
 
     public DoctorCertification(Doctor doctor, String certificateName, String issuingEntity, LocalDate issueDate) {
         this.doctor = doctor;
@@ -37,8 +35,6 @@ public class DoctorCertification {
         this.issuingEntity = issuingEntity;
         this.issueDate = issueDate;
     }
-
-    // Getters and setters...
 
     public Long getId() {
         return id;

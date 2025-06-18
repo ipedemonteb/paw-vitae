@@ -678,6 +678,11 @@ body {
     margin-bottom: 1.5rem;
 }
 
+.office-select {
+    flex: 1;
+    min-width: 180px;
+}
+
 .time-slot-row {
     display: flex;
     flex-wrap: wrap;
@@ -973,6 +978,11 @@ body {
         margin: 1rem auto 3rem;
     }
 
+    .time-slot-row {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
     .card-header {
         padding: 1.5rem 1rem;
     }
@@ -1022,6 +1032,13 @@ body {
     .btn-submit-doctor {
         padding: 0.7rem 1.25rem;
         font-size: 0.95rem;
+    }
+
+    .office-select,
+    .day-select,
+    .time-select {
+        min-width: auto;
+        width: 100%;
     }
 }
 

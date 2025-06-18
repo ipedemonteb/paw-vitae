@@ -35,15 +35,22 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
     }
 
     @Override
-    public List<DoctorOffice> getAllByDoctorId(long doctorId) {
+    public List<DoctorOffice> getByDoctorId(long doctorId) {
         return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId AND d.removed IS NULL", DoctorOffice.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
     }
 
     @Override
+    public List<DoctorOffice> getByDoctorIdWithAvailability(long doctorId) {
+        return em.createQuery("SELECT DISTINCT d FROM DoctorOffice d LEFT JOIN FETCH d.doctorOfficeAvailability WHERE d.doctor.id = :doctorId AND d.removed IS NULL", DoctorOffice.class)
+                .setParameter("doctorId", doctorId)
+                .getResultList();
+    }
+
+    @Override
     public List<DoctorOffice> getActiveByDoctorId(long doctorId) {
-        return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId AND d.active = true", DoctorOffice.class)
+        return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId AND d.active = true AND d.removed IS NULL", DoctorOffice.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
     }
@@ -58,14 +65,6 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
         return em.merge(o);
     }
 
-    public void softDelete(long id) {
-        DoctorOffice o = em.find(DoctorOffice.class, id);
-        if (o != null && o.isActive()) {
-            o.setActive(false);
-            em.merge(o);
-        }
-    }
-
     @Override
     public List<DoctorOffice> getByNameAndNeighborhoodId(String officeName, long neighborhoodId, long doctorId){
         return em.createQuery(
@@ -78,5 +77,11 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
                 .setParameter("name", officeName.trim().toLowerCase())
                 .getResultList();
     }
-
+    @Override
+    public void remove(long id) {
+        DoctorOffice office = em.find(DoctorOffice.class, id);
+        if (office != null) {
+            em.remove(office);
+        }
+    }
 }

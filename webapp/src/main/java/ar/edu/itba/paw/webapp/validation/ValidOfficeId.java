@@ -14,7 +14,7 @@ public @interface ValidOfficeId {
 
     Class<? extends javax.validation.Payload>[] payload() default {};
 
-    String offices() default "doctorOfficeForm"; // Default field name for office ID
+    String offices() default "doctorOfficeForm";
 
-    String doctorId() default "doctorId"; // Default field name for doctor ID
+    String doctorId() default "doctorId";
 }

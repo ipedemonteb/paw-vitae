@@ -25,7 +25,7 @@
     <jsp:param name="doctorId" value="${doctor.id}" />
 </jsp:include>
 
-<!-- Success Notification Toast -->
+<c:set var="isEditMode" value="${not empty editMode and editMode}" />
 <div id="successToast" class="success-toast">
     <div class="success-toast-icon">
         <i class="fas fa-check"></i>
@@ -55,9 +55,14 @@
             <div class="profile-header-content">
                 <div class="doctor-avatar-section">
                     <div class="doctor-avatar-large">
-                        <img src="<c:url value='/image/${empty doctor.imageId || doctor.imageId == -1 ? -1 : doctor.imageId}'/>"
-                             alt="<c:out value='${doctor.name} ${doctor.lastName}'/>"
-                             class="avatar-img">
+                        <c:choose>
+                            <c:when test="${doctor.imageId != null}">
+                                <img src='<c:url value="/image/${doctor.imageId}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="${doctor.name}" class="doctor-avatar-large" />
+                            </c:when>
+                            <c:otherwise>
+                                <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default" class="doctor-avatar-large" />
+                            </c:otherwise>
+                        </c:choose>
                     </div>
 <%--                    <c:if test="${doctor.verified}">--%>
 <%--                        <div class="verified-badge">--%>
@@ -154,7 +159,6 @@
                         </c:choose>
                     </div>
 
-                    <!-- Contact Info -->
                     <div class="contact-info">
                         <div class="contact-item">
                             <i class="fas fa-envelope"></i>
@@ -169,9 +173,7 @@
             </div>
         </div>
 
-        <!-- Doctor Details Grid -->
         <div class="details-grid">
-            <!-- About/Description Section with Edit Capability -->
             <div class="detail-card full-width">
                 <div class="detail-card-header">
                     <h3><i class="fas fa-user"></i><spring:message code="doctor.profile.about"/></h3>
@@ -202,7 +204,6 @@
             </div>
 
             <div class="specialty-coverage-row">
-                <!-- Specialties Section -->
                 <div class="detail-card">
                     <div class="detail-card-header">
                         <h3><i class="fas fa-stethoscope"></i> <spring:message code="doctor.profile.specialties" /></h3>
@@ -325,6 +326,7 @@
                                     </div>
                                 </c:forEach>
                             </div>
+
                             <button type="button" class="btn-add-new" onclick="addExperience()">
                                 <i class="fas fa-plus"></i> <spring:message code="doctor.profile.addExperience" />
                             </button>
@@ -397,6 +399,7 @@
                                     </div>
                                 </c:forEach>
                             </div>
+
                             <button type="button" class="btn-add-new" onclick="addCertificate()">
                                 <i class="fas fa-plus"></i> <spring:message code="doctor.profile.addCertificate" />
                             </button>
@@ -426,12 +429,6 @@
                                                     <c:out value="${office.neighborhood.name}" />
                                                 </span>
                                             </div>
-                                            <c:if test="${not empty doctor.phone}">
-                                                <div class="office-phone">
-                                                    <i class="fas fa-phone"></i>
-                                                    <a href="tel:${doctor.phone}"><c:out value="${doctor.phone}" /></a>
-                                                </div>
-                                            </c:if>
                                         </div>
                                     </div>
                                 </c:forEach>
@@ -507,9 +504,16 @@
 <c:if test="${isOwnProfile}">
     <form:form id="updateProfileForm" method="POST" action="${pageContext.request.contextPath}/doctor/profile/update" modelAttribute="doctorProfileForm" style="display: none;">
         <form:hidden path="biography" id="hiddenBio" />
+        <form:errors path="biography" cssClass="form-error" id="bioErrors" />
+
         <form:hidden path="description" id="hiddenDescription" />
+        <form:errors path="description" cssClass="form-error" id="descriptionErrors" />
+
         <div id="hiddenExperiences"></div>
+        <form:errors path="experiences" cssClass="form-error" id="experiencesErrors" />
+
         <div id="hiddenCertificates"></div>
+        <form:errors path="certificates" cssClass="form-error" id="certificatesErrors" />
     </form:form>
 </c:if>
 
@@ -570,11 +574,59 @@
 
         updateCharCount('bio');
         updateCharCount('description');
-
+        showFormErrors();
         document.getElementById('header-edit-mode-controls').style.display = 'none';
         document.getElementById('header-save-mode-controls').style.display = 'flex';
     }
+    function showFormErrors() {
+        // Mostrar errores de biografía
+        const bioErrors = document.getElementById('bioErrors');
+        if (bioErrors && bioErrors.textContent.trim()) {
+            const bioSection = document.getElementById('bio-edit');
+            if (bioSection) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'form-error visible';
+                errorDiv.innerHTML = bioErrors.innerHTML;
+                bioSection.appendChild(errorDiv);
+            }
+        }
 
+        // Mostrar errores de descripción
+        const descErrors = document.getElementById('descriptionErrors');
+        if (descErrors && descErrors.textContent.trim()) {
+            const descSection = document.getElementById('description-edit');
+            if (descSection) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'form-error visible';
+                errorDiv.innerHTML = descErrors.innerHTML;
+                descSection.appendChild(errorDiv);
+            }
+        }
+
+        // Mostrar errores de experiencias
+        const expErrors = document.getElementById('experiencesErrors');
+        if (expErrors && expErrors.textContent.trim()) {
+            const expSection = document.getElementById('experiences-edit');
+            if (expSection) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'form-error visible';
+                errorDiv.innerHTML = expErrors.innerHTML;
+                expSection.appendChild(errorDiv);
+            }
+        }
+
+
+        const certErrors = document.getElementById('certificatesErrors');
+        if (certErrors && certErrors.textContent.trim()) {
+            const certSection = document.getElementById('certificates-edit');
+            if (certSection) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'form-error visible';
+                errorDiv.innerHTML = certErrors.innerHTML;
+                certSection.appendChild(errorDiv);
+            }
+        }
+    }
     function cancelAllChanges() {
         isEditMode = false;
 
@@ -813,216 +865,12 @@
     // Set current year for copyright
     document.addEventListener('DOMContentLoaded', function() {
         window.currentYear = new Date().getFullYear();
+        const isEditMode = ${editMode}
+        if (isEditMode) {
+            enterEditMode();
+        }
     });
 </script>
-
-<style>
-    /* Doctor Avatar Section Layout */
-    .doctor-avatar-section {
-        position: relative;
-        display: flex;
-        align-items: flex-end;
-        gap: 1rem;
-        margin-bottom: 16px;
-    }
-
-    /* Header Edit Section positioned at bottom right */
-    .header-edit-section {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 0.5rem;
-    }
-
-    .header-edit-controls {
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-    }
-
-    .btn-edit-header {
-        background-color: var(--linkedin-blue);
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .btn-edit-header:hover {
-        background-color: var(--linkedin-blue-hover);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-    }
-
-    .btn-success {
-        background-color: var(--success-color);
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .btn-success:hover {
-        background-color: #059669;
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-    }
-
-    /* Edit Form Styles */
-    .edit-form {
-        margin-top: 1rem;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid var(--border-color);
-        border-radius: 0.25rem;
-        font-size: 1rem;
-        transition: border-color 0.2s ease;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: var(--text-primary);
-    }
-
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .experience-form-item, .certificate-form-item {
-        position: relative;
-        padding: 1.5rem;
-        border: 1px solid var(--border-color);
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-        background: var(--background-color);
-    }
-
-    .btn-remove {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        background: var(--danger-color);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 2rem;
-        height: 2rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 0.2s ease;
-    }
-
-    .btn-remove:hover {
-        background: #dc2626;
-    }
-
-    .char-counter {
-        text-align: right;
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-        margin-top: 0.5rem;
-    }
-
-    .btn-add-new {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        width: 100%;
-        padding: 0.75rem;
-        background-color: var(--white);
-        border: 1px dashed var(--primary-color);
-        border-radius: var(--border-radius);
-        color: var(--primary-color);
-        font-weight: 500;
-        cursor: pointer;
-        transition: var(--transition);
-    }
-
-    .btn-add-new:hover {
-        background-color: rgba(59, 130, 246, 0.1);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .doctor-avatar-section {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .header-edit-section {
-            position: static;
-            align-items: center;
-            margin-top: 1rem;
-        }
-
-        .header-edit-controls {
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .form-row {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .header-edit-controls {
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .btn-edit-header,
-        .btn-success,
-        .btn-secondary {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-    }
-
-    .scrollable-list {
-        max-height: 180px; /* Adjust as needed */
-        overflow-y: auto;
-        padding-right: 8px; /* Optional: space for scrollbar */
-    }
-    .specialty-list, .coverage-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-</style>
 <script>
     // Create a messages object to be used by the JavaScript
     window.appointmentMessages = {

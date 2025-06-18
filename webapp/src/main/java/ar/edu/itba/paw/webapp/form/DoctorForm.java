@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.form;
 
 
 
-import ar.edu.itba.paw.models.AvailabilitySlotForm;
 import ar.edu.itba.paw.models.DoctorOfficeForm;
 import ar.edu.itba.paw.webapp.validation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,7 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.*;
 import java.util.List;
 
-@AcceptedSpecialties(specialties = "specialties", offices = "doctorOfficeForm", message = "{specialties.not.accepted}")
+@ValidNewOffice
+@ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
+@OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
+@AcceptedSpecialties(specialties = "specialties", offices = "doctorOfficeForm")
 @RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "{register.passwordsDoNotMatch}")
 public class DoctorForm {
 
@@ -50,13 +52,8 @@ public class DoctorForm {
     private List<Long> coverages;
 
     @FileType(types = {"image/jpeg", "image/png", "image/jpg"},message = "{fileType.invalid}")
-    @FileSize(max = 2097154) // 2MB
+    @FileSize(max = 2097154)
     private MultipartFile image;
-
-    @NotEmpty
-    @ValidTimeSlot(message = "{slots.invalid}")
-    @TimeSlotIntersection(message = "{slots.overlap}")
-    private List<AvailabilitySlotForm> availabilitySlots;
 
     @NotEmpty
     @NotNull
@@ -65,6 +62,7 @@ public class DoctorForm {
     @ValidOfficeNames(message = "{offices.invalid.name}")
     @ValidOfficeSpecialties(message = "{offices.invalid.specialties}")
     @ValidOfficeNeighborhood(message = "{offices.invalid.neighborhood}")
+    @NewOffice(message = "{offices.invalid.new}")
     private List<DoctorOfficeForm> doctorOfficeForm;
 
     public String getName() {
@@ -139,13 +137,6 @@ public class DoctorForm {
         this.image = image;
     }
 
-    public List<AvailabilitySlotForm> getAvailabilitySlots() {
-        return availabilitySlots;
-    }
-    public void setAvailabilitySlots(List<AvailabilitySlotForm> availabilitySlots) {
-        this.availabilitySlots = availabilitySlots;
-    }
-
     public List<DoctorOfficeForm> getDoctorOfficeForm() {
         return doctorOfficeForm;
     }
@@ -153,5 +144,9 @@ public class DoctorForm {
     public void setDoctorOfficeForm(List<DoctorOfficeForm> doctorOfficeForm) {
         this.doctorOfficeForm = doctorOfficeForm;
     }
+
+    public String getOfficeAvailabilitySlotForms() {
+        return null;
+    };
 }
 

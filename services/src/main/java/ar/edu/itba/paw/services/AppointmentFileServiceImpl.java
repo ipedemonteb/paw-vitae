@@ -4,10 +4,7 @@ import ar.edu.itba.paw.interfacePersistence.AppointmentFileDao;
 import ar.edu.itba.paw.interfaceServices.AppointmentFileService;
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.interfaceServices.MailService;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.AppointmentFile;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AppointmentFileServiceImpl implements AppointmentFileService {
@@ -91,12 +87,44 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         if (appointmentOpt.isEmpty()) return Optional.empty();
 
         Appointment appointment = appointmentOpt.get();
-        if (!appointment.getDoctor().getEmail().equals(username) &&
-                !appointment.getPatient().getEmail().equals(username)) {
-            return Optional.empty();
-        }
         LOGGER.info("File {} authorized for appointment {} and user {}", file, appointment, username);
         return Optional.of(file);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AppointmentFile> getAllFilesForPatient(long patientId, int pageNumber, int pageSize) {
+        LOGGER.debug("Getting files for patient {} on page {}", patientId, pageNumber);
+        int totalFiles = appointmentFileDao.getAllFilesForPatientCount(patientId);
+        List<AppointmentFile> files = appointmentFileDao.getAllFilesForPatient(patientId, pageNumber, pageSize);
+        return new Page<>(files, pageNumber, pageSize, totalFiles);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Map.Entry<Appointment, List<AppointmentFile>>> getGroupedFilesForPatient(long patientId, int page, int pageSize, String direction) {
+        Page<Appointment> appointmentPage = appointmentService.getAppointmentsForPatientWithFilesOrReport(patientId, page, pageSize, direction);
+        List<Appointment> appointments = appointmentPage.getContent();
+
+        if (appointments.isEmpty()) {
+            return new Page<>(Collections.emptyList(), page, pageSize, 0);
+        }
+
+        List<Long> appointmentIds = appointments.stream().map(Appointment::getId).collect(Collectors.toList());
+        List<AppointmentFile> files = appointmentFileDao.getFilesByAppointmentIds(appointmentIds);
+
+        Map<Long, List<AppointmentFile>> filesByAppointmentId = files.stream()
+                .collect(Collectors.groupingBy(f -> f.getAppointment().getId()));
+
+        List<Map.Entry<Appointment, List<AppointmentFile>>> groupedList = appointments.stream()
+                .map(appt -> Map.entry(appt, filesByAppointmentId.getOrDefault(appt.getId(), Collections.emptyList())))
+                .collect(Collectors.toList());
+
+        return new Page<>(groupedList, page, pageSize, appointmentPage.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<AppointmentFile> getByAppointmentIdForDoctor(long appointmentId) {
+        return appointmentFileDao.getByAppointmentIdForDoctor( appointmentId);
+    }
 }

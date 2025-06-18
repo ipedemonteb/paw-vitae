@@ -6,10 +6,7 @@ import ar.edu.itba.paw.interfacePersistence.UserDao;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.MailService;
 import ar.edu.itba.paw.interfaceServices.PatientService;
-import ar.edu.itba.paw.models.Coverage;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -18,6 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -29,7 +27,7 @@ public class UserServiceImplTest {
     private static final Doctor DOCTOR = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
             1L, 4.5, 10, true);
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
-            new Coverage(1L, "Coverage A"), true);
+            new Coverage(1L, "Coverage A"), new Neighborhood(1L, "Neighborhood A"), true);
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -40,11 +38,7 @@ public class UserServiceImplTest {
     @Mock
     private PatientDao patientDao;
     @Mock
-    private PatientService patientService;
-    @Mock
     private DoctorDao doctorDao;
-    @Mock
-    private DoctorService doctorService;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -172,7 +166,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyValidationTokenReturnsPatient() {
         //Preconditions
-        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
+        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).plusDays(1));
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(PATIENT));
 
         //Exercise
@@ -187,7 +181,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyValidationTokenReturnsPatientExpiredToken() {
         //Preconditions
-        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().minusDays(1));
+        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(PATIENT));
         when(patientDao.getByEmail("john@test.com")).thenReturn(Optional.of(PATIENT));
 
@@ -202,7 +196,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyValidationTokenReturnsDoctor() {
         //Preconditions
-        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
+        when(userDao.tokenExpirationDate("VALIDATIONTOKEN")).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).plusDays(1));
         when(patientDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.empty());
         when(doctorDao.getByVerificationToken("VALIDATIONTOKEN")).thenReturn(Optional.of(DOCTOR));
 
@@ -230,7 +224,7 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyRecoveryTokenExists() {
         //Preconditions
-        when(userDao.tokenExpirationDate("RECOVERYTOKEN")).thenReturn(LocalDateTime.now().plusDays(1));
+        when(userDao.tokenExpirationDate("RECOVERYTOKEN")).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).plusDays(1));
         when(patientDao.getByResetToken("RECOVERYTOKEN")).thenReturn(Optional.of(PATIENT));
 
         //Exercise
@@ -297,5 +291,114 @@ public class UserServiceImplTest {
 
         //Postconditions
         assertEquals(1L, result.longValue());
+    }
+
+    @Test
+    public void testCheckTokenInvalidUser() {
+        //Preconditions
+        String token = "TOKEN";
+        boolean isVerification = true;
+        when(patientDao.getByVerificationToken(token)).thenReturn(Optional.empty());
+        when(doctorDao.getByVerificationToken(token)).thenReturn(Optional.empty());
+        //Exercise
+        Optional<? extends User> result = userService.checkToken(token, isVerification);
+
+        //Postconditions
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void testCheckTokenValidPatientVerificationExpiredToken() {
+        //Preconditions
+        String token = "TOKEN";
+        boolean isVerification = true;
+        when(patientDao.getByVerificationToken(anyString())).thenReturn(Optional.of(PATIENT));
+        when(userDao.tokenExpirationDate(anyString())).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
+        when(patientDao.getByEmail(anyString())).thenReturn(Optional.of(PATIENT));
+
+        //Exercise
+        Optional<? extends User> result = userService.checkToken(token, isVerification);
+
+        //Postconditions
+        assertTrue(result.isPresent());
+        assertEquals(PATIENT.getId(), result.get().getId());
+    }
+
+    @Test
+    public void testCheckTokenValidPatientResetExpiredToken() {
+        //Preconditions
+        String token = "TOKEN";
+        boolean isVerification = false;
+        when(patientDao.getByResetToken(token)).thenReturn(Optional.of(PATIENT));
+        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
+
+        //Exercise
+        Optional<? extends User> result = userService.checkToken(token, isVerification);
+
+        //Postconditions
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void testCheckTokenValidPatientVerification() {
+        //Preconditions
+        String token = "TOKEN";
+        boolean isVerification = true;
+        when(patientDao.getByVerificationToken(token)).thenReturn(Optional.of(PATIENT));
+        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).plusDays(2));
+
+        //Exercise
+        Optional<? extends User> result = userService.checkToken(token, isVerification);
+
+        //Postconditions
+        assertTrue(result.isPresent());
+        assertEquals(PATIENT.getId(), result.get().getId());
+    }
+
+    @Test
+    public void testCheckTokenValidDoctorVerificationExpiredToken() {
+        //Preconditions
+        String token = "TOKEN";
+        boolean isVerification = true;
+        when(doctorDao.getByVerificationToken(anyString())).thenReturn(Optional.of(DOCTOR));
+        when(userDao.tokenExpirationDate(anyString())).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
+        when(doctorDao.getByEmail(anyString())).thenReturn(Optional.of(DOCTOR));
+
+        //Exercise
+        Optional<? extends User> result = userService.checkToken(token, isVerification);
+
+        //Postconditions
+        assertTrue(result.isPresent());
+        assertEquals(DOCTOR.getId(), result.get().getId());
+    }
+
+    @Test
+    public void testCheckTokenValidDoctorResetExpiredToken() {
+        //Preconditions
+        String token = "TOKEN";
+        boolean isVerification = false;
+        when(doctorDao.getByResetToken(token)).thenReturn(Optional.of(DOCTOR));
+        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
+
+        //Exercise
+        Optional<? extends User> result = userService.checkToken(token, isVerification);
+
+        //Postconditions
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void testCheckTokenValidDoctorVerification() {
+        //Preconditions
+        String token = "TOKEN";
+        boolean isVerification = true;
+        when(doctorDao.getByVerificationToken(token)).thenReturn(Optional.of(DOCTOR));
+        when(userDao.tokenExpirationDate(token)).thenReturn(LocalDateTime.now(ZoneId.systemDefault()).plusDays(2));
+        //Exercise
+        Optional<? extends User> result = userService.checkToken(token, isVerification);
+
+        //Postconditions
+        assertTrue(result.isPresent());
+        assertEquals(DOCTOR.getId(), result.get().getId());
     }
 }

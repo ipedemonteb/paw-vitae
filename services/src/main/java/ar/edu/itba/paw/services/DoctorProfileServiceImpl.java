@@ -49,7 +49,6 @@ public class DoctorProfileServiceImpl implements DoctorProfileService {
         DoctorProfile profile = findByDoctorId(doctor.getId());
         profile.setBio(bio);
         profile.setDescription(description);
-        doctorProfileDao.update(profile);
         LOGGER.info("Doctor profile updated for doctor with ID: {}", doctor.getId());
     }
 }

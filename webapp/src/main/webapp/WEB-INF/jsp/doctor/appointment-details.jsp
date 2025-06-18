@@ -67,7 +67,6 @@
     </button>
 </div>
 
-<!-- Main Content -->
 <main class="main-content">
     <div class="container">
         <div class="appointment-container">
@@ -77,13 +76,10 @@
             </div>
 
             <div class="appointment-body">
-                <!-- Display doctor information if available -->
                 <c:if test="${not empty appointment.patient}">
                     <div class="doctor-info">
                         <div class="doctor-image">
-                            <img src="<c:url value='/image/-1'/>"
-                                 alt="<c:out value="${doctor.name}"/> <c:out value="${doctor.lastName}"/>"
-                                 class="doctor-avatar">
+                            <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default" class="doctor-avatar"/>
                         </div>
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${appointment.patient.name}"/> <c:out
@@ -102,7 +98,6 @@
                     </div>
                 </c:if>
 
-                <!-- Status field - NEW -->
                 <div class="specialty-card-appointment status-card">
                     <div class="specialty-icon-appointment">
                         <i class="fas fa-clipboard-check"></i>
@@ -120,7 +115,6 @@
                     </div>
                 </div>
 
-                <!-- Improved date display -->
                 <div class="specialty-card-appointment">
                     <div class="specialty-icon-appointment">
                         <i class="fas fa-calendar"></i>
@@ -196,6 +190,13 @@
                                     <div class="file-info">
                                         <div class="file-name"><c:out value="${file.fileName}"/></div>
                                     </div>
+                                    <a href="<c:url value='/appointment/${appointment.id}/file-view/${file.id}' />"
+                                       class="btn-view-file"
+                                       target="_blank"
+                                       title="<spring:message code='dashboard.medicalHistory.viewFile' />">
+                                        <i class="fas fa-eye"></i>
+                                        <span><spring:message code="dashboard.medicalHistory.view" /></span>
+                                    </a>
                                     <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>"
                                        class="file-download" download>
                                         <i class="fas fa-download"></i>
@@ -213,6 +214,21 @@
                             </div>
                         </c:if>
                     </div>
+                    <c:if test="${appointment.allowFullHistory}">
+                        <a href="<c:url value='/doctor/appointments/${appointment.id}/history'/>" class="btn btn-primary">
+                            <spring:message code="appointment.details.files.see.all"/>
+                        </a>
+                    </c:if>
+                    <c:if test="${not appointment.allowFullHistory}">
+                        <div class="no-files-message">
+                            <div class="no-files-content">
+                                <i class="fas fa-info-circle"></i>
+                                <spring:message code="appointment.details.files.see.all.no"/>
+                            </div>
+                        </div>
+                    </c:if>
+
+
                 </div>
 
                 <c:choose>
@@ -225,7 +241,6 @@
                             </h2>
                             <c:choose>
                                 <c:when test="${not empty existingRating}">
-                                    <!-- Display existing rating with title -->
                                     <div class="review-card">
                                         <div class="review-card-content">
                                             <div class="review-header">
@@ -244,7 +259,6 @@
                                     </div>
                                 </c:when>
                                 <c:otherwise>
-                                    <!-- Styled No Reviews Message -->
                                     <div class="review-card">
                                         <div class="no-reviews-message" style="border: none; box-shadow: none; margin-bottom: 0;">
                                             <div class="no-reviews-icon">
@@ -273,7 +287,6 @@
                                     <spring:message code="appointment.details.doctor.files.title"/>
                                 </h2>
 
-                                <!-- Report textarea -->
                                 <c:choose>
                                     <c:when test="${empty appointment.report}">
                                         <div class="form-group">
@@ -306,6 +319,13 @@
                                                 <div class="file-info">
                                                     <div class="file-name"><c:out value="${file.fileName}"/></div>
                                                 </div>
+                                                <a href="<c:url value='/appointment/${appointment.id}/file-view/${file.id}' />"
+                                                   class="btn-view-file"
+                                                   target="_blank"
+                                                   title="<spring:message code='dashboard.medicalHistory.viewFile' />">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span><spring:message code="dashboard.medicalHistory.view" /></span>
+                                                </a>
                                                 <a href="<c:url value='/appointment/${appointment.id}/file/${file.id}'/>"
                                                    class="file-download" download>
                                                     <i class="fas fa-download"></i>
@@ -325,7 +345,6 @@
                                 </div>
                             </div>
 
-                            <!-- File Upload Section -->
                             <div class="form-group">
                                 <label for="files">
                                     <spring:message code="appointment.form.files"  />
@@ -342,7 +361,7 @@
                                         <form:input type="file" path="files" id="files" multiple="true" accept=".pdf" class="file-upload-input-hidden" />
                                     </div>
                                     <div id="filePreview" class="file-upload-preview"></div>
-                                    <form:errors path="files" cssClass="error-message" />
+                                    <form:errors path="patientFiles" cssClass="error-message" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -445,7 +464,7 @@
                     </c:otherwise>
                 </c:choose>
                 <div class="back-button-container">
-                    <a href="${pageContext.request.contextPath}/doctor/dashboard" class="back-button">
+                    <a href="<c:url value='/doctor/dashboard'/>" class="back-button">
                         <i class="fas fa-arrow-left"></i>
                         <span><spring:message code="appointment.details.back"/></span>
                     </a>

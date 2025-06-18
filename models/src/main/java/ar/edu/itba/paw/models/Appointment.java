@@ -2,6 +2,7 @@ package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "appointments")
@@ -21,6 +22,10 @@ public class Appointment {
     @Column
     private String reason;
 
+    @Column(name = "allow_full_history", nullable = false)
+    private boolean allowFullHistory = true;
+
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "specialty_id", nullable = false)
     private Specialty specialty;
@@ -37,17 +42,17 @@ public class Appointment {
     @JoinColumn(name = "office_id", nullable = false)
     private DoctorOffice doctorOffice;
 
+    @OneToMany(mappedBy = "appointment")
+    private List<AppointmentFile> appointmentFiles;
     @Column
     private String report;
 
     @Transient
     private Boolean cancellable = true;
 
-    public Appointment() {
-        // For Hibernate use
-    }
+    public Appointment() {}
 
-    public Appointment(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice) {
+    public Appointment(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice, boolean allowFullHistory) {
         this.date = date;
         this.status = status;
         this.reason = reason;
@@ -56,6 +61,7 @@ public class Appointment {
         this.patient = patient;
         this.report = report;
         this.doctorOffice = doctorOffice;
+        this.allowFullHistory = allowFullHistory;
     }
 
     public long getId() {
@@ -133,4 +139,13 @@ public class Appointment {
     public void setDoctorOffice(DoctorOffice doctorOffice) {
         this.doctorOffice = doctorOffice;
     }
+
+    public boolean isAllowFullHistory() {
+        return allowFullHistory;
+    }
+
+    public void setAllowFullHistory(boolean allowFullHistory) {
+        this.allowFullHistory = allowFullHistory;
+    }
+
 }

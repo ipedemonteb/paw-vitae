@@ -8,13 +8,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
-@OfficeOwnedByDoctor(officeId = "officeId", doctorId = "doctorId", message = "{appointment.office.valid}")
-@OfficeAcceptsSpecialty(officeId = "officeId", specialtyId = "specialtyId" ,message = "{appointment.office.specialty.valid}")
-@DoctorAvailableAtDayAndTime(doctorId = "doctorId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.valid}")
-@AppointmentExistence(userId = "doctorId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existence}")
-@AppointmentExistence(userId = "patientId", date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.existence}")
-@AppointmentValidDate(date = "appointmentDate", startTime = "appointmentHour", message = "{appointment.date.valid}")
-@AppointmentValidSpecialtyForDoctor(doctorId = "doctorId", specialtyId = "specialtyId", message = "{appointment.specialty.valid}")
+@OfficeOwnedByDoctor(message = "{office.invalid}")
+@OfficeAcceptsSpecialty(officeId = "officeId", specialtyId = "specialtyId")
+@OfficeAvailableAtDayAndTime(officeId = "officeId", date = "appointmentDate", appointmentHour = "appointmentHour")
+@AppointmentExistence(userId = "doctorId", date = "appointmentDate", startTime = "appointmentHour")
+@AppointmentExistence(userId = "patientId", date = "appointmentDate", startTime = "appointmentHour")
+@AppointmentValidDate(date = "appointmentDate", startTime = "appointmentHour")
+@AppointmentValidSpecialtyForDoctor(doctorId = "doctorId", specialtyId = "specialtyId")
 public class AppointmentForm {
 
 
@@ -46,6 +46,9 @@ public class AppointmentForm {
 
     @NotNull
     private long patientId;
+
+    private boolean allowFullHistory = true;
+
 
     public long getPatientId() {
         return patientId;
@@ -116,6 +119,14 @@ public class AppointmentForm {
 
     public void setOfficeId(long officeId) {
         this.officeId = officeId;
+    }
+
+    public boolean isAllowFullHistory() {
+        return allowFullHistory;
+    }
+
+    public void setAllowFullHistory(boolean allowFullHistory) {
+        this.allowFullHistory = allowFullHistory;
     }
 }
 

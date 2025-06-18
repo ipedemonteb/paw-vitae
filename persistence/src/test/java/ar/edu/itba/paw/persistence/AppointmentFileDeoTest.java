@@ -70,6 +70,31 @@ public class AppointmentFileDeoTest {
     }
 
     @Test
+    public void testGetByAppointmentIdForDoctorDoesNotExist() {
+        //Preconditions
+
+        //Exercise
+        List<AppointmentFile> maybeFiles = fileDao.getByAppointmentIdForDoctor(1000L);
+
+        //Postconditions
+        assertTrue(maybeFiles.isEmpty());
+    }
+
+    @Test
+    public void testGetBtyAppointmentIdForDoctorExists() {
+        //Preconditions
+
+        //Exercise
+        List<AppointmentFile> maybeFiles = fileDao.getByAppointmentIdForDoctor(APPOINTMENT_ID);
+
+        //Postconditions
+        assertFalse(maybeFiles.isEmpty());
+        assertEquals(FILE_ID, maybeFiles.getFirst().getId());
+        assertEquals("informe.pdf", maybeFiles.getLast().getFileName());
+        assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, maybeFiles.getFirst().getFileData());
+    }
+
+    @Test
     public void testGetByIdDoesNotExist() {
         //Preconditions
 
@@ -98,11 +123,98 @@ public class AppointmentFileDeoTest {
         //Preconditions
 
         //Exercise
+        List<AppointmentFile> maybeImage = fileDao.getByAppointmentId(1000L);
+
+        //Postconditions
+        assertTrue(maybeImage.isEmpty());
+    }
+
+    @Test
+    public void testGetByAppointmentIdExists() {
+        //Preconditions
+
+        //Exercise
         List<AppointmentFile> maybeImage = fileDao.getByAppointmentId(APPOINTMENT_ID);
 
         //Postconditions
         assertFalse(maybeImage.isEmpty());
         assertEquals(FILE_ID, maybeImage.getFirst().getId());
         assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, maybeImage.getFirst().getFileData());
+    }
+
+    @Test
+    public void testGetAllFilesForPatientDoesNotExist() {
+        //Preconditions
+        int pageNumber = 1;
+        int pageSize = 10;
+
+        //Exercise
+        List<AppointmentFile> files = fileDao.getAllFilesForPatient(1000L, pageNumber, pageSize);
+
+        //Postconditions
+        assertTrue(files.isEmpty());
+    }
+
+    @Test
+    public void testGetAllFilesForPatientExists() {
+        //Preconditions
+        long patientId = 1L;
+        int pageNumber = 1;
+        int pageSize = 10;
+
+        //Exercise
+        List<AppointmentFile> files = fileDao.getAllFilesForPatient(patientId, pageNumber, pageSize);
+
+        //Postconditions
+        assertFalse(files.isEmpty());
+        assertEquals(2, files.size());
+    }
+
+    @Test
+    public void testGetAllAppointmentsForPatientCountDoesNotExist() {
+        //Preconditions
+
+        //Exercise
+        int count = fileDao.getAllFilesForPatientCount(1000L);
+
+        //Postconditions
+        assertEquals(0, count);
+    }
+
+    @Test
+    public void testGetAllFilesForPatientCountExists() {
+        //Preconditions
+        long patientId = 1L;
+
+        //Exercise
+        int count = fileDao.getAllFilesForPatientCount(patientId);
+
+        //Postconditions
+        assertEquals(2, count);
+    }
+
+    @Test
+    public void testGetFilesByAppointmentIdsDoNotExist() {
+        //Preconditions
+        List<Long> appointmentIds = List.of(1000L, 2000L);
+
+        //Exercise
+        List<AppointmentFile> files = fileDao.getFilesByAppointmentIds(appointmentIds);
+
+        //Postconditions
+        assertTrue(files.isEmpty());
+    }
+
+    @Test
+    public void testGetFilesByAppointmentIdsExist() {
+        //Preconditions
+        List<Long> appointmentIds = List.of(APPOINTMENT_ID, 2L);
+
+        //Exercise
+        List<AppointmentFile> files = fileDao.getFilesByAppointmentIds(appointmentIds);
+
+        //Postconditions
+        assertFalse(files.isEmpty());
+        assertEquals(2, files.size());
     }
 }

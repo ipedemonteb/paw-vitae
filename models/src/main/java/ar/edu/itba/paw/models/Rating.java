@@ -38,7 +38,6 @@ public class Rating {
     }
 
     public Rating() {
-        // For Hibernate use
     }
 
     public long getId() {

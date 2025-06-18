@@ -8,9 +8,11 @@ import java.util.Optional;
 
 public interface DoctorService {
 
-    Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<AvailabilitySlotForm> availabilitySlots, List<DoctorOfficeForm> doctorOfficeForm); //TODO doctorOffices should be DTO
+    Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm);
 
     Optional<Doctor> getById(final long id);
+
+    Optional<Doctor> getByIdWithAvailableOffices(final long id);
 
     Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize);
 

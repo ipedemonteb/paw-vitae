@@ -13,12 +13,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,12 +30,16 @@ public class AppointmentFileServiceImplTest {
     private static final long APPOINTMENT_ID = 1L;
     private static final long FILE_ID = 1L;
     private static final String USERNAME = "test@test.com";
+    private static final Neighborhood NEIGHBORHOOD = new Neighborhood(1L, "Neighborhood A");
+    private static final Specialty SPECIALTY = new Specialty(1L, "Cardiology");
     private static final Doctor DOCTOR = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
             1L, 4.5, 10, true);
+    private static final DoctorOffice DOCTOR_OFFICE = new DoctorOffice(DOCTOR, NEIGHBORHOOD, List.of(SPECIALTY), "Office A");
+
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
-            new Coverage(1L, "Coverage A"), true);
-    private static final Appointment APPOINTMENT = new Appointment(LocalDateTime.now(), "Confirmed", "Consultation",
-            new Specialty(3L, "Cardiology"), DOCTOR, PATIENT,"Report"
+            new Coverage(1L, "Coverage A"), NEIGHBORHOOD, true);
+    private static final Appointment APPOINTMENT = new Appointment(LocalDateTime.now(ZoneId.systemDefault()), "Confirmed", "Consultation",
+            new Specialty(3L, "Cardiology"), DOCTOR, PATIENT,"Report", DOCTOR_OFFICE, true
     );
     private static final AppointmentFile APPOINTMENT_FILE = new AppointmentFile(
             "testFile",
@@ -45,10 +50,8 @@ public class AppointmentFileServiceImplTest {
 
     @Mock
     private AppointmentFileDao appointmentFileDao;
-
     @Mock
     private AppointmentService appointmentService;
-
     @Mock
     private MailService mailService;
 
@@ -180,7 +183,6 @@ public class AppointmentFileServiceImplTest {
         assertFalse(file.isPresent());
     }
 
-    //@TODO: CHECK IF LEGAL
     @Test
     public void testGetAuthorizedFile() {
         //Preconditions
@@ -194,5 +196,36 @@ public class AppointmentFileServiceImplTest {
         assertTrue(file.isPresent());
         assertEquals(0L, file.get().getId());
         assertEquals(0L, file.get().getAppointment().getId());
+    }
+
+    @Test
+    public void testGetGroupedFilesForPatient() {
+        //Preconditions
+        long patientId = 1L;
+        int page = 0, pageSize = 2;
+        String direction = "desc";
+        Appointment appointment1 = mock(Appointment.class);
+        when(appointment1.getId()).thenReturn(1L);
+        Appointment appointment2 = mock(Appointment.class);
+        when(appointment2.getId()).thenReturn(2L);
+        List<Appointment> appointments = List.of(appointment1, appointment2);
+        Page<Appointment> appointmentPage = new Page<>(appointments, page, pageSize, 2);
+        AppointmentFile file1 = new AppointmentFile("file1", new byte[]{1}, "doctor", appointment1);
+        AppointmentFile file2 = new AppointmentFile("file2", new byte[]{2}, "doctor", appointment2);
+        when(appointmentService.getAppointmentsForPatientWithFilesOrReport(patientId, page, pageSize, direction))
+                .thenReturn(appointmentPage);
+        when(appointmentFileDao.getFilesByAppointmentIds(anyList()))
+                .thenReturn(List.of(file1, file2));
+
+        //Exercise
+        Page<Map.Entry<Appointment, List<AppointmentFile>>> result = appointmentFileService.getGroupedFilesForPatient(patientId, page, pageSize, direction);
+
+        //Postconditions
+        assertNotNull(result);
+        assertEquals(2, result.getContent().size());
+        assertEquals(appointment1.getId(), result.getContent().getFirst().getKey().getId());
+        assertEquals(appointment2.getId(), result.getContent().getLast().getKey().getId());
+        assertArrayEquals(file1.getFileData(), result.getContent().getFirst().getValue().getFirst().getFileData());
+        assertArrayEquals(file2.getFileData(), result.getContent().getLast().getValue().getFirst().getFileData());
     }
 }

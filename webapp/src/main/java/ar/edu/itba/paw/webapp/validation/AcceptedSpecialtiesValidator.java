@@ -35,10 +35,14 @@ public class AcceptedSpecialtiesValidator implements ConstraintValidator<Accepte
 
             for (DoctorOfficeForm office : offices) {
                 if (office.getSpecialtyIds() == null || office.getSpecialtyIds().isEmpty()) {
-                    return true; //validated elsewhere
+                    return true;
                 }
                 for (Long id : office.getSpecialtyIds()) {
                     if (!specialties.contains(id)) {
+                        context.disableDefaultConstraintViolation();
+                        context.buildConstraintViolationWithTemplate("{specialties.not.accepted}")
+                                .addPropertyNode(this.officesField)
+                                .addConstraintViolation();
                         return false;
                     }
                 }

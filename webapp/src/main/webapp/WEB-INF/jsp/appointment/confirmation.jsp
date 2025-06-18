@@ -17,10 +17,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Include the header -->
+
 <jsp:include page="/WEB-INF/jsp/components/header.jsp" />
 
-<!-- Main Content -->
+
 <main class="main-content">
     <div class="container">
         <div class="confirmation-container">
@@ -33,7 +33,6 @@
             </div>
 
             <div class="confirmation-body">
-                <!-- Appointment Details -->
                 <div class="confirmation-details">
                     <div class="confirmation-item">
                         <div class="confirmation-label"><spring:message code="appointment.form.reason"/></div>
@@ -83,7 +82,6 @@
                     </div>
                 </div>
 
-                <!-- Attached Files Section -->
                 <c:if test="${not empty patientFiles}">
                     <div class="files-section">
                         <h3 class="files-title">
@@ -111,12 +109,17 @@
                     </div>
                 </c:if>
 
-                <!-- Doctor Information -->
                 <c:if test="${not empty appointment.doctor}">
                     <div class="doctor-info">
                         <div class="doctor-image">
-                            <img src="<c:url value='/image/${empty appointment.doctor.imageId ? -1 : appointment.doctor.imageId}'/>" alt="<c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/> " class="doctor-avatar">
-                        </div>
+                            <c:choose>
+                                <c:when test="${appointment.doctor.imageId != null}">
+                                    <img src='<c:url value="/image/${appointment.doctor.imageId}"/>' onerror="this.src='${pageContext.request.contextPath}/img/default_picture.png'" alt="${appointment.doctor.name}" class="doctor-avatar"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="${pageContext.request.contextPath}/img/default_picture.png" alt="default" class="doctor-avatar"/>
+                                </c:otherwise>
+                            </c:choose>                               </div>
                         <div class="doctor-details">
                             <h3 class="doctor-name"><c:out value="${appointment.doctor.name}"/> <c:out value="${appointment.doctor.lastName}"/> </h3>
                             <p class="doctor-specialty"><spring:message code="${specialty.key}" /></p>

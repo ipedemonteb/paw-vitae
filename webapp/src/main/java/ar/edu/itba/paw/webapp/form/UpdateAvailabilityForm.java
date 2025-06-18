@@ -1,26 +1,25 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.models.AvailabilitySlot;
-import ar.edu.itba.paw.models.AvailabilitySlotForm;
+import ar.edu.itba.paw.models.DoctorOfficeAvailabilityForm;
 import ar.edu.itba.paw.models.UnavailabilitySlotForm;
-import ar.edu.itba.paw.webapp.validation.TimeSlotIntersection;
-import ar.edu.itba.paw.webapp.validation.UnavailabilityIntersection;
-import ar.edu.itba.paw.webapp.validation.ValidTimeSlot;
-import ar.edu.itba.paw.webapp.validation.ValidUnavailability;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import ar.edu.itba.paw.webapp.validation.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.stream.Collectors;
 
-
+@OfficeOwnedByDoctor(message = "{office.invalid}")
+@ActiveOfficeSlots
 public class UpdateAvailabilityForm {
 
     @NotEmpty
-    @ValidTimeSlot(message = "{slots.invalid}")
-    @TimeSlotIntersection(message = "{slots.overlap}")
-    private List<AvailabilitySlotForm> availabilitySlots;
+    @NotNull
+    @ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
+    @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
+    private List<DoctorOfficeAvailabilityForm> doctorOfficeAvailabilities;
+
+    @NotNull
+    private Long doctorId;
 
     @ValidUnavailability(message = "{unavailable.slots.invalid}")
     @UnavailabilityIntersection(message = "{unavailable.slots.overlap}")
@@ -34,11 +33,19 @@ public class UpdateAvailabilityForm {
         this.unavailabilitySlots = unavailabilitySlots;
     }
 
-    public List<AvailabilitySlotForm> getAvailabilitySlots() {
-        return availabilitySlots;
+    public List<DoctorOfficeAvailabilityForm> getDoctorOfficeAvailabilities() {
+        return doctorOfficeAvailabilities;
     }
 
-    public void setAvailabilitySlots(List<AvailabilitySlotForm> availabilitySlots) {
-        this.availabilitySlots = availabilitySlots;
+    public void setDoctorOfficeAvailabilities(List<DoctorOfficeAvailabilityForm> doctorOfficeAvailabilities) {
+        this.doctorOfficeAvailabilities = doctorOfficeAvailabilities;
+    }
+
+    public Long getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
     }
 }
