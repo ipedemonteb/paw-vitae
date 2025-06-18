@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-//@TODO: Check if entity or mappedSuperclass
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "users")
@@ -55,7 +54,6 @@ public abstract class User {
     private LocalDateTime tokenExpiration;
 
     public User() {
-        // For Hibernate use
     }
 
     public User(String name, String lastName, String email, String password, String phone, String language, boolean verified) {

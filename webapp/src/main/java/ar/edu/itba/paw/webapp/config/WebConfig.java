@@ -156,7 +156,7 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
     @Bean
     public MultipartResolver multipartResolver() {
         CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setMaxUploadSize(5242880); // 5MB
+        resolver.setMaxUploadSize(5242880);
         return resolver;
     }
 

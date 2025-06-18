@@ -19,7 +19,7 @@ public class UpdateDoctorForm {
     private String lastName;
 
     @FileType(types = {"image/jpeg", "image/png", "image/jpg"},message = "{fileType.invalid}")
-    @FileSize(max = 2097154) // 2MB
+    @FileSize(max = 2097154)
     private MultipartFile image;
 
     public MultipartFile getImage() {

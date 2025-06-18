@@ -37,7 +37,7 @@ public interface AppointmentService {
 
     boolean hasFullMedicalHistoryEnabled(long patientId, long doctorId);
 
-//    Page<Appointment> getAppointmentsWithFilesForPatient(long patientId, int page, int pageSize);
     boolean officeHasAppointments(long officeId);
+
     void revokeHistoryPermissionForOldAppointments();
 }

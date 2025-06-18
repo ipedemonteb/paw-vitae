@@ -15,10 +15,9 @@ public class OfficeAvailabilitySlotIntersectionValidator {
         public boolean isValid(DoctorForm form, ConstraintValidatorContext context) {
             List<DoctorOfficeForm> offices = form.getDoctorOfficeForm();
             if (offices == null || offices.isEmpty()) {
-                return true; // No offices to validate
+                return true;
             }
 
-            // Combine all slots into a single map
             Map<Integer, List<DoctorOfficeAvailabilityForm>> slotsByDay = new TreeMap<>();
             for (DoctorOfficeForm office : offices) {
                 if (office.getOfficeAvailabilitySlotForms() != null) {
@@ -30,7 +29,6 @@ public class OfficeAvailabilitySlotIntersectionValidator {
                 }
             }
 
-            // Validate slots for each day
             for (List<DoctorOfficeAvailabilityForm> slots : slotsByDay.values()) {
                 slots.sort(Comparator.comparing(DoctorOfficeAvailabilityForm::getStartTime));
 
@@ -43,12 +41,12 @@ public class OfficeAvailabilitySlotIntersectionValidator {
                         context.buildConstraintViolationWithTemplate("{office.availabilitySlot.intersection}")
                                 .addPropertyNode("officeAvailabilitySlotForms")
                                 .addConstraintViolation();
-                        return false; // Intersection found
+                        return false;
                     }
                 }
             }
 
-            return true; // No intersections found
+            return true;
         }
     }
 
@@ -56,7 +54,7 @@ public class OfficeAvailabilitySlotIntersectionValidator {
         @Override
         public boolean isValid(List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms, ConstraintValidatorContext context) {
             if (officeAvailabilitySlotForms == null || officeAvailabilitySlotForms.isEmpty()) {
-                return true; // No slots to validate
+                return true;
             }
 
             Map<Integer, List<DoctorOfficeAvailabilityForm>> slotsByDay = new TreeMap<>();
@@ -74,12 +72,12 @@ public class OfficeAvailabilitySlotIntersectionValidator {
                     DoctorOfficeAvailabilityForm next = slots.get(i + 1);
 
                     if (current.getEndTime().plusHours(1).isAfter(next.getStartTime())) {
-                        return false; // Intersection found
+                        return false;
                     }
                 }
             }
 
-            return true; // No intersections found
+            return true;
         }
     }
 }
