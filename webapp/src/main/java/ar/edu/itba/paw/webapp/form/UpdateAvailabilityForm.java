@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @OfficeOwnedByDoctor(message = "{office.invalid}")
+@ActiveOfficeSlots
 public class UpdateAvailabilityForm {
 
     @NotEmpty
