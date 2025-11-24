@@ -151,7 +151,7 @@ public class AuthController {
 
     @RequestMapping("/verify")
     public ModelAndView verifyAccount(@ModelAttribute("loggedUser") User user) {
-            return new ModelAndView("auth/verify").addObject("imageId", userService.getImageId(user));
+            return new ModelAndView("auth/verify").addObject("imageId", userService.getImageId(user).orElse(null));
     }
 
     @RequestMapping("/verify-confirmation")
