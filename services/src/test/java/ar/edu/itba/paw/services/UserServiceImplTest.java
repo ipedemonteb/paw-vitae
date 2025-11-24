@@ -276,10 +276,10 @@ public class UserServiceImplTest {
         //Preconditions
 
         //Exercise
-        Long result = userService.getImageId(null);
+        Optional<Long> result = userService.getImageId(null);
 
         //Postconditions
-        assertEquals(-1L, result.longValue());
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -287,10 +287,11 @@ public class UserServiceImplTest {
         //Preconditions
 
         //Exercise
-        Long result = userService.getImageId(DOCTOR);
+        Optional<Long> result = userService.getImageId(DOCTOR);
 
         //Postconditions
-        assertEquals(1L, result.longValue());
+        assertFalse(result.isEmpty());
+        assertEquals(1L, result.get().longValue());
     }
 
     @Test

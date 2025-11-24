@@ -29,7 +29,7 @@ public interface UserService {
 
     boolean verifyRecoveryToken(String token);
 
-    Long getImageId(User user);
+    Optional<Long> getImageId(User user);
 
     Optional<? extends User> checkToken (String token, boolean isVerification);
 }

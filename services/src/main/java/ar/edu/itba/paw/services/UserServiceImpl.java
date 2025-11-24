@@ -147,12 +147,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long getImageId(User user) {
+    public Optional<Long> getImageId(User user) {
         if (user == null || user instanceof Patient) {
-            return -1L;
+            return Optional.empty();
         }
         LOGGER.debug("Getting image id for user id={}", user.getId());
-        return ((Doctor) user).getImageId();
+        return Optional.of(((Doctor) user).getImageId());
     }
 
     @Transactional
