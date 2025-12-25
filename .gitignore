@@ -22,7 +22,6 @@ dist/
 *.lst
 # Maven
 **/target/
-dist/
 **/.mvn
 
 # JetBrains IDE
@@ -40,7 +39,6 @@ Thumbs.db
 # Applications
 *.app
 *.exe
-*.war
 # Large media files
 *.mp4
 *.tiff
@@ -59,5 +57,24 @@ Thumbs.db
 *.iml
 .smarttomcat/
 
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node/
+dist-ssr
+*.local
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 
