@@ -49,7 +49,7 @@ public class SearchController {
             @RequestParam(value = "view", required = false, defaultValue = "grid") String view
     ) {
         List<Coverage> coverages = coverageService.getAll();
-        Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId.getValue(), coverageId.getValue(), weekdays, keyword, orderBy, direction, (int) page.getValue(), 9);
+        Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId.getValue(), coverageId.getValue(), null, keyword, orderBy, direction, (int) page.getValue(), 9);
         List<Specialty> allSpecialties = specialtyService.getAll();
         ModelAndView mav = new ModelAndView("search/search");
         mav.addObject("coverages", coverages);

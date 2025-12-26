@@ -132,16 +132,12 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Doctor> getWithFilters(long specialtyId, long coverageId, List<QueryParam> weekdays, String keyword, String orderBy, String direction, int page, int pageSize) {
-        List<Integer> weekdayAux;
+    public Page<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction, int page, int pageSize) {
         if (weekdays == null) {
-             weekdayAux = new ArrayList<>();
+             weekdays = new ArrayList<>();
         }
-        else {
-            weekdayAux = weekdays.stream().map(queryParam -> (int) queryParam.getValue()).toList();
-        }
-        List<Doctor> docs = doctorDao.getWithFilters(specialtyId, coverageId, weekdayAux, keyword, orderBy, direction, page, pageSize);
-        int total = doctorDao.countWithFilters(specialtyId, coverageId, weekdayAux, keyword, orderBy, direction);
+        List<Doctor> docs = doctorDao.getWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction, page, pageSize);
+        int total = doctorDao.countWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction);
         return new Page<>(docs, page, pageSize, total);
     }
 
