@@ -3,14 +3,13 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Page;
+//import ar.edu.itba.paw.models.QueryParam;
 import ar.edu.itba.paw.models.exception.DoctorOfficeNotFoundException;
 import ar.edu.itba.paw.webapp.dto.DoctorDTO;
 import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
-import org.jvnet.hk2.annotations.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,6 +18,8 @@ import javax.validation.constraints.Min;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
+
+import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildPaginationHeaders;
 
 @Path("/doctors")
 @Component
@@ -54,7 +55,7 @@ public class RestDoctorController {
 
             @QueryParam("page")
             @DefaultValue("1")
-            @Min(1)
+            @Min(1) //TODO, these annotations wont work because of a missing jersey dependency. Validate in backend or idk
             int page,
 
             @QueryParam("coverage")
@@ -78,9 +79,32 @@ public class RestDoctorController {
             String direction
     ) {
         Page<Doctor> doctorPage = this.doctorService.getWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction, page, 9);
+
         List<DoctorDTO> doctors = doctorPage.getContent().stream().map(d -> DoctorDTO.fromDoctor(d, uriInfo)).toList();
-        return Response.ok(new GenericEntity<>(doctors) {})
-                .build();
+        Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(doctors) {});
+
+        return buildPaginationHeaders(rb, doctorPage, uriInfo);
     }
+
+
+//    @GET
+//    @Produces(value = MediaType.APPLICATION_JSON)
+//    public Response list(
+//            @ParamCustomizer(defaultValue = 0,paramName = "specialty") ar.edu.itba.paw.models.QueryParam specialtyId,
+//            @ParamCustomizer( defaultValue = 1) ar.edu.itba.paw.models.QueryParam page,
+//            @ParamCustomizer(defaultValue = 0,paramName = "coverage") ar.edu.itba.paw.models.QueryParam coverageId,
+//            @ParamCustomizer(paramName = "weekdays") List<QueryParam> weekdays,
+//            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+//            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
+//            @RequestParam(value = "direction", defaultValue = "asc") String direction,
+//            @RequestParam(value = "view", required = false, defaultValue = "grid") String view
+//    ) {
+//        Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId.getValue(), coverageId.getValue(), weekdays, keyword, orderBy, direction, (int) page.getValue(), 9);
+//
+//        List<DoctorDTO> doctors = doctorPage.getContent().stream().map(d -> DoctorDTO.fromDoctor(d, uriInfo)).toList();
+//        Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(doctors) {});
+//
+//        return buildPaginationHeaders(rb, doctorPage, uriInfo);
+//    }
 
 }
