@@ -36,7 +36,8 @@ public class RestAppointmentController {
         @Produces(value = MediaType.APPLICATION_JSON)
         public Response getById(@PathParam("id") final long id) {
             final Appointment appointment = this.appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
-            return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment)) {}).build();
+
+            return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment,uriInfo)) {}).build();
     }
 }
 
