@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaceServices;
 
+import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.Rating;
 
@@ -15,11 +16,13 @@ public interface RatingService {
 
      Optional<Rating> getRatingByAppointmentId(long appointmentId);
 
-     List<Rating> getRatingsByDoctorId(long doctorId);
+     Page<Rating> getRatingsByDoctorId(long doctorId, int page, int pageSize);
 
      List<Rating> getRatingsByPatientId(long patientId);
 
      Map<Rating, Patient> getFiveTopRatings();
 
     List<Rating> getFiveTopRatingsByDoctorId(long doctorId);
+
+    Page<Rating> getAllRatings(int page, int pageSize);
 }
