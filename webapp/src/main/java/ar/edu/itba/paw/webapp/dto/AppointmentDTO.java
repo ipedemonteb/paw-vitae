@@ -3,12 +3,12 @@ package ar.edu.itba.paw.webapp.dto;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentFile;
 
-import javax.persistence.Column;
-import javax.persistence.Transient;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AppointmentDTO {
 
@@ -42,10 +42,26 @@ public class AppointmentDTO {
         dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(appointment.getDoctor().getId())).build();
         dto.patient = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(appointment.getPatient().getId())).build();
         dto.specialty = uriInfo.getBaseUriBuilder().path("specialties").path(String.valueOf(appointment.getSpecialty().getId())).build();
-       // dto.doctorOffice = uriInfo.getBaseUriBuilder().path("doctorOffices").path(String.valueOf(appointment.getDoctorOffice().getId())).build();
-        //dto.appointmentFiles = uriInfo.getBaseUriBuilder().path("appointments").path(String.valueOf(appointment.getId())).path("files").build();
+        dto.doctorOffice = uriInfo.getBaseUriBuilder()
+                .path("doctors")
+                .path(String.valueOf(appointment.getDoctor().getId()))
+                .path("offices")
+                .path(String.valueOf(appointment.getDoctorOffice().getId()))
+                .build();
+        dto.appointmentFiles = uriInfo.getBaseUriBuilder().path("appointments").path(String.valueOf(appointment.getId())).path("files").build();
 
         return dto;
+    }
+
+    public static List<AppointmentFileDTO> filesFromAppointmentFiles(List<AppointmentFile> appointmentFiles, UriInfo uriInfo) {
+        if (appointmentFiles == null || appointmentFiles.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return appointmentFiles
+                .stream()
+                .map(file -> AppointmentFileDTO.fromAppointmentFile(file, uriInfo))
+                .collect(Collectors.toList());
     }
 
     public long getId() {

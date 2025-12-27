@@ -28,17 +28,14 @@ public class RestAppointmentController {
 
     @Autowired
     public RestAppointmentController(AppointmentService appointmentService) {
-            this.appointmentService = appointmentService;
-        }
+        this.appointmentService = appointmentService;
+    }
 
-        @GET
-        @Path("/{id}")
-        @Produces(value = MediaType.APPLICATION_JSON)
-        public Response getById(@PathParam("id") final long id) {
-            final Appointment appointment = this.appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
-
-            return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment,uriInfo)) {}).build();
+    @GET
+    @Path("/{id}")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getById(@PathParam("id") final long id) {
+        final Appointment appointment = this.appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
+        return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}).build();
     }
 }
-
-
