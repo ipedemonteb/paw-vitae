@@ -1,11 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.*;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Page;
+import ar.edu.itba.paw.models.*;
 //import ar.edu.itba.paw.models.QueryParam;
 import ar.edu.itba.paw.models.exception.DoctorOfficeNotFoundException;
-import ar.edu.itba.paw.webapp.dto.DoctorDTO;
+import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.ws.rs.*;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
 import java.util.List;
 
@@ -28,14 +28,30 @@ public class RestDoctorController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestDoctorController.class);
 
     private final DoctorService doctorService;
+    private final SpecialtyService specialtyService;
+    private final CoverageService coverageService;
+    private final DoctorOfficeService doctorOfficeService;
+    private final DoctorProfileService doctorProfileService;
+    private final DoctorExperienceService doctorExperienceService;
+    private final DoctorCertificationService doctorCertificationService;
+    private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestDoctorController(DoctorService doctorService) {
+    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService) {
         this.doctorService = doctorService;
+        this.specialtyService = specialtyService;
+        this.coverageService = coverageService;
+        this.doctorOfficeService = doctorOfficeService;
+        this.doctorProfileService = doctorProfileService;
+        this.doctorExperienceService = doctorExperienceService;
+        this.doctorCertificationService = doctorCertificationService;
+        this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
     }
+
+
 
     @GET
     @Path("/{id}")
@@ -85,6 +101,62 @@ public class RestDoctorController {
 
         return buildPaginationHeaders(rb, doctorPage, uriInfo);
     }
+
+    @GET
+    @Path("/{id}/specialties")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorSpecialties(@PathParam("id") final long id) {
+        List<Specialty> specialties = this.specialtyService.getByDoctorId(id);
+        List<SpecialtyDTO> specialtyDTOS = specialties.stream().map(s -> SpecialtyDTO.fromSpecialty(s, uriInfo)).toList();
+        return Response.ok(new GenericEntity<>(specialtyDTOS) {}).build();
+    }
+
+    @GET
+    @Path("/{id}/coverages")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorCoverages(@PathParam("id") final long id) {
+        List<Coverage> coverages = this.coverageService.findByDoctorId(id);
+        List<CoverageDTO> coverageDTOS = coverages.stream().map(c -> CoverageDTO.fromCoverage(c, uriInfo)).toList();
+        return Response.ok(new GenericEntity<>(coverageDTOS) {}).build();
+    }
+
+    @GET
+    @Path("/{id}/offices")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorOffices(@PathParam("id") final long id) {
+        List<DoctorOffice> offices = this.doctorOfficeService.getAllByDoctorId(id);
+        List<OfficeDTO> officeDTOS = offices.stream().map(o -> OfficeDTO.fromDoctorOffice(o, uriInfo)).toList();
+        return Response.ok(new GenericEntity<>(officeDTOS) {}).build();
+    }
+
+    @GET
+    @Path("/{id}/profile")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorProfile(@PathParam("id") final long id) {
+        DoctorProfile profile = this.doctorProfileService.findByDoctorId(id);
+        return Response.ok(new GenericEntity<>(ProfileDTO.fromDoctorProfile(profile, uriInfo)) {}).build();
+    }
+
+    @GET
+    @Path("/{id}/experiences")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorExperiences(@PathParam("id") final long id) {
+        List<DoctorExperience> experiences = this.doctorExperienceService.findByDoctorId(id);
+        List<ExperienceDTO> experienceDTOS = experiences.stream().map(e -> ExperienceDTO.fromDoctorExperience(e, uriInfo)).toList();
+        return Response.ok(new GenericEntity<>(experienceDTOS) {}).build();
+    }
+
+    @GET
+    @Path("/{id}/certifications")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorCertifications(@PathParam("id") final long id) {
+        List<DoctorCertification> certifications = this.doctorCertificationService.findByDoctorId(id);
+        List<CertificationDTO> certificationDTOS = certifications.stream().map(c -> CertificationDTO.fromDoctorCertification(c, uriInfo)).toList();
+        return Response.ok(new GenericEntity<>(certificationDTOS) {}).build();
+    }
+
+
+
 
 
 //    @GET
