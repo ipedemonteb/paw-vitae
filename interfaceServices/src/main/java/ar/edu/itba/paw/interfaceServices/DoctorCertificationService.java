@@ -11,7 +11,7 @@ public interface DoctorCertificationService {
 
     public DoctorCertification create(long doctorId, String certificateName, String issuingEntity, LocalDate issueDate);
 
-    public DoctorCertification findByDoctorId(long id);
+    public List<DoctorCertification> findByDoctorId(long id);
 
     public void update(Doctor doctor, List<CertificateForm> certificates);
 }
