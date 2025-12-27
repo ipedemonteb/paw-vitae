@@ -26,7 +26,12 @@ public class PatientDTO {
 
         String patientId = String.valueOf(patient.getId());
 
-        res.coverages = uriInfo.getBaseUriBuilder().path("patients").path(patientId).path("coverages").build();
+        if(patient.getCoverage() != null)        {
+            res.coverages = uriInfo.getBaseUriBuilder().path("coverages").path(String.valueOf(patient.getCoverage().getId())).build();
+        } else {
+            res.coverages = null;
+        }
+
         res.neighborhood = uriInfo.getBaseUriBuilder().path("neighborhoods").path(String.valueOf(patient.getNeighborhood().getId())).build();
         res.appointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("patientId", patient.getId()).build();
         res.self = uriInfo.getBaseUriBuilder().path("patients").path(patientId).build();
