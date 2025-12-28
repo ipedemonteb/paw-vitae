@@ -54,7 +54,7 @@ public class RestAppointmentFileController {
     }
 
     @GET
-    @Path("/{fileId}")
+    @Path("/{fileId:\\d+}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFile(@PathParam("appointmentId") final long appointmentId,
                                  @PathParam("fileId") final long fileId) {
@@ -68,7 +68,7 @@ public class RestAppointmentFileController {
     }
 
     @GET
-    @Path("/{fileId}/view")
+    @Path("/{fileId:\\d+}/view")
     @Produces("application/pdf")
     public Response viewFileInline(@PathParam("appointmentId") final long appointmentId,
                                    @PathParam("fileId") final long fileId) {

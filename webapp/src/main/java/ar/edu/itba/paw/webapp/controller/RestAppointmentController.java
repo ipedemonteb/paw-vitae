@@ -32,7 +32,7 @@ public class RestAppointmentController {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Appointment appointment = this.appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);

@@ -40,7 +40,7 @@ public class RestNeighborhoodController {
 
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Neighborhood neighborhood = neighborhoodService.getById(id)
