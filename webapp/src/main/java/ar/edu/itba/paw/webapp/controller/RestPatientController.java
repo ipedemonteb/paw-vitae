@@ -3,19 +3,19 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.webapp.dto.CreatePatientDto;
 import ar.edu.itba.paw.webapp.dto.PatientDTO;
+import ar.edu.itba.paw.webapp.form.PatientForm;
+import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Locale;
 
 @Path("/patients")
 @Component
@@ -69,17 +69,20 @@ public class RestPatientController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createPatient(final CreatePatientDto createPatientDto){
-        final  Patient patient=patientService.create(createPatientDto.getName(),createPatientDto.getLastName(),createPatientDto.getEmail(),createPatientDto.getPassword(),createPatientDto.getPhone(),createPatientDto.getLanguage(),createPatientDto.getCoverage(),createPatientDto.getNeighborhood());
-        userService.setVerificationToken(createPatientDto.getEmail());
+    public Response createPatient(@Valid @NotNull PatientForm patientForm,@Context HttpHeaders headers){
+        Locale locale = headers.getAcceptableLanguages().isEmpty() ?
+                Locale.ENGLISH :
+                headers.getAcceptableLanguages().get(0);
+        String language = locale.getLanguage();
+        final  Patient patient=patientService.create(patientForm.getName(),patientForm.getLastName(),patientForm.getEmail(),patientForm.getPassword(),patientForm.getPhone(),language,patientForm.getCoverage(),patientForm.getNeighborhoodId());
         return  Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(patient.getId())).build()).build();
     }
     @Path("/{id}")
     @PATCH
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response modifyPatient(@PathParam("id") final long id,final CreatePatientDto createPatientDto){
+    public Response modifyPatient(@PathParam("id") final long id,@Valid @NotNull UpdatePatientForm updatePatientForm){
         final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
-        patientService.updatePatient(patient,createPatientDto.getName(),createPatientDto.getLastName(),createPatientDto.getPhone(),createPatientDto.getCoverage());
+        patientService.updatePatient(patient,updatePatientForm.getName(),updatePatientForm.getLastName(),updatePatientForm.getPhone(),updatePatientForm.getCoverage());
         return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)){}).build();
     }
 

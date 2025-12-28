@@ -10,18 +10,15 @@ import javax.validation.constraints.*;
 public class UpdatePatientForm {
 
     @Size(min = 1, max = 30)
-    @NotEmpty
     private String name;
 
     @Size(min = 1, max = 30)
-    @NotEmpty
     private String lastName;
 
-    @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "{phone.invalid}")
     private String phone;
+
     @Coverage(message = "{coverage.invalid}")
-    @NotNull
     private Long coverage;
 
     public String getName() {
