@@ -35,12 +35,13 @@ public class RestDoctorController {
     private final DoctorExperienceService doctorExperienceService;
     private final DoctorCertificationService doctorCertificationService;
     private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
+    private final DoctorOfficeSpecialtyService doctorOfficeSpecialtyService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService) {
+    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
@@ -49,6 +50,8 @@ public class RestDoctorController {
         this.doctorExperienceService = doctorExperienceService;
         this.doctorCertificationService = doctorCertificationService;
         this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
+        this.doctorOfficeSpecialtyService = doctorOfficeSpecialtyService;
+
     }
 
 
@@ -102,6 +105,27 @@ public class RestDoctorController {
         return buildPaginationHeaders(rb, doctorPage, uriInfo);
     }
 
+
+//    @GET
+//    @Produces(value = MediaType.APPLICATION_JSON)
+//    public Response list(
+//            @ParamCustomizer(defaultValue = 0,paramName = "specialty") ar.edu.itba.paw.models.QueryParam specialtyId,
+//            @ParamCustomizer( defaultValue = 1) ar.edu.itba.paw.models.QueryParam page,
+//            @ParamCustomizer(defaultValue = 0,paramName = "coverage") ar.edu.itba.paw.models.QueryParam coverageId,
+//            @ParamCustomizer(paramName = "weekdays") List<QueryParam> weekdays,
+//            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+//            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
+//            @RequestParam(value = "direction", defaultValue = "asc") String direction,
+//            @RequestParam(value = "view", required = false, defaultValue = "grid") String view
+//    ) {
+//        Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId.getValue(), coverageId.getValue(), weekdays, keyword, orderBy, direction, (int) page.getValue(), 9);
+//
+//        List<DoctorDTO> doctors = doctorPage.getContent().stream().map(d -> DoctorDTO.fromDoctor(d, uriInfo)).toList();
+//        Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(doctors) {});
+//
+//        return buildPaginationHeaders(rb, doctorPage, uriInfo);
+//    }
+
     @GET
     @Path("/{id}/specialties")
     @Produces(value = MediaType.APPLICATION_JSON)
@@ -130,6 +154,33 @@ public class RestDoctorController {
     }
 
     @GET
+    @Path("/{id}/offices/{officeId}")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorOffices(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
+        DoctorOffice office = this.doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
+        return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(office, uriInfo)) {}).build();
+    }
+
+    @GET
+    @Path("/{id}/offices/{officeId}/availability")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorOfficeAvailability(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
+        List<DoctorOfficeAvailability> availabilities = this.doctorOfficeAvailabilityService.getByOfficeId(officeId);
+        List<AvailabilityDTO> availabilityDTOS = availabilities.stream().map(a -> AvailabilityDTO.fromDoctorOfficeAvailability(a, uriInfo)).toList();
+        return Response.ok(new GenericEntity<>(availabilityDTOS) {}).build();
+    }
+
+    @GET
+    @Path("/{id}/offices/{officeId}/specialties")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorOfficeSpecialties(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
+        List<DoctorOfficeSpecialty> specialties = this.doctorOfficeSpecialtyService.getByOfficeId(officeId);
+        List<OfficeSpecialtyDTO> specialtyDTOS = specialties.stream().map(s -> OfficeSpecialtyDTO.fromDoctorOfficeSpecialty(s, uriInfo)).toList();
+        return Response.ok(new GenericEntity<>(specialtyDTOS) {}).build();
+    }
+
+
+    @GET
     @Path("/{id}/profile")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorProfile(@PathParam("id") final long id) {
@@ -154,29 +205,5 @@ public class RestDoctorController {
         List<CertificationDTO> certificationDTOS = certifications.stream().map(c -> CertificationDTO.fromDoctorCertification(c, uriInfo)).toList();
         return Response.ok(new GenericEntity<>(certificationDTOS) {}).build();
     }
-
-
-
-
-
-//    @GET
-//    @Produces(value = MediaType.APPLICATION_JSON)
-//    public Response list(
-//            @ParamCustomizer(defaultValue = 0,paramName = "specialty") ar.edu.itba.paw.models.QueryParam specialtyId,
-//            @ParamCustomizer( defaultValue = 1) ar.edu.itba.paw.models.QueryParam page,
-//            @ParamCustomizer(defaultValue = 0,paramName = "coverage") ar.edu.itba.paw.models.QueryParam coverageId,
-//            @ParamCustomizer(paramName = "weekdays") List<QueryParam> weekdays,
-//            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
-//            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
-//            @RequestParam(value = "direction", defaultValue = "asc") String direction,
-//            @RequestParam(value = "view", required = false, defaultValue = "grid") String view
-//    ) {
-//        Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId.getValue(), coverageId.getValue(), weekdays, keyword, orderBy, direction, (int) page.getValue(), 9);
-//
-//        List<DoctorDTO> doctors = doctorPage.getContent().stream().map(d -> DoctorDTO.fromDoctor(d, uriInfo)).toList();
-//        Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(doctors) {});
-//
-//        return buildPaginationHeaders(rb, doctorPage, uriInfo);
-//    }
 
 }
