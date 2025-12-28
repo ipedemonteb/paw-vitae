@@ -44,11 +44,12 @@ public class DoctorExperienceServiceImpl implements DoctorExperienceService {
 
     @Transactional(readOnly = true)
     @Override
-    public DoctorExperience findByDoctorId(long doctorId) {
-        if(doctorExperienceDao.getByDoctorId(doctorId).isEmpty()) {
+    public List<DoctorExperience> findByDoctorId(long doctorId) {
+        List<DoctorExperience> experiences = this.doctorExperienceDao.getByDoctorId(doctorId);
+        if(experiences.isEmpty()) {
             throw new UserNotFoundException("Doctor profile not found for doctor ID: " + doctorId);
         }
-        return doctorExperienceDao.getByDoctorId(doctorId).getFirst();
+        return experiences;
     }
 
     @Transactional

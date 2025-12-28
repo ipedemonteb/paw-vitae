@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.persistence.hibernate;
 
 import ar.edu.itba.paw.interfacePersistence.RatingDao;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.Rating;
+import ar.edu.itba.paw.models.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -44,10 +41,27 @@ public class RatingDaoHibeImpl implements RatingDao {
     }
 
     @Override
-    public List<Rating> getRatingsByDoctorId(long doctorId) {
-        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.doctor.id = :id", Rating.class);
+    public Page<Rating> getRatingsByDoctorId(long doctorId, int page, int pageSize) {
+        String jpql = "SELECT r FROM Rating AS r " +
+                "JOIN FETCH r.patient " +
+                "WHERE r.doctor.id = :id " +
+                "ORDER BY r.rating DESC, r.id DESC";
+
+        TypedQuery<Rating> query = em.createQuery(jpql, Rating.class);
         query.setParameter("id", doctorId);
-        return query.getResultList();
+
+        query.setFirstResult((page - 1) * pageSize);
+        query.setMaxResults(pageSize);
+
+        List<Rating> ratings = query.getResultList();
+
+        TypedQuery<Long> countQuery = em.createQuery(
+                "SELECT COUNT(r) FROM Rating AS r WHERE r.doctor.id = :id", Long.class);
+        countQuery.setParameter("id", doctorId);
+
+        Long totalItems = countQuery.getSingleResult();
+
+        return new Page<>(ratings, page, pageSize, totalItems);
     }
 
     @Override
@@ -73,5 +87,20 @@ public class RatingDaoHibeImpl implements RatingDao {
         query.setParameter("doctorId", doctorId);
         query.setMaxResults(5);
         return query.getResultList();
+    }
+
+    public Page<Rating> getAllRatings(int page, int pageSize) {
+
+        String jpql = "SELECT r FROM Rating AS r ORDER BY r.rating DESC, r.id DESC";
+
+        TypedQuery<Rating> query = em.createQuery(jpql, Rating.class);
+        query.setFirstResult((page - 1) * pageSize);
+        query.setMaxResults(pageSize);
+        List<Rating> ratings = query.getResultList();
+
+        TypedQuery<Long> countQuery = em.createQuery("SELECT COUNT(r) FROM Rating AS r", Long.class);
+        Long totalItems = countQuery.getSingleResult();
+
+        return new Page<>(ratings, page, pageSize, totalItems);
     }
 }

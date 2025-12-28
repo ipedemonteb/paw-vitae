@@ -11,7 +11,7 @@ public interface DoctorExperienceService {
 
     public DoctorExperience create(long doctorId, String title, String orgName, LocalDate startDate, LocalDate endDate);
 
-    public DoctorExperience findByDoctorId(long doctorId);
+    public List<DoctorExperience> findByDoctorId(long doctorId);
 
     public void update(Doctor doctor, List<ExperienceForm> experiences);
 }

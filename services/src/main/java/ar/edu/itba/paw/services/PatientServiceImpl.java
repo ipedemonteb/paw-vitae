@@ -79,12 +79,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public String getAllPatientsDisplayCount() {
-        int count = patientDao.countAll();
-        if (count < 10000) {
-            return String.valueOf(count);
-        } else {
-            return String.valueOf(count / 1000) + "k+";
-        }
+    public long getAllPatientsDisplayCount() {
+        return patientDao.countAll();
     }
 }
