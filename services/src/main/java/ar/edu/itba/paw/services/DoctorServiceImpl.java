@@ -28,16 +28,18 @@ public class DoctorServiceImpl implements DoctorService {
     private final SpecialtyService specialtyService;
     private final CoverageService coverageService;
     private final DoctorOfficeService doctorOfficeService;
+    private final UserService userService;
 
     @Autowired
     public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder, ImageService imageService,
-                             SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService) {
+                             SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService,UserService userService) {
         this.doctorDao = doctorDao;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
         this.doctorOfficeService = doctorOfficeService;
+        this.userService = userService;
     }
 
     @Transactional
@@ -61,6 +63,7 @@ public class DoctorServiceImpl implements DoctorService {
         List<DoctorOffice> doctorOffices = doctorOfficeService.transformToDoctorOffice(doctor, doctorOfficeForm);
         doctor.setDoctorOffices(doctorOffices);
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
+        userService.setVerificationToken(email);
         return doctor;
     }
 

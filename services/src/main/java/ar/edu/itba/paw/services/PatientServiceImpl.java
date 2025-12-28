@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfacePersistence.PatientDao;
 import ar.edu.itba.paw.interfaceServices.NeighborhoodService;
 import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
+import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.Neighborhood;
 import ar.edu.itba.paw.models.Patient;
@@ -25,14 +26,16 @@ public class PatientServiceImpl implements PatientService {
     private final PasswordEncoder passwordEncoder;
     private final CoverageService coverageService;
     private final NeighborhoodService neighborhoodService;
+    private final UserService userService;
     Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
 
     @Autowired
-    public PatientServiceImpl(PatientDao patientDao, PasswordEncoder passwordEncoder, CoverageService coverageService, NeighborhoodService neighborhoodService) {
+    public PatientServiceImpl(PatientDao patientDao, PasswordEncoder passwordEncoder, CoverageService coverageService, NeighborhoodService neighborhoodService,UserService userService) {
         this.patientDao = patientDao;
         this.passwordEncoder = passwordEncoder;
         this.coverageService = coverageService;
         this.neighborhoodService = neighborhoodService;
+        this.userService = userService;
     }
 
     @Transactional(readOnly = true)
@@ -55,6 +58,7 @@ public class PatientServiceImpl implements PatientService {
         String passwordEncoded = passwordEncoder.encode(password);
         Patient patient = patientDao.create(name, lastName, email, passwordEncoded, phone, language, coverage, neighborhood);
         LOGGER.info("Patient created successfully: id={}, email={}", patient.getId(), patient.getEmail());
+        userService.setVerificationToken(email);
         return patient;
     }
 
@@ -67,24 +71,28 @@ public class PatientServiceImpl implements PatientService {
 
     @Transactional
     @Override
-    public void updatePatient(Patient patient, String name, String lastName, String phone, long coverageId) {
+    public void updatePatient(Patient patient, String name, String lastName, String phone, Long coverageId) {
         LOGGER.debug("Updating patient with id {}: name={}, lastName={}, phone={}, coverageId={}", patient.getId(), name, lastName, phone, coverageId);
-        patient.setName(name);
-        patient.setLastName(lastName);
-        patient.setPhone(phone);
+        if (name != null) {
+            patient.setName(name);
+        }
+        if (lastName != null) {
+            patient.setLastName(lastName);
+        }
+        if (phone != null) {
+            patient.setPhone(phone);
+        }
+        if (coverageId != null) {
+            Coverage coverage = coverageService.findById(coverageId)
+                    .orElseThrow(CoverageNotFoundException::new);
+            patient.setCoverage(coverage);
+        }
 
-        Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
-        patient.setCoverage(coverage);
         LOGGER.info("Patient updated successfully: id={}", patient.getId());
     }
 
     @Override
-    public String getAllPatientsDisplayCount() {
-        int count = patientDao.countAll();
-        if (count < 10000) {
-            return String.valueOf(count);
-        } else {
-            return String.valueOf(count / 1000) + "k+";
-        }
+    public long getAllPatientsDisplayCount() {
+        return patientDao.countAll();
     }
 }
