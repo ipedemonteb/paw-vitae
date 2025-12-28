@@ -10,10 +10,12 @@ public interface PatientService {
 
     Patient create(String name, String lastName, String email, String password, String phone, String language, long coverageId, long neighborhoodId);
 
+
+    void updatePatient(Patient patient, String name, String lastName, String phone, Long coverageId);
+
+    long getAllPatientsDisplayCount();
+
+    /* DEPRECATED METHODS */
     Optional<Patient> getByEmail(String email);
-
-    void updatePatient(Patient patient, String name, String lastName, String phone, long coverageId);
-
-    String getAllPatientsDisplayCount();
 
 }

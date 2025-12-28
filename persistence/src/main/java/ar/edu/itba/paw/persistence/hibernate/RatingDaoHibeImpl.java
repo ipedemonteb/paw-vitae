@@ -89,13 +89,9 @@ public class RatingDaoHibeImpl implements RatingDao {
         return query.getResultList();
     }
 
-    @Override
     public Page<Rating> getAllRatings(int page, int pageSize) {
 
-        String jpql = "SELECT r FROM Rating AS r " +
-                "JOIN FETCH r.patient " +
-                "JOIN FETCH r.doctor " +
-                "ORDER BY r.rating DESC, r.id DESC";
+        String jpql = "SELECT r FROM Rating AS r ORDER BY r.rating DESC, r.id DESC";
 
         TypedQuery<Rating> query = em.createQuery(jpql, Rating.class);
         query.setFirstResult((page - 1) * pageSize);
