@@ -67,14 +67,23 @@ public class PatientServiceImpl implements PatientService {
 
     @Transactional
     @Override
-    public void updatePatient(Patient patient, String name, String lastName, String phone, long coverageId) {
+    public void updatePatient(Patient patient, String name, String lastName, String phone, Long coverageId) {
         LOGGER.debug("Updating patient with id {}: name={}, lastName={}, phone={}, coverageId={}", patient.getId(), name, lastName, phone, coverageId);
-        patient.setName(name);
-        patient.setLastName(lastName);
-        patient.setPhone(phone);
+        if (name != null) {
+            patient.setName(name);
+        }
+        if (lastName != null) {
+            patient.setLastName(lastName);
+        }
+        if (phone != null) {
+            patient.setPhone(phone);
+        }
+        if (coverageId != null) {
+            Coverage coverage = coverageService.findById(coverageId)
+                    .orElseThrow(CoverageNotFoundException::new);
+            patient.setCoverage(coverage);
+        }
 
-        Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
-        patient.setCoverage(coverage);
         LOGGER.info("Patient updated successfully: id={}", patient.getId());
     }
 
