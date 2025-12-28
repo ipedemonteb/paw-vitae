@@ -2,10 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.RatingDao;
 import ar.edu.itba.paw.interfaceServices.*;
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.Patient;
-import ar.edu.itba.paw.models.Rating;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
@@ -67,8 +64,8 @@ public class RatingServiceImpl implements RatingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Rating> getRatingsByDoctorId(long doctorId) {
-        return ratingDao.getRatingsByDoctorId(doctorId);
+    public Page<Rating> getRatingsByDoctorId(long doctorId, int page, int pageSize) {
+        return ratingDao.getRatingsByDoctorId(doctorId, page, pageSize);
     }
 
     @Transactional(readOnly = true)
@@ -91,4 +88,11 @@ public class RatingServiceImpl implements RatingService {
     public List<Rating> getFiveTopRatingsByDoctorId(long doctorId) {
         return ratingDao.getFiveTopRatingsByDoctorId(doctorId);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<Rating> getAllRatings(int page, int pageSize) {
+        return ratingDao.getAllRatings(page, pageSize);
+    }
+
 }
