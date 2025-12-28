@@ -26,7 +26,7 @@ public class RestSpecialtyController {
     private UriInfo uriInfo;
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Specialty specialty = specialtyService.getById(id).orElseThrow(NotFoundException::new);

@@ -26,7 +26,7 @@ public class RestCoveragesController {
     private UriInfo uriInfo;
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Coverage coverage = coverageService.findById(id).orElseThrow(NotFoundException::new);

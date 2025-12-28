@@ -57,7 +57,7 @@ public class RestDoctorController {
 
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Doctor doctor = this.doctorService.getById(id).orElseThrow(DoctorOfficeNotFoundException::new);
@@ -127,7 +127,7 @@ public class RestDoctorController {
 //    }
 
     @GET
-    @Path("/{id}/specialties")
+    @Path("/{id:\\d+}/specialties")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorSpecialties(@PathParam("id") final long id) {
         List<Specialty> specialties = this.specialtyService.getByDoctorId(id);
@@ -136,7 +136,8 @@ public class RestDoctorController {
     }
 
     @GET
-    @Path("/{id}/coverages")
+
+    @Path("/{id:\\d+}/coverages")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorCoverages(@PathParam("id") final long id) {
         List<Coverage> coverages = this.coverageService.findByDoctorId(id);
@@ -145,7 +146,7 @@ public class RestDoctorController {
     }
 
     @GET
-    @Path("/{id}/offices")
+    @Path("/{id:\\d+}/offices")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOffices(@PathParam("id") final long id) {
         List<DoctorOffice> offices = this.doctorOfficeService.getAllByDoctorId(id);
@@ -154,7 +155,7 @@ public class RestDoctorController {
     }
 
     @GET
-    @Path("/{id}/offices/{officeId}")
+    @Path("/{id:\\d+}/offices/{officeId:\\d+}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOffices(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         DoctorOffice office = this.doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
@@ -162,7 +163,7 @@ public class RestDoctorController {
     }
 
     @GET
-    @Path("/{id}/offices/{officeId}/availability")
+    @Path("/{id:\\d+}/offices/{officeId:\\d+}/availability")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOfficeAvailability(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         List<DoctorOfficeAvailability> availabilities = this.doctorOfficeAvailabilityService.getByOfficeId(officeId);
@@ -171,7 +172,7 @@ public class RestDoctorController {
     }
 
     @GET
-    @Path("/{id}/offices/{officeId}/specialties")
+    @Path("/{id:\\d+}/offices/{officeId:\\d+}/specialties")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOfficeSpecialties(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         List<DoctorOfficeSpecialty> specialties = this.doctorOfficeSpecialtyService.getByOfficeId(officeId);
@@ -181,7 +182,7 @@ public class RestDoctorController {
 
 
     @GET
-    @Path("/{id}/profile")
+    @Path("/{id:\\d+}/profile")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorProfile(@PathParam("id") final long id) {
         DoctorProfile profile = this.doctorProfileService.findByDoctorId(id);
@@ -189,7 +190,7 @@ public class RestDoctorController {
     }
 
     @GET
-    @Path("/{id}/experiences")
+    @Path("/{id:\\d+}/experiences")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorExperiences(@PathParam("id") final long id) {
         List<DoctorExperience> experiences = this.doctorExperienceService.findByDoctorId(id);
@@ -198,7 +199,7 @@ public class RestDoctorController {
     }
 
     @GET
-    @Path("/{id}/certifications")
+    @Path("/{id:\\d+}/certifications")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorCertifications(@PathParam("id") final long id) {
         List<DoctorCertification> certifications = this.doctorCertificationService.findByDoctorId(id);

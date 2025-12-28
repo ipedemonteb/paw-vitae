@@ -28,7 +28,7 @@ public class RestImageController {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces({"image/png", "image/jpeg", "image/jpg"})
     public Response getImage(@PathParam("id") final long id) {
 

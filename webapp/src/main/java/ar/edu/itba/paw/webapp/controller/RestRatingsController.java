@@ -75,7 +75,7 @@ public class RestRatingsController {
 
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getRatingsById(@PathParam("id") final long id) {
         final Rating rating = this.ratingService.getRating(id).orElseThrow(NotFoundException::new);

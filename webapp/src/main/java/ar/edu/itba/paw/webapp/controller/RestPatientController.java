@@ -35,7 +35,7 @@ public class RestPatientController {
 
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
@@ -77,7 +77,7 @@ public class RestPatientController {
         final  Patient patient=patientService.create(patientForm.getName(),patientForm.getLastName(),patientForm.getEmail(),patientForm.getPassword(),patientForm.getPhone(),language,patientForm.getCoverage(),patientForm.getNeighborhoodId());
         return  Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(patient.getId())).build()).build();
     }
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @PATCH
     @Consumes({MediaType.APPLICATION_JSON})
     public Response modifyPatient(@PathParam("id") final long id,@Valid @NotNull UpdatePatientForm updatePatientForm){
