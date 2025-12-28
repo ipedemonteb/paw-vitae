@@ -12,6 +12,7 @@ public class OfficeDTO {
     private URI neighborhood;
     private URI officeAvailability;
     private URI officeSpecialties;
+    private URI self;
 
 
     public static OfficeDTO fromDoctorOffice(DoctorOffice office, UriInfo uriInfo) {
@@ -20,13 +21,23 @@ public class OfficeDTO {
         dto.name = office.getOfficeName();
 
         String doctorId = String.valueOf(office.getDoctor().getId());
+        String officeId = String.valueOf(office.getId());
 
         dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).build();
         dto.neighborhood = uriInfo.getBaseUriBuilder().path("neighborhood").queryParam("id", office.getNeighborhood().getId()).build();
-        dto.officeAvailability = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("offices").path("availability").build();
-        dto.officeSpecialties = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("offices").path("specialties").build();
+        dto.officeAvailability = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("offices").path(officeId).path("availability").build();
+        dto.officeSpecialties = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("offices").path(officeId).path("specialties").build();
+        dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("offices").path(officeId).build();
 
         return dto;
+    }
+
+    public URI getSelf() {
+        return self;
+    }
+
+    public void setSelf(URI self) {
+        this.self = self;
     }
 
     public URI getOfficeAvailability() {

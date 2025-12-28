@@ -20,7 +20,9 @@ public class CertificationDTO {
         dto.issuingEntity = certification.getIssuingEntity();
         dto.issueDate = certification.getIssueDate();
 
-        dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(certification.getDoctor().getId())).build();
+        String doctorId = String.valueOf(certification.getDoctor().getId());
+
+        dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).build();
 
         return dto;
     }
