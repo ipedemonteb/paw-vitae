@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Path("/patients")
 @Component
@@ -35,6 +39,18 @@ public class RestPatientController {
         final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
         return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}).build();
     }
+
+    @HEAD
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPatientCount() {
+
+        long count = patientService.getAllPatientsDisplayCount();
+
+        return Response.ok()
+                .header("X-Total-Count", count)
+                .build();
+    }
+
 
 //    @GET
 //    @Path("/{id}/coverages")

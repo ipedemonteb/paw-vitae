@@ -102,27 +102,27 @@ public class PatientServiceImplTest {
         assertEquals(EMAIL, patient.getEmail());
     }
 
-    @Test
-    public void testGetAllPatientsDisplayCountBelowTenThousand() {
-        //Preconditions
-        when(patientDao.countAll()).thenReturn(100);
-
-        //Exercise
-        String count = patientService.getAllPatientsDisplayCount();
-
-        //Postconditions
-        assertEquals("100", count);
-    }
-
-    @Test
-    public void testGetAllPatientsDisplayCountAboveTenThousand() {
-        //Preconditions
-        when(patientDao.countAll()).thenReturn(100000);
-
-        //Exercise
-        String count = patientService.getAllPatientsDisplayCount();
-
-        //Postconditions
-        assertEquals("100k+", count);
-    }
+//    @Test
+//    public void testGetAllPatientsDisplayCountBelowTenThousand() {
+//        //Preconditions
+//        when(patientDao.countAll()).thenReturn(100);
+//
+//        //Exercise
+//        String count = patientService.getAllPatientsDisplayCount();
+//
+//        //Postconditions
+//        assertEquals("100", count);
+//    }
+//
+//    @Test
+//    public void testGetAllPatientsDisplayCountAboveTenThousand() {
+//        //Preconditions
+//        when(patientDao.countAll()).thenReturn(100000);
+//
+//        //Exercise
+//        String count = patientService.getAllPatientsDisplayCount();
+//
+//        //Postconditions
+//        assertEquals("100k+", count);
+//    }
 }

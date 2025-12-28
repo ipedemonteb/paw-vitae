@@ -14,8 +14,10 @@ public interface SpecialtyService {
 
     List<Specialty> getByDoctorId(long id);
 
+    List<Specialty> getAll();
+
+    /* DEPRECATED METHODS */
     Optional<Specialty> getByName(String name);
 
-    List<Specialty> getAll();
 
 }

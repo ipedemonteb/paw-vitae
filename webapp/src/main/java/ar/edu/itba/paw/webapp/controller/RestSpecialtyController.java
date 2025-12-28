@@ -33,7 +33,7 @@ public class RestSpecialtyController {
         return Response.ok(SpecialtyDTO.fromSpecialty(specialty, uriInfo)).build();
     }
 
-
+//TODO: Pagination?
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
