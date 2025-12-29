@@ -38,4 +38,6 @@ public class RestAppointmentController {
         final Appointment appointment = this.appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
         return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}).build();
     }
+
+    //TODO add /rating(s?)
 }

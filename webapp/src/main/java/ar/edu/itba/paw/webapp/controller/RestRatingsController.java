@@ -32,13 +32,23 @@ public class RestRatingsController {
         this.ratingService = ratingService;
     }
 
-
-    //TODO: Agregar el @MIN
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@QueryParam("doctorId") final Integer doctorId, @QueryParam("appointmentId") final Integer appointmentId,
-                                            @QueryParam("page")@DefaultValue("1")int page,
-                                            @QueryParam("size")@DefaultValue("10")int pageSize) {
+    public Response getAll(
+            @QueryParam("doctorId")
+            final Integer doctorId,
+
+            @QueryParam("appointmentId")
+            final Integer appointmentId,
+
+            @QueryParam("page")
+            @DefaultValue("1")
+            int page,
+
+            @QueryParam("size" )
+            @DefaultValue("10")
+            int pageSize //TODO: control de tamaño o que no se pueda tocar. homogenizar en todos lados
+    ) {
 
         if (appointmentId != null) {
 

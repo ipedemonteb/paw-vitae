@@ -43,6 +43,6 @@ public class RestCoveragesController {
                 .map(c -> CoverageDTO.fromCoverage(c, uriInfo))
                 .collect(Collectors.toList());
 
-        return Response.ok(new GenericEntity<List<CoverageDTO>>(dtos) {}).build();
+        return Response.ok(new GenericEntity<>(dtos) {}).build();
     }
 }

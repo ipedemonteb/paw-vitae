@@ -33,7 +33,7 @@ public class RestNeighborhoodController {
         final List<Neighborhood> neighborhoodList = neighborhoodService.getAll();
         final List<NeighborhoodDTO> dtos = neighborhoodList.stream()
                 .map(n -> NeighborhoodDTO.fromNeighborhood(n, uriInfo))
-                .collect(Collectors.toList());
+                .toList();
 
         return Response.ok(new GenericEntity<List<NeighborhoodDTO>>(dtos) {}).build();
     }
