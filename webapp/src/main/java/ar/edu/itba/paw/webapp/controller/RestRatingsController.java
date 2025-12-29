@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildPaginationHeaders;
+import static ar.edu.itba.paw.webapp.utils.ResponseUtils.*;
+import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("/ratings")
 @Component
@@ -47,19 +48,7 @@ public class RestRatingsController {
             int pageSize //TODO: control de tamaño o que no se pueda tocar. homogenizar en todos lados
     ) {
         Page<Rating> ratingPage = ratingService.getAllRatings(page, pageSize);
-
-        if (ratingPage.getContent().isEmpty()) {
-            return Response.noContent().build();
-        }
-
-        final List<RatingDTO> dtos = ratingPage.getContent().stream()
-                .map(r -> RatingDTO.fromRating(r, uriInfo))
-                .collect(Collectors.toList());
-
-        Response.ResponseBuilder rb = Response.ok(new GenericEntity<List<RatingDTO>>(dtos){});
-
-
-        return buildPaginationHeaders(rb, ratingPage, uriInfo);
+        return buildPaginatedResponse(ratingPage, uriInfo, RatingDTO::fromRating, OK);
     }
 
 
@@ -68,9 +57,7 @@ public class RestRatingsController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getRatingsById(@PathParam("id") final long id) {
         final Rating rating = this.ratingService.getRating(id).orElseThrow(NotFoundException::new);
-
-        return Response.ok(new GenericEntity<>(RatingDTO.fromRating(rating, uriInfo)){}).build();
-
+        return buildResponse(rating, uriInfo, RatingDTO::fromRating, OK);
     }
 
 

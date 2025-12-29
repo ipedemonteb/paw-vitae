@@ -31,11 +31,8 @@ public class RestImageController {
     @Path("/{id:\\d+}")
     @Produces({"image/png", "image/jpeg", "image/jpg"})
     public Response getImage(@PathParam("id") final long id) {
-
         final Images image = imageService.findById(id).orElseThrow(NotFoundException::new);
-
         byte[] imageData = image.getImage();
-
         return Response.ok(imageData).build(); //TODO: SHOULD I CACHE?
     }
 

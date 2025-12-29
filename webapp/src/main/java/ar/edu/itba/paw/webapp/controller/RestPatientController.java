@@ -17,6 +17,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.Locale;
 
+import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildResponse;
+import static javax.ws.rs.core.Response.Status.OK;
+
 @Path("/patients")
 @Component
 public class RestPatientController {
@@ -37,7 +40,7 @@ public class RestPatientController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
-        return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}).build();
+        return buildResponse(patient, uriInfo, PatientDTO::fromPatient, OK);
     }
 
     @HEAD
@@ -76,7 +79,7 @@ public class RestPatientController {
                 headers.getAcceptableLanguages().getFirst();
 
         String language = locale.getLanguage();
-        final  Patient patient=patientService.create(patientForm.getName(),patientForm.getLastName(),patientForm.getEmail(),patientForm.getPassword(),patientForm.getPhone(),language,patientForm.getCoverage(),patientForm.getNeighborhoodId());
+        final  Patient patient = patientService.create(patientForm.getName(),patientForm.getLastName(),patientForm.getEmail(),patientForm.getPassword(),patientForm.getPhone(),language,patientForm.getCoverage(),patientForm.getNeighborhoodId());
         return  Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(patient.getId())).build()).build();
     }
 
@@ -89,7 +92,7 @@ public class RestPatientController {
     ){
         final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
         patientService.updatePatient(patient,updatePatientForm.getName(),updatePatientForm.getLastName(),updatePatientForm.getPhone(),updatePatientForm.getCoverage());
-        return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)){}).build();
+        return buildResponse(patient, uriInfo, PatientDTO::fromPatient, OK);
     }
 
 }

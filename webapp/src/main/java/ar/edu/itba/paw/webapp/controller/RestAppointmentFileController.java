@@ -22,6 +22,9 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Context;
 import java.util.List;
 
+import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildResponse;
+import static javax.ws.rs.core.Response.Status.OK;
+
 @Path("/appointments/{appointmentId}/files")
 @Component
 public class RestAppointmentFileController {
@@ -44,13 +47,8 @@ public class RestAppointmentFileController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response listFiles(@PathParam("appointmentId") final long appointmentId) {
         appointmentService.getById(appointmentId).orElseThrow(NotFoundException::new);
-
         List<AppointmentFile> files = appointmentFileService.getByAppointmentId(appointmentId);
-        if (files.isEmpty()) {
-            return Response.noContent().build();
-        }
-
-        return Response.ok(new GenericEntity<>(AppointmentDTO.filesFromAppointmentFiles(files, uriInfo)) {}).build();
+        return buildResponse(files, uriInfo, AppointmentDTO::filesFromAppointmentFiles, OK);
     }
 
     @GET
