@@ -50,8 +50,12 @@ public class AppointmentDTO {
                 .path(String.valueOf(appointment.getDoctorOffice().getId()))
                 .build();
         dto.appointmentFiles = uriInfo.getBaseUriBuilder().path("appointments").path(String.valueOf(appointment.getId())).path("files").build();
-        dto.rating = uriInfo.getBaseUriBuilder().path("ratings").path(String.valueOf(appointment.getRating().getId())).build();
-
+        if (appointment.getRating() != null) {
+            dto.rating = uriInfo.getBaseUriBuilder()
+                    .path("ratings")
+                    .path(String.valueOf(appointment.getRating().getId()))
+                    .build();
+        }
         return dto;
     }
 
