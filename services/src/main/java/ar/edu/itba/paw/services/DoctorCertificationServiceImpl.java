@@ -45,7 +45,7 @@ public class DoctorCertificationServiceImpl implements DoctorCertificationServic
     public List<DoctorCertification> findByDoctorId(long id) {
         List<DoctorCertification> certifications = this.doctorCertificationDao.getByDoctorId(id);
         if(certifications.isEmpty()) {
-            throw new UserNotFoundException("Doctor profile not found for doctor ID: " + id);
+            throw new UserNotFoundException();
         }
         return certifications;
     }

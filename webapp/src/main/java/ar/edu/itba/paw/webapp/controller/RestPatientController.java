@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Patient;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.dto.PatientDTO;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
@@ -90,7 +91,7 @@ public class RestPatientController {
             @PathParam("id") final long id,
             @Valid @NotNull UpdatePatientForm updatePatientForm
     ){
-        final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
+        final Patient patient = this.patientService.getById(id).orElseThrow(UserNotFoundException::new);
         patientService.updatePatient(patient,updatePatientForm.getName(),updatePatientForm.getLastName(),updatePatientForm.getPhone(),updatePatientForm.getCoverage());
         return buildResponse(patient, uriInfo, PatientDTO::fromPatient, OK);
     }

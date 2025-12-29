@@ -1,25 +1,12 @@
 package ar.edu.itba.paw.models.exception;
 
-public class FileNotFoundException extends RuntimeException{
+public class FileNotFoundException extends CustomRuntimeException{
+
 
 
     public FileNotFoundException() {
-        super();
+        super("exception.fileNotFound",ExceptionUtils.NOT_FOUND_STATUS_CODE);
     }
 
-    public FileNotFoundException(String message) {
-        super(message);
-    }
 
-    public FileNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public FileNotFoundException(Throwable cause) {
-        super(cause);
-    }
-
-    protected FileNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }
