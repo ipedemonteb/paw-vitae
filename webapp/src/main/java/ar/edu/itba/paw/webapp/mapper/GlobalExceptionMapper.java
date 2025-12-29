@@ -47,7 +47,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
                     .build();
         }
 
-        // 3. Error 500 Genérico
+
         LOGGER.error("Uncaught Critical Exception", exception);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ErrorDto("Internal Server Error"))
