@@ -44,7 +44,8 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, MultipartFile image, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm) {
+        String language = locales.isEmpty() ? Locale.ENGLISH.getLanguage() : locales.getFirst().getLanguage();
         LOGGER.debug("Creating doctor with name: {}, lastName: {}, email: {}, phone: {}, language: {}, specialties: {}, coverages: {}", name, lastName, email, phone, language, specialties, coverages);
         Images img = imageService.create(image);
 

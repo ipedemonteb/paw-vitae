@@ -5,20 +5,26 @@ import ar.edu.itba.paw.models.*;
 //import ar.edu.itba.paw.models.QueryParam;
 import ar.edu.itba.paw.models.exception.DoctorOfficeNotFoundException;
 import ar.edu.itba.paw.webapp.dto.*;
+import ar.edu.itba.paw.webapp.form.DoctorForm;
+import ar.edu.itba.paw.webapp.form.UpdateDoctorForm;
 import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
 import java.util.List;
+import java.util.Locale;
 
 import static ar.edu.itba.paw.webapp.utils.ResponseUtils.*;
 import static javax.ws.rs.core.Response.Status.OK;
@@ -214,6 +220,28 @@ public class RestDoctorController {
     ) {
         Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, page, 9);
         return buildPaginatedResponse(ratingPage, uriInfo, RatingDTO::fromRating, OK);
+    }
+
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    public Response createDoctor(
+            @Valid @NotNull DoctorForm doctorForm,
+            @Context HttpHeaders headers
+    ) {
+        Doctor doctor = this.doctorService.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), headers.getAcceptableLanguages(), doctorForm.getImage(), doctorForm.getSpecialties(), doctorForm.getCoverages(), doctorForm.getDoctorOfficeForm());
+        return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(doctor.getId())).build()).build();
+    }
+
+    @PATCH
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{id:\\d+}")
+    public Response updateDoctor(
+            @PathParam("id") final long id,
+            @Valid @NotNull UpdateDoctorForm updateDoctorForm
+    ) {
+        Doctor doctor = this.doctorService.getById(id).orElseThrow(DoctorOfficeNotFoundException::new);
+        this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(), updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages(), updateDoctorForm.getImage());
+        return buildResponse(doctor, uriInfo, DoctorDTO::fromDoctor, OK);
     }
 
 }

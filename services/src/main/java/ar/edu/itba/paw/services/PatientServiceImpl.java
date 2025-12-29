@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -51,7 +53,8 @@ public class PatientServiceImpl implements PatientService {
 
     @Transactional
     @Override
-    public Patient create(String name, String lastName, String email, String password, String phone, String language, long coverageId, long neighborhoodId) {
+    public Patient create(String name, String lastName, String email, String password, String phone, List<Locale> locales, long coverageId, long neighborhoodId) {
+        String language = locales.isEmpty() ? Locale.ENGLISH.getLanguage() : locales.getFirst().getLanguage();
         LOGGER.debug("Creating patient with name: {}, lastName: {}, email: {}, phone: {}, language: {}, coverageId: {}", name, lastName, email, phone, language, coverageId);
         Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
         Neighborhood neighborhood = neighborhoodService.getById(neighborhoodId).orElseThrow(NeighborhoodNotFoundException::new);

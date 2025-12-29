@@ -75,12 +75,7 @@ public class RestPatientController {
             @Valid @NotNull PatientForm patientForm,
             @Context HttpHeaders headers
     ){
-        Locale locale = headers.getAcceptableLanguages().isEmpty() ? //TODO revisar, logica de negocio? simplificar.
-                Locale.ENGLISH :
-                headers.getAcceptableLanguages().getFirst();
-
-        String language = locale.getLanguage();
-        final  Patient patient = patientService.create(patientForm.getName(),patientForm.getLastName(),patientForm.getEmail(),patientForm.getPassword(),patientForm.getPhone(),language,patientForm.getCoverage(),patientForm.getNeighborhoodId());
+        final  Patient patient = patientService.create(patientForm.getName(),patientForm.getLastName(),patientForm.getEmail(),patientForm.getPassword(),patientForm.getPhone(), headers.getAcceptableLanguages(),patientForm.getCoverage(),patientForm.getNeighborhoodId());
         return  Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(patient.getId())).build()).build();
     }
 

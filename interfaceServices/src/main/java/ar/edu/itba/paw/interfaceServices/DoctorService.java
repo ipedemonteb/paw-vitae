@@ -4,11 +4,12 @@ import ar.edu.itba.paw.models.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public interface DoctorService {
 
-    Doctor create(String name, String lastName, String email, String password, String phone, String language, MultipartFile image, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm);
+    Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, MultipartFile image, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm);
 
     Optional<Doctor> getById(final long id);
 

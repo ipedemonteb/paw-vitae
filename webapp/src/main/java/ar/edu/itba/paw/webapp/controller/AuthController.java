@@ -48,16 +48,16 @@ public class AuthController {
         if (errors.hasErrors()) {
             return doctorForm(form);
         }
-        doctorService.create(
-                form.getName(), form.getLastName(), form.getEmail(), form.getPassword(),
-                form.getPhone(), LocaleContextHolder.getLocale().getLanguage(), form.getImage(), form.getSpecialties(),
-                form.getCoverages(), form.getDoctorOfficeForm()
-        );
-        Optional<User> userOpt = userService.getByEmail(form.getEmail()).map(user -> (User) user);
-        if (userOpt.isEmpty()) {
-            return new ModelAndView("redirect:/email-sent");
-        }
-        userService.setVerificationToken(form.getEmail());
+//        doctorService.create(
+//                form.getName(), form.getLastName(), form.getEmail(), form.getPassword(),
+//                form.getPhone(), LocaleContextHolder.getLocale(), form.getImage(), form.getSpecialties(),
+//                form.getCoverages(), form.getDoctorOfficeForm()
+//        );
+//        Optional<User> userOpt = userService.getByEmail(form.getEmail()).map(user -> (User) user);
+//        if (userOpt.isEmpty()) {
+//            return new ModelAndView("redirect:/email-sent");
+//        }
+//        userService.setVerificationToken(form.getEmail());
         return new ModelAndView("redirect:/email-sent");
     }
 
@@ -86,9 +86,9 @@ public class AuthController {
         if (errors.hasErrors()) {
             return patientForm(patientForm);
         }
-        patientService.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(),
-                patientForm.getPhone(), LocaleContextHolder.getLocale().getLanguage(), patientForm.getCoverage(), patientForm.getNeighborhoodId());
-        userService.setVerificationToken(patientForm.getEmail());
+//        patientService.create(patientForm.getName(), patientForm.getLastName(), patientForm.getEmail(), patientForm.getPassword(),
+//                patientForm.getPhone(), LocaleContextHolder.getLocale().getLanguage(), patientForm.getCoverage(), patientForm.getNeighborhoodId());
+//        userService.setVerificationToken(patientForm.getEmail());
         return new ModelAndView("redirect:/email-sent");
     }
 
