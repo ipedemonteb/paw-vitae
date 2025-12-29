@@ -39,7 +39,8 @@ public class AuthUserDetailsService implements UserDetailsService {
                     true,
                     true,
                     true,
-                    List.of(new SimpleGrantedAuthority("ROLE_DOCTOR"))
+                    List.of(new SimpleGrantedAuthority("ROLE_DOCTOR")),
+                    user.getId()
             );
         }
         return new AuthUserDetails(
@@ -49,7 +50,8 @@ public class AuthUserDetailsService implements UserDetailsService {
                 true,
                 true,
                 true,
-                List.of(new SimpleGrantedAuthority("ROLE_PATIENT"))
+                List.of(new SimpleGrantedAuthority("ROLE_PATIENT")),
+                user.getId()
         );
     }
 
