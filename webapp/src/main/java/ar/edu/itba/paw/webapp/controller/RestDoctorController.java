@@ -83,7 +83,7 @@ public class RestDoctorController {
             long coverageId,
 
             @QueryParam("weekdays")
-            List<@Min(0) @Max(6) Integer> weekdays,
+            List<Integer> weekdays,
 
             @QueryParam("keyword")
             @DefaultValue("")
