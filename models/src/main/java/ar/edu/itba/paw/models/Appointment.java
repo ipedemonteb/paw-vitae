@@ -47,6 +47,10 @@ public class Appointment {
     @Column
     private String report;
 
+    //TODO: revisar esto?
+    @OneToOne(mappedBy = "appointment", optional = true)
+    private Rating rating;
+
     @Transient
     private Boolean cancellable = true;
 
@@ -146,6 +150,10 @@ public class Appointment {
 
     public void setAllowFullHistory(boolean allowFullHistory) {
         this.allowFullHistory = allowFullHistory;
+    }
+
+    public Rating getRating() {
+        return rating;
     }
 
 }
