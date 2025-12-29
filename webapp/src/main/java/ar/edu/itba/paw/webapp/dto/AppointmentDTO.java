@@ -26,6 +26,7 @@ public class AppointmentDTO {
     private URI specialty;
     private URI doctorOffice;
     private URI appointmentFiles;
+    private URI rating;
 
     public static AppointmentDTO fromAppointment(Appointment appointment, UriInfo uriInfo) {
         AppointmentDTO dto = new AppointmentDTO();
@@ -49,6 +50,7 @@ public class AppointmentDTO {
                 .path(String.valueOf(appointment.getDoctorOffice().getId()))
                 .build();
         dto.appointmentFiles = uriInfo.getBaseUriBuilder().path("appointments").path(String.valueOf(appointment.getId())).path("files").build();
+        dto.rating = uriInfo.getBaseUriBuilder().path("ratings").path(String.valueOf(appointment.getRating().getId())).build();
 
         return dto;
     }
@@ -166,5 +168,13 @@ public class AppointmentDTO {
 
     public void setAppointmentFiles(URI appointmentFiles) {
         this.appointmentFiles = appointmentFiles;
+    }
+
+    public URI getRating() {
+        return rating;
+    }
+
+    public void setRating(URI rating) {
+        this.rating = rating;
     }
 }

@@ -38,36 +38,15 @@ public class RestRatingsController {
             @QueryParam("doctorId")
             final Integer doctorId,
 
-            @QueryParam("appointmentId")
-            final Integer appointmentId,
-
             @QueryParam("page")
             @DefaultValue("1")
             int page,
 
             @QueryParam("size" )
-            @DefaultValue("10")
+            @DefaultValue("9")
             int pageSize //TODO: control de tamaño o que no se pueda tocar. homogenizar en todos lados
     ) {
-
-        if (appointmentId != null) {
-
-            Optional<Rating> match = ratingService.getRatingByAppointmentId(appointmentId);
-
-            List<Rating> ratings = match.map(Collections::singletonList)
-                    .orElse(Collections.emptyList());
-
-            List<RatingDTO> dtos = ratings.stream().map(r -> RatingDTO.fromRating(r, uriInfo)).collect(Collectors.toList());
-            return Response.ok(new GenericEntity<List<RatingDTO>>(dtos){}).build();
-        }
-
-        Page<Rating> ratingPage;
-
-        if(doctorId != null){
-            ratingPage = ratingService.getRatingsByDoctorId(doctorId, page, pageSize);
-        } else {
-            ratingPage = ratingService.getAllRatings(page, pageSize);
-        }
+        Page<Rating> ratingPage = ratingService.getAllRatings(page, pageSize);
 
         if (ratingPage.getContent().isEmpty()) {
             return Response.noContent().build();
