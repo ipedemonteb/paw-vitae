@@ -36,12 +36,13 @@ public class RestDoctorController {
     private final DoctorCertificationService doctorCertificationService;
     private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
     private final DoctorOfficeSpecialtyService doctorOfficeSpecialtyService;
+    private final RatingService ratingService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService) {
+    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, RatingService ratingService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
@@ -51,6 +52,7 @@ public class RestDoctorController {
         this.doctorCertificationService = doctorCertificationService;
         this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
         this.doctorOfficeSpecialtyService = doctorOfficeSpecialtyService;
+        this.ratingService = ratingService;
 
     }
 
@@ -207,6 +209,24 @@ public class RestDoctorController {
         return Response.ok(new GenericEntity<>(certificationDTOS) {}).build();
     }
 
-    //TODO /ratings
+    @GET
+    @Path("/{id:\\d+}/ratings")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorRatings(
+            @PathParam("id")
+            final long id,
+
+            @QueryParam("page")
+            @DefaultValue("1")
+            @Min(1)
+            final int page
+    ) {
+        Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, page, 9);
+
+        List<RatingDTO> ratingDTOS = ratingPage.getContent().stream().map(r -> RatingDTO.fromRating(r, uriInfo)).toList();
+        Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(ratingDTOS) {});
+
+        return buildPaginationHeaders(rb, ratingPage, uriInfo);
+    }
 
 }
