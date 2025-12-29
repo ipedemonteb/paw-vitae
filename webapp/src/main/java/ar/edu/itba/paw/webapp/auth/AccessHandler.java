@@ -1,12 +1,11 @@
 package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
-import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,70 +14,80 @@ import javax.servlet.http.HttpServletRequest;
 public class AccessHandler {
 
     private final AppointmentService appointmentService;
-    private final UserService userService;
 
     @Autowired
-    public AccessHandler(AppointmentService appointmentService, UserService userService) {
+    public AccessHandler(AppointmentService appointmentService) {
         this.appointmentService = appointmentService;
-        this.userService = userService;
+    }
+
+    /**
+     * Helper privado para obtener el usuario casteado de forma segura.
+     * Evita repetir el instanceof y el cast en cada método.
+     */
+    private AuthUserDetails getPrincipal(Authentication auth) {
+        if (auth != null && auth.getPrincipal() instanceof AuthUserDetails) {
+            return (AuthUserDetails) auth.getPrincipal();
+        }
+        return null;
     }
 
     public boolean canAccessDoctorProfile(Authentication auth, Long doctorId) {
-        Object principal = auth.getPrincipal();
-        if (!(principal instanceof AuthUserDetails)) {
+        AuthUserDetails user = getPrincipal(auth);
+        if (user == null) {
             return false;
         }
-
-        long userId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
-        return userId == doctorId;
+        return user.getUserId() == doctorId;
     }
 
     public boolean canSeeMedicalHistory(Authentication auth, long appointmentId) {
-        Object principal = auth.getPrincipal();
-        if (!(principal instanceof AuthUserDetails)) {
+        AuthUserDetails user = getPrincipal(auth);
+        if (user == null) {
             return false;
         }
-
-        long doctorId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
-        return appointmentService.hasHistoryAllowedByAppointmentId(appointmentId, doctorId);
+        return appointmentService.hasHistoryAllowedByAppointmentId(appointmentId, user.getUserId());
     }
 
-    public boolean canHandleAppointment(Authentication auth, String appointmentId) {
-        Object principal = auth.getPrincipal();
-        if (!(principal instanceof AuthUserDetails)) {
+    public boolean canHandleAppointment(Authentication auth, String appointmentIdStr) {
+        AuthUserDetails user = getPrincipal(auth);
+        if (user == null) {
             return false;
         }
-        long appointmentIdLong;
+
+        long appointmentId;
         try {
-            appointmentIdLong = Long.parseLong(appointmentId);
+            appointmentId = Long.parseLong(appointmentIdStr);
         } catch (NumberFormatException e) {
             return true;
         }
 
-        long userId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
-        return appointmentService.getById(appointmentIdLong)
-                .map(a -> a.getPatient().getId() == userId
-                        || a.getDoctor().getId() == userId)
+        return appointmentService.getById(appointmentId)
+                .map(a -> a.getPatient().getId() == user.getUserId()
+                        || a.getDoctor().getId() == user.getUserId())
                 .orElse(true);
     }
-     public boolean canHandleUnavailability( HttpServletRequest request) {
-         String requestedWith = request.getHeader("X-Requested-With");
-         return "XMLHttpRequest".equalsIgnoreCase(requestedWith);
+
+    public boolean canHandleUnavailability(HttpServletRequest request) {
+        String requestedWith = request.getHeader("X-Requested-With");
+        return "XMLHttpRequest".equalsIgnoreCase(requestedWith);
     }
+
     public boolean hasEnabledFullMedicalHistory(Authentication auth, long appointmentId) {
-        Object principal = auth.getPrincipal();
-        if (!(principal instanceof AuthUserDetails)) {
+        AuthUserDetails user = getPrincipal(auth);
+        if (user == null) {
             return false;
         }
-        Appointment appointment = appointmentService.getById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
-        if(auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"))){
-            long doctorId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
+
+        Appointment appointment = appointmentService.getById(appointmentId)
+                .orElseThrow(AppointmentNotFoundException::new);
+
+        boolean isDoctor = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_DOCTOR"));
+
+        if (isDoctor) {
             long patientId = appointment.getPatient().getId();
-            return appointmentService.hasFullMedicalHistoryEnabled(patientId, doctorId) || appointment.getDoctor().getId() == doctorId;
+            return appointmentService.hasFullMedicalHistoryEnabled(patientId, user.getUserId())
+                    || appointment.getDoctor().getId() == user.getUserId();
         } else {
-            long patientId = userService.getByEmail(((AuthUserDetails) principal).getUsername()).orElseThrow(UserNotFoundException::new).getId();
-            return appointment.getPatient().getId() == patientId;
+            return appointment.getPatient().getId() == user.getUserId();
         }
     }
 }
-
