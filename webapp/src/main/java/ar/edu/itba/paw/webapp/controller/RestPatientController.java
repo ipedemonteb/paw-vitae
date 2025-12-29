@@ -24,13 +24,11 @@ public class RestPatientController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestPatientController.class);
     private final PatientService patientService;
 
-    private final UserService userService;
     @Context
     private UriInfo uriInfo;
     @Autowired
-    public RestPatientController(PatientService patientService,UserService userService) {
+    public RestPatientController(PatientService patientService) {
         this.patientService = patientService;
-        this.userService = userService;
     }
 
 
@@ -48,7 +46,7 @@ public class RestPatientController {
 
         long count = patientService.getAllPatientsDisplayCount();
 
-        return Response.ok()
+        return Response.ok() //TODO: 204? (No Content)
                 .header("X-Total-Count", count)
                 .build();
     }
@@ -69,18 +67,26 @@ public class RestPatientController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createPatient(@Valid @NotNull PatientForm patientForm,@Context HttpHeaders headers){
-        Locale locale = headers.getAcceptableLanguages().isEmpty() ?
+    public Response createPatient(
+            @Valid @NotNull PatientForm patientForm,
+            @Context HttpHeaders headers
+    ){
+        Locale locale = headers.getAcceptableLanguages().isEmpty() ? //TODO revisar, logica de negocio? simplificar.
                 Locale.ENGLISH :
-                headers.getAcceptableLanguages().get(0);
+                headers.getAcceptableLanguages().getFirst();
+
         String language = locale.getLanguage();
         final  Patient patient=patientService.create(patientForm.getName(),patientForm.getLastName(),patientForm.getEmail(),patientForm.getPassword(),patientForm.getPhone(),language,patientForm.getCoverage(),patientForm.getNeighborhoodId());
         return  Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(patient.getId())).build()).build();
     }
+
     @Path("/{id:\\d+}")
     @PATCH
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response modifyPatient(@PathParam("id") final long id,@Valid @NotNull UpdatePatientForm updatePatientForm){
+    public Response modifyPatient(
+            @PathParam("id") final long id,
+            @Valid @NotNull UpdatePatientForm updatePatientForm
+    ){
         final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
         patientService.updatePatient(patient,updatePatientForm.getName(),updatePatientForm.getLastName(),updatePatientForm.getPhone(),updatePatientForm.getCoverage());
         return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)){}).build();

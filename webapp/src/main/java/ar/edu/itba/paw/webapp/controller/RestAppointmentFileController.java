@@ -62,7 +62,7 @@ public class RestAppointmentFileController {
         AppointmentFile file = getAuthorizedFile(appointmentId, fileId);
 
         return Response.ok(file.getFileData())
-                .type(MediaType.APPLICATION_OCTET_STREAM)
+                .type(MediaType.APPLICATION_OCTET_STREAM) //TODO remove
                 .header("Content-Disposition", "attachment; filename=\"" + file.getFileName() + "\"")
                 .build();
     }
@@ -70,13 +70,15 @@ public class RestAppointmentFileController {
     @GET
     @Path("/{fileId:\\d+}/view")
     @Produces("application/pdf")
-    public Response viewFileInline(@PathParam("appointmentId") final long appointmentId,
-                                   @PathParam("fileId") final long fileId) {
+    public Response viewFileInline(
+            @PathParam("appointmentId") final long appointmentId,
+            @PathParam("fileId") final long fileId
+    ) {
 
         AppointmentFile file = getAuthorizedFile(appointmentId, fileId);
 
         return Response.ok(file.getFileData())
-                .type("application/pdf")
+                .type("application/pdf") //TODO remove
                 .header("Content-Disposition", "inline; filename=\"" + file.getFileName() + "\"")
                 .build();
     }

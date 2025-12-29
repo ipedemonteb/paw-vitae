@@ -207,4 +207,6 @@ public class RestDoctorController {
         return Response.ok(new GenericEntity<>(certificationDTOS) {}).build();
     }
 
+    //TODO /ratings
+
 }
