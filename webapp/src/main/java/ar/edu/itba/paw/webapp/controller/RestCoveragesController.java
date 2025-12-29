@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.models.Coverage;
+import ar.edu.itba.paw.models.exception.CoverageNotFoundException;
 import ar.edu.itba.paw.webapp.dto.CoverageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildResponse;
+import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("/coverages")
 @Component
@@ -29,8 +33,8 @@ public class RestCoveragesController {
     @Path("/{id:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
-        final Coverage coverage = coverageService.findById(id).orElseThrow(NotFoundException::new);
-        return Response.ok(CoverageDTO.fromCoverage(coverage, uriInfo)).build();
+        final Coverage coverage = coverageService.findById(id).orElseThrow(CoverageNotFoundException::new);
+        return buildResponse(coverage, uriInfo, CoverageDTO::fromCoverage, OK);
     }
 
 
@@ -38,11 +42,6 @@ public class RestCoveragesController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
         final List<Coverage> coverages = coverageService.getAll();
-
-        final List<CoverageDTO> dtos = coverages.stream()
-                .map(c -> CoverageDTO.fromCoverage(c, uriInfo))
-                .collect(Collectors.toList());
-
-        return Response.ok(new GenericEntity<>(dtos) {}).build();
+        return buildResponse(coverages, uriInfo, CoverageDTO::fromCoverage, OK);
     }
 }

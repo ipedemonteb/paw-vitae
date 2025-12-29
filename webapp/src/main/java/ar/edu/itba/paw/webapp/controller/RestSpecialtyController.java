@@ -11,6 +11,9 @@ import javax.ws.rs.core.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildResponse;
+import static javax.ws.rs.core.Response.Status.OK;
+
 @Path("/specialties")
 @Component
 public class RestSpecialtyController {
@@ -30,7 +33,7 @@ public class RestSpecialtyController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Specialty specialty = specialtyService.getById(id).orElseThrow(NotFoundException::new);
-        return Response.ok(SpecialtyDTO.fromSpecialty(specialty, uriInfo)).build();
+        return buildResponse(specialty, uriInfo, SpecialtyDTO::fromSpecialty, OK);
     }
 
 //TODO: Pagination?
@@ -38,11 +41,6 @@ public class RestSpecialtyController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
         final List<Specialty> specialties = specialtyService.getAll();
-
-        final List<SpecialtyDTO> dtos = specialties.stream()
-                .map(s -> SpecialtyDTO.fromSpecialty(s, uriInfo))
-                .collect(Collectors.toList());
-
-        return Response.ok(new GenericEntity<List<SpecialtyDTO>>(dtos) {}).build();
+        return buildResponse(specialties, uriInfo, SpecialtyDTO::fromSpecialty, OK);
     }
 }

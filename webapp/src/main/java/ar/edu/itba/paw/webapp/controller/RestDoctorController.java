@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -19,7 +20,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
 import java.util.List;
 
-import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildPaginationHeaders;
+import static ar.edu.itba.paw.webapp.utils.ResponseUtils.*;
+import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("/doctors")
 @Component
@@ -63,7 +65,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Doctor doctor = this.doctorService.getById(id).orElseThrow(DoctorOfficeNotFoundException::new);
-        return Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctor, uriInfo)) {}).build();
+        return buildResponse(doctor, uriInfo, DoctorDTO::fromDoctor, OK);
     }
 
     @GET
@@ -100,11 +102,7 @@ public class RestDoctorController {
             String direction
     ) {
         Page<Doctor> doctorPage = this.doctorService.getWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction, page, 9);
-
-        List<DoctorDTO> doctors = doctorPage.getContent().stream().map(d -> DoctorDTO.fromDoctor(d, uriInfo)).toList();
-        Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(doctors) {});
-
-        return buildPaginationHeaders(rb, doctorPage, uriInfo);
+        return buildPaginatedResponse(doctorPage, uriInfo, DoctorDTO::fromDoctor, OK);
     }
 
 
@@ -133,8 +131,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorSpecialties(@PathParam("id") final long id) {
         List<Specialty> specialties = this.specialtyService.getByDoctorId(id);
-        List<SpecialtyDTO> specialtyDTOS = specialties.stream().map(s -> SpecialtyDTO.fromSpecialty(s, uriInfo)).toList();
-        return Response.ok(new GenericEntity<>(specialtyDTOS) {}).build();
+        return buildResponse(specialties, uriInfo, SpecialtyDTO::fromSpecialty, OK);
     }
 
     @GET
@@ -143,8 +140,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorCoverages(@PathParam("id") final long id) {
         List<Coverage> coverages = this.coverageService.findByDoctorId(id);
-        List<CoverageDTO> coverageDTOS = coverages.stream().map(c -> CoverageDTO.fromCoverage(c, uriInfo)).toList();
-        return Response.ok(new GenericEntity<>(coverageDTOS) {}).build();
+        return buildResponse(coverages, uriInfo, CoverageDTO::fromCoverage, OK);
     }
 
     @GET
@@ -152,8 +148,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOffices(@PathParam("id") final long id) {
         List<DoctorOffice> offices = this.doctorOfficeService.getAllByDoctorId(id);
-        List<OfficeDTO> officeDTOS = offices.stream().map(o -> OfficeDTO.fromDoctorOffice(o, uriInfo)).toList();
-        return Response.ok(new GenericEntity<>(officeDTOS) {}).build();
+        return buildResponse(offices, uriInfo, OfficeDTO::fromDoctorOffice, OK);
     }
 
     @GET
@@ -161,7 +156,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOffices(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         DoctorOffice office = this.doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
-        return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(office, uriInfo)) {}).build();
+        return buildResponse(office, uriInfo, OfficeDTO::fromDoctorOffice, OK);
     }
 
     @GET
@@ -169,8 +164,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOfficeAvailability(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         List<DoctorOfficeAvailability> availabilities = this.doctorOfficeAvailabilityService.getByOfficeId(officeId);
-        List<AvailabilityDTO> availabilityDTOS = availabilities.stream().map(a -> AvailabilityDTO.fromDoctorOfficeAvailability(a, uriInfo)).toList();
-        return Response.ok(new GenericEntity<>(availabilityDTOS) {}).build();
+        return buildResponse(availabilities, uriInfo, AvailabilityDTO::fromDoctorOfficeAvailability, OK);
     }
 
     @GET
@@ -178,8 +172,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOfficeSpecialties(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         List<DoctorOfficeSpecialty> specialties = this.doctorOfficeSpecialtyService.getByOfficeId(officeId);
-        List<OfficeSpecialtyDTO> specialtyDTOS = specialties.stream().map(s -> OfficeSpecialtyDTO.fromDoctorOfficeSpecialty(s, uriInfo)).toList();
-        return Response.ok(new GenericEntity<>(specialtyDTOS) {}).build();
+        return buildResponse(specialties, uriInfo, OfficeSpecialtyDTO::fromDoctorOfficeSpecialty, OK);
     }
 
 
@@ -188,7 +181,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorProfile(@PathParam("id") final long id) {
         DoctorProfile profile = this.doctorProfileService.findByDoctorId(id);
-        return Response.ok(new GenericEntity<>(ProfileDTO.fromDoctorProfile(profile, uriInfo)) {}).build();
+        return buildResponse(profile, uriInfo, ProfileDTO::fromDoctorProfile, OK);
     }
 
     @GET
@@ -196,8 +189,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorExperiences(@PathParam("id") final long id) {
         List<DoctorExperience> experiences = this.doctorExperienceService.findByDoctorId(id);
-        List<ExperienceDTO> experienceDTOS = experiences.stream().map(e -> ExperienceDTO.fromDoctorExperience(e, uriInfo)).toList();
-        return Response.ok(new GenericEntity<>(experienceDTOS) {}).build();
+        return buildResponse(experiences, uriInfo, ExperienceDTO::fromDoctorExperience, OK);
     }
 
     @GET
@@ -205,8 +197,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorCertifications(@PathParam("id") final long id) {
         List<DoctorCertification> certifications = this.doctorCertificationService.findByDoctorId(id);
-        List<CertificationDTO> certificationDTOS = certifications.stream().map(c -> CertificationDTO.fromDoctorCertification(c, uriInfo)).toList();
-        return Response.ok(new GenericEntity<>(certificationDTOS) {}).build();
+        return buildResponse(certifications, uriInfo, CertificationDTO::fromDoctorCertification, OK);
     }
 
     @GET
@@ -222,11 +213,7 @@ public class RestDoctorController {
             final int page
     ) {
         Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, page, 9);
-
-        List<RatingDTO> ratingDTOS = ratingPage.getContent().stream().map(r -> RatingDTO.fromRating(r, uriInfo)).toList();
-        Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(ratingDTOS) {});
-
-        return buildPaginationHeaders(rb, ratingPage, uriInfo);
+        return buildPaginatedResponse(ratingPage, uriInfo, RatingDTO::fromRating, OK);
     }
 
 }
