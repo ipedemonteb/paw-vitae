@@ -74,9 +74,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
 
-        DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(() -> new DoctorOfficeNotFoundException("Doctor office not found"));
+        DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
 
-        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(() -> new SpecialtyNotFoundException("Specialty not found")),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice, allowFullHistory);
+        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(SpecialtyNotFoundException::new ),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice, allowFullHistory);
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
         LOGGER.info("New appointment created with id: {}", appointment.getId());
@@ -203,7 +203,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Patient getPatientByAppointmentId(long appointmentId) {
         LOGGER.debug("Getting patient by appointmentId: {}", appointmentId);
-        Appointment appointment = getById(appointmentId).orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id: " + appointmentId));
+        Appointment appointment = getById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
         return appointment.getPatient();
     }
 

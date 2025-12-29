@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void changeLanguage(long id, String language) {
-        User user = getById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        User user = getById(id).orElseThrow(UserNotFoundException::new);
         user.setLanguage(language);
         LOGGER.info("Language changed to '{}' for user with id={}", language, id);
     }
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setVerificationToken(String email) {
         LOGGER.debug("Setting verification token for email: {}", email);
-        User user = getByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+        User user = getByEmail(email).orElseThrow(UserNotFoundException::new);
         String token = UUID.randomUUID().toString();
         String verificationLink = BASE_URL + "/verify-confirmation?token=" + token;
         mailService.sendVerificationRegisterEmail(user, verificationLink);

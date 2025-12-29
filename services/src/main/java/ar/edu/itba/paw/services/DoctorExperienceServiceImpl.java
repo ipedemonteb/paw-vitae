@@ -36,7 +36,7 @@ public class DoctorExperienceServiceImpl implements DoctorExperienceService {
     @Override
     public DoctorExperience create(long doctorId, String title, String orgName, LocalDate startDate, LocalDate endDate) {
         LOGGER.debug("Creating doctor experience for doctor with ID: {}", doctorId);
-        Doctor doctor = doctorService.getById(doctorId).orElseThrow(() -> new UserNotFoundException("Doctor not found with ID: " + doctorId));
+        Doctor doctor = doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new);
         DoctorExperience experience = doctorExperienceDao.create(doctor, title, orgName, startDate, endDate);
         LOGGER.info("Doctor experience created for doctor with ID: {}", doctorId);
         return experience;
@@ -47,7 +47,7 @@ public class DoctorExperienceServiceImpl implements DoctorExperienceService {
     public List<DoctorExperience> findByDoctorId(long doctorId) {
         List<DoctorExperience> experiences = this.doctorExperienceDao.getByDoctorId(doctorId);
         if(experiences.isEmpty()) {
-            throw new UserNotFoundException("Doctor profile not found for doctor ID: " + doctorId);
+            throw new UserNotFoundException();
         }
         return experiences;
     }
