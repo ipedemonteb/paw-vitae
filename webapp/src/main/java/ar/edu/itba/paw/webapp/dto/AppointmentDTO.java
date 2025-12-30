@@ -59,6 +59,10 @@ public class AppointmentDTO {
         return dto;
     }
 
+    public static List<AppointmentDTO> fromAppointment(List<Appointment> appointments, UriInfo uriInfo) {
+        return appointments.stream().map(a -> fromAppointment(a, uriInfo)).toList();
+    }
+
     public static List<AppointmentFileDTO> filesFromAppointmentFiles(List<AppointmentFile> appointmentFiles, UriInfo uriInfo) {
         if (appointmentFiles == null || appointmentFiles.isEmpty()) {
             return Collections.emptyList();
