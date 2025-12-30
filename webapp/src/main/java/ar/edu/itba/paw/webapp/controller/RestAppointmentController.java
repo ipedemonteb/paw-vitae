@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.dto.AppointmentDTO;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.CancelAppointmentForm;
+import ar.edu.itba.paw.webapp.form.AppointmentReportForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +115,16 @@ public class RestAppointmentController {
             LOGGER.warn("Failed to cancel appointment {} by user {}", id, form.getUserId());
             return Response.status(Response.Status.CONFLICT).build();
         }
+        return Response.noContent().build();
+    }
+
+    @PATCH
+    @Path("/{id:\\d+}/report")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateReport(@PathParam("id") final long id,
+                                 @Valid @NotNull AppointmentReportForm form) {
+        appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
+        appointmentService.updateAppointmentReport(id, form.getReport());
         return Response.noContent().build();
     }
 
