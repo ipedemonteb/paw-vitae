@@ -66,7 +66,7 @@ public class AppointmentController {
             return appointment(appointmentForm, doctorId, patient);
         }
         Appointment appointment = appointmentService.create(patient.getId(), doctorId.getValue(), appointmentForm.getAppointmentDate(), appointmentForm.getAppointmentHour(), appointmentForm.getReason(), appointmentForm.getSpecialtyId(), appointmentForm.getOfficeId(),    appointmentForm.isAllowFullHistory());
-        appointmentFileService.create(appointmentForm.getFiles(), "patient", appointment.getId());
+        //appointmentFileService.create(appointmentForm.getFiles(), "patient", appointment.getId());
         return new ModelAndView("redirect:/appointment/confirmation/" + appointment.getId());
     }
 
