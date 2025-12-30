@@ -1,8 +1,4 @@
-import {listDoctors} from "./utils/http.ts";
-
  function App() {
-
-    const d = listDoctors({}).then((x) => x);
 
   return (
     <>
