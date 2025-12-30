@@ -16,10 +16,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.Locale;
-
-import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildResponse;
-import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("/patients")
 @Component
@@ -41,7 +37,7 @@ public class RestPatientController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
-        return buildResponse(patient, uriInfo, PatientDTO::fromPatient, OK);
+        return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}).build();
     }
 
     @HEAD
@@ -88,7 +84,7 @@ public class RestPatientController {
     ){
         final Patient patient = this.patientService.getById(id).orElseThrow(UserNotFoundException::new);
         patientService.updatePatient(patient,updatePatientForm.getName(),updatePatientForm.getLastName(),updatePatientForm.getPhone(),updatePatientForm.getCoverage());
-        return buildResponse(patient, uriInfo, PatientDTO::fromPatient, OK);
+        return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}).build();
     }
 
 }

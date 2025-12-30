@@ -17,13 +17,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildResponse;
-import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("/appointments")
 @Component
@@ -46,7 +39,7 @@ public class RestAppointmentController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Appointment appointment = this.appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
-        return buildResponse(appointment, uriInfo, AppointmentDTO::fromAppointment, OK);
+        return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}).build();
     }
 
 //    @GET

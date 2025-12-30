@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.Doctor;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 public class DoctorDTO {
     private String name;
@@ -46,6 +47,10 @@ public class DoctorDTO {
         dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).build();
 
         return dto;
+    }
+
+    public static List<DoctorDTO> fromDoctor(List<Doctor> doctors, UriInfo uriInfo) {
+        return doctors.stream().map(d -> fromDoctor(d, uriInfo)).toList();
     }
 
     public URI getAppointments() {

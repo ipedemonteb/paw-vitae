@@ -12,10 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildResponse;
-import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("/neighborhoods")
 @Component
@@ -35,7 +32,7 @@ public class RestNeighborhoodController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getAll() {
         final List<Neighborhood> neighborhoodList = neighborhoodService.getAll();
-        return buildResponse(neighborhoodList, uriInfo, NeighborhoodDTO::fromNeighborhood, OK);
+        return Response.ok(new GenericEntity<>(NeighborhoodDTO.fromNeighborhood(neighborhoodList, uriInfo)) {}).build();
     }
 
 
@@ -44,7 +41,7 @@ public class RestNeighborhoodController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Neighborhood neighborhood = neighborhoodService.getById(id).orElseThrow(NeighborhoodNotFoundException::new);
-        return buildResponse(neighborhood, uriInfo, NeighborhoodDTO::fromNeighborhood, OK);
+        return Response.ok(new GenericEntity<>(NeighborhoodDTO.fromNeighborhood(neighborhood, uriInfo)) {}).build();
     }
 
 }

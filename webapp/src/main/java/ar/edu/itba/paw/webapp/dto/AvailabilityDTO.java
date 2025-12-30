@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.DoctorOfficeAvailability;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.time.LocalTime;
+import java.util.List;
 
 public class AvailabilityDTO {
     private int dayOfWeek;
@@ -23,6 +24,10 @@ public class AvailabilityDTO {
         dto.office = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(availability.getOffice().getDoctor().getId())).path("offices").path(String.valueOf(availability.getOffice().getId())).build();
 
         return dto;
+    }
+
+    public static List<AvailabilityDTO> fromDoctorOfficeAvailability(List<DoctorOfficeAvailability> availabilies, UriInfo uriInfo) {
+        return availabilies.stream().map(a -> fromDoctorOfficeAvailability(a, uriInfo)).toList();
     }
 
     public int getDayOfWeek() {

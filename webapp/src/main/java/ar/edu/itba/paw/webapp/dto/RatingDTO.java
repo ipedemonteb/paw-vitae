@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.Rating;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 public class RatingDTO {
 
@@ -26,6 +27,10 @@ public class RatingDTO {
         res.self = uriInfo.getBaseUriBuilder().path("ratings").path(String.valueOf(rating.getId())).build();
 
         return res;
+    }
+
+    public static List<RatingDTO> fromRating(List<Rating> ratings, UriInfo uriInfo) {
+        return ratings.stream().map(r -> fromRating(r, uriInfo)).toList();
     }
 
     public long getRating() {

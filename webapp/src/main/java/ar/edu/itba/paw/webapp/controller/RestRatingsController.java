@@ -48,7 +48,7 @@ public class RestRatingsController {
             int pageSize //TODO: control de tamaño o que no se pueda tocar. homogenizar en todos lados
     ) {
         Page<Rating> ratingPage = ratingService.getAllRatings(page, pageSize);
-        return buildPaginatedResponse(ratingPage, uriInfo, RatingDTO::fromRating, OK);
+        return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
     }
 
 
@@ -57,7 +57,7 @@ public class RestRatingsController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getRatingsById(@PathParam("id") final long id) {
         final Rating rating = this.ratingService.getRating(id).orElseThrow(NotFoundException::new);
-        return buildResponse(rating, uriInfo, RatingDTO::fromRating, OK);
+        return Response.ok(new GenericEntity<>(RatingDTO.fromRating(rating, uriInfo)) {}).build();
     }
 
 
