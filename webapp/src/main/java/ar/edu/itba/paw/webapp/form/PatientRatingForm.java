@@ -20,6 +20,9 @@ public class PatientRatingForm {
     @NotNull
     private Long doctorId;
 
+    @NotNull
+    private Long patientId;
+
     public Long getDoctorId() {
         return doctorId;
     }
@@ -50,5 +53,13 @@ public class PatientRatingForm {
 
     public void setAppointmentId(Long appointmentId) {
         this.appointmentId = appointmentId;
+    }
+
+    public Long getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(Long patientId) {
+        this.patientId = patientId;
     }
 }
