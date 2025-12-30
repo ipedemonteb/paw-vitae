@@ -22,6 +22,8 @@ import javax.ws.rs.core.*;
 import java.util.Locale;
 import java.util.Set;
 
+import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildPaginationHeaders;
+import static javax.ws.rs.core.Response.Status.OK;
 
 
 @Path("/appointments")
@@ -30,6 +32,7 @@ public class RestAppointmentController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestAppointmentController.class);
 
+    private static final Set<String> COLLECTIONS = Set.of("upcoming", "past");
     private static final Set<String> UPCOMING_FILTERS = Set.of("all", "today", "week", "month");
     private static final Set<String> PAST_FILTERS = Set.of("all", "completed", "cancelled");
 
@@ -44,37 +47,26 @@ public class RestAppointmentController {
     }
 
     @GET
-    @Path("/upcoming")
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response listUpcoming(
-            @QueryParam("doctorId") Long doctorId,
-            @QueryParam("patientId") Long patientId,
+    public Response list(
+            @QueryParam("userId") Long userId,
+            @QueryParam("collection") @DefaultValue("upcoming") String collection,
             @QueryParam("filter") @DefaultValue("all") String filter,
             @QueryParam("page") @DefaultValue("1") @Min(1) int page,
             @QueryParam("pageSize") @DefaultValue("10") @Min(1) int pageSize
     ) {
-        long userId = resolveUserId(doctorId, patientId);
-        String sanitizedFilter = sanitizeFilter(filter, UPCOMING_FILTERS, "all");
+        if (userId == null) {
+            throw new BadRequestException("Missing userId");
+        }
 
-        Page<Appointment> appointmentPage = appointmentService.getAppointments(userId, true, page, pageSize, sanitizedFilter);
-        return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointmentPage.getContent(), uriInfo)) {}).build();
-    }
+        String sanitizedCollection = sanitizeCollection(collection);
+        boolean isUpcoming = sanitizedCollection.equals("upcoming");
+        Set<String> allowedFilters = isUpcoming ? UPCOMING_FILTERS : PAST_FILTERS;
+        String sanitizedFilter = sanitizeFilter(filter, allowedFilters, "all");
 
-    @GET
-    @Path("/past")
-    @Produces(value = MediaType.APPLICATION_JSON)
-    public Response listPast(
-            @QueryParam("doctorId") Long doctorId,
-            @QueryParam("patientId") Long patientId,
-            @QueryParam("filter") @DefaultValue("all") String filter,
-            @QueryParam("page") @DefaultValue("1") @Min(1) int page,
-            @QueryParam("pageSize") @DefaultValue("10") @Min(1) int pageSize
-    ) {
-        long userId = resolveUserId(doctorId, patientId);
-        String sanitizedFilter = sanitizeFilter(filter, PAST_FILTERS, "all");
-
-        Page<Appointment> appointmentPage = appointmentService.getAppointments(userId, false, page, pageSize, sanitizedFilter);
-        return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointmentPage.getContent(), uriInfo)) {}).build();
+        Page<Appointment> appointmentPage = appointmentService.getAppointments(userId, isUpcoming, page, pageSize, sanitizedFilter);
+        Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointmentPage.getContent(), uriInfo)) {});
+        return buildPaginationHeaders(rb, appointmentPage, uriInfo);
     }
 
     @GET
@@ -85,14 +77,15 @@ public class RestAppointmentController {
         return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}).build();
     }
 
-    private long resolveUserId(Long doctorId, Long patientId) {
-        boolean doctorProvided = doctorId != null;
-        boolean patientProvided = patientId != null;
-
-        if (doctorProvided == patientProvided) {
-            throw new BadRequestException("Must provide either doctorId or patientId");
+    private String sanitizeCollection(String collection) {
+        if (collection == null || collection.isBlank()) {
+            return "upcoming";
         }
-        return doctorProvided ? doctorId : patientId;
+        String normalized = collection.trim().toLowerCase(Locale.ROOT);
+        if (!COLLECTIONS.contains(normalized)) {
+            throw new BadRequestException("Invalid collection value");
+        }
+        return normalized;
     }
 
     private String sanitizeFilter(String filter, Set<String> allowed, String defaultValue) {
