@@ -1,10 +1,13 @@
- function App() {
+import Header from './components/Header'
 
-  return (
-    <>
-      <div> Hello World!</div>
-    </>
-  )
+function App() {
+
+    return (
+        <>
+            <Header />
+            <div className="mt-[8rem]"> Hello World!</div>
+        </>
+    )
 }
 
 export default App
