@@ -36,6 +36,29 @@ public class OfficeOwnedByDoctorValidator {
 
     }
 
+    public static class ForCreateAppointmentForm implements ConstraintValidator<OfficeOwnedByDoctor, AppointmentForm> {
+
+        private final DoctorOfficeService doctorOfficeService;
+
+        @Autowired
+        public ForCreateAppointmentForm(DoctorOfficeService doctorOfficeService) {
+            this.doctorOfficeService = doctorOfficeService;
+        }
+
+        @Override
+        public boolean isValid(AppointmentForm form, javax.validation.ConstraintValidatorContext context) {
+            List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(form.getDoctorId());
+            if (offices.stream().noneMatch(office -> office.getId() == form.getOfficeId())) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("{appointment.office.valid}")
+                        .addPropertyNode("officeId")
+                        .addConstraintViolation();
+                return false;
+            }
+            return true;
+        }
+    }
+
     public static class ForDoctorOfficeAvailabilityForm implements ConstraintValidator<OfficeOwnedByDoctor, UpdateAvailabilityForm> {
 
         private final DoctorOfficeService doctorOfficeService;
