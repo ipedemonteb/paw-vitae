@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Specialty;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 public class SpecialtyDTO {
     private String name;
@@ -16,6 +17,10 @@ public class SpecialtyDTO {
         res.name = specialty.getKey();
         res.self = uriInfo.getBaseUriBuilder().path("specialties").path(String.valueOf(specialty.getId())).build();
         return res;
+    }
+
+    public static List<SpecialtyDTO> fromSpecialty(List<Specialty> specialties, UriInfo uriInfo) {
+        return specialties.stream().map(s -> fromSpecialty(s, uriInfo)).toList();
     }
 
     public String getName() {

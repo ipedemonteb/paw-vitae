@@ -71,7 +71,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Doctor doctor = this.doctorService.getById(id).orElseThrow(DoctorOfficeNotFoundException::new);
-        return buildResponse(doctor, uriInfo, DoctorDTO::fromDoctor, OK);
+        return Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctor, uriInfo)) {}).build();
     }
 
     @GET
@@ -108,7 +108,7 @@ public class RestDoctorController {
             String direction
     ) {
         Page<Doctor> doctorPage = this.doctorService.getWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction, page, 9);
-        return buildPaginatedResponse(doctorPage, uriInfo, DoctorDTO::fromDoctor, OK);
+        return buildPaginationHeaders(Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctorPage.getContent(), uriInfo)) {}), doctorPage, uriInfo);
     }
 
 
@@ -137,7 +137,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorSpecialties(@PathParam("id") final long id) {
         List<Specialty> specialties = this.specialtyService.getByDoctorId(id);
-        return buildResponse(specialties, uriInfo, SpecialtyDTO::fromSpecialty, OK);
+        return Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialties, uriInfo)) {}).build();
     }
 
     @GET
@@ -146,7 +146,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorCoverages(@PathParam("id") final long id) {
         List<Coverage> coverages = this.coverageService.findByDoctorId(id);
-        return buildResponse(coverages, uriInfo, CoverageDTO::fromCoverage, OK);
+        return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
     }
 
     @GET
@@ -154,7 +154,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOffices(@PathParam("id") final long id) {
         List<DoctorOffice> offices = this.doctorOfficeService.getAllByDoctorId(id);
-        return buildResponse(offices, uriInfo, OfficeDTO::fromDoctorOffice, OK);
+        return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(offices, uriInfo)) {}).build();
     }
 
     @GET
@@ -162,7 +162,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOffices(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         DoctorOffice office = this.doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
-        return buildResponse(office, uriInfo, OfficeDTO::fromDoctorOffice, OK);
+        return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(office, uriInfo)) {}).build();
     }
 
     @GET
@@ -170,7 +170,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOfficeAvailability(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         List<DoctorOfficeAvailability> availabilities = this.doctorOfficeAvailabilityService.getByOfficeId(officeId);
-        return buildResponse(availabilities, uriInfo, AvailabilityDTO::fromDoctorOfficeAvailability, OK);
+        return Response.ok(new GenericEntity<>(AvailabilityDTO.fromDoctorOfficeAvailability(availabilities, uriInfo)) {}).build();
     }
 
     @GET
@@ -178,7 +178,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorOfficeSpecialties(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         List<DoctorOfficeSpecialty> specialties = this.doctorOfficeSpecialtyService.getByOfficeId(officeId);
-        return buildResponse(specialties, uriInfo, OfficeSpecialtyDTO::fromDoctorOfficeSpecialty, OK);
+        return Response.ok(new GenericEntity<>(OfficeSpecialtyDTO.fromDoctorOfficeSpecialty(specialties, uriInfo)) {}).build();
     }
 
 
@@ -187,7 +187,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorProfile(@PathParam("id") final long id) {
         DoctorProfile profile = this.doctorProfileService.findByDoctorId(id);
-        return buildResponse(profile, uriInfo, ProfileDTO::fromDoctorProfile, OK);
+        return Response.ok(new GenericEntity<>(ProfileDTO.fromDoctorProfile(profile, uriInfo)) {}).build();
     }
 
     @GET
@@ -195,7 +195,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorExperiences(@PathParam("id") final long id) {
         List<DoctorExperience> experiences = this.doctorExperienceService.findByDoctorId(id);
-        return buildResponse(experiences, uriInfo, ExperienceDTO::fromDoctorExperience, OK);
+        return Response.ok(new GenericEntity<>(ExperienceDTO.fromDoctorExperience(experiences, uriInfo)) {}).build();
     }
 
     @GET
@@ -203,7 +203,7 @@ public class RestDoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorCertifications(@PathParam("id") final long id) {
         List<DoctorCertification> certifications = this.doctorCertificationService.findByDoctorId(id);
-        return buildResponse(certifications, uriInfo, CertificationDTO::fromDoctorCertification, OK);
+        return Response.ok(new GenericEntity<>(CertificationDTO.fromDoctorCertification(certifications, uriInfo)) {}).build();
     }
 
     @GET
@@ -219,7 +219,7 @@ public class RestDoctorController {
             final int page
     ) {
         Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, page, 9);
-        return buildPaginatedResponse(ratingPage, uriInfo, RatingDTO::fromRating, OK);
+        return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
     }
 
     @POST
@@ -241,7 +241,7 @@ public class RestDoctorController {
     ) {
         Doctor doctor = this.doctorService.getById(id).orElseThrow(DoctorOfficeNotFoundException::new);
         this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(), updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages(), updateDoctorForm.getImage());
-        return buildResponse(doctor, uriInfo, DoctorDTO::fromDoctor, OK);
+        return Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctor, uriInfo)) {}).build();
     }
 
 }

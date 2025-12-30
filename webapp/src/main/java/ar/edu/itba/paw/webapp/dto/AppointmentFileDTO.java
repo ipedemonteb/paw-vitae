@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.AppointmentFile;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 public class AppointmentFileDTO {
 
@@ -39,6 +40,10 @@ public class AppointmentFileDTO {
                 .build();
 
         return dto;
+    }
+
+    public static List<AppointmentFileDTO> fromAppointmentFile(List<AppointmentFile> appointmentFiles, UriInfo uriInfo) {
+        return appointmentFiles.stream().map(a -> fromAppointmentFile(a, uriInfo)).toList();
     }
 
     public long getId() {

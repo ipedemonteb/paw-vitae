@@ -10,10 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildResponse;
-import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("/coverages")
 @Component
@@ -34,7 +31,7 @@ public class RestCoveragesController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         final Coverage coverage = coverageService.findById(id).orElseThrow(CoverageNotFoundException::new);
-        return buildResponse(coverage, uriInfo, CoverageDTO::fromCoverage, OK);
+        return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverage, uriInfo)) {}).build();
     }
 
 
@@ -42,6 +39,6 @@ public class RestCoveragesController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
         final List<Coverage> coverages = coverageService.getAll();
-        return buildResponse(coverages, uriInfo, CoverageDTO::fromCoverage, OK);
+        return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
     }
 }

@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.DoctorOfficeSpecialty;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 public class OfficeSpecialtyDTO {
 
@@ -17,6 +18,10 @@ public class OfficeSpecialtyDTO {
         dto.office = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(specialty.getOffice().getDoctor().getId())).path("offices").path(String.valueOf(specialty.getOffice().getId())).build();
 
         return dto;
+    }
+
+    public static List<OfficeSpecialtyDTO> fromDoctorOfficeSpecialty(List<DoctorOfficeSpecialty> specialties, UriInfo uriInfo) {
+        return specialties.stream().map(s -> fromDoctorOfficeSpecialty(s, uriInfo)).toList();
     }
 
     public URI getSpecialty() {

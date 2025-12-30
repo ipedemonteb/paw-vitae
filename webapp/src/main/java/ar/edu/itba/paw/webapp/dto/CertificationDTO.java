@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.DoctorCertification;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 
 public class CertificationDTO {
     private String certificateName;
@@ -25,6 +26,10 @@ public class CertificationDTO {
         dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).build();
 
         return dto;
+    }
+
+    public static List<CertificationDTO> fromDoctorCertification(List<DoctorCertification> certifications, UriInfo uriInfo) {
+        return certifications.stream().map(c -> fromDoctorCertification(c, uriInfo)).toList();
     }
 
     public String getCertificateName() {

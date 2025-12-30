@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.DoctorOffice;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 public class OfficeDTO {
     private String name;
@@ -31,6 +32,11 @@ public class OfficeDTO {
 
         return dto;
     }
+
+    public static List<OfficeDTO> fromDoctorOffice(List<DoctorOffice> offices, UriInfo uriInfo) {
+        return offices.stream().map(o -> fromDoctorOffice(o, uriInfo)).toList();
+    }
+
 
     public URI getSelf() {
         return self;

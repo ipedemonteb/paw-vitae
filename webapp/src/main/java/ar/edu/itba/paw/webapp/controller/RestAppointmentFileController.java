@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfaceServices.AppointmentFileService;
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.models.AppointmentFile;
 import ar.edu.itba.paw.webapp.dto.AppointmentDTO;
+import ar.edu.itba.paw.webapp.dto.AppointmentFileDTO;
+import ar.edu.itba.paw.webapp.dto.CoverageDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +24,6 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Context;
 import java.util.List;
 
-import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildResponse;
-import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("/appointments/{appointmentId}/files")
 @Component
@@ -48,7 +48,7 @@ public class RestAppointmentFileController {
     public Response listFiles(@PathParam("appointmentId") final long appointmentId) {
         appointmentService.getById(appointmentId).orElseThrow(NotFoundException::new);
         List<AppointmentFile> files = appointmentFileService.getByAppointmentId(appointmentId);
-        return buildResponse(files, uriInfo, AppointmentDTO::filesFromAppointmentFiles, OK);
+        return Response.ok(new GenericEntity<>(AppointmentFileDTO.fromAppointmentFile(files, uriInfo)) {}).build();
     }
 
     @GET

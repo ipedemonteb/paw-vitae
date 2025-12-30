@@ -6,6 +6,7 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 public class ExperienceDTO {
     private String positionTitle;
@@ -26,6 +27,10 @@ public class ExperienceDTO {
         dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(experience.getDoctor().getId())).build();
 
         return dto;
+    }
+
+    public static List<ExperienceDTO> fromDoctorExperience(List<DoctorExperience> experiences, UriInfo uriInfo) {
+        return experiences.stream().map(e -> fromDoctorExperience(e, uriInfo)).toList();
     }
 
     public String getPositionTitle() {

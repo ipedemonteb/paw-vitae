@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.utils;
 
 import ar.edu.itba.paw.models.Page;
+import ar.edu.itba.paw.webapp.dto.DoctorDTO;
 
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
@@ -8,23 +9,9 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class ResponseUtils {
-
-    public static <T, Q> Response buildPaginatedResponse(Page<T> paginatedItems, UriInfo uriInfo, final BiFunction<T, UriInfo, Q> mapper, Response.Status status) {
-        List<T> items = paginatedItems.getContent();
-        List<Q> itemsDTO = items.stream().map(i -> mapper.apply(i, uriInfo)).toList();
-        return buildPaginationHeaders(Response.status(status).entity(new GenericEntity<>(itemsDTO, itemsDTO.getClass())), paginatedItems, uriInfo);    }
-
-    public static <T, Q> Response buildResponse(T item, UriInfo uriInfo, final BiFunction<T, UriInfo, Q> mapper, Response.Status status) {
-        Q itemDTO = mapper.apply(item, uriInfo);
-        return Response.status(status).entity(new GenericEntity<>(itemDTO, itemDTO.getClass())).build();
-    }
-
-    public static <T, Q> Response buildResponse(List<T> items, UriInfo uriInfo, final BiFunction<T, UriInfo, Q> mapper, Response.Status status) {
-        List<Q> itemsDTO = items.stream().map(i -> mapper.apply(i, uriInfo)).toList();
-        return Response.status(status).entity(new GenericEntity<>(itemsDTO, itemsDTO.getClass())).build();
-    }
 
     public static Response buildPaginationHeaders(Response.ResponseBuilder rb, Page<?> items, UriInfo uriInfo) {
 

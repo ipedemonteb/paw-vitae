@@ -4,6 +4,7 @@ import ar.edu.itba.paw.models.Neighborhood;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 public class NeighborhoodDTO {
     private String name;
@@ -16,6 +17,10 @@ public class NeighborhoodDTO {
         res.self = uriInfo.getBaseUriBuilder().path("neighborhoods").path(String.valueOf(neighborhood.getId())).build();
 
         return res;
+    }
+
+    public static List<NeighborhoodDTO> fromNeighborhood(List<Neighborhood> neighborhoods, UriInfo uriInfo) {
+        return neighborhoods.stream().map(n -> fromNeighborhood(n, uriInfo)).toList();
     }
 
     public String getName() {
