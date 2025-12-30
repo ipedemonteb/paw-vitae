@@ -5,10 +5,13 @@ import ar.edu.itba.paw.interfaceServices.RatingService;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Rating;
 import ar.edu.itba.paw.webapp.dto.RatingDTO;
+import ar.edu.itba.paw.webapp.form.PatientRatingForm;
 import ar.edu.itba.paw.webapp.utils.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.Collections;
@@ -60,6 +63,27 @@ public class RestRatingsController {
         return Response.ok(new GenericEntity<>(RatingDTO.fromRating(rating, uriInfo)) {}).build();
     }
 
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createRating(@Valid @NotNull final PatientRatingForm form) {
+
+
+        //TODO: IN FRONTEND PASS THE PATIENT ID
+        final Rating createdRating = ratingService.create(
+                form.getRating(),
+                form.getDoctorId(),
+                form.getPatientId(),
+                form.getAppointmentId(),
+                form.getComment()
+        );
+
+        return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(createdRating.getId())).build()).build();
+
+
+
+
+    }
 
 
 }
