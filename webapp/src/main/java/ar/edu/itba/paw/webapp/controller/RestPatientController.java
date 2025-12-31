@@ -84,7 +84,7 @@ public class RestPatientController {
     ){
         final Patient patient = this.patientService.getById(id).orElseThrow(UserNotFoundException::new);
         patientService.updatePatient(patient,updatePatientForm.getName(),updatePatientForm.getLastName(),updatePatientForm.getPhone(),updatePatientForm.getCoverage());
-        return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}).build();
+        return Response.noContent().build();
     }
 
 }

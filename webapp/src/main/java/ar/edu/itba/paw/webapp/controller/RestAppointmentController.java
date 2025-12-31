@@ -94,8 +94,7 @@ public class RestAppointmentController {
         );
 
         URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(appointment.getId())).build();
-        GenericEntity<AppointmentDTO> entity = new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {};
-        return Response.created(location).entity(entity).build();
+        return Response.created(location).build();
     }
 
     @GET
