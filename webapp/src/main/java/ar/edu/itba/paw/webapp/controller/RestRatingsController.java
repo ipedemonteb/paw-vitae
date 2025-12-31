@@ -39,9 +39,6 @@ public class RestRatingsController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(
-            @QueryParam("doctorId")
-            final Integer doctorId,
-
             @QueryParam("page")
             @DefaultValue("1")
             int page,
@@ -65,7 +62,6 @@ public class RestRatingsController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response createRating(@Valid @NotNull final PatientRatingForm form) {
 
 
