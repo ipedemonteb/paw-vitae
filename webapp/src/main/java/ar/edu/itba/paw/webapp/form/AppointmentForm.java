@@ -1,11 +1,19 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.models.DoctorOfficeForm;
-import ar.edu.itba.paw.webapp.validation.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import ar.edu.itba.paw.webapp.validation.AppointmentExistence;
+import ar.edu.itba.paw.webapp.validation.AppointmentValidDate;
+import ar.edu.itba.paw.webapp.validation.AppointmentValidSpecialtyForDoctor;
+import ar.edu.itba.paw.webapp.validation.OfficeAcceptsSpecialty;
+import ar.edu.itba.paw.webapp.validation.OfficeAvailableAtDayAndTime;
+import ar.edu.itba.paw.webapp.validation.OfficeOwnedByDoctor;
+import ar.edu.itba.paw.webapp.validation.Specialty;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @OfficeOwnedByDoctor(message = "{office.invalid}")
@@ -17,9 +25,8 @@ import java.time.LocalDate;
 @AppointmentValidSpecialtyForDoctor(doctorId = "doctorId", specialtyId = "specialtyId")
 public class AppointmentForm {
 
-
     @NotNull(message = "{appointment.date.notnull}")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate appointmentDate;
 
     @NotNull(message = "{appointment.hour.notnull}")
@@ -29,10 +36,6 @@ public class AppointmentForm {
 
     @Size(max = 255)
     private String reason;
-
-    @Size(max = 5, message = "{appointment.files.max}")
-    @AppointmentFileValid(message = "{appointment.files.valid}")
-    private MultipartFile[] patientFiles;
 
     @NotNull
     @Specialty(message = "{specialty.invalid}")
@@ -48,39 +51,6 @@ public class AppointmentForm {
     private long patientId;
 
     private boolean allowFullHistory = true;
-
-
-    public long getPatientId() {
-        return patientId;
-    }
-
-    public void setPatientId(long patientId) {
-        this.patientId = patientId;
-    }
-
-    public long getDoctorId() {
-        return doctorId;
-    }
-
-    public void setDoctorId(long doctorId) {
-        this.doctorId = doctorId;
-    }
-
-    public MultipartFile[] getPatientFiles() {
-        return patientFiles;
-    }
-
-    public void setPatientFiles(MultipartFile[] patientFiles) {
-        this.patientFiles = patientFiles;
-    }
-
-    public long getSpecialtyId() {
-        return specialtyId;
-    }
-
-    public void setSpecialtyId(long specialtyId) {
-        this.specialtyId = specialtyId;
-    }
 
     public LocalDate getAppointmentDate() {
         return appointmentDate;
@@ -105,12 +75,13 @@ public class AppointmentForm {
     public void setReason(String reason) {
         this.reason = reason;
     }
-    public MultipartFile[] getFiles() {
-        return patientFiles;
+
+    public long getSpecialtyId() {
+        return specialtyId;
     }
 
-    public void setFiles(MultipartFile[] files) {
-        this.patientFiles = files;
+    public void setSpecialtyId(long specialtyId) {
+        this.specialtyId = specialtyId;
     }
 
     public long getOfficeId() {
@@ -121,6 +92,22 @@ public class AppointmentForm {
         this.officeId = officeId;
     }
 
+    public long getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(long doctorId) {
+        this.doctorId = doctorId;
+    }
+
+    public long getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(long patientId) {
+        this.patientId = patientId;
+    }
+
     public boolean isAllowFullHistory() {
         return allowFullHistory;
     }
@@ -129,4 +116,3 @@ public class AppointmentForm {
         this.allowFullHistory = allowFullHistory;
     }
 }
-
