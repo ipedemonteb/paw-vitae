@@ -43,6 +43,12 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         return doctorOfficeDao.create(doctorOffice);
     }
 
+    @Override
+    @Transactional
+    public List<DoctorOffice> create(Doctor doctor, List<DoctorOfficeForm> doctorOfficeForms) {
+        return this.create(transformToDoctorOffice(doctor, doctorOfficeForms));
+    }
+
     @Transactional
     @Override
     public List<DoctorOffice> create(List<DoctorOffice> doctorOffice) {
