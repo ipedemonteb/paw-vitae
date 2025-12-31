@@ -11,6 +11,8 @@ public interface DoctorOfficeService {
 
     List<DoctorOffice> create(List<DoctorOffice> doctorOffice);
 
+    List<DoctorOffice> create(Doctor doctor,  List<DoctorOfficeForm> doctorOfficeForms);
+
     DoctorOffice create(DoctorOffice doctorOffice);
 
     List<DoctorOffice> transformToDoctorOffice(Doctor doctor, List<DoctorOfficeForm> officeForms);

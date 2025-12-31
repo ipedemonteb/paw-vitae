@@ -4,8 +4,10 @@ import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 //import ar.edu.itba.paw.models.QueryParam;
 import ar.edu.itba.paw.models.exception.DoctorOfficeNotFoundException;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.DoctorForm;
+import ar.edu.itba.paw.webapp.form.DoctorProfileForm;
 import ar.edu.itba.paw.webapp.form.UpdateDoctorForm;
 import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
 import org.slf4j.Logger;
@@ -232,6 +234,28 @@ public class RestDoctorController {
         return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(doctor.getId())).build()).build();
     }
 
+//    @POST
+//    @Path("/{id:\\d+}/offices")
+//    @Consumes(value = MediaType.APPLICATION_JSON)
+//    public Response createDoctorOffice(
+//            @Valid @NotNull List<DoctorOfficeForm> doctorOfficeForm,
+//            @PathParam("id") final long id
+//    ) {
+//        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
+//        List<DoctorOffice> office = this.doctorOfficeService.create(doctor, doctorOfficeForm);
+//    }
+
+//    @POST
+//    @Path("/{id:\\d+}/profile")
+//    @Consumes(value = MediaType.APPLICATION_JSON)
+//    public Response createDoctorProfile(
+//            @PathParam("id") final long id,
+//            @Valid @NotNull DoctorProfileForm doctorProfileForm
+//    ) {
+//        this.doctorProfileService.create(id, doctorProfileForm.getBiography(), doctorProfileForm.getDescription());
+//        return Response.created(uriInfo.getAbsolutePathBuilder().build()).build();
+//    }
+
     @PATCH
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id:\\d+}")
@@ -239,7 +263,7 @@ public class RestDoctorController {
             @PathParam("id") final long id,
             @Valid @NotNull UpdateDoctorForm updateDoctorForm
     ) {
-        Doctor doctor = this.doctorService.getById(id).orElseThrow(DoctorOfficeNotFoundException::new);
+        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
         this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(), updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages(), updateDoctorForm.getImage());
         return Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctor, uriInfo)) {}).build();
     }
