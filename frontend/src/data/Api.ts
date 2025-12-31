@@ -61,13 +61,28 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+function isExpiredJwt401(err: AxiosError): boolean {
+    if (err.response?.status !== 401) return false;
+
+    const header = err.response.headers?.["www-authenticate"];
+    if (!header || typeof header !== "string") return false;
+
+    const h = header.toLowerCase();
+
+    return (
+        h.includes("bearer") &&
+        h.includes("invalid_token") &&
+        h.includes("expired")
+    );
+}
+
+
 api.interceptors.response.use(
     (res) => res,
     async (err: AxiosError) => {
-        const status = err.response?.status;
         const original = err.config as Cfg | undefined;
 
-        if (!original || status !== 401) return Promise.reject(err);
+        if (!original || !isExpiredJwt401(err)) return Promise.reject(err);
 
         //para no loop infinito
         if (original._retriedWithRefresh) {

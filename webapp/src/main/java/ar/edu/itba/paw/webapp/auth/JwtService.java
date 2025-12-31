@@ -12,6 +12,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -37,7 +38,7 @@ public class JwtService {
 
     private static final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 30;
     private static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 10;
-//    private static final long ACCESS_TOKEN_VALIDITY = 15000; FOR TESTS ONLY
+//    private static final long ACCESS_TOKEN_VALIDITY = 15000; // FOR TESTS ONLY
     private final String TOKEN_TYPE_CLAIM = "tokenType";
 
     public String generateToken(ServletUriComponentsBuilder uriBuilder, User user, JwtTokenType type, long duration) {
@@ -88,7 +89,7 @@ public class JwtService {
         return claims;
     }
 
-    public JwtDetails validate(String token) {
+    public JwtDetails validate(String token, HttpServletResponse response) {
         try {
             final Jws<Claims> parsed = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             final Claims claims = parsed.getBody();
@@ -108,16 +109,22 @@ public class JwtService {
 
         } catch (SignatureException ex) {
             LOGGER.warn("Invalid JWT signature - {}", ex.getMessage());
+            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
         } catch (MalformedJwtException ex) {
             LOGGER.warn("Invalid JWT token - {}", ex.getMessage());
+            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
         } catch (ExpiredJwtException ex) {
             LOGGER.warn("Expired JWT token - {}", ex.getMessage());
+            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\", error_description=\"The access token expired\"");
         } catch (UnsupportedJwtException ex) {
             LOGGER.warn("Unsupported JWT token - {}", ex.getMessage());
+            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
         } catch (IllegalArgumentException ex) {
             LOGGER.warn("JWT claims string is empty - {}", ex.getMessage());
+            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
         } catch (Exception ex) {
             LOGGER.warn("JWT claims {}", ex.getMessage());
+            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
         }
         return null;
     }
