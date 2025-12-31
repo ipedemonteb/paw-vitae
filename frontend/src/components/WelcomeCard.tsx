@@ -17,10 +17,12 @@ const featureTextContainer = "flex flex-col";
 const featureTitle = "font-bold text-base select-none";
 const featureSubtitle = "text-sm opacity-80 select-none";
 
+import { useTranslation } from "react-i18next";
 
 
 
 function WelcomeCard() {
+    const { t } = useTranslation();
     return (
         <div className={loginWelcome}>
 
@@ -32,10 +34,10 @@ function WelcomeCard() {
                 </div>
 
                 <div className={welcomeTitle}>
-                    <h1>Bienvenido de nuevo</h1>
+                    <h1>{t('login.welcome_title')}</h1>
                 </div>
                 <div className={welcomeText}>
-                    <p>Tu salud es nuestra prioridad. Agenda tu cita ahora!</p>
+                    <p>{t('login.welcome_subtitle')}</p>
                 </div>
 
                 <div className={welcomeFeatures}>
@@ -45,8 +47,8 @@ function WelcomeCard() {
                             <i className="fas fa-user-md"></i>
                         </div>
                         <div className={featureTextContainer}>
-                            <h3 className={featureTitle}>Médicos Expertos</h3>
-                            <p className={featureSubtitle}>Conecta con profesionales verificados</p>
+                            <h3 className={featureTitle}>{t('login.feature_title_1')}</h3>
+                            <p className={featureSubtitle}>{t('login.feature_subtitle_1')}</p>
                         </div>
                     </div>
 
@@ -55,8 +57,8 @@ function WelcomeCard() {
                             <i className="fas fa-calendar-check"></i>
                         </div>
                         <div className={featureTextContainer}>
-                            <h3 className={featureTitle}>Citas Fáciles</h3>
-                            <p className={featureSubtitle}>Reserva y gestiona tus citas en línea</p>
+                            <h3 className={featureTitle}>{t('login.feature_title_2')}</h3>
+                            <p className={featureSubtitle}>{t('login.feature_subtitle_2')}</p>
                         </div>
                     </div>
 
@@ -65,8 +67,8 @@ function WelcomeCard() {
                             <i className="fas fa-shield-alt"></i>
                         </div>
                         <div className={featureTextContainer}>
-                            <h3 className={featureTitle}>Plataforma Segura</h3>
-                            <p className={featureSubtitle}>Tus datos están protegidos y privados</p>
+                            <h3 className={featureTitle}>{t('login.feature_title_3')}</h3>
+                            <p className={featureSubtitle}>{t('login.feature_subtitle_3')}</p>
                         </div>
                     </div>
 

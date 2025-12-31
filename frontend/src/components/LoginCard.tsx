@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/authContext.tsx";
 import { useNavigate } from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 const cardContainer = "flex-1 flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full h-full";
 const contentWrapper = "w-full max-w-sm space-y-8";
@@ -43,6 +44,8 @@ function LoginCard() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
+    const { t } = useTranslation();
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (isLoading) return;
@@ -68,9 +71,9 @@ function LoginCard() {
             <div className={contentWrapper}>
 
                 <div className={headerSection}>
-                    <h2 className={headerTitle}>Login</h2>
+                    <h2 className={headerTitle}>{t('login.login_title')}</h2>
                     <p className={headerSubtitle}>
-                        Ingrese sus credenciales para acceder a su cuenta
+                        {t('login.login_subtitle')}
                     </p>
                 </div>
 
@@ -83,7 +86,7 @@ function LoginCard() {
                             </div>
                             <input
                                 type="email"
-                                placeholder="Correo electrónico"
+                                placeholder={t('login.placeholder_email')}
                                 className={emailInputStyles}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -100,7 +103,7 @@ function LoginCard() {
                             </div>
                             <input
                                 type={showPassword ? "text" : "password"}
-                                placeholder="Contraseña"
+                                placeholder={t('login.placeholder_password')}
                                 className={passwordInputStyles}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -121,10 +124,10 @@ function LoginCard() {
                     <div className={optionsRow}>
                         <label className={checkboxLabel}>
                             <input type="checkbox" className={checkboxStyles} />
-                            <span>Recordarme</span>
+                            <span>{t('login.remember_me')}</span>
                         </label>
                         <a href="#" className={forgotLinkStyles}>
-                            Olvidé mi contraseña
+                            {t('login.forgot_password')}
                         </a>
                     </div>
 
@@ -132,19 +135,20 @@ function LoginCard() {
 
                     <Button type="submit" className={submitButtonStyles} disabled={isLoading}>
                         {isLoading ? "Ingresando..." : "Login"}
+                    {/*    TODO: HOW TO TRANSLATE THIS?*/}
                     </Button>
 
                 </form>
 
                 <div className={footerSection}>
-                    <p className={footerText}>¿No tienes una cuenta?</p>
+                    <p className={footerText}>{t('login.no_account')}</p>
 
                     <div className={linksContainer}>
                         <a href="/register-doctor" className={registerLinkStyles}>
-                            Regístrate aquí como Doctor
+                            {t('login.register_doctor')}
                         </a>
                         <a href="/register-patient" className={registerLinkStyles}>
-                            Regístrate aquí como Paciente
+                            {t('login.register_patient')}
                         </a>
                     </div>
                 </div>
