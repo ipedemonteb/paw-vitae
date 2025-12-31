@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { ChevronDown, User, BriefcaseMedical } from "lucide-react";
+import {useNavigate} from "react-router-dom";
 
 const header =
-    "fixed top-0 left-0 w-full shadow-[var(--shadow-md)] py-[30px] leading-[1.6] bg-white";
+    "fixed top-0 left-0 w-full shadow-[var(--shadow-md)] py-[30px] leading-[1.6] bg-white z-50";
 const headerContainer =
     "flex items-center justify-between w-full max-w-[1200px] px-[20px] mx-auto";
 const logo =
@@ -18,6 +19,7 @@ const dropDownItem =
     "flex items-center gap-2 text-[16px] cursor-pointer data-[highlighted]:text-[var(--primary-color)] data-[highlighted]:bg-transparent";
 
 function Header() {
+    const navigate = useNavigate();
     return (
         <>
             <div className={header}>
@@ -26,10 +28,15 @@ function Header() {
                         <h1 className="block text-5xl font-bold no-underline">Vitae</h1>
                     </a>
                     <div>
-                        Hello
                     </div>
                     <div className="flex gap-[12px] items-center">
-                        <Button className={btnOutline}>Login</Button>
+                        <Button
+                            type="button"
+                            className={btnOutline}
+                            onClick={() => navigate("/login")}
+                        >
+                            Login
+                        </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger className={btnFilled}>
                                 Register

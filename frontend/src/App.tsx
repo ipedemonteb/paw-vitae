@@ -1,11 +1,11 @@
-import Header from './components/Header'
+import {RouterProvider} from "react-router-dom";
+import {router} from "@/router.tsx";
 
 function App() {
 
     return (
         <>
-            <Header />
-            <div className="mt-[8rem]"> Hello World!</div>
+            <RouterProvider router={router} />
         </>
     )
 }
