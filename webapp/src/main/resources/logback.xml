@@ -24,6 +24,9 @@
     </appender>
 
 
+    <logger name="org.glassfish.jersey.media.multipart" level="ERROR"/>
+    <logger name="org.glassfish.jersey.server.internal.monitoring" level="ERROR"/>
+
     <root level="WARN">
         <appender-ref ref="root-appender" />
     </root>
