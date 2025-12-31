@@ -205,3 +205,18 @@
 // export function listDoctors(query: DoctorsQuery) {
 //     return http.get<DoctorDTO>("/doctors/24", { query });
 // }
+
+export const USER_CONTENT_TYPE = "application/vnd.vitae.user.v1+json";
+export const USER_PASSWORD_CONTENT_TYPE = "application/vnd.vitae.user-password.v1+json";
+export const USER_PROFILE_CONTENT_TYPE = "application/vnd.vitae.user-profile.v1+json";
+export const USER_ADDRESS_CONTENT_TYPE = "application/vnd.vitae.user-address.v1+json";
+export const USER_ROLE_CONTENT_TYPE = "application/vnd.vitae.user-role.v1+json";
+export const RESTAURANT_EMPLOYEES_CONTENT_TYPE = "application/vnd.vitae.restaurant-employees.v1+json";
+
+export const NOT_FOUND_STATUS_CODE = 404;
+export const ROLES = {
+    PATIENT: "PATIENT",
+    DOCTOR: "DOCTOR",
+    ADMIN: "ADMIN",
+    MODERATOR: "MODERATOR"
+};

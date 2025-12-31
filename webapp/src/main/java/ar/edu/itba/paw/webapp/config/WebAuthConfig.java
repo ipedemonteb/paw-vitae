@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static ar.edu.itba.paw.webapp.auth.AuthUtils.HEADER_ACCESS_TOKEN;
@@ -186,6 +187,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
+
+       //TODO: REMOVE THIS IN PRODUCTION
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+
+        config.setAllowCredentials(true);
 
         config.setExposedHeaders(Arrays.asList(
                 HEADER_ACCESS_TOKEN,
