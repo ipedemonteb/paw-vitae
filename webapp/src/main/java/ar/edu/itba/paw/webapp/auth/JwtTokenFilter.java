@@ -52,16 +52,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         final String token = header.substring(AUTH_HEADER.length()).trim();
-        final JwtDetails jwtDetails = jwtService.validate(token);
-        if (jwtDetails == null) {
-            response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\"");
+        final JwtDetails jwtDetails = jwtService.validate(token, response);
+        if (jwtDetails == null) { //TODO i have no idea where but this: response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\""); needs to be included when jwt not present and it should be
             chain.doFilter(request, response);
             return;
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtDetails.getEmail());
         if (userDetails == null) {
-            response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\"");
+            response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\"");//TODO check these if correct
             chain.doFilter(request, response);
             return;
         }
