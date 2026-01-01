@@ -13,6 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -143,6 +144,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                 // TODO: AGREGAR LAS RUTAS
                 .antMatchers("/images/**").permitAll()
+                .antMatchers("/coverages/**").permitAll()
+                .antMatchers("/specialties/**").permitAll()
+                .antMatchers("/neighborhoods/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/patients").permitAll()
+                .antMatchers(HttpMethod.POST, "/doctors").permitAll()
                 .antMatchers("/**").authenticated()
 
                 .and()

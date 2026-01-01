@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/authContext.tsx";
 import { useNavigate } from "react-router-dom";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 const cardContainer = "flex-1 flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full h-full";
 const contentWrapper = "w-full max-w-sm space-y-8";
@@ -34,6 +35,7 @@ const footerText = "text-sm text-gray-500";
 const linksContainer = "flex flex-col gap-2 text-sm font-medium";
 const registerLinkStyles = "text-blue-600 hover:text-blue-700 hover:underline";
 
+
 function LoginCard() {
     const [showPassword, setShowPassword] = useState(false);
     const { login } = useAuth();
@@ -57,10 +59,10 @@ function LoginCard() {
             if (success) {
                 navigate("/");
             } else {
-                setError("Credenciales inválidas");
+                setError(t('login.error_credentials'));
             }
         } catch (err) {
-            setError("Error en el inicio de sesión");
+            setError(t('login.error_generic'));
         } finally {
             setIsLoading(false);
         }
@@ -91,7 +93,7 @@ function LoginCard() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                aria-label="Correo electrónico"
+                                aria-label={t('login.aria_email')}
                             />
                         </div>
                     </div>
@@ -108,13 +110,13 @@ function LoginCard() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                aria-label="Contraseña"
+                                aria-label={t('login.aria_password')}
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
                                 className={eyeButtonStyles}
-                                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                aria-label={showPassword ? t('login.hide_password') : t('login.show_password')}
                             >
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
@@ -134,8 +136,7 @@ function LoginCard() {
                     {error && <div className="text-red-500 text-sm">{error}</div>}
 
                     <Button type="submit" className={submitButtonStyles} disabled={isLoading}>
-                        {isLoading ? "Ingresando..." : "Login"}
-                    {/*    TODO: HOW TO TRANSLATE THIS?*/}
+                        {isLoading ? t('login.logging_in') : t('login.button_login')}
                     </Button>
 
                 </form>
@@ -144,12 +145,12 @@ function LoginCard() {
                     <p className={footerText}>{t('login.no_account')}</p>
 
                     <div className={linksContainer}>
-                        <a href="/register-doctor" className={registerLinkStyles}>
+                        <Link to="/register?type=doctor" className={registerLinkStyles}>
                             {t('login.register_doctor')}
-                        </a>
-                        <a href="/register-patient" className={registerLinkStyles}>
+                        </Link>
+                        <Link to="/register?type=patient" className={registerLinkStyles}>
                             {t('login.register_patient')}
-                        </a>
+                        </Link>
                     </div>
                 </div>
 
