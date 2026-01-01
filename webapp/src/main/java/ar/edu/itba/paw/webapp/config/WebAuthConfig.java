@@ -143,6 +143,18 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
                 // TODO: AGREGAR LAS RUTAS
+
+                .antMatchers(HttpMethod.GET, "/appointments").access("@accessHandler.isUser(authentication, request)")
+                .antMatchers(HttpMethod.GET, "/appointments/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.PATCH, "/appointments/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.PATCH, "/appointments/{id:\\d+}/report").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.GET, "/appointments/{id:\\d+}/files").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.GET, "/appointments/{id:\\d+}/files/{fileId:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.GET, "/appointments/{id:\\d+}/files/{fileId:\\d+}/view").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.POST, "/appointments/{id:\\d+}/files/patient").access("hasRole('PATIENT') and @accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.POST, "/appointments/{id:\\d+}/files/doctor").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
+
+
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/coverages/**").permitAll()
                 .antMatchers("/specialties/**").permitAll()

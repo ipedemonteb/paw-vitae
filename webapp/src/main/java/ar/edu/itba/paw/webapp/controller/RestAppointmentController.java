@@ -40,11 +40,6 @@ import static javax.ws.rs.core.Response.Status.OK;
 public class RestAppointmentController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestAppointmentController.class);
-
-    private static final Set<String> COLLECTIONS = Set.of("upcoming", "past");
-    private static final Set<String> UPCOMING_FILTERS = Set.of("all", "today", "week", "month");
-    private static final Set<String> PAST_FILTERS = Set.of("all", "completed", "cancelled");
-
     private final AppointmentService appointmentService;
 
     @Context
@@ -58,22 +53,13 @@ public class RestAppointmentController {
     @GET
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response list(
-            @QueryParam("userId") Long userId,
+            @QueryParam("userId") @NotNull Long userId,
             @QueryParam("collection") @DefaultValue("upcoming") String collection,
             @QueryParam("filter") @DefaultValue("all") String filter,
             @QueryParam("page") @DefaultValue("1") @Min(1) int page,
             @QueryParam("pageSize") @DefaultValue("10") @Min(1) int pageSize
     ) {
-        if (userId == null) {
-            throw new BadRequestException("Missing userId");
-        }
-
-        String sanitizedCollection = sanitizeCollection(collection);
-        boolean isUpcoming = sanitizedCollection.equals("upcoming");
-        Set<String> allowedFilters = isUpcoming ? UPCOMING_FILTERS : PAST_FILTERS;
-        String sanitizedFilter = sanitizeFilter(filter, allowedFilters, "all");
-
-        Page<Appointment> appointmentPage = appointmentService.getAppointments(userId, isUpcoming, page, pageSize, sanitizedFilter);
+        Page<Appointment> appointmentPage = appointmentService.getAppointments(userId, "upcoming".equalsIgnoreCase(collection), page, pageSize, filter);
         Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointmentPage.getContent(), uriInfo)) {});
         return buildPaginationHeaders(rb, appointmentPage, uriInfo);
     }
@@ -109,10 +95,8 @@ public class RestAppointmentController {
     @Path("/{id:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response cancel(@PathParam("id") final long id, @Valid @NotNull CancelAppointmentForm form) {
-        Boolean cancelled = appointmentService.cancelAppointment(id, form.getUserId());
-        if (!Boolean.TRUE.equals(cancelled)) {
-            LOGGER.warn("Failed to cancel appointment {} by user {}", id, form.getUserId());
-            return Response.status(Response.Status.CONFLICT).build();
+        if (!appointmentService.cancelAppointment(id, form.getUserId())) {
+            throw new BadRequestException("Appointment can not be cancelled");
         }
         return Response.noContent().build();
     }
@@ -122,30 +106,8 @@ public class RestAppointmentController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateReport(@PathParam("id") final long id,
                                  @Valid @NotNull AppointmentReportForm form) {
-        appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
         appointmentService.updateAppointmentReport(id, form.getReport());
         return Response.noContent().build();
     }
 
-    private String sanitizeCollection(String collection) {
-        if (collection == null || collection.isBlank()) {
-            return "upcoming";
-        }
-        String normalized = collection.trim().toLowerCase(Locale.ROOT);
-        if (!COLLECTIONS.contains(normalized)) {
-            throw new BadRequestException("Invalid collection value");
-        }
-        return normalized;
-    }
-
-    private String sanitizeFilter(String filter, Set<String> allowed, String defaultValue) {
-        if (filter == null || filter.isBlank()) {
-            return defaultValue;
-        }
-        String normalized = filter.trim().toLowerCase(Locale.ROOT);
-        if (!allowed.contains(normalized)) {
-            throw new BadRequestException("Invalid filter value");
-        }
-        return normalized;
-    }
 }
