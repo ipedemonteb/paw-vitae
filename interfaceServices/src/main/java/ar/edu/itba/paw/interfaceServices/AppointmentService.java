@@ -27,7 +27,7 @@ public interface AppointmentService {
 
     Map<LocalDate, List<Integer>> getFutureAppointmentsByUserAndDate(long userId);
 
-    void updateAppointmentReport(long appointmentId, String report);
+    Optional<Long> updateAppointmentReport(long appointmentId, String report);
 
     boolean hasHistoryAllowedByAppointmentId(long appointmentId, long doctorId);
 
