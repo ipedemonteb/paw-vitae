@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from "
 import { useUserService } from "../hooks/userService.ts";
 import { api } from "../data/Api.ts";
 
-interface AuthContextType {
+interface   AuthContextType {
     isAuthenticated: boolean;
     login: (email: string, pass: string) => Promise<boolean>;
     logout: () => void;
