@@ -10,7 +10,6 @@ import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -148,19 +147,21 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional
     @Override
-    public void updateAppointmentReport(long appointmentId, String report) {
+    public Optional<Long> updateAppointmentReport(long appointmentId, String report) {
         LOGGER.debug("Updating appointment report for appointmentId: {}, report: {}", appointmentId, report);
-        if (report == null) {
-            return;
+        if (report == null ) {
+            return Optional.empty();
         }
         Optional<Appointment> appointment = getById(appointmentId);
         if (appointment.isPresent()) {
             appointment.get().setReport(report);
             mailService.sendReportAddedMail(appointment.get().getDoctor(), appointment.get().getPatient(), appointment.get(), report);
             LOGGER.info("Report added to appointment: {}", appointment.get());
+            return Optional.of(appointment.get().getId());
         } else {
             LOGGER.info("Appointment not found: {}", appointmentId);
         }
+        return Optional.empty();
     }
 
     @Transactional(readOnly = true)
