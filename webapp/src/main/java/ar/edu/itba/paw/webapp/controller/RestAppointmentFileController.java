@@ -6,22 +6,22 @@ import ar.edu.itba.paw.models.AppointmentFile;
 import ar.edu.itba.paw.webapp.dto.AppointmentDTO;
 import ar.edu.itba.paw.webapp.dto.AppointmentFileDTO;
 import ar.edu.itba.paw.webapp.dto.CoverageDTO;
+import ar.edu.itba.paw.webapp.utils.FileUtils;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Context;
+import java.net.URI;
 import java.util.List;
 
 
@@ -86,5 +86,42 @@ public class RestAppointmentFileController {
         return appointmentFileService
                 .getAuthorizedFile(fileId, appointmentId, username)
                 .orElseThrow(NotFoundException::new);
+    }
+
+    @POST
+    @Path("/doctor")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response uploadDoctorFiles(@PathParam("appointmentId") final long appointmentId,
+                                     final FormDataMultiPart multipart) {
+
+        List<AppointmentFile> createdFiles = appointmentFileService.create(FileUtils.requireFiles(multipart, "files"),"doctor" , appointmentId);
+        return Response.created(buildLocation(appointmentId, createdFiles)).build();
+    }
+
+    @POST
+    @Path("/patient")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response uploadPatientFiles(@PathParam("appointmentId") final long appointmentId,
+                                final FormDataMultiPart multipart) {
+
+        List<AppointmentFile> createdFiles = appointmentFileService.create(FileUtils.requireFiles(multipart, "files"),"patient" , appointmentId);
+        return Response.created(buildLocation(appointmentId, createdFiles)).build();
+    }
+
+
+    //TODO: revisar como devolver todos los uris
+    private URI buildLocation(long appointmentId, List<AppointmentFile> createdFiles) {
+        if (createdFiles == null || createdFiles.isEmpty()) {
+            throw new InternalServerErrorException("Failed to store uploaded files");
+        }
+        long fileId = createdFiles.getFirst().getId();
+        return uriInfo.getBaseUriBuilder()
+                .path("appointments")
+                .path(String.valueOf(appointmentId))
+                .path("files")
+                .path(String.valueOf(fileId))
+                .build();
     }
 }
