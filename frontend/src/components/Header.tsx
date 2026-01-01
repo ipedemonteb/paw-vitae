@@ -1,7 +1,22 @@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu"
 import { ChevronDown, User, BriefcaseMedical } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useMatch } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import React from "react";
+
+function HeaderNavLink({ to, end, children, }: {
+    to: string;
+    end?: boolean;
+    children: React.ReactNode;
+}) {
+    const match = useMatch({ path: to, end: end });
+    return (
+        <NavigationMenuLink asChild className={cn(navItem, match && navItemActive)}>
+            <Link to={to}>{children}</Link>
+        </NavigationMenuLink>
+    );
+}
 
 const header =
     "fixed top-0 left-0 w-full shadow-[var(--shadow-md)] py-[30px] leading-[1.6] bg-white z-50";
@@ -12,13 +27,18 @@ const logo =
 const nav =
     "font-medium";
 const navItem =
-    "text-base cursor-pointer hover:text-[var(--primary-color)] hover:bg-transparent";
+    "text-base cursor-pointer hover:text-[var(--primary-color)] hover:bg-transparent " +
+    "relative px-0 py-[5px] font-medium transition-colors duration-300 " +
+    "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-[var(--primary-color)] " +
+    "after:transition-[width] after:duration-300 hover:after:w-full";
+const navItemActive =
+    "text-[var(--primary-color)] font-semibold after:w-full";
 const btnBase =
     "inline-flex items-center justify-center text-base font-medium leading-[1.5] px-[24px] h-[44px] rounded-md !border-2 transition-colors transition-transform duration-300 ease-in-out";
 const btnOutline =
-    `${btnBase} bg-transparent text-[var(--primary-color)] border-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-[var(--white)]`;
+    `${btnBase} bg-transparent text-[var(--primary-color)] border-[var(--primary-color)] hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] hover:text-[var(--white)]`;
 const btnFilled =
-    `${btnBase} bg-[var(--primary-color)] text-[var(--white)] border-[var(--primary-color)] hover:bg-transparent hover:text-[var(--primary-color)] cursor-pointer`;
+    `${btnBase} bg-[var(--primary-color)] text-[var(--white)] border-[var(--primary-color)] hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] cursor-pointer`;
 const dropDownItem =
     "flex items-center gap-2 text-[16px] cursor-pointer data-[highlighted]:text-[var(--primary-color)] data-[highlighted]:bg-transparent";
 
@@ -31,29 +51,26 @@ function Header() {
                         <h1 className="block text-5xl font-bold no-underline">Vitae</h1>
                     </a>
                     <NavigationMenu className={nav}>
-                        <NavigationMenuList className="flex gap-[15px] items-center">
+                        <NavigationMenuList className="flex gap-[30px] items-center">
                             <NavigationMenuItem>
-                                <NavigationMenuLink asChild className={navItem}>
-                                    <Link to="/">Home</Link>
-                                </NavigationMenuLink>
+                                <HeaderNavLink to="/" end>
+                                    Home
+                                </HeaderNavLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
-                                <NavigationMenuLink asChild className={navItem}>
-                                    <Link to="/">Find Doctors</Link>
-                                </NavigationMenuLink>
+                                <HeaderNavLink to="/search">
+                                    Find Doctors
+                                </HeaderNavLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
-                                <NavigationMenuLink asChild className={navItem}>
-                                    <Link to="/">About Us</Link>
-                                </NavigationMenuLink>
+                                <HeaderNavLink to="/about-us">
+                                    About Us
+                                </HeaderNavLink>
                             </NavigationMenuItem>
                         </NavigationMenuList>
                     </NavigationMenu>
                     <div className="flex gap-[12px] items-center">
-                        <Link to="/login"
-                            type="button"
-                            className={btnOutline}
-                        >
+                        <Link to="/login" type="button" className={btnOutline}>
                             Login
                         </Link>
                         <DropdownMenu>
