@@ -1,14 +1,25 @@
 import { Input } from "@/components/ui/input";
 import { Combobox } from "@/components/ui/combobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
-// import { Card, CardContent } from "@/components/ui/card"
-import { Search, PersonStandingIcon, Lightbulb } from "lucide-react";
+import { Search, PersonStandingIcon, Lightbulb, CalendarDays, ShieldPlus } from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
 
 const landingPage =
     "pt-[100px]";
 const heroSection=
     "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
+const processSection =
+    "bg-[var(--background-light)]";
+const container =
+    "mx-auto max-w-[1200px] w-full px-[20px] py-[60px] flex flex-col items-center text-center";
+const sectionHeader =
+    "max-w-[800px] text-center mx-auto mt-0 mb-[60px]";
+const sectionTag =
+    "inline-block py-[6px] px-[16px] bg-[var(--landing-light)] text-[var(--primary-color)] rounded-[20px] text-[14px] font-[500] mb-[16px]";
+const sectionTitle =
+    "mb-4 rounded-full px-4 py-[6px] text-[36px] font-[700] text-[var(--text-color)]";
+const sectionText =
+    "text-[18px] text-[var(--text-light)]";
 
 function Landing() {
     return (
@@ -17,6 +28,9 @@ function Landing() {
                 <HeroSection />
             </div>
             <MissionSection />
+            <div className={processSection}>
+                <ProcessSection />
+            </div>
         </div>
     )
 }
@@ -86,16 +100,6 @@ function HeroSection() {
     )
 }
 
-const missionContainer =
-    "mx-auto max-w-[1200px] w-full px-[20px] py-[60px] flex flex-col items-center text-center";
-const missionHeader =
-    "max-w-[800px] text-center mx-auto mt-0 mb-[60px]";
-const missionTag =
-    "inline-block py-[6px] px-[16px] bg-[var(--landing-light)] text-[var(--primary-color)] rounded-[20px] text-[14px] font-[500] mb-[16px]";
-const missionTitle =
-    "mb-4 rounded-full px-4 py-[6px] text-[36px] font-[700] text-[var(--text-color)]";
-const missionText =
-    "text-[18px] text-[var(--text-light)]";
 const missionCards =
     "max-w-[1000px] flex gap-[50px] grid-cols-[repeat(auto-fit,minmax(300px,1fr))]";
 const missionCard =
@@ -111,15 +115,15 @@ const missionCardText =
 
 function MissionSection() {
     return (
-        <div className={missionContainer}>
-            <div className={missionHeader}>
-                <span className={missionTag}>
+        <div className={container}>
+            <div className={sectionHeader}>
+                <span className={sectionTag}>
                     Mission
                 </span>
-                <h1 className={missionTitle}>
+                <h1 className={sectionTitle}>
                     Our Mission
                 </h1>
-                <p className={missionText}>
+                <p className={sectionText}>
                     We're committed to making healthcare accessible, transparent, and efficient for everyone.
                 </p>
             </div>
@@ -143,6 +147,82 @@ function MissionSection() {
                     </p>
                 </Card>
             </div>
+        </div>
+    )
+}
+
+const stepsSection =
+    "flex flex-col gap-[40px] max-w-[800px] mx-auto";
+const step =
+    "flex items-center gap-[30px] relative";
+const stepNumber =
+    "shrink-0 w-[60px] h-[60px] flex items-center justify-center bg-[var(--primary-color)] rounded-[50%] text-[var(--white)] font-[700] text-[24px]";
+const stepContent =
+    "p-[30px] gap-[20px] flex flex-row items-center";
+const stepDescription =
+    "flex flex-col items-start text-left";
+const stepIcon =
+    "w-[60px] h-[60px] flex items-center justify-center rounded-[12px] text-[var(--primary-color)] bg-[var(--landing-light)]";
+const stepTitle =
+    "text-[22px] font-[600] text-[var(--text-color)]";
+const stepText =
+    "text-[var(--text-light)]";
+const startButton =
+    "mt-[60px] p-[32px] text-[18px] font-[500] bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
+
+function ProcessSection() {
+    return (
+        <div className={container}>
+            <div className={sectionHeader}>
+                <span className={sectionTag}>
+                    Process
+                </span>
+                <h1 className={sectionTitle}>
+                    How Vitae Works
+                </h1>
+                <p className={sectionText}>
+                    Finding and booking appointments with healthcare professionals has never been easier.
+                </p>
+            </div>
+            <div className={stepsSection}>
+                <div className={step}>
+                    <div className={stepNumber}>1</div>
+                    <Card className={stepContent}>
+                        <div className={stepIcon}>
+                            <Search />
+                        </div>
+                        <div className={stepDescription}>
+                            <h3 className={stepTitle}>Search for Specialists</h3>
+                            <p className={stepText}>Find the right healthcare professional by specialty, location, or availability.</p>
+                        </div>
+                    </Card>
+                </div>
+                <div className={step}>
+                    <div className={stepNumber}>2</div>
+                    <Card className={stepContent}>
+                        <div className={stepIcon}>
+                            <CalendarDays />
+                        </div>
+                        <div className={stepDescription}>
+                            <h3 className={stepTitle}>Book an Appointment</h3>
+                            <p className={stepText}>Select a convenient time slot and book your appointment in just a few clicks.</p>
+                        </div>
+                    </Card>
+                </div>
+                <div className={step}>
+                    <div className={stepNumber}>3</div>
+                    <Card className={stepContent}>
+                        <div className={stepIcon}>
+                            <ShieldPlus />
+                        </div>
+                        <div className={stepDescription}>
+                            <h3 className={stepTitle}>Visit Your Doctor</h3>
+                            <p className={stepText}>Attend your appointment and receive the care you need from qualified professionals.</p>
+                        </div>
+                    </Card>
+                </div>
+            </div>
+            <Button className={startButton}>Get Started Now</Button>
         </div>
     )
 }
