@@ -1,9 +1,8 @@
-import Header from '../../components/Header'
-
-
 function Landing() {
     return (
-        <Header />
+        <div>
+            Hello from Landing
+        </div>
     )
 }
 
