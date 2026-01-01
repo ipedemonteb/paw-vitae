@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Combobox } from "@/components/ui/combobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { Search, PersonStandingIcon, Lightbulb, CalendarDays, ShieldPlus } from "lucide-react";
+import { Search, PersonStandingIcon, Lightbulb, CalendarDays, ShieldPlus, ShieldCheck, Pointer } from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
 
 const landingPage =
@@ -10,16 +10,6 @@ const heroSection=
     "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
 const processSection =
     "bg-[var(--background-light)]";
-const container =
-    "mx-auto max-w-[1200px] w-full px-[20px] py-[60px] flex flex-col items-center text-center";
-const sectionHeader =
-    "max-w-[800px] text-center mx-auto mt-0 mb-[60px]";
-const sectionTag =
-    "inline-block py-[6px] px-[16px] bg-[var(--landing-light)] text-[var(--primary-color)] rounded-[20px] text-[14px] font-[500] mb-[16px]";
-const sectionTitle =
-    "mb-4 rounded-full px-4 py-[6px] text-[36px] font-[700] text-[var(--text-color)]";
-const sectionText =
-    "text-[18px] text-[var(--text-light)]";
 
 function Landing() {
     return (
@@ -31,6 +21,7 @@ function Landing() {
             <div className={processSection}>
                 <ProcessSection />
             </div>
+            <FeaturesSection />
         </div>
     )
 }
@@ -100,17 +91,27 @@ function HeroSection() {
     )
 }
 
-const missionCards =
+const container =
+    "mx-auto max-w-[1200px] w-full px-[20px] py-[60px] flex flex-col items-center text-center";
+const sectionHeader =
+    "max-w-[800px] text-center mx-auto mt-0 mb-[60px]";
+const sectionTag =
+    "inline-block py-[6px] px-[16px] bg-[var(--landing-light)] text-[var(--primary-color)] rounded-[20px] text-[14px] font-[500] mb-[16px]";
+const sectionTitle =
+    "mb-4 rounded-full px-4 py-[6px] text-[36px] font-[700] text-[var(--text-color)]";
+const sectionText =
+    "text-[18px] text-[var(--text-light)]";
+const sectionCards =
     "max-w-[1000px] flex gap-[50px] grid-cols-[repeat(auto-fit,minmax(300px,1fr))]";
-const missionCard =
+const sectionCard =
     "px-[30px] py-[40px] gap-[0] flex flex-col items-center text-center";
-const missionIcons =
+const sectionIcons =
     "w-[70px] h-[70px] mb-[24px] flex items-center justify-center bg-[var(--landing-light)] text-[var(--primary-color)] rounded-[50%] text-[28px]";
-const missionPersonIcon =
+const sectionPersonIcon =
     "text-[var(--landing-light)] bg-[var(--primary-color)] rounded-[50%]";
-const missionCardTitle =
+const sectionCardTitle =
     "text-[22px] font-[600] mb-[16px] text-[var(--text-color)]";
-const missionCardText =
+const sectionCardText =
     "text-[var(--text-light)]";
 
 function MissionSection() {
@@ -127,22 +128,22 @@ function MissionSection() {
                     We're committed to making healthcare accessible, transparent, and efficient for everyone.
                 </p>
             </div>
-            <div className={missionCards}>
-                <Card className={missionCard}>
-                    <div className={missionIcons}>
-                        <PersonStandingIcon className={missionPersonIcon}/>
+            <div className={sectionCards}>
+                <Card className={sectionCard}>
+                    <div className={sectionIcons}>
+                        <PersonStandingIcon className={sectionPersonIcon}/>
                     </div>
-                    <h3 className={missionCardTitle}>Accessible Healthcare</h3>
-                    <p className={missionCardText}>
+                    <h3 className={sectionCardTitle}>Accessible Healthcare</h3>
+                    <p className={sectionCardText}>
                         We believe everyone deserves easy access to quality healthcare services without barriers.
                     </p>
                 </Card>
-                <Card className={missionCard}>
-                    <div className={missionIcons}>
+                <Card className={sectionCard}>
+                    <div className={sectionIcons}>
                         <Lightbulb />
                     </div>
-                    <h3 className={missionCardTitle}>Innovative Solutions</h3>
-                    <p className={missionCardText}>
+                    <h3 className={sectionCardTitle}>Innovative Solutions</h3>
+                    <p className={sectionCardText}>
                         We leverage technology to create seamless experiences for patients and healthcare providers.
                     </p>
                 </Card>
@@ -223,6 +224,44 @@ function ProcessSection() {
                 </div>
             </div>
             <Button className={startButton}>Get Started Now</Button>
+        </div>
+    )
+}
+
+function FeaturesSection() {
+    return (
+        <div className={container}>
+            <div className={sectionHeader}>
+                <span className={sectionTag}>
+                    Benefits
+                </span>
+                <h1 className={sectionTitle}>
+                    Why Choose Vitae
+                </h1>
+                <p className={sectionText}>
+                    Our platform offers unique benefits for patients seeking quality healthcare.
+                </p>
+            </div>
+            <div className={sectionCards}>
+                <Card className={sectionCard}>
+                    <div className={sectionIcons}>
+                        <ShieldCheck />
+                    </div>
+                    <h3 className={sectionCardTitle}>Secure & Private</h3>
+                    <p className={sectionCardText}>
+                        Your personal and medical information is protected with advanced security.
+                    </p>
+                </Card>
+                <Card className={sectionCard}>
+                    <div className={sectionIcons}>
+                        <Pointer />
+                    </div>
+                    <h3 className={sectionCardTitle}>Easy to Use</h3>
+                    <p className={sectionCardText}>
+                        Our intuitive interface makes finding and booking appointments simple.
+                    </p>
+                </Card>
+            </div>
         </div>
     )
 }
