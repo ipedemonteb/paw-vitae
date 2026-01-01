@@ -5,8 +5,10 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,6 +66,23 @@ public class AccessHandler {
                 .map(a -> a.getPatient().getId() == user.getUserId()
                         || a.getDoctor().getId() == user.getUserId())
                 .orElse(true);
+    }
+
+    public boolean isUser(Authentication auth, HttpServletRequest request) {
+        AuthUserDetails user = getPrincipal(auth);
+        if (user == null) {
+            return false;
+        }
+        String userIdParam = request.getParameter("userId");
+        if (userIdParam == null || userIdParam.isBlank()) {
+            return true;
+        }
+        try {
+            long userId = Long.parseLong(userIdParam);
+            return userId == user.getUserId();
+        } catch (NumberFormatException e) {
+            return true;
+        }
     }
 
     public boolean canHandleUnavailability(HttpServletRequest request) {
