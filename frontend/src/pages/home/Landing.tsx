@@ -1,15 +1,22 @@
 import { Input } from "@/components/ui/input";
 import { Combobox } from "@/components/ui/combobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { Search } from "lucide-react";
+// import { Card, CardContent } from "@/components/ui/card"
+import { Search, PersonStandingIcon, Lightbulb } from "lucide-react";
+import { Card } from "@/components/ui/card.tsx";
 
+const landingPage =
+    "pt-[100px]";
 const heroSection=
-    "pt-[100px] bg-[linear-gradient(135deg,var(--background-light)_0%,var(--primary-light)_100%)]";
+    "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
 
 function Landing() {
     return (
-        <div className={heroSection}>
-            <HeroSection />
+        <div className={landingPage}>
+            <div className={heroSection}>
+                <HeroSection />
+            </div>
+            <MissionSection />
         </div>
     )
 }
@@ -75,6 +82,67 @@ function HeroSection() {
                 </div>
             </div>
             <div className={heroSpace} />
+        </div>
+    )
+}
+
+const missionContainer =
+    "mx-auto max-w-[1200px] w-full px-[20px] py-[60px] flex flex-col items-center text-center";
+const missionHeader =
+    "max-w-[800px] text-center mx-auto mt-0 mb-[60px]";
+const missionTag =
+    "inline-block py-[6px] px-[16px] bg-[var(--landing-light)] text-[var(--primary-color)] rounded-[20px] text-[14px] font-[500] mb-[16px]";
+const missionTitle =
+    "mb-4 rounded-full px-4 py-[6px] text-[36px] font-[700] text-[var(--text-color)]";
+const missionText =
+    "text-[18px] text-[var(--text-light)]";
+const missionCards =
+    "max-w-[1000px] flex gap-[50px] grid-cols-[repeat(auto-fit,minmax(300px,1fr))]";
+const missionCard =
+    "px-[30px] py-[40px] gap-[0] flex flex-col items-center text-center";
+const missionIcons =
+    "w-[70px] h-[70px] mb-[24px] flex items-center justify-center bg-[var(--landing-light)] text-[var(--primary-color)] rounded-[50%] text-[28px]";
+const missionPersonIcon =
+    "text-[var(--landing-light)] bg-[var(--primary-color)] rounded-[50%]";
+const missionCardTitle =
+    "text-[22px] font-[600] mb-[16px] text-[var(--text-color)]";
+const missionCardText =
+    "text-[var(--text-light)]";
+
+function MissionSection() {
+    return (
+        <div className={missionContainer}>
+            <div className={missionHeader}>
+                <span className={missionTag}>
+                    Mission
+                </span>
+                <h1 className={missionTitle}>
+                    Our Mission
+                </h1>
+                <p className={missionText}>
+                    We're committed to making healthcare accessible, transparent, and efficient for everyone.
+                </p>
+            </div>
+            <div className={missionCards}>
+                <Card className={missionCard}>
+                    <div className={missionIcons}>
+                        <PersonStandingIcon className={missionPersonIcon}/>
+                    </div>
+                    <h3 className={missionCardTitle}>Accessible Healthcare</h3>
+                    <p className={missionCardText}>
+                        We believe everyone deserves easy access to quality healthcare services without barriers.
+                    </p>
+                </Card>
+                <Card className={missionCard}>
+                    <div className={missionIcons}>
+                        <Lightbulb />
+                    </div>
+                    <h3 className={missionCardTitle}>Innovative Solutions</h3>
+                    <p className={missionCardText}>
+                        We leverage technology to create seamless experiences for patients and healthcare providers.
+                    </p>
+                </Card>
+            </div>
         </div>
     )
 }
