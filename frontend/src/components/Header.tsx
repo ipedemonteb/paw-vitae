@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { ChevronDown, User, BriefcaseMedical } from "lucide-react";
-import {useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 const header =
     "fixed top-0 left-0 w-full shadow-[var(--shadow-md)] py-[30px] leading-[1.6] bg-white z-50";
@@ -19,7 +18,6 @@ const dropDownItem =
     "flex items-center gap-2 text-[16px] cursor-pointer data-[highlighted]:text-[var(--primary-color)] data-[highlighted]:bg-transparent";
 
 function Header() {
-    const navigate = useNavigate();
     return (
         <>
             <div className={header}>
@@ -30,13 +28,12 @@ function Header() {
                     <div>
                     </div>
                     <div className="flex gap-[12px] items-center">
-                        <Button
+                        <Link to="/login"
                             type="button"
                             className={btnOutline}
-                            onClick={() => navigate("/login")}
                         >
                             Login
-                        </Button>
+                        </Link>
                         <DropdownMenu>
                             <DropdownMenuTrigger className={btnFilled}>
                                 Register
