@@ -6,30 +6,21 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.DoctorOfficeNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.dto.*;
-import ar.edu.itba.paw.webapp.form.DoctorForm;
-import ar.edu.itba.paw.webapp.form.DoctorProfileForm;
-import ar.edu.itba.paw.webapp.form.UpdateDoctorForm;
-import ar.edu.itba.paw.webapp.paging.ParamCustomizer;
+import ar.edu.itba.paw.webapp.form.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
 import java.util.List;
-import java.util.Locale;
 
 import static ar.edu.itba.paw.webapp.utils.ResponseUtils.*;
-import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("/doctors")
 @Component
@@ -143,7 +134,6 @@ public class RestDoctorController {
     }
 
     @GET
-
     @Path("/{id:\\d+}/coverages")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorCoverages(@PathParam("id") final long id) {
@@ -185,7 +175,7 @@ public class RestDoctorController {
 
 
     @GET
-    @Path("/{id:\\d+}/profile")
+    @Path("/{id:\\d+}/biography")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorProfile(@PathParam("id") final long id) {
         DoctorProfile profile = this.doctorProfileService.findByDoctorId(id);
@@ -265,7 +255,39 @@ public class RestDoctorController {
     ) {
         Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
         this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(), updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages(), updateDoctorForm.getImage());
-        return Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctor, uriInfo)) {}).build();
+        return Response.noContent().build();
     }
-
+    @PUT
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{id:\\d+}/certifications")
+    public Response changeDoctorCertifications(
+            @PathParam("id") final long id,
+            @Valid @NotNull DoctorCertificatesForm certifications
+            ) {
+        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
+        this.doctorCertificationService.update(doctor, certifications.getCertificates());
+        return Response.noContent().build();
+    }
+    @PUT
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{id:\\d+}/experiences")
+    public Response changeDoctorExperiences(
+            @PathParam("id") final long id,
+            @Valid @NotNull DoctorExperiencesForm experiences
+    ) {
+        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
+        this.doctorExperienceService.update(doctor, experiences.getExperiences());
+        return Response.noContent().build();
+    }
+    @PUT
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{id:\\d+}/biography")
+    public Response changeDoctorBiography(
+            @PathParam("id") final long id,
+            @Valid @NotNull DoctorBioForm doctorForm
+    ) {
+        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
+        this.doctorProfileService.update(doctor, doctorForm.getBiography(), doctorForm.getDescription());
+        return Response.noContent().build();
+    }
 }

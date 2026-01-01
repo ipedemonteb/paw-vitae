@@ -1,19 +1,22 @@
 package ar.edu.itba.paw.webapp.dto;
 
+import ar.edu.itba.paw.models.DoctorCertification;
+import ar.edu.itba.paw.models.DoctorExperience;
 import ar.edu.itba.paw.models.DoctorProfile;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 public class ProfileDTO {
     private String bio;
     private String description;
-
+    private List<DoctorCertification> certifications;
+    private List<DoctorExperience> experiences;
     private URI doctor;
 
     public static ProfileDTO fromDoctorProfile(DoctorProfile profile, UriInfo uriInfo) {
         ProfileDTO dto = new ProfileDTO();
-
         dto.bio = profile.getBio();
         dto.description = profile.getDescription();
 

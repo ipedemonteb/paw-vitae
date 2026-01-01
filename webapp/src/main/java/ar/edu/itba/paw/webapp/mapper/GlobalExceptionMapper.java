@@ -9,11 +9,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import java.util.stream.Collectors;
 
 @Component
 @Provider
@@ -34,7 +36,19 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
                     .type(MediaType.APPLICATION_JSON)
                     .build();
         }
+        if (exception instanceof ConstraintViolationException) {
+            ConstraintViolationException validationEx = (ConstraintViolationException) exception;
+            String messages = validationEx.getConstraintViolations().stream()
+                    .map(violation -> getI18nMessage(violation.getMessage()))
+                    .collect(Collectors.joining("; "));
 
+            LOGGER.warn("Validation Exception: {}", messages);
+
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorDto(messages))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
         if (exception instanceof CustomRuntimeException) {
             CustomRuntimeException customEx = (CustomRuntimeException) exception;
             String message = getI18nMessage(customEx.getMessageKey());
