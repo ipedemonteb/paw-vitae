@@ -3,12 +3,16 @@ import { Combobox } from "@/components/ui/combobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Search, PersonStandingIcon, Lightbulb, CalendarDays, ShieldPlus, ShieldCheck, Pointer } from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
+import { RatingCard } from "@/components/ui/rating.tsx";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
+
+// TODO: internacionalizacion
 
 const landingPage =
     "pt-[100px]";
 const heroSection=
     "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
-const processSection =
+const grayBackground =
     "bg-[var(--background-light)]";
 
 function Landing() {
@@ -18,10 +22,13 @@ function Landing() {
                 <HeroSection />
             </div>
             <MissionSection />
-            <div className={processSection}>
+            <div className={grayBackground}>
                 <ProcessSection />
             </div>
             <FeaturesSection />
+            <div className={grayBackground}>
+                <RatingsSection />
+            </div>
         </div>
     )
 }
@@ -169,7 +176,7 @@ const stepTitle =
 const stepText =
     "text-[var(--text-light)]";
 const startButton =
-    "mt-[60px] p-[32px] text-[18px] font-[500] bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
+    "mt-[60px] p-[26px] text-[16px] font-[500] bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 function ProcessSection() {
     return (
@@ -223,6 +230,7 @@ function ProcessSection() {
                     </Card>
                 </div>
             </div>
+            {/*TODO: Make button go to login*/}
             <Button className={startButton}>Get Started Now</Button>
         </div>
     )
@@ -261,6 +269,78 @@ function FeaturesSection() {
                         Our intuitive interface makes finding and booking appointments simple.
                     </p>
                 </Card>
+            </div>
+        </div>
+    )
+}
+
+const ratings = [
+    {
+        comment:
+            "Muy buena atención. Me atendieron rápido y el doctor explicó todo con claridad.",
+        rating: 5,
+        userName: "John Doe",
+        timeAgo: "2 days ago",
+    },
+    {
+        comment:
+            "Excelente plataforma. Encontré un especialista en minutos y conseguí turno para el mismo día.",
+        rating: 5,
+        userName: "María González",
+        timeAgo: "1 week ago",
+    },
+    {
+        comment:
+            "La experiencia fue muy simple y clara. Me gustó poder filtrar por especialidad y disponibilidad.",
+        rating: 4,
+        userName: "Lucas Pérez",
+        timeAgo: "3 weeks ago",
+    },
+];
+
+const ratingsContainer =
+    "w-full max-w-[900px] mx-auto";
+const carousel =
+    "relative max-w-[800px] w-full mx-auto px-12 mt-[-20px]";
+const carouselContent =
+    "-ml-4 py-2";
+const carouselItem =
+    "pl-4 basis-full";
+
+function RatingsSection() {
+    return (
+        <div className={container}>
+            <div className={sectionHeader}>
+                <span className={sectionTag}>
+                    Ratings
+                </span>
+                <h1 className={sectionTitle}>
+                    Doctor Ratings
+                </h1>
+                <p className={sectionText}>
+                    See what our patients say about our doctors.
+                </p>
+            </div>
+            <div className={ratingsContainer}>
+                <Carousel opts={{ align: "start", loop: true }} className={carousel}>
+                    <CarouselContent className={carouselContent}>
+                        {ratings.map((r, idx) => (
+                            <CarouselItem key={idx} className={carouselItem}>
+                                <div className="py-2">
+                                    <RatingCard
+                                        className="max-w-none"
+                                        comment={r.comment}
+                                        rating={r.rating}
+                                        userName={r.userName}
+                                        timeAgo={r.timeAgo}
+                                    />
+                                </div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="left-2" />
+                    <CarouselNext className="right-2" />
+                </Carousel>
             </div>
         </div>
     )
