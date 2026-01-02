@@ -5,11 +5,10 @@ import { Search, PersonStandingIcon, Lightbulb, CalendarDays, ShieldPlus, Shield
 import { Card } from "@/components/ui/card.tsx";
 import { RatingCard } from "@/components/ui/rating.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
+import { Link } from "react-router-dom";
 
 // TODO: internacionalizacion
 
-const landingPage =
-    "pt-[100px]";
 const heroSection=
     "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
 const grayBackground =
@@ -17,7 +16,7 @@ const grayBackground =
 
 function Landing() {
     return (
-        <div className={landingPage}>
+        <div>
             <div className={heroSection}>
                 <HeroSection />
             </div>
@@ -46,11 +45,11 @@ const heroSearch =
 const searchBar =
     "flex overflow-hidden rounded-md border border-gray-200 bg-white shadow-md";
 const heroInput =
-    "border-0 rounded-none text-[var(--text-light)] py-6 px-4 shadow-none focus-visible:ring-0";
+    "border-0 rounded-none text-[var(--text-light)] py-6 px-4 shadow-none focus-visible:ring-0 hover:bg-[var(--gray-100)]";
 const heroCombo =
-    "border-0 rounded-none py-6 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-white cursor-pointer shadow-none border-l border-gray-200";
+    "border-0 rounded-none py-6 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
 const heroButton =
-    "rounded-none py-6.25 px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)]";
+    "rounded-none py-6.25 px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)] cursor-pointer";
 const heroStats =
     "flex gap-[40px]";
 const statsItem =
@@ -230,8 +229,11 @@ function ProcessSection() {
                     </Card>
                 </div>
             </div>
-            {/*TODO: Make button go to login*/}
-            <Button className={startButton}>Get Started Now</Button>
+            <Button className={startButton}>
+                <Link to="/login">
+                    Get Started Now
+                </Link>
+            </Button>
         </div>
     )
 }
