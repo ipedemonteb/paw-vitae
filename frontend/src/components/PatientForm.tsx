@@ -144,7 +144,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                             {t('register.label_neighborhood')} <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
-                            <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                             <input
                                 id="neighborhood"
                                 type="text"

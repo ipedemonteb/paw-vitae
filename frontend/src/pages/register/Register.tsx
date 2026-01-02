@@ -42,7 +42,7 @@ function RegisterContent() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center pt-10 pb-10">
+        <div className="pt-[130px] min-h-screen bg-gray-100 flex flex-col items-center pt-10 pb-10">
             <div className="w-full max-w-4xl bg-blue-600 rounded-t-xl p-8 text-center text-white shadow-lg relative">
                 <h1 className="text-3xl font-bold mb-2">{t("register.title_register")}</h1>
                 <p className="opacity-90">
