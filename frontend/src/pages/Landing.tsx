@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input.tsx";
 import { Combobox } from "@/components/ui/combobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Search, PersonStandingIcon, Lightbulb, CalendarDays, ShieldPlus, ShieldCheck, Pointer } from "lucide-react";
@@ -42,15 +42,15 @@ const heroTitle =
 const heroSubtitle =
     "text-[18px] font-medium text-[var(--text-light)] mb-[30px]";
 const heroSearch =
-    "mb-[40px] w-full";
+    "mb-[40px] w-full bg-transparent";
 const searchBar =
-    "flex shadow-md";
+    "flex overflow-hidden rounded-md border border-gray-200 bg-white shadow-md";
 const heroInput =
-    "bg-white rounded-r-none text-[var(--text-light)] py-6 px-4";
+    "border-0 rounded-none text-[var(--text-light)] py-6 px-4 shadow-none focus-visible:ring-0";
 const heroCombo =
-    "rounded-none py-6 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-white cursor-pointer ";
+    "border-0 rounded-none py-6 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-white cursor-pointer shadow-none border-l border-gray-200";
 const heroButton =
-    "rounded-l-none py-6.25 px-8 bg-[var(--primary-color)] border-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)]";
+    "rounded-none py-6.25 px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)]";
 const heroStats =
     "flex gap-[40px]";
 const statsItem =

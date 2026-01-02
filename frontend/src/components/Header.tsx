@@ -29,6 +29,7 @@ const nav =
 const navItem =
     "text-base cursor-pointer hover:text-[var(--primary-color)] hover:bg-transparent " +
     "relative px-0 py-[5px] font-medium transition-colors duration-300 " +
+    "focus:bg-transparent active:bg-transparent focus:text-[var(--primary-color)] " +
     "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-[var(--primary-color)] " +
     "after:transition-[width] after:duration-300 hover:after:w-full";
 const navItemActive =
