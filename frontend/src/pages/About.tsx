@@ -1,8 +1,6 @@
 import { Card } from "@/components/ui/card.tsx";
-import { Lightbulb, PersonStandingIcon, Award, Heart, Shield, UsersRound, Rocket, MapPin } from "lucide-react";
+import { Lightbulb, PersonStandingIcon, Award, Heart, Shield, UsersRound, Rocket, MapPin, Mail, Phone } from "lucide-react";
 
-const aboutPage =
-    "pt-[100px]";
 const heroSection=
     "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
 const grayBackground =
@@ -10,19 +8,19 @@ const grayBackground =
 
 function About() {
     return (
-      <div className={aboutPage}>
-          <div className={heroSection}>
+        <div>
+            <div className={heroSection}>
               <HeroSection />
-          </div>
-          <StorySection />
-          <div className={grayBackground}>
+            </div>
+            <StorySection />
+            <div className={grayBackground}>
               <VisionSection />
-          </div>
-          <ValuesSection />
-          <div className={grayBackground}>
+            </div>
+            <ValuesSection />
+            <div className={grayBackground}>
               <ContactSection />
-          </div>
-      </div>
+            </div>
+        </div>
     )
 }
 
@@ -259,7 +257,7 @@ function ContactSection() {
                     </div>
                     <div className={contactData}>
                         <div className={contactIcon}>
-                            <MapPin />
+                            <Mail />
                         </div>
                         <div className="text-left">
                             <h3 className={contactTitle}>Email Us</h3>
@@ -268,7 +266,7 @@ function ContactSection() {
                     </div>
                     <div className={contactData}>
                         <div className={contactIcon}>
-                            <MapPin />
+                            <Phone />
                         </div>
                         <div className="text-left">
                             <h3 className={contactTitle}>Call Us</h3>

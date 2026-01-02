@@ -4,6 +4,7 @@ import Landing from './pages/Landing.tsx';
 import Login from './pages/Login.tsx'
 import Register from "@/pages/Register.tsx";
 import About from "@/pages/About.tsx";
+import Search from "@/pages/Search.tsx";
 
 
 export const router = createBrowserRouter([
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
                 path: 'about-us',
                 element: <About />
             },
+            {
+                path: 'search',
+                element: <Search />
+            }
         ],
     }
 ])
