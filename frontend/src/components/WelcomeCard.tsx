@@ -9,7 +9,7 @@ const welcomeText = "text-lg font-medium opacity-90 select-none";
 
 const welcomeFeatures = "flex flex-col gap-4 mt-4";
 
-const featureItem = "flex items-center gap-4 p-4 rounded-xl bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm border border-white/5";
+const featureItem = "flex items-center gap-4 p-4 rounded-xl bg-white/10 transition-colors backdrop-blur-sm border border-white/5";
 
 const featureIcon = "flex-shrink-0 flex items-center justify-center w-12 h-12 bg-white/20 rounded-full text-xl";
 
