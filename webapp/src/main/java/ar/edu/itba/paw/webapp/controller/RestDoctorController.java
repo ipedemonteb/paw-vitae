@@ -77,7 +77,7 @@ public class RestDoctorController {
 
             @QueryParam("page")
             @DefaultValue("1")
-            @Min(1) //TODO, these annotations wont work because of a missing jersey dependency. Validate in backend or idk
+            @Min(1)
             int page,
 
             @QueryParam("coverage")

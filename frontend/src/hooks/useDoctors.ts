@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { listDoctors, type DoctorsQuery } from "@/data/doctors";
+import {listDoctors, type DoctorsQuery} from "@/data/doctors";
 import { useAsync } from "./useAsync";
 
 
