@@ -109,9 +109,9 @@ const sectionTitle =
 const sectionText =
     "text-[18px] text-[var(--text-light)]";
 const sectionCards =
-    "max-w-[1000px] flex gap-[50px] grid-cols-[repeat(auto-fit,minmax(300px,1fr))]";
+    "max-w-[1000px] w-full flex flex-col md:flex-row gap-[30px] md:gap-[50px] items-stretch";
 const sectionCard =
-    "px-[30px] py-[40px] gap-[0] flex flex-col items-center text-center";
+    "flex-1 px-[30px] py-[40px] gap-[0] flex flex-col items-center text-center";
 const sectionIcons =
     "w-[70px] h-[70px] mb-[24px] flex items-center justify-center bg-[var(--landing-light)] text-[var(--primary-color)] rounded-[50%] text-[28px]";
 const sectionPersonIcon =
