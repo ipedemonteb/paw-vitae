@@ -7,10 +7,10 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { PatientForm } from "../../components/PatientForm.tsx"
-import { DoctorForm } from "../../components/DoctorForm"
+} from "@/components/ui/dropdown-menu.tsx"
+import { Button } from "@/components/ui/button.tsx"
+import { PatientForm } from "../components/PatientForm.tsx"
+import { DoctorForm } from "../components/DoctorForm.tsx"
 import {useTranslation} from "react-i18next";
 import {RegistrationSuccess} from "@/components/RegistrationSuccess.tsx";
 import {useSearchParams} from "react-router-dom";
