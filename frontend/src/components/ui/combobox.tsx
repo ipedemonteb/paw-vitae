@@ -18,26 +18,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-
-const specialties = [
-    { value: "all", label: "All Specialties" },
-    { value: "general", label: "General" },
-    { value: "cardiology", label: "Cardiology" },
-    { value: "dermatology", label: "Dermatology" },
-    { value: "endocrinology", label: "Endocrinology" },
-    { value: "gastroenterology", label: "Gastroenterology" },
-    { value: "hematology", label: "Hematology" },
-    { value: "infectious-diseases", label: "Infectious Diseases" },
-    { value: "nephrology", label: "Nephrology" },
-    { value: "neurology", label: "Neurology" },
-    { value: "oncology", label: "Oncology" },
-    { value: "pulmonology", label: "Pulmonology" },
-    { value: "rheumatology", label: "Rheumatology" },
-    { value: "urology", label: "Urology" },
-    { value: "pediatrics", label: "Pediatrics" },
-    { value: "gynecology", label: "Gynecology" },
-    { value: "traumatology", label: "Traumatology" },
-];
+import {useSpecialties} from "@/hooks/useSpecialties.ts";
+import {useTranslation} from "react-i18next";
 
 type ComboboxProps = {
     className?: string;
@@ -48,6 +30,9 @@ type ComboboxProps = {
 export function Combobox({ className, buttonClassName, contentClassName }: ComboboxProps) {
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState("");
+    const { specialties, loading } = useSpecialties();
+    const { t } = useTranslation();
+
 
     const triggerClass = cn("w-[200px] justify-between", buttonClassName, className);
 
@@ -61,7 +46,7 @@ export function Combobox({ className, buttonClassName, contentClassName }: Combo
                     className={triggerClass}
                 >
                     {value
-                        ? specialties.find((f) => f.value === value)?.label
+                        ? t(value)
                         : "Select specialty..."}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
@@ -71,27 +56,60 @@ export function Combobox({ className, buttonClassName, contentClassName }: Combo
                 <Command>
                     <CommandInput placeholder="Search specialty..." className="h-9" />
                     <CommandList>
-                        <CommandEmpty>No framework found.</CommandEmpty>
-                        <CommandGroup>
-                            {specialties.map((specialty) => (
-                                <CommandItem
-                                    key={specialty.value}
-                                    value={specialty.value}
-                                    onSelect={(currentValue) => {
-                                        setValue(currentValue === value ? "" : currentValue);
-                                        setOpen(false);
-                                    }}
+                        {loading ? (
+                            <div className="py-3 flex items-center justify-center">
+                                <svg
+                                    className="animate-spin h-5 w-5 text-gray-600"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
                                 >
-                                    {specialty.label}
-                                    <Check
-                                        className={cn(
-                                            "ml-auto",
-                                            value === specialty.value ? "opacity-100" : "opacity-0"
-                                        )}
-                                    />
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                                </svg>
+                                <span className="ml-2 text-sm text-gray-700">{t("Loading...")}</span>
+                            </div>
+                        ) : (
+                            <>
+                                <CommandEmpty>No Specialties Found</CommandEmpty>
+                                <CommandGroup>
+                                    <CommandItem
+                                        key={"specialty.all"}
+                                        value={t("specialty.all")}
+                                        onSelect={(currentValue) => {
+                                            setValue(currentValue === value ? "" : currentValue);
+                                            setOpen(false);
+                                        }}
+                                    >
+                                        {t("specialty.all")}
+                                        <Check
+                                            className={cn(
+                                                "ml-auto",
+                                                value === "specialty.all" ? "opacity-100" : "opacity-0"
+                                            )}
+                                        />
+                                    </CommandItem>
+                                    {(specialties || []).map((specialty) => (
+                                        <CommandItem
+                                            key={specialty.name}
+                                            value={t(specialty.name)}
+                                            onSelect={(currentValue) => {
+                                                setValue(currentValue === value ? "" : currentValue);
+                                                setOpen(false);
+                                            }}
+                                        >
+                                            {t(specialty.name)}
+                                            <Check
+                                                className={cn(
+                                                    "ml-auto",
+                                                    value === specialty.name ? "opacity-100" : "opacity-0"
+                                                )}
+                                            />
+                                        </CommandItem>
+                                    ))}
+                                </CommandGroup>
+                            </>
+                        )}
                     </CommandList>
                 </Command>
             </PopoverContent>

@@ -1,4 +1,23 @@
 {
+  "specialty": {
+    "all": "Todas las Especialidades",
+    "general": "General",
+    "cardiologia": "Cardiología",
+    "dermatologia": "Dermatología",
+    "endocrinologia": "Endocrinología",
+    "gastroenterologia": "Gastroenterología",
+    "hematologia": "Hematología",
+    "enfermedades.infecciosas": "Enfermedades Infecciosas",
+    "nefrologia": "Nefrología",
+    "neurologia": "Neurología",
+    "oncologia": "Oncología",
+    "pulmonologia": "Neumología",
+    "reumatologia": "Reumatología",
+    "urologia": "Urología",
+    "pediatria": "Pediatría",
+    "ginecologia": "Ginecología",
+    "traumatologia": "Traumatología"
+  },
   "login": {
     "welcome_title": "Bienvenido de nuevo!",
     "welcome_subtitle": "Tu salud es nuestra prioridad. Agenda tu cita ahora!",

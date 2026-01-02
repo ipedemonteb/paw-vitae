@@ -1,4 +1,23 @@
 {
+  "specialty": {
+    "all": "All Specialties",
+    "general": "General",
+    "cardiologia": "Cardiology",
+    "dermatologia": "Dermatology",
+    "endocrinologia": "Endocrinology",
+    "gastroenterologia": "Gastroenterology",
+    "hematologia": "Hematology",
+    "enfermedades.infecciosas": "Infectious Diseases",
+    "nefrologia": "Nephrology",
+    "neurologia": "Neurology",
+    "oncologia": "Oncology",
+    "pulmonologia": "Pulmonology",
+    "reumatologia": "Rheumatology",
+    "urologia": "Urology",
+    "pediatria": "Pediatrics",
+    "ginecologia": "Gynecology",
+    "traumatologia": "Traumatology"
+  },
   "login": {
     "welcome_title": "Welcome Back!",
     "welcome_subtitle": "Your health is our priority. Schedule your appointment now!",
