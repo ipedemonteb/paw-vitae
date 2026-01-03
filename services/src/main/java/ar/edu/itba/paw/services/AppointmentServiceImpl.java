@@ -3,10 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
-import ar.edu.itba.paw.models.exception.DoctorOfficeNotFoundException;
-import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
+import ar.edu.itba.paw.models.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,14 +99,12 @@ public class AppointmentServiceImpl implements AppointmentService {
         LOGGER.debug("Attempting to cancel appointment with id: {} by user with id: {}", appointmentId, userId);
         Optional<Appointment> appt = getById(appointmentId);
         if (appt.isEmpty()) {
-            LOGGER.warn("Appointment not found: {}", appointmentId);
-            return false;
+            throw new AppointmentNotFoundException();
         }
 
         Appointment appointment = appt.get();
         if (!appointment.getCancellable()) {
-            LOGGER.warn("Cannot cancel appointment less than two hours in advance: {}", appointmentId);
-            return false;
+            throw new CancellableException();
         }
 
         appointment.setStatus(AppointmentStatus.CANCELADO.getValue());
