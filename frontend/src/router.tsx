@@ -5,6 +5,7 @@ import Login from './pages/Login.tsx'
 import Register from "@/pages/Register.tsx";
 import About from "@/pages/About.tsx";
 import Search from "@/pages/Search.tsx";
+import AppointmentCard from "@/components/AppointmentCard.tsx";
 
 
 export const router = createBrowserRouter([
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
             {
                 path: 'search',
                 element: <Search />
+            },
+            {
+                path: '/test',
+                element: <AppointmentCard/>
             }
         ],
     }

@@ -161,6 +161,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/neighborhoods/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/patients").permitAll()
                 .antMatchers(HttpMethod.POST, "/doctors").permitAll()
+                .antMatchers(HttpMethod.GET, "/doctors").permitAll()
                 .antMatchers("/**").authenticated()
 
                 .and()
