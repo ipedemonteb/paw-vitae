@@ -160,7 +160,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PATCH, "/doctors/{id:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, request)")
                 .antMatchers(HttpMethod.PUT, "/{id:\\d+}/**").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, request)")
 
-                .antMatchers(HttpMethod.GET, "/patients/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/patients").permitAll()
+                .antMatchers(HttpMethod.HEAD, "/patients").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/patients/{id:\\d+}").access("hasRole('PATIENT') and @accessHandler.isUser(authentication, request)")
+                .antMatchers(HttpMethod.GET, "/patients/{id:\\d+}").access("@accessHandler.isUser(authentication, request) or hasRole('DOCTOR')")
+                // TODO: ACA DEBERIA HABER UNA VALIDACION AL ESTILO DE hasAppointmentWithPatient" asi solo los doctores que tuvieron citas con el paciente pueden ver su info"
+
+
 
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/coverages/**").permitAll()
