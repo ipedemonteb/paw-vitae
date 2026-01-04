@@ -56,6 +56,14 @@ public final class FileUtils {
         return files;
     }
 
+    public static MultipartFile requireSingleFile(FormDataMultiPart multiPart, String field) {
+        MultipartFile[] files = requireFiles(multiPart, field);
+        if (files.length != 1) {
+            throw new BadRequestException("Exactly one file must be provided");
+        }
+        return files[0];
+    }
+
     private static byte[] readBytes(FormDataBodyPart part) {
         BodyPartEntity entity = (BodyPartEntity) part.getEntity();
         try (InputStream inputStream = entity.getInputStream();

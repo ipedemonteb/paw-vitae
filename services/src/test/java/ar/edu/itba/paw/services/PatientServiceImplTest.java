@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -31,13 +33,13 @@ public class PatientServiceImplTest {
     private static final String EMAIL = "john@test.com";
     private static final String PASSWORD = "hashedpassword";
     private static final String PHONE = "12345678";
-    private static final String LANGUAGE = "en";
+    private static final List<Locale> LANGUAGE = List.of(new Locale("en"));
     private static final boolean VERIFIED = true;
     private static final long COVERAGE_ID = 1L;
     private static final long NEIGHBORHOOD_ID = 1L;
     private static final Coverage COVERAGE = new Coverage(COVERAGE_ID, "Coverage A");
     private static final Neighborhood NEIGHBORHOOD = new Neighborhood(NEIGHBORHOOD_ID, "Neighborhood A");
-    private static final Patient PATIENT = new Patient(NAME, LAST_NAME, EMAIL, PASSWORD, PHONE, LANGUAGE, COVERAGE, NEIGHBORHOOD, VERIFIED);
+    private static final Patient PATIENT = new Patient(NAME, LAST_NAME, EMAIL, PASSWORD, PHONE, LANGUAGE.toString(), COVERAGE, NEIGHBORHOOD, VERIFIED);
 
     @Mock
     private PasswordEncoder passwordEncoder;
