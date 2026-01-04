@@ -1,9 +1,8 @@
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {Popover, PopoverTrigger} from "@/components/ui/popover.tsx";
+import {Popover, PopoverTrigger, PopoverContent} from "@/components/ui/popover.tsx";
 import {ChevronDown} from "lucide-react";
-import {PopoverContent} from "@radix-ui/react-popover";
 import {useState} from "react";
 import type {AppointmentDTO} from "@/data/appointments.ts";
 import AppointmentCard from "@/components/AppointmentCard.tsx";
@@ -27,9 +26,9 @@ export const mockAppointment: AppointmentDTO = {
 };
 
 export default function AppointmentComponent() {
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("All History")
     const {t} = useTranslation();
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(t("appointment.all"))
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={"Appointment History"}>
@@ -38,16 +37,23 @@ export default function AppointmentComponent() {
                     Status:
                 </span>
                     <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger
-                            className="flex flex-row font-light items-center justify-center text-sm gap-2 border rounded-md p-1.5">{value}
-                            <ChevronDown size={20}/></PopoverTrigger>
+                        <PopoverTrigger asChild>
+                            <Button
+                                className="flex bg-white text-black hover:bg-gray-100 flex-row font-light items-center justify-center text-sm gap-2 border rounded-md p-1.5"
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={open}
+                            >
+                                {value}
+                                <ChevronDown size={20}/>
+                            </Button>
+                        </PopoverTrigger>
                         <PopoverContent className="min-w-fit max-w-28 p-0">
-                            <Button value="All History" onClick={(e) => {
+                            <Button value={t("appointment.all")} onClick={(e) => {
                                 setValue(e.currentTarget.value);
                                 setOpen(false)
                             }}
-                                    className="w-full text-xs bg-white font-light hover:bg-gray-100 hover:text-black flex text-(--text-light) justify-baseline">All
-                                History</Button>
+                                    className="w-full text-xs bg-white font-light hover:bg-gray-100 hover:text-black flex text-(--text-light) justify-baseline">{t("appointment.all")}</Button>
                             {appointmentStatus.map(a => (
                                 <Button value={t(a)} onClick={(e) => {
                                     setValue(e.currentTarget.value);
