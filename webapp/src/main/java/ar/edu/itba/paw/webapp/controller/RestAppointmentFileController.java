@@ -94,7 +94,7 @@ public class RestAppointmentFileController {
     public Response uploadDoctorFiles(@PathParam("appointmentId") final long appointmentId,
                                      final FormDataMultiPart multipart) {
 
-        MultipartFile file = FileUtils.requireSingleFile(multipart, "files");
+        MultipartFile file = FileUtils.requireSinglePdf(multipart, "files");
         AppointmentFile createdFile = appointmentFileService.create(file,"doctor" , appointmentId);
         return Response.created(buildLocation(appointmentId, createdFile)).build();
     }
@@ -106,7 +106,7 @@ public class RestAppointmentFileController {
     public Response uploadPatientFiles(@PathParam("appointmentId") final long appointmentId,
                                 final FormDataMultiPart multipart) {
 
-        MultipartFile file = FileUtils.requireSingleFile(multipart, "files");
+        MultipartFile file = FileUtils.requireSinglePdf(multipart, "file");
         AppointmentFile createdFile = appointmentFileService.create(file,"patient" , appointmentId);
         return Response.created(buildLocation(appointmentId, createdFile)).build();
     }

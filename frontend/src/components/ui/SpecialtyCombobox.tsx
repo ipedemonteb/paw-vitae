@@ -28,7 +28,7 @@ type ComboboxProps = {
     contentClassName?: string;
 };
 
-export function Combobox({ className, buttonClassName, contentClassName }: ComboboxProps) {
+export function SpecialtyCombobox({ className, buttonClassName, contentClassName }: ComboboxProps) {
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState("");
     const { specialties, loading } = useSpecialties();
