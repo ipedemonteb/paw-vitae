@@ -8,11 +8,9 @@ import java.util.Optional;
 
 public interface ImageService {
 
-    Images create(MultipartFile image, long doctorId);
+    long create(MultipartFile image, long doctorId);
 
     Optional<Images> findById(long id);
-
-    Optional<Images> findByDoctorId(long id);
 
     void deleteImage(long id);
 

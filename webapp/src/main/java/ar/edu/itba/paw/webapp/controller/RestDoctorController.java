@@ -223,7 +223,7 @@ public class RestDoctorController {
     @Path("/{id:\\d+}/image")
     @Produces({"image/png", "image/jpeg", "image/jpg"})
     public Response getImage(@PathParam("id") final long id) {
-        final Images image = imageService.findByDoctorId(id).orElseThrow(NotFoundException::new);
+        final Images image = doctorService.getDoctorImage(id).orElseThrow(NotFoundException::new);
         byte[] imageData = image.getImage();
         return Response.ok(imageData).build(); //TODO: SHOULD I CACHE?
     }
@@ -234,7 +234,7 @@ public class RestDoctorController {
             @Valid @NotNull DoctorForm doctorForm,
             @Context HttpHeaders headers
     ) {
-        Doctor doctor = this.doctorService.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), headers.getAcceptableLanguages(), doctorForm.getImage(), doctorForm.getSpecialties(), doctorForm.getCoverages(), doctorForm.getDoctorOfficeForm());
+        Doctor doctor = this.doctorService.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), headers.getAcceptableLanguages(), doctorForm.getImageId(), doctorForm.getSpecialties(), doctorForm.getCoverages(), doctorForm.getDoctorOfficeForm());
         return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(doctor.getId())).build()).build();
     }
 
@@ -268,7 +268,7 @@ public class RestDoctorController {
             @Valid @NotNull UpdateDoctorForm updateDoctorForm
     ) {
         Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
-        this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(), updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages(), updateDoctorForm.getImage());
+        this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(), updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages(), updateDoctorForm.getImageId());
         return Response.noContent().build();
     }
     @PUT
@@ -311,7 +311,8 @@ public class RestDoctorController {
     public Response uploadImage(final FormDataMultiPart multipart,
                                 @PathParam("id") final long id) {
         MultipartFile file = FileUtils.requireSingleImage(multipart, "file");
-        imageService.create(file, id);
+        long imageId = imageService.create(file, id);
+        doctorService.setImage(id, imageId);
         return Response.noContent().build();
     }
 

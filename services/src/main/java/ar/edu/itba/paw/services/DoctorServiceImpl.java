@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -45,10 +44,9 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, MultipartFile image, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, long imageId, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm) {
         String language = locales.isEmpty() ? Locale.ENGLISH.getLanguage() : locales.getFirst().getLanguage();
         LOGGER.debug("Creating doctor with name: {}, lastName: {}, email: {}, phone: {}, language: {}, specialties: {}, coverages: {}", name, lastName, email, phone, language, specialties, coverages);
-        Images img = imageService.create(image);
 
         String passwordEncoded = passwordEncoder.encode(password);
         List<Specialty> specialtiesList = new ArrayList<>();
@@ -61,7 +59,7 @@ public class DoctorServiceImpl implements DoctorService {
             Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
             coveragesList.add(coverage);
         }
-        Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, (img == null ? null : img.getId()), specialtiesList, coveragesList);
+        Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, imageId, specialtiesList, coveragesList);
         List<DoctorOffice> doctorOffices = doctorOfficeService.transformToDoctorOffice(doctor, doctorOfficeForm);
         doctor.setDoctorOffices(doctorOffices);
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
@@ -108,7 +106,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages, MultipartFile image) {
+    public void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages, long imageId) {
         LOGGER.debug("Updating doctor with id {}, name: {}, lastName: {}, phone: {}, specialties: {}, coverages: {}", doctor.getId(), name, lastName, phone, specialties, coverages);
 
             doctor.setName(name);
@@ -120,18 +118,8 @@ public class DoctorServiceImpl implements DoctorService {
 
             List<Coverage> newCoverages = coverageService.findByIds(coverages);
             doctor.setCoverageList(newCoverages);
+            setImage(doctor.getId(), imageId);
 
-            if (image != null && !image.isEmpty()) {
-                Long newImage = imageService.create(image).getId();
-                Images oldImage = null;
-                if (doctor.getImageId() != null) {
-                    oldImage = imageService.findById(doctor.getImageId()).orElse(null);
-                }
-                doctor.setImageId(newImage);
-                if (oldImage != null) {
-                    imageService.deleteImage(oldImage.getId());
-                }
-            }
         LOGGER.info("Doctor updated successfully: id={}", doctor.getId());
     }
 
@@ -149,6 +137,18 @@ public class DoctorServiceImpl implements DoctorService {
             imageService.deleteImage(oldImage.getId());
         }
         LOGGER.info("Doctor image updated successfully: id={}", doctor.getId());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<Images> getDoctorImage(long doctorId) {
+        LOGGER.debug("Getting image for doctor with id {}", doctorId);
+        Optional<Doctor> doctorOpt = doctorDao.getById(doctorId);
+        if (doctorOpt.isEmpty() || doctorOpt.get().getImageId() == null) {
+            LOGGER.warn("No image found for doctor with id {}", doctorId);
+            return Optional.empty();
+        }
+        return imageService.findById(doctorOpt.get().getImageId());
     }
 
 

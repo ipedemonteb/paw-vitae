@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface DoctorService {
 
-    Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, MultipartFile image, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm);
+    Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, long imageId, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm);
 
     Optional<Doctor> getById(final long id);
 
@@ -19,11 +19,13 @@ public interface DoctorService {
 
     Optional<Doctor> getByEmail(String email);
 
-     void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages,MultipartFile image);
+     void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages,long imageId);
 
     void UpdateDoctorRating(long id, long rating);
 
     void setImage(long doctorId, long imageId);
+
+    Optional<Images> getDoctorImage(long doctorId);
 
     Page<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction, int page, int pageSize);
 
