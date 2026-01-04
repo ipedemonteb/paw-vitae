@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -59,75 +60,42 @@ public class AppointmentFileServiceImplTest {
     private AppointmentFileServiceImpl appointmentFileService;
 
     @Test
-    public void testCreateAppointmentFileEmptyLength() {
-        //Preconditions
-        MultipartFile[] file = new MultipartFile[0];
-
-        //Exercise
-        List<AppointmentFile> appointmentFiles = appointmentFileService.create(file, UPLOADER, APPOINTMENT_ID);
-
-        //Postconditions
-        assertNull(appointmentFiles);
-    }
-
-    @Test
     public void testCreateAppointmentWithNullFile() {
-        //Preconditions
-        when(appointmentService.getById(anyLong())).thenReturn(Optional.of(APPOINTMENT));
-        MultipartFile[] file = new MultipartFile[1];
-        file[0] = null;
-
-        //Exercise
-        List<AppointmentFile> appointmentFiles = appointmentFileService.create(file, UPLOADER, APPOINTMENT_ID);
-
-        //Postconditions
-        assertTrue(appointmentFiles.isEmpty());
+        assertThrows(IllegalArgumentException.class,
+                () -> appointmentFileService.create(null, UPLOADER, APPOINTMENT_ID));
     }
 
     @Test
     public void testCreateAppointmentWithEmptyFile() {
-        //Preconditions
-        when(appointmentService.getById(anyLong())).thenReturn(Optional.of(APPOINTMENT));
-        MultipartFile[] file = new MultipartFile[1];
         MultipartFile emptyFile = mock(MultipartFile.class);
-        file[0] = emptyFile;
         when(emptyFile.isEmpty()).thenReturn(true);
-
-        //Exercise
-        List<AppointmentFile> appointmentFiles = appointmentFileService.create(file, UPLOADER, APPOINTMENT_ID);
-
-        //Postconditions
-        assertTrue(appointmentFiles.isEmpty());
+        assertThrows(IllegalArgumentException.class,
+                () -> appointmentFileService.create(emptyFile, UPLOADER, APPOINTMENT_ID));
     }
 
     @Test
     public void testCreateAppointmentWithInvalidAppointmentId() {
         //Preconditions
-        MultipartFile[] files = new MultipartFile[1];
         MultipartFile file = mock(MultipartFile.class);
-        files[0] = file;
+        when(file.isEmpty()).thenReturn(false);
 
-        //Exercise & Postconditions
-        assertThrows(AppointmentNotFoundException.class, () ->
-                appointmentFileService.create(files, UPLOADER, APPOINTMENT_ID)
-        );
+        assertThrows(AppointmentNotFoundException.class,
+                () -> appointmentFileService.create(file, UPLOADER, APPOINTMENT_ID));
     }
 
     @Test
-    public void testCreateAppointment() {
-        //Preconditions
-        MultipartFile[] files = new MultipartFile[1];
+    public void testCreateAppointment() throws IOException {
         MultipartFile file = mock(MultipartFile.class);
-        files[0] = file;
         when(file.isEmpty()).thenReturn(false);
+        when(file.getOriginalFilename()).thenReturn("test.pdf");
+        when(file.getBytes()).thenReturn(new byte[]{1, 2});
         when(appointmentService.getById(anyLong())).thenReturn(Optional.of(APPOINTMENT));
+        when(appointmentFileDao.create(anyString(), any(), anyString(), any())).thenReturn(APPOINTMENT_FILE);
 
-        //Exercise
-        List<AppointmentFile> appointmentFiles = appointmentFileService.create(files, UPLOADER, APPOINTMENT_ID);
+        AppointmentFile created = appointmentFileService.create(file, UPLOADER, APPOINTMENT_ID);
 
-        //Postconditions
-        assertNotNull(appointmentFiles);
-        assertFalse(appointmentFiles.isEmpty());
+        assertNotNull(created);
+        assertEquals(APPOINTMENT_FILE, created);
     }
 
     @Test

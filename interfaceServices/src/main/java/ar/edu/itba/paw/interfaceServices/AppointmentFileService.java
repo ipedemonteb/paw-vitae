@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface AppointmentFileService {
 
-    List<AppointmentFile> create(MultipartFile[] files, String uploader_role, long appointment_id);
+    AppointmentFile create(MultipartFile file, String uploader_role, long appointment_id);
 
     Optional<AppointmentFile> getById(long id);
 

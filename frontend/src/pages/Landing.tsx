@@ -33,31 +33,31 @@ function Landing() {
 }
 
 const heroContainer =
-    "relative overflow-visible block pt-[60px] pb-[80px] px-[20px] mx-auto max-w-[1200px] w-full";
+    "relative overflow-visible block pt-16 pb-20 px-5 mx-auto max-w-6xl w-full";
 const heroContent =
-    "flex-[1.5] max-w-[700px] box-border";
+    "flex-[1.5] max-w-2xl box-border";
 const heroTitle =
-    "text-[48px] font-[700] leading-[1.2] mb-[20px] text-[var(--text-color)]";
+    "text-5xl font-bold leading-[1.2] mb-5 text-[var(--text-color)]";
 const heroSubtitle =
-    "text-[18px] font-medium text-[var(--text-light)] mb-[30px]";
+    "text-lg font-medium text-[var(--text-light)] mb-8";
 const heroSearch =
-    "mb-[40px] w-full bg-transparent";
+    "mb-10 w-full bg-transparent";
 const searchBar =
-    "flex overflow-hidden rounded-md border border-gray-200 bg-white shadow-md";
+    "flex items-stretch overflow-hidden rounded-md border border-gray-200 bg-white shadow-md";
 const heroInput =
-    "border-0 rounded-none text-[var(--text-light)] py-6 px-4 shadow-none focus-visible:ring-0 hover:bg-[var(--gray-100)]";
+    "flex-1 h-12 border-0 rounded-none px-4 text-[var(--text-light)] shadow-none focus-visible:ring-0 hover:bg-[var(--gray-100)]";
 const heroCombo =
-    "border-0 rounded-none py-6 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
+    "h-12 border-0 rounded-none px-4 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
 const heroButton =
-    "rounded-none py-6.25 px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)] cursor-pointer";
+    "h-12 rounded-none px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)] cursor-pointer";
 const heroStats =
-    "flex gap-[40px]";
+    "flex gap-10";
 const statsItem =
     "flex flex-col box-border";
 const statsNumber =
-    "text-[36px] font-[700] leading-[1.2] text-[var(--primary-color)]";
+    "text-4xl font-bold leading-[1.2] text-[var(--primary-color)]";
 const statsLabel =
-    "text-[18px] text-[var(--text-light)]";
+    "text-lg text-[var(--text-light)]";
 const heroSpace =
     "flex-1 flex justify-end relative";
 
@@ -98,25 +98,25 @@ function HeroSection() {
 }
 
 const container =
-    "mx-auto max-w-[1200px] w-full px-[20px] py-[60px] flex flex-col items-center text-center";
+    "mx-auto max-w-6xl w-full px-5 py-16 flex flex-col items-center text-center";
 const sectionHeader =
-    "max-w-[800px] text-center mx-auto mt-0 mb-[60px]";
+    "max-w-3xl text-center mx-auto mt-0 mb-16";
 const sectionTag =
-    "inline-block py-[6px] px-[16px] bg-[var(--landing-light)] text-[var(--primary-color)] rounded-[20px] text-[14px] font-[500] mb-[16px]";
+    "inline-block py-1.5 px-4 bg-[var(--landing-light)] text-[var(--primary-color)] rounded-2xl text-sm font-medium mb-4";
 const sectionTitle =
-    "mb-4 rounded-full px-4 py-[6px] text-[36px] font-[700] text-[var(--text-color)]";
+    "mb-4 rounded-full px-4 py-1.5 text-4xl font-bold text-[var(--text-color)]";
 const sectionText =
-    "text-[18px] text-[var(--text-light)]";
+    "text-lg text-[var(--text-light)]";
 const sectionCards =
-    "max-w-[1000px] w-full flex flex-col md:flex-row gap-[30px] md:gap-[50px] items-stretch";
+    "max-w-5xl w-full flex flex-col md:flex-row gap-8 md:gap-12 items-stretch";
 const sectionCard =
-    "flex-1 px-[30px] py-[40px] gap-[0] flex flex-col items-center text-center";
+    "flex-1 px-8 py-10 gap-0 flex flex-col items-center text-center";
 const sectionIcons =
-    "w-[70px] h-[70px] mb-[24px] flex items-center justify-center bg-[var(--landing-light)] text-[var(--primary-color)] rounded-[50%] text-[28px]";
+    "w-16 h-16 mb-6 flex items-center justify-center bg-[var(--landing-light)] text-[var(--primary-color)] rounded-full text-3xl";
 const sectionPersonIcon =
-    "text-[var(--landing-light)] bg-[var(--primary-color)] rounded-[50%]";
+    "text-[var(--landing-light)] bg-[var(--primary-color)] rounded-full";
 const sectionCardTitle =
-    "text-[22px] font-[600] mb-[16px] text-[var(--text-color)]";
+    "text-xl font-semibold mb-4 text-[var(--text-color)]";
 const sectionCardText =
     "text-[var(--text-light)]";
 
@@ -159,23 +159,25 @@ function MissionSection() {
 }
 
 const stepsSection =
-    "flex flex-col gap-[40px] max-w-[800px] mx-auto";
+    "flex flex-col gap-10 max-w-3xl mx-auto";
 const step =
-    "flex items-center gap-[30px] relative";
+    "flex items-center gap-8 relative";
 const stepNumber =
-    "shrink-0 w-[60px] h-[60px] flex items-center justify-center bg-[var(--primary-color)] rounded-[50%] text-[var(--white)] font-[700] text-[24px]";
+    "shrink-0 flex-none size-16 aspect-square grid place-items-center " +
+    "bg-[var(--primary-color)] rounded-full text-[var(--white)] font-bold text-2xl";
 const stepContent =
-    "p-[30px] gap-[20px] flex flex-row items-center";
+    "p-8 gap-5 flex flex-row items-center";
 const stepDescription =
     "flex flex-col items-start text-left";
 const stepIcon =
-    "w-[60px] h-[60px] flex items-center justify-center rounded-[12px] text-[var(--primary-color)] bg-[var(--landing-light)]";
+    "shrink-0 flex-none size-16 aspect-square grid place-items-center " +
+    "rounded-xl text-[var(--primary-color)] bg-[var(--landing-light)]";
 const stepTitle =
-    "text-[22px] font-[600] text-[var(--text-color)]";
+    "text-xl font-semibold text-[var(--text-color)]";
 const stepText =
     "text-[var(--text-light)]";
 const startButton =
-    "mt-[60px] p-[26px] text-[16px] font-[500] bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
+    "mt-16 p-6.5 text-base font-medium bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 function ProcessSection() {
     return (
@@ -303,7 +305,7 @@ const ratings = [
 const ratingsContainer =
     "w-full max-w-[900px] mx-auto";
 const carousel =
-    "relative max-w-[800px] w-full mx-auto px-12 mt-[-20px]";
+    "relative max-w-3xl w-full mx-auto px-12 -mt-5";
 const carouselContent =
     "-ml-4 py-2";
 const carouselItem =
