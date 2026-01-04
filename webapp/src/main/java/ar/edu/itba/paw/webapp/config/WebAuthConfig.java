@@ -167,7 +167,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // TODO: ACA DEBERIA HABER UNA VALIDACION AL ESTILO DE hasAppointmentWithPatient" asi solo los doctores que tuvieron citas con el paciente pueden ver su info"
 
 
-
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/coverages/**").permitAll()
                 .antMatchers("/specialties/**").permitAll()
