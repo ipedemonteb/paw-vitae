@@ -18,16 +18,14 @@ public class UpdateDoctorForm {
     @NotEmpty
     private String lastName;
 
-    @FileType(types = {"image/jpeg", "image/png", "image/jpg"},message = "{fileType.invalid}")
-    @FileSize(max = 2097154)
-    private MultipartFile image;
+    private long imageId;
 
-    public MultipartFile getImage() {
-        return image;
+    public long getImageId() {
+        return imageId;
     }
 
-    public void setImage(MultipartFile image) {
-        this.image = image;
+    public void setImageId(long imageId) {
+        this.imageId = imageId;
     }
 
     @NotEmpty
