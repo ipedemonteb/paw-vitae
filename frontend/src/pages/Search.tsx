@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel } from "lucide-react";
-import { Combobox } from "@/components/ui/combobox.tsx";
-import {Button} from "@/components/ui/button.tsx";
+import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2 } from "lucide-react";
+import { SpecialtyCombobox } from "@/components/ui/SpecialtyCombobox.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { ButtonGroup } from "@/components/ui/button-group.tsx";
+import SearchListCard from "@/components/SearchListCard.tsx";
+import SearchGridCard from "@/components/SearchGridCard.tsx";
 
 const container =
     "px-[24px] mx-auto max-w-6xl w-full";
@@ -68,10 +71,10 @@ const availabilityButton =
 const availabilityButtonBase =
     "h-10 px-4 rounded-md";
 const applyButton =
-    "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white px-8 py-5 rounded-md font-[400] text-sm";
+    "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-dark)] " +
+    "hover:border-[var(--primary-dark)] hover:text-white px-8 py-5 rounded-md font-[400] text-sm cursor-pointer";
 
 function FilterSection() {
-
     const [selectedDays, setSelectedDays] = useState<Record<string, boolean>>({
         Monday: false,
         Tuesday: false,
@@ -94,26 +97,27 @@ function FilterSection() {
                         <Stethoscope className={iconSize} />
                         <p>Specialty</p>
                     </div>
-                    <Combobox className={filterCombo} />
+                    <SpecialtyCombobox className={filterCombo} />
                 </div>
                 <div className={filterGroup}>
                     <div className={filterLabel}>
                         <ShieldPlus className={iconSize} />
                         <p>Coverages</p>
                     </div>
-                    <Combobox className={filterCombo} />
+                    <SpecialtyCombobox className={filterCombo} />
                 </div>
                 <div className={filterGroup}>
                     <div className={filterLabel}>
                         <ChevronsUpDown className={iconSize} />
                         <p>Sort by</p>
                     </div>
-                    <Combobox className={filterCombo} />
+                    <SpecialtyCombobox className={filterCombo} />
                 </div>
             </div>
+
             <div className={availabilityContainer}>
                 <div className={availabilityTitle}>
-                    <Calendar className={iconSize}/>
+                    <Calendar className={iconSize} />
                     <p>Availability</p>
                 </div>
                 <div className={availabilityContent}>
@@ -132,7 +136,7 @@ function FilterSection() {
                         ))}
                     </div>
                     <Button className={applyButton}>
-                        <Funnel className=""/>
+                        <Funnel className="" />
                         Apply Filters
                     </Button>
                 </div>
@@ -141,12 +145,73 @@ function FilterSection() {
     );
 }
 
-const resultContainer =
-    "";
+const resultHeader =
+    "flex flex-row items-center justify-between gap-4 mb-4";
+const resultText =
+    "text-sm text-[var(--text-light)]";
+const formatBtnBase =
+    "bg-white border border-[var(--primary-color)] cursor-pointer";
+const formatBtnActive =
+    "bg-[var(--primary-color)] text-white hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)]";
+const formatBtnInactive =
+    "text-[var(--primary-color)] hover:bg-[var(--gray-100)] hover:text-[var(--primary-dark)]";
 
 function ResultSection() {
+    const [view, setView] = useState<"list" | "grid">("list");
+
     return (
-        <div className={resultContainer}>
+        <div>
+            <div className={resultHeader}>
+                <p className={resultText}>20 doctors found</p>
+                <div>
+                    <ButtonGroup orientation="horizontal">
+                        <Button
+                            type="button"
+                            onClick={() => setView("list")}
+                            className={`${formatBtnBase} ${view === "list" ? formatBtnActive : formatBtnInactive}`}
+                        >
+                            <List />
+                        </Button>
+                        <Button
+                            type="button"
+                            onClick={() => setView("grid")}
+                            className={`${formatBtnBase} ${view === "grid" ? formatBtnActive : formatBtnInactive}`}
+                        >
+                            <Grid2X2 />
+                        </Button>
+                    </ButtonGroup>
+                </div>
+            </div>
+            {view === "list" ? <ResultList/> : <ResultGrid/>}
+        </div>
+    );
+}
+
+const resultContentList =
+    "flex flex-col gap-4 mb-6";
+
+function ResultList() {
+    return (
+        <div className={resultContentList}>
+            <SearchListCard />
+            <SearchListCard />
+            <SearchListCard />
+        </div>
+    )
+}
+
+const resultContentGrid =
+    "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6";
+
+function ResultGrid() {
+    return (
+        <div className={resultContentGrid}>
+            <SearchGridCard />
+            <SearchGridCard />
+            <SearchGridCard />
+            <SearchGridCard />
+            <SearchGridCard />
+            <SearchGridCard />
         </div>
     )
 }
