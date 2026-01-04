@@ -23,7 +23,8 @@
       "confirmado": "Confirmed",
       "completo": "Completed",
       "cancelado": "Cancelled"
-    }
+    },
+    "all": "All"
   },
   "login": {
     "welcome_title": "Welcome Back!",
