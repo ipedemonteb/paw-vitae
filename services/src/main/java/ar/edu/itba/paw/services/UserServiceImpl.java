@@ -146,6 +146,7 @@ public class UserServiceImpl implements UserService {
             return false;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Long> getImageId(User user) {
         if (user == null || user instanceof Patient) {

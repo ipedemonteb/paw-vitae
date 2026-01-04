@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.CoverageNotFoundException;
 import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +134,23 @@ public class DoctorServiceImpl implements DoctorService {
             }
         LOGGER.info("Doctor updated successfully: id={}", doctor.getId());
     }
+
+    @Transactional
+    @Override
+    public void setImage(long doctorId, long imageId) {
+        LOGGER.debug("Updating doctor with id {}, imageId: {}", doctorId, imageId);
+        Doctor doctor = doctorDao.getById(doctorId).orElseThrow(UserNotFoundException::new);
+        Images oldImage = null;
+        if (doctor.getImageId() != null) {
+            oldImage = imageService.findById(doctor.getImageId()).orElse(null);
+        }
+        doctor.setImageId(imageId);
+        if (oldImage != null) {
+            imageService.deleteImage(oldImage.getId());
+        }
+        LOGGER.info("Doctor image updated successfully: id={}", doctor.getId());
+    }
+
 
     @Transactional(readOnly = true)
     @Override

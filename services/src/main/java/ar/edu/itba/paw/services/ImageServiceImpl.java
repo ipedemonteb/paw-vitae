@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.ImageDao;
+import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.interfaceServices.ImageService;
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.Images;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,16 +19,18 @@ import java.util.Optional;
 public class ImageServiceImpl implements ImageService {
 
     private final ImageDao imageDao;
+    private final DoctorService doctorService;
     Logger LOGGER = LoggerFactory.getLogger(ImageServiceImpl.class);
 
     @Autowired
-    public ImageServiceImpl(ImageDao imageDao) {
+    public ImageServiceImpl(ImageDao imageDao, DoctorService doctorService) {
         this.imageDao = imageDao;
+        this.doctorService = doctorService;
     }
 
     @Transactional
     @Override
-    public Images create(MultipartFile image) {
+    public Images create(MultipartFile image, long doctorId) {
         LOGGER.debug("Creating image with name '{}' and size {} bytes", image.getOriginalFilename(), image.getSize());
         if (image.isEmpty()) {
             LOGGER.warn("Image is empty");
@@ -39,6 +43,7 @@ public class ImageServiceImpl implements ImageService {
             LOGGER.error("Error while creating image", e);
             return null;
         }
+        doctorService.setImage(doctorId, toReturnImage.getId());
         LOGGER.info("Image created with id: {}", toReturnImage.getId());
         return toReturnImage;
     }
@@ -51,6 +56,20 @@ public class ImageServiceImpl implements ImageService {
             return Optional.empty();
         }
         return imageDao.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<Images> findByDoctorId(long id) {
+        LOGGER.debug("Finding image for Doctor with id {}", id);
+        if (id <= -1) {
+            return Optional.empty();
+        }
+        Optional<Doctor> doctor = doctorService.getById(id);
+        if (doctor.isEmpty() || doctor.get().getImageId() == null) {
+            return Optional.empty();
+        }
+        return imageDao.findById(doctor.get().getImageId());
     }
 
     @Override

@@ -7,10 +7,13 @@ import ar.edu.itba.paw.models.exception.DoctorOfficeNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.*;
+import ar.edu.itba.paw.webapp.utils.FileUtils;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -38,12 +41,14 @@ public class RestDoctorController {
     private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
     private final DoctorOfficeSpecialtyService doctorOfficeSpecialtyService;
     private final RatingService ratingService;
+    private final ImageService imageService;
+
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, RatingService ratingService) {
+    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, RatingService ratingService, ImageService imageService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
@@ -54,7 +59,7 @@ public class RestDoctorController {
         this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
         this.doctorOfficeSpecialtyService = doctorOfficeSpecialtyService;
         this.ratingService = ratingService;
-
+        this.imageService = imageService;
     }
 
 
@@ -214,6 +219,15 @@ public class RestDoctorController {
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
     }
 
+    @GET
+    @Path("/{id:\\d+}/image")
+    @Produces({"image/png", "image/jpeg", "image/jpg"})
+    public Response getImage(@PathParam("id") final long id) {
+        final Images image = imageService.findByDoctorId(id).orElseThrow(NotFoundException::new);
+        byte[] imageData = image.getImage();
+        return Response.ok(imageData).build(); //TODO: SHOULD I CACHE?
+    }
+
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response createDoctor(
@@ -290,4 +304,15 @@ public class RestDoctorController {
         this.doctorProfileService.update(doctor, doctorForm.getBiography(), doctorForm.getDescription());
         return Response.noContent().build();
     }
+
+    @PUT
+    @Path("/{id:\\d+}/image")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadImage(final FormDataMultiPart multipart,
+                                @PathParam("id") final long id) {
+        MultipartFile file = FileUtils.requireSingleImage(multipart, "file");
+        imageService.create(file, id);
+        return Response.noContent().build();
+    }
+
 }

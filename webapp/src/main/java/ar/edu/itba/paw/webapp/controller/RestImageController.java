@@ -23,7 +23,6 @@ import java.util.Set;
 public class RestImageController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestImageController.class);
-    private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of("image/png", "image/jpeg", "image/jpg");
 
     private final ImageService imageService;
     @Context

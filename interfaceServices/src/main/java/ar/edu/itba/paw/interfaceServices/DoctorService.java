@@ -23,6 +23,8 @@ public interface DoctorService {
 
     void UpdateDoctorRating(long id, long rating);
 
+    void setImage(long doctorId, long imageId);
+
     Page<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction, int page, int pageSize);
 
     String getAllDoctorsDisplayCount();
