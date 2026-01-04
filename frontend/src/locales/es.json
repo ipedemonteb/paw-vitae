@@ -18,6 +18,13 @@
     "ginecologia": "Ginecología",
     "traumatologia": "Traumatología"
   },
+  "appointment": {
+    "status": {
+      "confirmado": "Confirmado",
+      "completo": "Completado",
+      "cancelado": "Cancelado"
+    }
+  },
   "login": {
     "welcome_title": "Bienvenido de nuevo!",
     "welcome_subtitle": "Tu salud es nuestra prioridad. Agenda tu cita ahora!",

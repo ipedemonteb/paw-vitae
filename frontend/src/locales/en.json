@@ -18,6 +18,13 @@
     "ginecologia": "Gynecology",
     "traumatologia": "Traumatology"
   },
+  "appointment": {
+    "status": {
+      "confirmado": "Confirmed",
+      "completo": "Completed",
+      "cancelado": "Cancelled"
+    }
+  },
   "login": {
     "welcome_title": "Welcome Back!",
     "welcome_subtitle": "Your health is our priority. Schedule your appointment now!",
