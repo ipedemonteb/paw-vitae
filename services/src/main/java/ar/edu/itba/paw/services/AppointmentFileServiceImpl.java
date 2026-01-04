@@ -35,30 +35,26 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
 
     @Transactional
     @Override
-    public List<AppointmentFile> create(MultipartFile[] files, String uploader_role, long appointment_id) {
-        LOGGER.debug("Creating appointment files: {} for appointment with id {}", files, appointment_id);
-        if (files.length == 0) {
-            return null;
+    public AppointmentFile create(MultipartFile file, String uploader_role, long appointment_id) {
+        LOGGER.debug("Creating appointment file for appointment with id {}", appointment_id);
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Empty file payload");
         }
+
         Appointment appointment = appointmentService.getById(appointment_id).orElseThrow(AppointmentNotFoundException::new);
-        List<AppointmentFile> appointmentFiles = new ArrayList<>();
-        for (MultipartFile file : files) {
-            if (file == null || file.isEmpty()) {
-                continue;
+        try {
+            AppointmentFile createdFile = appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment);
+            if ("doctor".equals(uploader_role)) {
+                Doctor doctor = appointment.getDoctor();
+                Patient patient = appointment.getPatient();
+                mailService.sendFileUploadMail(doctor, patient, appointment, List.of(createdFile));
             }
-            try {
-                appointmentFiles.add(appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment));
-            } catch (IOException e) {
-                LOGGER.error("Error while adding files {} ", files, e);
-            }
+            LOGGER.info("Appointment file created successfully for appointment with id {}", appointment_id);
+            return createdFile;
+        } catch (IOException e) {
+            LOGGER.error("Error while adding file {}", file.getOriginalFilename(), e);
+            throw new RuntimeException("Failed to persist uploaded file", e);
         }
-        if(uploader_role.equals("doctor") && !appointmentFiles.isEmpty()) {
-            Doctor doctor = appointment.getDoctor();
-            Patient patient = appointment.getPatient();
-            mailService.sendFileUploadMail(doctor, patient, appointment, appointmentFiles);
-        }
-        LOGGER.info("Appointment files created successfully for appointment with id {}", appointment_id);
-        return appointmentFiles;
     }
 
     @Transactional(readOnly = true)

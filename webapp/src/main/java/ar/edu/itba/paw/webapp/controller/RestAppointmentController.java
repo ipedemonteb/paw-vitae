@@ -94,10 +94,9 @@ public class RestAppointmentController {
     @PATCH
     @Path("/{id:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response cancel(@PathParam("id") final long id, @Valid @NotNull CancelAppointmentForm form) {
-        if (!appointmentService.cancelAppointment(id, form.getUserId())) {
-            throw new BadRequestException("Appointment can not be cancelled");
-        }
+    public Response cancel(@PathParam("id") final long id,
+                           @QueryParam("userId") final Long userId) {
+        appointmentService.cancelAppointment(id, userId);
         return Response.noContent().build();
     }
 
