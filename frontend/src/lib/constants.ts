@@ -1,0 +1,1 @@
+export const appointmentStatus = ["appointment.status.confirmado","appointment.status.cancelado","appointment.status.completo"]

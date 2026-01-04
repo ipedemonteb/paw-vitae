@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card.tsx";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import { Quote, Star } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils.ts";
+import { clampRating } from "@/lib/utils.ts";
 
 export type RatingCardProps = React.ComponentPropsWithoutRef<"div"> & {
     comment: string;
@@ -13,11 +14,6 @@ export type RatingCardProps = React.ComponentPropsWithoutRef<"div"> & {
     timeAgo?: string;
     quoteIcon?: React.ReactNode;
 };
-
-function clampRating(rating: number) {
-    if (Number.isNaN(rating)) return 0;
-    return Math.max(0, Math.min(5, Math.round(rating)));
-}
 
 function initialsFromName(name: string) {
     const parts = name.trim().split(/\s+/).filter(Boolean);
