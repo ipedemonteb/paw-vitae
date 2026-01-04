@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -27,7 +28,7 @@ public class DoctorServiceImplTest {
     private static final String EMAIL = "jane@test.com";
     private static final String PASSWORD = "hashedpassword";
     private static final String PHONE = "987654321";
-    private static final String LANGUAGE = "es";
+    private static final List<Locale> LANGUAGE = List.of(new Locale("es"));
     private static final Specialty SPECIALTY = new Specialty(1L, "Cardiology");
     private static final Coverage COVERAGE = new Coverage(1L, "Coverage A");
 
