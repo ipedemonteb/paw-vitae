@@ -7,7 +7,7 @@ export default function AppLayout() {
         <div className="flex flex-col min-h-screen">
             <Header />
             <ScrollToTop />
-            <main className="flex-1 pt-[100px]">
+            <main className="flex-1">
                 <Outlet />
             </main>
         </div>

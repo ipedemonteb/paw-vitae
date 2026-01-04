@@ -36,7 +36,7 @@ function About() {
 }
 
 const heroContainer =
-    "relative overflow-visible block pt-16 pb-20 px-5 mx-auto max-w-6xl w-full";
+    "mt-25 relative overflow-visible block pt-16 pb-20 px-5 mx-auto max-w-6xl w-full";
 const heroContent =
     "flex-[1.5] max-w-2xl box-border";
 const heroTitle =
@@ -261,7 +261,6 @@ function ContactSection() {
                     Have questions or feedback? We'd love to hear from you.
                 </p>
             </div>
-
             <div className={contactContainer}>
                 <div className={contactDetails}>
                     <div className={contactData}>
@@ -275,7 +274,6 @@ function ContactSection() {
                             </p>
                         </div>
                     </div>
-
                     <div className={contactData}>
                         <div className={contactIcon}>
                             <Mail />
@@ -285,7 +283,6 @@ function ContactSection() {
                             <p className={contactText}>vitaepaw@gmail.com</p>
                         </div>
                     </div>
-
                     <div className={contactData}>
                         <div className={contactIcon}>
                             <Phone />
@@ -296,7 +293,6 @@ function ContactSection() {
                         </div>
                     </div>
                 </div>
-
                 <div className={contactMap}>
                     <div className="aspect-[16/10] w-full lg:aspect-auto lg:h-[520px]">
                         <iframe

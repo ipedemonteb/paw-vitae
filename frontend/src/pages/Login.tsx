@@ -3,7 +3,7 @@ import LoginContainer from "../components/LoginContainer.tsx";
 import LoginCard from "../components/LoginCard.tsx";
 
 const loginPage =
-    "flex-1 py-[30px] flex items-center justify-center bg-gray-100 min-h-[calc(100vh-100px)]";
+    "mt-25 flex-1 py-[30px] flex items-center justify-center bg-gray-100 min-h-[calc(100vh-100px)]";
 
 function Login() {
 
