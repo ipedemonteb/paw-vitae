@@ -12,10 +12,12 @@ const container =
 
 function Search() {
     return (
-        <div className={container}>
-            <HeroSection />
-            <FilterSection />
-            <ResultSection />
+        <div className="bg-[var(--background-light)] pt-22">
+            <div className={container}>
+                <HeroSection />
+                <FilterSection />
+                <ResultSection />
+            </div>
         </div>
     );
 }
@@ -188,7 +190,7 @@ function ResultSection() {
 }
 
 const resultContentList =
-    "flex flex-col gap-4 mb-6";
+    "flex flex-col gap-4 pb-6";
 
 function ResultList() {
     return (

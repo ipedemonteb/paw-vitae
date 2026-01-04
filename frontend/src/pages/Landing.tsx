@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 // TODO: internacionalizacion
 
 const heroSection=
-    "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
+    "mt-25 bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
 const grayBackground =
     "bg-[var(--background-light)]";
 
