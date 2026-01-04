@@ -15,9 +15,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public final class FileUtils {
 
+    private static final Set<String> ALLOWED_PDF_TYPES = Set.of("image/png", "image/jpeg", "image/jpg");
+    private static final Set<String> ALLOWED_FILE_TYPES = Set.of("application/pdf");
 
     public static MultipartFile[] getFiles(FormDataMultiPart multiPart, String field) {
         if (multiPart == null) {
@@ -62,6 +66,24 @@ public final class FileUtils {
             throw new BadRequestException("Exactly one file must be provided");
         }
         return files[0];
+    }
+
+    public static MultipartFile requireSingleImage(FormDataMultiPart multiPart, String field) {
+        MultipartFile file = requireSingleFile(multiPart, field);
+            String contentType = file.getContentType();
+            if (contentType == null || !ALLOWED_PDF_TYPES.contains(contentType.toLowerCase(Locale.ROOT))) {
+                throw new BadRequestException("Unsupported file type");
+            }
+        return file;
+    }
+
+    public static MultipartFile requireSinglePdf(FormDataMultiPart multiPart, String field) {
+        MultipartFile file = requireSingleFile(multiPart, field);
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_FILE_TYPES.contains(contentType.toLowerCase(Locale.ROOT))) {
+            throw new BadRequestException("Unsupported file type");
+        }
+        return file;
     }
 
     private static byte[] readBytes(FormDataBodyPart part) {

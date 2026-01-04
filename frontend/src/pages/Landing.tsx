@@ -1,16 +1,16 @@
 import { Input } from "@/components/ui/input.tsx";
-import { Combobox } from "@/components/ui/combobox.tsx";
+import { SpecialtyCombobox } from "@/components/ui/SpecialtyCombobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Search, PersonStandingIcon, Lightbulb, CalendarDays, ShieldPlus, ShieldCheck, Pointer } from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
-import { RatingCard } from "@/components/ui/rating.tsx";
+import { RatingCard } from "@/components/Rating.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
 import { Link } from "react-router-dom";
 
 // TODO: internacionalizacion
 
 const heroSection=
-    "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
+    "mt-25 bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
 const grayBackground =
     "bg-[var(--background-light)]";
 
@@ -74,7 +74,7 @@ function HeroSection() {
                 <div className={heroSearch}>
                     <div className={searchBar}>
                         <Input placeholder="Search by doctor name" className={heroInput} type="search"/>
-                        <Combobox className={heroCombo}></Combobox>
+                        <SpecialtyCombobox className={heroCombo}></SpecialtyCombobox>
                         <Button className={heroButton}>
                             <Search className="h-5 w-5"/>
                             Search
