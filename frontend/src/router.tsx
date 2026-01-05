@@ -8,6 +8,9 @@ import Search from "@/pages/Search.tsx";
 import AppointmentComponent from "@/components/AppointmentComponent.tsx";
 import PatientDashboardLayout from "@/pages/patient/PatientDashboardLayout.tsx";
 import PatientUpcoming from "@/pages/patient/PatientUpcoming.tsx";
+import PatientHistory from "@/pages/patient/PatientHistory.tsx";
+import PatientMedicalHistory from "@/pages/patient/PatientMedicalHistory.tsx";
+import PatientAccount from "@/pages/patient/PatientAccount.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -48,7 +51,19 @@ export const router = createBrowserRouter([
                     {
                         path: "upcoming",
                         element: <PatientUpcoming/>
-                    }
+                    },
+                    {
+                        path: "history",
+                        element: <PatientHistory/>
+                    },
+                    {
+                        path: "medical-history",
+                        element: <PatientMedicalHistory/>
+                    },
+                    {
+                        path: "account",
+                        element: <PatientAccount/>
+                    },
                 ]
             }
         ],
