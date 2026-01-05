@@ -1,7 +1,7 @@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu"
 import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/sheet"
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronDown, User, BriefcaseMedical, Menu, LogIn, ChartPie, LogOut } from "lucide-react";
 import { Link, useMatch } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -58,7 +58,7 @@ const navItemActive =
 
 function Header() {
 
-    const isLoggedIn = false;
+    const isLoggedIn = true;
 
     const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -231,7 +231,7 @@ function LoggedInComponent() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem className={dropDownItem}>
-                        <Link to="/register" className={dropDownItem}>
+                        <Link to="/patient/dashboard" className={dropDownItem}>
                             <ChartPie className="text-inherit" />
                             Dashboard
                         </Link>
