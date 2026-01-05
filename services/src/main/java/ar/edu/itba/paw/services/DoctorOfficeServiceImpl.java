@@ -3,9 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.DoctorOfficeDao;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exception.NeighborhoodNotFoundException;
-import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
+import ar.edu.itba.paw.models.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -175,7 +173,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
         for (DoctorOfficeForm form : forms) {
             if (form.getId() != null && !doctorOfficeIds.contains(form.getId())) {
-                throw new IllegalArgumentException("Access denied: Office ID " + form.getId() + " does not belong to doctor " + doctor.getId());
+                throw new ResourceOwnershipException();
             }
         }
     }
@@ -186,7 +184,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
                 .count();
 
         if (activeCount > MAX_OFFICES) {
-            throw new IllegalArgumentException("Max number of offices exceeded. Limit is " + MAX_OFFICES);
+            throw new BussinesRuleException("exception.business.tooManyOffices");
         }
     }
 
@@ -200,10 +198,10 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         for (DoctorOfficeForm form : forms) {
             if (Boolean.TRUE.equals(form.getActive())) {
                 if (form.getId() == null) {
-                    throw new IllegalArgumentException("Cannot activate a new office without availability slots.");
+                    throw new BussinesRuleException("exception.business.officeMustHaveAvailabilityToBeActive");
                 }
                 if (!officesWithSlots.contains(form.getId())) {
-                    throw new IllegalArgumentException("Cannot activate office " + form.getId() + " because it has no availability slots.");
+                    throw new IllegalArgumentException("exception.business.officeMustHaveAvailabilityToBeActive");
                 }
             }
         }
