@@ -18,16 +18,6 @@ public class UpdateDoctorForm {
     @NotEmpty
     private String lastName;
 
-    private long imageId;
-
-    public long getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(long imageId) {
-        this.imageId = imageId;
-    }
-
     @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "{phone.invalid}")
     private String phone;

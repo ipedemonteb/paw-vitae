@@ -51,8 +51,6 @@ public class DoctorForm {
     @NotEmpty
     private List<Long> coverages;
 
-    private long imageId;
-
     @NotEmpty
     @NotNull
     @Size(min = 1, max = 7)
@@ -125,14 +123,6 @@ public class DoctorForm {
 
     public void setCoverages(List<Long> coverages) {
         this.coverages = coverages;
-    }
-
-    public long getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(long imageId) {
-        this.imageId = imageId;
     }
 
     public List<DoctorOfficeForm> getDoctorOfficeForm() {

@@ -234,7 +234,7 @@ public class RestDoctorController {
             @Valid @NotNull DoctorForm doctorForm,
             @Context HttpHeaders headers
     ) {
-        Doctor doctor = this.doctorService.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), headers.getAcceptableLanguages(), doctorForm.getImageId(), doctorForm.getSpecialties(), doctorForm.getCoverages(), doctorForm.getDoctorOfficeForm());
+        Doctor doctor = this.doctorService.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), headers.getAcceptableLanguages(), doctorForm.getSpecialties(), doctorForm.getCoverages(), doctorForm.getDoctorOfficeForm());
         return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(doctor.getId())).build()).build();
     }
 
@@ -268,7 +268,7 @@ public class RestDoctorController {
             @Valid @NotNull UpdateDoctorForm updateDoctorForm
     ) {
         Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
-        this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(), updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages(), updateDoctorForm.getImageId());
+        this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(), updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages());
         return Response.noContent().build();
     }
     @PUT
