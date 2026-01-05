@@ -44,7 +44,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, long imageId, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm) {
         String language = locales.isEmpty() ? Locale.ENGLISH.getLanguage() : locales.getFirst().getLanguage();
         LOGGER.debug("Creating doctor with name: {}, lastName: {}, email: {}, phone: {}, language: {}, specialties: {}, coverages: {}", name, lastName, email, phone, language, specialties, coverages);
 
@@ -59,7 +59,8 @@ public class DoctorServiceImpl implements DoctorService {
             Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
             coveragesList.add(coverage);
         }
-        Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, imageId, specialtiesList, coveragesList);
+        //TODO: Maybe remove field imageId?
+        Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, null, specialtiesList, coveragesList);
         List<DoctorOffice> doctorOffices = doctorOfficeService.transformToDoctorOffice(doctor, doctorOfficeForm);
         doctor.setDoctorOffices(doctorOffices);
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
@@ -106,7 +107,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages, long imageId) {
+    public void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages) {
         LOGGER.debug("Updating doctor with id {}, name: {}, lastName: {}, phone: {}, specialties: {}, coverages: {}", doctor.getId(), name, lastName, phone, specialties, coverages);
 
             doctor.setName(name);
@@ -118,7 +119,6 @@ public class DoctorServiceImpl implements DoctorService {
 
             List<Coverage> newCoverages = coverageService.findByIds(coverages);
             doctor.setCoverageList(newCoverages);
-            setImage(doctor.getId(), imageId);
 
         LOGGER.info("Doctor updated successfully: id={}", doctor.getId());
     }
