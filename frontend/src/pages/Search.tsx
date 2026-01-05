@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button.tsx";
 import { ButtonGroup } from "@/components/ui/button-group.tsx";
 import SearchListCard from "@/components/SearchListCard.tsx";
 import SearchGridCard from "@/components/SearchGridCard.tsx";
+import { Pagination, PaginationContent, PaginationItem,
+    PaginationPrevious, PaginationLink, PaginationNext,
+    PaginationEllipsis } from "@/components/ui/pagination.tsx";
 
 const container =
     "px-[24px] mx-auto max-w-6xl w-full";
@@ -185,6 +188,7 @@ function ResultSection() {
                 </div>
             </div>
             {view === "list" ? <ResultList/> : <ResultGrid/>}
+            <PaginationSection />
         </div>
     );
 }
@@ -214,6 +218,42 @@ function ResultGrid() {
             <SearchGridCard />
             <SearchGridCard />
             <SearchGridCard />
+        </div>
+    )
+}
+
+const paginationContainer =
+    "pb-8";
+const paginantion =
+    "text-[var(--text-color)]"
+
+function PaginationSection() {
+    return (
+        <div className={paginationContainer}>
+            <Pagination>
+                <PaginationContent className={paginantion}>
+                    <PaginationItem>
+                        <PaginationPrevious href="#" />
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink href="#">1</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink href="#" isActive>
+                            2
+                        </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink href="#">3</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationEllipsis />
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationNext href="#" />
+                    </PaginationItem>
+                </PaginationContent>
+            </Pagination>
         </div>
     )
 }
