@@ -5,8 +5,7 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = {ValidNewOfficeValidator.ForOfficeForm.class,
-                          ValidNewOfficeValidator.ForDoctorForm.class})
+@Constraint(validatedBy = {ValidNewOfficeValidator.ForOfficeForm.class})
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidNewOffice {

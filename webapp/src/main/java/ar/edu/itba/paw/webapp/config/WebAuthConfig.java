@@ -159,7 +159,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/doctors").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/doctors/{id:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
                 .antMatchers(HttpMethod.PUT, "doctors/{id:\\d+}/**").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
-
                 .antMatchers(HttpMethod.POST, "/patients").permitAll()
                 .antMatchers(HttpMethod.HEAD, "/patients").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/patients/{id:\\d+}").access("hasRole('PATIENT') and @accessHandler.isUser(authentication, #id)")

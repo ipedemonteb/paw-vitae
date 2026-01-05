@@ -9,10 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.*;
 import java.util.List;
 
-@ValidNewOffice
-@ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
-@OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
-@AcceptedSpecialties(specialties = "specialties", offices = "doctorOfficeForm")
+
 @RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "{register.passwordsDoNotMatch}")
 public class DoctorForm {
 
@@ -51,15 +48,7 @@ public class DoctorForm {
     @NotEmpty
     private List<Long> coverages;
 
-    @NotEmpty
-    @NotNull
-    @Size(min = 1, max = 7)
-    @UniqueOffices(message = "{offices.duplicate}")
-    @ValidOfficeNames(message = "{offices.invalid.name}")
-    @ValidOfficeSpecialties(message = "{offices.invalid.specialties}")
-    @ValidOfficeNeighborhood(message = "{offices.invalid.neighborhood}")
-    @NewOffice(message = "{offices.invalid.new}")
-    private List<DoctorOfficeForm> doctorOfficeForm;
+
 
     public String getName() {
         return name;
@@ -125,13 +114,6 @@ public class DoctorForm {
         this.coverages = coverages;
     }
 
-    public List<DoctorOfficeForm> getDoctorOfficeForm() {
-        return doctorOfficeForm;
-    }
-
-    public void setDoctorOfficeForm(List<DoctorOfficeForm> doctorOfficeForm) {
-        this.doctorOfficeForm = doctorOfficeForm;
-    }
 
     public String getOfficeAvailabilitySlotForms() {
         return null;

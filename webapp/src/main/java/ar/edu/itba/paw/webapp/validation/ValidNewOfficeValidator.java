@@ -38,31 +38,4 @@ public class ValidNewOfficeValidator {
         }
     }
 
-    public static class ForDoctorForm implements ConstraintValidator<ValidNewOffice, DoctorForm> {
-        @Override
-        public boolean isValid(DoctorForm form, javax.validation.ConstraintValidatorContext context) {
-            List<DoctorOfficeForm> doctorOfficeForms = form.getDoctorOfficeForm();
-            if (doctorOfficeForms == null || doctorOfficeForms.isEmpty()) {
-                return true;
-            }
-
-            boolean flag = true;
-
-            for (DoctorOfficeForm office : doctorOfficeForms) {
-                if (!office.getActive()) {
-                    flag = false;
-                    break;
-                }
-            }
-
-            if (!flag || !helperFunction(doctorOfficeForms)) {
-                context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{offices.new.invalid}")
-                        .addPropertyNode("doctorOfficeForm")
-                        .addConstraintViolation();
-                return false;
-            }
-            return true;
-        }
-    }
 }
