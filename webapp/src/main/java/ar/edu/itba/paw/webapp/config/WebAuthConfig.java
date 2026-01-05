@@ -144,7 +144,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                 // TODO: AGREGAR LAS RUTAS
 
-                .antMatchers(HttpMethod.GET, "/appointments").access("@accessHandler.isUser(authentication, request)")
+                .antMatchers(HttpMethod.GET, "/appointments").access("@accessHandler.isUserQuery(authentication, request)")
                 .antMatchers(HttpMethod.GET, "/appointments/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
                 .antMatchers(HttpMethod.PATCH, "/appointments/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
                 .antMatchers(HttpMethod.PATCH, "/appointments/{id:\\d+}/report").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
@@ -157,13 +157,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.GET, "/doctors/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/doctors").permitAll()
-                .antMatchers(HttpMethod.PATCH, "/doctors/{id:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, request)")
-                .antMatchers(HttpMethod.PUT, "/{id:\\d+}/**").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, request)")
+                .antMatchers(HttpMethod.PATCH, "/doctors/{id:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
+                .antMatchers(HttpMethod.PUT, "doctors/{id:\\d+}/**").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
 
                 .antMatchers(HttpMethod.POST, "/patients").permitAll()
                 .antMatchers(HttpMethod.HEAD, "/patients").permitAll()
-                .antMatchers(HttpMethod.PATCH, "/patients/{id:\\d+}").access("hasRole('PATIENT') and @accessHandler.isUser(authentication, request)")
-                .antMatchers(HttpMethod.GET, "/patients/{id:\\d+}").access("@accessHandler.isUser(authentication, request) or hasRole('DOCTOR')")
+                .antMatchers(HttpMethod.PATCH, "/patients/{id:\\d+}").access("hasRole('PATIENT') and @accessHandler.isUser(authentication, #id)")
+                .antMatchers(HttpMethod.GET, "/patients/{id:\\d+}").access("@accessHandler.isUser(authentication, #id) or hasRole('DOCTOR')")
                 // TODO: ACA DEBERIA HABER UNA VALIDACION AL ESTILO DE hasAppointmentWithPatient" asi solo los doctores que tuvieron citas con el paciente pueden ver su info"
 
 
