@@ -1,0 +1,30 @@
+package ar.edu.itba.paw.webapp.form;
+
+import ar.edu.itba.paw.models.DoctorOfficeAvailabilityForm;
+import ar.edu.itba.paw.webapp.validation.ActiveOfficeSlots;
+import ar.edu.itba.paw.webapp.validation.OfficeAvailabilitySlotIntersection;
+import ar.edu.itba.paw.webapp.validation.OfficeOwnedByDoctor;
+import ar.edu.itba.paw.webapp.validation.ValidOfficeTimeSlot;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+@OfficeOwnedByDoctor(message = "{office.invalid}")
+@ActiveOfficeSlots
+public class DoctorAvailabilityForm {
+
+    public List<DoctorOfficeAvailabilityForm> getDoctorOfficeAvailabilities() {
+        return doctorOfficeAvailabilities;
+    }
+
+    public void setDoctorOfficeAvailabilities(List<DoctorOfficeAvailabilityForm> doctorOfficeAvailabilities) {
+        this.doctorOfficeAvailabilities = doctorOfficeAvailabilities;
+    }
+
+    @NotEmpty
+        @NotNull
+        @ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
+        @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
+        private List<DoctorOfficeAvailabilityForm> doctorOfficeAvailabilities;
+}

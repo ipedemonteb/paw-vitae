@@ -10,46 +10,6 @@ import java.util.*;
 
 public class OfficeAvailabilitySlotIntersectionValidator {
 
-    public static class ForDoctorOfficeForm implements ConstraintValidator<OfficeAvailabilitySlotIntersection, DoctorForm> {
-        @Override
-        public boolean isValid(DoctorForm form, ConstraintValidatorContext context) {
-            List<DoctorOfficeForm> offices = form.getDoctorOfficeForm();
-            if (offices == null || offices.isEmpty()) {
-                return true;
-            }
-
-            Map<Integer, List<DoctorOfficeAvailabilityForm>> slotsByDay = new TreeMap<>();
-            for (DoctorOfficeForm office : offices) {
-                if (office.getOfficeAvailabilitySlotForms() != null) {
-                    for (DoctorOfficeAvailabilityForm slot : office.getOfficeAvailabilitySlotForms()) {
-                        slotsByDay
-                                .computeIfAbsent(slot.getDayOfWeek(), k -> new ArrayList<>())
-                                .add(slot);
-                    }
-                }
-            }
-
-            for (List<DoctorOfficeAvailabilityForm> slots : slotsByDay.values()) {
-                slots.sort(Comparator.comparing(DoctorOfficeAvailabilityForm::getStartTime));
-
-                for (int i = 0; i < slots.size() - 1; i++) {
-                    DoctorOfficeAvailabilityForm current = slots.get(i);
-                    DoctorOfficeAvailabilityForm next = slots.get(i + 1);
-
-                    if (current.getEndTime().plusHours(1).isAfter(next.getStartTime())) {
-                        context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate("{office.availabilitySlot.intersection}")
-                                .addPropertyNode("officeAvailabilitySlotForms")
-                                .addConstraintViolation();
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-    }
-
     public static class ForDoctorOfficeAvailabilityForm implements ConstraintValidator<OfficeAvailabilitySlotIntersection, List<DoctorOfficeAvailabilityForm>> {
         @Override
         public boolean isValid(List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms, ConstraintValidatorContext context) {

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface DoctorService {
 
-    Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm);
+    Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, List<Long> specialties, List<Long> coverages );
 
     Optional<Doctor> getById(final long id);
 

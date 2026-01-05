@@ -44,7 +44,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, List<Long> specialties, List<Long> coverages, List<DoctorOfficeForm> doctorOfficeForm) {
+    public Doctor create(String name, String lastName, String email, String password, String phone, List<Locale> locales, List<Long> specialties, List<Long> coverages ) {
         String language = locales.isEmpty() ? Locale.ENGLISH.getLanguage() : locales.getFirst().getLanguage();
         LOGGER.debug("Creating doctor with name: {}, lastName: {}, email: {}, phone: {}, language: {}, specialties: {}, coverages: {}", name, lastName, email, phone, language, specialties, coverages);
 
@@ -61,8 +61,6 @@ public class DoctorServiceImpl implements DoctorService {
         }
         //TODO: Maybe remove field imageId?
         Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, null, specialtiesList, coveragesList);
-        List<DoctorOffice> doctorOffices = doctorOfficeService.transformToDoctorOffice(doctor, doctorOfficeForm);
-        doctor.setDoctorOffices(doctorOffices);
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
         userService.setVerificationToken(email);
         return doctor;

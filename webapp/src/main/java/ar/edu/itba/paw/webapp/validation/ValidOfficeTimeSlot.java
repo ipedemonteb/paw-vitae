@@ -5,8 +5,7 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = { ValidOfficeTimeSlotValidator.ForDoctorOfficeForm.class,
-                            ValidOfficeTimeSlotValidator.ForDoctorOfficeAvailabilitySlotForm.class
+@Constraint(validatedBy = {ValidOfficeTimeSlotValidator.ForDoctorOfficeAvailabilitySlotForm.class
                             })
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

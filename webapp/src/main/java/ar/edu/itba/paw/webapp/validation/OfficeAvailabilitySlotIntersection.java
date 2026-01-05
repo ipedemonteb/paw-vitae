@@ -5,8 +5,7 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = { OfficeAvailabilitySlotIntersectionValidator.ForDoctorOfficeAvailabilityForm.class,
-                            OfficeAvailabilitySlotIntersectionValidator.ForDoctorOfficeForm.class
+@Constraint(validatedBy = { OfficeAvailabilitySlotIntersectionValidator.ForDoctorOfficeAvailabilityForm.class
                             })
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
