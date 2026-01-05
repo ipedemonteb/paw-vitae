@@ -58,7 +58,7 @@ const navItemActive =
 
 function Header() {
 
-    const isLoggedIn = true;
+    const isLoggedIn = false;
 
     const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -186,7 +186,7 @@ function NotLoggedInComponent() {
             <DropdownMenu>
                 <DropdownMenuTrigger className={btnFilled}>
                     Register
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-4 w-4 ml-1" />
                 </DropdownMenuTrigger>
                 {/*TODO: que lleven a distintos paths*/}
                 <DropdownMenuContent>
