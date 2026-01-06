@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
-import { Mail, Phone, SquarePen, User, ShieldPlus, UserStar } from "lucide-react";
+import { Mail, Phone, SquarePen, ShieldPlus, UserStar, Stethoscope } from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import BadgeComponent from "@/components/BadgeComponent.tsx";
@@ -27,16 +27,15 @@ function PublicProfile() {
 
     return (
       <div className={profileContainer}>
-          <ProfileCard rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges} />
-          <AboutCard />
+          <ProfileCard rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges}/>
           <CoverageCard />
           <RatingsCard />
       </div>
     );
 }
 
-const cardsContainer =
-    "flex flex-col gap-0 items-center sm:flex-row";
+const titleIcon =
+    "w-5 h-5";
 const avatarContainer =
     "flex items-center w-20 h-20 mx-6 mb-2 border border-[var(--primary-light)] border-4 rounded-full sm:mb-0";
 const userDataContainer =
@@ -55,6 +54,20 @@ const ratingText =
     "font-medium text-sm text-[var(--text-light)]";
 const editButton =
     "mt-4 sm:mt-0 sm:mx-6 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] sm:ml-auto cursor-pointer";
+const card =
+    "p-0 gap-0";
+const cardTitle =
+    "flex items-center px-6 py-2 bg-[var(--primary-color)] text-white gap-1 border border-[var(--primary-color)] rounded-t-xl";
+const aboutContent =
+    "px-7 pt-4 pb-6";
+const cardTitleText =
+    "text-lg font-[500]";
+const profileContent =
+    "flex flex-col gap-0 items-center sm:flex-row pt-6";
+const aboutTitle =
+    "text-lg font-[500]";
+const aboutText =
+    "text-[var(--text-light)] text-md";
 
 function ProfileCard({ rating, ratingCount, specialties, maxBadges }:{
     rating: number;
@@ -63,69 +76,56 @@ function ProfileCard({ rating, ratingCount, specialties, maxBadges }:{
     maxBadges: number;
 }) {
     return (
-        <Card className={cardsContainer}>
-            <Avatar className={avatarContainer}>
-                <AvatarImage src="https://picsum.photos/200" />
-                <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <div className={userDataContainer}>
-                <h1 className={userName}>John Doe</h1>
-                <div className={dataContainer}>
-                    <div className={contactData}>
-                        <Mail className={contactIcon} />
-                        <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">johndoe@gmail.com</p>
-                    </div>
-                    <div className={contactData}>
-                        <Phone className={contactIcon} />
-                        <p>11 1234-5678</p>
-                    </div>
-                </div>
-                <div className={ratingContent}>
-                    <RatingStars rating={rating} sizeClassName="h-4 w-4" />
-                    <p>{rating}</p>
-                    <p className={ratingText}>({ratingCount} reviews)</p>
-                </div>
-                <BadgeComponent specialties={specialties} maxBadges={maxBadges} />
-            </div>
-            <Button className={editButton}>
-                <SquarePen className="w-4 h-4" />
-                Edit
-            </Button>
-        </Card>
-    )
-}
-
-const card =
-    "p-0 gap-0";
-const cardTitle =
-    "flex items-center px-6 py-2 bg-[var(--primary-color)] text-white gap-1 border border-[var(--primary-color)] rounded-t-xl";
-const aboutContent =
-    "px-6 py-4";
-const cardTitleText =
-    "text-lg font-[500]";
-
-function AboutCard() {
-    return (
         <Card className={card}>
             <div className={cardTitle}>
-                <User className="w-6 h-6"></User>
-                <h1 className={cardTitleText}>About</h1>
+                <Stethoscope className={titleIcon}></Stethoscope>
+                <h1 className={cardTitleText}>Doctor</h1>
+            </div>
+            <div className={profileContent}>
+                <Avatar className={avatarContainer}>
+                    <AvatarImage src="https://picsum.photos/200" />
+                    <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+                <div className={userDataContainer}>
+                    <h1 className={userName}>John Doe</h1>
+                    <div className={dataContainer}>
+                        <div className={contactData}>
+                            <Mail className={contactIcon} />
+                            <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">johndoe@gmail.com</p>
+                        </div>
+                        <div className={contactData}>
+                            <Phone className={contactIcon} />
+                            <p>11 1234-5678</p>
+                        </div>
+                    </div>
+                    <div className={ratingContent}>
+                        <RatingStars rating={rating} sizeClassName="h-4 w-4" />
+                        <p>{rating}</p>
+                        <p className={ratingText}>({ratingCount} reviews)</p>
+                    </div>
+                    <BadgeComponent specialties={specialties} maxBadges={maxBadges} />
+                </div>
+                <Button className={editButton}>
+                    <SquarePen className="w-4 h-4" />
+                    Edit
+                </Button>
             </div>
             <div className={aboutContent}>
-                <p>Soy traumatólogo en el Club Estudiantes de La Plata, con más de 40 años en el campo.</p>
+                <h1 className={aboutTitle}>About</h1>
+                <p className={aboutText}>Soy traumatólogo en el Club Estudiantes de La Plata, con más de 40 años en el campo.</p>
             </div>
         </Card>
-    )
+    );
 }
 
 const cardContent =
-    "flex flex-col items-center gap-3 px-6 py-4 sm:flex-row sm:flex-wrap sm:justify-center";
+    "flex flex-col items-center gap-3 px-6 py-6 sm:flex-row sm:flex-wrap sm:justify-center";
 
 function CoverageCard() {
     return (
         <Card className={card}>
             <div className={cardTitle}>
-                <ShieldPlus className="w-6 h-6"></ShieldPlus>
+                <ShieldPlus className={titleIcon}></ShieldPlus>
                 <h1 className={cardTitleText}>Coverage</h1>
             </div>
             <div className={cardContent}>
@@ -139,7 +139,7 @@ function CoverageCard() {
 }
 
 const componentContainer =
-    "flex w-full max-w-3xs flex-col px-10 py-2 items-center border border-[var(--gray-300)] rounded-lg";
+    "flex w-full max-w-3xs flex-col px-10 py-4 items-center border border-[var(--gray-300)] rounded-lg";
 const coverageAvatar =
     "w-16 h-16 mb-2";
 const coveragePlanText =
@@ -163,7 +163,7 @@ function CoverageComponent({coverageImage, coverageName, coveragePlan}:{
 }
 
 const ratingsContent =
-    "w-full max-w-xl mx-auto mt-6";
+    "w-full max-w-xl mx-auto pt-6";
 const carousel =
     "relative max-w-3xl w-full mx-auto px-12 -mt-5";
 const carouselContent =
@@ -200,7 +200,7 @@ function RatingsCard() {
     return (
         <Card className={card}>
             <div className={cardTitle}>
-                <UserStar className="w-6 h-6"></UserStar>
+                <UserStar className={titleIcon}></UserStar>
                 <h1 className={cardTitleText}>Ratings</h1>
             </div>
             <div className={ratingsContent}>
