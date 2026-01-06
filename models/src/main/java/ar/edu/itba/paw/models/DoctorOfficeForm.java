@@ -59,7 +59,7 @@ public class DoctorOfficeForm {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

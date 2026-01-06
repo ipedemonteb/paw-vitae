@@ -13,6 +13,11 @@ import java.util.List;
 //@OfficeOwnedByDoctor(message = "{office.invalid}")
 //@ActiveOfficeSlots
 public class DoctorAvailabilityForm {
+    @NotEmpty
+    @NotNull
+    @ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
+    @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
+    private List<DoctorOfficeAvailabilityForm> doctorOfficeAvailabilities;
 
     public List<DoctorOfficeAvailabilityForm> getDoctorOfficeAvailabilities() {
         return doctorOfficeAvailabilities;
@@ -22,9 +27,5 @@ public class DoctorAvailabilityForm {
         this.doctorOfficeAvailabilities = doctorOfficeAvailabilities;
     }
 
-    @NotEmpty
-        @NotNull
-        @ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
-        @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
-        private List<DoctorOfficeAvailabilityForm> doctorOfficeAvailabilities;
+
 }
