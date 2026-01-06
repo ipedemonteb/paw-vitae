@@ -24,7 +24,16 @@
       "completo": "Completed",
       "cancelado": "Cancelled"
     },
-    "all": "All"
+    "all": "All",
+    "history": "Appointment History",
+    "upcoming": "Upcoming Appointments",
+    "filters": {
+      "30_days": "Upcoming 30 Days",
+      "week": "This Week",
+      "today": "Today"
+    },
+    "history_filter_message": "Status",
+    "upcoming_filter_message": "Date Range"
   },
   "login": {
     "welcome_title": "Welcome Back!",

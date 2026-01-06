@@ -33,7 +33,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/test',
-                element: <AppointmentComponent/>
+                element: <AppointmentComponent type={"upcoming"} />
             }
         ],
     }

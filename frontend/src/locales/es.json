@@ -24,7 +24,16 @@
       "completo": "Completado",
       "cancelado": "Cancelado"
     },
-    "all": "Todos"
+    "all": "Todos",
+    "history": "Historial de Citas",
+    "upcoming": "Próximas Citas",
+    "filters": {
+      "30_days": "Próximos 30 Dias",
+      "week": "Esta Semana",
+      "today": "Hoy"
+    },
+    "history_filter_message": "Estado",
+    "upcoming_filter_message": "Rango de Fechas"
   },
   "login": {
     "welcome_title": "Bienvenido de nuevo!",
