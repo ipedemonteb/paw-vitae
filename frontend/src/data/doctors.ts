@@ -1,5 +1,4 @@
 import {api} from "@/data/Api.ts";
-import type {PaginationLinks} from "@/lib/types.ts";
 
 export type DoctorDTO = {
     name: string;
@@ -30,7 +29,7 @@ export type DoctorsQuery = {
     page?: number;
 };
 
-export async function listDoctors(params: DoctorsQuery, signal?: AbortSignal) {
+export async function listDoctors(params: DoctorsQuery) {
     const res = await api.get<DoctorDTO[]>("/doctors", {
         params: {
             specialty: params.specialty ?? 0,
@@ -40,12 +39,7 @@ export async function listDoctors(params: DoctorsQuery, signal?: AbortSignal) {
             orderBy: params.orderBy ?? "name",
             direction: params.direction ?? "asc",
             page: params.page ?? 1,
-        },
-        signal, // axios supports AbortController in modern versions
+        }
     });
-
-    const total = Number(res.headers["x-total-count"] ?? 0);
-    const links: PaginationLinks = res.headers["link"]; // if you used Link headers
-
-    return { data: res.data, total, links };
+    return res.data;
 }

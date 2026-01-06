@@ -31,7 +31,7 @@ type ComboboxProps = {
 export function SpecialtyCombobox({ className, buttonClassName, contentClassName }: ComboboxProps) {
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState("");
-    const { specialties, loading } = useSpecialties();
+    const { data: specialties, isLoading } = useSpecialties();
     const { t } = useTranslation();
 
 
@@ -57,7 +57,7 @@ export function SpecialtyCombobox({ className, buttonClassName, contentClassName
                 <Command>
                     <CommandInput placeholder="Search specialty..." className="h-9" />
                     <CommandList>
-                        {loading ? (
+                        {isLoading ? (
                             <div className="py-3 flex items-center justify-center space-x-1">
                                 <Spinner className="text-(--text-light) size-5"/>
                             </div>
@@ -82,7 +82,7 @@ export function SpecialtyCombobox({ className, buttonClassName, contentClassName
                                             )}
                                         />
                                     </CommandItem>
-                                    {(specialties || []).map((specialty) => (
+                                    {specialties?.map((specialty) => (
                                         <CommandItem
                                             key={specialty.name}
                                             value={t(specialty.name)}
