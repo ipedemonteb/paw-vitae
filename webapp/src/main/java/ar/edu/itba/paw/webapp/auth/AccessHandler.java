@@ -68,17 +68,21 @@ public class AccessHandler {
                 .orElse(true);
     }
 
-    public boolean isUser(Authentication auth, HttpServletRequest request) {
+    public boolean isUserQuery(Authentication auth, HttpServletRequest request) {
+        String userIdParam = request.getParameter("userId");
+        return isUser(auth, userIdParam);
+    }
+
+    public boolean isUser(Authentication auth, String id) {
         AuthUserDetails user = getPrincipal(auth);
         if (user == null) {
             return false;
         }
-        String userIdParam = request.getParameter("userId");
-        if (userIdParam == null || userIdParam.isBlank()) {
+        if (id == null || id.isBlank()) {
             return true;
         }
         try {
-            long userId = Long.parseLong(userIdParam);
+            long userId = Long.parseLong(id);
             return userId == user.getUserId();
         } catch (NumberFormatException e) {
             return true;

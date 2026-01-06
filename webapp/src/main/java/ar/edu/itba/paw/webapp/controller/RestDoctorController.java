@@ -12,6 +12,7 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,13 +43,13 @@ public class RestDoctorController {
     private final DoctorOfficeSpecialtyService doctorOfficeSpecialtyService;
     private final RatingService ratingService;
     private final ImageService imageService;
-
+    private final UnavailabilitySlotsService unavailabilitySlotsService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, RatingService ratingService, ImageService imageService) {
+    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, RatingService ratingService, ImageService imageService, UnavailabilitySlotsService unavailabilitySlotsService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
@@ -60,6 +61,7 @@ public class RestDoctorController {
         this.doctorOfficeSpecialtyService = doctorOfficeSpecialtyService;
         this.ratingService = ratingService;
         this.imageService = imageService;
+        this.unavailabilitySlotsService = unavailabilitySlotsService;
     }
 
 
@@ -234,7 +236,7 @@ public class RestDoctorController {
             @Valid @NotNull DoctorForm doctorForm,
             @Context HttpHeaders headers
     ) {
-        Doctor doctor = this.doctorService.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), headers.getAcceptableLanguages(), doctorForm.getSpecialties(), doctorForm.getCoverages(), doctorForm.getDoctorOfficeForm());
+        Doctor doctor = this.doctorService.create(doctorForm.getName(), doctorForm.getLastName(), doctorForm.getEmail(), doctorForm.getPassword(), doctorForm.getPhone(), headers.getAcceptableLanguages(), doctorForm.getSpecialties(), doctorForm.getCoverages());
         return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(doctor.getId())).build()).build();
     }
 
@@ -313,6 +315,38 @@ public class RestDoctorController {
         MultipartFile file = FileUtils.requireSingleImage(multipart, "file");
         long imageId = imageService.create(file, id);
         doctorService.setImage(id, imageId);
+        return Response.noContent().build();
+    }
+    @PUT
+    @Path("/{id:\\d+}/offices")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response setDoctorOffices(
+            @PathParam("id") final long id,
+            @Valid @NotNull OfficeForm officeForm
+    ) {
+        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
+        this.doctorOfficeService.update( officeForm.getDoctorOfficeForm(), doctor);
+        return Response.noContent().build();
+    }
+    @PUT
+    @Path("/{id:\\d+}/availability")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response setDoctorAvailability(
+            @PathParam("id") final long id,
+            @Valid @NotNull DoctorAvailabilityForm availabilityForm
+    ) {
+        this.doctorOfficeAvailabilityService.update(availabilityForm.getDoctorOfficeAvailabilities(), id);
+        return Response.noContent().build();
+    }
+    @PUT
+    @Path("/{id:\\d+}/unavailability")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response setDoctorUnavailability(
+            @PathParam("id") final long id,
+            @Valid @NotNull DoctorUnavailabilityForm unavailabilityForm
+    ) {
+        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
+        this.unavailabilitySlotsService.updateDoctorUnavailability(doctor,unavailabilityForm.getUnavailabilitySlots());
         return Response.noContent().build();
     }
 

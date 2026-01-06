@@ -3,9 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.DoctorOfficeDao;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exception.NeighborhoodNotFoundException;
-import ar.edu.itba.paw.models.exception.SpecialtyNotFoundException;
-import ar.edu.itba.paw.models.exception.UserNotFoundException;
+import ar.edu.itba.paw.models.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     private final SpecialtyService specialtyService;
     private final DoctorService doctorService;
     private final AppointmentService appointmentService;
-
+    private static final int MAX_OFFICES = 7;
     @Autowired
     public DoctorOfficeServiceImpl(DoctorOfficeDao doctorOfficeDao, NeighborhoodService neighborhoodService, SpecialtyService specialtyService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, @Lazy DoctorService doctorService,@Lazy AppointmentService appointmentService) {
         this.doctorOfficeDao = doctorOfficeDao;
@@ -100,11 +98,12 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
     @Transactional
     @Override
-    public void update(
-            List<DoctorOfficeForm> forms,
-            Doctor inputDoctor
-    ) {
-        Doctor doctor = doctorService.getByIdWithAvailableOffices(inputDoctor.getId()).orElseThrow(UserNotFoundException::new);
+    public void update(List<DoctorOfficeForm> forms, Doctor inputDoctor) {
+        Doctor doctor = doctorService.getByIdWithAvailableOffices(inputDoctor.getId())
+                .orElseThrow(UserNotFoundException::new);
+        validateOfficeOwnership(forms, doctor);
+        validateMaxOffices(forms);
+        validateActiveAvailability(forms, doctor.getId());
 
         Map<Long, DoctorOffice> existingById = doctor.getDoctorOffices().stream()
                 .collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
@@ -119,8 +118,6 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
                 if (!deleted) {
                     newOffices.add(office);
                 }
-
-
             } else {
                 Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
                         .orElseThrow(NeighborhoodNotFoundException::new);
@@ -169,5 +166,44 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
         return false;
     }
+    private void validateOfficeOwnership(List<DoctorOfficeForm> forms, Doctor doctor) {
+        Set<Long> doctorOfficeIds = doctor.getDoctorOffices().stream()
+                .map(DoctorOffice::getId)
+                .collect(Collectors.toSet());
 
+        for (DoctorOfficeForm form : forms) {
+            if (form.getId() != null && !doctorOfficeIds.contains(form.getId())) {
+                throw new ResourceOwnershipException();
+            }
+        }
+    }
+
+    private void validateMaxOffices(List<DoctorOfficeForm> forms) {
+        long activeCount = forms.stream()
+                .filter(f -> !Boolean.TRUE.equals(f.getRemoved()))
+                .count();
+
+        if (activeCount > MAX_OFFICES) {
+            throw new BussinesRuleException("exception.business.tooManyOffices");
+        }
+    }
+
+    private void validateActiveAvailability(List<DoctorOfficeForm> forms, long doctorId) {
+        List<DoctorOfficeAvailability> existingSlots = doctorOfficeAvailabilityService.getByDoctorId(doctorId);
+
+        Set<Long> officesWithSlots = existingSlots.stream()
+                .map(s -> s.getOffice().getId())
+                .collect(Collectors.toSet());
+
+        for (DoctorOfficeForm form : forms) {
+            if (Boolean.TRUE.equals(form.getActive())) {
+                if (form.getId() == null) {
+                    throw new BussinesRuleException("exception.business.officeMustHaveAvailabilityToBeActive");
+                }
+                if (!officesWithSlots.contains(form.getId())) {
+                    throw new IllegalArgumentException("exception.business.officeMustHaveAvailabilityToBeActive");
+                }
+            }
+        }
+    }
 }

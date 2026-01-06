@@ -9,14 +9,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-@ValidOfficeId
-@ActiveOfficeAvailability
-@MaxNumberOfOffices
+//@ValidOfficeId
+//@ActiveOfficeAvailability
+//@MaxNumberOfOffices
 @ValidNewOffice
 public class OfficeForm {
 
-    @NotNull
-    private Long doctorId;
 
     @NotEmpty
     @NotNull
@@ -36,11 +34,5 @@ public class OfficeForm {
         this.doctorOfficeForm = doctorOfficeForm;
     }
 
-    public Long getDoctorId() {
-        return doctorId;
-    }
 
-    public void setDoctorId(Long doctorId) {
-        this.doctorId = doctorId;
-    }
 }
