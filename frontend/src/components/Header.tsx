@@ -59,8 +59,10 @@ const navItemActive =
 function Header() {
 
     const isLoggedIn = true;
+    const isDoctor = true;
 
     const [sheetOpen, setSheetOpen] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -69,9 +71,11 @@ function Header() {
 
         const onChange = (e: MediaQueryListEvent) => {
             if (e.matches) setSheetOpen(false);
+            if (!e.matches) setDropdownOpen(false);
         };
 
         if (mql.matches) setSheetOpen(false);
+        if (!mql.matches) setDropdownOpen(false);
 
         const mqlAny = mql as unknown as {
             addEventListener?: (type: "change", listener: (e: MediaQueryListEvent) => void) => void;
@@ -114,8 +118,8 @@ function Header() {
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
-            {isLoggedIn ? <LoggedInComponent /> : <NotLoggedInComponent />}
-            <SheetComponent open={sheetOpen} onOpenChange={setSheetOpen} isLoggedIn={isLoggedIn}/>
+            {isLoggedIn ? <LoggedInComponent isDoctor={isDoctor} open={dropdownOpen} onOpenChange={setDropdownOpen}/> : <NotLoggedInComponent open={dropdownOpen} onOpenChange={setDropdownOpen}/>}
+            <SheetComponent open={sheetOpen} onOpenChange={setSheetOpen} isLoggedIn={isLoggedIn} isDoctor={isDoctor}/>
         </div>
 </div>
 );
@@ -137,10 +141,11 @@ const mobileNavLinkActive =
 const mobileSectionTitle =
     "mt-2 text-sm font-semibold text-[var(--text-light)]";
 
-function SheetComponent({ open, onOpenChange, isLoggedIn }: {
+function SheetComponent({ open, onOpenChange, isLoggedIn, isDoctor }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     isLoggedIn: boolean;
+    isDoctor: boolean;
 }) {
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
@@ -159,7 +164,7 @@ function SheetComponent({ open, onOpenChange, isLoggedIn }: {
                         About Us
                     </SheetNavLink>
                     <div className={mobileSectionTitle}>Account</div>
-                    {isLoggedIn ? <SheetLoggedInComponent /> : <SheetNotLoggedInComponent />}
+                    {isLoggedIn ? <SheetLoggedInComponent isDoctor={isDoctor}/> : <SheetNotLoggedInComponent />}
                 </nav>
             </SheetContent>
         </Sheet>
@@ -177,13 +182,13 @@ const dropDownItem =
 const authDesktop =
     "hidden md:flex gap-3 items-center";
 
-function NotLoggedInComponent() {
+function NotLoggedInComponent({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void;}) {
     return (
         <div className={authDesktop}>
             <Link to="/login" className={btnOutline}>
                 Login
             </Link>
-            <DropdownMenu>
+            <DropdownMenu open={open} onOpenChange={onOpenChange}>
                 <DropdownMenuTrigger className={btnFilled}>
                     Register
                     <ChevronDown className="h-4 w-4 ml-1" />
@@ -217,10 +222,10 @@ const userName =
 const logoutItem =
     "flex items-center gap-2 text-base text-[var(--danger)] cursor-pointer data-[highlighted]:text-[var(--danger-dark)] data-[highlighted]:bg-[var(--danger-light)]";
 
-function LoggedInComponent() {
+function LoggedInComponent({ isDoctor, open, onOpenChange }:{ isDoctor:boolean; open: boolean; onOpenChange: (open: boolean) => void; }) {
     return (
         <div className={authDesktop}>
-            <DropdownMenu>
+            <DropdownMenu open={open} onOpenChange={onOpenChange}>
                 <DropdownMenuTrigger className={loggedInContainer}>
                     <Avatar className={headerAvatar}>
                         <AvatarImage src="https://picsum.photos/200" />
@@ -229,20 +234,49 @@ function LoggedInComponent() {
                     <p className={userName}>John Doe</p>
                     <ChevronDown className="h-4 w-4 text-[var(--text-color)]" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuItem className={dropDownItem}>
-                        <Link to="/patient/dashboard" className={dropDownItem}>
-                            <ChartPie className="text-inherit" />
-                            Dashboard
-                        </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className={logoutItem}>
-                        <LogOut className="text-inherit" />
-                        Log Out
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
+                {isDoctor ? <DropdownDoctor /> : <DropdownPatient />}
             </DropdownMenu>
         </div>
+    )
+}
+
+function DropdownPatient() {
+    return (
+        <DropdownMenuContent>
+            <DropdownMenuItem className={dropDownItem}>
+                <Link to="/patient/dashboard" className={dropDownItem}>
+                    <ChartPie className="text-inherit" />
+                    Dashboard
+                </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className={logoutItem}>
+                <LogOut className="text-inherit" />
+                Log Out
+            </DropdownMenuItem>
+        </DropdownMenuContent>
+    )
+}
+
+function DropdownDoctor() {
+    return (
+        <DropdownMenuContent>
+            <DropdownMenuItem className={dropDownItem}>
+                <Link to="/doctor/dashboard" className={dropDownItem}>
+                    <ChartPie className="text-inherit" />
+                    Doctor Dashboard
+                </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className={dropDownItem}>
+                <Link to="/doctor/dashboard" className={dropDownItem}>
+                    <User className="text-inherit" />
+                    Public Profile
+                </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className={logoutItem}>
+                <LogOut className="text-inherit" />
+                Log Out
+            </DropdownMenuItem>
+        </DropdownMenuContent>
     )
 }
 
@@ -290,7 +324,7 @@ const logoutHover =
     "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-0 after:bg-[var(--danger-dark)] " +
     "after:transition-[width] after:duration-300 hover:after:w-full";
 
-function SheetLoggedInComponent() {
+function SheetLoggedInComponent({isDoctor}:{isDoctor:boolean}) {
     return (
         <div className={sheetContainer}>
             <div className={avatarContainer}>
@@ -300,16 +334,39 @@ function SheetLoggedInComponent() {
                 </Avatar>
                 <p className={userNameSheet}>John Doe</p>
             </div>
-            <SheetNavLink to="/login">
-                <div className={mobileIconContainer}>
-                    <ChartPie className={mobileIcon}/>
-                    Dashboard
-                </div>
-            </SheetNavLink>
-            <div className={logoutItem + " " + logoutHover}>
-                <LogOut className="text-inherit" />
-                <p>Log Out</p>
-            </div>
+            {isDoctor ?
+                <>
+                    <SheetNavLink to="/doctor/dashboard">
+                        <div className={mobileIconContainer}>
+                            <ChartPie className={mobileIcon}/>
+                            Doctor Dashboard
+                        </div>
+                    </SheetNavLink>
+                    <SheetNavLink to="/doctor/dashboard">
+                        <div className={mobileIconContainer}>
+                            <User className={mobileIcon}/>
+                            Public Profile
+                        </div>
+                    </SheetNavLink>
+                    <div className={logoutItem + " " + logoutHover}>
+                        <LogOut className="text-inherit" />
+                        <p>Log Out</p>
+                    </div>
+                </>
+                :
+                <>
+                    <SheetNavLink to="/login">
+                        <div className={mobileIconContainer}>
+                            <ChartPie className={mobileIcon}/>
+                            Dashboard
+                        </div>
+                    </SheetNavLink>
+                    <div className={logoutItem + " " + logoutHover}>
+                        <LogOut className="text-inherit" />
+                        <p>Log Out</p>
+                    </div>
+                </>
+            }
         </div>
     )
 }
