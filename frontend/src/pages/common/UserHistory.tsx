@@ -1,9 +1,9 @@
 import AppointmentComponent from "@/components/AppointmentComponent.tsx";
 
-function PatientHistory() {
+function UserHistory() {
     return (
         <AppointmentComponent type={"history"} />
     )
 }
 
-export default PatientHistory;
+export default UserHistory;
