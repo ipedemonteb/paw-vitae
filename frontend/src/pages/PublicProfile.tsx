@@ -1,9 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
-import { Mail, Phone, SquarePen, User } from "lucide-react";
+import { Mail, Phone, SquarePen, ShieldPlus, UserStar, Stethoscope } from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import BadgeComponent from "@/components/BadgeComponent.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious} from "@/components/ui/carousel.tsx";
+import {RatingCard} from "@/components/Rating.tsx";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -25,14 +27,15 @@ function PublicProfile() {
 
     return (
       <div className={profileContainer}>
-          <ProfileCard rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges} />
-          <AboutCard />
+          <ProfileCard rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges}/>
+          <CoverageCard />
+          <RatingsCard />
       </div>
     );
 }
 
-const profileCard =
-    "flex flex-col gap-0 items-center sm:flex-row";
+const titleIcon =
+    "w-5 h-5";
 const avatarContainer =
     "flex items-center w-20 h-20 mx-6 mb-2 border border-[var(--primary-light)] border-4 rounded-full sm:mb-0";
 const userDataContainer =
@@ -51,6 +54,20 @@ const ratingText =
     "font-medium text-sm text-[var(--text-light)]";
 const editButton =
     "mt-4 sm:mt-0 sm:mx-6 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] sm:ml-auto cursor-pointer";
+const card =
+    "p-0 gap-0";
+const cardTitle =
+    "flex items-center px-6 py-2 bg-[var(--primary-color)] text-white gap-1 border border-[var(--primary-color)] rounded-t-xl";
+const aboutContent =
+    "px-7 pt-4 pb-6";
+const cardTitleText =
+    "text-lg font-[500]";
+const profileContent =
+    "flex flex-col gap-0 items-center sm:flex-row pt-6";
+const aboutTitle =
+    "text-lg font-[500]";
+const aboutText =
+    "text-[var(--text-light)] text-md";
 
 function ProfileCard({ rating, ratingCount, specialties, maxBadges }:{
     rating: number;
@@ -59,59 +76,156 @@ function ProfileCard({ rating, ratingCount, specialties, maxBadges }:{
     maxBadges: number;
 }) {
     return (
-        <Card className={profileCard}>
-            <Avatar className={avatarContainer}>
-                <AvatarImage src="https://picsum.photos/200" />
-                <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <div className={userDataContainer}>
-                <h1 className={userName}>John Doe</h1>
-                <div className={dataContainer}>
-                    <div className={contactData}>
-                        <Mail className={contactIcon} />
-                        <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">johndoe@gmail.com</p>
-                    </div>
-                    <div className={contactData}>
-                        <Phone className={contactIcon} />
-                        <p>11 1234-5678</p>
-                    </div>
-                </div>
-                <div className={ratingContent}>
-                    <RatingStars rating={rating} sizeClassName="h-4 w-4" />
-                    <p>{rating}</p>
-                    <p className={ratingText}>({ratingCount} reviews)</p>
-                </div>
-                <BadgeComponent specialties={specialties} maxBadges={maxBadges} />
+        <Card className={card}>
+            <div className={cardTitle}>
+                <Stethoscope className={titleIcon}></Stethoscope>
+                <h1 className={cardTitleText}>Doctor</h1>
             </div>
-            <Button className={editButton}>
-                <SquarePen className="w-4 h-4" />
-                Edit
-            </Button>
+            <div className={profileContent}>
+                <Avatar className={avatarContainer}>
+                    <AvatarImage src="https://picsum.photos/200" />
+                    <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+                <div className={userDataContainer}>
+                    <h1 className={userName}>John Doe</h1>
+                    <div className={dataContainer}>
+                        <div className={contactData}>
+                            <Mail className={contactIcon} />
+                            <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">johndoe@gmail.com</p>
+                        </div>
+                        <div className={contactData}>
+                            <Phone className={contactIcon} />
+                            <p>11 1234-5678</p>
+                        </div>
+                    </div>
+                    <div className={ratingContent}>
+                        <RatingStars rating={rating} sizeClassName="h-4 w-4" />
+                        <p>{rating}</p>
+                        <p className={ratingText}>({ratingCount} reviews)</p>
+                    </div>
+                    <BadgeComponent specialties={specialties} maxBadges={maxBadges} />
+                </div>
+                <Button className={editButton}>
+                    <SquarePen className="w-4 h-4" />
+                    Edit
+                </Button>
+            </div>
+            <div className={aboutContent}>
+                <h1 className={aboutTitle}>About</h1>
+                <p className={aboutText}>Soy traumatólogo en el Club Estudiantes de La Plata, con más de 40 años en el campo.</p>
+            </div>
+        </Card>
+    );
+}
+
+const cardContent =
+    "flex flex-col items-center gap-3 px-6 py-6 sm:flex-row sm:flex-wrap sm:justify-center";
+
+function CoverageCard() {
+    return (
+        <Card className={card}>
+            <div className={cardTitle}>
+                <ShieldPlus className={titleIcon}></ShieldPlus>
+                <h1 className={cardTitleText}>Coverage</h1>
+            </div>
+            <div className={cardContent}>
+                <CoverageComponent coverageImage="https://upload.wikimedia.org/wikipedia/commons/1/18/Logo_OSDE_2020.png" coverageName="OSDE" coveragePlan="310" />
+                <CoverageComponent coverageImage="https://images.seeklogo.com/logo-png/33/2/galeno-logo-png_seeklogo-333694.png" coverageName="Galeno" coveragePlan="Premium" />
+                <CoverageComponent coverageImage="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB6p669ljP14WkZ1gAoq3dD6ppJUlIwkp59w&s" coverageName="Swiss Medical" coveragePlan="Plus" />
+                <CoverageComponent coverageImage="https://images.seeklogo.com/logo-png/62/1/sancor-salud-medicina-privada-logo-png_seeklogo-621371.png" coverageName="Sancor Salud" coveragePlan="Basic" />
+            </div>
         </Card>
     )
 }
 
-const aboutCard =
-    "p-0 gap-0";
-const cardTitle =
-    "flex items-center px-6 py-2 bg-[var(--primary-color)] text-white gap-1 border border-[var(--primary-color)] rounded-t-xl";
-const cardContent =
-    "px-6 py-4";
-const cardTitleText =
-    "text-lg font-[500]";
+const componentContainer =
+    "flex w-full max-w-3xs flex-col px-10 py-4 items-center border border-[var(--gray-300)] rounded-lg";
+const coverageAvatar =
+    "w-16 h-16 mb-2";
+const coveragePlanText =
+    "text-sm text-[var(--text-light)]";
 
-function AboutCard() {
+function CoverageComponent({coverageImage, coverageName, coveragePlan}:{
+    coverageImage: string;
+    coverageName: string;
+    coveragePlan: string;
+}) {
     return (
-        <Card className={aboutCard}>
+        <div className={componentContainer}>
+            <Avatar className={coverageAvatar}>
+                <AvatarImage src={coverageImage} />
+                <AvatarFallback>{coverageName}</AvatarFallback>
+            </Avatar>
+            <h3>{coverageName}</h3>
+            <p className={coveragePlanText}>Plan: {coveragePlan}</p>
+        </div>
+    );
+}
+
+const ratingsContent =
+    "w-full max-w-xl mx-auto pt-6";
+const carousel =
+    "relative max-w-3xl w-full mx-auto px-12 -mt-5";
+const carouselContent =
+    "-ml-4 py-2";
+const carouselItem =
+    "pl-4 basis-full";
+
+function RatingsCard() {
+
+    const ratings = [
+        {
+            comment:
+                "Muy buena atención. Me atendieron rápido y el doctor explicó todo con claridad.",
+            rating: 5,
+            userName: "John Doe",
+            timeAgo: "2 days ago",
+        },
+        {
+            comment:
+                "Excelente plataforma. Encontré un especialista en minutos y conseguí turno para el mismo día.",
+            rating: 5,
+            userName: "María González",
+            timeAgo: "1 week ago",
+        },
+        {
+            comment:
+                "La experiencia fue muy simple y clara. Me gustó poder filtrar por especialidad y disponibilidad.",
+            rating: 4,
+            userName: "Lucas Pérez",
+            timeAgo: "3 weeks ago",
+        },
+    ];
+
+    return (
+        <Card className={card}>
             <div className={cardTitle}>
-                <User className="w-6 h-6"></User>
-                <h1 className={cardTitleText}>About</h1>
+                <UserStar className={titleIcon}></UserStar>
+                <h1 className={cardTitleText}>Ratings</h1>
             </div>
-            <div className={cardContent}>
-                <p>Soy traumatólogo en el Club Estudiantes de La Plata, con más de 40 años en el campo.</p>
+            <div className={ratingsContent}>
+                <Carousel opts={{ align: "start", loop: true }} className={carousel}>
+                    <CarouselContent className={carouselContent}>
+                        {ratings.map((r, idx) => (
+                            <CarouselItem key={idx} className={carouselItem}>
+                                <div className="py-2">
+                                    <RatingCard
+                                        className="max-w-xl"
+                                        comment={r.comment}
+                                        rating={r.rating}
+                                        userName={r.userName}
+                                        timeAgo={r.timeAgo}
+                                    />
+                                </div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="left-2 cursor-pointer" />
+                    <CarouselNext className="right-2 cursor-pointer" />
+                </Carousel>
             </div>
         </Card>
-    )
+    );
 }
 
 export default PublicProfile;
