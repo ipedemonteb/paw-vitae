@@ -41,10 +41,21 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         return doctorOfficeDao.create(doctorOffice);
     }
 
-    @Override
     @Transactional
-    public List<DoctorOffice> create(Doctor doctor, List<DoctorOfficeForm> doctorOfficeForms) {
-        return this.create(transformToDoctorOffice(doctor, doctorOfficeForms));
+    @Override
+    public DoctorOffice create(Doctor doctor,DoctorOfficeForm form) {
+        if (Boolean.TRUE.equals(form.getActive())) {
+            throw new BussinesRuleException("exception.business.cannotCreateAndActivateOffice");
+        }
+        validateMaxOffices(doctor.getId());
+        Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
+                .orElseThrow(NeighborhoodNotFoundException::new);
+        List<Specialty> specs = form.getSpecialtyIds().stream()
+                .map(sid -> specialtyService.getById(sid).orElseThrow(SpecialtyNotFoundException::new))
+                .toList();
+
+        DoctorOffice office = form.toEntity(doctor, nb, specs);
+        return doctorOfficeDao.create(office);
     }
 
     @Transactional
@@ -59,17 +70,11 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
     @Transactional
     @Override
-    public List<DoctorOffice> transformToDoctorOffice(Doctor doctor, List<DoctorOfficeForm> officeForms) {
-        List<DoctorOffice> doctorOffices = new ArrayList<>();
-        for (DoctorOfficeForm officeForm : officeForms) {
+    public DoctorOffice transformToDoctorOffice(Doctor doctor, DoctorOfficeForm officeForm) {
             Neighborhood neighborhood = neighborhoodService.getById(officeForm.getNeighborhoodId()).orElseThrow(NeighborhoodNotFoundException::new); //TODO MAKE CUSTOM EXCEPTION AND MAKE EFFICIENT (THERE CAN BE REPEATED NEIGHBORHOODS)
             List<Specialty> specialties = specialtyService.getByIds(officeForm.getSpecialtyIds());
             DoctorOffice doctorOffice = officeForm.toEntity(doctor, neighborhood, specialties);
-            DoctorOffice created = create(doctorOffice);
-            doctorOffice.setDoctorOfficeAvailability(doctorOfficeAvailabilityService.create(officeForm.getOfficeAvailabilitySlotForms(), created));
-            doctorOffices.add(created);
-        }
-        return doctorOffices;
+        return create(doctorOffice);
     }
 
     @Transactional(readOnly = true)
@@ -98,42 +103,74 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
     @Transactional
     @Override
-    public void update(List<DoctorOfficeForm> forms, Doctor inputDoctor) {
-        Doctor doctor = doctorService.getByIdWithAvailableOffices(inputDoctor.getId())
-                .orElseThrow(UserNotFoundException::new);
-        validateOfficeOwnership(forms, doctor);
-        validateMaxOffices(forms);
-        validateActiveAvailability(forms, doctor.getId());
+    public DoctorOffice update(long officeId, DoctorOfficeForm form, long doctorId) {
+        DoctorOffice office = doctorOfficeDao.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
 
-        Map<Long, DoctorOffice> existingById = doctor.getDoctorOffices().stream()
-                .collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
-
-        List<DoctorOffice> newOffices = new ArrayList<>();
-
-        for (DoctorOfficeForm form : forms) {
-            Long id = form.getId();
-            if (id != null && existingById.containsKey(id)) {
-                DoctorOffice office = existingById.get(id);
-                boolean deleted = applyFormToEntity(office, form, doctor);
-                if (!deleted) {
-                    newOffices.add(office);
-                }
-            } else {
-                Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
-                        .orElseThrow(NeighborhoodNotFoundException::new);
-                List<Specialty> specs = form.getSpecialtyIds().stream()
-                        .map(sid -> specialtyService.getById(sid)
-                                .orElseThrow(SpecialtyNotFoundException::new))
-                        .toList();
-
-                DoctorOffice created = form.toEntity(doctor, nb, specs);
-                newOffices.add(created);
-            }
+        if (office.getDoctor().getId() != doctorId) {
+            throw new ResourceOwnershipException();
         }
 
-        doctor.getDoctorOffices().clear();
-        doctor.getDoctorOffices().addAll(newOffices);
+        if (form.getActive() != null && !office.isActive() && Boolean.TRUE.equals(form.getActive())) {
+            validateMaxOffices(doctorId);
+        }
+        if(form.getActive() != null && form.getActive() && !office.isActive()){
+            validateActiveAvailability(form, doctorId);
+            office.setActive(form.getActive());
+        }
+        if (form.getOfficeName() != null) {
+            office.setOfficeName(form.getOfficeName());
+        }
+        if (form.getNeighborhoodId() != null) {
+            Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
+                    .orElseThrow(NeighborhoodNotFoundException::new);
+            office.setNeighborhood(nb);
+        }
+        if (form.getSpecialtyIds() != null) {
+            List<Specialty> specs = form.getSpecialtyIds().stream()
+                    .map(sid -> specialtyService.getById(sid).orElseThrow(SpecialtyNotFoundException::new))
+                    .collect(Collectors.toList());
+            office.setSpecialties(specs);
+        }
+        return doctorOfficeDao.update(office);
     }
+//    @Transactional
+//    @Override
+//    public void update(DoctorOfficeForm form, Doctor inputDoctor) {
+//        Doctor doctor = doctorService.getByIdWithAvailableOffices(inputDoctor.getId())
+//                .orElseThrow(UserNotFoundException::new);
+//        validateOfficeOwnership(form, doctor);
+//        validateMaxOffices(form);
+//        validateActiveAvailability(form, doctor.getId());
+//
+//        Map<Long, DoctorOffice> existingById = doctor.getDoctorOffices().stream()
+//                .collect(Collectors.toMap(DoctorOffice::getId, Function.identity()));
+//
+//        List<DoctorOffice> newOffices = new ArrayList<>();
+//
+//        for (DoctorOfficeForm form : forms) {
+//            Long id = form.getId();
+//            if (id != null && existingById.containsKey(id)) {
+//                DoctorOffice office = existingById.get(id);
+//                boolean deleted = applyFormToEntity(office, form, doctor);
+//                if (!deleted) {
+//                    newOffices.add(office);
+//                }
+//            } else {
+//                Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
+//                        .orElseThrow(NeighborhoodNotFoundException::new);
+//                List<Specialty> specs = form.getSpecialtyIds().stream()
+//                        .map(sid -> specialtyService.getById(sid)
+//                                .orElseThrow(SpecialtyNotFoundException::new))
+//                        .toList();
+//
+//                DoctorOffice created = form.toEntity(doctor, nb, specs);
+//                newOffices.add(created);
+//            }
+//        }
+//
+//        doctor.getDoctorOffices().clear();
+//        doctor.getDoctorOffices().addAll(newOffices);
+//    }
 
 
     private boolean applyFormToEntity(
@@ -166,36 +203,23 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
         return false;
     }
-    private void validateOfficeOwnership(List<DoctorOfficeForm> forms, Doctor doctor) {
-        Set<Long> doctorOfficeIds = doctor.getDoctorOffices().stream()
-                .map(DoctorOffice::getId)
-                .collect(Collectors.toSet());
 
-        for (DoctorOfficeForm form : forms) {
-            if (form.getId() != null && !doctorOfficeIds.contains(form.getId())) {
-                throw new ResourceOwnershipException();
-            }
-        }
-    }
 
-    private void validateMaxOffices(List<DoctorOfficeForm> forms) {
-        long activeCount = forms.stream()
-                .filter(f -> !Boolean.TRUE.equals(f.getRemoved()))
-                .count();
-
-        if (activeCount > MAX_OFFICES) {
+    private void validateMaxOffices(long doctorId) {
+        long activeCount = doctorOfficeDao.getByDoctorId(doctorId).size();
+        if (activeCount >= MAX_OFFICES) {
             throw new BussinesRuleException("exception.business.tooManyOffices");
         }
     }
 
-    private void validateActiveAvailability(List<DoctorOfficeForm> forms, long doctorId) {
+    private void validateActiveAvailability(DoctorOfficeForm form, long doctorId) {
         List<DoctorOfficeAvailability> existingSlots = doctorOfficeAvailabilityService.getByDoctorId(doctorId);
 
         Set<Long> officesWithSlots = existingSlots.stream()
                 .map(s -> s.getOffice().getId())
                 .collect(Collectors.toSet());
 
-        for (DoctorOfficeForm form : forms) {
+
             if (Boolean.TRUE.equals(form.getActive())) {
                 if (form.getId() == null) {
                     throw new BussinesRuleException("exception.business.officeMustHaveAvailabilityToBeActive");
@@ -203,7 +227,20 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
                 if (!officesWithSlots.contains(form.getId())) {
                     throw new IllegalArgumentException("exception.business.officeMustHaveAvailabilityToBeActive");
                 }
-            }
+        }
+    }
+    @Transactional
+    @Override
+    public void delete(long officeId, long doctorId) {
+        DoctorOffice office = doctorOfficeDao.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
+        if (office.getDoctor().getId() != doctorId) {
+            throw new ResourceOwnershipException();
+        }
+
+        if (appointmentService.officeHasAppointments(officeId)) {
+            office.setRemoved(LocalDateTime.now(ZoneId.systemDefault()));
+        } else {
+            doctorOfficeDao.remove(officeId);
         }
     }
 }

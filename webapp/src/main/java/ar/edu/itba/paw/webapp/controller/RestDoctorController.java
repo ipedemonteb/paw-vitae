@@ -317,17 +317,17 @@ public class RestDoctorController {
         doctorService.setImage(id, imageId);
         return Response.noContent().build();
     }
-    @PUT
-    @Path("/{id:\\d+}/offices")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response setDoctorOffices(
-            @PathParam("id") final long id,
-            @Valid @NotNull OfficeForm officeForm
-    ) {
-        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
-        this.doctorOfficeService.update( officeForm.getDoctorOfficeForm(), doctor);
-        return Response.noContent().build();
-    }
+//    @PUT
+//    @Path("/{id:\\d+}/offices")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    public Response setDoctorOffices(
+//            @PathParam("id") final long id,
+//            @Valid @NotNull OfficeForm officeForm
+//    ) {
+//        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
+//        this.doctorOfficeService.update( officeForm.getDoctorOfficeForm(), doctor);
+//        return Response.noContent().build();
+//    }
     @PUT
     @Path("/{id:\\d+}/availability")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -349,5 +349,36 @@ public class RestDoctorController {
         this.unavailabilitySlotsService.updateDoctorUnavailability(doctor,unavailabilityForm.getUnavailabilitySlots());
         return Response.noContent().build();
     }
+    @POST
+    @Path("/{id:\\d+}/offices")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    public Response createDoctorOffice(
+            @Valid @NotNull OfficeForm officeForm,
+            @PathParam("id") final long id
+    ) {
+        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
+        DoctorOffice office = this.doctorOfficeService.create(doctor, officeForm.getDoctorOfficeForm());
+        return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(office.getId())).build()).build();
+    }
+    @PATCH
+    @Path("/{id:\\d+}/offices/{officeId:\\d+}")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    public Response updateDoctorOffice(
+        @Valid @NotNull UpdateOfficeForm officeForm,
+        @PathParam("id") final long id,
+        @PathParam("officeId") final long officeId
+    ){
+        this.doctorOfficeService.update(officeId,officeForm.getDoctorOfficeForm(),id);
+        return Response.noContent().build();
+    }
 
+    @DELETE
+    @Path("/{id:\\d+}/offices/{officeId:\\d+}")
+    public Response deleteDoctorOffice(
+            @PathParam("id") final long doctorId,
+            @PathParam("officeId") final long officeId
+    ) {
+        this.doctorOfficeService.delete(officeId, doctorId);
+        return Response.noContent().build();
+    }
 }

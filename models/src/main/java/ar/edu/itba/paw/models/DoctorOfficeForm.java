@@ -11,23 +11,21 @@ public class DoctorOfficeForm {
     private boolean active;
     private boolean removed;
 
-    private List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms;
 
-    public DoctorOfficeForm(Long id, Long neighborhoodId, List<Long> specialtyIds, String officeName, List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms, boolean active, boolean removed) {
+    public DoctorOfficeForm(Long id, Long neighborhoodId, List<Long> specialtyIds, String officeName, boolean active, boolean removed) {
         this.id = id;
         this.neighborhoodId = neighborhoodId;
         this.specialtyIds = specialtyIds;
         this.officeName = officeName;
-        this.officeAvailabilitySlotForms = officeAvailabilitySlotForms;
         this.active = active;
         this.removed = removed;
     }
 
-    public DoctorOfficeForm(Long neighborhoodId, String officeName, List<Long> specialtyIds, List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms) {
+    public DoctorOfficeForm(Long neighborhoodId, String officeName, List<Long> specialtyIds) {
         this.neighborhoodId = neighborhoodId;
         this.officeName = officeName;
         this.specialtyIds = specialtyIds;
-        this.officeAvailabilitySlotForms = officeAvailabilitySlotForms;
+
     }
 
     public DoctorOfficeForm() {
@@ -57,7 +55,7 @@ public class DoctorOfficeForm {
         this.specialtyIds = specialtyIds;
     }
 
-    public boolean getActive() {
+    public Boolean getActive() {
         return active;
     }
 
@@ -81,13 +79,6 @@ public class DoctorOfficeForm {
         this.id = id;
     }
 
-    public List<DoctorOfficeAvailabilityForm> getOfficeAvailabilitySlotForms() {
-        return officeAvailabilitySlotForms;
-    }
-
-    public void setOfficeAvailabilitySlotForms(List<DoctorOfficeAvailabilityForm> officeAvailabilitySlotForms) {
-        this.officeAvailabilitySlotForms = officeAvailabilitySlotForms;
-    }
 
     public DoctorOffice toEntity(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties) {
         return new DoctorOffice(doctor, neighborhood, specialties, officeName, active);

@@ -16,21 +16,20 @@ import java.util.List;
 public class OfficeForm {
 
 
-    @NotEmpty
     @NotNull
-    @ActiveOffice(message = "{offices.active}")
-    @UniqueOffices(message = "{offices.duplicate}")
+//    @ActiveOffice(message = "{offices.active}")
+//    @UniqueOffices(message = "{offices.duplicate}")
     @ValidOfficeNames(message = "{offices.invalid.name}")
     @ValidOfficeSpecialties(message = "{offices.invalid.specialties}")
     @ValidOfficeNeighborhood(message = "{offices.invalid.neighborhood}")
-    private List<DoctorOfficeForm> doctorOfficeForm;
+    private DoctorOfficeForm doctorOfficeForm;
 
 
-    public List<DoctorOfficeForm> getDoctorOfficeForm() {
+    public DoctorOfficeForm getDoctorOfficeForm() {
         return doctorOfficeForm;
     }
 
-    public void setDoctorOfficeForm(List<DoctorOfficeForm> doctorOfficeForm) {
+    public void setDoctorOfficeForm(DoctorOfficeForm doctorOfficeForm) {
         this.doctorOfficeForm = doctorOfficeForm;
     }
 
