@@ -5,7 +5,6 @@ import Login from './pages/Login.tsx'
 import Register from "@/pages/Register.tsx";
 import About from "@/pages/About.tsx";
 import Search from "@/pages/Search.tsx";
-import AppointmentComponent from "@/components/AppointmentComponent.tsx";
 import PatientDashboardLayout from "@/pages/patient/PatientDashboardLayout.tsx";
 import PatientUpcoming from "@/pages/patient/PatientUpcoming.tsx";
 import PatientHistory from "@/pages/patient/PatientHistory.tsx";
@@ -35,10 +34,6 @@ export const router = createBrowserRouter([
             {
                 path: 'search',
                 element: <Search />
-            },
-            {
-                path: '/test',
-                element: <AppointmentComponent/>
             },
             {
                 path: "patient/dashboard",

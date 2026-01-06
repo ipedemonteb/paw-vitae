@@ -1,6 +1,8 @@
+import AppointmentComponent from "@/components/AppointmentComponent.tsx";
+
 function PatientHistory() {
     return (
-        <div />
+        <AppointmentComponent type={"history"} />
     )
 }
 

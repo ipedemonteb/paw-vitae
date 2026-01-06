@@ -1,8 +1,8 @@
+import AppointmentComponent from "@/components/AppointmentComponent.tsx";
+
 function PatientUpcoming() {
     return (
-        <div>
-
-        </div>
+        <AppointmentComponent type={"upcoming"}/>
     )
 }
 
