@@ -6,8 +6,8 @@ import Register from "@/pages/Register.tsx";
 import About from "@/pages/About.tsx";
 import Search from "@/pages/Search.tsx";
 import PatientDashboardLayout from "@/pages/patient/PatientDashboardLayout.tsx";
-import PatientUpcoming from "@/pages/patient/PatientUpcoming.tsx";
-import PatientHistory from "@/pages/patient/PatientHistory.tsx";
+import UserUpcoming from "@/pages/common/UserUpcoming.tsx";
+import UserHistory from "@/pages/common/UserHistory.tsx";
 import PatientMedicalHistory from "@/pages/patient/PatientMedicalHistory.tsx";
 import PatientAccount from "@/pages/patient/PatientAccount.tsx";
 import DoctorDashboardLayout from "@/pages/doctor/DoctorDashboardLayout.tsx";
@@ -49,11 +49,11 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: "upcoming",
-                        element: <PatientUpcoming/>
+                        element: <UserUpcoming/>
                     },
                     {
                         path: "history",
-                        element: <PatientHistory/>
+                        element: <UserHistory/>
                     },
                     {
                         path: "medical-history",
@@ -75,11 +75,11 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: "upcoming",
-                        element: <PatientUpcoming/>
+                        element: <UserUpcoming/>
                     },
                     {
                         path: "history",
-                        element: <PatientHistory/>
+                        element: <UserHistory/>
                     },
                     {
                         path: "availability",

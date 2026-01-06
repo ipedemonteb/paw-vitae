@@ -1,9 +1,9 @@
 import AppointmentComponent from "@/components/AppointmentComponent.tsx";
 
-function PatientUpcoming() {
+function UserUpcoming() {
     return (
         <AppointmentComponent type={"upcoming"}/>
     )
 }
 
-export default PatientUpcoming;
+export default UserUpcoming;
