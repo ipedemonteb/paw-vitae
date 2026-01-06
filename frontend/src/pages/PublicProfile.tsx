@@ -1,9 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
-import { Mail, Phone, SquarePen, User, ShieldPlus } from "lucide-react";
+import { Mail, Phone, SquarePen, User, ShieldPlus, UserStar } from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import BadgeComponent from "@/components/BadgeComponent.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious} from "@/components/ui/carousel.tsx";
+import {RatingCard} from "@/components/Rating.tsx";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -28,6 +30,7 @@ function PublicProfile() {
           <ProfileCard rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges} />
           <AboutCard />
           <CoverageCard />
+          <RatingsCard />
       </div>
     );
 }
@@ -156,6 +159,72 @@ function CoverageComponent({coverageImage, coverageName, coveragePlan}:{
             <h3>{coverageName}</h3>
             <p className={coveragePlanText}>Plan: {coveragePlan}</p>
         </div>
+    );
+}
+
+const ratingsContent =
+    "w-full max-w-xl mx-auto mt-6";
+const carousel =
+    "relative max-w-3xl w-full mx-auto px-12 -mt-5";
+const carouselContent =
+    "-ml-4 py-2";
+const carouselItem =
+    "pl-4 basis-full";
+
+function RatingsCard() {
+
+    const ratings = [
+        {
+            comment:
+                "Muy buena atención. Me atendieron rápido y el doctor explicó todo con claridad.",
+            rating: 5,
+            userName: "John Doe",
+            timeAgo: "2 days ago",
+        },
+        {
+            comment:
+                "Excelente plataforma. Encontré un especialista en minutos y conseguí turno para el mismo día.",
+            rating: 5,
+            userName: "María González",
+            timeAgo: "1 week ago",
+        },
+        {
+            comment:
+                "La experiencia fue muy simple y clara. Me gustó poder filtrar por especialidad y disponibilidad.",
+            rating: 4,
+            userName: "Lucas Pérez",
+            timeAgo: "3 weeks ago",
+        },
+    ];
+
+    return (
+        <Card className={card}>
+            <div className={cardTitle}>
+                <UserStar className="w-6 h-6"></UserStar>
+                <h1 className={cardTitleText}>Ratings</h1>
+            </div>
+            <div className={ratingsContent}>
+                <Carousel opts={{ align: "start", loop: true }} className={carousel}>
+                    <CarouselContent className={carouselContent}>
+                        {ratings.map((r, idx) => (
+                            <CarouselItem key={idx} className={carouselItem}>
+                                <div className="py-2">
+                                    <RatingCard
+                                        className="max-w-xl"
+                                        comment={r.comment}
+                                        rating={r.rating}
+                                        userName={r.userName}
+                                        timeAgo={r.timeAgo}
+                                    />
+                                </div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="left-2 cursor-pointer" />
+                    <CarouselNext className="right-2 cursor-pointer" />
+                </Carousel>
+            </div>
+        </Card>
     );
 }
 
