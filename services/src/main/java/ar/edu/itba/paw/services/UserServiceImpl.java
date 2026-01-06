@@ -66,6 +66,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public Optional<? extends User> getByVerificationToken(String token){
+        LOGGER.debug("Retrieving user by verification token");
+        Optional<Patient> patient = patientDao.getByVerificationToken(token);
+        return patient.isPresent() ? patient : doctorDao.getByVerificationToken(token);
+    }
+    @Transactional
+    @Override
     public void setVerificationToken(String email) {
         LOGGER.debug("Setting verification token for email: {}", email);
         User user = getByEmail(email).orElseThrow(UserNotFoundException::new);

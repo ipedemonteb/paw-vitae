@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.interfaceServices.UserService; // Asegúrate de usar tu interface correcta
+import ar.edu.itba.paw.interfaceServices.UserService;
+import ar.edu.itba.paw.webapp.auth.JwtService;
+import ar.edu.itba.paw.webapp.auth.TokenResponseHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,9 +11,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64; // Usar Java util standard
+import java.util.Base64;
 import java.util.Optional;
 
 import static ar.edu.itba.paw.webapp.auth.AuthUtils.BASIC_PREFIX;
@@ -29,18 +33,19 @@ public class BasicFilter extends OncePerRequestFilter {
 
     private static final String AUTH_HEADER = BASIC_PREFIX;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+
+    private final AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final UserDetailsService userDetailsService;
+    private final TokenResponseHelper tokenResponseHelper;
 
     @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private TokenResponseHelper tokenResponseHelper;
-
+    public BasicFilter(AuthenticationManager authenticationManager, UserService userService, UserDetailsService userDetailsService, TokenResponseHelper tokenResponseHelper) {
+        this.authenticationManager = authenticationManager;
+        this.userService = userService;
+        this.userDetailsService = userDetailsService;
+        this.tokenResponseHelper = tokenResponseHelper;
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -52,31 +57,46 @@ public class BasicFilter extends OncePerRequestFilter {
 
         try {
             final String credsBase64 = authHeader.substring(AUTH_HEADER.length()).trim();
-            final byte[] credsBytes = Base64.getDecoder().decode(credsBase64);
-            final String credsDecoded = new String(credsBytes, StandardCharsets.UTF_8);
-
+            final String credsDecoded = new String(Base64.getDecoder().decode(credsBase64), StandardCharsets.UTF_8);
             final String[] split = credsDecoded.split(":", 2);
+
             if (split.length != 2) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
             final String email = split[0];
-            final String password = split[1];
+            final String potentialPasswordOrToken = split[1];
+
+            Authentication auth;
+            Optional<? extends User> targetUser;
 
 
-            final Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, password)
-            );
+            final Optional< ? extends User> userByToken = userService.getByVerificationToken(potentialPasswordOrToken);
+            if (userByToken.isPresent() && userByToken.get().getEmail().equals(email)) {
+                User user = userByToken.get();
+                userService.verifyValidationToken(potentialPasswordOrToken);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                UsernamePasswordAuthenticationToken manualAuth = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities()
+                );
+                manualAuth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+                auth = manualAuth;
+                targetUser = Optional.of(user);
+
+            } else {
+                auth = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(email, potentialPasswordOrToken)
+                );
+                targetUser = userService.getByEmail(email);
+            }
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-
-            final Optional<? extends User> user = userService.getByEmail(email);
-
-            user.ifPresent(value -> tokenResponseHelper.addAuthenticationHeaders(response, value, request));
+            targetUser.ifPresent(user -> tokenResponseHelper.addAuthenticationHeaders(response, user, request));
 
         } catch (AuthenticationException e) {
+            SecurityContextHolder.clearContext();
             response.addHeader("WWW-Authenticate", "Basic realm=\"Vitae\"");
         }
 
