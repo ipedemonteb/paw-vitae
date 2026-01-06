@@ -14,6 +14,7 @@ import DoctorDashboardLayout from "@/pages/doctor/DoctorDashboardLayout.tsx";
 import DoctorAvailability from "@/pages/doctor/DoctorAvailability.tsx";
 import DoctorOffices from "@/pages/doctor/DoctorOffices.tsx";
 import DoctorAccount from "@/pages/doctor/DoctorAccount.tsx";
+import PublicProfile from "@/pages/PublicProfile.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -38,6 +39,11 @@ export const router = createBrowserRouter([
             {
                 path: 'search',
                 element: <Search />
+            },
+            {
+                //TODO: change this path, its for development only
+                path: "profile",
+                element: <PublicProfile />
             },
             {
                 path: "patient/dashboard",

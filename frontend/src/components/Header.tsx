@@ -271,7 +271,7 @@ function DropdownDoctor() {
                 </Link>
             </DropdownMenuItem>
             <DropdownMenuItem className={dropDownItem}>
-                <Link to="/doctor/dashboard" className={dropDownItem}>
+                <Link to="/profile" className={dropDownItem}>
                     <User className="text-inherit" />
                     Public Profile
                 </Link>
@@ -346,7 +346,7 @@ function SheetLoggedInComponent({isDoctor}:{isDoctor:boolean}) {
                             Doctor Dashboard
                         </div>
                     </SheetNavLink>
-                    <SheetNavLink to="/doctor/dashboard">
+                    <SheetNavLink to="/profile">
                         <div className={mobileIconContainer}>
                             <User className={mobileIcon}/>
                             Public Profile
