@@ -10,6 +10,10 @@ import PatientUpcoming from "@/pages/patient/PatientUpcoming.tsx";
 import PatientHistory from "@/pages/patient/PatientHistory.tsx";
 import PatientMedicalHistory from "@/pages/patient/PatientMedicalHistory.tsx";
 import PatientAccount from "@/pages/patient/PatientAccount.tsx";
+import DoctorDashboardLayout from "@/pages/doctor/DoctorDashboardLayout.tsx";
+import DoctorAvailability from "@/pages/doctor/DoctorAvailability.tsx";
+import DoctorOffices from "@/pages/doctor/DoctorOffices.tsx";
+import DoctorAccount from "@/pages/doctor/DoctorAccount.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -59,6 +63,36 @@ export const router = createBrowserRouter([
                         path: "account",
                         element: <PatientAccount/>
                     },
+                ]
+            },
+            {
+                path: "doctor/dashboard",
+                element: <DoctorDashboardLayout />,
+                children: [
+                    {
+                        index: true,
+                        element: <Navigate to="upcoming" replace />
+                    },
+                    {
+                        path: "upcoming",
+                        element: <PatientUpcoming/>
+                    },
+                    {
+                        path: "history",
+                        element: <PatientHistory/>
+                    },
+                    {
+                        path: "availability",
+                        element: <DoctorAvailability/>
+                    },
+                    {
+                        path: "offices",
+                        element: <DoctorOffices/>
+                    },
+                    {
+                        path: "account",
+                        element: <DoctorAccount/>
+                    }
                 ]
             }
         ],
