@@ -69,7 +69,7 @@ export default function AppointmentCard({appointment, patientName, patientLastna
                         </span>
                         <span className="text-(--text-light) text-xs flex felx-row items-center justify-baseline gap-2">
                             <span className="bg-blue-500 w-2 h-2 rounded-full"></span>
-                            {patientCoverage}
+                            {t(patientCoverage)}
                         </span>
                     </div>
                 </div>
