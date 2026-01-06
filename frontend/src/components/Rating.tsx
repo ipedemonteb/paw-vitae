@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card.tsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import { Quote, Star } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
-import { clampRating } from "@/lib/utils.ts";
+import {RatingStars} from "@/components/RatingStars.tsx";
 
 export type RatingCardProps = React.ComponentPropsWithoutRef<"div"> & {
     comment: string;
@@ -34,7 +34,6 @@ export function RatingCard({
                                quoteIcon,
                                ...props
                            }: RatingCardProps) {
-    const r = clampRating(rating);
     const initials = userInitials ?? initialsFromName(userName);
 
     const ratingsContainer = "w-full max-w-[800px] mx-auto";
@@ -44,7 +43,7 @@ export function RatingCard({
     const ratingIconBox = "shrink-0 w-[48px] h-[48px] flex items-top justify-center text-[var(--primary-color)]";
     const ratingQuote = "flex-1";
     const ratingText = "text-[16px] text-[var(--text-color)] leading-[1.6]";
-    const ratingStars = "mt-[10px] flex items-center gap-[6px]";
+    const ratingStars = "mt-[10px]";
     const ratingBottomContent =
         "pt-[14px] border-t border-[var(--gray-200)] flex items-center justify-between";
     const ratingAuthor = "font-[600] text-[var(--text-color)]";
@@ -62,23 +61,7 @@ export function RatingCard({
 
                     <div className={ratingQuote}>
                         <p className={ratingText}>{comment}</p>
-
-                        <div className={ratingStars} aria-label={`${r} star rating`}>
-                            {Array.from({ length: 5 }).map((_, i) => {
-                                const filled = i < r;
-                                return (
-                                    <Star
-                                        key={i}
-                                        className={cn(
-                                            "h-5 w-5",
-                                            filled
-                                                ? "fill-[var(--primary-color)] text-[var(--primary-color)]"
-                                                : "text-[var(--gray-300)]"
-                                        )}
-                                    />
-                                );
-                            })}
-                        </div>
+                        <RatingStars rating={rating} className={ratingStars}/>
                     </div>
                 </div>
 

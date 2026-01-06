@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
-import {Calendar, Mail, Phone, Star, Stethoscope, UserRoundSearch} from "lucide-react";
-import { clampRating, cn } from "@/lib/utils.ts";
-import {Button} from "@/components/ui/button.tsx";
+import { Calendar, Mail, Phone, Stethoscope, UserRoundSearch } from "lucide-react";
+import { Button } from "@/components/ui/button.tsx";
+import { RatingStars } from "@/components/RatingStars.tsx";
 
 const cardContainer =
     "p-0 gap-0";
@@ -30,9 +30,8 @@ const viewProfileButton =
     "w-full bg-white text-[var(--primary-color)] border border-[var(--primary-color)] py-2 px-4 hover:text-white hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] cursor-pointer";
 
 function SearchGridCard() {
-    const rating = 4.5;
 
-    const r = clampRating(rating);
+    const rating = 4;
 
     return (
         <Card className={cardContainer}>
@@ -56,22 +55,7 @@ function SearchGridCard() {
                     <Phone className={dataIcon} />
                     <p>11 1234-5678</p>
                 </div>
-                <div className={ratingStars} aria-label={`${r} star rating`}>
-                    {Array.from({ length: 5 }).map((_, i) => {
-                        const filled = i < r;
-                        return (
-                            <Star
-                                key={i}
-                                className={cn(
-                                    "h-4 w-4",
-                                    filled
-                                        ? "fill-[var(--primary-color)] text-[var(--primary-color)]"
-                                        : "text-[var(--gray-300)]"
-                                )}
-                            />
-                        );
-                    })}
-                </div>
+                <RatingStars rating={rating} className={ratingStars} sizeClassName="h-4 w-4"/>
             </div>
             <div className={scheduleContainer}>
                 <Button className={scheduleButton}>
