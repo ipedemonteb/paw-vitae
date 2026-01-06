@@ -106,11 +106,15 @@ function Header() {
                                 Home
                             </HeaderNavLink>
                         </NavigationMenuItem>
-                        <NavigationMenuItem>
-                            <HeaderNavLink to="/search">
-                                Find Doctors
-                            </HeaderNavLink>
-                        </NavigationMenuItem>
+                        {isDoctor ?
+                            <></>
+                            :
+                            <NavigationMenuItem>
+                                <HeaderNavLink to="/search">
+                                    Find Doctors
+                                </HeaderNavLink>
+                            </NavigationMenuItem>
+                        }
                         <NavigationMenuItem>
                             <HeaderNavLink to="/about-us">
                                 About Us
