@@ -111,6 +111,7 @@
     "note_availability": "Office and Availability configuration will be done once your license is validated.",
     "loader_specialties": "Loading specialties...",
     "loader_coverages": "Loading insurance plans...",
+    "loader_neighborhoods": "Loading neighborhoods...",
     "no_neighborhoods": "No neighborhoods found",
     "errors": {
       "passwords_mismatch": "Passwords do not match",

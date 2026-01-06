@@ -111,6 +111,7 @@
     "note_availability": "La configuración de Consultorios y Disponibilidad se realizará una vez validada su matrícula.",
     "loader_specialties": "Cargando especialidades...",
     "loader_coverages": "Cargando obras sociales...",
+    "loader_neighborhoods": "Cargando barrios...",
     "no_neighborhoods": "No se encontraron barrios",
     "errors": {
       "passwords_mismatch": "Las contraseñas no coinciden",

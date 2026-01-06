@@ -54,13 +54,13 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(t("appointment.all"))
-    const data = typeDictionary[type]
+    const componentType = typeDictionary[type]
     return (
         <DashboardNavContainer>
-            <DashboardNavHeader title={t(data.title)}>
+            <DashboardNavHeader title={t(componentType.title)}>
                 <div className="flex felx-col items-center justify-center gap-2">
                 <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
-                    {t(data.filterMessage)}:
+                    {t(componentType.filterMessage)}:
                 </span>
                     <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
@@ -80,7 +80,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                                 setOpen(false)
                             }}
                                     className="w-full text-xs bg-white font-light hover:bg-gray-100 hover:text-black flex text-(--text-light) justify-baseline">{t("appointment.all")}</Button>
-                            {data.popoverData.map(a => (
+                            {componentType.popoverData.map(a => (
                                 <Button value={t(a)} onClick={(e) => {
                                     setValue(e.currentTarget.value);
                                     setOpen(false)
@@ -100,15 +100,24 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                             <PaginationPrevious href="#" />
                         </PaginationItem>
                         <PaginationItem>
-                            <PaginationLink href="#">1</PaginationLink>
+                            <PaginationEllipsis />
                         </PaginationItem>
                         <PaginationItem>
-                            <PaginationLink href="#" isActive>
-                                2
+                            <PaginationLink href="#">6</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">
+                                7
                             </PaginationLink>
                         </PaginationItem>
                         <PaginationItem>
-                            <PaginationLink href="#">3</PaginationLink>
+                            <PaginationLink href="#" isActive>8</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">9</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">10</PaginationLink>
                         </PaginationItem>
                         <PaginationItem>
                             <PaginationEllipsis />

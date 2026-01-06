@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import {
     ArrowRight,
     ArrowLeft,
@@ -31,8 +31,8 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
     const [step, setStep] = useState(1)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const specialties = useSpecialties()
-    const coverages = useCoverages()
+    const {data: specialties, isLoading: isLoadingSpecialties} = useSpecialties()
+    const {data: coverages, isLoading: isLoadingCoverages} = useCoverages()
 
     const [formData, setFormData] = useState({
         name: "",
@@ -234,11 +234,11 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                     <div className="space-y-3">
                         <label className="text-sm font-medium text-gray-700">{t('register.label_specialties')} <span className="text-red-500">*</span></label>
 
-                        {!specialties ? (
+                        {isLoadingSpecialties ? (
                             <div className="flex items-center gap-2 text-gray-500 text-sm"><Loader2 className="h-4 w-4 animate-spin"/> {t('register.loader_specialties')}</div>
                         ) : (
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                {specialties.specialties.map((spec) => (
+                                {specialties?.map((spec) => (
                                     <div
                                         key={spec.name}
                                         onClick={() => toggleSelection('selectedSpecialties', spec.self)}
@@ -261,11 +261,11 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                     <div className="space-y-3">
                         <label className="text-sm font-medium text-gray-700">{t('register.label_coverages')} <span className="text-red-500">*</span></label>
 
-                        {!coverages ? (
+                        {isLoadingCoverages ? (
                             <div className="flex items-center gap-2 text-gray-500 text-sm"><Loader2 className="h-4 w-4 animate-spin"/> {t('register.loader_coverages')}</div>
                         ) : (
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                {coverages.coverages.map((cov) => (
+                                {coverages?.map((cov) => (
                                     <div
                                         key={cov.name}
                                         onClick={() => toggleSelection('selectedCoverages', cov.self)}
