@@ -22,8 +22,8 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
 
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const coverages = useCoverages()
-    const neighborhoods = useNeighborhoods()
+    const {data: coverages, isLoading: isLoadingCoverages} = useCoverages()
+    const {data: neighborhoods, isLoading: isLoadingNeighborhoods} = useNeighborhoods()
 
     const [formData, setFormData] = useState({
         name: "",
@@ -98,9 +98,9 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
         }
     }
 
-    const filteredNeighborhoods = neighborhoods.neighborhoods.filter(n =>
+    const filteredNeighborhoods = neighborhoods?.filter(n =>
         n.name.toLowerCase().includes(neighborhoodQuery.toLowerCase())
-    )
+    ) || []
 
 
     return (
@@ -161,7 +161,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                             />
                         </div>
 
-                        {showNeighborhoods && (
+                        {showNeighborhoods && !isLoadingNeighborhoods ? (
                             <div className="absolute z-10 w-full bg-white border rounded-md shadow-lg mt-1 max-h-40 overflow-y-auto">
                                 {filteredNeighborhoods.length > 0 ? (
                                     filteredNeighborhoods.map(n => (
@@ -177,7 +177,9 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                                     <div className="px-4 py-2 text-gray-500 text-sm">{t('register.no_neighborhoods')}</div>
                                 )}
                             </div>
-                        )}
+                        ) : isLoadingNeighborhoods ? (
+                            <div className="flex items-center gap-2 text-gray-500 text-sm"><Loader2 className="h-4 w-4 animate-spin"/> {t('register.loader_neighborhoods')}</div>
+                        ): (<></>)}
                     </div>
 
                     <div className="md:col-span-2">
@@ -223,11 +225,11 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                     {t('register.section_coverage')} <span className="text-red-500 text-sm">*</span>
                 </h2>
 
-                {!coverages ? (
+                {isLoadingCoverages ? (
                     <div className="flex items-center gap-2 text-gray-500 text-sm"><Loader2 className="h-4 w-4 animate-spin"/> {t('register.loader_coverages')}</div>
                 ) : (
                     <div className="flex flex-wrap gap-4">
-                        {coverages.coverages.map((cov: any) => (
+                        {coverages?.map((cov: any) => (
                             <div
                                 key={cov.self}
                                 onClick={() => setFormData(prev => ({...prev, coverageUrl: cov.self}))}

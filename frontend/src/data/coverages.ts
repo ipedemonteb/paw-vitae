@@ -7,7 +7,5 @@ export type CoverageDTO = {
 
 export async function listCoverages() {
     const res = await api.get<CoverageDTO[]>("/coverages");
-
-
-    return { data: res.data };
+    return res.data;
 }
