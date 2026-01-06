@@ -11,23 +11,15 @@ import java.util.List;
 
 public class ValidNewOfficeValidator {
 
-    private static boolean helperFunction(List<DoctorOfficeForm> doctorOfficeForms) {
-        for (DoctorOfficeForm office : doctorOfficeForms) {
-            if (office.getRemoved() && office.getId() == null) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     public static class ForOfficeForm implements ConstraintValidator<ValidNewOffice, OfficeForm> {
         @Override
         public boolean isValid(OfficeForm form, javax.validation.ConstraintValidatorContext context) {
-            List<DoctorOfficeForm> doctorOfficeForms = form.getDoctorOfficeForm();
-            if (doctorOfficeForms == null || doctorOfficeForms.isEmpty()) {
+            DoctorOfficeForm doctorOfficeForms = form.getDoctorOfficeForm();
+            if (doctorOfficeForms == null ) {
                 return true;
             }
-            boolean flag = helperFunction(doctorOfficeForms);
+            boolean flag =  !doctorOfficeForms.getRemoved() || doctorOfficeForms.getId() != null;
             if (!flag) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("{offices.new.invalid}")

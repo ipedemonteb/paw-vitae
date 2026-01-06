@@ -10,8 +10,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@OfficeOwnedByDoctor(message = "{office.invalid}")
-@ActiveOfficeSlots
+//@OfficeOwnedByDoctor(message = "{office.invalid}")
+//@ActiveOfficeSlots
 public class DoctorAvailabilityForm {
 
     public List<DoctorOfficeAvailabilityForm> getDoctorOfficeAvailabilities() {

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintValidator;
 import java.util.List;
 
-public class ValidOfficeNeighborhoodValidator implements ConstraintValidator<ValidOfficeNeighborhood, List<DoctorOfficeForm>> {
+public class ValidOfficeNeighborhoodValidator implements ConstraintValidator<ValidOfficeNeighborhood, DoctorOfficeForm> {
 
     private final NeighborhoodService neighborhoodService;
 
@@ -17,15 +17,10 @@ public class ValidOfficeNeighborhoodValidator implements ConstraintValidator<Val
     }
 
     @Override
-    public boolean isValid(List<DoctorOfficeForm> value, javax.validation.ConstraintValidatorContext context) {
+    public boolean isValid(DoctorOfficeForm value, javax.validation.ConstraintValidatorContext context) {
         if (value == null) {
             return true;
         }
-        for (DoctorOfficeForm office : value) {
-            if (office.getNeighborhoodId() == null || neighborhoodService.getById(office.getNeighborhoodId()).isEmpty()) {
-                return false;
-            }
-        }
-        return true;
+        return value.getNeighborhoodId() != null && neighborhoodService.getById(value.getNeighborhoodId()).isPresent();
     }
 }

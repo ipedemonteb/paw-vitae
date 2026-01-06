@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ValidOfficeSpecialtiesValidator implements ConstraintValidator<ValidOfficeSpecialties, List<DoctorOfficeForm>> {
+public class ValidOfficeSpecialtiesValidator implements ConstraintValidator<ValidOfficeSpecialties, DoctorOfficeForm> {
     private final SpecialtyService specialtyService;
 
     @Autowired
@@ -20,16 +20,16 @@ public class ValidOfficeSpecialtiesValidator implements ConstraintValidator<Vali
     Set<Long> seenIds = new HashSet<>();
 
     @Override
-    public boolean isValid(List<DoctorOfficeForm> values, javax.validation.ConstraintValidatorContext context) {
-        if (values == null || values.isEmpty()) {
+    public boolean isValid(DoctorOfficeForm value, javax.validation.ConstraintValidatorContext context) {
+        if (value == null ) {
             return true;
         }
-        for (DoctorOfficeForm specialty : values) {
-            if (specialty.getSpecialtyIds() == null || specialty.getSpecialtyIds().isEmpty()) {
+
+            if (value.getSpecialtyIds() == null || value.getSpecialtyIds().isEmpty()) {
 
                 return false;
             }
-            for (Long id : specialty.getSpecialtyIds()) {
+            for (Long id : value.getSpecialtyIds()) {
                 if (id == null || id < 0) {
                     return false;
                 }
@@ -38,7 +38,6 @@ public class ValidOfficeSpecialtiesValidator implements ConstraintValidator<Vali
                 }
             }
             seenIds.clear();
-        }
         return true;
     }
 }
