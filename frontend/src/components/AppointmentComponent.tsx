@@ -6,8 +6,15 @@ import {ChevronDown} from "lucide-react";
 import {useState} from "react";
 import type {AppointmentDTO} from "@/data/appointments.ts";
 import AppointmentCard from "@/components/AppointmentCard.tsx";
-import {appointmentStatus} from "@/lib/constants.ts";
+import {appointmentStatus, appointmentUpcomingFilters} from "@/lib/constants.ts";
 import {useTranslation} from "react-i18next";
+import {
+    Pagination,
+    PaginationContent, PaginationEllipsis,
+    PaginationItem,
+    PaginationLink, PaginationNext,
+    PaginationPrevious
+} from "@/components/ui/pagination.tsx";
 
 export const mockAppointment: AppointmentDTO = {
     date: new Date('2026-01-04T17:30:00Z'),
@@ -19,22 +26,41 @@ export const mockAppointment: AppointmentDTO = {
     self: '/api/appointments/1',
     doctor: '/api/doctors/123',
     patient: '/api/patients/456',
-    specialty: 'General Medicine',
+    specialty: 'General',
     doctorOffice: 'Clinic A - Room 2',
     appointmentFiles: '[]',
     rating: '5'
 };
 
-export default function AppointmentComponent() {
+const typeDictionary = {
+    history: {
+        title: "appointment.history",
+        popoverData: appointmentStatus,
+        filterMessage: "appointment.history_filter_message"
+
+    },
+    upcoming: {
+        title: "appointment.upcoming",
+        popoverData:appointmentUpcomingFilters,
+        filterMessage: "appointment.upcoming_filter_message"
+    }
+}
+
+type AppointmentComponentProps = {
+    type: "history" | "upcoming"
+}
+
+export default function AppointmentComponent({type}: AppointmentComponentProps) {
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(t("appointment.all"))
+    const componentType = typeDictionary[type]
     return (
         <DashboardNavContainer>
-            <DashboardNavHeader title={"Appointment History"}>
+            <DashboardNavHeader title={t(componentType.title)}>
                 <div className="flex felx-col items-center justify-center gap-2">
                 <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
-                    Status:
+                    {t(componentType.filterMessage)}:
                 </span>
                     <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
@@ -54,7 +80,7 @@ export default function AppointmentComponent() {
                                 setOpen(false)
                             }}
                                     className="w-full text-xs bg-white font-light hover:bg-gray-100 hover:text-black flex text-(--text-light) justify-baseline">{t("appointment.all")}</Button>
-                            {appointmentStatus.map(a => (
+                            {componentType.popoverData.map(a => (
                                 <Button value={t(a)} onClick={(e) => {
                                     setValue(e.currentTarget.value);
                                     setOpen(false)
@@ -67,6 +93,41 @@ export default function AppointmentComponent() {
             </DashboardNavHeader>
             <AppointmentCard patientCoverage="Galeno" patientName="Jose" patientLastname="Benegas"
                              appointment={mockAppointment}/>
+            <div>
+                <Pagination>
+                    <PaginationContent className="text-(--text-color) gap-2">
+                        <PaginationItem>
+                            <PaginationPrevious href="#" />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">6</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">
+                                7
+                            </PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#" isActive>8</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">9</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">10</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationNext href="#" />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+            </div>
         </DashboardNavContainer>
     );
 }

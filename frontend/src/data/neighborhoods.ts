@@ -7,7 +7,5 @@ export type NeighborhoodDTO = {
 
 export async function listNeighborhoods() {
     const res = await api.get<NeighborhoodDTO[]>("/neighborhoods");
-
-
-    return { data: res.data };
+    return res.data;
 }

@@ -24,7 +24,16 @@
       "completo": "Completado",
       "cancelado": "Cancelado"
     },
-    "all": "Todos"
+    "all": "Todos",
+    "history": "Historial de Citas",
+    "upcoming": "Próximas Citas",
+    "filters": {
+      "30_days": "Próximos 30 Dias",
+      "week": "Esta Semana",
+      "today": "Hoy"
+    },
+    "history_filter_message": "Estado",
+    "upcoming_filter_message": "Rango de Fechas"
   },
   "login": {
     "welcome_title": "Bienvenido de nuevo!",
@@ -102,6 +111,7 @@
     "note_availability": "La configuración de Consultorios y Disponibilidad se realizará una vez validada su matrícula.",
     "loader_specialties": "Cargando especialidades...",
     "loader_coverages": "Cargando obras sociales...",
+    "loader_neighborhoods": "Cargando barrios...",
     "no_neighborhoods": "No se encontraron barrios",
     "errors": {
       "passwords_mismatch": "Las contraseñas no coinciden",

@@ -225,7 +225,7 @@ function ResultGrid() {
 const paginationContainer =
     "pb-8";
 const paginantion =
-    "text-[var(--text-color)]"
+    "text-[var(--text-color)] gap-2"
 
 function PaginationSection() {
     return (

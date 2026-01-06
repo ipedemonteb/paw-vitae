@@ -1,19 +1,10 @@
-import {useAsync} from "@/hooks/useAsync.ts";
-import {useEffect} from "react";
 import {listSpecialties} from "@/data/specialties.ts";
+import {useQuery} from "@tanstack/react-query";
 
 
 export function useSpecialties() {
-    const {data, error, loading, run} = useAsync(listSpecialties, []);
-
-    useEffect(() => {
-        run();
-    }, [run]);
-
-    return {
-        specialties: data?.data ?? [],
-        loading,
-        error,
-        refetch: () => run(),
-    };
+    return useQuery({
+        queryKey: ["specialties"],
+        queryFn: listSpecialties
+    })
 }
