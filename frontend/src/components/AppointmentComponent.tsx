@@ -8,7 +8,13 @@ import type {AppointmentDTO} from "@/data/appointments.ts";
 import AppointmentCard from "@/components/AppointmentCard.tsx";
 import {appointmentStatus, appointmentUpcomingFilters} from "@/lib/constants.ts";
 import {useTranslation} from "react-i18next";
-import PageNavigation from "@/components/PageNavigation.tsx";
+import {
+    Pagination,
+    PaginationContent, PaginationEllipsis,
+    PaginationItem,
+    PaginationLink, PaginationNext,
+    PaginationPrevious
+} from "@/components/ui/pagination.tsx";
 
 export const mockAppointment: AppointmentDTO = {
     date: new Date('2026-01-04T17:30:00Z'),
@@ -87,7 +93,32 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
             </DashboardNavHeader>
             <AppointmentCard patientCoverage="Galeno" patientName="Jose" patientLastname="Benegas"
                              appointment={mockAppointment}/>
-            <PageNavigation/>
+            <div>
+                <Pagination>
+                    <PaginationContent className="text-(--text-color) gap-2">
+                        <PaginationItem>
+                            <PaginationPrevious href="#" />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">1</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#" isActive>
+                                2
+                            </PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">3</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationNext href="#" />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+            </div>
         </DashboardNavContainer>
     );
 }
