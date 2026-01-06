@@ -58,14 +58,14 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={t(componentType.title)}>
-                <div className="flex felx-col items-center justify-center gap-2">
-                <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
-                    {t(componentType.filterMessage)}:
-                </span>
+                <div className="flex felx-col items-center sm:justify-center gap-2 mt-2 sm:mt-0">
+                    <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
+                        {t(componentType.filterMessage)}:
+                    </span>
                     <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
                             <Button
-                                className="flex bg-white text-black hover:bg-gray-100 flex-row font-light items-center justify-center text-sm gap-2 border rounded-md p-1.5"
+                                className="flex bg-white text-black hover:bg-gray-100 flex-row font-light items-center justify-center text-sm gap-1 border rounded-md cursor-pointer"
                                 variant="outline"
                                 role="combobox"
                                 aria-expanded={open}
