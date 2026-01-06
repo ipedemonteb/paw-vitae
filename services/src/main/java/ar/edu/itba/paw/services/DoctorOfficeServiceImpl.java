@@ -114,18 +114,18 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             validateMaxOffices(doctorId);
         }
         if(form.getActive() != null && form.getActive() && !office.isActive()){
-            validateActiveAvailability(form, doctorId);
+            validateActiveAvailability(form, doctorId,officeId);
             office.setActive(form.getActive());
         }
         if (form.getOfficeName() != null) {
             office.setOfficeName(form.getOfficeName());
         }
-        if (form.getNeighborhoodId() != null) {
+        if (form.getNeighborhoodId() != null ) {
             Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
                     .orElseThrow(NeighborhoodNotFoundException::new);
             office.setNeighborhood(nb);
         }
-        if (form.getSpecialtyIds() != null) {
+        if (form.getSpecialtyIds() != null && !form.getSpecialtyIds().isEmpty()) {
             List<Specialty> specs = form.getSpecialtyIds().stream()
                     .map(sid -> specialtyService.getById(sid).orElseThrow(SpecialtyNotFoundException::new))
                     .collect(Collectors.toList());
@@ -212,7 +212,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         }
     }
 
-    private void validateActiveAvailability(DoctorOfficeForm form, long doctorId) {
+    private void validateActiveAvailability(DoctorOfficeForm form, long doctorId,long officeId) {
         List<DoctorOfficeAvailability> existingSlots = doctorOfficeAvailabilityService.getByDoctorId(doctorId);
 
         Set<Long> officesWithSlots = existingSlots.stream()
@@ -221,11 +221,8 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
 
             if (Boolean.TRUE.equals(form.getActive())) {
-                if (form.getId() == null) {
+                if (!officesWithSlots.contains(officeId)) {
                     throw new BussinesRuleException("exception.business.officeMustHaveAvailabilityToBeActive");
-                }
-                if (!officesWithSlots.contains(form.getId())) {
-                    throw new IllegalArgumentException("exception.business.officeMustHaveAvailabilityToBeActive");
                 }
         }
     }

@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfacePersistence.DoctorOfficeAvailabilityDao;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeAvailabilityService;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.BussinesRuleException;
+import ar.edu.itba.paw.models.exception.ResourceOwnershipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +68,23 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
         List<DoctorOffice> offices =
                 doctorOfficeService.getAllByDoctorIdWithAvailability(doctorId);
 
+        Set<Long> doctorOfficeIds = offices.stream()
+                .map(DoctorOffice::getId)
+                .collect(Collectors.toSet());
+
+        Set<Long> incomingOfficeIds = forms.stream()
+                .map(DoctorOfficeAvailabilityForm::getOfficeId)
+                .collect(Collectors.toSet());
+        for (Long incomingId : incomingOfficeIds) {
+            if (!doctorOfficeIds.contains(incomingId)) {
+                throw new ResourceOwnershipException();
+            }
+        }
+        for (DoctorOffice office : offices) {
+            if (office.isActive() && !incomingOfficeIds.contains(office.getId())) {
+                throw new BussinesRuleException("exception.business.officeAvailabilitySlot.active");
+            }
+        }
         Map<Long,DoctorOfficeAvailability> existingById =
                 offices.stream()
                         .flatMap(o -> o.getDoctorOfficeAvailability().stream())
