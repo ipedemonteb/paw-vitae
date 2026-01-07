@@ -4,6 +4,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.NeighborhoodService;
 import ar.edu.itba.paw.models.Neighborhood;
 import ar.edu.itba.paw.models.exception.NeighborhoodNotFoundException;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CoverageDTO;
 import ar.edu.itba.paw.webapp.dto.NeighborhoodDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class RestNeighborhoodController {
     }
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_NEIGHBORHOOD_LIST)
     public Response getAll() {
         final List<Neighborhood> neighborhoodList = neighborhoodService.getAll();
         return Response.ok(new GenericEntity<>(NeighborhoodDTO.fromNeighborhood(neighborhoodList, uriInfo)) {}).build();
@@ -38,7 +39,7 @@ public class RestNeighborhoodController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_NEIGHBORHOOD)
     public Response getById(@PathParam("id") final long id) {
         final Neighborhood neighborhood = neighborhoodService.getById(id).orElseThrow(NeighborhoodNotFoundException::new);
         return Response.ok(new GenericEntity<>(NeighborhoodDTO.fromNeighborhood(neighborhood, uriInfo)) {}).build();

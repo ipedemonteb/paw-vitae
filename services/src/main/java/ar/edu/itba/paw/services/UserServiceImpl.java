@@ -138,19 +138,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public boolean changePassword(String token, String password) {
-        Optional<? extends User> userOpt = getByResetToken(token);
-        if (userOpt.isPresent()) {
-                User user = userOpt.get();
-                LOGGER.debug("Changing password for user id={}", user.getId());
-                String newPassword = passwordEncoder.encode(password);
-                user.setPassword(newPassword);
-                user.setResetPasswordToken(null);
-                LOGGER.info("Password changed successfully for user id={}", user.getId());
-                return true;
-        }
-            LOGGER.warn("User not found for valid token");
-            return false;
+    public void changePassword(long userId,String password) {
+        User user = getById(userId).orElseThrow(UserNotFoundException::new);
+        String encodedPassword = passwordEncoder.encode(password);
+        user.setPassword(encodedPassword);
+        user.setResetPasswordToken(null);
+        user.setTokenExpiration(null);
+        LOGGER.info("Password changed for user id={}", userId);
     }
 
     @Transactional(readOnly = true)

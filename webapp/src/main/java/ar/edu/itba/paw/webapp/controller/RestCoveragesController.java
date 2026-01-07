@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.CoverageService;
 import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.exception.CoverageNotFoundException;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CoverageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ public class RestCoveragesController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_COVERAGE)
     public Response getById(@PathParam("id") final long id) {
         final Coverage coverage = coverageService.findById(id).orElseThrow(CoverageNotFoundException::new);
         return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverage, uriInfo)) {}).build();
@@ -36,7 +37,7 @@ public class RestCoveragesController {
 
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_COVERAGE_LIST)
     public Response getAll() {
         final List<Coverage> coverages = coverageService.getAll();
         return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
