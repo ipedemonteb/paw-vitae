@@ -1,11 +1,22 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
-import { Mail, Phone, SquarePen, ShieldPlus, UserStar, Stethoscope } from "lucide-react";
+import {
+    Mail,
+    Phone,
+    SquarePen,
+    ShieldPlus,
+    UserStar,
+    Stethoscope,
+    FileBadge,
+    BadgeCheck,
+    Calendar
+} from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import BadgeComponent from "@/components/BadgeComponent.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious} from "@/components/ui/carousel.tsx";
-import {RatingCard} from "@/components/Rating.tsx";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
+import { RatingCard } from "@/components/Rating.tsx";
+import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -29,6 +40,7 @@ function PublicProfile() {
       <div className={profileContainer}>
           <ProfileCard rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges}/>
           <CoverageCard />
+          <CertificatesCard />
           <RatingsCard />
       </div>
     );
@@ -160,6 +172,74 @@ function CoverageComponent({coverageImage, coverageName, coveragePlan}:{
             <p className={coveragePlanText}>Plan: {coveragePlan}</p>
         </div>
     );
+}
+
+const certificatesContent =
+    "flex flex-col gap-2 px-6";
+const certificatesScrollWrap =
+    "relative";
+const certificatesScrollArea =
+    "h-68 py-6";
+const certificatesFadeBottom =
+    "pointer-events-none absolute bottom-0 left-0 right-0 h-10 z-10 bg-linear-to-b from-transparent to-white";
+
+function CertificatesCard() {
+    return (
+        <Card className={card}>
+            <div className={cardTitle}>
+                <FileBadge className={titleIcon}></FileBadge>
+                <h1 className={cardTitleText}>Certificates</h1>
+            </div>
+
+            <div className={certificatesScrollWrap}>
+                <ScrollArea className={certificatesScrollArea}>
+                    <div className={certificatesContent}>
+                        <CertificateComponent />
+                        <CertificateComponent />
+                        <CertificateComponent />
+                    </div>
+                </ScrollArea>
+                <div className={certificatesFadeBottom} />
+            </div>
+        </Card>
+    );
+}
+
+const certificateContainer =
+    "flex flex-row items-center border border-[var(--gray-300)] rounded-lg py-3";
+const badgeContainer =
+    "px-4";
+const certificateData =
+    "flex flex-col gap-0";
+const badgeIcon =
+    "h-10 w-10 bg-[var(--primary-color)] text-white rounded-full p-2";
+const certificateTitle =
+    "text-base font-[500]";
+const certificateIssuer =
+    "text-sm text-[var(--text-light)]";
+const certificateDate =
+    "flex flex-row items-center gap-1 text-[var(--text-light)]";
+const calendarIcon =
+    "w-4 h-4";
+const dateText =
+    "text-sm mt-1";
+
+function CertificateComponent() {
+    return (
+        <div className={certificateContainer}>
+            <div className={badgeContainer}>
+                <BadgeCheck className={badgeIcon}/>
+            </div>
+            <div className={certificateData}>
+                <h3 className={certificateTitle}>Congreso Nacional de Traumatólogos</h3>
+                <p className={certificateIssuer}>Asociación Nacional de Médicos Traumatólogos</p>
+                <div className={certificateDate}>
+                    <Calendar className={calendarIcon}/>
+                    <p className={dateText}>12/04/2024</p>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 const ratingsContent =
