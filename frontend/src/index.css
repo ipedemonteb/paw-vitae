@@ -63,6 +63,7 @@
     --sidebar-ring: oklch(0.708 0 0);
     --landing-light: #dbeafe;
     --primary-bg: #eff6ff;
+    --bubble-color: #FFFFFF33;
 }
 
 body {

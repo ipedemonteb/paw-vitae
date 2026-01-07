@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-const cardContainer = "flex-1 flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full h-full";
+const cardContainer = "flex flex-col items-center justify-center p-8 md:p-12 bg-white max-w-xl w-full h-full";
 const contentWrapper = "w-full max-w-sm space-y-8";
 const headerSection = "text-center space-y-2";
 const headerTitle = "text-3xl font-bold text-gray-900";
