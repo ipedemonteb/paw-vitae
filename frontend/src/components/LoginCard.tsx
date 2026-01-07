@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 const cardContainer = "flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full rounded-xl md:flex-1";
-const headerSection = "text-center space-y-2 mb-6";
+const headerSection = "text-center space-y-2 mb-8";
 const headerTitle = "text-3xl font-bold text-[var(--text-color)]";
 const headerSubtitle = "text-[var(--text-color)] text-sm";
 const formStyles = "flex flex-col gap-4 w-full max-w-sm";
