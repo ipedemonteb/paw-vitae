@@ -70,7 +70,7 @@ const ratingContent =
 const ratingText =
     "font-medium text-sm text-[var(--text-light)]";
 const editButton =
-    "mt-4 sm:mt-0 sm:mx-6 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] sm:ml-auto cursor-pointer";
+    "mt-4 w-26 h-10 sm:mt-0 sm:mx-6 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] sm:ml-auto cursor-pointer";
 const card =
     "p-0 gap-0";
 const cardTitle =
@@ -408,7 +408,7 @@ function CertificateComponent({certificate, issuer, date}:{
 }
 
 const ratingsContent =
-    "w-full max-w-xl mx-auto pt-6";
+    "w-full max-w-3xl mx-auto pt-6";
 const carousel =
     "relative max-w-3xl w-full mx-auto px-12 -mt-5";
 const carouselContent =
