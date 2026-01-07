@@ -185,8 +185,8 @@ function OfficesCard() {
                 <h1 className={cardTitleText}>Offices</h1>
             </div>
             <div className={cardContent}>
-                <OfficeComponent />
-                <OfficeComponent />
+                <OfficeComponent officeTitle="Main Office" officeLocation="La Plata" />
+                <OfficeComponent officeTitle="Hospital" officeLocation="Munro"/>
             </div>
         </Card>
     );
@@ -205,16 +205,19 @@ const locationTitle =
 const mapPinIcon =
     "h-4 w-4";
 
-function OfficeComponent() {
+function OfficeComponent({officeTitle, officeLocation}:{
+    officeLocation: string;
+    officeTitle: string;
+}) {
     return (
         <div className={officeContainer}>
             <div className={iconContainer}>
                 <Hospital className={locationIcon}/>
             </div>
-            <h3 className={locationTitle}>Main Office</h3>
+            <h3 className={locationTitle}>{officeTitle}</h3>
             <div className={locationContainer}>
                 <MapPin className={mapPinIcon}/>
-                <p>Almagro</p>
+                <p>{officeLocation}</p>
             </div>
         </div>
     )
@@ -239,9 +242,9 @@ function CertificatesCard() {
             <div className={certificatesScrollWrap}>
                 <ScrollArea className={certificatesScrollArea}>
                     <div className={certificatesContent}>
-                        <CertificateComponent />
-                        <CertificateComponent />
-                        <CertificateComponent />
+                        <CertificateComponent certificate="Congreso Nacional de Traumatólogos" issuer="Asociación Nacional de Médicos Traumatólogos" date="12/04/2024"/>
+                        <CertificateComponent certificate="Congreso Nacional de Traumatólogos" issuer="Asociación Nacional de Médicos Traumatólogos" date="12/04/2024"/>
+                        <CertificateComponent certificate="Congreso Nacional de Traumatólogos" issuer="Asociación Nacional de Médicos Traumatólogos" date="12/04/2024"/>
                     </div>
                 </ScrollArea>
                 <div className={certificatesFadeBottom} />
@@ -269,18 +272,22 @@ const calendarIcon =
 const dateText =
     "text-sm mt-1";
 
-function CertificateComponent() {
+function CertificateComponent({certificate, issuer, date}:{
+    certificate: string;
+    issuer: string;
+    date: string;
+}) {
     return (
         <div className={certificateContainer}>
             <div className={badgeContainer}>
                 <BadgeCheck className={badgeIcon}/>
             </div>
             <div className={certificateData}>
-                <h3 className={certificateTitle}>Congreso Nacional de Traumatólogos</h3>
-                <p className={certificateIssuer}>Asociación Nacional de Médicos Traumatólogos</p>
+                <h3 className={certificateTitle}>{certificate}</h3>
+                <p className={certificateIssuer}>{issuer}</p>
                 <div className={certificateDate}>
                     <Calendar className={calendarIcon}/>
-                    <p className={dateText}>12/04/2024</p>
+                    <p className={dateText}>{date}</p>
                 </div>
             </div>
         </div>
