@@ -16,6 +16,8 @@ public interface PatientService {
     void updatePatient(Patient patient, String name, String lastName, String phone, Long coverageId);
 
     long getAllPatientsDisplayCount();
+    void setResetPasswordToken(String email);
+    void changePassword(long userId,String password);
 
     /* DEPRECATED METHODS */
     Optional<Patient> getByEmail(String email);

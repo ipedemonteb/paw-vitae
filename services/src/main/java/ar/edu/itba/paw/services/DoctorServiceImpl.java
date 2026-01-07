@@ -200,4 +200,13 @@ public class DoctorServiceImpl implements DoctorService {
         response.put("doctors", doctors);
         return JsonUtils.toJson(response, Doctor.Views.Public.class);
     }
+
+    @Override
+    public void setResetPasswordToken(String email) {
+        userService.setResetPasswordToken(email);
+    }
+    @Override
+    public void changePassword(long userId,String password) {
+        userService.changePassword(userId,password);
+    }
 }

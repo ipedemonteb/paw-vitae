@@ -98,4 +98,13 @@ public class PatientServiceImpl implements PatientService {
     public long getAllPatientsDisplayCount() {
         return patientDao.countAll();
     }
+
+    @Override
+    public void setResetPasswordToken(String email) {
+        userService.setResetPasswordToken(email);
+    }
+    @Override
+    public void changePassword(long userId,String password) {
+        userService.changePassword(userId,password);
+    }
 }

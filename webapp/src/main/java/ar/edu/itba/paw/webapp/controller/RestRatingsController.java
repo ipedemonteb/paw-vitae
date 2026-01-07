@@ -4,6 +4,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.RatingService;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Rating;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.RatingDTO;
 import ar.edu.itba.paw.webapp.form.PatientRatingForm;
 import ar.edu.itba.paw.webapp.utils.ResponseUtils;
@@ -37,7 +38,7 @@ public class RestRatingsController {
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RATING_LIST)
     public Response getAll(
             @QueryParam("page")
             @DefaultValue("1")
@@ -54,17 +55,15 @@ public class RestRatingsController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_RATING)
     public Response getRatingsById(@PathParam("id") final long id) {
         final Rating rating = this.ratingService.getRating(id).orElseThrow(NotFoundException::new);
         return Response.ok(new GenericEntity<>(RatingDTO.fromRating(rating, uriInfo)) {}).build();
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_RATING)
     public Response createRating(@Valid @NotNull final PatientRatingForm form) {
-
-
         //TODO: IN FRONTEND PASS THE PATIENT ID
         final Rating createdRating = ratingService.create(
                 form.getRating(),
@@ -75,10 +74,6 @@ public class RestRatingsController {
         );
 
         return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(createdRating.getId())).build()).build();
-
-
-
-
     }
 
 

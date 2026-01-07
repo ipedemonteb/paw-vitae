@@ -8,6 +8,7 @@ import ar.edu.itba.paw.webapp.dto.AppointmentDTO;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.CancelAppointmentForm;
 import ar.edu.itba.paw.webapp.form.AppointmentReportForm;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class RestAppointmentController {
     }
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_APPOINTMENT_LIST)
     public Response list(
             @QueryParam("userId") @NotNull Long userId,
             @QueryParam("collection") @DefaultValue("upcoming") String collection,
@@ -65,8 +66,7 @@ public class RestAppointmentController {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_APPOINTMENT)
     public Response create(@Valid @NotNull AppointmentForm form) {
         Appointment appointment = appointmentService.create(
                 form.getPatientId(),
@@ -85,7 +85,7 @@ public class RestAppointmentController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_APPOINTMENT)
     public Response getById(@PathParam("id") final long id) {
         final Appointment appointment = this.appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
         return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}).build();
@@ -93,7 +93,6 @@ public class RestAppointmentController {
 
     @PATCH
     @Path("/{id:\\d+}")
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response cancel(@PathParam("id") final long id,
                            @QueryParam("userId") final Long userId) {
         appointmentService.cancelAppointment(id, userId);
@@ -102,7 +101,7 @@ public class RestAppointmentController {
 
     @PATCH
     @Path("/{id:\\d+}/report")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_APPOINTMENT_REPORT)
     public Response updateReport(@PathParam("id") final long id,
                                  @Valid @NotNull AppointmentReportForm form) {
         appointmentService.updateAppointmentReport(id, form.getReport());

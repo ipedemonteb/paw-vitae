@@ -13,7 +13,7 @@ public interface UserService {
 
     Optional<? extends User> getById(long id);
 
-    boolean changePassword(String token, String password);
+     void changePassword(long userId,String password);
 
     void changeLanguage(long id, String language);
 

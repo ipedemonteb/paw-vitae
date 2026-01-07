@@ -2,9 +2,9 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
-//import ar.edu.itba.paw.models.QueryParam;
 import ar.edu.itba.paw.models.exception.DoctorOfficeNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.utils.FileUtils;
@@ -12,7 +12,6 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,77 +63,32 @@ public class RestDoctorController {
         this.unavailabilitySlotsService = unavailabilitySlotsService;
     }
 
-
-
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_DOCTOR)
     public Response getById(@PathParam("id") final long id) {
         final Doctor doctor = this.doctorService.getById(id).orElseThrow(DoctorOfficeNotFoundException::new);
         return Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctor, uriInfo)) {}).build();
     }
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_DOCTOR_LIST)
     public Response list(
-            @QueryParam("specialty")
-            @DefaultValue("0")
-            @Min(0)
-            long specialtyId,
-
-            @QueryParam("page")
-            @DefaultValue("1")
-            @Min(1)
-            int page,
-
-            @QueryParam("coverage")
-            @DefaultValue("0")
-            @Min(0)
-            long coverageId,
-
-            @QueryParam("weekdays")
-            List<Integer> weekdays,
-
-            @QueryParam("keyword")
-            @DefaultValue("")
-            String keyword,
-
-            @QueryParam("orderBy")
-            @DefaultValue("name")
-            String orderBy,
-
-            @QueryParam("direction")
-            @DefaultValue("asc")
-            String direction
+            @QueryParam("specialty") @DefaultValue("0") @Min(0) long specialtyId,
+            @QueryParam("page") @DefaultValue("1") @Min(1) int page,
+            @QueryParam("coverage") @DefaultValue("0") @Min(0) long coverageId,
+            @QueryParam("weekdays") List<Integer> weekdays,
+            @QueryParam("keyword") @DefaultValue("") String keyword,
+            @QueryParam("orderBy") @DefaultValue("name") String orderBy,
+            @QueryParam("direction") @DefaultValue("asc") String direction
     ) {
         Page<Doctor> doctorPage = this.doctorService.getWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction, page, 9);
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctorPage.getContent(), uriInfo)) {}), doctorPage, uriInfo);
     }
 
-
-//    @GET
-//    @Produces(value = MediaType.APPLICATION_JSON)
-//    public Response list(
-//            @ParamCustomizer(defaultValue = 0,paramName = "specialty") ar.edu.itba.paw.models.QueryParam specialtyId,
-//            @ParamCustomizer( defaultValue = 1) ar.edu.itba.paw.models.QueryParam page,
-//            @ParamCustomizer(defaultValue = 0,paramName = "coverage") ar.edu.itba.paw.models.QueryParam coverageId,
-//            @ParamCustomizer(paramName = "weekdays") List<QueryParam> weekdays,
-//            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
-//            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
-//            @RequestParam(value = "direction", defaultValue = "asc") String direction,
-//            @RequestParam(value = "view", required = false, defaultValue = "grid") String view
-//    ) {
-//        Page<Doctor> doctorPage = doctorService.getWithFilters(specialtyId.getValue(), coverageId.getValue(), weekdays, keyword, orderBy, direction, (int) page.getValue(), 9);
-//
-//        List<DoctorDTO> doctors = doctorPage.getContent().stream().map(d -> DoctorDTO.fromDoctor(d, uriInfo)).toList();
-//        Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(doctors) {});
-//
-//        return buildPaginationHeaders(rb, doctorPage, uriInfo);
-//    }
-
     @GET
     @Path("/{id:\\d+}/specialties")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_SPECIALTY_LIST)
     public Response getDoctorSpecialties(@PathParam("id") final long id) {
         List<Specialty> specialties = this.specialtyService.getByDoctorId(id);
         return Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialties, uriInfo)) {}).build();
@@ -142,7 +96,7 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/coverages")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_COVERAGE_LIST)
     public Response getDoctorCoverages(@PathParam("id") final long id) {
         List<Coverage> coverages = this.coverageService.findByDoctorId(id);
         return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
@@ -150,7 +104,7 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/offices")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_OFFICE_LIST)
     public Response getDoctorOffices(@PathParam("id") final long id) {
         List<DoctorOffice> offices = this.doctorOfficeService.getAllByDoctorId(id);
         return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(offices, uriInfo)) {}).build();
@@ -158,7 +112,7 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/offices/{officeId:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_OFFICE)
     public Response getDoctorOffices(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         DoctorOffice office = this.doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
         return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(office, uriInfo)) {}).build();
@@ -166,7 +120,7 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/offices/{officeId:\\d+}/availability")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_AVAILABILITY_LIST)
     public Response getDoctorOfficeAvailability(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         List<DoctorOfficeAvailability> availabilities = this.doctorOfficeAvailabilityService.getByOfficeId(officeId);
         return Response.ok(new GenericEntity<>(AvailabilityDTO.fromDoctorOfficeAvailability(availabilities, uriInfo)) {}).build();
@@ -174,16 +128,15 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/offices/{officeId:\\d+}/specialties")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_OFFICE_SPECIALTY_LIST)
     public Response getDoctorOfficeSpecialties(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
         List<DoctorOfficeSpecialty> specialties = this.doctorOfficeSpecialtyService.getByOfficeId(officeId);
         return Response.ok(new GenericEntity<>(OfficeSpecialtyDTO.fromDoctorOfficeSpecialty(specialties, uriInfo)) {}).build();
     }
 
-
     @GET
     @Path("/{id:\\d+}/biography")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_DOCTOR_PROFILE)
     public Response getDoctorProfile(@PathParam("id") final long id) {
         DoctorProfile profile = this.doctorProfileService.findByDoctorId(id);
         return Response.ok(new GenericEntity<>(ProfileDTO.fromDoctorProfile(profile, uriInfo)) {}).build();
@@ -191,7 +144,7 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/experiences")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_DOCTOR_EXPERIENCE_LIST)
     public Response getDoctorExperiences(@PathParam("id") final long id) {
         List<DoctorExperience> experiences = this.doctorExperienceService.findByDoctorId(id);
         return Response.ok(new GenericEntity<>(ExperienceDTO.fromDoctorExperience(experiences, uriInfo)) {}).build();
@@ -199,7 +152,7 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/certifications")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_DOCTOR_CERTIFICATION_LIST)
     public Response getDoctorCertifications(@PathParam("id") final long id) {
         List<DoctorCertification> certifications = this.doctorCertificationService.findByDoctorId(id);
         return Response.ok(new GenericEntity<>(CertificationDTO.fromDoctorCertification(certifications, uriInfo)) {}).build();
@@ -207,15 +160,10 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/ratings")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_RATING_LIST)
     public Response getDoctorRatings(
-            @PathParam("id")
-            final long id,
-
-            @QueryParam("page")
-            @DefaultValue("1")
-            @Min(1)
-            final int page
+            @PathParam("id") final long id,
+            @QueryParam("page") @DefaultValue("1") @Min(1) final int page
     ) {
         Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, page, 9);
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
@@ -226,12 +174,11 @@ public class RestDoctorController {
     @Produces({"image/png", "image/jpeg", "image/jpg"})
     public Response getImage(@PathParam("id") final long id) {
         final Images image = doctorService.getDoctorImage(id).orElseThrow(NotFoundException::new);
-        byte[] imageData = image.getImage();
-        return Response.ok(imageData).build(); //TODO: SHOULD I CACHE?
+        return Response.ok(image.getImage()).build();
     }
 
     @POST
-    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = CustomMediaType.APPLICATION_DOCTOR)
     public Response createDoctor(
             @Valid @NotNull DoctorForm doctorForm,
             @Context HttpHeaders headers
@@ -240,30 +187,8 @@ public class RestDoctorController {
         return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(doctor.getId())).build()).build();
     }
 
-//    @POST
-//    @Path("/{id:\\d+}/offices")
-//    @Consumes(value = MediaType.APPLICATION_JSON)
-//    public Response createDoctorOffice(
-//            @Valid @NotNull List<DoctorOfficeForm> doctorOfficeForm,
-//            @PathParam("id") final long id
-//    ) {
-//        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
-//        List<DoctorOffice> office = this.doctorOfficeService.create(doctor, doctorOfficeForm);
-//    }
-
-//    @POST
-//    @Path("/{id:\\d+}/profile")
-//    @Consumes(value = MediaType.APPLICATION_JSON)
-//    public Response createDoctorProfile(
-//            @PathParam("id") final long id,
-//            @Valid @NotNull DoctorProfileForm doctorProfileForm
-//    ) {
-//        this.doctorProfileService.create(id, doctorProfileForm.getBiography(), doctorProfileForm.getDescription());
-//        return Response.created(uriInfo.getAbsolutePathBuilder().build()).build();
-//    }
-
     @PATCH
-    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = CustomMediaType.APPLICATION_DOCTOR)
     @Path("/{id:\\d+}")
     public Response updateDoctor(
             @PathParam("id") final long id,
@@ -273,19 +198,21 @@ public class RestDoctorController {
         this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(), updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages());
         return Response.noContent().build();
     }
+
     @PUT
-    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = CustomMediaType.APPLICATION_DOCTOR_CERTIFICATION_LIST)
     @Path("/{id:\\d+}/certifications")
     public Response changeDoctorCertifications(
             @PathParam("id") final long id,
             @Valid @NotNull DoctorCertificatesForm certifications
-            ) {
+    ) {
         Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
         this.doctorCertificationService.update(doctor, certifications.getCertificates());
         return Response.noContent().build();
     }
+
     @PUT
-    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = CustomMediaType.APPLICATION_DOCTOR_EXPERIENCE_LIST)
     @Path("/{id:\\d+}/experiences")
     public Response changeDoctorExperiences(
             @PathParam("id") final long id,
@@ -295,8 +222,9 @@ public class RestDoctorController {
         this.doctorExperienceService.update(doctor, experiences.getExperiences());
         return Response.noContent().build();
     }
+
     @PUT
-    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = CustomMediaType.APPLICATION_DOCTOR_PROFILE)
     @Path("/{id:\\d+}/biography")
     public Response changeDoctorBiography(
             @PathParam("id") final long id,
@@ -317,20 +245,10 @@ public class RestDoctorController {
         doctorService.setImage(id, imageId);
         return Response.noContent().build();
     }
-//    @PUT
-//    @Path("/{id:\\d+}/offices")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    public Response setDoctorOffices(
-//            @PathParam("id") final long id,
-//            @Valid @NotNull OfficeForm officeForm
-//    ) {
-//        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
-//        this.doctorOfficeService.update( officeForm.getDoctorOfficeForm(), doctor);
-//        return Response.noContent().build();
-//    }
+
     @PUT
     @Path("/{id:\\d+}/availability")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_AVAILABILITY_LIST)
     public Response setDoctorAvailability(
             @PathParam("id") final long id,
             @Valid @NotNull DoctorAvailabilityForm availabilityForm
@@ -338,9 +256,10 @@ public class RestDoctorController {
         this.doctorOfficeAvailabilityService.update(availabilityForm.getDoctorOfficeAvailabilities(), id);
         return Response.noContent().build();
     }
+
     @PUT
     @Path("/{id:\\d+}/unavailability")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_UNAVAILABILITY_LIST)
     public Response setDoctorUnavailability(
             @PathParam("id") final long id,
             @Valid @NotNull DoctorUnavailabilityForm unavailabilityForm
@@ -349,9 +268,10 @@ public class RestDoctorController {
         this.unavailabilitySlotsService.updateDoctorUnavailability(doctor,unavailabilityForm.getUnavailabilitySlots());
         return Response.noContent().build();
     }
+
     @POST
     @Path("/{id:\\d+}/offices")
-    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = CustomMediaType.APPLICATION_OFFICE)
     public Response createDoctorOffice(
             @Valid @NotNull OfficeForm officeForm,
             @PathParam("id") final long id
@@ -360,13 +280,14 @@ public class RestDoctorController {
         DoctorOffice office = this.doctorOfficeService.create(doctor, officeForm.getDoctorOfficeForm());
         return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(office.getId())).build()).build();
     }
+
     @PATCH
     @Path("/{id:\\d+}/offices/{officeId:\\d+}")
-    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = CustomMediaType.APPLICATION_OFFICE)
     public Response updateDoctorOffice(
-        @Valid @NotNull UpdateOfficeForm officeForm,
-        @PathParam("id") final long id,
-        @PathParam("officeId") final long officeId
+            @Valid @NotNull UpdateOfficeForm officeForm,
+            @PathParam("id") final long id,
+            @PathParam("officeId") final long officeId
     ){
         this.doctorOfficeService.update(officeId,officeForm.getDoctorOfficeForm(),id);
         return Response.noContent().build();
@@ -379,6 +300,26 @@ public class RestDoctorController {
             @PathParam("officeId") final long officeId
     ) {
         this.doctorOfficeService.delete(officeId, doctorId);
+        return Response.noContent().build();
+    }
+
+    @POST
+    @Consumes(value = CustomMediaType.APPLICATION_USER_PASSWORD)
+    public Response createPasswordResetToken(
+            @Valid @NotNull final RecoverPasswordForm recoverPasswordForm
+    ) {
+        doctorService.setResetPasswordToken(recoverPasswordForm.getEmail());
+        return Response.noContent().build();
+    }
+
+    @PATCH
+    @Path("/{id:\\d+}")
+    @Consumes(value = CustomMediaType.APPLICATION_USER_PASSWORD)
+    public Response editDoctorPasswordWithToken(
+            @PathParam("id") long id,
+            @Valid @NotNull final ChangePasswordForm changePasswordForm
+    ) {
+        doctorService.changePassword(id,changePasswordForm.getPassword());
         return Response.noContent().build();
     }
 }
