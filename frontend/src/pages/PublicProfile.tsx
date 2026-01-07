@@ -10,7 +10,8 @@ import {
     BadgeCheck,
     Calendar,
     Hospital,
-    MapPin
+    MapPin,
+    BriefcaseBusiness
 } from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
@@ -43,6 +44,7 @@ function PublicProfile() {
           <ProfileCard rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges}/>
           <CoverageCard />
           <OfficesCard />
+          <ExperienceCard />
           <CertificatesCard />
           <RatingsCard />
       </div>
@@ -222,6 +224,117 @@ function OfficeComponent({officeTitle, officeLocation}:{
         </div>
     )
 }
+
+const experienceContent =
+    "pr-6 py-6";
+const experienceEmpty =
+    "text-sm text-[var(--text-light)]";
+const timelineContainer =
+    "relative pl-10 " +
+    "before:content-[''] before:absolute before:top-3 before:bottom-3 " +
+    "before:left-14 before:w-[2px] before:-translate-x-1/2 before:bg-[var(--gray-300)]";
+
+function ExperienceCard() {
+
+    const experiences = [
+        {
+            position: "Head of Traumatology",
+            organization: "Club Estudiantes de La Plata",
+            period: "1984 – Present",
+            description:
+                "Lidero el equipo de traumatología, coordinando cirugías y seguimiento post-operatorio. Enfocado en lesiones deportivas y rehabilitación integral.",
+        },
+        {
+            position: "Traumatologist",
+            organization: "Hospital Central",
+            period: "1979 – 1984",
+            description:
+                "Atención clínica y guardias. Participación en protocolos de urgencias y formación de residentes.",
+        },
+        {
+            position: "Resident Physician",
+            organization: "Residencia Médica – Ortopedia",
+            period: "1975 – 1979",
+            description:
+                "Formación intensiva en ortopedia y traumatología, rotaciones quirúrgicas y práctica supervisada.",
+        },
+    ];
+
+    return (
+        <Card className={card}>
+            <div className={cardTitle}>
+                <BriefcaseBusiness className={titleIcon}></BriefcaseBusiness>
+                <h1 className={cardTitleText}>Experience</h1>
+            </div>
+            <div className={experienceContent}>
+                {experiences.length === 0 ? (
+                    <p className={experienceEmpty}>
+                        No experience added yet.
+                    </p>
+                ) : (
+                    <div className={timelineContainer}>
+                        {experiences.map((e, idx) => (
+                            <ExperienceItem
+                                key={`${e.position}-${idx}`}
+                                position={e.position}
+                                organization={e.organization}
+                                period={e.period}
+                                description={e.description}
+                                isLast={idx === experiences.length - 1}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
+        </Card>
+    );
+}
+
+const careerItem =
+    "relative pb-4";
+const careerDot =
+    "absolute left-4 top-[6px] -translate-x-1/2 " +
+    "w-6 h-6 rounded-full bg-white border-2 border-[var(--gray-300)] " +
+    "grid place-items-center " +
+    "after:content-[''] after:block after:w-2.5 after:h-2.5 after:rounded-full after:bg-[var(--primary-color)]";
+const careerPosition =
+    "text-base font-[600] text-[var(--text-color)] leading-tight";
+const careerOrganization =
+    "text-sm font-[500] text-[var(--primary-color)]";
+const careerPeriod =
+    "flex items-center gap-1 text-sm text-[var(--text-light)]";
+const careerDescription =
+    "text-sm text-[var(--text-color)] leading-6";
+
+function ExperienceItem({
+                            position,
+                            organization,
+                            period,
+                            description,
+                            isLast,
+                        }: {
+    position: string;
+    organization: string;
+    period: string;
+    description: string;
+    isLast: boolean;
+}) {
+    return (
+        <div className={`${careerItem} ${isLast ? "pb-0" : ""}`}>
+            <span className={careerDot} />
+            <div className="pl-10 flex flex-col gap-1">
+                <h3 className={careerPosition}>{position}</h3>
+                <p className={careerOrganization}>{organization}</p>
+                <div className={careerPeriod}>
+                    <Calendar className="w-4 h-4" />
+                    <span>{period}</span>
+                </div>
+                <p className={careerDescription}>{description}</p>
+            </div>
+        </div>
+    );
+}
+
 
 const certificatesContent =
     "flex flex-col gap-2 px-6";
