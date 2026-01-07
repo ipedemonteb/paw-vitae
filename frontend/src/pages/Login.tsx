@@ -2,9 +2,9 @@ import WelcomeCard from "../components/WelcomeCard.tsx";
 import LoginCard from "../components/LoginCard.tsx";
 
 const loginPage =
-    "mt-25 bg-[var(--background-light)] px-5 flex items-center justify-center";
+    "bg-[var(--background-light)] px-5 flex justify-center items-start min-h-screen";
 const loginContainer =
-    "flex flex-col md:flex-row my-8 max-w-6xl w-full bg-white rounded-lg";
+    "mt-32 flex flex-col md:flex-row my-8 max-w-6xl w-full bg-white rounded-lg items-stretch";
 
 function Login() {
 
