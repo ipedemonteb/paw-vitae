@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-const cardContainer = "flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full rounded-xl md:flex-1";
+const cardContainer = "flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full md:w-1/2 rounded-xl";
 const headerSection = "text-center space-y-2 mb-8";
 const headerTitle = "text-3xl font-bold text-[var(--text-color)]";
 const headerSubtitle = "text-[var(--text-color)] text-sm";
@@ -17,10 +17,10 @@ const baseInputStyles = "w-full pl-10 py-2 bg-gray-50 border border-gray-200 rou
 const emailInputStyles = `${baseInputStyles} pr-4`;
 const passwordInputStyles = `${baseInputStyles} pr-12`;
 const eyeButtonStyles = "absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600";
-const optionsRow = "flex items-center justify-between text-sm";
+const optionsRow = "flex items-center justify-between text-sm mb-1";
 const checkboxLabel = "flex items-center gap-2 cursor-pointer text-gray-600";
 const checkboxStyles = "w-4 h-4 rounded border-gray-300 text-[var(--primary-color)] focus:ring-blue-500";
-const forgotLinkStyles = "text-[var(--primary-color)] font-medium hover:underline";
+const forgotLinkStyles = "text-[var(--primary-color)] font-[400] hover:underline";
 const submitButtonStyles = "w-full text-base py-4 font-semibold mt-3 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 const footerSection = "flex flex-col gap-2 mt-6 text-center";
 const footerText = "text-sm text-gray-500";
