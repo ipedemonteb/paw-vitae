@@ -8,7 +8,9 @@ import {
     Stethoscope,
     FileBadge,
     BadgeCheck,
-    Calendar
+    Calendar,
+    Hospital,
+    MapPin
 } from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
@@ -19,7 +21,7 @@ import { RatingCard } from "@/components/Rating.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 
 const profileContainer =
-    "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
+    "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
 
 function PublicProfile() {
     const rating = 3.5;
@@ -40,6 +42,7 @@ function PublicProfile() {
       <div className={profileContainer}>
           <ProfileCard rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges}/>
           <CoverageCard />
+          <OfficesCard />
           <CertificatesCard />
           <RatingsCard />
       </div>
@@ -174,6 +177,49 @@ function CoverageComponent({coverageImage, coverageName, coveragePlan}:{
     );
 }
 
+function OfficesCard() {
+    return (
+        <Card className={card}>
+            <div className={cardTitle}>
+                <Hospital className={titleIcon}></Hospital>
+                <h1 className={cardTitleText}>Offices</h1>
+            </div>
+            <div className={cardContent}>
+                <OfficeComponent />
+                <OfficeComponent />
+            </div>
+        </Card>
+    );
+}
+
+const officeContainer =
+    "flex w-full max-w-[200px] flex-col px-10 py-4 items-center border border-[var(--gray-300)] rounded-lg";
+const iconContainer =
+    "bg-[var(--primary-color)] rounded-full p-2 flex items-center justify-center gap-1 text-white mb-2";
+const locationIcon =
+    "h-6 w-6 text-white";
+const locationContainer =
+    "flex items-center gap-1 text-[var(--text-light)] text-sm";
+const locationTitle =
+    "text-base font-[500]";
+const mapPinIcon =
+    "h-4 w-4";
+
+function OfficeComponent() {
+    return (
+        <div className={officeContainer}>
+            <div className={iconContainer}>
+                <Hospital className={locationIcon}/>
+            </div>
+            <h3 className={locationTitle}>Main Office</h3>
+            <div className={locationContainer}>
+                <MapPin className={mapPinIcon}/>
+                <p>Almagro</p>
+            </div>
+        </div>
+    )
+}
+
 const certificatesContent =
     "flex flex-col gap-2 px-6";
 const certificatesScrollWrap =
@@ -190,7 +236,6 @@ function CertificatesCard() {
                 <FileBadge className={titleIcon}></FileBadge>
                 <h1 className={cardTitleText}>Certificates</h1>
             </div>
-
             <div className={certificatesScrollWrap}>
                 <ScrollArea className={certificatesScrollArea}>
                     <div className={certificatesContent}>
