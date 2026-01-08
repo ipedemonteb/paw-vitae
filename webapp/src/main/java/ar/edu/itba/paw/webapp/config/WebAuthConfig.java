@@ -145,14 +145,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                 // TODO: AGREGAR LAS RUTAS
 
-                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS).access("@accessHandler.isUserQuery(authentication, request)")
-                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS +"/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS).access("@accessHandler.isUserQuery(authentication, request) OR hasRole('DOCTOR') AND @accessHandler.canSeeHistory(authentication, request) ")
+                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS +"/{id:\\d+}/**").access("@accessHandler.canHandleAppointment(authentication, #id) OR (hasRole('DOCTOR') AND @accessHandler.canSeeMedicalHistoryApp(authentication, #id))")
                 .antMatchers(HttpMethod.PATCH, UriUtils.APPOINTMENTS +"/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
                 .antMatchers(HttpMethod.PATCH, UriUtils.APPOINTMENTS +"/{id:\\d+}/report").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
-
-                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS + "{id:\\d+}/files").access("@accessHandler.canHandleAppointment(authentication, #id)")
-                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/{fileId:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
-                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/{fileId:\\d+}/view").access("@accessHandler.canHandleAppointment(authentication, #id)")
                 .antMatchers(HttpMethod.POST, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/patient").access("hasRole('PATIENT') and @accessHandler.canHandleAppointment(authentication, #id)")
                 .antMatchers(HttpMethod.POST, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/doctor").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
 
@@ -171,6 +167,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // TODO: ACA DEBERIA HABER UNA VALIDACION AL ESTILO DE hasAppointmentWithPatient" asi solo los doctores que tuvieron citas con el paciente pueden ver su info"
                 .antMatchers(HttpMethod.POST,UriUtils.RATINGS).access("hasRole('PATIENT')")
                 .antMatchers(HttpMethod.GET, UriUtils.RATINGS +"/**").permitAll()
+                //TODO: REVISAR VALIDACION DE RATING
                 .antMatchers("/images/**").permitAll()
                 .antMatchers(UriUtils.COVERAGES +"/**").permitAll()
                 .antMatchers(UriUtils.SPECIALTIES + "/**").permitAll()

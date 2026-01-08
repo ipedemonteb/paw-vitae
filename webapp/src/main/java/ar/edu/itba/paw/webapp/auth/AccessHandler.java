@@ -45,14 +45,6 @@ public class AccessHandler {
         return user.getUserId() == doctorId;
     }
 
-    public boolean canSeeMedicalHistory(Authentication auth, long appointmentId) {
-        AuthUserDetails user = getPrincipal(auth);
-        if (user == null) {
-            return false;
-        }
-        return appointmentService.hasHistoryAllowedByAppointmentId(appointmentId, user.getUserId());
-    }
-
     public boolean canHandleAppointment(Authentication auth, String appointmentIdStr) {
         AuthUserDetails user = getPrincipal(auth);
         if (user == null) {
@@ -75,6 +67,11 @@ public class AccessHandler {
     public boolean isUserQuery(Authentication auth, HttpServletRequest request) {
         String userIdParam = request.getParameter("userId");
         return isUser(auth, userIdParam);
+    }
+
+    public boolean isUserDoctorQuery(Authentication auth, HttpServletRequest request) {
+        String doctorIdParam = request.getParameter("doctorId");
+        return isUser(auth, doctorIdParam);
     }
 
     public boolean isUser(Authentication auth, String id) {
@@ -125,5 +122,30 @@ public class AccessHandler {
         } else {
             return appointment.getPatient().getId() == user.getUserId();
         }
+    }
+
+    public boolean canSeeHistory(Authentication auth, HttpServletRequest request) {
+
+        isUserDoctorQuery(auth, request);
+
+        String patient = request.getParameter("userId");
+        String doctor = request.getParameter("doctorId");
+
+        if (patient == null) {
+            return false;
+        }
+
+        return appointmentService.hasFullMedicalHistoryEnabled(Long.parseLong(patient), Long.parseLong(doctor));
+
+    }
+
+    public boolean canSeeMedicalHistoryApp(Authentication auth, long appointmentId) {
+        AuthUserDetails user = getPrincipal(auth);
+        if (user == null) {
+            return false;
+        }
+        Appointment appointment = appointmentService.getById(appointmentId)
+                .orElseThrow(AppointmentNotFoundException::new);
+        return appointmentService.hasHistoryAllowedByAppointmentId(appointmentId, user.getUserId()) || appointmentService.hasFullMedicalHistoryEnabled(appointment.getPatient().getId(), user.getUserId());
     }
 }
