@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.exception.NeighborhoodNotFoundException;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CoverageDTO;
 import ar.edu.itba.paw.webapp.dto.NeighborhoodDTO;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ import javax.ws.rs.core.*;
 import java.util.List;
 
 
-@Path("/neighborhoods")
+@Path(UriUtils.NEIGHBORHOODS)
 @Component
 public class RestNeighborhoodController {
 

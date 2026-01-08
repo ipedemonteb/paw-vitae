@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface RatingService {
 
-     Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment);
+     Rating create(long rating,String email, long appointmentId, String comment);
 
      Optional<Rating> getRating(long id);
 

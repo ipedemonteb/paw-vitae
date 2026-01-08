@@ -128,23 +128,23 @@ public class PatientController {
         return mav;
     }
 
-    @PostMapping("/patient/dashboard/appointment/rate")
-    public ModelAndView submitRating(@Valid @ModelAttribute("patientRatingForm") final PatientRatingForm form,
-                                     BindingResult errors,
-                                     @ModelAttribute("loggedUser") final Patient patient
-    ) {
-        if (errors.hasErrors()) {
-            return patientAppointmentDetails(form, form.getAppointmentId());
-        }
-        ratingService.create(
-                form.getRating(),
-                form.getDoctorId(),
-                patient.getId(),
-                form.getAppointmentId(),
-                form.getComment()
-        );
-        return new ModelAndView("redirect:/patient/dashboard/appointment-details/" + form.getAppointmentId() + "?rated=true");
-    }
+//    @PostMapping("/patient/dashboard/appointment/rate")
+//    public ModelAndView submitRating(@Valid @ModelAttribute("patientRatingForm") final PatientRatingForm form,
+//                                     BindingResult errors,
+//                                     @ModelAttribute("loggedUser") final Patient patient
+//    ) {
+//        if (errors.hasErrors()) {
+//            return patientAppointmentDetails(form, form.getAppointmentId());
+//        }
+//        ratingService.create(
+//                form.getRating(),
+//                form.getDoctorId(),
+//                patient.getId(),
+//                form.getAppointmentId(),
+//                form.getComment()
+//        );
+//        return new ModelAndView("redirect:/patient/dashboard/appointment-details/" + form.getAppointmentId() + "?rated=true");
+//    }
 
     @RequestMapping("/patient/dashboard/medical-history")
     public ModelAndView getMedicalHistory(@ParamCustomizer(defaultValue = 1) QueryParam page,

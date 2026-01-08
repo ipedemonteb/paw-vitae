@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.CancelAppointmentForm;
 import ar.edu.itba.paw.webapp.form.AppointmentReportForm;
 import ar.edu.itba.paw.webapp.CustomMediaType;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildPaginationHeaders;
 import static javax.ws.rs.core.Response.Status.OK;
 
 
-@Path("/appointments")
+@Path(UriUtils.APPOINTMENTS)
 @Component
 public class RestAppointmentController {
 

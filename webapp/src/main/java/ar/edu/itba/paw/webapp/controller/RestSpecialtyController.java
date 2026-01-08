@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.SpecialtyDTO;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
+import org.glassfish.jersey.server.Uri;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
 
-@Path("/specialties")
+@Path(UriUtils.SPECIALTIES)
 @Component
 public class RestSpecialtyController {
 
