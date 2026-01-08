@@ -56,6 +56,7 @@ public class RestAppointmentController {
     @Produces(value = CustomMediaType.APPLICATION_APPOINTMENT_LIST)
     public Response list(
             @QueryParam("userId") @NotNull Long userId,
+            @QueryParam("doctorId") Long doctorId,
             @QueryParam("collection") @DefaultValue("upcoming") String collection,
             @QueryParam("filter") @DefaultValue("all") String filter,
             @QueryParam("page") @DefaultValue("1") @Min(1) int page,
