@@ -22,7 +22,6 @@ public class RestHomeController {
     private  UriInfo uriInfo;
 
     @GET
-    @Produces(CustomMediaType.APPLICATION_HOME)
     public Response home() {
         return Response.ok(new GenericEntity<>(HomeDTO.fromUriInfo(uriInfo)) {}).build();
     }
