@@ -13,6 +13,8 @@ public interface AppointmentDao {
 
     boolean officeHasAppointments(long officeId);
 
+    boolean hasAppointmentWithPatient(long patientId, long doctorId);
+
     List<Appointment> getAppointmentsWithHistoryAllowedBefore(LocalDateTime dateTime);
 
     List<Appointment> getPastConfirmedAppointments();

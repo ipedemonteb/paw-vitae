@@ -163,8 +163,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, UriUtils.PATIENTS).permitAll()
                 .antMatchers(HttpMethod.HEAD, UriUtils.PATIENTS).permitAll()
                 .antMatchers(HttpMethod.PATCH,UriUtils.PATIENTS +"/{id:\\d+}").access("hasRole('PATIENT') and @accessHandler.isUser(authentication, #id)")
-                .antMatchers(HttpMethod.GET, UriUtils.PATIENTS +"/{id:\\d+}").access("@accessHandler.isUser(authentication, #id) or hasRole('DOCTOR')")
-                // TODO: ACA DEBERIA HABER UNA VALIDACION AL ESTILO DE hasAppointmentWithPatient" asi solo los doctores que tuvieron citas con el paciente pueden ver su info"
+                .antMatchers(HttpMethod.GET, UriUtils.PATIENTS +"/{id:\\d+}").access("@accessHandler.isUser(authentication, #id) or hasRole('DOCTOR') and @accessHandler.hasAppointmentWithPatient(authentication, #id)")
                 .antMatchers(HttpMethod.POST,UriUtils.RATINGS).access("hasRole('PATIENT')")
                 .antMatchers(HttpMethod.GET, UriUtils.RATINGS +"/**").permitAll()
                 //TODO: REVISAR VALIDACION DE RATING

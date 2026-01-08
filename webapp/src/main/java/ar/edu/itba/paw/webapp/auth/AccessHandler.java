@@ -148,4 +148,13 @@ public class AccessHandler {
                 .orElseThrow(AppointmentNotFoundException::new);
         return appointmentService.hasHistoryAllowedByAppointmentId(appointmentId, user.getUserId()) || appointmentService.hasFullMedicalHistoryEnabled(appointment.getPatient().getId(), user.getUserId());
     }
+
+    public boolean hasAppointmentWithPatient(Authentication auth, long patientId) {
+        AuthUserDetails user = getPrincipal(auth);
+        if (user == null) {
+            return false;
+        }
+        long doctorId = user.getUserId();
+        return appointmentService.hasAppointmentWithPatient(doctorId, patientId);
+    }
 }
