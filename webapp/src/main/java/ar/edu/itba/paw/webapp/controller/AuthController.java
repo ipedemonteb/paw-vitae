@@ -127,17 +127,17 @@ public class AuthController {
         return new ModelAndView("auth/change-password").addObject("token", token);
     }
 
-    @RequestMapping(value = "/change-password", method = RequestMethod.POST)
-    public ModelAndView changePassword(@RequestParam(value = "token", required = false) String token,
-                                       @Valid @ModelAttribute("ChangePasswordForm") ChangePasswordForm form, BindingResult errors) {
-        if (errors.hasErrors()) {
-            return new ModelAndView("auth/change-password").addObject("token", token);
-        }
-        boolean success = userService.changePassword(token, form.getPassword());
-        String value = String.valueOf(success);
-            return new ModelAndView("redirect:/change-password-result?success="+value);
-
-    }
+//    @RequestMapping(value = "/change-password", method = RequestMethod.POST)
+//    public ModelAndView changePassword(@RequestParam(value = "token", required = false) String token,
+//                                       @Valid @ModelAttribute("ChangePasswordForm") ChangePasswordForm form, BindingResult errors) {
+//        if (errors.hasErrors()) {
+//            return new ModelAndView("auth/change-password").addObject("token", token);
+//        }
+//        boolean success = userService.changePassword(token, form.getPassword());
+//        String value = String.valueOf(success);
+//            return new ModelAndView("redirect:/change-password-result?success="+value);
+//
+//    }
 
     @RequestMapping(value = "/change-password-result", method = RequestMethod.GET)
     public ModelAndView changePasswordResult() {

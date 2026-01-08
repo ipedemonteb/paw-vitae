@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Card } from "@/components/ui/card.tsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
-import { Quote, Star } from "lucide-react";
+import { Quote } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
 import {RatingStars} from "@/components/RatingStars.tsx";
 

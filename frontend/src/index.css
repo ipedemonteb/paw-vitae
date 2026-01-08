@@ -17,6 +17,9 @@
     --danger: #ef4444;
     --danger-dark: #b91c1c;
     --danger-light: #f9dede;
+    --warning: #f59e0b;
+    --warning-dark: #a16207;
+    --warning-light: #fef3c7;
     --gray-100: #f3f4f6;
     --gray-200: #e5e7eb;
     --gray-300: #d1d5db;
@@ -63,6 +66,9 @@
     --sidebar-ring: oklch(0.708 0 0);
     --landing-light: #dbeafe;
     --primary-bg: #eff6ff;
+    --bubble-color: #FFFFFF33;
+    --success: #16a34a;        /* verde principal (oscuro para badge) */
+    --success-light: #dcfce7;
 }
 
 body {

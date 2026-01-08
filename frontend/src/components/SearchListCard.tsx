@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Stethoscope, Calendar, UserRoundSearch, Mail, Phone, Star } from "lucide-react";
+import { Stethoscope, Calendar, UserRoundSearch, Mail, Phone } from "lucide-react";
 import { RatingStars } from "@/components/RatingStars.tsx";
 
 const cardContainer =

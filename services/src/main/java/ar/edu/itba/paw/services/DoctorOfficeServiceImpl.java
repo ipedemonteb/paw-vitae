@@ -45,6 +45,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     @Override
     public DoctorOffice create(Doctor doctor,DoctorOfficeForm form) {
         if (Boolean.TRUE.equals(form.getActive())) {
+            //TODO: CHECK
             throw new BussinesRuleException("exception.business.cannotCreateAndActivateOffice");
         }
         validateMaxOffices(doctor.getId());
