@@ -9,7 +9,9 @@ import {
     FileCheckCorner,
     Paperclip,
     Download,
-    Info
+    Info,
+    Cross,
+    Asterisk
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -49,6 +51,7 @@ function AppointmentDetails() {
                             </div>
                             <VisitCard />
                             <PatientFileCard />
+                            <PostVisitComponent />
                         </div>
                     </Card>
                 </div>
@@ -152,7 +155,7 @@ const patientFileIcon =
 const patientFileTitle =
     "text-lg font-semibold";
 const patientFileContent =
-    "px-5 gap-3";
+    "px-5 gap-4";
 
 function PatientFileCard() {
     return (
@@ -162,10 +165,10 @@ function PatientFileCard() {
                 <h1 className={patientFileTitle}>Patient Files</h1>
             </div>
             <Card className={patientFileContent}>
-                {/*<FileComponent />*/}
-                {/*<FileComponent />*/}
-                {/*<FileComponent />*/}
-                <FileEmptyComponent />
+                <FileComponent />
+                <FileComponent />
+                <FileComponent />
+                {/*<FileEmptyComponent />*/}
             </Card>
         </div>
     );
@@ -203,6 +206,31 @@ function FileEmptyComponent() {
         <div className={emptyFileContainer}>
             <Info />
             <p>No uploaded files.</p>
+        </div>
+    );
+}
+
+const doctorCommentContainer =
+    "flex flex-row items-center px-5 gap-0";
+const asteriskIcon =
+    "w-8 h-8 text-[var(--primary-color)] shrink-0 mr-3";
+const doctorComment =
+    "text-md text-[var(--text-color)]";
+
+function PostVisitComponent() {
+    return (
+        <div>
+            <div className={patientFileIconContainer}>
+                <Cross className={patientFileIcon}/>
+                <h1 className={patientFileTitle}>Post Visit Information</h1>
+            </div>
+            <Card className={patientFileContent}>
+                <Card className={doctorCommentContainer}>
+                    <Asterisk className={asteriskIcon} />
+                    <p className={doctorComment}>El paciente efectivamente, tiene dolor de cabeza, adjunto archivos de estudios.</p>
+                </Card>
+                <FileEmptyComponent />
+            </Card>
         </div>
     );
 }
