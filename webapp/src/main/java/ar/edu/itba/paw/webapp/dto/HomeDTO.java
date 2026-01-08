@@ -1,0 +1,158 @@
+package ar.edu.itba.paw.webapp.dto;
+
+import javax.ws.rs.core.UriInfo;
+import java.io.Serializable;
+
+public class HomeDTO implements Serializable {
+
+
+    private String doctorsUrl;
+    private String patientsUrl;
+    private String appointmentsUrl;
+    private String ratingsUrl;
+
+    private String specialtiesUrl;
+    private String coveragesUrl;
+    private String neighborhoodsUrl;
+
+
+    private String doctorByIdUrl;
+
+
+    private String doctorProfileUrl;
+    private String doctorExperiencesUrl;
+    private String doctorCertificationsUrl;
+    private String doctorImageUrl;
+
+
+    private String doctorRatingsUrl;
+    private String doctorSpecialtiesUrl;
+    private String doctorCoveragesUrl;
+
+    private String doctorOfficesUrl;
+    private String doctorOfficeByIdUrl;
+    private String doctorOfficeAvailabilityUrl;
+    private String doctorOfficeSpecialtiesUrl;
+
+    private String appointmentByIdUrl;
+    private String appointmentReportUrl;
+
+    private String appointmentFilesUrl;
+    private String appointmentFileByIdUrl;
+    private String appointmentFileViewUrl;
+
+    private String patientByIdUrl;
+    private String specialtyByIdUrl;
+    private String coverageByIdUrl;
+    private String neighborhoodByIdUrl;
+    private String ratingByIdUrl;
+
+    public HomeDTO() {
+    }
+
+    public static HomeDTO fromUriInfo(final UriInfo uriInfo) {
+        final HomeDTO dto = new HomeDTO();
+        final String baseUri = uriInfo.getBaseUri().toString();
+
+        dto.doctorsUrl = baseUri + "doctors{?specialty,coverage,weekdays,keyword,orderBy,direction,page}";
+
+        dto.appointmentsUrl = baseUri + "appointments{?userId,collection,filter,page,pageSize}";
+
+        dto.ratingsUrl = baseUri + "ratings{?page,size}";
+
+        dto.patientsUrl = baseUri + "patients";
+        dto.specialtiesUrl = baseUri + "specialties";
+        dto.coveragesUrl = baseUri + "coverages";
+        dto.neighborhoodsUrl = baseUri + "neighborhoods";
+
+        dto.doctorByIdUrl = baseUri + "doctors/{id}";
+        dto.doctorProfileUrl = baseUri + "doctors/{id}/biography";
+        dto.doctorExperiencesUrl = baseUri + "doctors/{id}/experiences";
+        dto.doctorCertificationsUrl = baseUri + "doctors/{id}/certifications";
+        dto.doctorImageUrl = baseUri + "doctors/{id}/image";
+        dto.doctorRatingsUrl = baseUri + "doctors/{id}/ratings{?page}";
+
+        dto.doctorSpecialtiesUrl = baseUri + "doctors/{id}/specialties";
+        dto.doctorCoveragesUrl = baseUri + "doctors/{id}/coverages";
+
+
+        dto.doctorOfficesUrl = baseUri + "doctors/{id}/offices";
+        dto.doctorOfficeByIdUrl = baseUri + "doctors/{doctorId}/offices/{officeId}";
+        dto.doctorOfficeAvailabilityUrl = baseUri + "doctors/{doctorId}/offices/{officeId}/availability";
+        dto.doctorOfficeSpecialtiesUrl = baseUri + "doctors/{doctorId}/offices/{officeId}/specialties";
+
+        dto.appointmentByIdUrl = baseUri + "appointments/{id}";
+        dto.appointmentReportUrl = baseUri + "appointments/{id}/report";
+
+        dto.appointmentFilesUrl = baseUri + "appointments/{id}/files";
+        dto.appointmentFileByIdUrl = baseUri + "appointments/{appointmentId}/files/{fileId}";
+        dto.appointmentFileViewUrl = baseUri + "appointments/{appointmentId}/files/{fileId}/view";
+
+        dto.patientByIdUrl = baseUri + "patients/{id}";
+        dto.specialtyByIdUrl = baseUri + "specialties/{id}";
+        dto.coverageByIdUrl = baseUri + "coverages/{id}";
+        dto.neighborhoodByIdUrl = baseUri + "neighborhoods/{id}";
+        dto.ratingByIdUrl = baseUri + "ratings/{id}";
+
+        return dto;
+    }
+
+    public String getDoctorsUrl() { return doctorsUrl; }
+    public void setDoctorsUrl(String doctorsUrl) { this.doctorsUrl = doctorsUrl; }
+    public String getPatientsUrl() { return patientsUrl; }
+    public void setPatientsUrl(String patientsUrl) { this.patientsUrl = patientsUrl; }
+    public String getAppointmentsUrl() { return appointmentsUrl; }
+    public void setAppointmentsUrl(String appointmentsUrl) { this.appointmentsUrl = appointmentsUrl; }
+    public String getRatingsUrl() { return ratingsUrl; }
+    public void setRatingsUrl(String ratingsUrl) { this.ratingsUrl = ratingsUrl; }
+    public String getSpecialtiesUrl() { return specialtiesUrl; }
+    public void setSpecialtiesUrl(String specialtiesUrl) { this.specialtiesUrl = specialtiesUrl; }
+    public String getCoveragesUrl() { return coveragesUrl; }
+    public void setCoveragesUrl(String coveragesUrl) { this.coveragesUrl = coveragesUrl; }
+    public String getNeighborhoodsUrl() { return neighborhoodsUrl; }
+    public void setNeighborhoodsUrl(String neighborhoodsUrl) { this.neighborhoodsUrl = neighborhoodsUrl; }
+    public String getDoctorByIdUrl() { return doctorByIdUrl; }
+    public void setDoctorByIdUrl(String doctorByIdUrl) { this.doctorByIdUrl = doctorByIdUrl; }
+    public String getDoctorProfileUrl() { return doctorProfileUrl; }
+    public void setDoctorProfileUrl(String doctorProfileUrl) { this.doctorProfileUrl = doctorProfileUrl; }
+    public String getDoctorExperiencesUrl() { return doctorExperiencesUrl; }
+    public void setDoctorExperiencesUrl(String doctorExperiencesUrl) { this.doctorExperiencesUrl = doctorExperiencesUrl; }
+    public String getDoctorCertificationsUrl() { return doctorCertificationsUrl; }
+    public void setDoctorCertificationsUrl(String doctorCertificationsUrl) { this.doctorCertificationsUrl = doctorCertificationsUrl; }
+    public String getDoctorImageUrl() { return doctorImageUrl; }
+    public void setDoctorImageUrl(String doctorImageUrl) { this.doctorImageUrl = doctorImageUrl; }
+    public String getDoctorRatingsUrl() { return doctorRatingsUrl; }
+    public void setDoctorRatingsUrl(String doctorRatingsUrl) { this.doctorRatingsUrl = doctorRatingsUrl; }
+    public String getDoctorSpecialtiesUrl() { return doctorSpecialtiesUrl; }
+    public void setDoctorSpecialtiesUrl(String doctorSpecialtiesUrl) { this.doctorSpecialtiesUrl = doctorSpecialtiesUrl; }
+    public String getDoctorCoveragesUrl() { return doctorCoveragesUrl; }
+    public void setDoctorCoveragesUrl(String doctorCoveragesUrl) { this.doctorCoveragesUrl = doctorCoveragesUrl; }
+    public String getDoctorOfficesUrl() { return doctorOfficesUrl; }
+    public void setDoctorOfficesUrl(String doctorOfficesUrl) { this.doctorOfficesUrl = doctorOfficesUrl; }
+    public String getDoctorOfficeByIdUrl() { return doctorOfficeByIdUrl; }
+    public void setDoctorOfficeByIdUrl(String doctorOfficeByIdUrl) { this.doctorOfficeByIdUrl = doctorOfficeByIdUrl; }
+    public String getDoctorOfficeAvailabilityUrl() { return doctorOfficeAvailabilityUrl; }
+    public void setDoctorOfficeAvailabilityUrl(String doctorOfficeAvailabilityUrl) { this.doctorOfficeAvailabilityUrl = doctorOfficeAvailabilityUrl; }
+    public String getDoctorOfficeSpecialtiesUrl() { return doctorOfficeSpecialtiesUrl; }
+    public void setDoctorOfficeSpecialtiesUrl(String doctorOfficeSpecialtiesUrl) { this.doctorOfficeSpecialtiesUrl = doctorOfficeSpecialtiesUrl; }
+    public String getAppointmentByIdUrl() { return appointmentByIdUrl; }
+    public void setAppointmentByIdUrl(String appointmentByIdUrl) { this.appointmentByIdUrl = appointmentByIdUrl; }
+    public String getAppointmentReportUrl() { return appointmentReportUrl; }
+    public void setAppointmentReportUrl(String appointmentReportUrl) { this.appointmentReportUrl = appointmentReportUrl; }
+    public String getAppointmentFilesUrl() { return appointmentFilesUrl; }
+    public void setAppointmentFilesUrl(String appointmentFilesUrl) { this.appointmentFilesUrl = appointmentFilesUrl; }
+    public String getAppointmentFileByIdUrl() { return appointmentFileByIdUrl; }
+    public void setAppointmentFileByIdUrl(String appointmentFileByIdUrl) { this.appointmentFileByIdUrl = appointmentFileByIdUrl; }
+    public String getAppointmentFileViewUrl() { return appointmentFileViewUrl; }
+    public void setAppointmentFileViewUrl(String appointmentFileViewUrl) { this.appointmentFileViewUrl = appointmentFileViewUrl; }
+    public String getPatientByIdUrl() { return patientByIdUrl; }
+    public void setPatientByIdUrl(String patientByIdUrl) { this.patientByIdUrl = patientByIdUrl; }
+    public String getSpecialtyByIdUrl() { return specialtyByIdUrl; }
+    public void setSpecialtyByIdUrl(String specialtyByIdUrl) { this.specialtyByIdUrl = specialtyByIdUrl; }
+    public String getCoverageByIdUrl() { return coverageByIdUrl; }
+    public void setCoverageByIdUrl(String coverageByIdUrl) { this.coverageByIdUrl = coverageByIdUrl; }
+    public String getNeighborhoodByIdUrl() { return neighborhoodByIdUrl; }
+    public void setNeighborhoodByIdUrl(String neighborhoodByIdUrl) { this.neighborhoodByIdUrl = neighborhoodByIdUrl; }
+    public String getRatingByIdUrl() { return ratingByIdUrl; }
+    public void setRatingByIdUrl(String ratingByIdUrl) { this.ratingByIdUrl = ratingByIdUrl; }
+}

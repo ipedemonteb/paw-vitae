@@ -6,6 +6,7 @@ import ar.edu.itba.paw.webapp.auth.JwtService;
 import ar.edu.itba.paw.webapp.auth.JwtTokenFilter;
 import ar.edu.itba.paw.webapp.handler.AuthEntryPointHandler;
 import ar.edu.itba.paw.webapp.handler.CustomAuthenticationSuccessHandler;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -144,35 +145,36 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                 // TODO: AGREGAR LAS RUTAS
 
-                .antMatchers(HttpMethod.GET, "/appointments").access("@accessHandler.isUserQuery(authentication, request)")
-                .antMatchers(HttpMethod.GET, "/appointments/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
-                .antMatchers(HttpMethod.PATCH, "/appointments/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
-                .antMatchers(HttpMethod.PATCH, "/appointments/{id:\\d+}/report").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS).access("@accessHandler.isUserQuery(authentication, request)")
+                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS +"/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.PATCH, UriUtils.APPOINTMENTS +"/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.PATCH, UriUtils.APPOINTMENTS +"/{id:\\d+}/report").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
 
-                .antMatchers(HttpMethod.GET, "/appointments/{id:\\d+}/files").access("@accessHandler.canHandleAppointment(authentication, #id)")
-                .antMatchers(HttpMethod.GET, "/appointments/{id:\\d+}/files/{fileId:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
-                .antMatchers(HttpMethod.GET, "/appointments/{id:\\d+}/files/{fileId:\\d+}/view").access("@accessHandler.canHandleAppointment(authentication, #id)")
-                .antMatchers(HttpMethod.POST, "/appointments/{id:\\d+}/files/patient").access("hasRole('PATIENT') and @accessHandler.canHandleAppointment(authentication, #id)")
-                .antMatchers(HttpMethod.POST, "/appointments/{id:\\d+}/files/doctor").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS + "{id:\\d+}/files").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/{fileId:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/{fileId:\\d+}/view").access("@accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.POST, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/patient").access("hasRole('PATIENT') and @accessHandler.canHandleAppointment(authentication, #id)")
+                .antMatchers(HttpMethod.POST, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/doctor").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
 
-                .antMatchers(HttpMethod.GET, "/doctors/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/doctors").permitAll()
-                .antMatchers(HttpMethod.PATCH, "/doctors/{id:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
-                .antMatchers(HttpMethod.PUT, "/doctors/{id:\\d+}/**").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
-                .antMatchers(HttpMethod.POST,"/doctors/{id:\\d+}/offices").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication,#id)")
-                .antMatchers(HttpMethod.PATCH,"/doctors/{id:\\d+}/offices/{officeId:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication,#id) and @accessHandler.hasOfficeOwnership(authentication, #officeId)")
-                .antMatchers(HttpMethod.DELETE,"/doctors/{id:\\d+}/offices/{officeId:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication,#id ) and @accessHandler.hasOfficeOwnership(authentication, #officeId)")
-                .antMatchers(HttpMethod.POST, "/patients").permitAll()
-                .antMatchers(HttpMethod.HEAD, "/patients").permitAll()
-                .antMatchers(HttpMethod.PATCH, "/patients/{id:\\d+}").access("hasRole('PATIENT') and @accessHandler.isUser(authentication, #id)")
-                .antMatchers(HttpMethod.GET, "/patients/{id:\\d+}").access("@accessHandler.isUser(authentication, #id) or hasRole('DOCTOR')")
+                .antMatchers(HttpMethod.GET, UriUtils.DOCTORS +"/**").permitAll()
+                .antMatchers(HttpMethod.POST, UriUtils.DOCTORS).permitAll()
+                .antMatchers(HttpMethod.PATCH, UriUtils.DOCTORS + "/{id:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
+                .antMatchers(HttpMethod.PUT, UriUtils.DOCTORS +"/{id:\\d+}/**").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
+                .antMatchers(HttpMethod.POST,UriUtils.DOCTORS +"/{id:\\d+}/offices").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication,#id)")
+                .antMatchers(HttpMethod.PATCH,UriUtils.DOCTORS +"/{id:\\d+}/offices/{officeId:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication,#id) and @accessHandler.hasOfficeOwnership(authentication, #officeId)")
+                .antMatchers(HttpMethod.DELETE,UriUtils.DOCTORS +"/{id:\\d+}/offices/{officeId:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication,#id ) and @accessHandler.hasOfficeOwnership(authentication, #officeId)")
+
+                .antMatchers(HttpMethod.POST, UriUtils.PATIENTS).permitAll()
+                .antMatchers(HttpMethod.HEAD, UriUtils.PATIENTS).permitAll()
+                .antMatchers(HttpMethod.PATCH,UriUtils.PATIENTS +"/{id:\\d+}").access("hasRole('PATIENT') and @accessHandler.isUser(authentication, #id)")
+                .antMatchers(HttpMethod.GET, UriUtils.PATIENTS +"/{id:\\d+}").access("@accessHandler.isUser(authentication, #id) or hasRole('DOCTOR')")
                 // TODO: ACA DEBERIA HABER UNA VALIDACION AL ESTILO DE hasAppointmentWithPatient" asi solo los doctores que tuvieron citas con el paciente pueden ver su info"
-                .antMatchers(HttpMethod.POST,"/ratings").access("hasRole('PATIENT')")
-
+                .antMatchers(HttpMethod.POST,UriUtils.RATINGS).access("hasRole('PATIENT')")
+                .antMatchers(HttpMethod.GET, UriUtils.RATINGS +"/**").permitAll()
                 .antMatchers("/images/**").permitAll()
-                .antMatchers("/coverages/**").permitAll()
-                .antMatchers("/specialties/**").permitAll()
-                .antMatchers("/neighborhoods/**").permitAll()
+                .antMatchers(UriUtils.COVERAGES +"/**").permitAll()
+                .antMatchers(UriUtils.SPECIALTIES + "/**").permitAll()
+                .antMatchers( UriUtils.NEIGHBORHOODS +"/**").permitAll()
                 .antMatchers("/**").permitAll()
 
                 .and()
