@@ -8,11 +8,11 @@ import {
     Hospital,
     FileCheckCorner,
     Paperclip,
-    Download
+    Download,
+    Info
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -162,9 +162,10 @@ function PatientFileCard() {
                 <h1 className={patientFileTitle}>Patient Files</h1>
             </div>
             <Card className={patientFileContent}>
-                <FileComponent />
-                <FileComponent />
-                <FileComponent />
+                {/*<FileComponent />*/}
+                {/*<FileComponent />*/}
+                {/*<FileComponent />*/}
+                <FileEmptyComponent />
             </Card>
         </div>
     );
@@ -193,10 +194,15 @@ function FileComponent() {
     );
 }
 
+const emptyFileContainer =
+    "flex flex-row items-center justify-center p-4 text-[var(--gray-500)] " +
+    " bg-[var(--gray-100)] rounded-lg gap-2 border border-dashed border-[var(--gray-400)]";
+
 function FileEmptyComponent() {
     return (
-        <div>
-
+        <div className={emptyFileContainer}>
+            <Info />
+            <p>No uploaded files.</p>
         </div>
     );
 }
