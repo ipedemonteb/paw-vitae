@@ -4,6 +4,7 @@ public final class CustomMediaType {
 
     private CustomMediaType() {}
 
+    public static final String APPLICATION_HOME = "application/vnd.vitae.home.v1+json";
     // --- DOCTORS (Principal) ---
     public static final String APPLICATION_DOCTOR = "application/vnd.vitae.doctor.v1+json";
     public static final String APPLICATION_DOCTOR_LIST = "application/vnd.vitae.doctor-list.v1+json";
