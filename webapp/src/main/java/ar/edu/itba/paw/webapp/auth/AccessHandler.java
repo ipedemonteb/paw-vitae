@@ -139,22 +139,36 @@ public class AccessHandler {
 
     }
 
-    public boolean canSeeMedicalHistoryApp(Authentication auth, long appointmentId) {
+    public boolean canSeeMedicalHistoryApp(Authentication auth, String appointmentIdStr) {
         AuthUserDetails user = getPrincipal(auth);
         if (user == null) {
             return false;
         }
+        long appointmentId = Long.parseLong(appointmentIdStr);
         Appointment appointment = appointmentService.getById(appointmentId)
                 .orElseThrow(AppointmentNotFoundException::new);
         return appointmentService.hasHistoryAllowedByAppointmentId(appointmentId, user.getUserId()) || appointmentService.hasFullMedicalHistoryEnabled(appointment.getPatient().getId(), user.getUserId());
     }
 
-    public boolean hasAppointmentWithPatient(Authentication auth, long patientId) {
+    public boolean hasAppointmentWithPatient(Authentication auth, String patientId) {
         AuthUserDetails user = getPrincipal(auth);
         if (user == null) {
             return false;
         }
         long doctorId = user.getUserId();
-        return appointmentService.hasAppointmentWithPatient(doctorId, patientId);
+        return appointmentService.hasAppointmentWithPatient(doctorId, Long.parseLong(patientId));
+    }
+
+    public boolean canRateAppointment(Authentication auth, HttpServletRequest request) {
+        AuthUserDetails user = getPrincipal(auth);
+        if (user == null) {
+            return false;
+        }
+        String appointmentId = request.getParameter("appointmentId");
+        if (appointmentId == null) {
+            return false;
+        }
+
+        return canHandleAppointment(auth, appointmentId);
     }
 }
