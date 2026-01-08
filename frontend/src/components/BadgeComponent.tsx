@@ -29,8 +29,8 @@ function BadgeComponent({specialties, maxBadges}:{
                 </Badge>
             ))}
             {hiddenCount > 0 && (
-                <HoverCard>
-                    <HoverCardTrigger asChild>
+                <HoverCard openDelay={100}>
+                    <HoverCardTrigger className="cursor-default" asChild>
                         <Badge className={moreBadge}>+{hiddenCount}</Badge>
                     </HoverCardTrigger>
 

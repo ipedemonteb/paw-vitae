@@ -3,9 +3,10 @@ import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuL
 import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/sheet"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronDown, User, BriefcaseMedical, Menu, LogIn, ChartPie, LogOut } from "lucide-react";
-import { Link, useMatch } from "react-router-dom";
+import {Link, useMatch, useNavigate} from "react-router-dom";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
+import {useAuth} from "@/hooks/useAuth";
 
 function HeaderNavLink({ to, end, children, }: {
     to: string;
@@ -244,7 +245,15 @@ function LoggedInComponent({ isDoctor, open, onOpenChange }:{ isDoctor:boolean; 
     )
 }
 
+
+
 function DropdownPatient() {
+    const auth = useAuth();
+    const navigate = useNavigate()
+    const logout = () => {
+        auth.logout();
+        navigate("/");
+    }
     return (
         <DropdownMenuContent>
             <DropdownMenuItem className={dropDownItem}>
@@ -253,7 +262,7 @@ function DropdownPatient() {
                     Dashboard
                 </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className={logoutItem}>
+            <DropdownMenuItem onClick={logout} className={logoutItem}>
                 <LogOut className="text-inherit" />
                 Log Out
             </DropdownMenuItem>
@@ -262,6 +271,13 @@ function DropdownPatient() {
 }
 
 function DropdownDoctor() {
+    const auth = useAuth();
+    const navigate = useNavigate();
+    const logout = () => {
+        auth.logout();
+        navigate("/")
+
+    }
     return (
         <DropdownMenuContent>
             <DropdownMenuItem className={dropDownItem}>
@@ -276,7 +292,7 @@ function DropdownDoctor() {
                     Public Profile
                 </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className={logoutItem}>
+            <DropdownMenuItem onClick={logout} className={logoutItem}>
                 <LogOut className="text-inherit" />
                 Log Out
             </DropdownMenuItem>

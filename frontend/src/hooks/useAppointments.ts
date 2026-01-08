@@ -3,7 +3,7 @@ import {useQuery} from "@tanstack/react-query";
 
 export function useAppointments(query: AppointmentsQuery) {
     return useQuery({
-        queryKey: ["appointments", query.userId],
+        queryKey: ['auth', 'appointments', query.userId],
         queryFn: () => listAppointments(query)
     })
 }
