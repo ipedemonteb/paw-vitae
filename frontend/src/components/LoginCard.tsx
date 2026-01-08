@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { useAuth } from "@/context/authContext.tsx";
+import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -38,7 +38,7 @@ const registerLinkStyles = "text-blue-600 hover:text-blue-700 hover:underline";
 
 function LoginCard() {
     const [showPassword, setShowPassword] = useState(false);
-    const { login } = useAuth();
+    const auth = useAuth();
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -54,18 +54,11 @@ function LoginCard() {
         setIsLoading(true);
         setError("");
 
-        try {
-            const success = await login(email, password);
-            if (success) {
-                navigate("/");
-            } else {
-                setError(t('login.error_credentials'));
-            }
-        } catch (err) {
-            setError(t('login.error_generic'));
-        } finally {
-            setIsLoading(false);
-        }
+        const res = await auth.login(email, password);
+        if (res.success) navigate("/")
+        else if (res.errorMessage) setError(t(res.errorMessage));
+
+        setIsLoading(false);
     };
 
     return (

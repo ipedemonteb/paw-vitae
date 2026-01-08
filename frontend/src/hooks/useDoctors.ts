@@ -1,10 +1,11 @@
 import {listDoctors, type DoctorsQuery} from "@/data/doctors";
-import {useQuery} from "@tanstack/react-query";
+import {keepPreviousData, useQuery} from "@tanstack/react-query";
 
 export function useDoctors(query: DoctorsQuery) {
     return useQuery({
-        queryKey: ["doctors"],
+        queryKey: ['auth', 'doctors', query],
         queryFn: () => listDoctors(query),
+        placeholderData: keepPreviousData
     })
 }
 
