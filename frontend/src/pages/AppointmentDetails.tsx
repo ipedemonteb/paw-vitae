@@ -12,12 +12,14 @@ import {
     Info,
     Cross,
     Asterisk,
-    Star
+    Star,
+    CloudUpload,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import {RatingStars} from "@/components/RatingStars.tsx";
-import {Separator} from "@/components/ui/separator.tsx";
+import { RatingStars } from "@/components/RatingStars.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
+import { UploadFiles } from "@/components/UploadFiles.tsx"
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -56,6 +58,7 @@ function AppointmentDetails() {
                             <PatientFileCard />
                             <PostVisitComponent />
                             <RatingComponent />
+                            <UploadComponent />
                         </div>
                     </Card>
                 </div>
@@ -261,6 +264,30 @@ function RatingComponent() {
                     <p className={ratingNumber}>{rating}</p>
                 </div>
             </Card>
+        </div>
+    );
+}
+
+const uploadTitle =
+    "text-[var(--text-color)] font-[600]";
+const submitContainer =
+    "flex w-full items-center justify-center";
+const submitButton =
+    "mt-6 w-3xs bg-[var(--primary-color)] text-white hover:bg-[var(--primary-dark)] cursor-pointer";
+
+function UploadComponent() {
+    return (
+        <div>
+            <div className={cardIconContainer + " mt-4"}>
+                <CloudUpload className={cardIcon}/>
+                <h1 className={uploadTitle}>Upload files for the appointment.</h1>
+            </div>
+            <UploadFiles />
+            <div className={submitContainer}>
+                <Button className={submitButton}>
+                    Submit
+                </Button>
+            </div>
         </div>
     );
 }
