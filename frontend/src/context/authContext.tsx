@@ -1,64 +1,62 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-import { useUserService } from "../hooks/userService.ts";
-import { api } from "../data/Api.ts";
+import {createContext, type ReactNode, useCallback, useEffect, useMemo, useState} from "react";
+import {
+    clearAuth,
+    initAuthFromStorage,
+    type JWTClaims,
+    subscribeAuth,
+} from "@/context/auth-store.ts";
+import {login as loginApi} from "@/data/auth.ts";
+import {useQueryClient} from "@tanstack/react-query";
 
 interface   AuthContextType {
+    claims: JWTClaims | null;
     isAuthenticated: boolean;
-    login: (email: string, pass: string) => Promise<boolean>;
+
+    userId?: string;
+    email?: string;
+    roles: string[];
+
+    login: (email: string, password: string) => Promise<{success: boolean, errorMessage?: string}>;
     logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
-
-export const useAuth = () => useContext(AuthContext);
-
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 
-    const userService = useUserService(api);
+export function AuthProvider({ children }: { children: ReactNode })  {
+    const [claims, setClaims] = useState<JWTClaims | null>(null)
+    const queryClient = useQueryClient();
 
     useEffect(() => {
-        const token = localStorage.getItem("jwt");
-        if (token) setIsAuthenticated(true);
+        initAuthFromStorage();
+        return subscribeAuth((s) => setClaims(s.claims));
     }, []);
 
-    const login = async (email: string, pass: string) => {
-        try {
+    const login = useCallback(async (email: string, password: string) => {
+        return loginApi(email, password);
+    }, []);
 
-            const result = await userService.login("/", email, pass);
+    const logout = useCallback(() => {
+        clearAuth();
+        queryClient.removeQueries({ queryKey: ["auth"], exact: false });
+    }, [queryClient]);
 
-            if (result.success) {
-                if (result.jwt != null) {
-                    localStorage.setItem("jwt", result.jwt);
-                }
-                if (result.refreshToken != null) {
-                    localStorage.setItem("refreshToken", result.refreshToken);
-                }
-
-                api.defaults.headers.common['Authorization'] = `Bearer ${result.jwt}`;
-
-                setIsAuthenticated(true);
-                return true;
-            }
-            return false;
-
-        } catch (error) {
-            console.error("Error en AuthContext:", error);
-            return false;
-        }
-    };
-
-    const logout = () => {
-        localStorage.removeItem("jwt");
-        localStorage.removeItem("refreshToken");
-        delete api.defaults.headers.common['Authorization'];
-        setIsAuthenticated(false);
-    };
+    const value = useMemo(
+        () => ({
+            claims,
+            isAuthenticated: !!claims,
+            userId: claims?.sub,
+            roles: claims?.roles ?? [],
+            email: claims?.email,
+            login,
+            logout,
+        }),
+        [claims, login, logout]
+    );
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );
-};
+}
