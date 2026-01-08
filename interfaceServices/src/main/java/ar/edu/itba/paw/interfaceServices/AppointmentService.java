@@ -40,4 +40,6 @@ public interface AppointmentService {
     boolean officeHasAppointments(long officeId);
 
     void revokeHistoryPermissionForOldAppointments();
+
+    boolean hasAppointmentWithPatient(long doctorId, long patientId);
 }

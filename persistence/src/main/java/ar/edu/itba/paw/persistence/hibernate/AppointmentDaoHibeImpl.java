@@ -155,6 +155,16 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return !query.getResultList().isEmpty();
     }
 
+    @Override
+    public boolean hasAppointmentWithPatient(long patientId, long doctorId) {
+        TypedQuery<Appointment> query = em.createQuery(
+                "SELECT a FROM Appointment a WHERE a.patient.id = :patientId AND a.doctor.id = :doctorId",
+                Appointment.class);
+        query.setParameter("patientId", patientId);
+        query.setParameter("doctorId", doctorId);
+        return !query.getResultList().isEmpty();
+    }
+
     private static StringBuilder getSql(boolean isFuture, String filter, boolean isCount) {
         StringBuilder sql = new StringBuilder();
         if (isCount) {
