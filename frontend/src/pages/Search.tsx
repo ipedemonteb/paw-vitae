@@ -46,7 +46,7 @@ function HeroSection() {
 
             <div className={searchWrapper}>
                 <SearchIcon className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-                <Input placeholder="Search for doctors" className={searchHero} />
+                <Input type="search" placeholder="Search for doctors" className={searchHero} />
             </div>
         </div>
     );
