@@ -15,6 +15,7 @@ import DoctorAvailability from "@/pages/doctor/DoctorAvailability.tsx";
 import DoctorOffices from "@/pages/doctor/DoctorOffices.tsx";
 import DoctorAccount from "@/pages/doctor/DoctorAccount.tsx";
 import PublicProfile from "@/pages/PublicProfile.tsx";
+import AppointmentDetails from "@/pages/AppointmentDetails.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -44,6 +45,11 @@ export const router = createBrowserRouter([
                 //TODO: change this path, its for development only
                 path: "profile",
                 element: <PublicProfile />
+            },
+            {
+                //TODO: change this path, its for development only
+                path: "appointment-details",
+                element: <AppointmentDetails/>
             },
             {
                 path: "patient/dashboard",
