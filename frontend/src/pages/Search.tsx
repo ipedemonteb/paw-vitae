@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2 } from "lucide-react";
-import { SpecialtyCombobox } from "@/components/ui/SpecialtyCombobox.tsx";
+import { SpecialtyCombobox } from "@/components/SpecialtyCombobox.tsx";
+import { CoverageCombobox } from "@/components/CoverageCombobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { ButtonGroup } from "@/components/ui/button-group.tsx";
 import SearchListCard from "@/components/SearchListCard.tsx";
@@ -109,7 +110,7 @@ function FilterSection() {
                         <ShieldPlus className={iconSize} />
                         <p>Coverages</p>
                     </div>
-                    <SpecialtyCombobox className={filterCombo} />
+                    <CoverageCombobox className={filterCombo} />
                 </div>
                 <div className={filterGroup}>
                     <div className={filterLabel}>
