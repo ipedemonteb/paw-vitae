@@ -167,7 +167,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PATCH, "/patients/{id:\\d+}").access("hasRole('PATIENT') and @accessHandler.isUser(authentication, #id)")
                 .antMatchers(HttpMethod.GET, "/patients/{id:\\d+}").access("@accessHandler.isUser(authentication, #id) or hasRole('DOCTOR')")
                 // TODO: ACA DEBERIA HABER UNA VALIDACION AL ESTILO DE hasAppointmentWithPatient" asi solo los doctores que tuvieron citas con el paciente pueden ver su info"
-
+                .antMatchers(HttpMethod.POST,"/ratings").access("hasRole('PATIENT')")
 
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/coverages/**").permitAll()

@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfacePersistence.RatingDao;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
+import ar.edu.itba.paw.models.exception.ResourceOwnershipException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +38,18 @@ public class RatingServiceImpl implements RatingService {
 
     @Transactional
     @Override
-    public Rating create(long rating, long doctorId, long patientId, long appointmentId, String comment) {
-        LOGGER.debug("Creating rating with rating: {}, doctorId: {}, patientId: {}, appointmentId: {}, comment: {}", rating, doctorId, patientId, appointmentId, comment);
-        Doctor doctor = doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new);
-        Patient patient = patientService.getById(patientId).orElseThrow(UserNotFoundException::new);
+    public Rating create(long rating,String email, long appointmentId, String comment) {
+        Patient patient = patientService.getByEmail(email).orElseThrow(UserNotFoundException::new);
         Appointment appointment = appointmentService.getById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
+        if (patient.getId() != appointment.getPatient().getId()){
+            throw new ResourceOwnershipException();
+        }
+        Doctor doctor = doctorService.getById(appointment.getDoctor().getId()).orElseThrow(UserNotFoundException::new);
         Rating rating_aux = ratingDao.create(rating, doctor, patient, appointment, comment);
-        doctorService.UpdateDoctorRating(doctorId, rating_aux.getRating());
+        LOGGER.debug("Creating rating with rating: {}, doctorId: {}, patientId: {}, appointmentId: {}, comment: {}", rating, doctor.getId(), patient.getId(), appointmentId, comment);
+        doctorService.UpdateDoctorRating(doctor.getId(), rating_aux.getRating());
         mailService.sendRatingMail(doctor, patient, appointment, rating_aux.getRating(), comment);
-        LOGGER.info("Rating created with id: {} for doctor with id {} by patient with id {}", rating_aux.getId(), doctorId, patientId);
+        LOGGER.info("Rating created with id: {} for doctor with id {} by patient with id {}", rating_aux.getId(), doctor.getId(), patient.getId());
         return rating_aux;
 
     }

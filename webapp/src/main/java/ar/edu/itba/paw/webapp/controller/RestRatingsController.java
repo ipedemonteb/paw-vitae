@@ -8,6 +8,7 @@ import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.RatingDTO;
 import ar.edu.itba.paw.webapp.form.PatientRatingForm;
 import ar.edu.itba.paw.webapp.utils.ResponseUtils;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 import static ar.edu.itba.paw.webapp.utils.ResponseUtils.*;
 import static javax.ws.rs.core.Response.Status.OK;
 
-@Path("/ratings")
+@Path(UriUtils.RATINGS)
 @Component
 public class RestRatingsController {
 
@@ -63,16 +64,15 @@ public class RestRatingsController {
 
     @POST
     @Consumes(CustomMediaType.APPLICATION_RATING)
-    public Response createRating(@Valid @NotNull final PatientRatingForm form) {
-        //TODO: IN FRONTEND PASS THE PATIENT ID
+    public Response createRating(@Valid @NotNull final PatientRatingForm form,
+                                 @Context SecurityContext securityContext) {
+        String loggedUserEmail = securityContext.getUserPrincipal().getName();
         final Rating createdRating = ratingService.create(
                 form.getRating(),
-                form.getDoctorId(),
-                form.getPatientId(),
+                loggedUserEmail,
                 form.getAppointmentId(),
                 form.getComment()
         );
-
         return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(createdRating.getId())).build()).build();
     }
 

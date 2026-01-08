@@ -8,6 +8,7 @@ import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.utils.FileUtils;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ import java.util.List;
 
 import static ar.edu.itba.paw.webapp.utils.ResponseUtils.*;
 
-@Path("/doctors")
+@Path(UriUtils.DOCTORS)
 @Component
 public class RestDoctorController {
 

@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.exception.CoverageNotFoundException;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CoverageDTO;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,7 @@ import javax.ws.rs.core.*;
 import java.util.List;
 
 
-@Path("/coverages")
+@Path(UriUtils.COVERAGES)
 @Component
 public class RestCoveragesController {
 
