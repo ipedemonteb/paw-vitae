@@ -38,7 +38,7 @@ public class JwtService {
 
     private static final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 30;
     private static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 10;
-//    private static final long ACCESS_TOKEN_VALIDITY = 15000; // FOR TESTS ONLY
+//    private static final long ACCESS_TOKEN_VALIDITY = 1000 * 30; // FOR TESTS ONLY
     private final String TOKEN_TYPE_CLAIM = "tokenType";
 
     public String generateToken(ServletUriComponentsBuilder uriBuilder, User user, JwtTokenType type, long duration) {

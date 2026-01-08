@@ -5,29 +5,13 @@ import axios, {
     type InternalAxiosRequestConfig,
 } from "axios";
 
+import {getAccessToken, clearAuth, getRefreshToken, setAuth} from "@/context/auth-store.ts";
+
 const BASE_URL = "http://localhost:8080/";
 
-const TOKEN_KEY = "jwt";
-const REFRESH_KEY = "refreshToken";
-
 const AUTHZ = "Authorization";
-const NEW_JWT_HEADER = "x-vitae-authtoken";
-const NEW_REFRESH_HEADER = "x-vitae-refreshtoken";
-
-function getJwt() {
-    return localStorage.getItem(TOKEN_KEY);
-}
-function getRefresh() {
-    return localStorage.getItem(REFRESH_KEY);
-}
-function setStoredTokens(jwt?: string, refresh?: string) {
-    if (jwt) localStorage.setItem(TOKEN_KEY, jwt);
-    if (refresh) localStorage.setItem(REFRESH_KEY, refresh);
-}
-function clearStoredTokens() {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(REFRESH_KEY);
-}
+export const NEW_JWT_HEADER = "x-vitae-authtoken";
+export const NEW_REFRESH_HEADER = "x-vitae-refreshtoken";
 
 export const api: AxiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -52,7 +36,7 @@ function waitForRefresh(): Promise<boolean> {
 
 
 api.interceptors.request.use((config) => {
-    const jwt = getJwt();
+    const jwt = getAccessToken();
     if (jwt) {
         const headers = AxiosHeaders.from(config.headers);
         if (!headers.get(AUTHZ)) headers.set(AUTHZ, `Bearer ${jwt}`);
@@ -82,22 +66,24 @@ api.interceptors.response.use(
     async (err: AxiosError) => {
         const original = err.config as Cfg | undefined;
 
+        console.log("refreshing!!!!")
+
         if (!original || !isExpiredJwt401(err)) return Promise.reject(err);
 
         //para no loop infinito
         if (original._retriedWithRefresh) {
-            clearStoredTokens();
+            clearAuth();
             return Promise.reject(err);
         }
 
         if (isRefreshing) {
             const ok = await waitForRefresh();
             if (!ok) {
-                clearStoredTokens();
+                clearAuth();
                 return Promise.reject(err);
             }
 
-            const jwt = getJwt();
+            const jwt = getAccessToken();
             original.headers = AxiosHeaders.from(original.headers);
             if (jwt) original.headers.set(AUTHZ, `Bearer ${jwt}`);
 
@@ -107,7 +93,7 @@ api.interceptors.response.use(
         isRefreshing = true;
 
         try {
-            const refresh = getRefresh();
+            const refresh = getRefreshToken();
             if (!refresh) throw new Error("No refresh token available");
 
             const replayHeaders = AxiosHeaders.from(original.headers);
@@ -124,17 +110,23 @@ api.interceptors.response.use(
             const newJwt = replayRes.headers?.[NEW_JWT_HEADER] as string | undefined;
             const newRefresh = replayRes.headers?.[NEW_REFRESH_HEADER] as string | undefined;
 
-            if (newJwt || newRefresh) {
-                setStoredTokens(newJwt, newRefresh);
-                if (newJwt) api.defaults.headers.common[AUTHZ] = `Bearer ${newJwt}`;
+
+            console.log("entering")
+            if (newJwt && newRefresh) {
+                console.log(getAccessToken())
+                setAuth(newJwt, newRefresh);
+                api.defaults.headers.common[AUTHZ] = `Bearer ${newJwt}`;
             }
 
             notifyWaiters(true);
 
+            console.log("refreshed!!!!")
+            console.log(newJwt)
+
             return replayRes;
         } catch (e) {
             notifyWaiters(false);
-            clearStoredTokens();
+            clearAuth();
             return Promise.reject(e);
         } finally {
             isRefreshing = false;

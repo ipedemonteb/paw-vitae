@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2 } from "lucide-react";
-import { SpecialtyCombobox } from "@/components/ui/SpecialtyCombobox.tsx";
+import { SpecialtyCombobox } from "@/components/SpecialtyCombobox.tsx";
+import { CoverageCombobox } from "@/components/CoverageCombobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { ButtonGroup } from "@/components/ui/button-group.tsx";
 import SearchListCard from "@/components/SearchListCard.tsx";
@@ -45,7 +46,7 @@ function HeroSection() {
 
             <div className={searchWrapper}>
                 <SearchIcon className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-                <Input placeholder="Search for doctors" className={searchHero} />
+                <Input type="search" placeholder="Search for doctors" className={searchHero} />
             </div>
         </div>
     );
@@ -109,7 +110,7 @@ function FilterSection() {
                         <ShieldPlus className={iconSize} />
                         <p>Coverages</p>
                     </div>
-                    <SpecialtyCombobox className={filterCombo} />
+                    <CoverageCombobox className={filterCombo} />
                 </div>
                 <div className={filterGroup}>
                     <div className={filterLabel}>
