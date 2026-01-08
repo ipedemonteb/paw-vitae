@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.interfaceServices.UserService;
-import ar.edu.itba.paw.webapp.auth.JwtService;
 import ar.edu.itba.paw.webapp.auth.TokenResponseHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +32,6 @@ public class BasicFilter extends OncePerRequestFilter {
 
     private static final String AUTH_HEADER = BASIC_PREFIX;
 
-
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final UserDetailsService userDetailsService;
@@ -46,6 +44,7 @@ public class BasicFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
         this.tokenResponseHelper = tokenResponseHelper;
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -71,28 +70,31 @@ public class BasicFilter extends OncePerRequestFilter {
             Authentication auth;
             Optional<? extends User> targetUser;
 
+            Optional<? extends User> userByVerificationToken = userService.getByVerificationToken(potentialPasswordOrToken);
 
-            final Optional< ? extends User> userByToken = userService.getByVerificationToken(potentialPasswordOrToken);
-            if (userByToken.isPresent() && userByToken.get().getEmail().equals(email)) {
-                User user = userByToken.get();
+            if (userByVerificationToken.isPresent() && userByVerificationToken.get().getEmail().equals(email)) {
+                User user = userByVerificationToken.get();
                 userService.verifyValidationToken(potentialPasswordOrToken);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                UsernamePasswordAuthenticationToken manualAuth = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
-                );
-                manualAuth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                auth = manualAuth;
+                auth = createManualAuthentication(email, request);
                 targetUser = Optional.of(user);
 
             } else {
-                auth = authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(email, potentialPasswordOrToken)
-                );
-                targetUser = userService.getByEmail(email);
+                Optional<? extends User> userByResetToken = userService.getByResetToken(potentialPasswordOrToken);
+                if (userByResetToken.isPresent() && userByResetToken.get().getEmail().equals(email)) {
+                    User user = userByResetToken.get();
+                    auth = createManualAuthentication(email, request);
+                    targetUser = Optional.of(user);
+
+                } else {
+                    auth = authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(email, potentialPasswordOrToken)
+                    );
+                    targetUser = userService.getByEmail(email);
+                }
             }
 
             SecurityContextHolder.getContext().setAuthentication(auth);
+
             targetUser.ifPresent(user -> tokenResponseHelper.addAuthenticationHeaders(response, user, request));
 
         } catch (AuthenticationException e) {
@@ -101,5 +103,14 @@ public class BasicFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private Authentication createManualAuthentication(String email, HttpServletRequest request) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        UsernamePasswordAuthenticationToken manualAuth = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities()
+        );
+        manualAuth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        return manualAuth;
     }
 }

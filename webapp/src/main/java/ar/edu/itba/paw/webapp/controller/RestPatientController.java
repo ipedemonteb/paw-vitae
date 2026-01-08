@@ -4,9 +4,13 @@ import ar.edu.itba.paw.interfaceServices.PatientService;
 import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.Patient;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.PatientDTO;
+import ar.edu.itba.paw.webapp.form.ChangePasswordForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
+import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +21,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-@Path("/patients")
+@Path(UriUtils.PATIENTS)
 @Component
 public class RestPatientController {
 
@@ -34,14 +38,14 @@ public class RestPatientController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_PATIENT)
     public Response getById(@PathParam("id") final long id) {
         final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
         return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}).build();
     }
 
     @HEAD
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_PATIENT_LIST)
     public Response getPatientCount() {
 
         long count = patientService.getAllPatientsDisplayCount();
@@ -66,7 +70,7 @@ public class RestPatientController {
 
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(CustomMediaType.APPLICATION_PATIENT)
     public Response createPatient(
             @Valid @NotNull PatientForm patientForm,
             @Context HttpHeaders headers
@@ -77,13 +81,31 @@ public class RestPatientController {
 
     @Path("/{id:\\d+}")
     @PATCH
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes(CustomMediaType.APPLICATION_PATIENT)
     public Response modifyPatient(
             @PathParam("id") final long id,
             @Valid @NotNull UpdatePatientForm updatePatientForm
     ){
         final Patient patient = this.patientService.getById(id).orElseThrow(UserNotFoundException::new);
         patientService.updatePatient(patient,updatePatientForm.getName(),updatePatientForm.getLastName(),updatePatientForm.getPhone(),updatePatientForm.getCoverage());
+        return Response.noContent().build();
+    }
+    @PATCH
+    @Path("/{id:\\d+}/")
+    @Consumes(CustomMediaType.APPLICATION_USER_PASSWORD)
+    public Response changePassword(
+            @PathParam("id") final long id,
+            @Valid @NotNull ChangePasswordForm changePasswordForm
+    ){
+        patientService.changePassword(id,changePasswordForm.getPassword());
+        return Response.noContent().build();
+    }
+    @POST
+    @Consumes(CustomMediaType.APPLICATION_USER_PASSWORD)
+    public Response createPasswordResetToken(
+            @Valid @NotNull final RecoverPasswordForm recoverPasswordForm
+    ){
+        patientService.setResetPasswordToken(recoverPasswordForm.getEmail());
         return Response.noContent().build();
     }
 

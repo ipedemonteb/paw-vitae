@@ -4,9 +4,11 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.RatingService;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.Rating;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.RatingDTO;
 import ar.edu.itba.paw.webapp.form.PatientRatingForm;
 import ar.edu.itba.paw.webapp.utils.ResponseUtils;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 import static ar.edu.itba.paw.webapp.utils.ResponseUtils.*;
 import static javax.ws.rs.core.Response.Status.OK;
 
-@Path("/ratings")
+@Path(UriUtils.RATINGS)
 @Component
 public class RestRatingsController {
 
@@ -37,7 +39,7 @@ public class RestRatingsController {
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_RATING_LIST)
     public Response getAll(
             @QueryParam("page")
             @DefaultValue("1")
@@ -54,31 +56,24 @@ public class RestRatingsController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = CustomMediaType.APPLICATION_RATING)
     public Response getRatingsById(@PathParam("id") final long id) {
         final Rating rating = this.ratingService.getRating(id).orElseThrow(NotFoundException::new);
         return Response.ok(new GenericEntity<>(RatingDTO.fromRating(rating, uriInfo)) {}).build();
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response createRating(@Valid @NotNull final PatientRatingForm form) {
-
-
-        //TODO: IN FRONTEND PASS THE PATIENT ID
+    @Consumes(CustomMediaType.APPLICATION_RATING)
+    public Response createRating(@Valid @NotNull final PatientRatingForm form,
+                                 @Context SecurityContext securityContext) {
+        String loggedUserEmail = securityContext.getUserPrincipal().getName();
         final Rating createdRating = ratingService.create(
                 form.getRating(),
-                form.getDoctorId(),
-                form.getPatientId(),
+                loggedUserEmail,
                 form.getAppointmentId(),
                 form.getComment()
         );
-
         return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(createdRating.getId())).build()).build();
-
-
-
-
     }
 
 

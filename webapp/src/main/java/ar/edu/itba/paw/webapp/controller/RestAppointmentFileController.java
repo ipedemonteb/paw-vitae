@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaceServices.AppointmentFileService;
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.models.AppointmentFile;
+import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.AppointmentFileDTO;
 import ar.edu.itba.paw.webapp.utils.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -43,7 +44,7 @@ public class RestAppointmentFileController {
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(CustomMediaType.APPLICATION_APPOINTMENT_FILE_LIST)
     public Response listFiles(@PathParam("appointmentId") final long appointmentId) {
         appointmentService.getById(appointmentId).orElseThrow(NotFoundException::new);
         List<AppointmentFile> files = appointmentFileService.getByAppointmentId(appointmentId);
@@ -90,7 +91,6 @@ public class RestAppointmentFileController {
     @POST
     @Path("/doctor")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response uploadDoctorFiles(@PathParam("appointmentId") final long appointmentId,
                                      final FormDataMultiPart multipart) {
 
@@ -102,7 +102,6 @@ public class RestAppointmentFileController {
     @POST
     @Path("/patient")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response uploadPatientFiles(@PathParam("appointmentId") final long appointmentId,
                                 final FormDataMultiPart multipart) {
 
