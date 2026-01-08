@@ -11,15 +11,18 @@ import {
     Download,
     Info,
     Cross,
-    Asterisk
+    Asterisk,
+    Star
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import {RatingStars} from "@/components/RatingStars.tsx";
+import {Separator} from "@/components/ui/separator.tsx";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer =
-    "mt-36 px-5 mx-auto max-w-6xl w-full";
+    "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
 const appointmentContainer =
     "p-0 pb-8";
 const appointmentHeader =
@@ -52,6 +55,7 @@ function AppointmentDetails() {
                             <VisitCard />
                             <PatientFileCard />
                             <PostVisitComponent />
+                            <RatingComponent />
                         </div>
                     </Card>
                 </div>
@@ -148,23 +152,23 @@ function VisitCard() {
     );
 }
 
-const patientFileIconContainer =
+const cardIconContainer =
     "flex flex-row items-center text-[var(--primary-color)] gap-1 mb-2 mt-1";
-const patientFileIcon =
+const cardIcon =
     "w-5 h-5";
-const patientFileTitle =
+const cardTitle =
     "text-lg font-semibold";
-const patientFileContent =
+const cardContent =
     "px-5 gap-4";
 
 function PatientFileCard() {
     return (
         <div>
-            <div className={patientFileIconContainer}>
-                <FileCheckCorner className={patientFileIcon}/>
-                <h1 className={patientFileTitle}>Patient Files</h1>
+            <div className={cardIconContainer}>
+                <FileCheckCorner className={cardIcon}/>
+                <h1 className={cardTitle}>Patient Files</h1>
             </div>
-            <Card className={patientFileContent}>
+            <Card className={cardContent}>
                 <FileComponent />
                 <FileComponent />
                 <FileComponent />
@@ -220,16 +224,42 @@ const doctorComment =
 function PostVisitComponent() {
     return (
         <div>
-            <div className={patientFileIconContainer}>
-                <Cross className={patientFileIcon}/>
-                <h1 className={patientFileTitle}>Post Visit Information</h1>
+            <div className={cardIconContainer}>
+                <Cross className={cardIcon}/>
+                <h1 className={cardTitle}>Post Visit Information</h1>
             </div>
-            <Card className={patientFileContent}>
+            <Card className={cardContent}>
                 <Card className={doctorCommentContainer}>
                     <Asterisk className={asteriskIcon} />
                     <p className={doctorComment}>El paciente efectivamente, tiene dolor de cabeza, adjunto archivos de estudios.</p>
                 </Card>
                 <FileEmptyComponent />
+            </Card>
+        </div>
+    );
+}
+
+const ratingContainer =
+    "flex flex-row items-center gap-3";
+const ratingNumber =
+    "text-base text-[var(--primary-text)] font-[700] mt-1";
+
+function RatingComponent() {
+    const rating = 3;
+
+    return (
+        <div>
+            <div className={cardIconContainer}>
+                <Star className={cardIcon}/>
+                <h1 className={cardTitle}>Rating</h1>
+            </div>
+            <Card className={cardContent}>
+                <p>Me atendió demasiado rapido, no me prestó atención</p>
+                <Separator />
+                <div className={ratingContainer}>
+                    <RatingStars rating={rating} />
+                    <p className={ratingNumber}>{rating}</p>
+                </div>
             </Card>
         </div>
     );
