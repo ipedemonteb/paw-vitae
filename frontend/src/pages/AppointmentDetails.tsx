@@ -271,7 +271,7 @@ function RatingComponent() {
 const uploadTitle =
     "text-[var(--text-color)] font-[600]";
 const submitContainer =
-    "flex w-full items-center justify-center";
+    "flex w-full justify-center";
 const submitButton =
     "mt-6 w-3xs bg-[var(--primary-color)] text-white hover:bg-[var(--primary-dark)] cursor-pointer";
 
