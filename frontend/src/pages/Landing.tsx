@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input.tsx";
-import { SpecialtyCombobox } from "@/components/ui/SpecialtyCombobox.tsx";
+import { SpecialtyCombobox } from "@/components/SpecialtyCombobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Search, PersonStandingIcon, Lightbulb, CalendarDays, ShieldPlus, ShieldCheck, Pointer } from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
