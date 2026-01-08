@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
+import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.DoctorOffice;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -16,10 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 public class AccessHandler {
 
     private final AppointmentService appointmentService;
+    private final DoctorOfficeService doctorOfficeService;
 
     @Autowired
-    public AccessHandler(AppointmentService appointmentService) {
+    public AccessHandler(AppointmentService appointmentService, DoctorOfficeService doctorOfficeService) {
         this.appointmentService = appointmentService;
+        this.doctorOfficeService = doctorOfficeService;
     }
 
     /**
@@ -87,6 +91,15 @@ public class AccessHandler {
         } catch (NumberFormatException e) {
             return true;
         }
+    }
+
+    public boolean hasOfficeOwnership(Authentication auth, long officeId) {
+        AuthUserDetails user = getPrincipal(auth);
+        if (user == null) {
+            return false;
+        }
+        DoctorOffice office = doctorOfficeService.getById(officeId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return office.getDoctor().getId() == user.getUserId();
     }
 
     public boolean canHandleUnavailability(HttpServletRequest request) {
