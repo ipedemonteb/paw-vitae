@@ -1,7 +1,18 @@
 import { Card } from "@/components/ui/card.tsx"
 import PatientProfileCard from "@/components/PatientProfileCard.tsx";
-import { ClipboardCheck, Calendar, Stethoscope, MessageCircle, Hospital } from "lucide-react";
+import {
+    ClipboardCheck,
+    Calendar,
+    Stethoscope,
+    MessageCircle,
+    Hospital,
+    FileCheckCorner,
+    Paperclip,
+    Download
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -37,6 +48,7 @@ function AppointmentDetails() {
                                 <OfficeCard />
                             </div>
                             <VisitCard />
+                            <PatientFileCard />
                         </div>
                     </Card>
                 </div>
@@ -113,13 +125,12 @@ function OfficeCard() {
             </div>
             <div className={componentData}>
                 <p className={statusText}>Office</p>
-                <p className={dateText + " truncate max-w-full"}>Parque Avellaneda</p>
+                <p className={dateText}>Parque Avellaneda</p>
             </div>
         </Card>
     );
 }
 
-// TODO: revise truncate for long descriptions and for long office names above...
 function VisitCard() {
     return (
         <Card className={appointmentComponent}>
@@ -128,9 +139,65 @@ function VisitCard() {
             </div>
             <div className={componentData}>
                 <p className={statusText}>Reason of Visit (Optional)</p>
-                <p className={dateText + " truncate max-w-full"}>Voy porque me duele la cabeza.</p>
+                <p className={dateText}>Voy porque me duele la cabeza.</p>
             </div>
         </Card>
+    );
+}
+
+const patientFileIconContainer =
+    "flex flex-row items-center text-[var(--primary-color)] gap-1 mb-2 mt-1";
+const patientFileIcon =
+    "w-5 h-5";
+const patientFileTitle =
+    "text-lg font-semibold";
+const patientFileContent =
+    "px-5 gap-3";
+
+function PatientFileCard() {
+    return (
+        <div>
+            <div className={patientFileIconContainer}>
+                <FileCheckCorner className={patientFileIcon}/>
+                <h1 className={patientFileTitle}>Patient Files</h1>
+            </div>
+            <Card className={patientFileContent}>
+                <FileComponent />
+                <FileComponent />
+                <FileComponent />
+            </Card>
+        </div>
+    );
+}
+
+const fileComponent =
+    "flex flex-row items-center p-4 rounded-lg gap-3";
+const fileIcon =
+    "text-[var(--primary-color)] h-6 w-6 mx-1";
+const fileTitle =
+    "font-[500] text-sm text-[var(--text-color)]";
+const fileDownload =
+    "ml-auto rounded-full p-5 flex items-center justify-center " +
+    "text-white bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
+
+// TODO: add file view page?
+function FileComponent() {
+    return (
+        <Card className={fileComponent}>
+            <Paperclip className={fileIcon} />
+            <h3 className={fileTitle}>Estudio de Sangre - Paciente Rodriguez</h3>
+            <Button className={fileDownload}>
+                <Download />
+            </Button>
+        </Card>
+    );
+}
+
+function FileEmptyComponent() {
+    return (
+        <div>
+
+        </div>
     );
 }
 
