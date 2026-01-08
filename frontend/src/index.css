@@ -64,6 +64,8 @@
     --landing-light: #dbeafe;
     --primary-bg: #eff6ff;
     --bubble-color: #FFFFFF33;
+    --success: #16a34a;        /* verde principal (oscuro para badge) */
+    --success-light: #dcfce7;
 }
 
 body {
