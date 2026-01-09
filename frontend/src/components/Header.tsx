@@ -7,6 +7,8 @@ import {Link, useMatch, useNavigate} from "react-router-dom";
 import {cn} from "@/lib/utils";
 import React, {useEffect, useMemo, useState} from "react";
 import {useAuth} from "@/hooks/useAuth";
+import {Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader} from "@/components/ui/dialog.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 type UserRole = "ANON" | "PATIENT" | "DOCTOR";
 
@@ -201,7 +203,6 @@ function SheetComponent({
                             {item.label}
                         </SheetNavLink>
                     ))}
-
                     <div className={mobileSectionTitle}>Account</div>
                     {isLoggedIn ? <SheetLoggedInComponent userRole={userRole} /> : <SheetNotLoggedInComponent />}
                 </nav>
@@ -264,6 +265,18 @@ const logoutItem =
 
 type LoggedInRole = Exclude<UserRole, "ANON">;
 
+const dialogHeader =
+    "font-bold text-xl text-[var(--text-color)]";
+const dialogText =
+    "text-[var(--text-light)]";
+const dialogFooter =
+    "mt-2";
+const dialogCancel =
+    "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] " +
+    "hover:text-white hover:bg-[var(--primary-dark)] hover:border hover:border-[var(--primary-dark)] cursor-pointer";
+const dialogConfirm =
+    "text-white bg-[var(--danger)] border border-[var(--danger)] hover:text-white hover:bg-[var(--danger-dark)] hover:border hover:border-[var(--danger-dark)] cursor-pointer";
+
 function LoggedInComponent({
                                userRole,
                                open,
@@ -274,6 +287,17 @@ function LoggedInComponent({
     onOpenChange: (open: boolean) => void;
 }) {
     if (userRole === "ANON") return null;
+
+    const auth = useAuth();
+    const navigate = useNavigate();
+    const [logoutOpen, setLogoutOpen] = useState(false);
+
+    const logout = () => {
+        auth.logout();
+        onOpenChange(false);
+        setLogoutOpen(false);
+        navigate("/");
+    };
 
     return (
         <div className={authDesktop}>
@@ -287,40 +311,80 @@ function LoggedInComponent({
                     <ChevronDown className="h-4 w-4 text-[var(--text-color)]" />
                 </DropdownMenuTrigger>
 
-                <LoggedInDropdown userRole={userRole} />
+                <LoggedInDropdown
+                    userRole={userRole}
+                    closeDropdown={() => onOpenChange(false)}
+                    onLogoutClick={() => {
+                        onOpenChange(false);
+                        setLogoutOpen(true);
+                    }}
+                />
             </DropdownMenu>
+
+            <Dialog
+                open={logoutOpen}
+                onOpenChange={(next) => {
+                    setLogoutOpen(next);
+                    if (!next) onOpenChange(false);
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader className={dialogHeader}>Confirm Logout</DialogHeader>
+                    <p className={dialogText}>Are you sure you want to log out of your account?</p>
+                    <DialogFooter className={dialogFooter}>
+                        <DialogClose asChild>
+                            <Button className={dialogCancel}>Cancel</Button>
+                        </DialogClose>
+                        <Button onClick={logout} type="button" className={dialogConfirm}>
+                            Log Out
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
 
-function LoggedInDropdown({ userRole }: { userRole: LoggedInRole }) {
-    const auth = useAuth();
-    const navigate = useNavigate();
-
-    const logout = () => {
-        auth.logout();
-        navigate("/");
-    };
-
+function LoggedInDropdown({
+                              userRole,
+                              onLogoutClick,
+                              closeDropdown,
+                          }: {
+    userRole: LoggedInRole;
+    onLogoutClick: () => void;
+    closeDropdown: () => void;
+}) {
     const items =
         userRole === "DOCTOR"
             ? [
                 { to: "/doctor/dashboard", label: "Doctor Dashboard", icon: ChartPie },
-                { to: "/profile", label: "Public Profile", icon: User }
+                { to: "/profile", label: "Public Profile", icon: User },
             ]
             : [{ to: "/patient/dashboard", label: "Dashboard", icon: ChartPie }];
 
     return (
         <DropdownMenuContent>
             {items.map((item) => (
-                <DropdownMenuItem key={item.to} className={dropDownItem}>
+                <DropdownMenuItem
+                    key={item.to}
+                    className={dropDownItem}
+                    asChild
+                    onSelect={() => closeDropdown()}
+                >
                     <Link to={item.to} className={dropDownItem}>
                         <item.icon className="text-inherit" />
                         {item.label}
                     </Link>
                 </DropdownMenuItem>
             ))}
-            <DropdownMenuItem onClick={logout} className={logoutItem}>
+
+            <DropdownMenuItem
+                className={logoutItem}
+                onSelect={(e) => {
+                    e.preventDefault();
+                    onLogoutClick();
+                }}
+            >
                 <LogOut className="text-inherit" />
                 Log Out
             </DropdownMenuItem>
