@@ -172,6 +172,7 @@
     "about": "Sobre Nosotros",
     "login": "Iniciar Sesión",
     "register": "Registrarse",
+    "account": "Account",
     "doctor": {
       "dashboard": "Panel de Doctor",
       "profile": "Mi Perfil Público"
@@ -184,6 +185,65 @@
       "text": "¿Estás seguro de que deseas cerrar sesión en tu cuenta?\n\n",
       "cancel": "Cancelar",
       "confirm": "Cerrar Sesión"
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Encuentra el Médico Adecuado para Tu Salud",
+      "subtitle": "Conéctate con profesionales de la salud verificados y reserva citas en línea en minutos.",
+      "search_placeholder": "Buscar por nombre de médico",
+      "search": "Buscar",
+      "doctors": "Doctores",
+      "patients": "Pacientes"
+    },
+    "mission": {
+      "tag": "Misión",
+      "title": "Nuestra Misión",
+      "subtitle": "Estamos comprometidos a hacer que la atención médica sea accesible, transparente y eficiente para todos.",
+      "accessible_card": {
+        "title": "Salud Accesible",
+        "subtitle": "Creemos que todos merecen acceso fácil a servicios de salud de calidad sin barreras."
+      },
+      "innovative_card": {
+        "title": "Soluciones Innovadoras",
+        "subtitle": "Aprovechamos la tecnología para crear experiencias fluidas para pacientes y proveedores de atención médica."
+      }
+    },
+    "process": {
+      "tag": "Proceso",
+      "title": "Como Funciona Vitae",
+      "subtitle": "Encontrar y reservar citas con profesionales de la salud nunca ha sido tan fácil.",
+      "first_step": {
+        "title": "Busca Especialistas",
+        "subtitle": "Encuentra al profesional de la salud adecuado por especialidad, ubicación o disponibilidad."
+      },
+      "second_step": {
+        "title": "Reserva una Cita",
+        "subtitle": "Selecciona un horario conveniente y reserva tu cita con solo unos clicks."
+      },
+      "third_step": {
+        "title": "Visita a Tu Médico",
+        "subtitle": "Asiste a tu cita y recibe la atención que necesitas de profesionales calificados."
+      },
+      "start": "Comenzar Ahora"
+    },
+    "benefits": {
+      "tag": "Beneficios",
+      "title": "Por Qué Elegir Vitae",
+      "subtitle": "Nuestra plataforma ofrece beneficios únicos para pacientes que buscan atención médica de calidad.",
+      "secure_card": {
+        "title": "Seguro y Privado",
+        "subtitle": "Tu información personal y médica está protegida con seguridad avanzada."
+      },
+      "easy_card": {
+        "title": "Fácil de Usar",
+        "subtitle": "Nuestra interfaz intuitiva hace que encontrar y reservar citas sea simple."
+      }
+    },
+    "ratings": {
+      "tag": "Reseñas",
+      "title": "Calificaciones de Doctores",
+      "subtitle": "Vea lo que nuestros pacientes dicen sobre nuestros doctores."
     }
   }
 }

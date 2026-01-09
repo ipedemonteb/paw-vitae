@@ -172,6 +172,7 @@
     "about": "About Us",
     "login": "Login",
     "register": "Register",
+    "account": "Cuenta",
     "doctor": {
       "dashboard": "Doctor Dashboard",
       "profile": "My Public Profile"
@@ -184,6 +185,65 @@
       "text": "Are you sure you want to log out of your account?",
       "cancel": "Cancel",
       "confirm": "Log Out"
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Find the Right Doctor for Your Health Needs",
+      "subtitle": "Connect with verified healthcare professionals and book appointments online in minutes.",
+      "search_placeholder": "Search by doctor name",
+      "search": "Search",
+      "doctors_count": "Doctors",
+      "patients_count": "Patients"
+    },
+    "mission": {
+      "tag": "Mission",
+      "title": "Our Mission",
+      "subtitle": "We're committed to making healthcare accessible, transparent, and efficient for everyone.",
+      "accessible_card": {
+        "title": "Accessible Healthcare",
+        "subtitle": "We believe everyone deserves easy access to quality healthcare services without barriers."
+      },
+      "innovative_card": {
+        "title": "Innovative Solutions",
+        "subtitle": "We leverage technology to create seamless experiences for patients and healthcare providers."
+      }
+    },
+    "process": {
+      "tag": "Process",
+      "title": "How Vitae Works",
+      "subtitle": "Finding and booking appointments with healthcare professionals has never been easier.",
+      "first_step": {
+        "title": "Search for Specialists",
+        "subtitle": "Find the right healthcare professional by specialty, location, or availability."
+      },
+      "second_step": {
+        "title": "Book an Appointment",
+        "subtitle": "Select a convenient time slot and book your appointment in just a few clicks."
+      },
+      "third_step": {
+        "title": "Visit Your Doctor",
+        "subtitle": "Attend your appointment and receive the care you need from qualified professionals."
+      },
+      "start": "Get Started Now"
+    },
+    "benefits": {
+      "tag": "Benefits",
+      "title": "Why Choose Vitae",
+      "subtitle": "Our platform offers unique benefits for patients seeking quality healthcare.",
+      "secure_card": {
+        "title": "Secure & Private",
+        "subtitle": "Your personal and medical information is protected with advanced security."
+      },
+      "easy_card": {
+        "title": "Easy to Use",
+        "subtitle": "Our intuitive interface makes finding and booking appointments simple."
+      }
+    },
+    "ratings": {
+      "tag": "Ratings",
+      "title": "Doctor Ratings",
+      "subtitle": "See what our patients say about our doctors."
     }
   }
 }
