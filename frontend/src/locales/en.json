@@ -18,6 +18,12 @@
     "ginecologia": "Gynecology",
     "traumatologia": "Traumatology"
   },
+  "combobox": {
+    "specialty": {
+      "select": "Select specialty...",
+      "search": "Search specialty..."
+    }
+  },
   "recover": {
     "title": "Recover password",
     "subtitle": "Enter your email and we will send you a recovery token",

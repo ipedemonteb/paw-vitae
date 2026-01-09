@@ -48,14 +48,14 @@ export function SpecialtyCombobox({ className, buttonClassName, contentClassName
                 >
                     {value
                         ? t(value)
-                        : "Select specialty..."}
+                        : t("combobox.specialty.select")}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
 
             <PopoverContent className={cn("w-[200px] p-0", contentClassName)}>
                 <Command>
-                    <CommandInput placeholder="Search specialty..." className="h-9" />
+                    <CommandInput placeholder={t("combobox.specialty.search")} className="h-9" />
                     <CommandList>
                         {isLoading ? (
                             <div className="py-3 flex items-center justify-center space-x-1">
