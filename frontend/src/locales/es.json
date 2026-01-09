@@ -338,6 +338,14 @@
       "availability": "Disponibilidad",
       "offices": "Consultorios",
       "account": "Cuenta"
+    },
+    "profile": {
+      "doctor": "Doctor",
+      "coverages": "Coberturas",
+      "offices": "Oficinas",
+      "experiences": "Experiencia",
+      "certificates": "Certificados",
+      "ratings": "Calificaciones"
     }
   }
 }
