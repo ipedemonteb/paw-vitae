@@ -32,6 +32,7 @@ public class JwtService {
     String ROLE_CLAIM = "role";
     String NAME_CLAIM = "name";
     String SELF_URL_CLAIM = "selfUrl";
+    String USER_ID_CLAIM = "userId";
 
 
 
@@ -85,6 +86,8 @@ public class JwtService {
                     .build().toString();
 
             claims.put(SELF_URL_CLAIM, selfUrl);
+
+            claims.put(USER_ID_CLAIM, user.getId());
         }
         return claims;
     }

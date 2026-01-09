@@ -45,7 +45,17 @@
       "today": "Today"
     },
     "history_filter_message": "Status",
-    "upcoming_filter_message": "Date Range"
+    "upcoming_filter_message": "Date Range",
+    "empty": {
+      "title": {
+        "upcoming":  "No Upcoming Appointments",
+        "past": "No Past Appointments"
+      },
+      "text": {
+        "upcoming": "You don't have any upcoming appointments scheduled. Your future appointments will appear here",
+        "past": "Your past appointments will appear here once you've completed some appointments"
+      }
+    }
   },
   "login": {
     "welcome_title": "Welcome Back!",
@@ -155,5 +165,25 @@
     }
 
   },
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "header": {
+    "home": "Home",
+    "search": "Find Doctors",
+    "about": "About Us",
+    "login": "Login",
+    "register": "Register",
+    "doctor": {
+      "dashboard": "Doctor Dashboard",
+      "profile": "My Public Profile"
+    },
+    "patient": {
+      "dashboard": "Dashboard"
+    },
+    "logout": {
+      "title": "Confirm Logout",
+      "text": "Are you sure you want to log out of your account?",
+      "cancel": "Cancel",
+      "confirm": "Log Out"
+    }
+  }
 }
