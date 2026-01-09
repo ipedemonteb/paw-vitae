@@ -251,5 +251,76 @@
       "title": "Doctor Ratings",
       "subtitle": "See what our patients say about our doctors."
     }
+  },
+  "about": {
+    "hero": {
+      "title": "Transforming Healthcare Access",
+      "subtitle": "Learn about our mission and the story behind Vitae - the unified medical platform created by ITBA students."
+    },
+    "story": {
+      "tag": "Our Story",
+      "title": "The Journey of Vitae",
+      "subtitle": "How a group of ITBA students created a platform to revolutionize healthcare access.",
+      "text": {
+        "paragraph_1": "Vitae was born in 2025 at the Instituto Tecnológico de Buenos Aires (ITBA) when a group of passionate engineering students identified a critical gap in healthcare accessibility in Latin America.",
+        "paragraph_2": "What started as a university project for the Programming of Web Applications (PAW) course quickly evolved into a comprehensive platform with a mission to connect patients with healthcare providers seamlessly and efficiently.",
+        "paragraph_3": "Our team of dedicated professionals works tirelessly to improve the platform and expand our services to reach more communities, driven by our commitment to innovation, accessibility, and quality healthcare for all."
+      }
+    },
+    "vision": {
+      "tag": "Our Vision",
+      "title": "What Drives Us Forward",
+      "subtitle": "Our core mission and the values that guide our work every day.",
+      "accessibility_card": {
+        "title": "Accessibility",
+        "text": "We believe healthcare should be accessible to everyone, regardless of location or socioeconomic status. Our platform breaks down barriers to quality medical care."
+      },
+      "quality_card": {
+        "title": "Quality Care",
+        "text": "We are committed to connecting patients with verified, high-quality healthcare providers who deliver exceptional care and service."
+      },
+      "innovation_card": {
+        "title": "Innovation",
+        "text": "We constantly evolve our platform with cutting-edge technology to improve the healthcare experience for both patients and providers."
+      }
+    },
+    "values": {
+      "tag": "Our Values",
+      "title": "The Principles That Guide Us",
+      "subtitle": "Core values that shape our decisions and drive our mission forward.",
+      "patient_card": {
+        "title": "Patient-Centered Care",
+        "text": "We put patients first in everything we do, ensuring their needs, preferences, and experiences guide our platform development."
+      },
+      "trust_card": {
+        "title": "Trust & Security",
+        "text": "We maintain the highest standards of data security and privacy, earning the trust of both patients and healthcare providers."
+      },
+      "community_card": {
+        "title": "Community Impact",
+        "text": "We strive to make a positive difference in communities by improving healthcare access and outcomes."
+      },
+      "forward_card": {
+        "title": "Forward Thinking",
+        "text": "We embrace innovation and continuously seek new ways to improve healthcare delivery through technology."
+      }
+    },
+    "contact": {
+      "tag": "Get in Touch",
+      "title": "Contact Us",
+      "subtitle": "Have questions or feedback? We'd love to hear from you.",
+      "visit_component": {
+        "title": "Visit Us",
+        "info": "Iguazú 341, C1437 Cdad. Autónoma de Buenos Aires"
+      },
+      "email_component": {
+        "title": "Email Us",
+        "info": "vitaepaw@gmail.com"
+      },
+      "call_component": {
+        "title": "Call Us",
+        "info": "+54 9 11 6892-1516"
+      }
+    }
   }
 }
