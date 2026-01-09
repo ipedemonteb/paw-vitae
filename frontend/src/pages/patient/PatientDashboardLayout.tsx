@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button.tsx";
 import {Link, Outlet, useMatch} from "react-router-dom";
 import { cn } from "@/lib/utils";
 import PatientProfileCard from "@/components/PatientProfileCard.tsx";
+import {useTranslation} from "react-i18next";
 
 const dashboardCointainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -49,22 +50,23 @@ function DashboardTab({ to, end, icon: Icon, children }: {
 }
 
 function PatientDashboardLayout() {
+    const { t } = useTranslation();
     return (
         <div className={dashboardCointainer}>
             <PatientProfileCard />
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>
                     <DashboardTab to="/patient/dashboard/upcoming" end icon={Calendar}>
-                        Upcoming
+                        {t("patient.dashboard.upcoming")}
                     </DashboardTab>
                     <DashboardTab to="/patient/dashboard/history" icon={History}>
-                        History
+                        {t("patient.dashboard.history")}
                     </DashboardTab>
                     <DashboardTab to="/patient/dashboard/medical-history" icon={ClipboardPlus}>
-                        Medical History
+                        {t("patient.dashboard.medical-history")}
                     </DashboardTab>
                     <DashboardTab to="/patient/dashboard/account" icon={User}>
-                        Account
+                        {t("patient.dashboard.account")}
                     </DashboardTab>
                 </ButtonGroup>
             </Card>
