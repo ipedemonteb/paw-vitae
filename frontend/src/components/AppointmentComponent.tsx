@@ -2,7 +2,7 @@ import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Popover, PopoverTrigger, PopoverContent} from "@/components/ui/popover.tsx";
-import {ChevronDown} from "lucide-react";
+import {CalendarFoldIcon, ChevronDown} from "lucide-react";
 import {useState} from "react";
 import AppointmentCard from "@/components/AppointmentCard.tsx";
 import {appointmentStatus, appointmentUpcomingFilters} from "@/lib/constants.ts";
@@ -23,13 +23,19 @@ const typeDictionary = {
     history: {
         title: "appointment.history",
         popoverData: appointmentStatus,
-        filterMessage: "appointment.history_filter_message"
+        filterMessage: "appointment.history_filter_message",
+        emptyTitle: "appointment.empty.title.past",
+        emptyText: "appointment.empty.text.past",
+        emptyIcon: CalendarFoldIcon
 
     },
     upcoming: {
         title: "appointment.upcoming",
         popoverData:appointmentUpcomingFilters,
-        filterMessage: "appointment.upcoming_filter_message"
+        filterMessage: "appointment.upcoming_filter_message",
+        emptyTitle: "appointment.empty.title.upcoming",
+        emptyText: "appointment.empty.text.upcoming",
+        emptyIcon: CalendarFoldIcon
     }
 }
 
@@ -80,14 +86,14 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                     </Popover>
                 </div>
             </DashboardNavHeader>
-            {(isLoading && false) ? (
+            {(isLoading) ? (
                 <DashboardNavLoader item={t("appointment")}/>
-            ) : (appointments !== undefined && appointments.length > 0 && false) ? (
+            ) : (appointments !== undefined && appointments.length > 0) ? (
                 appointments?.map(a => (
                     <AppointmentCard key={a.self} appointment={a}/>
                 ))
             ) : (
-                <DashboardNavEmptyContent/>
+                <DashboardNavEmptyContent Icon={componentType.emptyIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>
             )}
             <div>
                 <Pagination>
