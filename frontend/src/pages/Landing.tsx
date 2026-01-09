@@ -48,7 +48,7 @@ const searchBar =
 const heroInput =
     "flex-1 h-12 border-0 rounded-none px-4 text-[var(--text-light)] shadow-none focus-visible:ring-0 hover:bg-[var(--gray-100)]";
 const heroCombo =
-    "h-12 border-0 rounded-none px-4 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
+    "h-12 border-0 min-w-58 rounded-none px-4 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
 const heroButton =
     "h-12 rounded-none px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)] cursor-pointer";
 const heroStats =

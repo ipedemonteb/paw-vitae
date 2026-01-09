@@ -18,6 +18,12 @@
     "ginecologia": "Ginecología",
     "traumatologia": "Traumatología"
   },
+  "combobox": {
+    "specialty": {
+      "select": "Seleccionar Especialidad...",
+      "search": "Buscar Especialidad..."
+    }
+  },
   "appointment": {
     "status": {
       "confirmado": "Confirmado",
