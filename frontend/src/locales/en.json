@@ -338,6 +338,14 @@
       "availability": "Availability",
       "offices": "Offices",
       "account": "Account"
+    },
+    "profile": {
+      "doctor": "Doctor",
+      "coverages": "Coverages",
+      "offices": "Offices",
+      "experiences": "Experience",
+      "certificates": "Certificates",
+      "ratings": "Ratings"
     }
   }
 }
