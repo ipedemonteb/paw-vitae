@@ -49,6 +49,21 @@
         "upcoming": "No tienes citas próximas programadas. Tus futuras citas aparecerán aquí",
         "past": "Tus citas pasadas aparecerán aquí una vez que hayas completado algunas"
       }
+    },
+    "details": {
+      "title": "Detalles del Turno",
+      "subtitle": "Ver y gestionar la información de la cita",
+      "status": "Estado",
+      "date": "Fecha",
+      "specialty": "Especialidad",
+      "office": "Consultorio",
+      "reason": "Razón de la Visita (Opcional)",
+      "patient-files": "Archivos del Paciente",
+      "post-visit": "Información Post-Visita",
+      "no-upload": "Todavía no se subieron archivos.",
+      "rating": "Calificación",
+      "upload": "Subir archivos para la cita.",
+      "submit": "Enviar"
     }
   },
   "login": {

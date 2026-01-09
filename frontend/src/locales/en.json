@@ -61,6 +61,21 @@
         "upcoming": "You don't have any upcoming appointments scheduled. Your future appointments will appear here",
         "past": "Your past appointments will appear here once you've completed some appointments"
       }
+    },
+    "details": {
+      "title": "Appointment Details",
+      "subtitle": "View and manage your appointment information",
+      "status": "Status",
+      "date": "Date",
+      "specialty": "Specialty",
+      "office": "Office",
+      "reason": "Reason of Visit (Optional)",
+      "patient-files": "Patient Files",
+      "post-visit": "Post Visit Information",
+      "no-upload": "No uploaded files.",
+      "rating": "Rating",
+      "upload": "Upload files for the appointment.",
+      "submit": "Submit"
     }
   },
   "login": {
