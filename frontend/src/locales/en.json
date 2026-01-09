@@ -324,10 +324,19 @@
     }
   },
   "patient": {
-    "dashboard":{
+    "dashboard": {
       "upcoming": "Upcoming",
       "history": "History",
       "medical-history": "Medical History",
+      "account": "Account"
+    }
+  },
+  "doctor": {
+    "dashboard": {
+      "upcoming": "Upcoming",
+      "history": "History",
+      "availability": "Availability",
+      "offices": "Offices",
       "account": "Account"
     }
   }

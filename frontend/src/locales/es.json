@@ -324,10 +324,19 @@
     }
   },
   "patient": {
-    "dashboard":{
-      "upcoming": "Próximas",
+    "dashboard": {
+      "upcoming": "Próximo",
       "history": "Historial",
       "medical-history": "Historial Médico",
+      "account": "Cuenta"
+    }
+  },
+  "doctor": {
+    "dashboard": {
+      "upcoming": "Próximo",
+      "history": "Historial",
+      "availability": "Disponibilidad",
+      "offices": "Consultorios",
       "account": "Cuenta"
     }
   }
