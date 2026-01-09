@@ -121,17 +121,17 @@ function ProfileCard({ rating, ratingCount, specialties, maxBadges }:{
                     <div className={ratingContent}>
                         <RatingStars rating={rating} sizeClassName="h-4 w-4" />
                         <p>{rating}</p>
-                        <p className={ratingText}>({ratingCount} reviews)</p>
+                        <p className={ratingText}>({ratingCount} {t("doctor.profile.card.rating")})</p>
                     </div>
                     <BadgeComponent specialties={specialties} maxBadges={maxBadges} />
                 </div>
                 <Button className={editButton}>
                     <SquarePen className="w-4 h-4" />
-                    Edit
+                    {t("doctor.profile.card.edit")}
                 </Button>
             </div>
             <div className={aboutContent}>
-                <h1 className={aboutTitle}>About</h1>
+                <h1 className={aboutTitle}>{t("doctor.profile.card.about")}</h1>
                 <p className={aboutText}>Soy traumatólogo en el Club Estudiantes de La Plata, con más de 40 años en el campo.</p>
             </div>
         </Card>
