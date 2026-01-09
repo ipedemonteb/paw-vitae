@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import PatientProfileCard from "@/components/PatientProfileCard.tsx";
 import {useTranslation} from "react-i18next";
 
-const dashboardCointainer =
+const dashboardContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
 const sectionCard =
     "p-0 overflow-hidden shadow-[var(--shadow-md)]";
@@ -52,7 +52,7 @@ function DashboardTab({ to, end, icon: Icon, children }: {
 function PatientDashboardLayout() {
     const { t } = useTranslation();
     return (
-        <div className={dashboardCointainer}>
+        <div className={dashboardContainer}>
             <PatientProfileCard />
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>
