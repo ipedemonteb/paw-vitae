@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react"
+import { useState, type FormEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useTranslation } from "react-i18next"
@@ -35,8 +35,8 @@ const formContainer =
 const inputWrapper =
     "relative";
 
-const inputIcon =
-    "absolute left-3 top-3 h-5 w-5 text-gray-400";
+// const inputIcon =
+//     "absolute left-3 top-3 h-5 w-5 text-gray-400";
 
 const inputField =
     "pl-10 h-11";

@@ -3,11 +3,11 @@ import {Stethoscope, BriefcaseMedical, CalendarCheck, ShieldHalf } from "lucide-
 import type { LucideIcon } from "lucide-react";
 
 const loginWelcome = "bg-[var(--primary-color)] rounded-t-lg md:rounded-l-lg md:rounded-tr-[0] w-full md:w-1/2 md:py-6 lg:py-10 hidden md:block";
-const welcomeContent = "flex flex-col h-full justify-center text-white px-12 ";
+const welcomeContent = "flex flex-col h-full justify-center text-white px-12 mb-6";
 const welcomeIcon = "w-18 h-18 text-white bg-[var(--bubble-color)] rounded-full p-3 flex items-center justify-center mb-8";
 const welcomeTitle = "text-3xl font-bold mb-2 tracking-wide";
 const welcomeText = "mb-6";
-const welcomeFeatures = "flex flex-col gap-4";
+const welcomeFeatures = "flex flex-col gap-6";
 
 function WelcomeCard() {
     const { t } = useTranslation();
