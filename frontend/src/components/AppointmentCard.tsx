@@ -139,15 +139,22 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
                     <div className={reasonWrapper}>
                         <div className={reasonBar} />
                         <div className={reasonBox}>
-                            <span className={reasonLabel}>
+                            {appointment.reason.trim().length > 0 ? (
+                                <>
+                                    <span className={reasonLabel}>
                                 Reason for Visit:
                             </span>
-                            <div className={reasonTextWrap}>
+                                    <div className={reasonTextWrap}>
                                 <span className={reasonText}>
                                     {appointment.reason}
                                 </span>
-                                <div className={reasonFade} />
-                            </div>
+                                        <div className={reasonFade} />
+                                    </div>
+                                </>
+                            ) : (
+                                <span className="text-(--text-light)">No Reason Specified</span>
+                            )}
+
                         </div>
                     </div>
                 </div>
