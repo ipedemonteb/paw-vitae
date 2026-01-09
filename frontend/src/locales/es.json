@@ -247,9 +247,80 @@
       }
     },
     "ratings": {
-      "tag": "Reseñas",
+      "tag": "Calificaciones",
       "title": "Calificaciones de Doctores",
       "subtitle": "Vea lo que nuestros pacientes dicen sobre nuestros doctores."
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Transformando el Acceso a la Salud",
+      "subtitle": "Conoce nuestra misión y la historia detrás de Vitae - la plataforma médica unificada creada por estudiantes del ITBA."
+    },
+    "story": {
+      "tag": "Historia",
+      "title": "El Viaje de Vitae",
+      "subtitle": "Cómo un grupo de estudiantes del ITBA creó una plataforma para revolucionar el acceso a la salud.",
+      "text": {
+        "paragraph_1": "Vitae nació en 2025 en el Instituto Tecnológico de Buenos Aires (ITBA) cuando un grupo de estudiantes de ingeniería apasionados identificó una brecha crítica en la accesibilidad a la salud en América Latina.",
+        "paragraph_2": "Lo que comenzó como un proyecto universitario para el curso de Programación de Aplicaciones Web (PAW) rápidamente evolucionó a una plataforma integral con la misión de conectar pacientes con proveedores de salud de manera fluida y eficiente.",
+        "paragraph_3": "Nuestro equipo de profesionales dedicados trabaja incansablemente para mejorar la plataforma y expandir nuestros servicios para llegar a más comunidades, impulsados por nuestro compromiso con la innovación, la accesibilidad y la atención médica de calidad para todos."
+      }
+    },
+    "vision": {
+      "tag": "Visión",
+      "title": "Lo Que Nos Impulsa",
+      "subtitle": "Nuestra misión central y los valores que guían nuestro trabajo cada día.",
+      "accessibility_card": {
+        "title": "Accesibilidad",
+        "text": "Creemos que la atención médica debe ser accesible para todos, independientemente de su ubicación o situación socioeconómica. Nuestra plataforma elimina las barreras a la atención médica de calidad."
+      },
+      "quality_card": {
+        "title": "Atención de Calidad",
+        "text": "Estamos comprometidos a conectar pacientes con proveedores de salud verificados y de alta calidad que brindan atención y servicio excepcionales."
+      },
+      "innovation_card": {
+        "title": "Innovación",
+        "text": "Evolucionamos constantemente nuestra plataforma con tecnología de vanguardia para mejorar la experiencia de salud tanto para pacientes como para proveedores."
+      }
+    },
+    "values": {
+      "tag": "Valores",
+      "title": "Los Principios Que Nos Guían",
+      "subtitle": "Valores fundamentales que dan forma a nuestras decisiones e impulsan nuestra misión.",
+      "patient_card": {
+        "title": "Foco en el Paciente",
+        "text": "Ponemos a los pacientes en primer lugar en todo lo que hacemos, asegurando que sus necesidades, preferencias y experiencias guíen el desarrollo de nuestra plataforma."
+      },
+      "trust_card": {
+        "title": "Confianza y Seguridad",
+        "text": "Mantenemos los más altos estándares de seguridad y privacidad de datos, ganando la confianza tanto de pacientes como de proveedores de salud."
+      },
+      "community_card": {
+        "title": "Impacto Comunitario",
+        "text": "Nos esforzamos por hacer una diferencia positiva en las comunidades mejorando el acceso y los resultados de la atención médica."
+      },
+      "forward_card": {
+        "title": "Pensamiento a Futuro",
+        "text": "Abrazamos la innovación y buscamos continuamente nuevas formas de mejorar la prestación de servicios de salud a través de la tecnología."
+      }
+    },
+    "contact": {
+      "tag": "Contacto",
+      "title": "Ponte en Contacto",
+      "subtitle": "¿Tienes preguntas o comentarios? Nos encantaría saber de ti.",
+      "visit_component": {
+        "title": "Visítanos",
+        "info": "Iguazú 341, C1437 Cdad. Autónoma de Buenos Aires"
+      },
+      "email_component": {
+        "title": "Escríbenos",
+        "info": "vitaepaw@gmail.com"
+      },
+      "call_component": {
+        "title": "Llámanos",
+        "info": "+54 9 11 6892-1516"
+      }
     }
   }
 }
