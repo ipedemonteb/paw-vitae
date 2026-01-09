@@ -144,6 +144,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
                 // TODO: AGREGAR LAS RUTAS
+                .antMatchers(HttpMethod.POST,UriUtils.USERS).permitAll()
 
                 .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS).access("@accessHandler.isUserQuery(authentication, request) OR hasRole('DOCTOR') AND @accessHandler.canSeeHistory(authentication, request) ")
                 .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS +"/{id:\\d+}/**").access("@accessHandler.canHandleAppointment(authentication, #id) OR (hasRole('DOCTOR') AND @accessHandler.canSeeMedicalHistoryApp(authentication, #id))")

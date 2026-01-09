@@ -73,7 +73,6 @@ export const buildHeaders = (contentType, acceptType, token = null) => {
         'Accept': acceptType || ContentTypes.JSON,
     };
 
-    // Solo agregamos Content-Type si no es Multipart (el navegador lo pone solo con el boundary)
     if (contentType && contentType !== ContentTypes.MULTIPART) {
         headers['Content-Type'] = contentType;
     }

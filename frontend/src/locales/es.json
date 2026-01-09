@@ -63,6 +63,38 @@
     "aria_email": "Correo electrónico",
     "aria_password": "Contraseña"
   },
+  "recover": {
+    "title": "Recuperar contraseña",
+    "subtitle": "Ingresá tu correo electrónico y te enviaremos un token de recuperación",
+    "placeholder_email": "Correo electrónico",
+    "button_send": "Enviar",
+    "back_to_login": "Volver al inicio de sesión",
+    "error_required": "El correo electrónico es obligatorio",
+    "error_invalid": "Por favor ingrese un formato de correo válido",
+    "error_generic": "Ocurrió un error al procesar la solicitud. Inténtalo de nuevo.",
+    "success_title": "¡Revisa tu correo!",
+    "success_message": "Hemos enviado un enlace de restablecimiento a {{email}}."
+  },
+  "change_password": {
+    "title": "Cambiar Contraseña",
+    "subtitle": "Por favor ingresa una contraseña nueva y segura",
+    "new_password": "Nueva Contraseña",
+    "confirm_password": "Confirmar Contraseña",
+    "submit": "Cambiar Contraseña",
+    "back_to_login": "Volver al inicio de sesión",
+    "strength": {
+      "weak": "Débil",
+      "medium": "Media",
+      "strong": "Fuerte"
+    },
+    "req_length": "Mínimo 8 caracteres",
+    "req_uppercase": "Al menos una letra mayúscula",
+    "req_number": "Al menos un número",
+    "error_mismatch": "Las contraseñas no coinciden",
+    "success_title": "¡Contraseña Actualizada!",
+    "success_message": "Tu contraseña ha sido cambiada exitosamente. Ahora puedes iniciar sesión con tus nuevas credenciales.",
+    "passwords_match": "Passwors match"
+  },
   "register": {
     "title_register" : "Registrarse",
     "subtitle_register" : "Crea tu cuenta para acceder a nuestros servicios de salud.",
@@ -113,6 +145,7 @@
     "loader_coverages": "Cargando obras sociales...",
     "loader_neighborhoods": "Cargando barrios...",
     "no_neighborhoods": "No se encontraron barrios",
+
     "errors": {
       "passwords_mismatch": "Las contraseñas no coinciden",
       "password_requirements": "La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.",

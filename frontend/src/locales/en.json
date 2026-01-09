@@ -18,6 +18,18 @@
     "ginecologia": "Gynecology",
     "traumatologia": "Traumatology"
   },
+  "recover": {
+    "title": "Recover password",
+    "subtitle": "Enter your email and we will send you a recovery token",
+    "placeholder_email": "Email",
+    "button_send": "Send",
+    "back_to_login": "Back to login",
+    "error_required": "Email is required",
+    "error_invalid": "Please enter a valid email format",
+    "error_generic": "An error occurred. Please try again.",
+    "success_title": "Check your email",
+    "success_message": "We have sent a reset link to {{email}}."
+  },
   "appointment": {
     "status": {
       "confirmado": "Confirmed",
@@ -120,6 +132,26 @@
       "email_taken": "Error: That email is already registered.",
       "generic": "An error occurred during registration.",
       "missing_fields": "Please complete all required fields before continuing."
+    },
+    "change_password": {
+      "title": "Change Password",
+      "subtitle": "Please enter a new secure password",
+      "new_password": "New Password",
+      "confirm_password": "Confirm Password",
+      "submit": "Change Password",
+      "back_to_login": "Back to login",
+      "strength": {
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong"
+      },
+      "req_length": "Minimum 8 characters",
+      "passwords_match": "Passwors match",
+      "req_uppercase": "At least one uppercase letter",
+        "req_number": "At least one number",
+      "error_mismatch": "Passwords do not match",
+      "success_title": "Password Updated!",
+      "success_message": "Your password has been changed successfully. You can now login with your new credentials."
     }
 
   },
