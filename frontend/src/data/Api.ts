@@ -66,8 +66,6 @@ api.interceptors.response.use(
     async (err: AxiosError) => {
         const original = err.config as Cfg | undefined;
 
-        console.log("refreshing!!!!")
-
         if (!original || !isExpiredJwt401(err)) return Promise.reject(err);
 
         //para no loop infinito
@@ -111,17 +109,12 @@ api.interceptors.response.use(
             const newRefresh = replayRes.headers?.[NEW_REFRESH_HEADER] as string | undefined;
 
 
-            console.log("entering")
             if (newJwt && newRefresh) {
-                console.log(getAccessToken())
                 setAuth(newJwt, newRefresh);
                 api.defaults.headers.common[AUTHZ] = `Bearer ${newJwt}`;
             }
 
             notifyWaiters(true);
-
-            console.log("refreshed!!!!")
-            console.log(newJwt)
 
             return replayRes;
         } catch (e) {

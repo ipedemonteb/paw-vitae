@@ -276,7 +276,6 @@ function DropdownDoctor() {
     const logout = () => {
         auth.logout();
         navigate("/")
-
     }
     return (
         <DropdownMenuContent>

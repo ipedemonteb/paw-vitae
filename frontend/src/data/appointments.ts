@@ -19,17 +19,21 @@ export type AppointmentDTO = {
 
 
 export type AppointmentsQuery = {
-    userId: string;
+    userId?: string;
+    doctorId?: string;
     collection?: string;
     filter?: string;
     page?: number;
     pageSize?: number;
 }
 
+
 export async function listAppointments(params: AppointmentsQuery) {
-    const res = await api.get("/appointments", {
+    if (!params.userId) return []; //TODO
+    const res = await api.get<AppointmentDTO[]>("/appointments", {
         params: {
             userId: params.userId,
+            doctorId: params.doctorId,
             collection: params.collection,
             filter: params.filter,
             page: params.page ?? 1,
