@@ -322,5 +322,13 @@
         "info": "+54 9 11 6892-1516"
       }
     }
+  },
+  "patient": {
+    "dashboard":{
+      "upcoming": "Próximas",
+      "history": "Historial",
+      "medical-history": "Historial Médico",
+      "account": "Cuenta"
+    }
   }
 }
