@@ -133,5 +133,25 @@
     }
 
   },
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "header": {
+    "home": "Home",
+    "search": "Find Doctors",
+    "about": "About Us",
+    "login": "Login",
+    "register": "Register",
+    "doctor": {
+      "dashboard": "Doctor Dashboard",
+      "profile": "My Public Profile"
+    },
+    "patient": {
+      "dashboard": "Dashboard"
+    },
+    "logout": {
+      "title": "Confirm Logout",
+      "text": "Are you sure you want to log out of your account?",
+      "cancel": "Cancel",
+      "confirm": "Log Out"
+    }
+  }
 }

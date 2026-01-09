@@ -9,6 +9,7 @@ import React, {useEffect, useMemo, useState} from "react";
 import {useAuth} from "@/hooks/useAuth";
 import {Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader} from "@/components/ui/dialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import {useTranslation} from "react-i18next";
 
 type UserRole = "ANON" | "PATIENT" | "DOCTOR";
 
@@ -75,23 +76,24 @@ function deriveUserRole(isAuthenticated: boolean, role?: string | null): UserRol
     return role === "ROLE_DOCTOR" ? "DOCTOR" : "PATIENT";
 }
 
-function buildNavItems(role: UserRole): NavItem[] {
+function buildNavItems(role: UserRole, t: (key: string) => string): NavItem[] {
     const canFindDoctors = role !== "DOCTOR";
 
     return [
-        {to: "/", label: "Home", end: true},
-        ...(canFindDoctors ? [{to: "/search", label: "Find Doctors"} as NavItem] : []),
-        {to: "/about-us", label: "About Us"}
+        {to: "/", label: t("header.home"), end: true},
+        ...(canFindDoctors ? [{to: "/search", label: t("header.search")} as NavItem] : []),
+        {to: "/about-us", label: t("header.about")}
     ];
 }
 
 function Header() {
     const auth = useAuth();
+    const { t } = useTranslation();
 
     const isLoggedIn = auth.isAuthenticated;
     const userRole = deriveUserRole(isLoggedIn, auth.role);
 
-    const navItems = useMemo(() => buildNavItems(userRole), [userRole]);
+    const navItems = useMemo(() => buildNavItems(userRole, t), [userRole, t]);
 
     const [sheetOpen, setSheetOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -226,14 +228,15 @@ function NotLoggedInComponent({
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }) {
+    const { t } = useTranslation();
     return (
         <div className={authDesktop}>
             <Link to="/login" className={btnOutline}>
-                Login
+                {t("header.login")}
             </Link>
             <DropdownMenu open={open} onOpenChange={onOpenChange}>
                 <DropdownMenuTrigger className={btnFilled}>
-                    Register
+                    {t("header.register")}
                     <ChevronDown className="h-4 w-4 ml-1" />
                 </DropdownMenuTrigger>
                 {/*TODO: que lleven a distintos paths*/}
@@ -241,13 +244,13 @@ function NotLoggedInComponent({
                     <DropdownMenuItem className={dropDownItem}>
                         <Link to="/register" className={dropDownItem}>
                             <User className="text-inherit" />
-                            Register
+                            {t("header.register")}
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className={dropDownItem}>
                         <Link to="/register" className={dropDownItem}>
                             <BriefcaseMedical className="text-inherit" />
-                            Are you a Doctor?
+                            {t("header.search")}
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -288,6 +291,7 @@ function LoggedInComponent({
 }) {
     if (userRole === "ANON") return null;
 
+    const { t } = useTranslation();
     const auth = useAuth();
     const navigate = useNavigate();
     const [logoutOpen, setLogoutOpen] = useState(false);
@@ -329,14 +333,14 @@ function LoggedInComponent({
                 }}
             >
                 <DialogContent>
-                    <DialogHeader className={dialogHeader}>Confirm Logout</DialogHeader>
-                    <p className={dialogText}>Are you sure you want to log out of your account?</p>
+                    <DialogHeader className={dialogHeader}>{t("header.logout.title")}</DialogHeader>
+                    <p className={dialogText}>{t("header.logout.text")}</p>
                     <DialogFooter className={dialogFooter}>
                         <DialogClose asChild>
-                            <Button className={dialogCancel}>Cancel</Button>
+                            <Button className={dialogCancel}>{t("header.logout.cancel")}</Button>
                         </DialogClose>
                         <Button onClick={logout} type="button" className={dialogConfirm}>
-                            Log Out
+                            {t("header.logout.confirm")}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -354,13 +358,14 @@ function LoggedInDropdown({
     onLogoutClick: () => void;
     closeDropdown: () => void;
 }) {
+    const { t } = useTranslation();
     const items =
         userRole === "DOCTOR"
             ? [
-                { to: "/doctor/dashboard", label: "Doctor Dashboard", icon: ChartPie },
-                { to: "/profile", label: "Public Profile", icon: User },
+                { to: "/doctor/dashboard", label: t("header.doctor.dashboard"), icon: ChartPie },
+                { to: "/profile", label: t("header.doctor.profile"), icon: User },
             ]
-            : [{ to: "/patient/dashboard", label: "Dashboard", icon: ChartPie }];
+            : [{ to: "/patient/dashboard", label: t("header.patient.dashboard"), icon: ChartPie }];
 
     return (
         <DropdownMenuContent>
@@ -386,7 +391,7 @@ function LoggedInDropdown({
                 }}
             >
                 <LogOut className="text-inherit" />
-                Log Out
+                {t("header.logout.confirm")}
             </DropdownMenuItem>
         </DropdownMenuContent>
     );
@@ -397,24 +402,25 @@ const mobileIconContainer = "flex items-center gap-1";
 const mobileIcon = "h-5 w-5";
 
 function SheetNotLoggedInComponent() {
+    const { t } = useTranslation();
     return (
         <div className={sheetContainer}>
             <SheetNavLink to="/login">
                 <div className={mobileIconContainer}>
                     <LogIn className={mobileIcon} />
-                    Login
+                    {t("header.login")}
                 </div>
             </SheetNavLink>
             <SheetNavLink to="/register">
                 <div className={mobileIconContainer}>
                     <User className={mobileIcon} />
-                    Register
+                    {t("header.register")}
                 </div>
             </SheetNavLink>
             <SheetNavLink to="/register">
                 <div className={mobileIconContainer}>
                     <BriefcaseMedical className={mobileIcon} />
-                    Are You a Doctor?
+                    {t("header.search")}
                 </div>
             </SheetNavLink>
         </div>
@@ -431,6 +437,7 @@ const logoutHover =
     "after:transition-[width] after:duration-300 hover:after:w-full";
 
 function SheetLoggedInComponent({ userRole }: { userRole: UserRole }) {
+    const { t } = useTranslation();
     const auth = useAuth();
     const navigate = useNavigate();
 
@@ -455,33 +462,33 @@ function SheetLoggedInComponent({ userRole }: { userRole: UserRole }) {
                 <>
                     <SheetNavLink to="/doctor/dashboard">
                         <div className={mobileIconContainer}>
-                            <ChartPie className={mobileIcon} />
-                            Doctor Dashboard
+                            <ChartPie className={mobileIcon}/>
+                            {t("header.doctor.dashboard")}
                         </div>
                     </SheetNavLink>
 
                     <SheetNavLink to="/profile">
                         <div className={mobileIconContainer}>
-                            <User className={mobileIcon} />
-                            Public Profile
+                            <User className={mobileIcon}/>
+                            {t("header.doctor.profile")}
                         </div>
                     </SheetNavLink>
                     <div onClick={logout} className={logoutItem + " " + logoutHover}>
                         <LogOut className="text-inherit" />
-                        <p>Log Out</p>
+                        <p>{t("header.logout.confirm")}</p>
                     </div>
                 </>
             ) : (
                 <>
                     <SheetNavLink to="/patient/dashboard">
                         <div className={mobileIconContainer}>
-                            <ChartPie className={mobileIcon} />
-                            Dashboard
+                            <ChartPie className={mobileIcon}/>
+                            {t("header.patient.dashboard")}
                         </div>
                     </SheetNavLink>
                     <div onClick={logout} className={logoutItem + " " + logoutHover}>
                         <LogOut className="text-inherit" />
-                        <p>Log Out</p>
+                        <p>{t("header.logout.confirm")}</p>
                     </div>
                 </>
             )}
