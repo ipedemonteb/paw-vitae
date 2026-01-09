@@ -2,9 +2,8 @@ import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Popover, PopoverTrigger, PopoverContent} from "@/components/ui/popover.tsx";
-import {ChevronDown} from "lucide-react";
+import {CalendarFoldIcon, ChevronDown} from "lucide-react";
 import {useState} from "react";
-import type {AppointmentDTO} from "@/data/appointments.ts";
 import AppointmentCard from "@/components/AppointmentCard.tsx";
 import {appointmentStatus, appointmentUpcomingFilters} from "@/lib/constants.ts";
 import {useTranslation} from "react-i18next";
@@ -15,34 +14,28 @@ import {
     PaginationLink, PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination.tsx";
-
-export const mockAppointment: AppointmentDTO = {
-    date: new Date('2026-01-04T17:30:00Z'),
-    status: 'confirmado',
-    reason: 'Routine check-up and follow-up on blood work',
-    allowFullHistory: 'true',
-    report: 'No abnormal findings. Advise follow-up in 6 months.',
-    cancellable: true,
-    self: '/api/appointments/1',
-    doctor: '/api/doctors/123',
-    patient: '/api/patients/456',
-    specialty: 'General',
-    doctorOffice: 'Clinic A - Room 2',
-    appointmentFiles: '[]',
-    rating: '5'
-};
+import {useAppointments} from "@/hooks/useAppointments.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
+import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 
 const typeDictionary = {
     history: {
         title: "appointment.history",
         popoverData: appointmentStatus,
-        filterMessage: "appointment.history_filter_message"
+        filterMessage: "appointment.history_filter_message",
+        emptyTitle: "appointment.empty.title.past",
+        emptyText: "appointment.empty.text.past",
+        emptyIcon: CalendarFoldIcon
 
     },
     upcoming: {
         title: "appointment.upcoming",
         popoverData:appointmentUpcomingFilters,
-        filterMessage: "appointment.upcoming_filter_message"
+        filterMessage: "appointment.upcoming_filter_message",
+        emptyTitle: "appointment.empty.title.upcoming",
+        emptyText: "appointment.empty.text.upcoming",
+        emptyIcon: CalendarFoldIcon
     }
 }
 
@@ -55,6 +48,8 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(t("appointment.all"))
     const componentType = typeDictionary[type]
+    const auth = useAuth()
+    const {data: appointments, isLoading} = useAppointments({userId: auth.userId, collection: type});
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={t(componentType.title)}>
@@ -91,8 +86,15 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                     </Popover>
                 </div>
             </DashboardNavHeader>
-            <AppointmentCard patientCoverage="Galeno" patientName="Jose" patientLastname="Benegas"
-                             appointment={mockAppointment}/>
+            {(isLoading) ? (
+                <DashboardNavLoader item={t("appointment")}/>
+            ) : (appointments !== undefined && appointments.length > 0) ? (
+                appointments?.map(a => (
+                    <AppointmentCard key={a.self} appointment={a}/>
+                ))
+            ) : (
+                <DashboardNavEmptyContent Icon={componentType.emptyIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>
+            )}
             <div>
                 <Pagination>
                     <PaginationContent className="text-(--text-color) gap-2">

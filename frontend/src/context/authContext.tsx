@@ -8,13 +8,13 @@ import {
 import {login as loginApi} from "@/data/auth.ts";
 import {useQueryClient} from "@tanstack/react-query";
 
-interface   AuthContextType {
+interface AuthContextType {
     claims: JWTClaims | null;
     isAuthenticated: boolean;
 
     userId?: string;
     email?: string;
-    roles: string[];
+    role?: string;
 
     login: (email: string, password: string) => Promise<{success: boolean, errorMessage?: string}>;
     logout: () => void;
@@ -45,8 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode })  {
         () => ({
             claims,
             isAuthenticated: !!claims,
-            userId: claims?.sub,
-            roles: claims?.roles ?? [],
+            userId: claims?.userId,
+            role: claims?.role,
             email: claims?.email,
             login,
             logout,

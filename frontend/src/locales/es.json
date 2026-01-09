@@ -33,7 +33,17 @@
       "today": "Hoy"
     },
     "history_filter_message": "Estado",
-    "upcoming_filter_message": "Rango de Fechas"
+    "upcoming_filter_message": "Rango de Fechas",
+    "empty": {
+      "title": {
+        "upcoming": "Sin Citas Próximas",
+        "past": "Sin Historial de Citas"
+      },
+      "text": {
+        "upcoming": "No tienes citas próximas programadas. Tus futuras citas aparecerán aquí",
+        "past": "Tus citas pasadas aparecerán aquí una vez que hayas completado algunas"
+      }
+    }
   },
   "login": {
     "welcome_title": "Bienvenido de nuevo!",
@@ -155,5 +165,25 @@
       "missing_fields": "Por favor complete todos los campos obligatorios antes de continuar."
     }
   },
-  "Loading": "Cargando..."
+  "Loading": "Cargando...",
+  "header": {
+    "home": "Inicio",
+    "search": "Buscar Doctores",
+    "about": "Sobre Nosotros",
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "doctor": {
+      "dashboard": "Panel de Doctor",
+      "profile": "Mi Perfil Público"
+    },
+    "patient": {
+      "dashboard": "Panel"
+    },
+    "logout": {
+      "title": "Confirmar Cierre de Sesión",
+      "text": "¿Estás seguro de que deseas cerrar sesión en tu cuenta?\n\n",
+      "cancel": "Cancelar",
+      "confirm": "Cerrar Sesión"
+    }
+  }
 }
