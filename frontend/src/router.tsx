@@ -16,6 +16,8 @@ import DoctorOffices from "@/pages/doctor/DoctorOffices.tsx";
 import DoctorAccount from "@/pages/doctor/DoctorAccount.tsx";
 import PublicProfile from "@/pages/PublicProfile.tsx";
 import AppointmentDetails from "@/pages/AppointmentDetails.tsx";
+import RecoverPassword from "@/pages/ResetPassword.tsx";
+import ChangePassword from "@/pages/ChangePassword.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -76,6 +78,14 @@ export const router = createBrowserRouter([
                         element: <PatientAccount/>
                     },
                 ]
+            },
+            {
+               path:"recover-password",
+                element:<RecoverPassword/>
+            },
+            {
+                path:"change-password",
+                element:<ChangePassword/>
             },
             {
                 path: "doctor/dashboard",
