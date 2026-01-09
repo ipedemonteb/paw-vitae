@@ -2,9 +2,12 @@ import { jwtDecode } from "jwt-decode";
 type Claims = {
     sub: string;
     email?: string;
-    roles?: string[];
+    role?: string;
     exp: number;
     iat: number;
+
+    userId: string;
+
     [k: string]: unknown;
 };
 

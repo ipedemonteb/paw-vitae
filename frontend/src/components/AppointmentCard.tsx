@@ -2,6 +2,9 @@ import { Clock4, EyeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import type { AppointmentDTO } from "@/data/appointments.ts";
 import { useTranslation } from "react-i18next";
+import {usePatient} from "@/hooks/usePatients.ts";
+import {useSpecialty} from "@/hooks/useSpecialties.ts";
+import {useCoverage} from "@/hooks/useCoverages.ts";
 
 const statusClassname =
     "h-7 font-medium border-solid border text-xs w-3/4 rounded-2xl flex items-center justify-center";
@@ -78,22 +81,22 @@ const detailsButton =
 
 type AppointmentCardProps = {
     appointment: AppointmentDTO;
-    patientName: string;
-    patientLastname: string;
-    patientCoverage: string;
 };
 
-export default function AppointmentCard({ appointment, patientName, patientLastname, patientCoverage }: AppointmentCardProps) {
+export default function AppointmentCard({ appointment }: AppointmentCardProps) {
     const { t, i18n } = useTranslation();
+    const {data: patient} = usePatient(appointment.patient)
+    const {data: specialty} = useSpecialty(appointment.specialty)
+    const {data: coverage} = useCoverage(patient?.coverages)
     const locale = i18n?.language || "en-US";
 
-    const d = appointment.date;
+    const d = new Date(appointment.date);
     const weekday = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(d).toUpperCase();
     const day = d.getDate();
     const month = new Intl.DateTimeFormat(locale, { month: "long" }).format(d).toUpperCase();
     const time = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", hour12: false }).format(d);
-    const initials = patientName[0] + patientLastname[0];
-    const fullName = patientName + " " + patientLastname;
+    const initials = patient?.name[0] || "" + patient?.lastName[0];
+    const fullName = patient?.name + " " + patient?.lastName;
 
     const status = "appointment.status." + appointment.status;
 
@@ -127,7 +130,7 @@ export default function AppointmentCard({ appointment, patientName, patientLastn
                         </span>
                         <span className={coverageRow}>
                             <span className={coverageDot} />
-                            {t(patientCoverage)}
+                            {t(coverage?.name || "")}
                         </span>
                     </div>
                 </div>
@@ -151,7 +154,7 @@ export default function AppointmentCard({ appointment, patientName, patientLastn
 
                 <div className={bottomRow}>
                     <div className={specialtyPill}>
-                        {t(appointment.specialty)}
+                        {t(specialty?.name || "")}
                     </div>
                     <Button className={detailsButton}>
                         <EyeIcon />
