@@ -24,6 +24,18 @@
       "search": "Buscar Especialidad..."
     }
   },
+  "files": {
+    "title": "Arrastrar y soltar archivos aquí",
+    "subtitle": "Solamente archivos PDF · Hasta {{maxFiles}} archivos · Máximo {{maxSize}} cada uno.",
+    "no-files": "No hay archivos seleccionados.",
+    "selected": "Archivos seleccionados ",
+    "clear": "Eliminar todos",
+    "error": {
+      "many": "Demasiados archivos. Máximo {{maxFiles}}.",
+      "type": "Tipo de archivo inválido. Solamente se permiten archivos PDF.",
+      "size": "Algunos archivos son demasiado grandes. Máximo {{maxSize}}."
+    }
+  },
   "appointment": {
     "status": {
       "confirmado": "Confirmado",

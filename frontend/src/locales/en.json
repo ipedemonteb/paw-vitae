@@ -24,6 +24,18 @@
       "search": "Search specialty..."
     }
   },
+  "files": {
+    "title": "Drag & drop files here",
+    "subtitle": "Only PDF files · Up to {{maxFiles}} files · Max {{maxSize}} each.",
+    "no-files": "No files selected yet.",
+    "selected": "Selected files ",
+    "clear": "Clear All",
+    "error": {
+      "many": "Too many files. Max {{maxFiles}}.",
+      "type": "Invalid file type. Only PDF files are allowed.",
+      "size": "Some files are too large. Max {{maxSize}}."
+    }
+  },
   "recover": {
     "title": "Recover password",
     "subtitle": "Enter your email and we will send you a recovery token",
