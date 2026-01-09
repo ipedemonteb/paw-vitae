@@ -345,7 +345,12 @@
       "offices": "Oficinas",
       "experiences": "Experiencia",
       "certificates": "Certificados",
-      "ratings": "Calificaciones"
+      "ratings": "Calificaciones",
+      "card": {
+        "rating": "calificaciones",
+        "edit": "Editar",
+        "about": "Sobre Mí"
+      }
     }
   }
 }
