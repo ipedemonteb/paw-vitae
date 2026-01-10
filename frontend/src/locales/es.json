@@ -76,6 +76,25 @@
       "rating": "Calificación",
       "upload": "Subir archivos para la cita.",
       "submit": "Enviar"
+    },
+    "booking": {
+      "header": {
+        "title": "Reservar un Turno",
+        "subtitle": "Complete el formulario a continuación para programar su turno  "
+      },
+      "specialty": "Seleccionar Especialidad",
+      "office": "Seleccionar Consultorio",
+      "date": "Fecha y Hora",
+      "select-date": "Seleccione una Fecha",
+      "your-appointment": "Tu Turno",
+      "reason": "Motivo de la Visita (Opcional)",
+      "enter-reason": "Ingrese el motivo de su visita.",
+      "upload": "Suba sus archivos para el turno (Opcional)",
+      "allow": {
+        "title": "Permitir acceso completo al historial médico",
+        "subtitle": "Al seleccionar esta opción, se habilita el acceso completo de su médico a su historial médico."
+      },
+      "book": "Reservar Turno"
     }
   },
   "login": {
