@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Card } from "@/components/ui/card.tsx"
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
 import { Stethoscope, Hospital, CalendarDays } from "lucide-react";
@@ -23,16 +23,6 @@ const selectorTitle =
     "text-[var(--text-color)] text-md font-[500]";
 const selectorsContainer =
     "flex flex-col md:flex-row gap-6";
-const selectorCard =
-    "flex flex-row items-center w-full gap-0";
-const iconContainer =
-    "flex items-center bg-[var(--primary-bg)] rounded-full p-5 text-[var(--primary-color)] mx-5";
-const icon =
-    "w-8 h-8";
-const selectorContent =
-    "flex flex-col gap-1 min-w-56";
-const selectorButton =
-    "cursor-pointer";
 const dateCard =
     "flex flex-col";
 const dateContainer =
@@ -50,6 +40,103 @@ function Appointment() {
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
+    return (
+        <div className={appointmentBackground}>
+            <div className={cardContainer}>
+                <Card className={appointmentContainer}>
+                    <div className={appointmentHeader}>
+                        <h1 className={appointmentTitle}>Book an Appointment</h1>
+                        <p>Fill out the form below to schedule your appointment</p>
+                    </div>
+                    <div className={appointmentContent}>
+                        <DoctorProfileCard />
+                        <div className={selectorsContainer}>
+                            <SpecialtySelector selectedSpecialty={selectedSpecialty} />
+                            <OfficeSelector />
+                        </div>
+                        <DateSelector
+                            selectedDate={selectedDate}
+                            setSelectedDate={setSelectedDate}
+                            selectedTime={selectedTime}
+                            setSelectedTime={setSelectedTime}
+                        />
+                    </div>
+                </Card>
+            </div>
+        </div>
+    )
+}
+
+const selectorCard =
+    "flex flex-row items-center w-full gap-0";
+const iconContainer =
+    "flex items-center bg-[var(--primary-bg)] rounded-full p-5 text-[var(--primary-color)] mx-5";
+const icon =
+    "w-8 h-8";
+const selectorContent =
+    "flex flex-col gap-1 min-w-56";
+const selectorButton =
+    "cursor-pointer";
+
+function SpecialtySelector({selectedSpecialty}: {selectedSpecialty: string}) {
+    return (
+        <Card className={selectorCard}>
+            <div className={iconContainer}>
+                <Stethoscope className={icon}/>
+            </div>
+            <div className={selectorContent}>
+                <p className={selectorTitle}>Select Specialty</p>
+                <Select>
+                    <SelectTrigger className={selectorButton}>
+                        <SelectValue placeholder={selectedSpecialty}/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem value="general">General</SelectItem>
+                            <SelectItem value="cardiology">Cardiology</SelectItem>
+                            <SelectItem value="endocrinology">Endocrinology</SelectItem>
+                            <SelectItem value="dermatolofy">Dermatology</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
+        </Card>
+    );
+}
+
+function OfficeSelector() {
+    return (
+        <Card className={selectorCard}>
+            <div className={iconContainer}>
+                <Hospital className={icon}/>
+            </div>
+            <div className={selectorContent}>
+                <p className={selectorTitle}>Select Office</p>
+                <Select>
+                    <SelectTrigger className={selectorButton}>
+                        <SelectValue placeholder="Select Office"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem value="main">Main Office</SelectItem>
+                            <SelectItem value="hospital">Hospital</SelectItem>
+                            <SelectItem value="oficina2">Oficina Mataderos</SelectItem>
+                            <SelectItem value="oficina3">Oficina Parque Chas</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
+        </Card>
+    );
+}
+
+function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedTime}:{
+    selectedDate: Date | undefined
+    setSelectedDate: (date: Date | undefined) => void
+    selectedTime: string | null
+    setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
+}) {
 
     useEffect(() => {
         if (!selectedDate) setSelectedTime(null);
@@ -80,96 +167,38 @@ function Appointment() {
     }, [selectedDate, selectedTime, locale]);
 
     return (
-        <div className={appointmentBackground}>
-            <div className={cardContainer}>
-                <Card className={appointmentContainer}>
-                    <div className={appointmentHeader}>
-                        <h1 className={appointmentTitle}>Book an Appointment</h1>
-                        <p>Fill out the form below to schedule your appointment</p>
+        <Card className={dateCard}>
+            <div className={dateContainer}>
+                <div className={dateUpperContainer}>
+                    <div className={iconContainer}>
+                        <CalendarDays className={icon}/>
                     </div>
-                    <div className={appointmentContent}>
-                        <DoctorProfileCard />
-                        <div className={selectorsContainer}>
-                            <Card className={selectorCard}>
-                                <div className={iconContainer}>
-                                    <Stethoscope className={icon}/>
-                                </div>
-                                <div className={selectorContent}>
-                                    <p className={selectorTitle}>Select Specialty</p>
-                                    <Select>
-                                        <SelectTrigger className={selectorButton}>
-                                            <SelectValue placeholder={selectedSpecialty}/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectItem value="general">General</SelectItem>
-                                                <SelectItem value="cardiology">Cardiology</SelectItem>
-                                                <SelectItem value="endocrinology">Endocrinology</SelectItem>
-                                                <SelectItem value="dermatolofy">Dermatology</SelectItem>
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </Card>
-                            <Card className={selectorCard}>
-                                <div className={iconContainer}>
-                                    <Hospital className={icon}/>
-                                </div>
-                                <div className={selectorContent}>
-                                    <p className={selectorTitle}>Select Office</p>
-                                    <Select>
-                                        <SelectTrigger className={selectorButton}>
-                                            <SelectValue placeholder="Select Office"/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectItem value="main">Main Office</SelectItem>
-                                                <SelectItem value="hospital">Hospital</SelectItem>
-                                                <SelectItem value="oficina2">Oficina Mataderos</SelectItem>
-                                                <SelectItem value="oficina3">Oficina Parque Chas</SelectItem>
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </Card>
-                        </div>
-                        <Card className={dateCard}>
-                            <div className={dateContainer}>
-                                <div className={dateUpperContainer}>
-                                    <div className={iconContainer}>
-                                        <CalendarDays className={icon}/>
-                                    </div>
-                                    <div className={selectorContent}>
-                                        <p className={selectorTitle}>Date and Time</p>
-                                        <DatePicker value={selectedDate} onChange={setSelectedDate} />
-                                    </div>
-                                </div>
-                                {selectedDate ? (
-                                    <div className={availableTimes}>
-                                        {[
-                                            "10:00","11:00","12:00","13:00","14:00","15:00","16:00",
-                                            "17:00","18:00","19:00","20:00"
-                                        ].map((t) => (
-                                            <Button
-                                                key={t}
-                                                className={timeButton}
-                                                data-selected={selectedTime === t}
-                                                onClick={() => setSelectedTime((prev) => (prev === t ? null : t))}
-                                            >
-                                                {t}
-                                            </Button>
-                                        ))}
-                                    </div>
-                                ) : null}
-                            </div>
-
-                            {formattedConfirmation ? <Confirmation text={formattedConfirmation} /> : null}
-                        </Card>
+                    <div className={selectorContent}>
+                        <p className={selectorTitle}>Date and Time</p>
+                        <DatePicker value={selectedDate} onChange={setSelectedDate} />
                     </div>
-                </Card>
+                </div>
+                {selectedDate ? (
+                    <div className={availableTimes}>
+                        {[
+                            "10:00","11:00","12:00","13:00","14:00","15:00","16:00",
+                            "17:00","18:00","19:00","20:00"
+                        ].map((t) => (
+                            <Button
+                                key={t}
+                                className={timeButton}
+                                data-selected={selectedTime === t}
+                                onClick={() => setSelectedTime((prev) => (prev === t ? null : t))}
+                            >
+                                {t}
+                            </Button>
+                        ))}
+                    </div>
+                ) : null}
             </div>
-        </div>
-    )
+            {formattedConfirmation ? <Confirmation text={formattedConfirmation} /> : null}
+        </Card>
+    );
 }
 
 const confirmation =
