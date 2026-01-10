@@ -81,13 +81,32 @@
       "date": "Date",
       "specialty": "Specialty",
       "office": "Office",
-      "reason": "Reason of Visit (Optional)",
+      "reason": "Reason for Visit (Optional)",
       "patient-files": "Patient Files",
       "post-visit": "Post Visit Information",
       "no-upload": "No uploaded files.",
       "rating": "Rating",
       "upload": "Upload files for the appointment.",
       "submit": "Submit"
+    },
+    "booking": {
+      "header": {
+        "title": "Book an Appointment",
+        "subtitle": "Fill out the form below to schedule your appointment"
+      },
+      "specialty": "Select Specialty",
+      "office": "Select Office",
+      "date": "Date and Time",
+      "select-date": "Select a Date",
+      "your-appointment": "Your Appointment",
+      "reason": "Reason for Visit (Optional)",
+      "enter-reason": "Enter the reason for your visit.",
+      "upload": "Upload files for your appointment (Optional)",
+      "allow": {
+        "title": "Allow full medical history access",
+        "subtitle": "By selecting this option, you are allowing full access to your medical history for your doctor."
+      },
+      "book": "Book Appointment"
     }
   },
   "login": {

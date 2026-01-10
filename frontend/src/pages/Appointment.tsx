@@ -9,6 +9,7 @@ import {Textarea} from "@/components/ui/textarea.tsx";
 import {UploadFiles} from "@/components/UploadFiles.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
+import {useTranslation} from "react-i18next";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -48,6 +49,8 @@ const bookButton =
 function Appointment() {
     const selectedSpecialty = "General";
 
+    const { t } = useTranslation();
+
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
@@ -56,8 +59,8 @@ function Appointment() {
             <div className={cardContainer}>
                 <Card className={appointmentContainer}>
                     <div className={appointmentHeader}>
-                        <h1 className={appointmentTitle}>Book an Appointment</h1>
-                        <p>Fill out the form below to schedule your appointment</p>
+                        <h1 className={appointmentTitle}>{t("appointment.booking.header.title")}</h1>
+                        <p>{t("appointment.booking.header.subtitle")}</p>
                     </div>
                     <div className={appointmentContent}>
                         <DoctorProfileCard />
@@ -78,7 +81,7 @@ function Appointment() {
                         </div>
                         <div className={bookContainer}>
                             <Button className={bookButton}>
-                                Book Appointment
+                                {t("appointment.booking.book")}
                             </Button>
                         </div>
                     </div>
@@ -100,13 +103,15 @@ const selectorButton =
     "cursor-pointer";
 
 function SpecialtySelector({selectedSpecialty}: {selectedSpecialty: string}) {
+    const { t } = useTranslation();
+
     return (
         <Card className={selectorCard}>
             <div className={iconContainer}>
                 <Stethoscope className={icon}/>
             </div>
             <div className={selectorContent}>
-                <p className={selectorTitle}>Select Specialty</p>
+                <p className={selectorTitle}>{t("appointment.booking.specialty")}</p>
                 <Select>
                     <SelectTrigger className={selectorButton}>
                         <SelectValue placeholder={selectedSpecialty}/>
@@ -126,16 +131,18 @@ function SpecialtySelector({selectedSpecialty}: {selectedSpecialty: string}) {
 }
 
 function OfficeSelector() {
+    const { t } = useTranslation();
+
     return (
         <Card className={selectorCard}>
             <div className={iconContainer}>
                 <Hospital className={icon}/>
             </div>
             <div className={selectorContent}>
-                <p className={selectorTitle}>Select Office</p>
+                <p className={selectorTitle}>{t("appointment.booking.office")}</p>
                 <Select>
                     <SelectTrigger className={selectorButton}>
-                        <SelectValue placeholder="Select Office"/>
+                        <SelectValue placeholder={t("appointment.booking.office")}/>
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
@@ -157,6 +164,7 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
     selectedTime: string | null
     setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
 }) {
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (!selectedDate) setSelectedTime(null);
@@ -196,8 +204,8 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
                         <CalendarDays className={icon}/>
                     </div>
                     <div className={selectorContent}>
-                        <p className={selectorTitle}>Date and Time</p>
-                        <DatePicker value={selectedDate} onChange={setSelectedDate} />
+                        <p className={selectorTitle}>{t("appointment.booking.date")}</p>
+                        <DatePicker value={selectedDate} onChange={setSelectedDate} placeholder={t("appointment.booking.select-date")}/>
                     </div>
                 </div>
                 {selectedDate ? (
@@ -231,9 +239,11 @@ const confirmationText =
     "text-[var(--text-color)] text-sm font-[300]";
 
 function Confirmation({ text }: { text: string }) {
+    const { t } = useTranslation();
+
     return (
         <div className={confirmation}>
-            <h3 className={confirmationTitle}>Your Appointment</h3>
+            <h3 className={confirmationTitle}>{t("appointment.booking.your-appointment")}</h3>
             <p className={confirmationText}>{text}</p>
         </div>
     );
@@ -243,18 +253,22 @@ const reasonCard =
     "flex flex-col gap-2";
 
 function ReasonInput() {
+    const { t } = useTranslation();
+
     return (
         <div className={reasonCard}>
-            <h3 className={selectorTitle}>Reason for Visit (Optional)</h3>
-            <Textarea placeholder="Enter reason for your visit."/>
+            <h3 className={selectorTitle}>{t("appointment.booking.reason")}</h3>
+            <Textarea placeholder={t("appointment.booking.enter-reason")}/>
         </div>
     );
 }
 
 function FilesUpload() {
+    const { t } = useTranslation();
+
     return (
         <div>
-            <h3 className={selectorTitle + " mb-2"}>Upload files for your appointment (Optional)</h3>
+            <h3 className={selectorTitle + " mb-2"}>{t("appointment.booking.upload")}</h3>
             <UploadFiles />
         </div>
     );
@@ -264,6 +278,8 @@ const medicalCointainer =
     "flex flex-col";
 
 function MedicalHistory() {
+    const { t } = useTranslation();
+
     return (
         <div className={medicalCointainer}>
             <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-[var(--primary-color)] has-[[aria-checked=true]]:bg-[var(--primary-bg)] dark:has-[[aria-checked=true]]:border-[var(--primary-light)] dark:has-[[aria-checked=true]]:bg-[var(--primary-dark)]">
@@ -273,9 +289,9 @@ function MedicalHistory() {
                     className="data-[state=checked]:border-[var(--primary-color)] data-[state=checked]:bg-[var(--primary-color)] data-[state=checked]:text-white dark:data-[state=checked]:border-[var(--primary-light)] dark:data-[state=checked]:bg-[var(--primary-light)] dark:data-[state=checked]:text-[var(--text-color)] cursor-pointer"
                 />
                 <div className="grid gap-1.5 font-normal">
-                    <p className="text-sm leading-none font-medium">Allow full medical history access</p>
+                    <p className="text-sm leading-none font-medium">{t("appointment.booking.allow.title")}</p>
                     <p className="text-muted-foreground text-sm">
-                        By selecting this option, you are allowing full access to your medical history for your doctor.
+                        {t("appointment.booking.allow.subtitle")}
                     </p>
                 </div>
             </Label>
