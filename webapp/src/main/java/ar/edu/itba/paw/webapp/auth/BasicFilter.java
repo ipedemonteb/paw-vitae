@@ -73,18 +73,16 @@ public class BasicFilter extends OncePerRequestFilter {
             Optional<? extends User> userByVerificationToken = userService.getByVerificationToken(potentialPasswordOrToken);
 
             if (userByVerificationToken.isPresent() && userByVerificationToken.get().getEmail().equals(email)) {
-                User user = userByVerificationToken.get();
-                userService.verifyValidationToken(potentialPasswordOrToken);
+                targetUser = userService.verifyValidationToken(potentialPasswordOrToken);
                 auth = createManualAuthentication(email, request);
-                targetUser = Optional.of(user);
 
             } else {
                 Optional<? extends User> userByResetToken = userService.getByResetToken(potentialPasswordOrToken);
                 if (userByResetToken.isPresent() && userByResetToken.get().getEmail().equals(email)) {
                     User user = userByResetToken.get();
+                    boolean isValid = userService.verifyRecoveryToken(potentialPasswordOrToken);
                     auth = createManualAuthentication(email, request);
-                    targetUser = Optional.of(user);
-
+                    targetUser = isValid ? Optional.of(user) : Optional.empty();
                 } else {
                     auth = authenticationManager.authenticate(
                             new UsernamePasswordAuthenticationToken(email, potentialPasswordOrToken)

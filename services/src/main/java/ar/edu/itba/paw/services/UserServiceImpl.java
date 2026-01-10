@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService {
                     setResetPasswordToken(patient.get().getEmail());
                     return Optional.empty();
                 }
-                return patient;
+                return Optional.empty();
             }
             if(isVerification){
                 setVerificationStatus(patient.get(), true);
@@ -198,7 +198,7 @@ public class UserServiceImpl implements UserService {
                     setResetPasswordToken(doctor.get().getEmail());
                     return Optional.empty();
                 }
-                return doctor;
+                return Optional.empty();
             }
             if(isVerification){
             setVerificationStatus(doctor.get(), true);

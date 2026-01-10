@@ -19,6 +19,7 @@ import AppointmentDetails from "@/pages/AppointmentDetails.tsx";
 import RecoverPassword from "@/pages/ResetPassword.tsx";
 import ChangePassword from "@/pages/ChangePassword.tsx";
 import Appointment from "@/pages/Appointment.tsx";
+import VerifyAccount from "@/pages/VerifiyAccount.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -91,6 +92,10 @@ export const router = createBrowserRouter([
             {
                 path:"change-password",
                 element:<ChangePassword/>
+            },
+            {
+              path:"verify",
+                element:<VerifyAccount/>
             },
             {
                 path: "doctor/dashboard",

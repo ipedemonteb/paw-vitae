@@ -158,7 +158,16 @@
     "passwords_match": "Las contraseñas coinciden",
     "error_generic": "Ocurrió un error al cambiar la contraseña. Inténtalo de nuevo.",
     "error_token_expired": "El token ha expirado o es inválido."
-
+  },
+  "verify": {
+    "loading_title": "Verificando cuenta...",
+    "loading_message": "Por favor espere mientras validamos su información.",
+    "success_title": "¡Cuenta Verificada!",
+    "success_message": "Tu cuenta ha sido confirmada exitosamente. Ya puedes acceder a todos nuestros servicios.",
+    "error_title": "Enlace inválido o expirado",
+    "error_message": "No pudimos verificar tu cuenta. El enlace puede haber expirado o ya fue utilizado. Si expiro te enviaremos un nuevo correo de verificación.",
+    "go_home": "Ir al Inicio",
+    "back_to_login": "Volver al inicio de sesión"
   },
   "register": {
     "title_register" : "Registrarse",

@@ -217,7 +217,16 @@
         "error_generic": "An error occurred while changing the password. Please try again.",
       "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
     }
-
+  },
+  "verify": {
+    "loading_title": "Verifying account...",
+    "loading_message": "Please wait while we validate your information.",
+    "success_title": "Account Verified!",
+    "success_message": "Your account has been successfully confirmed. You can now access all our services.",
+    "error_title": "Invalid or expired link",
+    "error_message": "We could not verify your account. The link may have expired or has already been used. if it is expired, we will send you a new verification email.",
+    "go_home": "Go to Home",
+    "back_to_login": "Back to Login"
   },
   "loading": "Loading...",
   "header": {
