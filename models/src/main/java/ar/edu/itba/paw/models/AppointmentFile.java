@@ -32,6 +32,12 @@ public class AppointmentFile {
         this.uploaderRole = uploaderRole;
         this.appointment = appointment;
     }
+    public AppointmentFile(long id, String fileName, String uploaderRole, Appointment appointment) {
+        this.id = id;
+        this.fileName = fileName;
+        this.uploaderRole = uploaderRole;
+        this.appointment = appointment;
+    }
 
     public long getId() {
         return id;
