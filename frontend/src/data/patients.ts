@@ -1,5 +1,5 @@
 import {api} from "@/data/Api.ts";
-import axios from "axios";
+import type { AxiosRequestConfig } from "axios";
 import { ContentTypes } from "@/utils/contentTypes.js";
 export type PatientDTO = {
     name: string;
@@ -14,7 +14,7 @@ export type PatientDTO = {
 }
 export type ChangePasswordForm = {
     password: string;
-    repeatedPassword: string;
+    repeatPassword: string;
 
 }
 
@@ -28,6 +28,6 @@ export async function changePatientPassword(url: string, form: ChangePasswordFor
         headers: {
            "content-type":  ContentTypes.USER_PASSWORD
         }
-    } as axios.AxiosRequestConfig);
+    } as AxiosRequestConfig);
     return res.data;
 }

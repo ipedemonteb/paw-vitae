@@ -112,7 +112,7 @@
     "button_signup": "Regístrate",
     "placeholder_email": "Correo Electrónico",
     "placeholder_password": "Contraseña",
-    "forgot_password": "Olvidé tu contraseña",
+    "forgot_password": "Olvidé mi contraseña",
     "remember_me" : "Recordarme",
     "no_account": "¿No tienes una cuenta?",
     "register_doctor" : "Regístrate aquí como Doctor",
@@ -155,7 +155,10 @@
     "error_mismatch": "Las contraseñas no coinciden",
     "success_title": "¡Contraseña Actualizada!",
     "success_message": "Tu contraseña ha sido cambiada exitosamente. Ahora puedes iniciar sesión con tus nuevas credenciales.",
-    "passwords_match": "Passwors match"
+    "passwords_match": "Las contraseñas coinciden",
+    "error_generic": "Ocurrió un error al cambiar la contraseña. Inténtalo de nuevo.",
+    "error_token_expired": "El token ha expirado o es inválido."
+
   },
   "register": {
     "title_register" : "Registrarse",
