@@ -151,12 +151,14 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
         const d = new Date(selectedDate);
         d.setHours(hh, mm, 0, 0);
 
-        const datePart = new Intl.DateTimeFormat(locale, {
+        let datePart = new Intl.DateTimeFormat(locale, {
             weekday: "long",
             year: "numeric",
             month: "long",
             day: "numeric",
         }).format(d);
+
+        datePart = datePart.charAt(0).toUpperCase() + datePart.slice(1);
 
         const timePart = new Intl.DateTimeFormat(locale, {
             hour: "2-digit",
