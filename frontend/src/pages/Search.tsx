@@ -10,6 +10,7 @@ import SearchGridCard from "@/components/SearchGridCard.tsx";
 import { Pagination, PaginationContent, PaginationItem,
     PaginationPrevious, PaginationLink, PaginationNext,
     PaginationEllipsis } from "@/components/ui/pagination.tsx";
+import {useTranslation} from "react-i18next";
 
 const container =
     "px-[24px] mx-auto max-w-6xl w-full";
@@ -39,14 +40,17 @@ const searchHero =
     "w-full bg-white rounded-full pr-6 pl-12 py-5 text-slate-900 placeholder:text-slate-400";
 
 function HeroSection() {
+    const { t } = useTranslation();
+
+    const specialty = "All Specialties"
+
     return (
         <div className={heroContainer}>
-            <h1 className={heroTitle}>Specialist Doctors</h1>
-            <p className={heroSubtitle}>Doctors specializing in: Endocrinology</p>
-
+            <h1 className={heroTitle}>{t("search.title")}</h1>
+            <p className={heroSubtitle}>{t("search.subtitle", { specialty: specialty })}</p>
             <div className={searchWrapper}>
                 <SearchIcon className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-                <Input type="search" placeholder="Search for doctors" className={searchHero} />
+                <Input type="search" placeholder={t("search.search")} className={searchHero} />
             </div>
         </div>
     );
@@ -75,23 +79,28 @@ const availabilityButton =
     "hover:border-[var(--primary-color)] data-[selected=true]:bg-[var(--primary-color)] data-[selected=true]:text-white " +
     "data-[selected=true]:border-[var(--primary-color)]";
 const availabilityButtonBase =
-    "h-10 px-4 rounded-md";
+    "h-10 px-4 rounded-md cursor-pointer";
 const applyButton =
     "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-dark)] " +
     "hover:border-[var(--primary-dark)] hover:text-white px-8 py-5 rounded-md font-[400] text-sm cursor-pointer";
 
 function FilterSection() {
-    const [selectedDays, setSelectedDays] = useState<Record<string, boolean>>({
-        Monday: false,
-        Tuesday: false,
-        Wednesday: false,
-        Thursday: false,
-        Friday: false,
-        Saturday: false,
-        Sunday: false,
+    const { t } = useTranslation();
+
+    const days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] as const;
+    type DayKey = typeof days[number];
+
+    const [selectedDays, setSelectedDays] = useState<Record<DayKey, boolean>>({
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
     });
 
-    const toggleDay = (day: keyof typeof selectedDays) => {
+    const toggleDay = (day: DayKey) => {
         setSelectedDays((prev) => ({ ...prev, [day]: !prev[day] }));
     };
 
@@ -101,21 +110,21 @@ function FilterSection() {
                 <div className={filterGroup}>
                     <div className={filterLabel}>
                         <Stethoscope className={iconSize} />
-                        <p>Specialty</p>
+                        <p>{t("search.specialty")}</p>
                     </div>
                     <SpecialtyCombobox className={filterCombo} />
                 </div>
                 <div className={filterGroup}>
                     <div className={filterLabel}>
                         <ShieldPlus className={iconSize} />
-                        <p>Coverages</p>
+                        <p>{t("search.coverage")}</p>
                     </div>
                     <CoverageCombobox className={filterCombo} />
                 </div>
                 <div className={filterGroup}>
                     <div className={filterLabel}>
                         <ChevronsUpDown className={iconSize} />
-                        <p>Sort by</p>
+                        <p>{t("search.sort")}</p>
                     </div>
                     <SpecialtyCombobox className={filterCombo} />
                 </div>
@@ -124,26 +133,26 @@ function FilterSection() {
             <div className={availabilityContainer}>
                 <div className={availabilityTitle}>
                     <Calendar className={iconSize} />
-                    <p>Availability</p>
+                    <p>{t("search.availability")}</p>
                 </div>
                 <div className={availabilityContent}>
                     <div className={availabilityButtons}>
-                        {Object.keys(selectedDays).map((day) => (
+                        {days.map((day) => (
                             <Button
                                 key={day}
                                 type="button"
                                 variant="outline"
                                 data-selected={selectedDays[day]}
                                 className={`${availabilityButtonBase} ${availabilityButton}`}
-                                onClick={() => toggleDay(day as keyof typeof selectedDays)}
+                                onClick={() => toggleDay(day)}
                             >
-                                {day}
+                                {t(`search.week.${day}`)}
                             </Button>
                         ))}
                     </div>
                     <Button className={applyButton}>
                         <Funnel className="" />
-                        Apply Filters
+                        {t("search.filters")}
                     </Button>
                 </div>
             </div>
@@ -163,12 +172,16 @@ const formatBtnInactive =
     "text-[var(--primary-color)] hover:bg-[var(--gray-100)] hover:text-[var(--primary-dark)]";
 
 function ResultSection() {
+    const { t } = useTranslation();
+
     const [view, setView] = useState<"list" | "grid">("list");
+
+    const found = 20;
 
     return (
         <div>
             <div className={resultHeader}>
-                <p className={resultText}>20 doctors found</p>
+                <p className={resultText}>{t("search.found", { doctorsFound: found })}</p>
                 <div>
                     <ButtonGroup orientation="horizontal">
                         <Button

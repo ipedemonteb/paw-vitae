@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
 import { RatingCard } from "@/components/Rating.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
+import {useTranslation} from "react-i18next";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
@@ -92,11 +93,13 @@ function ProfileCard({ rating, ratingCount, specialties, maxBadges }:{
     specialties: string[];
     maxBadges: number;
 }) {
+    const { t } = useTranslation();
+
     return (
         <Card className={card}>
             <div className={cardTitle}>
                 <Stethoscope className={titleIcon}></Stethoscope>
-                <h1 className={cardTitleText}>Doctor</h1>
+                <h1 className={cardTitleText}>{t("doctor.profile.doctor")}</h1>
             </div>
             <div className={profileContent}>
                 <Avatar className={avatarContainer}>
@@ -118,17 +121,17 @@ function ProfileCard({ rating, ratingCount, specialties, maxBadges }:{
                     <div className={ratingContent}>
                         <RatingStars rating={rating} sizeClassName="h-4 w-4" />
                         <p>{rating}</p>
-                        <p className={ratingText}>({ratingCount} reviews)</p>
+                        <p className={ratingText}>({ratingCount} {t("doctor.profile.card.rating")})</p>
                     </div>
                     <BadgeComponent specialties={specialties} maxBadges={maxBadges} />
                 </div>
                 <Button className={editButton}>
                     <SquarePen className="w-4 h-4" />
-                    Edit
+                    {t("doctor.profile.card.edit")}
                 </Button>
             </div>
             <div className={aboutContent}>
-                <h1 className={aboutTitle}>About</h1>
+                <h1 className={aboutTitle}>{t("doctor.profile.card.about")}</h1>
                 <p className={aboutText}>Soy traumatólogo en el Club Estudiantes de La Plata, con más de 40 años en el campo.</p>
             </div>
         </Card>
@@ -139,11 +142,13 @@ const cardContent =
     "flex flex-col items-center gap-3 px-6 py-6 sm:flex-row sm:flex-wrap sm:justify-center";
 
 function CoverageCard() {
+    const { t } = useTranslation();
+
     return (
         <Card className={card}>
             <div className={cardTitle}>
                 <ShieldPlus className={titleIcon}></ShieldPlus>
-                <h1 className={cardTitleText}>Coverage</h1>
+                <h1 className={cardTitleText}>{t("doctor.profile.coverages")}</h1>
             </div>
             <div className={cardContent}>
                 <CoverageComponent coverageImage="https://upload.wikimedia.org/wikipedia/commons/1/18/Logo_OSDE_2020.png" coverageName="OSDE" coveragePlan="310" />
@@ -180,11 +185,13 @@ function CoverageComponent({coverageImage, coverageName, coveragePlan}:{
 }
 
 function OfficesCard() {
+    const { t } = useTranslation();
+
     return (
         <Card className={card}>
             <div className={cardTitle}>
                 <Hospital className={titleIcon}></Hospital>
-                <h1 className={cardTitleText}>Offices</h1>
+                <h1 className={cardTitleText}>{t("doctor.profile.offices")}</h1>
             </div>
             <div className={cardContent}>
                 <OfficeComponent officeTitle="Main Office" officeLocation="La Plata" />
@@ -260,11 +267,13 @@ function ExperienceCard() {
         },
     ];
 
+    const { t } = useTranslation();
+
     return (
         <Card className={card}>
             <div className={cardTitle}>
                 <BriefcaseBusiness className={titleIcon}></BriefcaseBusiness>
-                <h1 className={cardTitleText}>Experience</h1>
+                <h1 className={cardTitleText}>{t("doctor.profile.experiences")}</h1>
             </div>
             <div className={experienceContent}>
                 {experiences.length === 0 ? (
@@ -346,11 +355,13 @@ const certificatesFadeBottom =
     "pointer-events-none absolute bottom-0 left-0 right-0 h-10 z-10 bg-linear-to-b from-transparent to-white";
 
 function CertificatesCard() {
+    const { t } = useTranslation();
+
     return (
         <Card className={card}>
             <div className={cardTitle}>
                 <FileBadge className={titleIcon}></FileBadge>
-                <h1 className={cardTitleText}>Certificates</h1>
+                <h1 className={cardTitleText}>{t("doctor.profile.certificates")}</h1>
             </div>
             <div className={certificatesScrollWrap}>
                 <ScrollArea className={certificatesScrollArea}>
@@ -442,11 +453,13 @@ function RatingsCard() {
         },
     ];
 
+    const { t } = useTranslation();
+
     return (
         <Card className={card}>
             <div className={cardTitle}>
                 <UserStar className={titleIcon}></UserStar>
-                <h1 className={cardTitleText}>Ratings</h1>
+                <h1 className={cardTitleText}>{t("doctor.profile.ratings")}</h1>
             </div>
             <div className={ratingsContent}>
                 <Carousel opts={{ align: "start", loop: true }} className={carousel}>
