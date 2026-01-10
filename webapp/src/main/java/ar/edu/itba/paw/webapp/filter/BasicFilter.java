@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.auth;
+package ar.edu.itba.paw.webapp.filter;
 
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.interfaceServices.UserService;

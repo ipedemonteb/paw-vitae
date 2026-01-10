@@ -1,7 +1,10 @@
-package ar.edu.itba.paw.webapp.auth;
+package ar.edu.itba.paw.webapp.filter;
 
 import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.auth.JwtDetails;
+import ar.edu.itba.paw.webapp.auth.JwtService;
+import ar.edu.itba.paw.webapp.auth.TokenResponseHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +15,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
