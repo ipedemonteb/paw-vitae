@@ -1,5 +1,12 @@
 import {api} from "@/data/Api.ts";
+import {ContentTypes} from "@/utils/contentTypes.js";
+import axios from "axios";
 
+
+export type ChangePasswordForm = {
+    password: string;
+    repeatedPassword: string;
+}
 export type DoctorDTO = {
     name: string;
     lastName: string;
@@ -41,5 +48,14 @@ export async function listDoctors(params: DoctorsQuery) {
             page: params.page ?? 1,
         }
     });
+    return res.data;
+}
+
+export async function changeDoctorPassword(url: string, form: ChangePasswordForm) {
+    const res = await api.patch(`${url}`,form,{
+        headers: {
+            "content-type":  ContentTypes.USER_PASSWORD
+        }
+    } as axios.AxiosRequestConfig);
     return res.data;
 }
