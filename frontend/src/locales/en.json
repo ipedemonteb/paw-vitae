@@ -379,5 +379,25 @@
         "about": "About"
       }
     }
+  },
+  "search": {
+    "title": "Specialist Doctors",
+    "subtitle": "Doctors specializing in: {{ specialty }}",
+    "search": "Search for doctors",
+    "specialty": "Specialty",
+    "coverage": "Coverage",
+    "sort": "Sort By",
+    "availability": "Availability",
+    "week": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "filters": "Apply Filters",
+    "found": "{{ doctorsFound }} doctors found"
   }
 }
