@@ -10,6 +10,7 @@ import {useAuth} from "@/hooks/useAuth";
 import {Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader} from "@/components/ui/dialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {useTranslation} from "react-i18next";
+import {useDoctor, useDoctorImageUrl} from "@/hooks/useDoctors.ts";
 
 type UserRole = "ANON" | "PATIENT" | "DOCTOR";
 
@@ -93,6 +94,23 @@ function Header() {
     const isLoggedIn = auth.isAuthenticated;
     const userRole = deriveUserRole(isLoggedIn, auth.role);
 
+    const { data: doctor } = useDoctor(auth.userId);
+    const { url: doctorImgUrl } = useDoctorImageUrl(auth.userId);
+    const displayName =
+        userRole === "DOCTOR"
+            ? doctor
+                ? `${doctor.name} ${doctor.lastName}`
+                : auth.email ?? ""
+            : auth.email ?? "";
+    const avatarFallbackText = (() => {
+        if (userRole === "DOCTOR" && doctor) {
+            const a = doctor.name?.trim()?.[0] ?? "";
+            const b = doctor.lastName?.trim()?.[0] ?? "";
+            return (a + b).toUpperCase() || "U";
+        }
+        return auth.email?.trim()?.[0]?.toUpperCase() ?? "U";
+    })();
+
     const navItems = useMemo(() => buildNavItems(userRole, t), [userRole, t]);
 
     const [sheetOpen, setSheetOpen] = useState(false);
@@ -151,6 +169,9 @@ function Header() {
                         userRole={userRole}
                         open={dropdownOpen}
                         onOpenChange={setDropdownOpen}
+                        displayName={displayName}
+                        avatarFallbackText={avatarFallbackText}
+                        doctorImgUrl={doctorImgUrl}
                     />
                 ) : (
                     <NotLoggedInComponent open={dropdownOpen} onOpenChange={setDropdownOpen} />
@@ -162,6 +183,9 @@ function Header() {
                     isLoggedIn={isLoggedIn}
                     userRole={userRole}
                     navItems={navItems}
+                    displayName={displayName}
+                    avatarFallbackText={avatarFallbackText}
+                    doctorImgUrl={doctorImgUrl}
                 />
             </div>
         </div>
@@ -185,13 +209,19 @@ function SheetComponent({
                             onOpenChange,
                             isLoggedIn,
                             userRole,
-                            navItems
+                            navItems,
+                            displayName,
+                            avatarFallbackText,
+                            doctorImgUrl
                         }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     isLoggedIn: boolean;
     userRole: UserRole;
     navItems: NavItem[];
+    displayName: string;
+    avatarFallbackText: string;
+    doctorImgUrl: string | null;
 }) {
     const { t } = useTranslation();
 
@@ -208,7 +238,12 @@ function SheetComponent({
                         </SheetNavLink>
                     ))}
                     <div className={mobileSectionTitle}>{t("header.account")}</div>
-                    {isLoggedIn ? <SheetLoggedInComponent userRole={userRole} /> : <SheetNotLoggedInComponent />}
+                    {isLoggedIn ? <SheetLoggedInComponent
+                        userRole={userRole}
+                        displayName={displayName}
+                        avatarFallbackText={avatarFallbackText}
+                        doctorImgUrl={doctorImgUrl}
+                    /> : <SheetNotLoggedInComponent />}
                 </nav>
             </SheetContent>
         </Sheet>
@@ -285,11 +320,17 @@ const dialogConfirm =
 function LoggedInComponent({
                                userRole,
                                open,
-                               onOpenChange
+                               onOpenChange,
+                               displayName,
+                               avatarFallbackText,
+                               doctorImgUrl
                            }: {
     userRole: UserRole;
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    displayName: string;
+    avatarFallbackText: string;
+    doctorImgUrl: string | null;
 }) {
     if (userRole === "ANON") return null;
 
@@ -310,10 +351,10 @@ function LoggedInComponent({
             <DropdownMenu open={open} onOpenChange={onOpenChange}>
                 <DropdownMenuTrigger className={loggedInContainer}>
                     <Avatar className={headerAvatar}>
-                        <AvatarImage src="https://picsum.photos/200" />
-                        <AvatarFallback>JD</AvatarFallback>
+                        <AvatarImage src={doctorImgUrl ?? undefined}/>
+                        <AvatarFallback>{avatarFallbackText}</AvatarFallback>
                     </Avatar>
-                    <p className={userName}>John Doe</p>
+                    <p className={userName}>{displayName}</p>
                     <ChevronDown className="h-4 w-4 text-[var(--text-color)]" />
                 </DropdownMenuTrigger>
 
@@ -438,7 +479,12 @@ const logoutHover =
     "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-0 after:bg-[var(--danger-dark)] " +
     "after:transition-[width] after:duration-300 hover:after:w-full";
 
-function SheetLoggedInComponent({ userRole }: { userRole: UserRole }) {
+function SheetLoggedInComponent({ userRole, displayName, avatarFallbackText, doctorImgUrl }: {
+    userRole: UserRole,
+    displayName: string,
+    avatarFallbackText: string,
+    doctorImgUrl: string | null,
+}) {
     const { t } = useTranslation();
     const auth = useAuth();
     const navigate = useNavigate();
@@ -454,10 +500,10 @@ function SheetLoggedInComponent({ userRole }: { userRole: UserRole }) {
         <div className={sheetContainer}>
             <div className={avatarContainer}>
                 <Avatar className={avatarSheetImage}>
-                    <AvatarImage src="https://picsum.photos/200" />
-                    <AvatarFallback>JD</AvatarFallback>
+                    <AvatarImage src={doctorImgUrl ?? undefined} />
+                    <AvatarFallback>{avatarFallbackText}</AvatarFallback>
                 </Avatar>
-                <p className={userNameSheet}>John Doe</p>
+                <p className={userNameSheet}>{displayName}</p>
             </div>
 
             {userRole === "DOCTOR" ? (

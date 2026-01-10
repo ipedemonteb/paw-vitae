@@ -59,3 +59,15 @@ export async function changeDoctorPassword(url: string, form: ChangePasswordForm
     } as AxiosRequestConfig);
     return res.data;
 }
+
+export async function getDoctor(id: string) {
+    const res = await api.get<DoctorDTO>(`/doctors/${id}`);
+    return res.data;
+}
+
+export async function getDoctorImage(id: string) {
+    const res = await api.get<Blob>(`/doctors/${id}/image`,
+        { responseType: "blob" }
+    );
+    return res.data;
+}
