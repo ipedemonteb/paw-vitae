@@ -193,6 +193,8 @@ function SheetComponent({
     userRole: UserRole;
     navItems: NavItem[];
 }) {
+    const { t } = useTranslation();
+
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetTrigger className={mobileTrigger} aria-label="Open menu">
@@ -205,7 +207,7 @@ function SheetComponent({
                             {item.label}
                         </SheetNavLink>
                     ))}
-                    <div className={mobileSectionTitle}>Account</div>
+                    <div className={mobileSectionTitle}>{t("header.account")}</div>
                     {isLoggedIn ? <SheetLoggedInComponent userRole={userRole} /> : <SheetNotLoggedInComponent />}
                 </nav>
             </SheetContent>

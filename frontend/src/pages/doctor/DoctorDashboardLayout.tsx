@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { Link, Outlet, useMatch } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
+import {useTranslation} from "react-i18next";
 
 const dashboardCointainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -27,6 +28,7 @@ const tabIconInactive =
     "text-[var(--text-light)] group-hover:text-[var(--primary-color)]";
 
 function DoctorDashboardLayout() {
+    const { t } = useTranslation();
 
     return (
         <div className={dashboardCointainer}>
@@ -34,19 +36,19 @@ function DoctorDashboardLayout() {
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>
                     <DashboardTab to="/doctor/dashboard/upcoming" end icon={Calendar}>
-                        Upcoming
+                        {t("doctor.dashboard.upcoming")}
                     </DashboardTab>
                     <DashboardTab to="/doctor/dashboard/history" icon={History}>
-                        History
+                        {t("doctor.dashboard.history")}
                     </DashboardTab>
                     <DashboardTab to="/doctor/dashboard/availability" icon={CalendarCheck}>
-                        Availability
+                        {t("doctor.dashboard.availability")}
                     </DashboardTab>
                     <DashboardTab to="/doctor/dashboard/offices" icon={HousePlus}>
-                        Offices
+                        {t("doctor.dashboard.offices")}
                     </DashboardTab>
                     <DashboardTab to="/doctor/dashboard/account" icon={User}>
-                        Account
+                        {t("doctor.dashboard.account")}
                     </DashboardTab>
                 </ButtonGroup>
             </Card>

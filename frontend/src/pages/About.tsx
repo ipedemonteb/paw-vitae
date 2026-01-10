@@ -11,6 +11,7 @@ import {
     Mail,
     Phone,
 } from "lucide-react";
+import {useTranslation} from "react-i18next";
 
 const heroSection =
     "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
@@ -44,13 +45,14 @@ const heroTitle =
 const heroSubtitle = "text-lg font-medium text-[var(--text-light)] mb-8";
 
 function HeroSection() {
+    const { t } = useTranslation();
+
     return (
         <div className={heroContainer}>
             <div className={heroContent}>
-                <h1 className={heroTitle}>Transforming Healthcare Access</h1>
+                <h1 className={heroTitle}>{t("about.hero.title")}</h1>
                 <p className={heroSubtitle}>
-                    Learn about our mission and the story behind Vitae - the unified medical
-                    platform created by ITBA students.
+                    {t("about.hero.subtitle")}
                 </p>
             </div>
         </div>
@@ -73,35 +75,20 @@ const storyParagraph =
     "text-[var(--text-light)]";
 
 function StorySection() {
+    const { t } = useTranslation();
+
     return (
         <div className={container}>
             <div className={sectionHeader}>
-                <span className={sectionTag}>Our Story</span>
-                <h1 className={sectionTitle}>The Journey of Vitae</h1>
-                <p className={sectionText}>
-                    How a group of ITBA students created a platform to revolutionize
-                    healthcare access.
-                </p>
+                <span className={sectionTag}>{t("about.story.tag")}</span>
+                <h1 className={sectionTitle}>{t("about.story.title")}</h1>
+                <p className={sectionText}>{t("about.story.subtitle")}</p>
             </div>
 
             <div className={storyDescription}>
-                <p className={storyParagraph}>
-                    Vitae was born in 2025 at the Instituto Tecnológico de Buenos Aires
-                    (ITBA) when a group of passionate engineering students identified a
-                    critical gap in healthcare accessibility in Latin America.
-                </p>
-                <p className={storyParagraph}>
-                    What started as a university project for the Programming of Web
-                    Applications (PAW) course quickly evolved into a comprehensive
-                    platform with a mission to connect patients with healthcare providers
-                    seamlessly and efficiently.
-                </p>
-                <p className={storyParagraph}>
-                    Our team of dedicated professionals works tirelessly to improve the
-                    platform and expand our services to reach more communities, driven by
-                    our commitment to innovation, accessibility, and quality healthcare
-                    for all.
-                </p>
+                <p className={storyParagraph}>{t("about.story.text.paragraph_1")}</p>
+                <p className={storyParagraph}>{t("about.story.text.paragraph_2")}</p>
+                <p className={storyParagraph}>{t("about.story.text.paragraph_3")}</p>
             </div>
         </div>
     );
@@ -120,14 +107,14 @@ const sectionCardTitle =
 const sectionCardText = "text-[var(--text-light)]";
 
 function VisionSection() {
+    const { t } = useTranslation();
+
     return (
         <div className={container}>
             <div className={sectionHeader}>
-                <span className={sectionTag}>Our Vision</span>
-                <h1 className={sectionTitle}>What Drives Us Forward</h1>
-                <p className={sectionText}>
-                    Our core mission and the values that guide our work every day.
-                </p>
+                <span className={sectionTag}>{t("about.vision.tag")}</span>
+                <h1 className={sectionTitle}>{t("about.vision.title")}</h1>
+                <p className={sectionText}>{t("about.vision.subtitle")}</p>
             </div>
 
             <div className={sectionCards}>
@@ -135,34 +122,24 @@ function VisionSection() {
                     <div className={sectionIcons}>
                         <PersonStandingIcon className={sectionPersonIcon} />
                     </div>
-                    <h3 className={sectionCardTitle}>Accessibility</h3>
-                    <p className={sectionCardText}>
-                        We believe healthcare should be accessible to everyone, regardless
-                        of location or socioeconomic status. Our platform breaks down
-                        barriers to quality medical care.
-                    </p>
+                    <h3 className={sectionCardTitle}>{t("about.vision.accessibility_card.title")}</h3>
+                    <p className={sectionCardText}>{t("about.vision.accessibility_card.text")}</p>
                 </Card>
 
                 <Card className={sectionCard}>
                     <div className={sectionIcons}>
                         <Award />
                     </div>
-                    <h3 className={sectionCardTitle}>Quality Care</h3>
-                    <p className={sectionCardText}>
-                        We are committed to connecting patients with verified, high-quality
-                        healthcare providers who deliver exceptional care and service.
-                    </p>
+                    <h3 className={sectionCardTitle}>{t("about.vision.quality_card.title")}</h3>
+                    <p className={sectionCardText}>{t("about.vision.quality_card.text")}</p>
                 </Card>
 
                 <Card className={sectionCard}>
                     <div className={sectionIcons}>
                         <Lightbulb />
                     </div>
-                    <h3 className={sectionCardTitle}>Innovation</h3>
-                    <p className={sectionCardText}>
-                        We constantly evolve our platform with cutting-edge technology to
-                        improve the healthcare experience for both patients and providers.
-                    </p>
+                    <h3 className={sectionCardTitle}>{t("about.vision.innovation_card.title")}</h3>
+                    <p className={sectionCardText}>{t("about.vision.innovation_card.text")}</p>
                 </Card>
             </div>
         </div>
@@ -177,59 +154,43 @@ const valuesHeart =
     "fill-[var(--primary-color)]";
 
 function ValuesSection() {
+    const { t } = useTranslation();
+
     return (
         <div className={container}>
             <div className={sectionHeader}>
-                <span className={sectionTag}>Our Values</span>
-                <h1 className={sectionTitle}>The Principles That Guide Us</h1>
-                <p className={sectionText}>
-                    Core values that shape our decisions and drive our mission forward
-                </p>
+                <span className={sectionTag}>{t("about.values.tag")}</span>
+                <h1 className={sectionTitle}>{t("about.values.title")}</h1>
+                <p className={sectionText}>{t("about.values.subtitle")}</p>
             </div>
-
             <div className={valuesCards}>
                 <Card className={valuesCard}>
                     <div className={sectionIcons}>
                         <Heart className={valuesHeart} />
                     </div>
-                    <h3 className={sectionCardTitle}>Patient-Centered Care</h3>
-                    <p className={sectionCardText}>
-                        We put patients first in everything we do, ensuring their needs,
-                        preferences, and experiences guide our platform development.
-                    </p>
+                    <h3 className={sectionCardTitle}>{t("about.values.patient_card.title")}</h3>
+                    <p className={sectionCardText}>{t("about.values.patient_card.text")}</p>
                 </Card>
-
                 <Card className={valuesCard}>
                     <div className={sectionIcons}>
                         <Shield />
                     </div>
-                    <h3 className={sectionCardTitle}>Trust & Security</h3>
-                    <p className={sectionCardText}>
-                        We maintain the highest standards of data security and privacy,
-                        earning the trust of both patients and healthcare providers.
-                    </p>
+                    <h3 className={sectionCardTitle}>{t("about.values.trust_card.title")}</h3>
+                    <p className={sectionCardText}>{t("about.values.trust_card.text")}</p>
                 </Card>
-
                 <Card className={valuesCard}>
                     <div className={sectionIcons}>
                         <UsersRound />
                     </div>
-                    <h3 className={sectionCardTitle}>Community Impact</h3>
-                    <p className={sectionCardText}>
-                        We strive to make a positive difference in communities by improving
-                        healthcare access and outcomes.
-                    </p>
+                    <h3 className={sectionCardTitle}>{t("about.values.community_card.title")}</h3>
+                    <p className={sectionCardText}>{t("about.values.community_card.text")}</p>
                 </Card>
-
                 <Card className={valuesCard}>
                     <div className={sectionIcons}>
                         <Rocket />
                     </div>
-                    <h3 className={sectionCardTitle}>Forward Thinking</h3>
-                    <p className={sectionCardText}>
-                        We embrace innovation and continuously seek new ways to improve
-                        healthcare delivery through technology.
-                    </p>
+                    <h3 className={sectionCardTitle}>{t("about.values.forward_card.title")}</h3>
+                    <p className={sectionCardText}>{t("about.values.forward_card.text")}</p>
                 </Card>
             </div>
         </div>
@@ -252,14 +213,14 @@ const contactMap =
     "w-full lg:flex-1 overflow-hidden rounded-3xl shadow-[var(--shadow-md)]";
 
 function ContactSection() {
+    const { t } = useTranslation();
+
     return (
         <div className={container}>
             <div className={sectionHeader}>
-                <span className={sectionTag}>Get in Touch</span>
-                <h1 className={sectionTitle}>Contact Us</h1>
-                <p className={sectionText}>
-                    Have questions or feedback? We'd love to hear from you.
-                </p>
+                <span className={sectionTag}>{t("about.contact.tag")}</span>
+                <h1 className={sectionTitle}>{t("about.contact.title")}</h1>
+                <p className={sectionText}>{t("about.contact.subtitle")}</p>
             </div>
             <div className={contactContainer}>
                 <div className={contactDetails}>
@@ -268,10 +229,8 @@ function ContactSection() {
                             <MapPin />
                         </div>
                         <div className="text-left">
-                            <h3 className={contactTitle}>Visit Us</h3>
-                            <p className={contactText}>
-                                Iguazú 341, C1437 Cdad. Autónoma de Buenos Aires
-                            </p>
+                            <h3 className={contactTitle}>{t("about.contact.visit_component.title")}</h3>
+                            <p className={contactText}>{t("about.contact.visit_component.info")}</p>
                         </div>
                     </div>
                     <div className={contactData}>
@@ -279,8 +238,8 @@ function ContactSection() {
                             <Mail />
                         </div>
                         <div className="text-left">
-                            <h3 className={contactTitle}>Email Us</h3>
-                            <p className={contactText}>vitaepaw@gmail.com</p>
+                            <h3 className={contactTitle}>{t("about.contact.email_component.title")}</h3>
+                            <p className={contactText}>{t("about.contact.email_component.info")}</p>
                         </div>
                     </div>
                     <div className={contactData}>
@@ -288,8 +247,8 @@ function ContactSection() {
                             <Phone />
                         </div>
                         <div className="text-left">
-                            <h3 className={contactTitle}>Call Us</h3>
-                            <p className={contactText}>+54 9 11 6892-1516</p>
+                            <h3 className={contactTitle}>{t("about.contact.call_component.title")}</h3>
+                            <p className={contactText}>{t("about.contact.call_component.info")}</p>
                         </div>
                     </div>
                 </div>

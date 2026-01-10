@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card.tsx";
 import { RatingCard } from "@/components/Rating.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
 import { Link } from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 // TODO: internacionalizacion
 
@@ -47,7 +48,7 @@ const searchBar =
 const heroInput =
     "flex-1 h-12 border-0 rounded-none px-4 text-[var(--text-light)] shadow-none focus-visible:ring-0 hover:bg-[var(--gray-100)]";
 const heroCombo =
-    "h-12 border-0 rounded-none px-4 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
+    "h-12 border-0 min-w-58 rounded-none px-4 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
 const heroButton =
     "h-12 rounded-none px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)] cursor-pointer";
 const heroStats =
@@ -62,33 +63,35 @@ const heroSpace =
     "flex-1 flex justify-end relative";
 
 function HeroSection() {
+    const { t } = useTranslation();
+
     return (
         <div className={heroContainer}>
             <div className={heroContent}>
                 <h1 className={heroTitle}>
-                    Find the Right Doctor for Your Health Needs
+                    {t("landing.hero.title")}
                 </h1>
                 <p className={heroSubtitle}>
-                    Connect with verified healthcare professionals and book appointments online in minutes.
+                    {t("landing.hero.subtitle")}
                 </p>
                 <div className={heroSearch}>
                     <div className={searchBar}>
-                        <Input placeholder="Search by doctor name" className={heroInput} type="search"/>
+                        <Input placeholder={t("landing.hero.search_placeholder")} className={heroInput} type="search"/>
                         <SpecialtyCombobox className={heroCombo}></SpecialtyCombobox>
                         <Button className={heroButton}>
                             <Search className="h-5 w-5"/>
-                            Search
+                            {t("landing.hero.search")}
                         </Button>
                     </div>
                 </div>
                 <div className={heroStats}>
                     <div className={statsItem}>
                         <span className={statsNumber}>268</span>
-                        <span className={statsLabel}>Doctors</span>
+                        <span className={statsLabel}>{t("landing.hero.doctors")}</span>
                     </div>
                     <div className={statsItem}>
                         <span className={statsNumber}>1000</span>
-                        <span className={statsLabel}>Patients</span>
+                        <span className={statsLabel}>{t("landing.hero.patients")}</span>
                     </div>
                 </div>
             </div>
@@ -121,17 +124,19 @@ const sectionCardText =
     "text-[var(--text-light)]";
 
 function MissionSection() {
+    const { t } = useTranslation();
+
     return (
         <div className={container}>
             <div className={sectionHeader}>
                 <span className={sectionTag}>
-                    Mission
+                    {t("landing.mission.tag")}
                 </span>
                 <h1 className={sectionTitle}>
-                    Our Mission
+                    {t("landing.mission.title")}
                 </h1>
                 <p className={sectionText}>
-                    We're committed to making healthcare accessible, transparent, and efficient for everyone.
+                    {t("landing.mission.subtitle")}
                 </p>
             </div>
             <div className={sectionCards}>
@@ -139,18 +144,18 @@ function MissionSection() {
                     <div className={sectionIcons}>
                         <PersonStandingIcon className={sectionPersonIcon}/>
                     </div>
-                    <h3 className={sectionCardTitle}>Accessible Healthcare</h3>
+                    <h3 className={sectionCardTitle}>{t("landing.mission.accessible_card.title")}</h3>
                     <p className={sectionCardText}>
-                        We believe everyone deserves easy access to quality healthcare services without barriers.
+                        {t("landing.mission.accessible_card.subtitle")}
                     </p>
                 </Card>
                 <Card className={sectionCard}>
                     <div className={sectionIcons}>
                         <Lightbulb />
                     </div>
-                    <h3 className={sectionCardTitle}>Innovative Solutions</h3>
+                    <h3 className={sectionCardTitle}>{t("landing.mission.innovative_card.title")}</h3>
                     <p className={sectionCardText}>
-                        We leverage technology to create seamless experiences for patients and healthcare providers.
+                        {t("landing.mission.innovative_card.subtitle")}
                     </p>
                 </Card>
             </div>
@@ -180,17 +185,19 @@ const startButton =
     "mt-16 p-6.5 text-base font-medium bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 function ProcessSection() {
+    const { t } = useTranslation();
+
     return (
         <div className={container}>
             <div className={sectionHeader}>
                 <span className={sectionTag}>
-                    Process
+                    {t("landing.process.tag")}
                 </span>
                 <h1 className={sectionTitle}>
-                    How Vitae Works
+                    {t("landing.process.title")}
                 </h1>
                 <p className={sectionText}>
-                    Finding and booking appointments with healthcare professionals has never been easier.
+                    {t("landing.process.subtitle")}
                 </p>
             </div>
             <div className={stepsSection}>
@@ -201,8 +208,8 @@ function ProcessSection() {
                             <Search />
                         </div>
                         <div className={stepDescription}>
-                            <h3 className={stepTitle}>Search for Specialists</h3>
-                            <p className={stepText}>Find the right healthcare professional by specialty, location, or availability.</p>
+                            <h3 className={stepTitle}>{t("landing.process.first_step.title")}</h3>
+                            <p className={stepText}>{t("landing.process.first_step.subtitle")}</p>
                         </div>
                     </Card>
                 </div>
@@ -213,8 +220,8 @@ function ProcessSection() {
                             <CalendarDays />
                         </div>
                         <div className={stepDescription}>
-                            <h3 className={stepTitle}>Book an Appointment</h3>
-                            <p className={stepText}>Select a convenient time slot and book your appointment in just a few clicks.</p>
+                            <h3 className={stepTitle}>{t("landing.process.second_step.title")}</h3>
+                            <p className={stepText}>{t("landing.process.second_step.subtitle")}</p>
                         </div>
                     </Card>
                 </div>
@@ -225,15 +232,15 @@ function ProcessSection() {
                             <ShieldPlus />
                         </div>
                         <div className={stepDescription}>
-                            <h3 className={stepTitle}>Visit Your Doctor</h3>
-                            <p className={stepText}>Attend your appointment and receive the care you need from qualified professionals.</p>
+                            <h3 className={stepTitle}>{t("landing.process.third_step.title")}</h3>
+                            <p className={stepText}>{t("landing.process.third_step.subtitle")}</p>
                         </div>
                     </Card>
                 </div>
             </div>
             <Button className={startButton}>
-                <Link to="/login">
-                    Get Started Now
+                <Link to="/search">
+                    {t("landing.process.start")}
                 </Link>
             </Button>
         </div>
@@ -241,17 +248,19 @@ function ProcessSection() {
 }
 
 function FeaturesSection() {
+    const { t } = useTranslation();
+
     return (
         <div className={container}>
             <div className={sectionHeader}>
                 <span className={sectionTag}>
-                    Benefits
+                    {t("landing.benefits.tag")}
                 </span>
                 <h1 className={sectionTitle}>
-                    Why Choose Vitae
+                    {t("landing.benefits.title")}
                 </h1>
                 <p className={sectionText}>
-                    Our platform offers unique benefits for patients seeking quality healthcare.
+                    {t("landing.benefits.subtitle")}
                 </p>
             </div>
             <div className={sectionCards}>
@@ -259,18 +268,18 @@ function FeaturesSection() {
                     <div className={sectionIcons}>
                         <ShieldCheck />
                     </div>
-                    <h3 className={sectionCardTitle}>Secure & Private</h3>
+                    <h3 className={sectionCardTitle}>{t("landing.benefits.secure_card.title")}</h3>
                     <p className={sectionCardText}>
-                        Your personal and medical information is protected with advanced security.
+                        {t("landing.benefits.secure_card.subtitle")}
                     </p>
                 </Card>
                 <Card className={sectionCard}>
                     <div className={sectionIcons}>
                         <Pointer />
                     </div>
-                    <h3 className={sectionCardTitle}>Easy to Use</h3>
+                    <h3 className={sectionCardTitle}>{t("landing.benefits.easy_card.title")}</h3>
                     <p className={sectionCardText}>
-                        Our intuitive interface makes finding and booking appointments simple.
+                        {t("landing.benefits.easy_card.subtitle")}
                     </p>
                 </Card>
             </div>
@@ -312,17 +321,19 @@ const carouselItem =
     "pl-4 basis-full";
 
 function RatingsSection() {
+    const { t } = useTranslation();
+
     return (
         <div className={container}>
             <div className={sectionHeader}>
                 <span className={sectionTag}>
-                    Ratings
+                    {t("landing.ratings.tag")}
                 </span>
                 <h1 className={sectionTitle}>
-                    Doctor Ratings
+                    {t("landing.ratings.title")}
                 </h1>
                 <p className={sectionText}>
-                    See what our patients say about our doctors.
+                    {t("landing.ratings.subtitle")}
                 </p>
             </div>
             <div className={ratingsContainer}>
