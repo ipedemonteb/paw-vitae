@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useSearchParams } from "react-router-dom"
 import { CheckCircle2, XCircle, Loader2, Home, ArrowLeft } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/useAuth"
 
