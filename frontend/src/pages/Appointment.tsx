@@ -1,7 +1,10 @@
+import { useMemo, useState, useEffect } from "react";
 import { Card } from "@/components/ui/card.tsx"
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
-import { Stethoscope, Hospital } from "lucide-react";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
+import { Stethoscope, Hospital, CalendarDays } from "lucide-react";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
+import { DatePicker } from "@/components/ui/date-picker.tsx";
+import { Button } from "@/components/ui/button.tsx";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -16,21 +19,65 @@ const appointmentTitle =
     "font-bold text-4xl text-center text-[var(--text-color)]";
 const appointmentContent =
     "flex flex-col px-8 gap-4";
+const selectorTitle =
+    "text-[var(--text-color)] text-md font-[500]";
 const selectorsContainer =
     "flex flex-col md:flex-row gap-6";
 const selectorCard =
-    "flex flex-row w-full gap-0";
+    "flex flex-row items-center w-full gap-0";
 const iconContainer =
-    "bg-[var(--primary-bg)] rounded-full p-5 text-[var(--primary-color)] mx-5";
+    "flex items-center bg-[var(--primary-bg)] rounded-full p-5 text-[var(--primary-color)] mx-5";
 const icon =
-    "w-8 h-8"
+    "w-8 h-8";
 const selectorContent =
-    "flex flex-col gap-1"
+    "flex flex-col gap-1 min-w-56";
 const selectorButton =
-    "cursor-pointer"
+    "cursor-pointer";
+const dateCard =
+    "flex flex-col";
+const dateContainer =
+    "flex flex-col md:items-center md:flex-row gap-5 md:gap-0";
+const dateUpperContainer =
+    "flex flex-row items-center";
+const availableTimes =
+    "flex flex-wrap items-center px-5 gap-2";
+const timeButton =
+    "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-white cursor-pointer " +
+    "data-[selected=true]:bg-[var(--primary-color)] data-[selected=true]:text-white data-[selected=true]:border-[var(--primary-color)]";
 
 function Appointment() {
     const selectedSpecialty = "General";
+
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+    const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!selectedDate) setSelectedTime(null);
+    }, [selectedDate]);
+
+    const locale = useMemo(() => (typeof navigator === "undefined" ? "en-US" : navigator.language || "en-US"), []);
+
+    const formattedConfirmation = useMemo(() => {
+        if (!selectedDate || !selectedTime) return null;
+
+        const [hh, mm] = selectedTime.split(":").map(Number);
+        const d = new Date(selectedDate);
+        d.setHours(hh, mm, 0, 0);
+
+        const datePart = new Intl.DateTimeFormat(locale, {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        }).format(d);
+
+        const timePart = new Intl.DateTimeFormat(locale, {
+            hour: "2-digit",
+            minute: "2-digit",
+        }).format(d);
+
+        return `${datePart} at ${timePart}`;
+    }, [selectedDate, selectedTime, locale]);
 
     return (
         <div className={appointmentBackground}>
@@ -48,7 +95,7 @@ function Appointment() {
                                     <Stethoscope className={icon}/>
                                 </div>
                                 <div className={selectorContent}>
-                                    <p>Selected Specialty:</p>
+                                    <p className={selectorTitle}>Select Specialty</p>
                                     <Select>
                                         <SelectTrigger className={selectorButton}>
                                             <SelectValue placeholder={selectedSpecialty}/>
@@ -69,7 +116,7 @@ function Appointment() {
                                     <Hospital className={icon}/>
                                 </div>
                                 <div className={selectorContent}>
-                                    <p>Selected Office:</p>
+                                    <p className={selectorTitle}>Select Office</p>
                                     <Select>
                                         <SelectTrigger className={selectorButton}>
                                             <SelectValue placeholder="Select Office"/>
@@ -86,11 +133,59 @@ function Appointment() {
                                 </div>
                             </Card>
                         </div>
+                        <Card className={dateCard}>
+                            <div className={dateContainer}>
+                                <div className={dateUpperContainer}>
+                                    <div className={iconContainer}>
+                                        <CalendarDays className={icon}/>
+                                    </div>
+                                    <div className={selectorContent}>
+                                        <p className={selectorTitle}>Date and Time</p>
+                                        <DatePicker value={selectedDate} onChange={setSelectedDate} />
+                                    </div>
+                                </div>
+                                {selectedDate ? (
+                                    <div className={availableTimes}>
+                                        {[
+                                            "10:00","11:00","12:00","13:00","14:00","15:00","16:00",
+                                            "17:00","18:00","19:00","20:00"
+                                        ].map((t) => (
+                                            <Button
+                                                key={t}
+                                                className={timeButton}
+                                                data-selected={selectedTime === t}
+                                                onClick={() => setSelectedTime((prev) => (prev === t ? null : t))}
+                                            >
+                                                {t}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                ) : null}
+                            </div>
+
+                            {formattedConfirmation ? <Confirmation text={formattedConfirmation} /> : null}
+                        </Card>
                     </div>
                 </Card>
             </div>
         </div>
     )
+}
+
+const confirmation =
+    "mx-6 py-2 px-5 bg-[var(--success-light)] rounded-lg border border-[var(--success)]";
+const confirmationTitle =
+    "text-[var(--text-color)] text-md font-[500]";
+const confirmationText =
+    "text-[var(--text-color)] text-sm font-[300]";
+
+function Confirmation({ text }: { text: string }) {
+    return (
+        <div className={confirmation}>
+            <h3 className={confirmationTitle}>Your Appointment</h3>
+            <p className={confirmationText}>{text}</p>
+        </div>
+    );
 }
 
 export default Appointment;
