@@ -213,7 +213,9 @@
         "req_number": "At least one number",
       "error_mismatch": "Passwords do not match",
       "success_title": "Password Updated!",
-      "success_message": "Your password has been changed successfully. You can now login with your new credentials."
+      "success_message": "Your password has been changed successfully. You can now login with your new credentials.",
+        "error_generic": "An error occurred while changing the password. Please try again.",
+      "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
     }
 
   },

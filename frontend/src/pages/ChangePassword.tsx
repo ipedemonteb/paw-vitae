@@ -1,10 +1,21 @@
 import { useState, useEffect, type FormEvent } from "react"
 import { useTranslation } from "react-i18next"
-import { Link } from "react-router-dom"
-import { Lock, CheckCircle2, ArrowLeft, Check, X } from "lucide-react"
+import {Link, useSearchParams} from "react-router-dom"
+import {Lock, CheckCircle2, ArrowLeft, Check, X, AlertCircle} from "lucide-react"
 import { PasswordInput } from "@/components/ui/passwordInput"
 import { Button } from "@/components/ui/button"
+import {changePatientPassword} from "@/data/patients.ts";
+import { useAuth } from "@/hooks/useAuth"
+import { changeDoctorPassword } from "@/data/doctors"
+import { getAccessToken } from "@/context/auth-store"
 
+function parseJwt(token: string) {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+        return null;
+    }
+}
 
 
 const pageContainer =
@@ -50,16 +61,31 @@ const strengthBarFill = "h-full transition-all duration-500 ease-out";
 
 export default function ChangePassword() {
     const { t } = useTranslation()
+    const [searchParams] = useSearchParams()
+
+    const { login, logout } = useAuth()
+
+    const token = searchParams.get("token")
+    const email = searchParams.get("email")
 
     const [password, setPassword] = useState("")
     const [repeatPassword, setRepeatPassword] = useState("")
+
     const [isSubmitted, setIsSubmitted] = useState(false)
+    const [ isLoading,setIsLoading] = useState(false)
+    const [apiError, setApiError] = useState<string | null>(null)
 
     const [strength, setStrength] = useState(0)
     const [hasMinLength, setHasMinLength] = useState(false)
     const [hasUppercase, setHasUppercase] = useState(false)
     const [hasNumber, setHasNumber] = useState(false)
     const [passwordsMatch, setPasswordsMatch] = useState(false)
+
+    useEffect(() => {
+        if (!token || !email) {
+            setApiError(t("change_password.error_invalid_link") || "Enlace inválido o expirado.");
+        }
+    }, [token, email, t]);
 
     useEffect(() => {
         let score = 0;
@@ -85,13 +111,58 @@ export default function ChangePassword() {
     };
 
     const strengthStyle = getStrengthStyles();
-    const isFormValid = hasMinLength && hasUppercase && hasNumber && passwordsMatch;
-
-    const handleSubmit = (e: FormEvent) => {
+    const isFormValid = hasMinLength && hasUppercase && hasNumber && passwordsMatch && !apiError;
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (!isFormValid) return;
-        console.log("Password changed");
-        setIsSubmitted(true);
+        if (!isFormValid || !token || !email) return;
+
+        setIsLoading(true);
+        setApiError(null);
+
+        try {
+            const loginResult = await login(email, token);
+
+            if (!loginResult.success) {
+                console.log(loginResult.errorMessage);
+                throw new Error(t("change_password.error_token_expired") || "Enlace expirado.");
+            }
+
+            const accessToken = getAccessToken();
+            const claims = parseJwt(accessToken || "");
+
+            if (!claims || !claims.role || !claims.userId) {
+                throw new Error("No se pudo verificar la identidad del usuario.");
+            }
+
+            const userId = claims.userId;
+            const userRole = claims.role;
+
+            const formPayload = {
+                password: password,
+                repeatPassword: repeatPassword
+            };
+
+            const roleUpper = String(userRole).toUpperCase();
+
+            if (roleUpper.includes('DOCTOR')) {
+                await changeDoctorPassword(`/doctors/${userId}`, formPayload);
+            }
+            else if (roleUpper.includes('PATIENT')) {
+                await changePatientPassword(`/patients/${userId}/`, formPayload);
+            }
+            else {
+                throw new Error("Rol de usuario desconocido.");
+            }
+
+            setIsSubmitted(true);
+            logout();
+
+        } catch (error: any) {
+            setApiError(error.message || t("change_password.error_generic") || "Error al cambiar la contraseña.");
+            logout();
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     if (isSubmitted) {
@@ -137,7 +208,12 @@ export default function ChangePassword() {
                 </div>
 
                 <form className={formContainer} onSubmit={handleSubmit} noValidate>
-
+                    {apiError && (
+                        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md flex items-center gap-2 text-sm">
+                            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                            <span>{apiError}</span>
+                        </div>
+                    )}
                     <div className={inputGroup}>
                         <PasswordInput
                             id="new-password"

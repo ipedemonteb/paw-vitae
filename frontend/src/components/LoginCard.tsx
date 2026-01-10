@@ -103,9 +103,9 @@ function LoginCard() {
                         <input type="checkbox" className={checkboxStyles} />
                         <span>{t('login.remember_me')}</span>
                     </label>
-                    <a href="#" className={forgotLinkStyles}>
+                    <Link to="/recover-password" className={forgotLinkStyles}>
                         {t('login.forgot_password')}
-                    </a>
+                    </Link>
                 </div>
                 {error && <div className="text-red-500 text-sm">{error}</div>}
                 <Button type="submit" className={submitButtonStyles} disabled={isLoading}>
