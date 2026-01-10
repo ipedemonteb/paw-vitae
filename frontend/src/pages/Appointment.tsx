@@ -5,6 +5,10 @@ import { Stethoscope, Hospital, CalendarDays } from "lucide-react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import { DatePicker } from "@/components/ui/date-picker.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import {Textarea} from "@/components/ui/textarea.tsx";
+import {UploadFiles} from "@/components/UploadFiles.tsx";
+import {Label} from "@/components/ui/label.tsx";
+import {Checkbox} from "@/components/ui/checkbox.tsx";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -13,7 +17,7 @@ const cardContainer =
 const appointmentContainer =
     "p-0 pb-8";
 const appointmentHeader =
-    "flex flex-col items-center py-8 rounded-t-lg gap-3 " +
+    "flex flex-col items-center py-8 rounded-t-xl gap-3 " +
     "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]"
 const appointmentTitle =
     "font-bold text-4xl text-center text-[var(--text-color)]";
@@ -34,6 +38,12 @@ const availableTimes =
 const timeButton =
     "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-white cursor-pointer " +
     "data-[selected=true]:bg-[var(--primary-color)] data-[selected=true]:text-white data-[selected=true]:border-[var(--primary-color)]";
+const optionalsContainer =
+    "flex flex-col gap-8 mt-4";
+const bookContainer =
+    "flex flex-col items-center w-full";
+const bookButton =
+    "mt-6 py-4 w-xs bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 function Appointment() {
     const selectedSpecialty = "General";
@@ -61,6 +71,16 @@ function Appointment() {
                             selectedTime={selectedTime}
                             setSelectedTime={setSelectedTime}
                         />
+                        <div className={optionalsContainer}>
+                            <ReasonInput />
+                            <FilesUpload />
+                            <MedicalHistory />
+                        </div>
+                        <div className={bookContainer}>
+                            <Button className={bookButton}>
+                                Book Appointment
+                            </Button>
+                        </div>
                     </div>
                 </Card>
             </div>
@@ -215,6 +235,50 @@ function Confirmation({ text }: { text: string }) {
         <div className={confirmation}>
             <h3 className={confirmationTitle}>Your Appointment</h3>
             <p className={confirmationText}>{text}</p>
+        </div>
+    );
+}
+
+const reasonCard =
+    "flex flex-col gap-2";
+
+function ReasonInput() {
+    return (
+        <div className={reasonCard}>
+            <h3 className={selectorTitle}>Reason for Visit (Optional)</h3>
+            <Textarea placeholder="Enter reason for your visit."/>
+        </div>
+    );
+}
+
+function FilesUpload() {
+    return (
+        <div>
+            <h3 className={selectorTitle + " mb-2"}>Upload files for your appointment (Optional)</h3>
+            <UploadFiles />
+        </div>
+    );
+}
+
+const medicalCointainer =
+    "flex flex-col";
+
+function MedicalHistory() {
+    return (
+        <div className={medicalCointainer}>
+            <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-[var(--primary-color)] has-[[aria-checked=true]]:bg-[var(--primary-bg)] dark:has-[[aria-checked=true]]:border-[var(--primary-light)] dark:has-[[aria-checked=true]]:bg-[var(--primary-dark)]">
+                <Checkbox
+                    id="toggle-2"
+                    defaultChecked
+                    className="data-[state=checked]:border-[var(--primary-color)] data-[state=checked]:bg-[var(--primary-color)] data-[state=checked]:text-white dark:data-[state=checked]:border-[var(--primary-light)] dark:data-[state=checked]:bg-[var(--primary-light)] dark:data-[state=checked]:text-[var(--text-color)] cursor-pointer"
+                />
+                <div className="grid gap-1.5 font-normal">
+                    <p className="text-sm leading-none font-medium">Allow full medical history access</p>
+                    <p className="text-muted-foreground text-sm">
+                        By selecting this option, you are allowing full access to your medical history for your doctor.
+                    </p>
+                </div>
+            </Label>
         </div>
     );
 }
