@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
-import ar.edu.itba.paw.webapp.auth.BasicFilter;
+import ar.edu.itba.paw.webapp.filter.BasicFilter;
 import ar.edu.itba.paw.webapp.auth.JwtService;
-import ar.edu.itba.paw.webapp.auth.JwtTokenFilter;
+import ar.edu.itba.paw.webapp.filter.JwtTokenFilter;
 import ar.edu.itba.paw.webapp.handler.AuthEntryPointHandler;
 import ar.edu.itba.paw.webapp.handler.CustomAuthenticationSuccessHandler;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static ar.edu.itba.paw.webapp.auth.AuthUtils.HEADER_ACCESS_TOKEN;
 import static ar.edu.itba.paw.webapp.auth.AuthUtils.HEADER_REFRESH_TOKEN;
