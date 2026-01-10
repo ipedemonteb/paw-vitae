@@ -18,6 +18,7 @@ import PublicProfile from "@/pages/PublicProfile.tsx";
 import AppointmentDetails from "@/pages/AppointmentDetails.tsx";
 import RecoverPassword from "@/pages/ResetPassword.tsx";
 import ChangePassword from "@/pages/ChangePassword.tsx";
+import Appointment from "@/pages/Appointment.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -52,6 +53,10 @@ export const router = createBrowserRouter([
                 //TODO: change this path, its for development only
                 path: "appointment-details",
                 element: <AppointmentDetails/>
+            },
+            {
+                path: "appointment",
+                element: <Appointment />
             },
             {
                 path: "patient/dashboard",
