@@ -239,7 +239,7 @@ function ProcessSection() {
                 </div>
             </div>
             <Button className={startButton}>
-                <Link to="/login">
+                <Link to="/search">
                     {t("landing.process.start")}
                 </Link>
             </Button>

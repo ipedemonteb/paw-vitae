@@ -379,5 +379,25 @@
         "about": "Sobre Mí"
       }
     }
+  },
+  "search": {
+    "title": "Médicos Especialistas",
+    "subtitle": "Médicos de la especialidad: {{ specialty }}",
+    "search": "Buscar Doctores",
+    "specialty": "Especialidad",
+    "coverage": "Cobertura",
+    "sort": "Ordenar Por",
+    "availability": "Disponibilidad",
+    "week": {
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado",
+      "sunday": "Domingo"
+    },
+    "filters": "Aplicar Filtros",
+    "found": "{{ doctorsFound }} doctores encontrados"
   }
 }
