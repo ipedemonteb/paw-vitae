@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.*;
+import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.FileUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
 import java.util.List;
@@ -175,7 +177,8 @@ public class RestDoctorController {
     @Produces({"image/png", "image/jpeg", "image/jpg"})
     public Response getImage(@PathParam("id") final long id) {
         final Images image = doctorService.getDoctorImage(id).orElseThrow(NotFoundException::new);
-        return Response.ok(image.getImage()).build();
+        ResponseBuilder response =  Response.ok(image.getImage());
+        return CacheUtils.unconditionalCache(response, CacheUtils.IMAGE_MAX_AGE).build();
     }
 
     @POST
