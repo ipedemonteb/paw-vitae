@@ -31,7 +31,7 @@ const formContainer =
     "mt-8 space-y-6";
 
 const inputGroup =
-    "space-y-4"; // Más aire entre grupos
+    "space-y-4";
 
 const inputStyle =
     "text-base";
