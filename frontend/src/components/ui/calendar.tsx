@@ -12,6 +12,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
+import { enUS, es } from "date-fns/locale";
 
 function Calendar({
   className,
@@ -26,9 +27,14 @@ function Calendar({
   buttonVariant?: React.ComponentProps<typeof Button>["variant"]
 }) {
   const defaultClassNames = getDefaultClassNames()
+  const browserLang =
+        typeof navigator === "undefined" ? "en" : (navigator.language || "en").toLowerCase();
+
+  const locale = browserLang.startsWith("es") ? es : enUS;
 
   return (
     <DayPicker
+      locale={locale}
       showOutsideDays={showOutsideDays}
       className={cn(
         "bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
@@ -39,7 +45,7 @@ function Calendar({
       captionLayout={captionLayout}
       formatters={{
         formatMonthDropdown: (date) =>
-          date.toLocaleString("default", { month: "short" }),
+          date.toLocaleString(browserLang, { month: "short" }),
         ...formatters,
       }}
       classNames={{
