@@ -10,18 +10,21 @@ export function useDoctors(query: DoctorsQuery) {
     })
 }
 
-export function useDoctor(id?: string) {
+export function useDoctor(userId?: string | null, options?: { enabled?: boolean }) {
     return useQuery({
-        queryKey: ["doctor", id],
-        queryFn: () => getDoctor(id!),
-        enabled: !!id,
+        queryKey: ["doctor", userId],
+        queryFn: () => getDoctor(userId!),
+        enabled: !!userId && (options?.enabled ?? true),
     });
 }
 
 const isNumericId = (id?: string) => !!id && /^\d+$/.test(id);
 
-export function useDoctorImageUrl(id?: string) {
-    const enabled = useMemo(() => isNumericId(id), [id]);
+export function useDoctorImageUrl(id?: string | null, options?: { enabled?: boolean }) {
+    const enabled = useMemo(
+        () => isNumericId(id ?? undefined) && (options?.enabled ?? true),
+        [id, options?.enabled]
+    );
 
     const query = useQuery({
         queryKey: ["auth", "doctor", id, "image"],

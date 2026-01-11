@@ -93,9 +93,11 @@ function Header() {
 
     const isLoggedIn = auth.isAuthenticated;
     const userRole = deriveUserRole(isLoggedIn, auth.role);
+    const shouldFetchDoctor = isLoggedIn && userRole === "DOCTOR" && !!auth.userId;
+    const { data: doctor } = useDoctor(auth.userId, { enabled: shouldFetchDoctor });
+    const { url: getDoctorImgUrl } = useDoctorImageUrl(auth.userId, { enabled: shouldFetchDoctor });
+    const doctorImgUrl = shouldFetchDoctor ? getDoctorImgUrl : null;
 
-    const { data: doctor } = useDoctor(auth.userId);
-    const { url: doctorImgUrl } = useDoctorImageUrl(auth.userId);
     const displayName =
         userRole === "DOCTOR"
             ? doctor
