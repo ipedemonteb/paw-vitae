@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class HomeDTO implements Serializable {
 
-
+    private String usersUrl;
     private String doctorsUrl;
     private String patientsUrl;
     private String appointmentsUrl;
@@ -53,7 +53,7 @@ public class HomeDTO implements Serializable {
     public static HomeDTO fromUriInfo(final UriInfo uriInfo) {
         final HomeDTO dto = new HomeDTO();
         final String baseUri = uriInfo.getBaseUri().toString();
-
+        dto.usersUrl = baseUri + "users";
         dto.doctorsUrl = baseUri + "doctors{?specialty,coverage,weekdays,keyword,orderBy,direction,page}";
 
         dto.appointmentsUrl = baseUri + "appointments{?userId,collection,filter,page,pageSize}";
@@ -82,8 +82,6 @@ public class HomeDTO implements Serializable {
         dto.doctorOfficeSpecialtiesUrl = baseUri + "doctors/{doctorId}/offices/{officeId}/specialties";
 
         dto.appointmentByIdUrl = baseUri + "appointments/{id}";
-        dto.appointmentReportUrl = baseUri + "appointments/{id}/report";
-
         dto.appointmentFilesUrl = baseUri + "appointments/{id}/files";
         dto.appointmentFileByIdUrl = baseUri + "appointments/{appointmentId}/files/{fileId}";
         dto.appointmentFileViewUrl = baseUri + "appointments/{appointmentId}/files/{fileId}/view";
@@ -95,6 +93,14 @@ public class HomeDTO implements Serializable {
         dto.ratingByIdUrl = baseUri + "ratings/{id}";
 
         return dto;
+    }
+
+    public String getUsersUrl() {
+        return usersUrl;
+    }
+
+    public void setUsersUrl(String usersUrl) {
+        this.usersUrl = usersUrl;
     }
 
     public String getDoctorsUrl() { return doctorsUrl; }

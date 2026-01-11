@@ -3,11 +3,11 @@ package ar.edu.itba.paw.persistence.hibernate;
 import ar.edu.itba.paw.interfacePersistence.AppointmentFileDao;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentFile;
-import ar.edu.itba.paw.models.Page;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -20,15 +20,8 @@ public class AppointmentFileDaoHibeImpl implements AppointmentFileDao {
     @Override
     public AppointmentFile create(String fileName, byte[] fileData, String uploader_role, Appointment appointment) {
         final AppointmentFile appointmentFile = new AppointmentFile(fileName, fileData, uploader_role, appointment);
-           em.persist(appointmentFile);
+        em.persist(appointmentFile);
         return appointmentFile;
-    }
-
-    @Override
-    public List<AppointmentFile> getByAppointmentIdForDoctor(long appointment_id) {
-        return em.createQuery("FROM AppointmentFile af WHERE af.appointment.id = :appointment_id AND af.uploaderRole = 'doctor'", AppointmentFile.class)
-                .setParameter("appointment_id", appointment_id)
-                .getResultList();
     }
 
     @Override
@@ -38,19 +31,33 @@ public class AppointmentFileDaoHibeImpl implements AppointmentFileDao {
 
     @Override
     public List<AppointmentFile> getByAppointmentId(long appointment_id) {
-        return em.createQuery("FROM AppointmentFile af WHERE af.appointment.id = :appointment_id", AppointmentFile.class)
-                .setParameter("appointment_id", appointment_id)
-                .getResultList();
+        final TypedQuery<AppointmentFile> query = em.createQuery(
+                "SELECT new AppointmentFile(af.id, af.fileName, af.uploaderRole, af.appointment) " +
+                        "FROM AppointmentFile af WHERE af.appointment.id = :appointment_id", AppointmentFile.class);
+        query.setParameter("appointment_id", appointment_id);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<AppointmentFile> getByAppointmentIdForDoctor(long appointment_id) {
+        final TypedQuery<AppointmentFile> query = em.createQuery(
+                "SELECT new AppointmentFile(af.id, af.fileName, af.uploaderRole, af.appointment) " +
+                        "FROM AppointmentFile af WHERE af.appointment.id = :appointment_id AND af.uploaderRole = 'doctor'", AppointmentFile.class);
+        query.setParameter("appointment_id", appointment_id);
+        return query.getResultList();
     }
 
     @Override
     public List<AppointmentFile> getAllFilesForPatient(long patientId, int pageNumber, int pageSize) {
         int firstResult = (pageNumber - 1) * pageSize;
-        return em.createQuery("FROM AppointmentFile af WHERE af.appointment.patient.id = :patientId", AppointmentFile.class)
-                .setParameter("patientId", patientId)
-                .setFirstResult(firstResult)
-                .setMaxResults(pageSize)
-                .getResultList();
+        final TypedQuery<AppointmentFile> query = em.createQuery(
+                "SELECT new AppointmentFile(af.id, af.fileName, af.uploaderRole, af.appointment) " +
+                        "FROM AppointmentFile af WHERE af.appointment.patient.id = :patientId", AppointmentFile.class);
+
+        query.setParameter("patientId", patientId);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
     }
 
     @Override
@@ -58,9 +65,12 @@ public class AppointmentFileDaoHibeImpl implements AppointmentFileDao {
         if (appointmentIds.isEmpty()) {
             return Collections.emptyList();
         }
-        return em.createQuery("FROM AppointmentFile af WHERE af.appointment.id IN :appointmentIds", AppointmentFile.class)
-                .setParameter("appointmentIds", appointmentIds)
-                .getResultList();
+        final TypedQuery<AppointmentFile> query = em.createQuery(
+                "SELECT new AppointmentFile(af.id, af.fileName, af.uploaderRole, af.appointment) " +
+                        "FROM AppointmentFile af WHERE af.appointment.id IN :appointmentIds", AppointmentFile.class);
+
+        query.setParameter("appointmentIds", appointmentIds);
+        return query.getResultList();
     }
 
     @Override
@@ -69,6 +79,4 @@ public class AppointmentFileDaoHibeImpl implements AppointmentFileDao {
                 .setParameter("patientId", patientId)
                 .getSingleResult()).intValue();
     }
-
-
 }

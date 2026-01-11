@@ -1,5 +1,6 @@
-import {listDoctors, type DoctorsQuery} from "@/data/doctors";
+import {listDoctors, type DoctorsQuery, getDoctor, getDoctorImage} from "@/data/doctors";
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
+import {useEffect, useState, useMemo} from "react";
 
 export function useDoctors(query: DoctorsQuery) {
     return useQuery({
@@ -9,9 +10,40 @@ export function useDoctors(query: DoctorsQuery) {
     })
 }
 
+export function useDoctor(userId?: string | null, options?: { enabled?: boolean }) {
+    return useQuery({
+        queryKey: ["doctor", userId],
+        queryFn: () => getDoctor(userId!),
+        enabled: !!userId && (options?.enabled ?? true),
+    });
+}
 
-// export function useDoctorMutation
+const isNumericId = (id?: string) => !!id && /^\d+$/.test(id);
 
+export function useDoctorImageUrl(id?: string | null, options?: { enabled?: boolean }) {
+    const enabled = useMemo(
+        () => isNumericId(id ?? undefined) && (options?.enabled ?? true),
+        [id, options?.enabled]
+    );
 
+    const query = useQuery({
+        queryKey: ["auth", "doctor", id, "image"],
+        queryFn: () => getDoctorImage(id!),
+        enabled,
+        staleTime: 5 * 60_000,
+    });
 
+    const [url, setUrl] = useState<string | null>(null);
 
+    useEffect(() => {
+        if (!query.data) {
+            setUrl(null);
+            return;
+        }
+        const objectUrl = URL.createObjectURL(query.data);
+        setUrl(objectUrl);
+        return () => URL.revokeObjectURL(objectUrl);
+    }, [query.data]);
+
+    return { ...query, url };
+}

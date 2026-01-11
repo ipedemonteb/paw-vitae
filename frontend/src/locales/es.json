@@ -18,6 +18,24 @@
     "ginecologia": "Ginecología",
     "traumatologia": "Traumatología"
   },
+  "combobox": {
+    "specialty": {
+      "select": "Seleccionar Especialidad...",
+      "search": "Buscar Especialidad..."
+    }
+  },
+  "files": {
+    "title": "Arrastrar y soltar archivos aquí",
+    "subtitle": "Solamente archivos PDF · Hasta {{maxFiles}} archivos · Máximo {{maxSize}} cada uno.",
+    "no-files": "No hay archivos seleccionados.",
+    "selected": "Archivos seleccionados ",
+    "clear": "Eliminar todos",
+    "error": {
+      "many": "Demasiados archivos. Máximo {{maxFiles}}.",
+      "type": "Tipo de archivo inválido. Solamente se permiten archivos PDF.",
+      "size": "Algunos archivos son demasiado grandes. Máximo {{maxSize}}."
+    }
+  },
   "appointment": {
     "status": {
       "confirmado": "Confirmado",
@@ -43,6 +61,40 @@
         "upcoming": "No tienes citas próximas programadas. Tus futuras citas aparecerán aquí",
         "past": "Tus citas pasadas aparecerán aquí una vez que hayas completado algunas"
       }
+    },
+    "details": {
+      "title": "Detalles del Turno",
+      "subtitle": "Ver y gestionar la información de la cita",
+      "status": "Estado",
+      "date": "Fecha",
+      "specialty": "Especialidad",
+      "office": "Consultorio",
+      "reason": "Razón de la Visita (Opcional)",
+      "patient-files": "Archivos del Paciente",
+      "post-visit": "Información Post-Visita",
+      "no-upload": "Todavía no se subieron archivos.",
+      "rating": "Calificación",
+      "upload": "Subir archivos para la cita.",
+      "submit": "Enviar"
+    },
+    "booking": {
+      "header": {
+        "title": "Reservar un Turno",
+        "subtitle": "Complete el formulario a continuación para programar su turno  "
+      },
+      "specialty": "Seleccionar Especialidad",
+      "office": "Seleccionar Consultorio",
+      "date": "Fecha y Hora",
+      "select-date": "Seleccione una Fecha",
+      "your-appointment": "Tu Turno",
+      "reason": "Motivo de la Visita (Opcional)",
+      "enter-reason": "Ingrese el motivo de su visita.",
+      "upload": "Suba sus archivos para el turno (Opcional)",
+      "allow": {
+        "title": "Permitir acceso completo al historial médico",
+        "subtitle": "Al seleccionar esta opción, se habilita el acceso completo de su médico a su historial médico."
+      },
+      "book": "Reservar Turno"
     }
   },
   "login": {
@@ -60,7 +112,7 @@
     "button_signup": "Regístrate",
     "placeholder_email": "Correo Electrónico",
     "placeholder_password": "Contraseña",
-    "forgot_password": "Olvidé tu contraseña",
+    "forgot_password": "Olvidé mi contraseña",
     "remember_me" : "Recordarme",
     "no_account": "¿No tienes una cuenta?",
     "register_doctor" : "Regístrate aquí como Doctor",
@@ -72,6 +124,72 @@
     "error_generic": "Ocurrió un error al iniciar sesión",
     "aria_email": "Correo electrónico",
     "aria_password": "Contraseña"
+  },
+  "recover": {
+    "title": "Recuperar contraseña",
+    "subtitle": "Ingresá tu correo electrónico y te enviaremos un token de recuperación",
+    "placeholder_email": "Correo electrónico",
+    "button_send": "Enviar",
+    "back_to_login": "Volver al inicio de sesión",
+    "error_required": "El correo electrónico es obligatorio",
+    "error_invalid": "Por favor ingrese un formato de correo válido",
+    "error_generic": "Ocurrió un error al procesar la solicitud. Inténtalo de nuevo.",
+    "success_title": "¡Revisa tu correo!",
+    "success_message": "Hemos enviado un enlace de restablecimiento a {{email}}."
+  },
+  "change_password": {
+    "title": "Cambiar Contraseña",
+    "subtitle": "Por favor ingresa una contraseña nueva y segura",
+    "new_password": "Nueva Contraseña",
+    "confirm_password": "Confirmar Contraseña",
+    "submit": "Cambiar Contraseña",
+    "back_to_login": "Volver al inicio de sesión",
+    "strength": {
+      "weak": "Débil",
+      "medium": "Media",
+      "strong": "Fuerte"
+    },
+    "req_length": "Mínimo 8 caracteres",
+    "req_uppercase": "Al menos una letra mayúscula",
+    "req_number": "Al menos un número",
+    "error_mismatch": "Las contraseñas no coinciden",
+    "success_title": "¡Contraseña Actualizada!",
+    "success_message": "Tu contraseña ha sido cambiada exitosamente. Ahora puedes iniciar sesión con tus nuevas credenciales.",
+    "passwords_match": "Las contraseñas coinciden",
+    "error_generic": "Ocurrió un error al cambiar la contraseña. Inténtalo de nuevo.",
+    "error_token_expired": "El token ha expirado o es inválido."
+  },
+  "common": {
+    "go_back": "Volver atrás",
+    "return_home": "Ir al Inicio"
+  },
+  "error": {
+    "403": {
+      "title": "Acceso Denegado",
+      "message": "Lo sentimos, no tienes permisos para acceder a esta página. Verifica que hayas iniciado sesión con la cuenta correcta."
+    },
+    "404": {
+      "title": "Página no encontrada",
+      "message": "La página que buscas no existe, ha sido movida o el enlace es incorrecto. Por favor verifica la URL."
+    },
+    "500": {
+      "title": "Error del Servidor",
+      "message": "Ocurrió un problema inesperado de nuestro lado. Nuestro equipo técnico ha sido notificado. Por favor intenta nuevamente más tarde."
+    },
+    "default": {
+      "title": "Ocurrió un error",
+      "message": "Ha ocurrido un error inesperado. Por favor intenta nuevamente."
+    }
+  },
+  "verify": {
+    "loading_title": "Verificando cuenta...",
+    "loading_message": "Por favor espere mientras validamos su información.",
+    "success_title": "¡Cuenta Verificada!",
+    "success_message": "Tu cuenta ha sido confirmada exitosamente. Ya puedes acceder a todos nuestros servicios.",
+    "error_title": "Enlace inválido o expirado",
+    "error_message": "No pudimos verificar tu cuenta. El enlace puede haber expirado o ya fue utilizado. Si expiro te enviaremos un nuevo correo de verificación.",
+    "go_home": "Ir al Inicio",
+    "back_to_login": "Volver al inicio de sesión"
   },
   "register": {
     "title_register" : "Registrarse",
@@ -123,6 +241,7 @@
     "loader_coverages": "Cargando obras sociales...",
     "loader_neighborhoods": "Cargando barrios...",
     "no_neighborhoods": "No se encontraron barrios",
+
     "errors": {
       "passwords_mismatch": "Las contraseñas no coinciden",
       "password_requirements": "La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.",
@@ -132,5 +251,206 @@
       "missing_fields": "Por favor complete todos los campos obligatorios antes de continuar."
     }
   },
-  "Loading": "Cargando..."
+  "Loading": "Cargando...",
+  "header": {
+    "home": "Inicio",
+    "search": "Buscar Doctores",
+    "about": "Sobre Nosotros",
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "account": "Account",
+    "doctor": {
+      "dashboard": "Panel de Doctor",
+      "profile": "Mi Perfil Público"
+    },
+    "patient": {
+      "dashboard": "Panel"
+    },
+    "logout": {
+      "title": "Confirmar Cierre de Sesión",
+      "text": "¿Estás seguro de que deseas cerrar sesión en tu cuenta?\n\n",
+      "cancel": "Cancelar",
+      "confirm": "Cerrar Sesión"
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Encuentra el Médico Adecuado para Tu Salud",
+      "subtitle": "Conéctate con profesionales de la salud verificados y reserva citas en línea en minutos.",
+      "search_placeholder": "Buscar por nombre de médico",
+      "search": "Buscar",
+      "doctors": "Doctores",
+      "patients": "Pacientes"
+    },
+    "mission": {
+      "tag": "Misión",
+      "title": "Nuestra Misión",
+      "subtitle": "Estamos comprometidos a hacer que la atención médica sea accesible, transparente y eficiente para todos.",
+      "accessible_card": {
+        "title": "Salud Accesible",
+        "subtitle": "Creemos que todos merecen acceso fácil a servicios de salud de calidad sin barreras."
+      },
+      "innovative_card": {
+        "title": "Soluciones Innovadoras",
+        "subtitle": "Aprovechamos la tecnología para crear experiencias fluidas para pacientes y proveedores de atención médica."
+      }
+    },
+    "process": {
+      "tag": "Proceso",
+      "title": "Como Funciona Vitae",
+      "subtitle": "Encontrar y reservar citas con profesionales de la salud nunca ha sido tan fácil.",
+      "first_step": {
+        "title": "Busca Especialistas",
+        "subtitle": "Encuentra al profesional de la salud adecuado por especialidad, ubicación o disponibilidad."
+      },
+      "second_step": {
+        "title": "Reserva una Cita",
+        "subtitle": "Selecciona un horario conveniente y reserva tu cita con solo unos clicks."
+      },
+      "third_step": {
+        "title": "Visita a Tu Médico",
+        "subtitle": "Asiste a tu cita y recibe la atención que necesitas de profesionales calificados."
+      },
+      "start": "Comenzar Ahora"
+    },
+    "benefits": {
+      "tag": "Beneficios",
+      "title": "Por Qué Elegir Vitae",
+      "subtitle": "Nuestra plataforma ofrece beneficios únicos para pacientes que buscan atención médica de calidad.",
+      "secure_card": {
+        "title": "Seguro y Privado",
+        "subtitle": "Tu información personal y médica está protegida con seguridad avanzada."
+      },
+      "easy_card": {
+        "title": "Fácil de Usar",
+        "subtitle": "Nuestra interfaz intuitiva hace que encontrar y reservar citas sea simple."
+      }
+    },
+    "ratings": {
+      "tag": "Calificaciones",
+      "title": "Calificaciones de Doctores",
+      "subtitle": "Vea lo que nuestros pacientes dicen sobre nuestros doctores."
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Transformando el Acceso a la Salud",
+      "subtitle": "Conoce nuestra misión y la historia detrás de Vitae - la plataforma médica unificada creada por estudiantes del ITBA."
+    },
+    "story": {
+      "tag": "Historia",
+      "title": "El Viaje de Vitae",
+      "subtitle": "Cómo un grupo de estudiantes del ITBA creó una plataforma para revolucionar el acceso a la salud.",
+      "text": {
+        "paragraph_1": "Vitae nació en 2025 en el Instituto Tecnológico de Buenos Aires (ITBA) cuando un grupo de estudiantes de ingeniería apasionados identificó una brecha crítica en la accesibilidad a la salud en América Latina.",
+        "paragraph_2": "Lo que comenzó como un proyecto universitario para el curso de Programación de Aplicaciones Web (PAW) rápidamente evolucionó a una plataforma integral con la misión de conectar pacientes con proveedores de salud de manera fluida y eficiente.",
+        "paragraph_3": "Nuestro equipo de profesionales dedicados trabaja incansablemente para mejorar la plataforma y expandir nuestros servicios para llegar a más comunidades, impulsados por nuestro compromiso con la innovación, la accesibilidad y la atención médica de calidad para todos."
+      }
+    },
+    "vision": {
+      "tag": "Visión",
+      "title": "Lo Que Nos Impulsa",
+      "subtitle": "Nuestra misión central y los valores que guían nuestro trabajo cada día.",
+      "accessibility_card": {
+        "title": "Accesibilidad",
+        "text": "Creemos que la atención médica debe ser accesible para todos, independientemente de su ubicación o situación socioeconómica. Nuestra plataforma elimina las barreras a la atención médica de calidad."
+      },
+      "quality_card": {
+        "title": "Atención de Calidad",
+        "text": "Estamos comprometidos a conectar pacientes con proveedores de salud verificados y de alta calidad que brindan atención y servicio excepcionales."
+      },
+      "innovation_card": {
+        "title": "Innovación",
+        "text": "Evolucionamos constantemente nuestra plataforma con tecnología de vanguardia para mejorar la experiencia de salud tanto para pacientes como para proveedores."
+      }
+    },
+    "values": {
+      "tag": "Valores",
+      "title": "Los Principios Que Nos Guían",
+      "subtitle": "Valores fundamentales que dan forma a nuestras decisiones e impulsan nuestra misión.",
+      "patient_card": {
+        "title": "Foco en el Paciente",
+        "text": "Ponemos a los pacientes en primer lugar en todo lo que hacemos, asegurando que sus necesidades, preferencias y experiencias guíen el desarrollo de nuestra plataforma."
+      },
+      "trust_card": {
+        "title": "Confianza y Seguridad",
+        "text": "Mantenemos los más altos estándares de seguridad y privacidad de datos, ganando la confianza tanto de pacientes como de proveedores de salud."
+      },
+      "community_card": {
+        "title": "Impacto Comunitario",
+        "text": "Nos esforzamos por hacer una diferencia positiva en las comunidades mejorando el acceso y los resultados de la atención médica."
+      },
+      "forward_card": {
+        "title": "Pensamiento a Futuro",
+        "text": "Abrazamos la innovación y buscamos continuamente nuevas formas de mejorar la prestación de servicios de salud a través de la tecnología."
+      }
+    },
+    "contact": {
+      "tag": "Contacto",
+      "title": "Ponte en Contacto",
+      "subtitle": "¿Tienes preguntas o comentarios? Nos encantaría saber de ti.",
+      "visit_component": {
+        "title": "Visítanos",
+        "info": "Iguazú 341, C1437 Cdad. Autónoma de Buenos Aires"
+      },
+      "email_component": {
+        "title": "Escríbenos",
+        "info": "vitaepaw@gmail.com"
+      },
+      "call_component": {
+        "title": "Llámanos",
+        "info": "+54 9 11 6892-1516"
+      }
+    }
+  },
+  "patient": {
+    "dashboard": {
+      "upcoming": "Próximo",
+      "history": "Historial",
+      "medical-history": "Historial Médico",
+      "account": "Cuenta"
+    }
+  },
+  "doctor": {
+    "dashboard": {
+      "upcoming": "Próximo",
+      "history": "Historial",
+      "availability": "Disponibilidad",
+      "offices": "Consultorios",
+      "account": "Cuenta"
+    },
+    "profile": {
+      "doctor": "Doctor",
+      "coverages": "Coberturas",
+      "offices": "Oficinas",
+      "experiences": "Experiencia",
+      "certificates": "Certificados",
+      "ratings": "Calificaciones",
+      "card": {
+        "rating": "calificaciones",
+        "edit": "Editar",
+        "about": "Sobre Mí"
+      }
+    }
+  },
+  "search": {
+    "title": "Médicos Especialistas",
+    "subtitle": "Médicos de la especialidad: {{ specialty }}",
+    "search": "Buscar Doctores",
+    "specialty": "Especialidad",
+    "coverage": "Cobertura",
+    "sort": "Ordenar Por",
+    "availability": "Disponibilidad",
+    "week": {
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado",
+      "sunday": "Domingo"
+    },
+    "filters": "Aplicar Filtros",
+    "found": "{{ doctorsFound }} doctores encontrados"
+  }
 }

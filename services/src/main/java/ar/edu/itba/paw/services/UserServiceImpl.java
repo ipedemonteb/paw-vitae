@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
         LOGGER.debug("Setting verification token for email: {}", email);
         User user = getByEmail(email).orElseThrow(UserNotFoundException::new);
         String token = UUID.randomUUID().toString();
-        String verificationLink = BASE_URL + "/verify-confirmation?token=" + token;
+        String verificationLink = BASE_URL + "/verify-confirmation?token=" + token + "&email=" + email;
         mailService.sendVerificationRegisterEmail(user, verificationLink);
         user.setVerificationToken(token);
         user.setTokenExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusDays(30));
@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
         String token = UUID.randomUUID().toString();
-        String resetPasswordLink = BASE_URL + "/change-password?token=" + token;
+        String resetPasswordLink = BASE_URL + "/change-password?token=" + token + "&email=" + email;
         user.setResetPasswordToken(token);
         user.setTokenExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusHours(1));
         mailService.sendRecoverPasswordEmail(user, resetPasswordLink);
@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService {
                     setResetPasswordToken(patient.get().getEmail());
                     return Optional.empty();
                 }
-                return patient;
+                return Optional.empty();
             }
             if(isVerification){
                 setVerificationStatus(patient.get(), true);
@@ -198,7 +198,7 @@ public class UserServiceImpl implements UserService {
                     setResetPasswordToken(doctor.get().getEmail());
                     return Optional.empty();
                 }
-                return doctor;
+                return Optional.empty();
             }
             if(isVerification){
             setVerificationStatus(doctor.get(), true);

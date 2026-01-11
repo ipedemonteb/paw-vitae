@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.models.AppointmentFile;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.AppointmentFileDTO;
+import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Context;
 import java.net.URI;
@@ -59,10 +61,10 @@ public class RestAppointmentFileController {
 
         AppointmentFile file = getAuthorizedFile(appointmentId, fileId);
 
-        return Response.ok(file.getFileData())
+        ResponseBuilder response = Response.ok(file.getFileData())
                 .type(MediaType.APPLICATION_OCTET_STREAM) //TODO remove
-                .header("Content-Disposition", "attachment; filename=\"" + file.getFileName() + "\"")
-                .build();
+                .header("Content-Disposition", "attachment; filename=\"" + file.getFileName() + "\"");
+        return CacheUtils.unconditionalCache(response, CacheUtils.FILE_MAX_AGE).build();
     }
 
     @GET
@@ -75,10 +77,11 @@ public class RestAppointmentFileController {
 
         AppointmentFile file = getAuthorizedFile(appointmentId, fileId);
 
-        return Response.ok(file.getFileData())
+        ResponseBuilder response = Response.ok(file.getFileData())
                 .type("application/pdf") //TODO remove
-                .header("Content-Disposition", "inline; filename=\"" + file.getFileName() + "\"")
-                .build();
+                .header("Content-Disposition", "inline; filename=\"" + file.getFileName() + "\"");
+
+        return CacheUtils.unconditionalCache(response, CacheUtils.FILE_MAX_AGE).build();
     }
 
     private AppointmentFile getAuthorizedFile(long appointmentId, long fileId) {
