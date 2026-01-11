@@ -1,4 +1,5 @@
 import {api} from "@/data/Api.ts";
+import type {PaginationData} from "@/lib/types.ts";
 
 export type AppointmentDTO = {
     date: Date;
@@ -27,9 +28,24 @@ export type AppointmentsQuery = {
     pageSize?: number;
 }
 
+type Links = Partial<Record<"first" | "last" | "self" | "prev" | "next", string>>;
 
-export async function listAppointments(params: AppointmentsQuery) {
-    if (!params.userId) return []; //TODO
+function parseLinkHeader(header?: string): Links {
+    if (!header) return {};
+    const links: Links = {};
+
+    for (const part of header.split(",")) {
+        const section = part.split(";").map(s => s.trim());
+        const url = section[0]?.replace(/^<|>$/g, "");
+        const rel = section.find(s => s.startsWith("rel="))?.split("=")[1]?.replace(/"/g, "");
+
+        if (url && rel) (links as any)[rel] = url;
+    }
+    return links;
+}
+
+
+export async function listAppointments(params: AppointmentsQuery): Promise<PaginationData<AppointmentDTO[]>> {
     const res = await api.get<AppointmentDTO[]>("/appointments", {
         params: {
             userId: params.userId,
@@ -40,5 +56,17 @@ export async function listAppointments(params: AppointmentsQuery) {
             pageSize: params.pageSize
         }
     })
-    return res.data;
+    const total = Number(res.headers["x-total-count"]);
+    const links = parseLinkHeader(res.headers["link"]);
+    return {
+        data: res.data,
+        pagination: {
+            next: links.next,
+            prev: links.prev,
+            first: links.first,
+            last: links.last,
+            self: links.self,
+            total: total
+        }
+    };
 }
