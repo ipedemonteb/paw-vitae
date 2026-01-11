@@ -13,6 +13,7 @@ public final class UriUtils {
     public final static String SPECIALTIES = API_BASE_URL + "specialties";
     public final static String COVERAGES = API_BASE_URL + "coverages";
     public final static String NEIGHBORHOODS = API_BASE_URL + "neighborhoods";
+    public final static String USERS = API_BASE_URL + "users";
     public final static String DOCTOR_OFFICES = DOCTORS + "/{id}/offices";
     public final static String DOCTOR_AVAILABILITY = DOCTORS + "/{id}/availability";
     public final static String DOCTOR_UNAVAILABILITY = DOCTORS + "/{id}/unavailability";

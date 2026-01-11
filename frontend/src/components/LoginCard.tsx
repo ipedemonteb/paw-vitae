@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import {getClaims} from "@/context/auth-store.ts";
 
 const cardContainer = "flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full md:w-1/2 rounded-xl";
 const headerSection = "text-center space-y-2 mb-8";
@@ -32,12 +33,12 @@ function LoginCard() {
     const [showPassword, setShowPassword] = useState(false);
     const auth = useAuth();
     const navigate = useNavigate();
-
+    const location = useLocation();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-
+    const from = (location.state as { from: string } )?.from || null;
     const { t } = useTranslation();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -47,7 +48,21 @@ function LoginCard() {
         setError("");
 
         const res = await auth.login(email, password);
-        if (res.success) navigate("/")
+        if (res.success) {
+            if (from) {
+                navigate(from, { replace: true });
+            } else {
+                const claims = getClaims();
+                const role = claims?.role?.toUpperCase();
+                if (role === 'ROLE_DOCTOR') {
+                    navigate("/doctor/dashboard/upcoming", { replace: true });
+                } else if (role === 'ROLE_PATIENT') {
+                    navigate("/patient/dashboard/upcoming", { replace: true });
+                } else {
+                    navigate("/", { replace: true });
+                }
+            }
+        }
         else if (res.errorMessage) setError(t(res.errorMessage));
 
         setIsLoading(false);
@@ -103,9 +118,9 @@ function LoginCard() {
                         <input type="checkbox" className={checkboxStyles} />
                         <span>{t('login.remember_me')}</span>
                     </label>
-                    <a href="#" className={forgotLinkStyles}>
+                    <Link to="/recover-password" className={forgotLinkStyles}>
                         {t('login.forgot_password')}
-                    </a>
+                    </Link>
                 </div>
                 {error && <div className="text-red-500 text-sm">{error}</div>}
                 <Button type="submit" className={submitButtonStyles} disabled={isLoading}>

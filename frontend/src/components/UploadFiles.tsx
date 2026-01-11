@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import { Upload, FileText, X, AlertTriangle } from "lucide-react";
+import {useTranslation} from "react-i18next";
 
 type PickedFile = {
     file: File;
@@ -21,6 +22,8 @@ function dedupId(f: File) {
 const uploadContainer = "w-full";
 
 export function UploadFiles() {
+    const { t } = useTranslation();
+
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [dragActive, setDragActive] = useState(false);
     const [items, setItems] = useState<PickedFile[]>([]);
@@ -39,7 +42,7 @@ export function UploadFiles() {
 
         const merged = Array.from(currentMap.values());
         if (merged.length > maxFiles) {
-            setError(`Too many files. Max ${maxFiles}.`);
+            setError(t("files.error.many", { maxFiles }));
             setItems(merged.slice(0, maxFiles));
             return;
         }
@@ -59,9 +62,9 @@ export function UploadFiles() {
         const hadTooLarge = sizeOk.length !== onlyPdf.length;
 
         if (hadInvalidType) {
-            setError("Invalid file type. Only PDF files are allowed.");
+            setError(t("files.error.type"));
         } else if (hadTooLarge) {
-            setError(`Some files are too large. Max ${formatBytes(maxSizeBytes)} each.`);
+            setError(t("files.error.size", { maxSize: formatBytes(maxSizeBytes) }));
         } else {
             setError(null);
         }
@@ -133,15 +136,16 @@ export function UploadFiles() {
                     onChange={onPick}
                 />
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                    <div className="shrink-0 h-12 w-12 rounded-full bg-[var(--primary-bg)] flex items-center justify-center">
+                <div className="flex flex-col items-center text-center sm:text-left sm:flex-row sm:items-center sm:justify-start gap-4">
+
+                <div className="shrink-0 h-12 w-12 rounded-full bg-[var(--primary-bg)] flex items-center justify-center">
                         <Upload className="h-6 w-6 text-[var(--primary-color)]" />
                     </div>
 
                     <div className="flex-1">
-                        <div className={titleText}>Drag & drop files here</div>
+                        <div className={titleText}>{t("files.title")}</div>
                         <div className={helperText + " mt-1"}>
-                            Only PDF files · Up to {maxFiles} files · Max {formatBytes(maxSizeBytes)} each
+                            {t("files.subtitle", { maxFiles, maxSize: formatBytes(maxSizeBytes) })}
                         </div>
                     </div>
                 </div>
@@ -158,7 +162,7 @@ export function UploadFiles() {
                 <div className="">
                     <div className="flex items-center justify-between mt-4">
                         <p className="text-sm font-semibold text-[var(--text-color)]">
-                            Selected files{" "}
+                            {t("files.selected")}
                             <span className="text-[var(--text-light)] font-normal">
                 ({items.length}/{maxFiles})
               </span>
@@ -171,7 +175,7 @@ export function UploadFiles() {
                                 setError(null);
                             }}
                         >
-                            Clear all
+                            {t("files.clear")}
                         </button>
                     </div>
 
@@ -201,7 +205,7 @@ export function UploadFiles() {
                     </div>
                 </div>
             ) : (
-                <div className="text-sm text-[var(--text-light)] mt-4">No files selected yet.</div>
+                <div className="text-sm text-[var(--text-light)] mt-4">{t("files.no-files")}</div>
             )}
         </div>
     );

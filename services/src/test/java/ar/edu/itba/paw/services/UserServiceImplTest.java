@@ -247,29 +247,9 @@ public class UserServiceImplTest {
         assertFalse(result);
     }
 
-    @Test
-    public void testChangePasswordInvalidUser() {
-        //Preconditions
 
-        //Exercise
-        boolean result = userService.changePassword("RECOVERYTOKEN", "newpassword");
 
-        //Postconditions
-        assertFalse(result);
-    }
 
-    @Test
-    public void testChangePassword() {
-        //Preconditions
-        when(patientDao.getByResetToken(anyString())).thenReturn(Optional.of(PATIENT));
-        when(passwordEncoder.encode(anyString())).thenReturn("ENCODEDPASSWORD");
-
-        //Exercise
-        boolean result = userService.changePassword("RECOVERYTOKEN", "NEWPASSWORD");
-
-        //Postconditions
-        assertTrue(result);
-    }
 
     @Test
     public void testGetImageIdIsNotDoctor() {

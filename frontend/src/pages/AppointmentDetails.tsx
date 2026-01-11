@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { UploadFiles } from "@/components/UploadFiles.tsx"
+import {useTranslation} from "react-i18next";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -38,13 +39,15 @@ const appointmentData =
     "grid w-full gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
 
 function AppointmentDetails() {
+    const { t } = useTranslation();
+
     return (
             <div className={appointmentBackground}>
                 <div className={cardContainer}>
                     <Card className={appointmentContainer}>
                         <div className={appointmentHeader}>
-                            <h1 className={appointmentTitle}>Appointment Details</h1>
-                            <p>View and manage your appointment information</p>
+                            <h1 className={appointmentTitle}>{t("appointment.details.title")}</h1>
+                            <p>{t("appointment.details.subtitle")}</p>
                         </div>
                         <div className={appointmentContent}>
                             <PatientProfileCard />
@@ -80,13 +83,15 @@ const badge =
     "bg-[var(--success-light)] text-[var(--success)] border border-[var(--success)]";
 
 function StatusCard() {
+    const { t } = useTranslation();
+
     return (
         <Card className={appointmentComponent}>
             <div className={iconContainer}>
                 <ClipboardCheck className={icon}/>
             </div>
             <div className={componentData}>
-                <p className={statusText + " mb-1"}>Status</p>
+                <p className={statusText + " mb-1"}>{t("appointment.details.status")}</p>
                 <Badge className={badge}>Confirmed</Badge>
             </div>
         </Card>
@@ -97,13 +102,15 @@ const dateText =
     "text-[var(--text-light)] text-sm";
 
 function DateCard() {
+    const { t } = useTranslation();
+
     return (
         <Card className={appointmentComponent}>
             <div className={iconContainer}>
                 <Calendar className={icon}/>
             </div>
             <div className={componentData}>
-                <p className={statusText}>Date</p>
+                <p className={statusText}>{t("appointment.details.date")}</p>
                 <div>
                     <p className={dateText}>2025-12-30</p>
                     <p className={dateText}>14:00</p>
@@ -114,13 +121,15 @@ function DateCard() {
 }
 
 function SpecialtyCard() {
+    const { t } = useTranslation();
+
     return (
         <Card className={appointmentComponent}>
             <div className={iconContainer}>
                 <Stethoscope className={icon}/>
             </div>
             <div className={componentData}>
-                <p className={statusText}>Specialty</p>
+                <p className={statusText}>{t("appointment.details.specialty")}</p>
                 <p className={dateText}>Dermatology</p>
             </div>
         </Card>
@@ -128,13 +137,15 @@ function SpecialtyCard() {
 }
 
 function OfficeCard() {
+    const { t } = useTranslation();
+
     return (
         <Card className={appointmentComponent}>
             <div className={iconContainer}>
                 <Hospital className={icon}/>
             </div>
             <div className={componentData}>
-                <p className={statusText}>Office</p>
+                <p className={statusText}>{t("appointment.details.office")}</p>
                 <p className={dateText}>Parque Avellaneda</p>
             </div>
         </Card>
@@ -142,13 +153,15 @@ function OfficeCard() {
 }
 
 function VisitCard() {
+    const { t } = useTranslation();
+
     return (
         <Card className={appointmentComponent}>
             <div className={iconContainer}>
                 <MessageCircle className={icon}/>
             </div>
             <div className={componentData}>
-                <p className={statusText}>Reason of Visit (Optional)</p>
+                <p className={statusText}>{t("appointment.details.reason")})</p>
                 <p className={dateText}>Voy porque me duele la cabeza.</p>
             </div>
         </Card>
@@ -165,11 +178,13 @@ const cardContent =
     "px-5 gap-4";
 
 function PatientFileCard() {
+    const { t } = useTranslation();
+
     return (
         <div>
             <div className={cardIconContainer}>
                 <FileCheckCorner className={cardIcon}/>
-                <h1 className={cardTitle}>Patient Files</h1>
+                <h1 className={cardTitle}>{t("appointment.details.patient-files")}</h1>
             </div>
             <Card className={cardContent}>
                 <FileComponent />
@@ -209,10 +224,12 @@ const emptyFileContainer =
     " bg-[var(--gray-100)] rounded-lg gap-2 border border-dashed border-[var(--gray-400)]";
 
 function FileEmptyComponent() {
+    const { t } = useTranslation();
+
     return (
         <div className={emptyFileContainer}>
             <Info />
-            <p>No uploaded files.</p>
+            <p>{t("appointment.details.no-upload")}</p>
         </div>
     );
 }
@@ -225,11 +242,13 @@ const doctorComment =
     "text-md text-[var(--text-color)]";
 
 function PostVisitComponent() {
+    const { t } = useTranslation();
+
     return (
         <div>
             <div className={cardIconContainer}>
                 <Cross className={cardIcon}/>
-                <h1 className={cardTitle}>Post Visit Information</h1>
+                <h1 className={cardTitle}>{t("appointment.details.post-visit")}</h1>
             </div>
             <Card className={cardContent}>
                 <Card className={doctorCommentContainer}>
@@ -248,13 +267,15 @@ const ratingNumber =
     "text-base text-[var(--primary-text)] font-[700] mt-1";
 
 function RatingComponent() {
+    const { t } = useTranslation();
+
     const rating = 3;
 
     return (
         <div>
             <div className={cardIconContainer}>
                 <Star className={cardIcon}/>
-                <h1 className={cardTitle}>Rating</h1>
+                <h1 className={cardTitle}>{t("appointment.details.rating")}</h1>
             </div>
             <Card className={cardContent}>
                 <p>Me atendió demasiado rapido, no me prestó atención</p>
@@ -276,16 +297,18 @@ const submitButton =
     "mt-6 w-3xs bg-[var(--primary-color)] text-white hover:bg-[var(--primary-dark)] cursor-pointer";
 
 function UploadComponent() {
+    const { t } = useTranslation();
+
     return (
         <div>
             <div className={cardIconContainer + " mt-4"}>
                 <CloudUpload className={cardIcon}/>
-                <h1 className={uploadTitle}>Upload files for the appointment.</h1>
+                <h1 className={uploadTitle}>{t("appointment.details.upload")}</h1>
             </div>
             <UploadFiles />
             <div className={submitContainer}>
                 <Button className={submitButton}>
-                    Submit
+                    {t("appointment.details.submit")}
                 </Button>
             </div>
         </div>

@@ -95,6 +95,7 @@ public class RestAppointmentController {
 
     @PATCH
     @Path("/{id:\\d+}")
+    @Consumes(CustomMediaType.APPLICATION_APPOINTMENT_CANCEL)
     public Response cancel(@PathParam("id") final long id,
                            @QueryParam("userId") final Long userId) {
         appointmentService.cancelAppointment(id, userId);
@@ -102,7 +103,7 @@ public class RestAppointmentController {
     }
 
     @PATCH
-    @Path("/{id:\\d+}/report")
+    @Path("/{id:\\d+}")
     @Consumes(CustomMediaType.APPLICATION_APPOINTMENT_REPORT)
     public Response updateReport(@PathParam("id") final long id,
                                  @Valid @NotNull AppointmentReportForm form) {

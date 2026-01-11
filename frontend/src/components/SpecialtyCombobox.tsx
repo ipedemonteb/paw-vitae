@@ -1,10 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
-
-import { cn } from "@/lib/utils.ts"
-import { Button } from "@/components/ui/button.tsx"
+import * as React from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils.ts";
+import { Button } from "@/components/ui/button.tsx";
 import {
     Command,
     CommandEmpty,
@@ -12,93 +11,93 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@/components/ui/command.tsx"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover.tsx"
-import {useSpecialties} from "@/hooks/useSpecialties.ts";
-import {useTranslation} from "react-i18next";
-import {Spinner} from "@/components/ui/spinner.tsx";
+} from "@/components/ui/command.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx";
+import { useSpecialties } from "@/hooks/useSpecialties.ts";
+import { useTranslation } from "react-i18next";
+import { Spinner } from "@/components/ui/spinner.tsx";
+import { specialtyIdFromSelf } from "@/utils/specialtyUtils.ts";
+import type { SpecialtyDTO } from "@/data/specialties.ts";
 
-type ComboboxProps = {
+type Props = {
     className?: string;
     buttonClassName?: string;
     contentClassName?: string;
+
+    value?: string | null; // specialty self (controlado). null => "todas"
+    onValueChange?: (self: string | null, derivedId: number | null, dto?: SpecialtyDTO) => void;
 };
 
-export function SpecialtyCombobox({ className, buttonClassName, contentClassName }: ComboboxProps) {
+export function SpecialtyCombobox({
+                                      className,
+                                      buttonClassName,
+                                      contentClassName,
+                                      value,
+                                      onValueChange,
+                                  }: Props) {
     const [open, setOpen] = React.useState(false);
-    const [value, setValue] = React.useState("");
+    const [internal, setInternal] = React.useState<string | null>(null);
+
+    const selectedSelf = value !== undefined ? value : internal;
+
     const { data: specialties, isLoading } = useSpecialties();
     const { t } = useTranslation();
 
-
     const triggerClass = cn("w-[200px] justify-between", buttonClassName, className);
+
+    const selectedLabel = React.useMemo(() => {
+        if (selectedSelf == null) return t("combobox.specialty.select");
+        const found = specialties?.find((s) => s.self === selectedSelf);
+        return found ? t(found.name) : t("combobox.specialty.select");
+    }, [selectedSelf, specialties, t]);
+
+    const setSelected = (self: string | null, dto?: SpecialtyDTO) => {
+        if (value === undefined) setInternal(self);
+        const id = self ? specialtyIdFromSelf(self) : null;
+        onValueChange?.(self, id, dto);
+        setOpen(false);
+    };
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className={triggerClass}
-                >
-                    {value
-                        ? t(value)
-                        : "Select specialty..."}
+                <Button variant="outline" role="combobox" aria-expanded={open} className={triggerClass}>
+                    {selectedLabel}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
 
             <PopoverContent className={cn("w-[200px] p-0", contentClassName)}>
                 <Command>
-                    <CommandInput placeholder="Search specialty..." className="h-9" />
+                    <CommandInput placeholder={t("combobox.specialty.search")} className="h-9" />
                     <CommandList>
                         {isLoading ? (
                             <div className="py-3 flex items-center justify-center space-x-1">
-                                <Spinner className="text-(--text-light) size-5"/>
+                                <Spinner className="text-(--text-light) size-5" />
                             </div>
                         ) : (
                             <>
                                 <CommandEmpty>No Specialties Found</CommandEmpty>
                                 <CommandGroup>
                                     <CommandItem
-                                        key={"specialty.all"}
+                                        key="specialty.all"
                                         value={t("specialty.all")}
-                                        onSelect={(currentValue) => {
-                                            setValue(currentValue === value ? "" : currentValue);
-                                            setOpen(false);
-                                        }}
+                                        onSelect={() => setSelected(null)}
                                         className="text-(--text-light)"
                                     >
                                         {t("specialty.all")}
-                                        <Check
-                                            className={cn(
-                                                "ml-auto",
-                                                value === "specialty.all" ? "opacity-100" : "opacity-0"
-                                            )}
-                                        />
+                                        <Check className={cn("ml-auto", selectedSelf == null ? "opacity-100" : "opacity-0")} />
                                     </CommandItem>
-                                    {specialties?.map((specialty) => (
+
+                                    {specialties?.map((s) => (
                                         <CommandItem
-                                            key={specialty.name}
-                                            value={t(specialty.name)}
-                                            onSelect={(currentValue) => {
-                                                setValue(currentValue === value ? "" : currentValue);
-                                                setOpen(false);
-                                            }}
+                                            key={s.self}
+                                            value={t(s.name)}
+                                            onSelect={() => setSelected(s.self, s)}
                                             className="text-(--text-light)"
                                         >
-                                            {t(specialty.name)}
-                                            <Check
-                                                className={cn(
-                                                    "ml-auto",
-                                                    value === specialty.name ? "opacity-100" : "opacity-0"
-                                                )}
-                                            />
+                                            {t(s.name)}
+                                            <Check className={cn("ml-auto", selectedSelf === s.self ? "opacity-100" : "opacity-0")} />
                                         </CommandItem>
                                     ))}
                                 </CommandGroup>
@@ -110,4 +109,3 @@ export function SpecialtyCombobox({ className, buttonClassName, contentClassName
         </Popover>
     );
 }
-
