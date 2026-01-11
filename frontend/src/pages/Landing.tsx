@@ -5,7 +5,8 @@ import { Search, PersonStandingIcon, Lightbulb, CalendarDays, ShieldPlus, Shield
 import { Card } from "@/components/ui/card.tsx";
 import { RatingCard } from "@/components/Rating.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {useTranslation} from "react-i18next";
 
 // TODO: internacionalizacion
@@ -65,6 +66,20 @@ const heroSpace =
 function HeroSection() {
     const { t } = useTranslation();
 
+    const navigate = useNavigate();
+    const [keyword, setKeyword] = useState("");
+    const [specialtySelf, setSpecialtySelf] = useState<string | null>(null);
+    const [specialtyId, setSpecialtyId] = useState<number | null>(null);
+
+    const doSearch = () => {
+        const params = new URLSearchParams();
+        const k = keyword.trim();
+        if (k) params.set("keyword", k);
+        if (specialtyId != null) params.set("specialty", String(specialtyId));
+        const qs = params.toString();
+        navigate(qs ? `/search?${qs}` : "/search");
+    };
+
     return (
         <div className={heroContainer}>
             <div className={heroContent}>
@@ -76,9 +91,25 @@ function HeroSection() {
                 </p>
                 <div className={heroSearch}>
                     <div className={searchBar}>
-                        <Input placeholder={t("landing.hero.search_placeholder")} className={heroInput} type="search"/>
-                        <SpecialtyCombobox className={heroCombo}></SpecialtyCombobox>
-                        <Button className={heroButton}>
+                        <Input
+                            placeholder={t("landing.hero.search_placeholder")}
+                            className={heroInput}
+                            type="search"
+                            value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") doSearch();
+                            }}
+                        />
+                        <SpecialtyCombobox
+                            className={heroCombo}
+                            value={specialtySelf}
+                            onValueChange={(self, id) => {
+                                setSpecialtySelf(self);
+                                setSpecialtyId(id);
+                            }}
+                        ></SpecialtyCombobox>
+                        <Button className={heroButton} onClick={doSearch}>
                             <Search className="h-5 w-5"/>
                             {t("landing.hero.search")}
                         </Button>
