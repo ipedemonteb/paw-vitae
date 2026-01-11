@@ -59,7 +59,7 @@ function PaginationLink({
           size,
         }),
         className,
-          "bg-(--primary-color) text-white  hover:text-white",
+          "bg-(--primary-color) cursor-pointer text-white  hover:text-white",
           isActive ? "bg-(--primary-light) hover:bg-(--primary-light)" : "bg-(--primary-color) hover:bg-(--primary-dark)"
       )}
       {...props}

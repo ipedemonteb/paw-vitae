@@ -5,7 +5,8 @@ import {useQuery} from "@tanstack/react-query";
 
 export function useAppointments(query: AppointmentsQuery) {
     return useQuery({
-        queryKey: ['auth', 'appointments', query.userId],
-        queryFn: () => listAppointments(query)
+        queryKey: ['auth', 'appointments', query],
+        queryFn: () => listAppointments(query),
+        enabled: !!query.userId //TODO revise
     })
 }

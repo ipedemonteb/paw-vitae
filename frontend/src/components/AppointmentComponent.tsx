@@ -7,17 +7,12 @@ import {useState} from "react";
 import AppointmentCard from "@/components/AppointmentCard.tsx";
 import {appointmentStatus, appointmentUpcomingFilters} from "@/lib/constants.ts";
 import {useTranslation} from "react-i18next";
-import {
-    Pagination,
-    PaginationContent, PaginationEllipsis,
-    PaginationItem,
-    PaginationLink, PaginationNext,
-    PaginationPrevious
-} from "@/components/ui/pagination.tsx";
 import {useAppointments} from "@/hooks/useAppointments.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
+import PaginationComponent from "@/components/PaginationComponent.tsx";
+import {useAppointmentsQueryParams} from "@/hooks/useAppointmentsQueryParams.ts";
 
 const typeDictionary = {
     history: {
@@ -49,7 +44,17 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
     const [value, setValue] = useState(t("appointment.all"))
     const componentType = typeDictionary[type]
     const auth = useAuth()
-    const {data: appointments, isLoading} = useAppointments({userId: auth.userId, collection: type});
+
+    const searchParams = useAppointmentsQueryParams()
+
+    const {data: appointments, isLoading} = useAppointments({
+        userId: auth.userId,
+        collection: type,
+        page: searchParams.page,
+        pageSize: searchParams.pageSize,
+        filter: searchParams.filter,
+    });
+
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={t(componentType.title)}>
@@ -88,48 +93,14 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
             </DashboardNavHeader>
             {(isLoading) ? (
                 <DashboardNavLoader item={t("appointment")}/>
-            ) : (appointments !== undefined && appointments.length > 0) ? (
-                appointments?.map(a => (
+            ) : (appointments?.data !== undefined && appointments.data.length > 0) ? (
+                appointments.data.map(a => (
                     <AppointmentCard key={a.self} appointment={a}/>
                 ))
             ) : (
                 <DashboardNavEmptyContent Icon={componentType.emptyIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>
             )}
-            <div>
-                <Pagination>
-                    <PaginationContent className="text-(--text-color) gap-2">
-                        <PaginationItem>
-                            <PaginationPrevious href="#" />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">6</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">
-                                7
-                            </PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#" isActive>8</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">9</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">10</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationNext href="#" />
-                        </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
-            </div>
+            <PaginationComponent pagination={appointments?.pagination} searchParams={searchParams}/>
         </DashboardNavContainer>
     );
 }
