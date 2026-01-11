@@ -60,7 +60,16 @@ export const router = createBrowserRouter([
                 children: [
                     {
                         path: 'search',
-                        element: <Search />
+                        children: [
+                            {
+                                index: true,
+                                element: <Search />
+                            },
+                            {
+                                path: ":id",
+                                element: <PublicProfile/>
+                            }
+                        ]
                     }
                 ]
             },
@@ -203,4 +212,4 @@ export const router = createBrowserRouter([
             }
         ],
     }
-]);
+])
