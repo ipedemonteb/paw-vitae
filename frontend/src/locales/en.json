@@ -218,6 +218,28 @@
       "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
     }
   },
+  "common": {
+    "go_back": "Go Back",
+    "return_home": "Return Home"
+  },
+  "error": {
+    "403": {
+      "title": "Access Denied",
+      "message": "We are sorry, you do not have permission to access this page. Please verify that you are logged in with the correct account."
+    },
+    "404": {
+      "title": "Page Not Found",
+      "message": "The page you are looking for does not exist, has been moved, or the link is incorrect. Please check the URL."
+    },
+    "500": {
+      "title": "Server Error",
+      "message": "An unexpected problem occurred on our side. Our technical team has been notified. Please try again later."
+    },
+    "default": {
+      "title": "An Error Occurred",
+      "message": "An unexpected error has occurred. Please try again."
+    }
+  },
   "verify": {
     "loading_title": "Verifying account...",
     "loading_message": "Please wait while we validate your information.",
