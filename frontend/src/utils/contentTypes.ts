@@ -10,6 +10,7 @@ export const ContentTypes = {
     APPOINTMENT: "application/vnd.vitae.appointment.v1+json",
     APPOINTMENT_LIST: "application/vnd.vitae.appointment-list.v1+json",
     APPOINTMENT_REPORT: "application/vnd.vitae.appointment-report.v1+json",
+    APPOINTMENT_CANCEL: "application/vnd.vitae.appointment-cancel.v1+json",
     APPOINTMENT_FILE: "application/vnd.vitae.appointment-file.v1+json",
     APPOINTMENT_FILE_LIST: "application/vnd.vitae.appointment-file-list.v1+json",
     OFFICE: "application/vnd.vitae.office.v1+json",
@@ -33,6 +34,7 @@ export const ContentTypes = {
     IMAGE_PNG: "image/png",
     IMAGE_JPEG: "image/jpeg",
     IMAGE_JPG: "image/image/jpg",
+
 } as const;
 
 export type ContentType = (typeof ContentTypes)[keyof typeof ContentTypes];
