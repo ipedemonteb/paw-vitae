@@ -159,6 +159,28 @@
     "error_generic": "Ocurrió un error al cambiar la contraseña. Inténtalo de nuevo.",
     "error_token_expired": "El token ha expirado o es inválido."
   },
+  "common": {
+    "go_back": "Volver atrás",
+    "return_home": "Ir al Inicio"
+  },
+  "error": {
+    "403": {
+      "title": "Acceso Denegado",
+      "message": "Lo sentimos, no tienes permisos para acceder a esta página. Verifica que hayas iniciado sesión con la cuenta correcta."
+    },
+    "404": {
+      "title": "Página no encontrada",
+      "message": "La página que buscas no existe, ha sido movida o el enlace es incorrecto. Por favor verifica la URL."
+    },
+    "500": {
+      "title": "Error del Servidor",
+      "message": "Ocurrió un problema inesperado de nuestro lado. Nuestro equipo técnico ha sido notificado. Por favor intenta nuevamente más tarde."
+    },
+    "default": {
+      "title": "Ocurrió un error",
+      "message": "Ha ocurrido un error inesperado. Por favor intenta nuevamente."
+    }
+  },
   "verify": {
     "loading_title": "Verificando cuenta...",
     "loading_message": "Por favor espere mientras validamos su información.",

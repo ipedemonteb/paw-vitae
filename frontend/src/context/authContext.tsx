@@ -1,7 +1,8 @@
 import {createContext, type ReactNode, useCallback, useEffect, useMemo, useState} from "react";
 import {
     clearAuth,
-    initAuthFromStorage,
+    getClaims,           // <--- IMPORTANTE: Importamos esto
+    initAuthFromStorage, // <--- IMPORTANTE: Importamos esto
     type JWTClaims,
     subscribeAuth,
 } from "@/context/auth-store.ts";
@@ -22,13 +23,14 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-
 export function AuthProvider({ children }: { children: ReactNode })  {
-    const [claims, setClaims] = useState<JWTClaims | null>(null)
     const queryClient = useQueryClient();
+    const [claims, setClaims] = useState<JWTClaims | null>(() => {
+        initAuthFromStorage();
+        return getClaims();
+    });
 
     useEffect(() => {
-        initAuthFromStorage();
         return subscribeAuth((s) => setClaims(s.claims));
     }, []);
 

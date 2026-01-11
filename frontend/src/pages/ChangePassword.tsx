@@ -123,7 +123,6 @@ export default function ChangePassword() {
             const loginResult = await login(email, token);
 
             if (!loginResult.success) {
-                console.log(loginResult.errorMessage);
                 throw new Error(t("change_password.error_token_expired") || "Enlace expirado.");
             }
 
