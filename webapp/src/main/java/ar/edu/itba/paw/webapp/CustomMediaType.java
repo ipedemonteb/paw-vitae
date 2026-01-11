@@ -28,7 +28,7 @@ public final class CustomMediaType {
     public static final String APPLICATION_APPOINTMENT = "application/vnd.vitae.appointment.v1+json";
     public static final String APPLICATION_APPOINTMENT_LIST = "application/vnd.vitae.appointment-list.v1+json";
     public static final String APPLICATION_APPOINTMENT_REPORT = "application/vnd.vitae.appointment-report.v1+json";
-
+    public static final String APPLICATION_APPOINTMENT_CANCEL = "application/vnd.vitae.appointment-cancel.v1+json";
     // --- APPOINTMENT FILES ---
     // Para /appointments/{id}/files (devuelve lista)
     public static final String APPLICATION_APPOINTMENT_FILE_LIST = "application/vnd.vitae.appointment-file-list.v1+json";

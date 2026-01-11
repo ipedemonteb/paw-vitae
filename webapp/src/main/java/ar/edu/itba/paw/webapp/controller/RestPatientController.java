@@ -100,13 +100,5 @@ public class RestPatientController {
         patientService.changePassword(id,changePasswordForm.getPassword());
         return Response.noContent().build();
     }
-    @POST
-    @Consumes(CustomMediaType.APPLICATION_USER_PASSWORD)
-    public Response createPasswordResetToken(
-            @Valid @NotNull final RecoverPasswordForm recoverPasswordForm
-    ){
-        patientService.setResetPasswordToken(recoverPasswordForm.getEmail());
-        return Response.noContent().build();
-    }
 
 }

@@ -307,19 +307,11 @@ public class RestDoctorController {
         return Response.noContent().build();
     }
 
-    @POST
-    @Consumes(value = CustomMediaType.APPLICATION_USER_PASSWORD)
-    public Response createPasswordResetToken(
-            @Valid @NotNull final RecoverPasswordForm recoverPasswordForm
-    ) {
-        doctorService.setResetPasswordToken(recoverPasswordForm.getEmail());
-        return Response.noContent().build();
-    }
 
     @PATCH
     @Path("/{id:\\d+}")
     @Consumes(value = CustomMediaType.APPLICATION_USER_PASSWORD)
-    public Response editDoctorPasswordWithToken(
+    public Response editDoctorPassword(
             @PathParam("id") long id,
             @Valid @NotNull final ChangePasswordForm changePasswordForm
     ) {
