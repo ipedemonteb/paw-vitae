@@ -43,12 +43,16 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'search',
-                element: <Search />
-            },
-            {
-                //TODO: change this path, its for development only
-                path: "profile",
-                element: <PublicProfile />
+                children: [
+                    {
+                        index: true,
+                        element: <Search />
+                    },
+                    {
+                        path: ":id",
+                        element: <PublicProfile/>
+                    }
+                ]
             },
             {
                 //TODO: change this path, its for development only
