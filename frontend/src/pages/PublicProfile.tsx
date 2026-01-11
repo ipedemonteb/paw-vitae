@@ -20,12 +20,15 @@ import { Button } from "@/components/ui/button.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
 import { RatingCard } from "@/components/Rating.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
-import {useTranslation} from "react-i18next";
+import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
 
 function PublicProfile() {
+    const { id } = useParams();
+
     const rating = 3.5;
     const ratingCount = 123;
     const specialties = [
