@@ -236,7 +236,7 @@
     "success_title": "¡Registro Exitoso!",
     "success_message": "Tu cuenta ha sido creada correctamente. Hemos enviado un correo de confirmación a",
     "success_check_email": "Por favor revisa tu bandeja de entrada para verificar tu cuenta.",
-    "note_availability": "La configuración de Consultorios y Disponibilidad se realizará una vez validada su matrícula.",
+    "note_availability": "La configuración de Consultorios y Disponibilidad se realizará una vez verificada su cuenta.",
     "loader_specialties": "Cargando especialidades...",
     "loader_coverages": "Cargando obras sociales...",
     "loader_neighborhoods": "Cargando barrios...",
@@ -248,7 +248,14 @@
       "select_valid": "Por favor seleccione una obra social y un barrio válido",
       "email_taken": "Error: Ese correo electrónico ya está registrado.",
       "generic": "Ocurrió un error al registrar.",
-      "missing_fields": "Por favor complete todos los campos obligatorios antes de continuar."
+      "missing_fields": "Por favor complete todos los campos obligatorios antes de continuar.",
+      "required": "Este campo es obligatorio",
+      "select_coverage": "Por favor seleccione una obra social.",
+      "select_neighborhoods": "Por favor seleccione un barrio.",
+      "no_specialties_available": "No se encontraron especialidades en este momento. Intente denuevo mas tarde",
+      "no_coverages_available": "No se encontraron obras sociales en este momento. Intente denuevo mas tarde",
+      "terms_required" : "Debe aceptar los terminos y condiciones para continuar",
+      "select_neighborhood": "Por favor seleccione un barrio."
     }
   },
   "Loading": "Cargando...",
@@ -258,6 +265,8 @@
     "about": "Sobre Nosotros",
     "login": "Iniciar Sesión",
     "register": "Registrarse",
+    "register_patient": "Registrarse como Paciente",
+    "register_doctor": "Registrarse como Doctor",
     "account": "Account",
     "doctor": {
       "dashboard": "Panel de Doctor",
