@@ -4,7 +4,7 @@ import {
     getDoctor,
     getDoctorImage,
     type DoctorRegisterData,
-    registerDoctor
+    registerDoctor, fetchCountDoctors
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
@@ -63,3 +63,11 @@ export function useRegisterDoctor() {
     });
 }
 
+export function useDoctorsCount() {
+    return useQuery<number>({
+        queryKey: ['counts', 'doctors'],
+        queryFn: () => fetchCountDoctors(),
+        staleTime: 1000 * 60,
+        retry: 1
+    });
+}

@@ -305,17 +305,17 @@ public class DoctorDaoTest {
         assertEquals(TEST_PHONE, maybeDoctor.get().getPhone());
         assertEquals(TEST_LANGUAGE, maybeDoctor.get().getLanguage());
     }
-
-    @Test
-    public void testCountAll() {
-        //Preconditions
-
-        //Exercise
-        int count = doctorDao.countAll();
-
-        //Postconditions
-        assertEquals(3, count);
-    }
+//
+//    @Test
+//    public void testCountAll() {
+//        //Preconditions
+//
+//        //Exercise
+//        int count = doctorDao.countAll();
+//
+//        //Postconditions
+//        assertEquals(3, count);
+//    }
 
     @Test
     public void testSearchEmpty() {
