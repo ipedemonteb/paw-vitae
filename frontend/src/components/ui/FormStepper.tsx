@@ -13,7 +13,7 @@ interface FormStepperProps {
 
 export function FormStepper({ currentStep, steps }: FormStepperProps) {
     return (
-        <div className="flex justify-between mb-10 relative px-4">
+        <div className="flex justify-between mb-10 relative px-4 max-w-md mx-auto w-full">
             <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-10 -translate-y-1/2 rounded-full"></div>
             {steps.map((s) => (
                 <div key={s.id} className="flex flex-col items-center gap-2 bg-white px-2">

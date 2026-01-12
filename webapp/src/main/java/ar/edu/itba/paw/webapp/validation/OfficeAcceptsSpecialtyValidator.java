@@ -42,7 +42,7 @@ public class OfficeAcceptsSpecialtyValidator implements ConstraintValidator<Offi
             }
             if (doctorOffice.getSpecialties().stream().noneMatch(specialty -> specialty.getId() == specialtyIdValue)) {
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{appointment.office.specialty.valid}")
+                context.buildConstraintViolationWithTemplate("appointment.office.specialty.valid")
                         .addPropertyNode(specialtyId)
                         .addConstraintViolation();
                 return false;

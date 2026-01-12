@@ -31,7 +31,7 @@ public class ActiveOfficeSlotsValidator implements ConstraintValidator<ActiveOff
         for (DoctorOffice office : offices) {
             if (!ids.contains(office.getId())) {
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{office.availabilitySlot.active}")
+                context.buildConstraintViolationWithTemplate("office.availabilitySlot.active")
                         .addPropertyNode("doctorOfficeAvailabilities")
                         .addConstraintViolation();
                 return false;

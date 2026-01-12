@@ -15,8 +15,8 @@ import java.util.List;
 public class DoctorAvailabilityForm {
     @NotEmpty
     @NotNull
-    @ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
-    @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
+    @ValidOfficeTimeSlot(message = "office.invalid.timeSlot")
+    @OfficeAvailabilitySlotIntersection(message = "office.availabilitySlot.intersection")
     private List<DoctorOfficeAvailabilityForm> doctorOfficeAvailabilities;
 
     public List<DoctorOfficeAvailabilityForm> getDoctorOfficeAvailabilities() {

@@ -22,7 +22,7 @@ public class ValidNewOfficeValidator {
             boolean flag =  !doctorOfficeForms.getRemoved() || doctorOfficeForms.getId() != null;
             if (!flag) {
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{offices.new.invalid}")
+                context.buildConstraintViolationWithTemplate("offices.new.invalid")
                         .addPropertyNode("doctorOfficeForm")
                         .addConstraintViolation();
             }

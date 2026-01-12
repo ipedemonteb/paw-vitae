@@ -58,7 +58,7 @@ public class AppointmentExistenceValidator implements ConstraintValidator<Appoin
 
             if (!isValid) {
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{appointment.date.existence}")
+                context.buildConstraintViolationWithTemplate("appointment.date.existence")
                         .addPropertyNode(dateFieldName)
                         .addConstraintViolation();
             }

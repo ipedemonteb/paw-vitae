@@ -184,7 +184,7 @@
     "success_title": "Registration Successful!",
     "success_message": "Your account has been created successfully. We have sent a confirmation email to",
     "success_check_email": "Please check your inbox to verify your account.",
-    "note_availability": "Office and Availability configuration will be done once your license is validated.",
+    "note_availability": "Office and Availability configuration will be done once your account is verified.",
     "loader_specialties": "Loading specialties...",
     "loader_coverages": "Loading insurance plans...",
     "loader_neighborhoods": "Loading neighborhoods...",
@@ -195,7 +195,15 @@
       "select_valid": "Please select a valid insurance plan and neighborhood",
       "email_taken": "Error: That email is already registered.",
       "generic": "An error occurred during registration.",
-      "missing_fields": "Please complete all required fields before continuing."
+      "missing_fields": "Please complete all required fields before continuing.",
+      "required": "This field is required.",
+      "select_coverage": "Please select an insurance plan.",
+      "select_neighborhoods": "Please select a neighborhood.",
+      "no_specialties_available": "No specialties found at the moment. Please try again later.",
+      "no_coverages_available": "No insurance plans found at the moment. Please try again later.",
+      "terms_required" : "You must accept the terms and conditions to continue.",
+      "select_neighborhood": "Please select a neighborhood."
+
     },
     "change_password": {
       "title": "Change Password",
@@ -259,6 +267,8 @@
     "about": "About Us",
     "login": "Login",
     "register": "Register",
+    "register_patient": "Register Patient",
+    "register_doctor": "Register Doctor",
     "account": "Cuenta",
     "doctor": {
       "dashboard": "Doctor Dashboard",
