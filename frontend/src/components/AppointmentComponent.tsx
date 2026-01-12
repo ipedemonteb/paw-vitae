@@ -12,25 +12,25 @@ import {useAuth} from "@/hooks/useAuth.ts";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
-import {useAppointmentsQueryParams} from "@/hooks/useAppointmentsQueryParams.ts";
+import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
 
 const typeDictionary = {
     history: {
         title: "appointment.history",
-        popoverData: appointmentStatus,
+        popoverData: appointmentStatus.filter(s => s !== "appointment.status.confirmado"),
         filterMessage: "appointment.history_filter_message",
         emptyTitle: "appointment.empty.title.past",
         emptyText: "appointment.empty.text.past",
-        emptyIcon: CalendarFoldIcon
+        loadingText: "appointment.loading.past"
 
     },
     upcoming: {
         title: "appointment.upcoming",
-        popoverData:appointmentUpcomingFilters,
+        popoverData: appointmentUpcomingFilters,
         filterMessage: "appointment.upcoming_filter_message",
         emptyTitle: "appointment.empty.title.upcoming",
         emptyText: "appointment.empty.text.upcoming",
-        emptyIcon: CalendarFoldIcon
+        loadingText: "appointment.loading.upcoming"
     }
 }
 
@@ -38,14 +38,27 @@ type AppointmentComponentProps = {
     type: "history" | "upcoming"
 }
 
+
+function transformFilter(filterValue: string) {
+    return "appointment.filters." + filterValue
+}
+
 export default function AppointmentComponent({type}: AppointmentComponentProps) {
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(t("appointment.all"))
     const componentType = typeDictionary[type]
     const auth = useAuth()
 
-    const searchParams = useAppointmentsQueryParams()
+    const searchParams = useAppointmentsQueryParams();
+    const filterValue = searchParams.filter;
+
+    const setFilter = (newFilter: string) => {
+        searchParams.setParams((p) => {
+            if (newFilter === "all") p.delete("filter");
+            else p.set("filter", newFilter);
+            p.set("page", "1");
+        });
+    };
 
     const {data: appointments, isLoading} = useAppointments({
         userId: auth.userId,
@@ -70,35 +83,35 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                                 role="combobox"
                                 aria-expanded={open}
                             >
-                                {value}
+                                {t(transformFilter(filterValue))}
                                 <ChevronDown size={20}/>
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="min-w-fit max-w-28 p-0">
-                            <Button value={t("appointment.all")} onClick={(e) => {
-                                setValue(e.currentTarget.value);
+                            <Button value={"all"} onClick={(e) => {
+                                setFilter(e.currentTarget.value)
                                 setOpen(false)
                             }}
-                                    className="w-full text-xs bg-white font-light hover:bg-gray-100 hover:text-black flex text-(--text-light) justify-baseline">{t("appointment.all")}</Button>
+                                    className="w-full text-xs bg-white font-light hover:bg-gray-100 hover:text-black flex text-(--text-light) justify-baseline">{t("appointment.filters.all")}</Button>
                             {componentType.popoverData.map(a => (
-                                <Button value={t(a)} onClick={(e) => {
-                                    setValue(e.currentTarget.value);
+                                <Button value={a} onClick={(e) => {
+                                    setFilter(e.currentTarget.value)
                                     setOpen(false)
                                 }}
-                                        className="w-full text-xs bg-white font-light hover:bg-gray-100 hover:text-black flex text-(--text-light) justify-baseline">{t(a)}</Button>
+                                        className="w-full text-xs bg-white font-light hover:bg-gray-100 hover:text-black flex text-(--text-light) justify-baseline">{t(transformFilter(a))}</Button>
                             ))}
                         </PopoverContent>
                     </Popover>
                 </div>
             </DashboardNavHeader>
             {(isLoading) ? (
-                <DashboardNavLoader item={t("appointment")}/>
+                <DashboardNavLoader item={t(componentType.loadingText)}/>
             ) : (appointments?.data !== undefined && appointments.data.length > 0) ? (
                 appointments.data.map(a => (
                     <AppointmentCard key={a.self} appointment={a}/>
                 ))
             ) : (
-                <DashboardNavEmptyContent Icon={componentType.emptyIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>
+                <DashboardNavEmptyContent Icon={CalendarFoldIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>
             )}
             <PaginationComponent pagination={appointments?.pagination} searchParams={searchParams}/>
         </DashboardNavContainer>

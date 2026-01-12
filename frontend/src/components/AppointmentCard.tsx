@@ -16,9 +16,9 @@ const completedStatusClassname =
     statusClassname + " bg-blue-100 border-blue-400";
 
 const statusClassnameDictionary = {
-    completed: completedStatusClassname,
-    confirmed: confirmedStatusClassname,
-    cancelled: cancelledStatusClassname
+    completo: completedStatusClassname,
+    confirmado: confirmedStatusClassname,
+    cancelado: cancelledStatusClassname
 };
 
 const cardContainer =
@@ -83,6 +83,17 @@ type AppointmentCardProps = {
     appointment: AppointmentDTO;
 };
 
+function transformStatus(status: string) {
+    switch (status) {
+        case "confirmado":
+            return "confirmed"
+        case "completo":
+            return "completed"
+        case "cancelado":
+            return "cancelled"
+    }
+}
+
 export default function AppointmentCard({ appointment }: AppointmentCardProps) {
     const { t, i18n } = useTranslation();
     const {data: patient} = usePatient(appointment.patient)
@@ -98,7 +109,7 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
     const initials = patient?.name[0] || "" + patient?.lastName[0];
     const fullName = patient?.name + " " + patient?.lastName;
 
-    const status = "appointment.status." + appointment.status;
+    const status = "appointment.filters." + transformStatus(appointment.status);
 
     return (
         <div className={cardContainer}>
@@ -113,7 +124,7 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
                     {time}
                 </div>
                 <div className={statusRow}>
-                    <div className={statusClassnameDictionary["confirmed"]}>
+                    <div className={statusClassnameDictionary[appointment.status]}>
                         {t(status)}
                     </div>
                 </div>

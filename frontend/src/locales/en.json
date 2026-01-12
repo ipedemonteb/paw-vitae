@@ -49,18 +49,16 @@
     "success_message": "We have sent a reset link to {{email}}."
   },
   "appointment": {
-    "status": {
-      "confirmado": "Confirmed",
-      "completo": "Completed",
-      "cancelado": "Cancelled"
-    },
-    "all": "All",
     "history": "Appointment History",
     "upcoming": "Upcoming Appointments",
     "filters": {
-      "30_days": "Upcoming 30 Days",
+      "month": "Upcoming 30 Days",
       "week": "This Week",
-      "today": "Today"
+      "today": "Today",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "all": "All"
     },
     "history_filter_message": "Status",
     "upcoming_filter_message": "Date Range",
@@ -73,6 +71,10 @@
         "upcoming": "You don't have any upcoming appointments scheduled. Your future appointments will appear here",
         "past": "Your past appointments will appear here once you've completed some appointments"
       }
+    },
+    "loading": {
+      "past": "Loading your past appointments...",
+      "upcoming": "Loading your upcoming appointments..."
     },
     "details": {
       "title": "Appointment Details",
