@@ -15,10 +15,10 @@ public class UpdatePatientForm {
     @Size(min = 1, max = 30)
     private String lastName;
 
-    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "{phone.invalid}")
+    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "phone.invalid")
     private String phone;
 
-    @Coverage(message = "{coverage.invalid}")
+    @Coverage(message = "coverage.invalid")
     private Long coverage;
 
     public String getName() {

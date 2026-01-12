@@ -19,9 +19,9 @@ public class OfficeForm {
     @NotNull
 //    @ActiveOffice(message = "{offices.active}")
 //    @UniqueOffices(message = "{offices.duplicate}")
-    @ValidOfficeNames(message = "{offices.invalid.name}")
-    @ValidOfficeSpecialties(message = "{offices.invalid.specialties}")
-    @ValidOfficeNeighborhood(message = "{offices.invalid.neighborhood}")
+    @ValidOfficeNames(message = "offices.invalid.name")
+    @ValidOfficeSpecialties(message = "offices.invalid.specialties")
+    @ValidOfficeNeighborhood(message = "offices.invalid.neighborhood")
     private DoctorOfficeForm doctorOfficeForm;
 
 

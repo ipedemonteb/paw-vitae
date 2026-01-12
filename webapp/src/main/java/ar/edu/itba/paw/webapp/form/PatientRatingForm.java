@@ -3,7 +3,7 @@ package ar.edu.itba.paw.webapp.form;
 import ar.edu.itba.paw.webapp.validation.InvalidRatingForm;
 
 import javax.validation.constraints.*;
-@InvalidRatingForm(message = "{InvalidRatingForm.message}")
+@InvalidRatingForm(message = "InvalidRatingForm.message")
 public class PatientRatingForm {
 
     @NotNull

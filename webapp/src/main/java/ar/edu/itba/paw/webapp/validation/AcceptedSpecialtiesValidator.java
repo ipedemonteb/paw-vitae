@@ -40,7 +40,7 @@ public class AcceptedSpecialtiesValidator implements ConstraintValidator<Accepte
                 for (Long id : office.getSpecialtyIds()) {
                     if (!specialties.contains(id)) {
                         context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate("{specialties.not.accepted}")
+                        context.buildConstraintViolationWithTemplate("specialties.not.accepted")
                                 .addPropertyNode(this.officesField)
                                 .addConstraintViolation();
                         return false;

@@ -42,7 +42,7 @@ public class AppointmentValidSpecialtyForDoctorValidator implements ConstraintVa
                 }
             }
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate("{appointment.specialty.valid}")
+            context.buildConstraintViolationWithTemplate("appointment.specialty.valid")
                     .addPropertyNode(specialtyIdFieldName)
                     .addConstraintViolation();
             return false;

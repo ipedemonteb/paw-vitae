@@ -43,7 +43,7 @@ public class AppointmentValidDateValidator implements ConstraintValidator<Appoin
 
             if (!appointmentDateTime.isAfter(now)) {
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{appointment.date.invalid}")
+                context.buildConstraintViolationWithTemplate("appointment.date.invalid")
                         .addPropertyNode(dateFieldName)
                         .addConstraintViolation();
                 return false;

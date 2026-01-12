@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidNewOffice {
-    String message() default "{offices.new.invalid}";
+    String message() default "offices.new.invalid";
 
     Class<?>[] groups() default {};
 
