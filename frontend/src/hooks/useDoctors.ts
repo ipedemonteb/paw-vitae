@@ -107,3 +107,11 @@ export function useDoctorBiography(url?: string | null) {
         enabled: !!url,
     });
 }
+
+export function useDoctorOffices(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'offices', url],
+        queryFn: () => getDoctorBiography(url!),
+        enabled: !!url,
+    });
+}
