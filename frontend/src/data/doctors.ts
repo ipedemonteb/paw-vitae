@@ -3,6 +3,7 @@ import {ContentTypes} from "@/utils/contentTypes.js";
 import type {AxiosRequestConfig} from "axios";
 import type {CoverageDTO} from "@/data/coverages.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
+import type {OfficeDTO} from "@/data/office.ts";
 
 
 export type ChangePasswordForm = {
@@ -15,7 +16,7 @@ export type DoctorDTO = {
     email: string;
     phone: string;
     rating: number;
-    ratingCount: string;
+    ratingCount: number;
     specialties: string;
     coverages: string;
     offices: string;
@@ -176,6 +177,12 @@ export async function getDoctorCertifications(certificationsUrl: string) {
 export async function getDoctorBiography(profileUrl: string) {
     const res = await api.get<DoctorProfileDTO>(profileUrl,{
         headers: {"accept": ContentTypes.DOCTOR_PROFILE,}
+    } as AxiosRequestConfig);
+    return res.data;
+}
+export async function getDoctorOffices(officesUrl: string) {
+    const res = await api.get<OfficeDTO[]>(officesUrl,{
+        headers: {"accept": ContentTypes.OFFICE_LIST,}
     } as AxiosRequestConfig);
     return res.data;
 }
