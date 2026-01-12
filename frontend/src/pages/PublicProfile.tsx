@@ -22,6 +22,7 @@ import { RatingCard } from "@/components/Rating.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import {useDoctorImageUrl} from "@/hooks/useDoctors.ts";
 import {
     useDoctor,
     useDoctorBiography, useDoctorCertifications,
@@ -53,7 +54,7 @@ function PublicProfile() {
 
     return (
       <div className={profileContainer}>
-          <ProfileCard rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges}/>
+          <ProfileCard doctorId={id} rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges}/>
           <CoverageCard />
           <OfficesCard />
           <ExperienceCard />
@@ -98,13 +99,15 @@ const aboutTitle =
 const aboutText =
     "text-[var(--text-light)] text-md";
 
-function ProfileCard({ rating, ratingCount, specialties, maxBadges }:{
+function ProfileCard({ doctorId, rating, ratingCount, specialties, maxBadges }:{
+    doctorId: string | undefined;
     rating: number;
     ratingCount: number;
     specialties: string[];
     maxBadges: number;
 }) {
     const { t } = useTranslation();
+    const { url: getDoctorImgUrl } = useDoctorImageUrl(doctorId);
 
     return (
         <Card className={card}>
@@ -114,7 +117,7 @@ function ProfileCard({ rating, ratingCount, specialties, maxBadges }:{
             </div>
             <div className={profileContent}>
                 <Avatar className={avatarContainer}>
-                    <AvatarImage src="https://picsum.photos/200" />
+                    <AvatarImage src={getDoctorImgUrl || undefined} />
                     <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <div className={userDataContainer}>

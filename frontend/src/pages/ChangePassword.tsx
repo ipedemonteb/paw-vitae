@@ -76,11 +76,7 @@ export default function ChangePassword() {
         setApiError(null);
 
         try {
-            const loginResult = await login(email, token);
-
-            if (!loginResult.success) {
-                throw new Error(t("change_password.error_token_expired") || "Enlace expirado.");
-            }
+            await login(email, token);
 
             const accessToken = getAccessToken();
             const claims = parseJwt(accessToken || "");
@@ -113,7 +109,8 @@ export default function ChangePassword() {
             logout();
 
         } catch (error: any) {
-            setApiError(error.message || t("change_password.error_generic") || "Error al cambiar la contraseña.");
+
+            setApiError( t("change_password.error_token_expired") || "Error al cambiar la contraseña.");
             logout();
         } finally {
             setIsLoading(false);

@@ -123,7 +123,7 @@
     "show_password": "Mostrar contraseña",
     "hide_password": "Ocultar contraseña",
     "error_credentials": "Las credenciales son inválidas",
-    "error_generic": "Ocurrió un error al iniciar sesión",
+    "error_generic": "Ocurrió un error al iniciar sesión. Verifique sus credenciales y vuelva a intentarlo.",
     "aria_email": "Correo electrónico",
     "aria_password": "Contraseña"
   },

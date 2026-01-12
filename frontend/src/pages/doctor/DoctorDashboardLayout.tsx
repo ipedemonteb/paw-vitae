@@ -30,9 +30,11 @@ const tabIconInactive =
 function DoctorDashboardLayout() {
     const { t } = useTranslation();
 
+    const doctorId = "24";
+
     return (
         <div className={dashboardCointainer}>
-            <DoctorProfileCard />
+            <DoctorProfileCard doctorId={doctorId}/>
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>
                     <DashboardTab to="/doctor/dashboard/upcoming" end icon={Calendar}>
