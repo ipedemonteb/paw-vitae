@@ -1,6 +1,14 @@
-import {listDoctors, type DoctorsQuery, getDoctor, getDoctorImage} from "@/data/doctors";
-import {keepPreviousData, useQuery} from "@tanstack/react-query";
+import {
+    listDoctors,
+    type DoctorsQuery,
+    getDoctor,
+    getDoctorImage,
+    type DoctorRegisterData,
+    registerDoctor
+} from "@/data/doctors";
+import {keepPreviousData, useMutation, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
+import type {AxiosError} from "axios";
 
 export function useDoctors(query: DoctorsQuery) {
     return useQuery({
@@ -47,3 +55,11 @@ export function useDoctorImageUrl(id?: string | null, options?: { enabled?: bool
 
     return { ...query, url };
 }
+
+
+export function useRegisterDoctor() {
+    return useMutation<any, AxiosError<any>, DoctorRegisterData>({
+        mutationFn: (data: DoctorRegisterData) => registerDoctor(data)
+    });
+}
+

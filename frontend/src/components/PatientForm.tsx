@@ -6,12 +6,12 @@ import { useTranslation } from "react-i18next"
 
 import { useCoverages } from "@/hooks/useCoverages"
 import { useNeighborhoods } from "@/hooks/useNeighborhoods"
-import { useUserService } from "@/hooks/userService"
-import { api } from "@/data/Api"
+
 
 import { FormInput } from "@/components/ui/FormInput"
 import { PasswordInput } from "@/components/ui/passwordInput"
 import { PasswordStrengthMeter } from "@/components/ui/PasswordStrengthMeter"
+import {useRegisterPatient} from "@/hooks/usePatients.ts";
 
 interface PatientFormProps {
     onSuccess: (email: string) => void;
@@ -19,9 +19,8 @@ interface PatientFormProps {
 
 export function PatientForm({ onSuccess }: PatientFormProps) {
     const { t } = useTranslation()
-    const userService = useUserService(api)
 
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const {mutate: registerPatient, isPending: isSubmitting} = useRegisterPatient()
 
     const {data: coverages, isLoading: isLoadingCoverages} = useCoverages()
     const {data: neighborhoods, isLoading: isLoadingNeighborhoods} = useNeighborhoods()
@@ -112,43 +111,42 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
         }
 
         setErrors({});
-        setIsSubmitting(true)
 
-        try {
-            await userService.registerPatient(formData);
-            onSuccess(formData.email);
-        } catch (error: any) {
-            let isEmailError = false;
-            let errorMessage = t('register.errors.generic');
+        registerPatient(formData, {
+                onSuccess: () => {
+                    onSuccess(formData.email);
+                },
+                onError: (error: any) => {
+                    let isEmailError = false;
+                    let errorMessage = t('register.errors.generic');
 
-            if (error.response && error.response.data) {
+                    if (error.response && error.response.data) {
 
-                const backendMsg = error.response.data.message;
+                        const backendMsg = error.response.data.message;
 
-                if (backendMsg && backendMsg.toLowerCase().includes("email")) {
-                    isEmailError = true;
-                } else if (backendMsg) {
-                    errorMessage = backendMsg;
-                }
+                        if (backendMsg && backendMsg.toLowerCase().includes("email")) {
+                            isEmailError = true;
+                        } else if (backendMsg) {
+                            errorMessage = backendMsg;
+                        }
 
-                if (error.response.data.errors) {
-                    const apiErrors = error.response.data.errors;
-                    const foundEmailError = apiErrors.find((e: any) =>
-                        e.field === "email" || e.message?.toLowerCase().includes("email")
-                    );
-                    if (foundEmailError) isEmailError = true;
-                }
+                        if (error.response.data.errors) {
+                            const apiErrors = error.response.data.errors;
+                            const foundEmailError = apiErrors.find((e: any) =>
+                                e.field === "email" || e.message?.toLowerCase().includes("email")
+                            );
+                            if (foundEmailError) isEmailError = true;
+                        }
+                    }
+
+                    if (isEmailError) {
+                        setErrors(prev => ({ ...prev, email: t('register.errors.email_taken') }));
+                    } else {
+                        setGlobalError(errorMessage);
+                    }                }
             }
+            );
 
-            if (isEmailError) {
-                setErrors(prev => ({ ...prev, email: t('register.errors.email_taken') }));
-            } else {
-                setGlobalError(errorMessage);
-            }
-
-        } finally {
-            setIsSubmitting(false);
-        }
     }
 
     const filteredNeighborhoods = neighborhoods?.filter(n =>
