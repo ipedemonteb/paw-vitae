@@ -109,7 +109,8 @@ export default function ChangePassword() {
             logout();
 
         } catch (error: any) {
-            setApiError(error.message || t("change_password.error_generic") || "Error al cambiar la contraseña.");
+
+            setApiError( t("change_password.error_token_expired") || "Error al cambiar la contraseña.");
             logout();
         } finally {
             setIsLoading(false);
