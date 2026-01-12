@@ -45,11 +45,7 @@ public class DoctorExperienceServiceImpl implements DoctorExperienceService {
     @Transactional(readOnly = true)
     @Override
     public List<DoctorExperience> findByDoctorId(long doctorId) {
-        List<DoctorExperience> experiences = this.doctorExperienceDao.getByDoctorId(doctorId);
-        if(experiences.isEmpty()) {
-            throw new UserNotFoundException();
-        }
-        return experiences;
+        return doctorExperienceDao.getByDoctorId(doctorId);
     }
 
     @Transactional
