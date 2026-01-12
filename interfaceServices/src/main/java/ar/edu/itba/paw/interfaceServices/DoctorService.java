@@ -29,7 +29,7 @@ public interface DoctorService {
 
     Page<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction, int page, int pageSize);
 
-    String getAllDoctorsDisplayCount();
+    long getAllDoctorsDisplayCount();
 
     String search(String keyword, int results);
     void setResetPasswordToken(String email);

@@ -8,6 +8,8 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {useTranslation} from "react-i18next";
+import {useDoctorsCount} from "@/hooks/useDoctors.ts";
+import {usePatientsCount} from "@/hooks/usePatients.ts";
 
 // TODO: internacionalizacion
 
@@ -52,19 +54,14 @@ const heroCombo =
     "h-12 border-0 min-w-58 rounded-none px-4 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
 const heroButton =
     "h-12 rounded-none px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)] cursor-pointer";
-const heroStats =
-    "flex gap-10";
-const statsItem =
-    "flex flex-col box-border";
-const statsNumber =
-    "text-4xl font-bold leading-[1.2] text-[var(--primary-color)]";
-const statsLabel =
-    "text-lg text-[var(--text-light)]";
 const heroSpace =
     "flex-1 flex justify-end relative";
 
 function HeroSection() {
     const { t } = useTranslation();
+
+    const { data: doctors = 0, isLoading: loadingDoctors } = useDoctorsCount();
+    const { data: patients = 0, isLoading: loadingPatients } = usePatientsCount();
 
     const navigate = useNavigate();
     const [keyword, setKeyword] = useState("");
@@ -79,6 +76,8 @@ function HeroSection() {
         const qs = params.toString();
         navigate(qs ? `/search?${qs}` : "/search");
     };
+
+
 
     return (
         <div className={heroContainer}>
@@ -115,14 +114,18 @@ function HeroSection() {
                         </Button>
                     </div>
                 </div>
-                <div className={heroStats}>
-                    <div className={statsItem}>
-                        <span className={statsNumber}>268</span>
-                        <span className={statsLabel}>{t("landing.hero.doctors")}</span>
+                <div className="flex gap-10">
+                    <div className="flex flex-col">
+        <span className="text-4xl font-bold text-[var(--primary-color)]">
+          {loadingDoctors ? '…' : doctors}
+        </span>
+                        <span className="text-lg text-[var(--text-light)]">Doctores</span>
                     </div>
-                    <div className={statsItem}>
-                        <span className={statsNumber}>1000</span>
-                        <span className={statsLabel}>{t("landing.hero.patients")}</span>
+                    <div className="flex flex-col">
+        <span className="text-4xl font-bold text-[var(--primary-color)]">
+          {loadingPatients ? '…' : patients}
+        </span>
+                        <span className="text-lg text-[var(--text-light)]">Pacientes</span>
                     </div>
                 </div>
             </div>

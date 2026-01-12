@@ -145,6 +145,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // TODO: AGREGAR LAS RUTAS
                 .antMatchers(HttpMethod.POST,UriUtils.USERS).permitAll()
 
+
+
                 .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS).access("@accessHandler.isUserQuery(authentication, request) OR hasRole('DOCTOR') AND @accessHandler.canSeeHistory(authentication, request) ")
                 .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS +"/{id:\\d+}/**").access("@accessHandler.canHandleAppointment(authentication, #id) OR (hasRole('DOCTOR') AND @accessHandler.canSeeMedicalHistoryApp(authentication, #id))")
                 .antMatchers(HttpMethod.PATCH, UriUtils.APPOINTMENTS +"/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
@@ -153,6 +155,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/doctor").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
 
                 .antMatchers(HttpMethod.GET, UriUtils.DOCTORS +"/**").permitAll()
+                .antMatchers(HttpMethod.HEAD, UriUtils.DOCTORS).permitAll()
                 .antMatchers(HttpMethod.POST, UriUtils.DOCTORS).permitAll()
                 .antMatchers(HttpMethod.PATCH, UriUtils.DOCTORS + "/{id:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
                 .antMatchers(HttpMethod.PUT, UriUtils.DOCTORS +"/{id:\\d+}/**").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
@@ -226,7 +229,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 HEADER_REFRESH_TOKEN,
                 "Location",
                 "Link",
-                "WWW-Authenticate"
+                "WWW-Authenticate",
+                "X-Total-Count"
         ));
 
         source.registerCorsConfiguration("/**", config);

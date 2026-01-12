@@ -77,4 +77,12 @@ export async function registerPatient(data: PatientRegisterData) {
 
     return api.post('/patients', payload,
         { headers: { 'Content-Type': 'application/vnd.vitae.patient.v1+json' } });
-};
+}
+
+
+export async function fetchCountsPatient(): Promise<number> {
+    const res = await api.head('/patients')
+    const header = res.headers['x-total-count'] ?? res.headers['X-Total-Count'];
+    const parsed = parseInt(String(header ?? ''), 10);
+    return Number.isNaN(parsed) ? 0 : parsed;
+}

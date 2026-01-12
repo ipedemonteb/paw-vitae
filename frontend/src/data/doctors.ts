@@ -122,3 +122,10 @@ export async function  registerDoctor (data: DoctorRegisterData){
     });
 }
 
+
+export async function fetchCountDoctors(): Promise<number> {
+    const res = await api.head('/doctors')
+    const header = res.headers['x-total-count'] ?? res.headers['X-Total-Count'];
+    const parsed = parseInt(String(header ?? ''), 10);
+    return Number.isNaN(parsed) ? 0 : parsed;
+}

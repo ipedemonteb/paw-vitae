@@ -89,6 +89,13 @@ public class RestDoctorController {
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctorPage.getContent(), uriInfo)) {}), doctorPage, uriInfo);
     }
 
+    @HEAD
+    @Produces(value = CustomMediaType.APPLICATION_DOCTOR_LIST)
+    public Response getDoctorCount(){
+        long count = doctorService.getAllDoctorsDisplayCount();
+        return Response.ok().header("X-Total-Count", count).build();
+    }
+
     @GET
     @Path("/{id:\\d+}/specialties")
     @Produces(value = CustomMediaType.APPLICATION_SPECIALTY_LIST)
