@@ -7,8 +7,8 @@ import ar.edu.itba.paw.webapp.validation.ValidUnavailability;
 import java.util.List;
 
 public class DoctorUnavailabilityForm {
-    @ValidUnavailability(message = "{unavailable.slots.invalid}")
-    @UnavailabilityIntersection(message = "{unavailable.slots.overlap}")
+    @ValidUnavailability(message = "unavailable.slots.invalid")
+    @UnavailabilityIntersection(message = "unavailable.slots.overlap")
     private List<UnavailabilitySlotForm> unavailabilitySlots;
 
     public List<UnavailabilitySlotForm> getUnavailabilitySlots() {

@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 public class RecoverPasswordForm {
 
     @NotEmpty
-    @Email(message = "{recover.password.email.invalid}")
+    @Email(message = "recover.password.email.invalid")
     @Size(max = 100)
     private String email;
     public String getEmail() {

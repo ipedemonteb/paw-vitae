@@ -6,12 +6,12 @@ import ar.edu.itba.paw.webapp.validation.InvalidFileQuantity;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
-@InvalidDoctorFileForm(message = "{InvalidDoctorFileForm.message}")
-@InvalidFileQuantity(message = "{InvalidFileQuantity.message}")
+@InvalidDoctorFileForm(message = "InvalidDoctorFileForm.message")
+@InvalidFileQuantity(message = "InvalidFileQuantity.message}")
 public class DoctorFileForm {
 
-    @Size(max = 5, message = "{appointment.files.max}")
-    @AppointmentFileValid(message = "{appointment.files.valid}")
+    @Size(max = 5, message = "appointment.files.max")
+    @AppointmentFileValid(message = "appointment.files.valid")
     private MultipartFile[] patientFiles;
 
     @Size(max = 255)

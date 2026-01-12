@@ -8,14 +8,14 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@OfficeOwnedByDoctor(message = "{office.invalid}")
+@OfficeOwnedByDoctor(message = "office.invalid")
 @ActiveOfficeSlots
 public class UpdateAvailabilityForm {
 
     @NotEmpty
     @NotNull
-    @ValidOfficeTimeSlot(message = "{office.invalid.timeSlot}")
-    @OfficeAvailabilitySlotIntersection(message = "{office.availabilitySlot.intersection}")
+    @ValidOfficeTimeSlot(message = "office.invalid.timeSlot")
+    @OfficeAvailabilitySlotIntersection(message = "office.availabilitySlot.intersection")
     private List<DoctorOfficeAvailabilityForm> doctorOfficeAvailabilities;
 
     @NotNull

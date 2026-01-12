@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 public class DoctorExperiencesForm {
-    @ValidExperience(message = "{experiences.invalid}")
+    @ValidExperience(message = "experiences.invalid")
     @Size(max = 10)
     private List<ExperienceForm> experiences;
 
