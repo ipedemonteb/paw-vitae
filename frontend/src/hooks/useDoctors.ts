@@ -4,6 +4,12 @@ import {
     getDoctor,
     getDoctorImage,
     type DoctorRegisterData,
+    registerDoctor,
+    getDoctorCertifications,
+    getDoctorBiography,
+    getDoctorExperiences,
+    getDoctorCoverages,
+    getDoctorSpecialties
     registerDoctor, fetchCountDoctors
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQuery} from "@tanstack/react-query";
@@ -60,6 +66,54 @@ export function useDoctorImageUrl(id?: string | null, options?: { enabled?: bool
 export function useRegisterDoctor() {
     return useMutation<any, AxiosError<any>, DoctorRegisterData>({
         mutationFn: (data: DoctorRegisterData) => registerDoctor(data)
+    });
+}
+
+export function useDoctorSpecialties(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'specialties', url],
+        queryFn: () => getDoctorSpecialties(url!),
+        enabled: !!url,
+    });
+}
+
+export function useDoctorCoverages(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'coverages', url],
+        queryFn: () => getDoctorCoverages(url!),
+        enabled: !!url,
+    });
+}
+
+export function useDoctorExperience(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'experiences', url],
+        queryFn: () => getDoctorExperiences(url!),
+        enabled: !!url,
+    });
+}
+
+export function useDoctorCertifications(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'certifications', url],
+        queryFn: () => getDoctorCertifications(url!),
+        enabled: !!url,
+    });
+}
+
+export function useDoctorBiography(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'bio', url],
+        queryFn: () => getDoctorBiography(url!),
+        enabled: !!url,
+    });
+}
+
+export function useDoctorOffices(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'offices', url],
+        queryFn: () => getDoctorBiography(url!),
+        enabled: !!url,
     });
 }
 

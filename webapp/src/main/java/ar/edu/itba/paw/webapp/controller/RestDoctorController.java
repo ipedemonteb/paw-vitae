@@ -101,7 +101,7 @@ public class RestDoctorController {
     @Produces(value = CustomMediaType.APPLICATION_SPECIALTY_LIST)
     public Response getDoctorSpecialties(@PathParam("id") final long id) {
         List<Specialty> specialties = this.specialtyService.getByDoctorId(id);
-        return Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialties, uriInfo)) {}).build();
+        return Response.ok(new GenericEntity<List<SpecialtyDTO>>(SpecialtyDTO.fromSpecialty(specialties, uriInfo)) {}).build();
     }
 
     @GET
@@ -109,7 +109,7 @@ public class RestDoctorController {
     @Produces(value = CustomMediaType.APPLICATION_COVERAGE_LIST)
     public Response getDoctorCoverages(@PathParam("id") final long id) {
         List<Coverage> coverages = this.coverageService.findByDoctorId(id);
-        return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
+        return Response.ok(new GenericEntity<List<CoverageDTO>>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
     }
 
     @GET

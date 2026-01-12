@@ -1,6 +1,9 @@
 import {api} from "@/data/Api.ts";
 import {ContentTypes} from "@/utils/contentTypes.js";
 import type {AxiosRequestConfig} from "axios";
+import type {CoverageDTO} from "@/data/coverages.ts";
+import type {SpecialtyDTO} from "@/data/specialties.ts";
+import type {OfficeDTO} from "@/data/office.ts";
 
 
 export type ChangePasswordForm = {
@@ -13,7 +16,7 @@ export type DoctorDTO = {
     email: string;
     phone: string;
     rating: number;
-    ratingCount: string;
+    ratingCount: number;
     specialties: string;
     coverages: string;
     offices: string;
@@ -48,6 +51,24 @@ export interface DoctorRegisterData {
     selectedCoverages: string[];
 }
 
+export interface ExperienceDTO {
+    positionTitle: string;
+    organizationName: string;
+    startDate: string;
+    endDate?: string;
+    doctor: string;
+}
+export interface CertificationDTO {
+    certificateName: string;
+    issuingEntity: string;
+    issueDate: string;
+    doctor: string;
+}
+export interface DoctorProfileDTO {
+    biography: string;
+    description: string;
+    doctor: string;
+}
 const extractIdFromUrl = (url: string): string => {
     if (!url) return "";
     const segments = url.replace(/\/$/, "").split("/");
@@ -64,8 +85,11 @@ export async function listDoctors(params: DoctorsQuery) {
             orderBy: params.orderBy ?? "name",
             direction: params.direction ?? "asc",
             page: params.page ?? 1,
+        },
+        headers: {
+            "accept": ContentTypes.DOCTOR_LIST
         }
-    });
+    } as AxiosRequestConfig);
     return res.data;
 }
 
@@ -79,7 +103,11 @@ export async function changeDoctorPassword(url: string, form: ChangePasswordForm
 }
 
 export async function getDoctor(id: string) {
-    const res = await api.get<DoctorDTO>(`/doctors/${id}`);
+    const res = await api.get<DoctorDTO>(`/doctors/${id}`,{
+        headers: {
+            "accept": ContentTypes.DOCTOR
+        }
+    } as AxiosRequestConfig);
     return res.data;
 }
 
@@ -117,7 +145,7 @@ export async function  registerDoctor (data: DoctorRegisterData){
 
     return api.post('/doctors', payload, {
         headers: {
-            'Content-Type': 'application/vnd.vitae.doctor.v1+json',
+            'Content-Type': ContentTypes.DOCTOR,
         }
     });
 }
@@ -128,4 +156,41 @@ export async function fetchCountDoctors(): Promise<number> {
     const header = res.headers['x-total-count'] ?? res.headers['X-Total-Count'];
     const parsed = parseInt(String(header ?? ''), 10);
     return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+export async function getDoctorSpecialties(specialtyUrl: string) {
+    const res = await api.get<SpecialtyDTO[]>(specialtyUrl,{
+        headers: {"accept": ContentTypes.SPECIALTY_LIST,}
+    } as AxiosRequestConfig);
+    return res.data;
+}
+export async function getDoctorCoverages(coverageUrl: string) {
+    const res = await api.get<CoverageDTO[]>(coverageUrl,{
+        headers: {"accept": ContentTypes.COVERAGE_LIST,}
+    } as AxiosRequestConfig);
+    return res.data;
+}
+export async function getDoctorExperiences(experiencesUrl: string) {
+    const res = await api.get<ExperienceDTO[]>(experiencesUrl,{
+        headers: {"accept": ContentTypes.DOCTOR_EXPERIENCE_LIST,}
+    } as AxiosRequestConfig);
+    return res.data;
+}
+export async function getDoctorCertifications(certificationsUrl: string) {
+    const res = await api.get<CertificationDTO[]>(certificationsUrl,{
+        headers: {"accept": ContentTypes.DOCTOR_CERTIFICATION_LIST,}
+    } as AxiosRequestConfig);
+    return res.data;
+}
+export async function getDoctorBiography(profileUrl: string) {
+    const res = await api.get<DoctorProfileDTO>(profileUrl,{
+        headers: {"accept": ContentTypes.DOCTOR_PROFILE,}
+    } as AxiosRequestConfig);
+    return res.data;
+}
+export async function getDoctorOffices(officesUrl: string) {
+    const res = await api.get<OfficeDTO[]>(officesUrl,{
+        headers: {"accept": ContentTypes.OFFICE_LIST,}
+    } as AxiosRequestConfig);
+    return res.data;
 }

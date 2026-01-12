@@ -13,7 +13,6 @@ public class ExperienceDTO {
     private String organizationName;
     private LocalDate startDate;
     private LocalDate endDate;
-
     private URI doctor;
 
     public static ExperienceDTO fromDoctorExperience(DoctorExperience experience, UriInfo uriInfo) {
@@ -32,6 +31,7 @@ public class ExperienceDTO {
     public static List<ExperienceDTO> fromDoctorExperience(List<DoctorExperience> experiences, UriInfo uriInfo) {
         return experiences.stream().map(e -> fromDoctorExperience(e, uriInfo)).toList();
     }
+
 
     public String getPositionTitle() {
         return positionTitle;
