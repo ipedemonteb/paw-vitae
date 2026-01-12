@@ -135,7 +135,7 @@
     "show_password": "Show password",
     "hide_password": "Hide password",
     "error_credentials": "Invalid credentials",
-    "error_generic": "An error occurred during login",
+    "error_generic": "An error occurred during login. Check your credentials and try again.",
     "aria_email": "Email address",
     "aria_password": "Password"
   },
