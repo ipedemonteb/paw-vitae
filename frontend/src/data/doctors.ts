@@ -36,6 +36,24 @@ export type DoctorsQuery = {
     page?: number;
 };
 
+export interface DoctorRegisterData {
+    name: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    password: string;
+    repeatPassword: string;
+    image: File | null;
+    selectedSpecialties: string[];
+    selectedCoverages: string[];
+}
+
+const extractIdFromUrl = (url: string): string => {
+    if (!url) return "";
+    const segments = url.replace(/\/$/, "").split("/");
+    return segments.pop() || "";
+}
+
 export async function listDoctors(params: DoctorsQuery) {
     const res = await api.get<DoctorDTO[]>("/doctors", {
         params: {
@@ -71,3 +89,36 @@ export async function getDoctorImage(id: string) {
     );
     return res.data;
 }
+
+export async function  registerDoctor (data: DoctorRegisterData){
+    const specialtyIds: number[] = [];
+    data.selectedSpecialties.forEach(url => {
+        const id = extractIdFromUrl(url);
+        if (id) specialtyIds.push(parseInt(id));
+    });
+
+    const coverageIds: number[] = [];
+    data.selectedCoverages.forEach(url => {
+        const id = extractIdFromUrl(url);
+        if (id) coverageIds.push(parseInt(id));
+    });
+
+    const payload = {
+        name: data.name,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        repeatPassword: data.repeatPassword,
+        specialties: specialtyIds,
+        coverages: coverageIds
+    };
+
+
+    return api.post('/doctors', payload, {
+        headers: {
+            'Content-Type': 'application/vnd.vitae.doctor.v1+json',
+        }
+    });
+}
+
