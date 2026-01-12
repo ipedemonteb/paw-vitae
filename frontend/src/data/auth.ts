@@ -1,4 +1,6 @@
 import {api, NEW_JWT_HEADER, NEW_REFRESH_HEADER} from "@/data/Api.ts"
+import {t} from "i18next";
+
 // import {setAuth} from "@/context/auth-store.ts";
 // export async function login(email: string, password: string)  {
 //     const credentials = btoa(email + ":" + password);
@@ -17,9 +19,9 @@ import {api, NEW_JWT_HEADER, NEW_REFRESH_HEADER} from "@/data/Api.ts"
 //     }
 // }
 
+
 export async function login(email: string, password: string) {
     const credentials = btoa(email + ":" + password);
-
     const res = await api.head("/", {
         headers: { Authorization: `Basic ${credentials}` }
     });
@@ -28,7 +30,7 @@ export async function login(email: string, password: string) {
     const refresh = res.headers[NEW_REFRESH_HEADER];
 
     if (!jwt || !refresh) {
-        throw new Error("login.error_credentials");
+        throw new Error(t("login.error_credentials"));
     }
 
     return { jwt, refresh };
