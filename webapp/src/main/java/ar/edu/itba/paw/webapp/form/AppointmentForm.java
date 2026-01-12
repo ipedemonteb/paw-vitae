@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
-@OfficeOwnedByDoctor(message = "{office.invalid}")
+@OfficeOwnedByDoctor(message = "office.invalid")
 @OfficeAcceptsSpecialty(officeId = "officeId", specialtyId = "specialtyId")
 @OfficeAvailableAtDayAndTime(officeId = "officeId", date = "appointmentDate", appointmentHour = "appointmentHour")
 @AppointmentExistence(userId = "doctorId", date = "appointmentDate", startTime = "appointmentHour")
@@ -25,20 +25,20 @@ import java.time.LocalDate;
 @AppointmentValidSpecialtyForDoctor(doctorId = "doctorId", specialtyId = "specialtyId")
 public class AppointmentForm {
 
-    @NotNull(message = "{appointment.date.notnull}")
+    @NotNull(message = "appointment.date.notnull")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate appointmentDate;
 
-    @NotNull(message = "{appointment.hour.notnull}")
-    @Min(value = 8, message = "${appointment.hour.invalid}")
-    @Max(value = 20, message = "${appointment.hour.invalid}")
+    @NotNull(message = "appointment.hour.notnull")
+    @Min(value = 8, message = "$appointment.hour.invalid")
+    @Max(value = 20, message = "$appointment.hour.invalid")
     private Integer appointmentHour;
 
     @Size(max = 255)
     private String reason;
 
     @NotNull
-    @Specialty(message = "{specialty.invalid}")
+    @Specialty(message = "specialty.invalid")
     private long specialtyId;
 
     @NotNull

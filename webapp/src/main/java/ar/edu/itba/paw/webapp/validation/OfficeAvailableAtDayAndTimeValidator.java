@@ -52,7 +52,7 @@ public class OfficeAvailableAtDayAndTimeValidator implements ConstraintValidator
             if (!doctorOfficeAvailabilityService.isAvailableAtDayAndTime(officeId, date, hour)
                     || unavailabilitySlotsService.isUnavailableAtDate(officeId, date)) {
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{appointment.office.date.valid}")
+                context.buildConstraintViolationWithTemplate("appointment.office.date.valid")
                         .addPropertyNode(dateFieldName)
                         .addConstraintViolation();
                 return false;

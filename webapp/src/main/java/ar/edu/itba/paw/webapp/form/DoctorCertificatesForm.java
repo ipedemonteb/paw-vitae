@@ -10,7 +10,7 @@ import java.util.List;
 public class DoctorCertificatesForm {
 
 
-    @ValidCertificate(message = "{certificates.invalid}")
+    @ValidCertificate(message = "certificates.invalid")
     @Size(max = 8)
     private List<CertificateForm> certificates;
 

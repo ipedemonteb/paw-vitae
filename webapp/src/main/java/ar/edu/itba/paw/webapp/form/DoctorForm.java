@@ -10,7 +10,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 
 
-@RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "{register.passwordsDoNotMatch}")
+@RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "register.passwordsDoNotMatch")
 public class DoctorForm {
 
     @NotEmpty
@@ -23,7 +23,7 @@ public class DoctorForm {
 
     @NotEmpty
     @Email
-    @EmailExistance( message = "{email.existance}")
+    @EmailExistance( message = "email.existance")
     @Size(max = 100)
     private String email;
 
@@ -37,14 +37,14 @@ public class DoctorForm {
     private String repeatPassword;
 
     @NotEmpty
-    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "{phone.invalid}")
+    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "phone.invalid")
     private String phone;
 
-    @SpecialtyList(message = "{specialties.invalids}")
+    @SpecialtyList(message = "specialties.invalids")
     @NotEmpty
     private List<Long> specialties;
 
-    @CoverageList(message = "{coverages.invalids}")
+    @CoverageList(message = "coverages.invalids")
     @NotEmpty
     private List<Long> coverages;
 

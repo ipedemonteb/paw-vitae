@@ -26,7 +26,7 @@ public class OfficeOwnedByDoctorValidator {
             List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(form.getDoctorId());
             if (offices.stream().noneMatch(office -> office.getId() == form.getOfficeId())) {
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{appointment.office.valid}")
+                context.buildConstraintViolationWithTemplate("appointment.office.valid")
                         .addPropertyNode("officeId")
                         .addConstraintViolation();
                 return false;

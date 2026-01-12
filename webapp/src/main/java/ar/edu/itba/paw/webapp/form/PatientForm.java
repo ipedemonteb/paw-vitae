@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.*;
 import java.util.List;
 
-@RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "{register.passwordsDoNotMatch}")
+@RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "register.passwordsDoNotMatch")
 public class PatientForm {
 
     @NotEmpty
@@ -26,24 +26,24 @@ public class PatientForm {
     private String email;
 
     @NotEmpty
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "password.invalid")
     @Size(min = 8, max = 50)
     private String password;
 
     @NotEmpty
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "{password.invalid}")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "password.invalid")
     @Size(min = 8, max = 50)
     private String repeatPassword;
 
     @NotEmpty
-    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "{phone.invalid}")
+    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "phone.invalid")
     private String phone;
-    @Coverage(message = "{coverage.invalid}")
+    @Coverage(message = "coverage.invalid")
     @NotNull
     private Long coverage;
 
     @NotNull
-    @Neighborhood(message = "{neighborhood.invalid}")
+    @Neighborhood(message = "neighborhood.invalid")
     private Long neighborhoodId;
 
     public String getName() {

@@ -19,12 +19,12 @@ public class UpdateDoctorForm {
     private String lastName;
 
     @NotEmpty
-    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "{phone.invalid}")
+    @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "phone.invalid")
     private String phone;
     @CoverageList(message = "{coverages.invalids}")
     @NotEmpty
     private List<Long> coverages;
-    @SpecialtyList(message = "{specialties.invalids}")
+    @SpecialtyList(message = "specialties.invalids")
     @NotEmpty
     private List<Long> specialties;
 
