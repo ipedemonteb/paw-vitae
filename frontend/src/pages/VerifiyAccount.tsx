@@ -51,13 +51,9 @@ export default function VerifyAccount() {
             }
 
             try {
-                const result = await login(email, token);
+                 await login(email, token);
 
-                if (result.success) {
-                    setStatus('success')
-                } else {
-                    setStatus('error')
-                }
+
             } catch (e) {
                 setStatus('error')
             }

@@ -76,11 +76,7 @@ export default function ChangePassword() {
         setApiError(null);
 
         try {
-            const loginResult = await login(email, token);
-
-            if (!loginResult.success) {
-                throw new Error(t("change_password.error_token_expired") || "Enlace expirado.");
-            }
+            await login(email, token);
 
             const accessToken = getAccessToken();
             const claims = parseJwt(accessToken || "");
