@@ -39,7 +39,7 @@ public class DoctorDTO {
         dto.specialties = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("specialties").build();
         dto.coverages = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("coverages").build();
         dto.offices = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("offices").build();
-        dto.profile = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("profile").build();
+        dto.profile = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("biography").build();
         dto.experiences = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("experiences").build();
         dto.certifications = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("certifications").build();
         dto.ratings = uriInfo.getBaseUriBuilder().path("ratings").queryParam("doctorId", doctorId).build();
