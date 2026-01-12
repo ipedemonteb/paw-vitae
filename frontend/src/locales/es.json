@@ -37,18 +37,16 @@
     }
   },
   "appointment": {
-    "status": {
-      "confirmado": "Confirmado",
-      "completo": "Completado",
-      "cancelado": "Cancelado"
-    },
-    "all": "Todos",
     "history": "Historial de Citas",
     "upcoming": "Próximas Citas",
     "filters": {
-      "30_days": "Próximos 30 Dias",
+      "month": "Próximos 30 Dias",
       "week": "Esta Semana",
-      "today": "Hoy"
+      "today": "Hoy",
+      "confirmed": "Confirmado",
+      "completed": "Completado",
+      "cancelled": "Cancelado",
+      "all": "Todos"
     },
     "history_filter_message": "Estado",
     "upcoming_filter_message": "Rango de Fechas",
@@ -61,6 +59,10 @@
         "upcoming": "No tienes citas próximas programadas. Tus futuras citas aparecerán aquí",
         "past": "Tus citas pasadas aparecerán aquí una vez que hayas completado algunas"
       }
+    },
+    "loading": {
+      "past": "Cargando sus citas pasadas...",
+      "upcoming": "Cargando sus citas próximas..."
     },
     "details": {
       "title": "Detalles del Turno",

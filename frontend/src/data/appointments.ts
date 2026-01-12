@@ -3,7 +3,7 @@ import type {PaginationData} from "@/lib/types.ts";
 
 export type AppointmentDTO = {
     date: Date;
-    status: string;
+    status: 'completo' | 'cancelado'  | 'confirmado';
     reason: string;
     allowFullHistory: string;
     report: string;
@@ -18,12 +18,15 @@ export type AppointmentDTO = {
     rating: string;
 }
 
+export type AppointmentCollection = "upcoming" | "history";
+export type AppointmentFilter = "all" | "today" | "week" | "month" | "cancelled" | "completed";
+
 
 export type AppointmentsQuery = {
     userId?: string;
     doctorId?: string;
-    collection?: string;
-    filter?: string;
+    collection?: AppointmentCollection;
+    filter?: AppointmentFilter;
     page?: number;
     pageSize?: number;
 }
