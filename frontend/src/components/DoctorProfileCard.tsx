@@ -3,6 +3,7 @@ import { Mail, Phone } from "lucide-react";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import BadgeComponent from "@/components/BadgeComponent.tsx";
 import { Card } from "@/components/ui/card.tsx";
+import { useDoctorImageUrl } from "@/hooks/useDoctors.ts";
 
 const profileCard =
     "flex flex-col gap-0 items-center sm:flex-row";
@@ -23,7 +24,10 @@ const ratingContent =
 const ratingText =
     "font-medium text-[var(--text-light)]";
 
-function DoctorProfileCard() {
+function DoctorProfileCard( { doctorId } : { doctorId: string } ) {
+
+    const { url: getDoctorImgUrl } = useDoctorImageUrl(doctorId);
+
     const rating = 3.5;
     const ratingCount = 123;
     const specialties = [
@@ -41,7 +45,7 @@ function DoctorProfileCard() {
     return (
         <Card className={profileCard}>
             <Avatar className={avatarContainer}>
-                <AvatarImage src="https://picsum.photos/200" />
+                <AvatarImage src={getDoctorImgUrl || undefined} />
                 <AvatarFallback>JD</AvatarFallback>
             </Avatar>
             <div className={userDataContainer}>

@@ -40,6 +40,13 @@ export async function getPatient(url: string) {
     return res.data;
 }
 
+export const patientUrl = (id: string) => `/patients/${id}`;
+
+export async function getPatientById(id: string) {
+    const res = await api.get<PatientDTO>(patientUrl(id));
+    return res.data;
+}
+
 export async function changePatientPassword(url: string, form: ChangePasswordForm) {
     const res = await api.patch(`${url}`,form,{
         headers: {
