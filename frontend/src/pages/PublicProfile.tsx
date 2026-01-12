@@ -22,25 +22,33 @@ import { RatingCard } from "@/components/Rating.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import {
+    useDoctor,
+    useDoctorBiography, useDoctorCertifications,
+    useDoctorCoverages,
+    useDoctorExperience,
+    useDoctorSpecialties
+} from "@/hooks/useDoctors.ts";
+import type {DoctorDTO} from "@/data/doctors.ts";
+import GenericError from "@/pages/GenericError.tsx";
+import {useRatings} from "@/hooks/useRatings.ts";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
 
 function PublicProfile() {
-    const { id } = useParams();
-
-    const rating = 3.5;
-    const ratingCount = 123;
-    const specialties = [
-        "General",
-        "Cardiology",
-        "Dermatology",
-        "Pediatrics",
-        "Neurology",
-        "Oncology",
-        "Urology",
-        "Ophthalmology",
-    ];
+    const { id } = useParams<{ id: string }>();
+    const { data: doctor, isLoading: isLoadingDoctor, isError } = useDoctor(id);
+    const { data: specialties, isLoading: isLoadingSpecialties } = useDoctorSpecialties(doctor?.specialties);
+    const {data:coverages, isLoading: isLoadingCoverages} = useDoctorCoverages(doctor?.coverages);
+    const {data:experiences, isLoading: isLoadingExperiences} = useDoctorExperience(doctor?.experiences);
+    const {data:certifications, isLoading: isLoadingCertifications} = useDoctorCertifications(doctor?.certifications);
+    const {data:profile, isLoading: isLoadingProfile} = useDoctorBiography(doctor?.profile);
+    const {data:ratings, isLoading: isLoadingRatings} = useRatings(doctor?.ratings);
+    if (isLoadingDoctor || isLoadingCertifications|| isLoadingCoverages || isLoadingExperiences  || isLoadingProfile || isLoadingRatings || isLoadingSpecialties) return <div>Loading...</div>;
+    if (isError || !doctor) return <GenericError code={404} />;
+    const rating = doctor.rating ;
+    const ratingCount =doctor.ratingCount;
     const maxBadges = 4;
 
     return (
