@@ -74,39 +74,52 @@ export function useUserService(api: AxiosInstance) {
             neighborhoodId: parseInt(neighborhoodId) // Backend espera Long
         };
 
-        return api.post('/patients', payload);
+        return api.post('/patients', payload,
+            { headers: { 'Content-Type': 'application/vnd.vitae.patient.v1+json' } });
     };
 
     const registerDoctor = async (data: DoctorRegisterData) => {
-        const payload = new FormData();
-
-        payload.append("name", data.name);
-        payload.append("lastName", data.lastName);
-        payload.append("email", data.email);
-        payload.append("phone", data.phone);
-        payload.append("password", data.password);
-        payload.append("repeatPassword", data.repeatPassword);
-
-        if (data.image) {
-            payload.append("image", data.image);
-        }
-
+        const specialtyIds: number[] = [];
         data.selectedSpecialties.forEach(url => {
             const id = extractIdFromUrl(url);
-            if (id) payload.append("specialties", id);
+            if (id) specialtyIds.push(parseInt(id));
         });
 
+        const coverageIds: number[] = [];
         data.selectedCoverages.forEach(url => {
             const id = extractIdFromUrl(url);
-            if (id) payload.append("coverages", id);
+            if (id) coverageIds.push(parseInt(id));
         });
 
-        return api.post('/doctors', payload);
+        const payload = {
+            name: data.name,
+            lastName: data.lastName,
+            email: data.email,
+            phone: data.phone,
+            password: data.password,
+            repeatPassword: data.repeatPassword,
+            specialties: specialtyIds,
+            coverages: coverageIds
+        };
+
+
+        return api.post('/doctors', payload, {
+            headers: {
+                'Content-Type': 'application/vnd.vitae.doctor.v1+json',
+            }
+        });
     };
+
+    const uploadDoctorImage = async (uploadUrl: string, image: File) => {
+        const formData = new FormData();
+        formData.append('image', image);
+        return api.put(uploadUrl, formData);
+    }
 
     return {
         login,
         registerPatient,
-        registerDoctor
+        registerDoctor,
+        uploadDoctorImage
     };
 }

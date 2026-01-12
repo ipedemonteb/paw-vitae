@@ -1,17 +1,18 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Eye, EyeOff, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
     tooltip?: string;
+    error?: string;
 }
 
-export function PasswordInput({ label, tooltip, id, required, className, ...props }: PasswordInputProps) {
+export function PasswordInput({ label, tooltip, id, required, className, error, ...props }: PasswordInputProps) {
     const [show, setShow] = useState(false);
 
     return (
-        <div className="space-y-2 w-full"> {/* Aseguramos ancho completo aquí también */}
+        <div className="space-y-2 w-full">
             <div className="flex items-center gap-2">
                 <label htmlFor={id} className="text-sm font-medium text-[var(--text-color)] leading-none">
                     {label} {required && <span className="text-red-500 ml-1">*</span>}
@@ -32,7 +33,10 @@ export function PasswordInput({ label, tooltip, id, required, className, ...prop
                     type={show ? "text" : "password"}
                     required={required}
                     className={cn(
-                        "flex h-12 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 pr-10 transition-all",
+                        "flex h-12 w-full rounded-md border bg-white px-3 py-2 text-base shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 pr-10 transition-all",
+                        error
+                            ? "border-red-500 focus:ring-red-500 text-red-900 placeholder-red-300"
+                            : "border-gray-300 focus:ring-[var(--primary-color)]",
                         className
                     )}
                     {...props}
@@ -46,6 +50,12 @@ export function PasswordInput({ label, tooltip, id, required, className, ...prop
                     {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
             </div>
+
+            {error && (
+                <p className="text-sm text-red-500 font-medium animate-in fade-in slide-in-from-top-1">
+                    {error}
+                </p>
+            )}
         </div>
     );
 }

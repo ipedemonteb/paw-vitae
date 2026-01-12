@@ -27,8 +27,8 @@ import DoctorOffices from "@/pages/doctor/DoctorOffices.tsx";
 import DoctorAccount from "@/pages/doctor/DoctorAccount.tsx";
 import GenericError from "@/pages/GenericError.tsx";
 
-import { GuestGuard } from "@/guards/GuestGuard";
-import { AuthGuard } from "@/guards/AuthGuard";
+import { GuestGuard } from "@/guards/guestGuard";
+import { AuthGuard } from "@/guards/authGuard";
 import { ExcludeRolesGuard } from "@/guards/excludedRolesGuard.tsx";
 
 export const router = createBrowserRouter([

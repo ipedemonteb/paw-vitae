@@ -1,6 +1,6 @@
 "use client"
 
-import {Suspense, useState} from "react"
+import {Suspense, useEffect, useState} from "react"
 import { ChevronDown, User, Stethoscope } from "lucide-react"
 import {
     DropdownMenu,
@@ -32,6 +32,14 @@ function RegisterContent() {
     const [userType, setUserType] = useState<UserType>(
         typeParam === 'doctor' ? 'doctor' : 'patient'
     );
+
+    useEffect(() => {
+        if (typeParam === 'doctor') {
+            setUserType('doctor');
+        } else if (typeParam === 'patient') {
+            setUserType('patient');
+        }
+    }, [typeParam]);
     const { t } = useTranslation();
     const [successEmail, setSuccessEmail] = useState<string | null>(null)
 
