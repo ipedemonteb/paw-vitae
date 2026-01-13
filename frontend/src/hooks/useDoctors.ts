@@ -9,7 +9,7 @@ import {
     getDoctorBiography,
     getDoctorExperiences,
     getDoctorCoverages,
-    getDoctorSpecialties
+    getDoctorSpecialties, getDoctorOffices
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
@@ -111,7 +111,7 @@ export function useDoctorBiography(url?: string | null) {
 export function useDoctorOffices(url?: string | null) {
     return useQuery({
         queryKey: ['doctor', 'offices', url],
-        queryFn: () => getDoctorBiography(url!),
+        queryFn: () => getDoctorOffices(url!),
         enabled: !!url,
     });
 }

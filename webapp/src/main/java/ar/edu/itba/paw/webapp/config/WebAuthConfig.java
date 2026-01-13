@@ -170,7 +170,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/images/**").permitAll()
                 .antMatchers(UriUtils.COVERAGES +"/**").permitAll()
                 .antMatchers(UriUtils.SPECIALTIES + "/**").permitAll()
-                .antMatchers( UriUtils.NEIGHBORHOODS +"/**").permitAll()
+                .antMatchers( HttpMethod.GET,UriUtils.NEIGHBORHOODS +"/**").permitAll()
                 .antMatchers("/**").permitAll()
 
                 .and()
