@@ -3,7 +3,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import {useTranslation} from "react-i18next";
 
 const badgeContainer =
-    "flex flex-wrap gap-1 mt-2";
+    "flex flex-wrap gap-1 mt-2 md:px-0 px-5 justify-center";
 const badge =
     "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] px-2 py-1 rounded-full";
 const moreBadge =
