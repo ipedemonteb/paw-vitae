@@ -81,6 +81,11 @@ export interface DoctorProfileDTO {
     description: string;
     doctor: string;
 }
+export interface OfficeSpecialtyDTO {
+    specialty: string;
+    office: string;
+}
+
 const extractIdFromUrl = (url: string): string => {
     if (!url) return "";
     const segments = url.replace(/\/$/, "").split("/");
@@ -215,6 +220,13 @@ export async function getDoctorBiography(profileUrl: string) {
 export async function getDoctorOffices(officesUrl: string) {
     const res = await api.get<OfficeDTO[]>(officesUrl,{
         headers: {"accept": ContentTypes.OFFICE_LIST,}
+    } );
+    return res.data;
+}
+
+export async function getDoctorOfficeSpecialties(url: string) {
+    const res = await api.get<OfficeSpecialtyDTO[]>(url, {
+        headers: {"accept": ContentTypes.OFFICE_SPECIALTY_LIST,}
     } );
     return res.data;
 }

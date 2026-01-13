@@ -10,6 +10,46 @@ import {UploadFiles} from "@/components/UploadFiles.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {useTranslation} from "react-i18next";
+import {useDoctor, useDoctorOffices, useDoctorSpecialties, useDoctorOfficeSpecialties} from "@/hooks/useDoctors.ts";
+import type {OfficeDTO} from "@/data/office.ts";
+import type {SpecialtyDTO} from "@/data/specialties.ts";
+import type {OfficeSpecialtyDTO} from "@/data/doctors.ts";
+
+function buildSpecialtyToOfficesMapFromLinks(
+    offices: OfficeDTO[],
+    officeSpecialtyLinks: OfficeSpecialtyDTO[][],
+    specialtyBySelf: Map<string, SpecialtyDTO>
+) {
+    const map = new Map<string, { specialty: SpecialtyDTO; offices: OfficeDTO[] }>();
+
+    offices.forEach((office, i) => {
+        const links = officeSpecialtyLinks[i] ?? [];
+        links.forEach((link) => {
+            const self = link.specialty;
+            const specialty = specialtyBySelf.get(self) ?? { self, name: self };
+            const current = map.get(self);
+            if (!current) map.set(self, { specialty, offices: [office] });
+            else current.offices.push(office);
+        });
+    });
+
+    return map;
+}
+
+function getFilteredOffices(
+    offices: OfficeDTO[] | undefined,
+    selectedSpecialty: string | null,
+    specialtyToOffices: Map<string, { specialty: SpecialtyDTO; offices: OfficeDTO[] }>
+): OfficeDTO[] {
+    if (!offices) return [];
+    if (!selectedSpecialty) return offices;
+    return specialtyToOffices.get(selectedSpecialty)?.offices ?? [];
+}
+
+function isOfficeValid(offices: OfficeDTO[], selectedOffice: string | null) {
+    if (!selectedOffice) return true;
+    return offices.some((o) => o.self === selectedOffice);
+}
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -47,7 +87,6 @@ const bookButton =
     "mt-6 py-4 w-xs bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 function Appointment() {
-    const selectedSpecialty = "General";
 
     const doctorId = "24";
 
@@ -55,6 +94,53 @@ function Appointment() {
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null);
+    const [selectedOffice, setSelectedOffice] = useState<string | null>(null);
+
+    const { data: doctor, isLoading, isError } = useDoctor(doctorId);
+    // TODO: Handle isLoading and isError
+    const { data: offices } = useDoctorOffices(doctor?.offices ?? null);
+    const { data: officeSpecialties } = useDoctorOfficeSpecialties(offices ?? null);
+    const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties ?? null);
+
+    const specialtyBySelf = useMemo(() => {
+        const m = new Map<string, SpecialtyDTO>();
+        (doctorSpecialties ?? []).forEach((s) => m.set(s.self, s));
+        return m;
+    }, [doctorSpecialties]);
+
+    const specialtyToOffices = useMemo(() => {
+        if (!offices) return new Map<string, { specialty: SpecialtyDTO; offices: OfficeDTO[] }>();
+        return buildSpecialtyToOfficesMapFromLinks(offices, officeSpecialties, specialtyBySelf);
+    }, [offices, officeSpecialties, specialtyBySelf]);
+
+    const specialtyOptions = useMemo(
+        () => Array.from(specialtyToOffices.values()).map((x) => x.specialty),
+        [specialtyToOffices]
+    );
+
+    const filteredOffices = useMemo(
+        () => getFilteredOffices(offices, selectedSpecialty, specialtyToOffices),
+        [offices, selectedSpecialty, specialtyToOffices]
+    );
+
+    useEffect(() => {
+        if (!isOfficeValid(filteredOffices, selectedOffice)) {
+            setSelectedOffice(null);
+        }
+    }, [filteredOffices, selectedOffice]);
+
+    if (isLoading) {
+        return (
+            <div>Loading...</div>
+        );
+    }
+
+    if (!doctor || isError) {
+        return (
+            <div>Error</div>
+        );
+    }
 
     return (
         <div className={appointmentBackground}>
@@ -65,10 +151,18 @@ function Appointment() {
                         <p>{t("appointment.booking.header.subtitle")}</p>
                     </div>
                     <div className={appointmentContent}>
-                        <DoctorProfileCard doctorId={doctorId}/>
+                        <DoctorProfileCard doctorId={doctorId} doctor={doctor}/>
                         <div className={selectorsContainer}>
-                            <SpecialtySelector selectedSpecialty={selectedSpecialty} />
-                            <OfficeSelector />
+                            <SpecialtySelector
+                                options={specialtyOptions}
+                                selectedSpecialty={selectedSpecialty}
+                                setSelectedSpecialty={setSelectedSpecialty}/>
+                            <OfficeSelector
+                                options={filteredOffices}
+                                selectedOffice={selectedOffice}
+                                setSelectedOffice={setSelectedOffice}
+                                disabled={!selectedSpecialty}
+                            />
                         </div>
                         <DateSelector
                             selectedDate={selectedDate}
@@ -104,7 +198,11 @@ const selectorContent =
 const selectorButton =
     "cursor-pointer";
 
-function SpecialtySelector({selectedSpecialty}: {selectedSpecialty: string}) {
+function SpecialtySelector({options, selectedSpecialty, setSelectedSpecialty}: {
+    options: SpecialtyDTO[];
+    selectedSpecialty: string | null;
+    setSelectedSpecialty: React.Dispatch<React.SetStateAction<string | null>>;
+}) {
     const { t } = useTranslation();
 
     return (
@@ -114,16 +212,17 @@ function SpecialtySelector({selectedSpecialty}: {selectedSpecialty: string}) {
             </div>
             <div className={selectorContent}>
                 <p className={selectorTitle}>{t("appointment.booking.specialty")}</p>
-                <Select>
+                <Select value={selectedSpecialty ?? ""} onValueChange={(v) => setSelectedSpecialty(v)}>
                     <SelectTrigger className={selectorButton}>
-                        <SelectValue placeholder={selectedSpecialty}/>
+                        <SelectValue placeholder={t("appointment.booking.specialty")}/>
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem value="general">General</SelectItem>
-                            <SelectItem value="cardiology">Cardiology</SelectItem>
-                            <SelectItem value="endocrinology">Endocrinology</SelectItem>
-                            <SelectItem value="dermatolofy">Dermatology</SelectItem>
+                            {options.map((s) => (
+                                <SelectItem key={s.self} value={s.self}>
+                                    {t(s.name)}
+                                </SelectItem>
+                            ))}
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -132,26 +231,42 @@ function SpecialtySelector({selectedSpecialty}: {selectedSpecialty: string}) {
     );
 }
 
-function OfficeSelector() {
+function OfficeSelector({
+                            options,
+                            selectedOffice,
+                            setSelectedOffice,
+                            disabled,
+                        }: {
+    options: OfficeDTO[];
+    selectedOffice: string | null;
+    setSelectedOffice: React.Dispatch<React.SetStateAction<string | null>>;
+    disabled?: boolean;
+}) {
     const { t } = useTranslation();
-
     return (
         <Card className={selectorCard}>
             <div className={iconContainer}>
-                <Hospital className={icon}/>
+                <Hospital className={icon} />
             </div>
             <div className={selectorContent}>
                 <p className={selectorTitle}>{t("appointment.booking.office")}</p>
-                <Select>
+
+                <Select
+                    value={selectedOffice ?? ""}
+                    onValueChange={(v) => setSelectedOffice(v)}
+                    disabled={disabled || options.length === 0}
+                >
                     <SelectTrigger className={selectorButton}>
-                        <SelectValue placeholder={t("appointment.booking.office")}/>
+                        <SelectValue placeholder={t("appointment.booking.office")} />
                     </SelectTrigger>
+
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem value="main">Main Office</SelectItem>
-                            <SelectItem value="hospital">Hospital</SelectItem>
-                            <SelectItem value="oficina2">Oficina Mataderos</SelectItem>
-                            <SelectItem value="oficina3">Oficina Parque Chas</SelectItem>
+                            {options.map((o) => (
+                                <SelectItem key={o.self} value={o.self}>
+                                    {o.name}
+                                </SelectItem>
+                            ))}
                         </SelectGroup>
                     </SelectContent>
                 </Select>
