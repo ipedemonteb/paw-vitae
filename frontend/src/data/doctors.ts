@@ -10,6 +10,7 @@ export type ChangePasswordForm = {
     password: string;
     repeatPassword: string;
 }
+
 export type DoctorDTO = {
     name: string;
     lastName: string;
@@ -148,6 +149,14 @@ export async function  registerDoctor (data: DoctorRegisterData){
             'Content-Type': ContentTypes.DOCTOR,
         }
     });
+}
+
+
+export async function fetchCountDoctors(): Promise<number> {
+    const res = await api.head('/doctors')
+    const header = res.headers['x-total-count'] ?? res.headers['X-Total-Count'];
+    const parsed = parseInt(String(header ?? ''), 10);
+    return Number.isNaN(parsed) ? 0 : parsed;
 }
 
 export async function getDoctorSpecialties(specialtyUrl: string) {

@@ -3,7 +3,10 @@ import { Mail, Phone } from "lucide-react";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import BadgeComponent from "@/components/BadgeComponent.tsx";
 import { Card } from "@/components/ui/card.tsx";
-import { useDoctorImageUrl } from "@/hooks/useDoctors.ts";
+import {useDoctor, useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
+import {initialsFallback} from "@/utils/userUtils.ts";
 
 const profileCard =
     "flex flex-col gap-0 items-center sm:flex-row";
@@ -26,46 +29,58 @@ const ratingText =
 
 function DoctorProfileCard( { doctorId } : { doctorId: string } ) {
 
+    const { data: doctor, isLoading, isError  } = useDoctor(doctorId);
     const { url: getDoctorImgUrl } = useDoctorImageUrl(doctorId);
+    const shouldFetchSpecialties = !!doctor?.specialties;
+    const { data: specialties } = useDoctorSpecialties(doctor?.specialties, {
+        enabled: shouldFetchSpecialties,
+    });
 
-    const rating = 3.5;
-    const ratingCount = 123;
-    const specialties = [
-        "General",
-        "Cardiology",
-        "Dermatology",
-        "Pediatrics",
-        "Neurology",
-        "Oncology",
-        "Urology",
-        "Ophthalmology",
-    ];
+    if (isLoading) {
+        return (
+            <Skeleton className={profileCard + "w-full h-42 justify-center items-center"}>
+                <Spinner className="h-8 w-8 text-(--text-light)"/>
+            </Skeleton>
+        );
+    }
+
+    if (isError || !doctor) {
+        return (
+            //TODO: handle in another way
+            <Card className={profileCard}>
+                <div className="px-6 py-4 text-[var(--danger)]">No se pudo cargar el paciente.</div>
+            </Card>
+        );
+    }
+    const avatarFallbackText = initialsFallback(doctor.name, doctor.lastName);
+    const specialtiesList: string[] = (specialties ?? []).map((s) => s.name);
+
     const maxBadges = 4;
 
     return (
         <Card className={profileCard}>
             <Avatar className={avatarContainer}>
                 <AvatarImage src={getDoctorImgUrl || undefined} />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarFallback>{avatarFallbackText}</AvatarFallback>
             </Avatar>
             <div className={userDataContainer}>
-                <h1 className={userName}>John Doe</h1>
+                <h1 className={userName}>{doctor.name + " " + doctor.lastName}</h1>
                 <div className={dataContainer}>
                     <div className={contactData}>
                         <Mail className={contactIcon} />
-                        <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">johndoe@gmail.com</p>
+                        <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">{doctor.email}</p>
                     </div>
                     <div className={contactData}>
                         <Phone className={contactIcon} />
-                        <p>11 1234-5678</p>
+                        <p>{doctor.phone}</p>
                     </div>
                 </div>
                 <div className={ratingContent}>
-                    <RatingStars rating={rating} sizeClassName="h-4 w-4" />
-                    <p>{rating}</p>
-                    <p className={ratingText}>({ratingCount})</p>
+                    <RatingStars rating={doctor.rating} sizeClassName="h-4 w-4" />
+                    <p>{doctor.rating}</p>
+                    <p className={ratingText}>({doctor.ratingCount})</p>
                 </div>
-                <BadgeComponent specialties={specialties} maxBadges={maxBadges} />
+                <BadgeComponent specialties={specialtiesList} maxBadges={maxBadges} />
             </div>
         </Card>
     );
