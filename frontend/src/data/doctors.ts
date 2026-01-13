@@ -218,8 +218,11 @@ export async function getDoctorOffices(officesUrl: string) {
     } );
     return res.data;
 }
-export async function putDoctorCertificates(certificationsUrl: string, certificate: CertificateForm[]) {
-    const res = await api.put(certificationsUrl,certificate,{
+export async function putDoctorCertificates(certificationsUrl: string, certificatesList: CertificateForm[]) {
+    const payload = {
+        certificates: certificatesList // Debe coincidir con el nombre de la variable en DoctorCertificatesForm.java
+    };
+    const res = await api.put(certificationsUrl, payload, {
         headers: {
             "content-type":  ContentTypes.DOCTOR_CERTIFICATION_LIST
         }
@@ -240,8 +243,11 @@ export async function putDoctorProfile(profileUrl: string, biography: string, de
     return res.data;
 }
 
-export async function putDoctorExperiences(experiencesUrl: string, experiences: ExperienceForm[]) {
-    const res = await api.put(experiencesUrl,experiences,{
+export async function putDoctorExperiences(experiencesUrl: string, experiencesList: ExperienceForm[]) {
+    const payload = {
+        experiences: experiencesList
+    };
+    const res = await api.put(experiencesUrl, payload, {
         headers: {
             "content-type":  ContentTypes.DOCTOR_EXPERIENCE_LIST
         }
