@@ -441,7 +441,14 @@
         "rating": "calificaciones",
         "edit": "Editar",
         "about": "Sobre Mí"
-      }
+      },
+      "no_ratings": "Este doctor aún no tiene calificaciones.",
+      "no_certificates": "Este doctor aún no ha subido certificados.",
+      "no_experiences": "Este doctor aún no ha agregado experiencias.",
+      "present": "Presente",
+      "no_offices": "Este doctor aún no ha agregado consultorios.",
+      "no_coverages": "Este doctor aún no ha agregado coberturas.",
+      "no_bio_available": "Este doctor aún no ha agregado una biografía."
     }
   },
   "search": {

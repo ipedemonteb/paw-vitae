@@ -165,10 +165,9 @@ public class RestDoctorController {
     @Path("/{id:\\d+}/ratings")
     @Produces(value = CustomMediaType.APPLICATION_RATING_LIST)
     public Response getDoctorRatings(
-            @PathParam("id") final long id,
-            @QueryParam("page") @DefaultValue("1") @Min(1) final int page
+            @PathParam("id") final long id
     ) {
-        Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, page, 9);
+        Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, 1, 9);
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
     }
 

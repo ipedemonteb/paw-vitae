@@ -22,7 +22,7 @@ import { RatingCard } from "@/components/Rating.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {useDoctorImageUrl} from "@/hooks/useDoctors.ts";
+import {useDoctorImageUrl, useDoctorOffices} from "@/hooks/useDoctors.ts";
 import {
     useDoctor,
     useDoctorBiography, useDoctorCertifications,
@@ -36,7 +36,12 @@ import type {OfficeDTO} from "@/data/office.ts";
 import GenericError from "@/pages/GenericError.tsx";
 import {useRatings} from "@/hooks/useRatings.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
-
+import type {RatingsDTO} from "@/data/ratings.ts";
+import osdeLogo from "@/assets/osdeLogo.png";
+import medifeLogo from "@/assets/medifeLogo.png";
+import galenoLogo from "@/assets/galenoLogo.png";
+import {useNeighborhood} from "@/hooks/useNeighborhoods.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
 
@@ -49,22 +54,20 @@ function PublicProfile() {
     const {data:certifications, isLoading: isLoadingCertifications} = useDoctorCertifications(doctor?.certifications);
     const {data:profile, isLoading: isLoadingProfile} = useDoctorBiography(doctor?.profile);
     const {data:ratings, isLoading: isLoadingRatings} = useRatings(doctor?.ratings);
-    const {data:offices, isLoading: isLoadingOffices} = useDoctorCoverages(doctor?.offices);
-    if (isLoadingDoctor || isLoadingCertifications|| isLoadingCoverages || isLoadingExperiences  || isLoadingProfile || isLoadingRatings || isLoadingSpecialties) return <div>Loading...</div>;
+    const {data:offices, isLoading: isLoadingOffices} = useDoctorOffices(doctor?.offices);
+    if (isLoadingDoctor || isLoadingCertifications|| isLoadingCoverages || isLoadingExperiences  || isLoadingProfile || isLoadingOffices || isLoadingRatings || isLoadingSpecialties) return <div>Loading...</div>;
     if (isError || !doctor) return <GenericError code={404} />;
-    const rating = doctor.rating;
-    const ratingCount = doctor.ratingCount; // Nota: en tu DTO era string, asegúrate de convertirlo si es necesario
     const maxBadges = 4;
 
 
     return (
       <div className={profileContainer}>
-          <ProfileCard doctor={doctor} rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges}/>
+          <ProfileCard doctor={doctor} profile={profile} specialties={specialties || []} maxBadges={maxBadges}/>
           <CoverageCard coverages={coverages || []} />
           <OfficesCard offices={offices || []}/>
           <ExperienceCard experiences={experiences || []} />
           <CertificatesCard certifications={certifications || []} />
-          <RatingsCard ratings={ratings?.content || []} />
+          <RatingsCard ratings={ratings || []} />
       </div>
     );
 }
@@ -104,15 +107,21 @@ const aboutTitle =
 const aboutText =
     "text-[var(--text-light)] text-md";
 
-function ProfileCard({ doctor, rating, ratingCount, specialties, maxBadges }:{
+function ProfileCard({ doctor, profile, specialties, maxBadges }:{
     doctor: DoctorDTO ;
-    profile?: DoctorProfileDTO;
+    profile: DoctorProfileDTO | undefined;
     specialties: SpecialtyDTO[];
     maxBadges: number;
 }) {
+    const authUser = useAuth();
+    const avatarFallbackText = (() => {
+        const a = doctor.name?.trim()?.[0] ?? "";
+        const b = doctor.lastName?.trim()?.[0] ?? "";
+        return (a + b).toUpperCase() || "U";
+    })();
     const { t } = useTranslation();
     const { url: getDoctorImgUrl } = useDoctorImageUrl(String(doctor.self.split('/').pop()));
-    const specialtyNames = specialties.map(s => s.name);
+    const specialtyNames = specialties.map(s => t(s.name));
     return (
         <Card className={card}>
             <div className={cardTitle}>
@@ -122,35 +131,41 @@ function ProfileCard({ doctor, rating, ratingCount, specialties, maxBadges }:{
             <div className={profileContent}>
                 <Avatar className={avatarContainer}>
                     <AvatarImage src={getDoctorImgUrl || undefined} />
-                    <AvatarFallback>JD</AvatarFallback>
+                    <AvatarFallback>{avatarFallbackText}</AvatarFallback>
                 </Avatar>
                 <div className={userDataContainer}>
-                    <h1 className={userName}>John Doe</h1>
+                    <h1 className={userName}>{doctor.name} {doctor.lastName}</h1>
                     <div className={dataContainer}>
                         <div className={contactData}>
                             <Mail className={contactIcon} />
-                            <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">johndoe@gmail.com</p>
+                            <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">{doctor.email}</p>
                         </div>
                         <div className={contactData}>
                             <Phone className={contactIcon} />
-                            <p>11 1234-5678</p>
+                            <p>{doctor.phone}</p>
                         </div>
                     </div>
-                    <div className={ratingContent}>
-                        <RatingStars rating={rating} sizeClassName="h-4 w-4" />
-                        <p>{rating}</p>
-                        <p className={ratingText}>({ratingCount} {t("doctor.profile.card.rating")})</p>
-                    </div>
-                    <BadgeComponent specialties={specialties} maxBadges={maxBadges} />
+                    {doctor.ratingCount > 0 ? (
+                        <div className={ratingContent}>
+                            <RatingStars rating={doctor.rating} sizeClassName="h-4 w-4" />
+                            <p>{doctor.rating}</p>
+                            <p className={ratingText}>({doctor.ratingCount} {t("doctor.profile.card.rating")})</p>
+                        </div>
+                    ): null}
+                    <BadgeComponent specialties={specialtyNames} maxBadges={maxBadges} />
                 </div>
-                <Button className={editButton}>
-                    <SquarePen className="w-4 h-4" />
-                    {t("doctor.profile.card.edit")}
-                </Button>
+                {authUser.email === doctor.email ? (
+                    <Button className={editButton}>
+                        <SquarePen className="w-4 h-4" />
+                        {t("doctor.profile.card.edit")}
+                    </Button>
+                ): null}
             </div>
             <div className={aboutContent}>
                 <h1 className={aboutTitle}>{t("doctor.profile.card.about")}</h1>
-                <p className={aboutText}>Soy traumatólogo en el Club Estudiantes de La Plata, con más de 40 años en el campo.</p>
+                <p className={aboutText}>
+                    {profile?.biography || profile?.description || t("doctor.profile.no_bio_available", "No biography available.")}
+                </p>
             </div>
         </Card>
     );
@@ -159,8 +174,17 @@ function ProfileCard({ doctor, rating, ratingCount, specialties, maxBadges }:{
 const cardContent =
     "flex flex-col items-center gap-3 px-6 py-6 sm:flex-row sm:flex-wrap sm:justify-center";
 
-function CoverageCard() {
+function CoverageCard({ coverages }: { coverages: CoverageDTO[] }) {
     const { t } = useTranslation();
+    const coverageImages: Record<string, string> = {
+        "osde": osdeLogo,
+        "medife": medifeLogo,
+        "galeno": galenoLogo,
+    };
+
+    const getLogo = (name: string) => {
+        return coverageImages[name] ;
+    };
 
     return (
         <Card className={card}>
@@ -169,10 +193,17 @@ function CoverageCard() {
                 <h1 className={cardTitleText}>{t("doctor.profile.coverages")}</h1>
             </div>
             <div className={cardContent}>
-                <CoverageComponent coverageImage="https://upload.wikimedia.org/wikipedia/commons/1/18/Logo_OSDE_2020.png" coverageName="OSDE" coveragePlan="310" />
-                <CoverageComponent coverageImage="https://images.seeklogo.com/logo-png/33/2/galeno-logo-png_seeklogo-333694.png" coverageName="Galeno" coveragePlan="Premium" />
-                <CoverageComponent coverageImage="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB6p669ljP14WkZ1gAoq3dD6ppJUlIwkp59w&s" coverageName="Swiss Medical" coveragePlan="Plus" />
-                <CoverageComponent coverageImage="https://images.seeklogo.com/logo-png/62/1/sancor-salud-medicina-privada-logo-png_seeklogo-621371.png" coverageName="Sancor Salud" coveragePlan="Basic" />
+                {coverages.length > 0 ? (
+                    coverages.map((cov) => (
+                        <CoverageComponent
+                            key={cov.name}
+                            coverageImage={getLogo(cov.name.toLowerCase())}
+                            coverageName={cov.name}
+                        />
+                    ))
+                ) : (
+                    <p className="text-[var(--text-light)]">{t("doctor.profile.no_coverages")}</p>
+                )}
             </div>
         </Card>
     )
@@ -182,27 +213,25 @@ const componentContainer =
     "flex w-full max-w-3xs flex-col px-10 py-4 items-center border border-[var(--gray-300)] rounded-lg";
 const coverageAvatar =
     "w-16 h-16 mb-2";
-const coveragePlanText =
-    "text-sm text-[var(--text-light)]";
 
-function CoverageComponent({coverageImage, coverageName, coveragePlan}:{
+
+function CoverageComponent({coverageImage, coverageName}:{
     coverageImage: string;
     coverageName: string;
-    coveragePlan: string;
+
 }) {
     return (
         <div className={componentContainer}>
             <Avatar className={coverageAvatar}>
                 <AvatarImage src={coverageImage} />
-                <AvatarFallback>{coverageName}</AvatarFallback>
+                <AvatarFallback>{coverageName.substring(0, 2)}</AvatarFallback>
             </Avatar>
             <h3>{coverageName}</h3>
-            <p className={coveragePlanText}>Plan: {coveragePlan}</p>
         </div>
     );
 }
 
-function OfficesCard() {
+function OfficesCard({ offices }: { offices: OfficeDTO[] }) {
     const { t } = useTranslation();
 
     return (
@@ -212,8 +241,18 @@ function OfficesCard() {
                 <h1 className={cardTitleText}>{t("doctor.profile.offices")}</h1>
             </div>
             <div className={cardContent}>
-                <OfficeComponent officeTitle="Main Office" officeLocation="La Plata" />
-                <OfficeComponent officeTitle="Hospital" officeLocation="Munro"/>
+                {offices.length > 0 ? (
+                    offices.map((office, idx) => (
+
+                        <OfficeComponent
+                            key={office.self || idx}
+                            officeTitle={office.name || t("doctor.profile.office", "Consultorio")}
+                            neighborhoodUrl={office.neighborhood}
+                        />
+                    ))
+                ) : (
+                    <p className="text-[var(--text-light)]">{t("doctor.profile.no_offices", "No registered offices.")}</p>
+                )}
             </div>
         </Card>
     );
@@ -232,19 +271,30 @@ const locationTitle =
 const mapPinIcon =
     "h-4 w-4";
 
-function OfficeComponent({officeTitle, officeLocation}:{
-    officeLocation: string;
+function OfficeComponent({officeTitle, neighborhoodUrl}:{
     officeTitle: string;
+    neighborhoodUrl: string;
 }) {
+
+    const { data: neighborhood, isLoading } = useNeighborhood(neighborhoodUrl);
     return (
         <div className={officeContainer}>
             <div className={iconContainer}>
                 <Hospital className={locationIcon}/>
             </div>
             <h3 className={locationTitle}>{officeTitle}</h3>
+
             <div className={locationContainer}>
-                <MapPin className={mapPinIcon}/>
-                <p>{officeLocation}</p>
+                <p className="text-xs font-semibold text-[var(--primary-color)] mt-1">
+                    {isLoading ? (
+                        <span className="animate-pulse">...</span>
+                    ) : (
+                        <div className="flex items-center gap-1">
+                        <MapPin className={mapPinIcon}/>
+                        <span>{neighborhood?.name || ""}</span>
+                        </div>
+                    )}
+                </p>
             </div>
         </div>
     )
@@ -259,34 +309,13 @@ const timelineContainer =
     "before:content-[''] before:absolute before:top-3 before:bottom-3 " +
     "before:left-14 before:w-[2px] before:-translate-x-1/2 before:bg-[var(--gray-300)]";
 
-function ExperienceCard() {
-
-    const experiences = [
-        {
-            position: "Head of Traumatology",
-            organization: "Club Estudiantes de La Plata",
-            period: "1984 – Present",
-            description:
-                "Lidero el equipo de traumatología, coordinando cirugías y seguimiento post-operatorio. Enfocado en lesiones deportivas y rehabilitación integral.",
-        },
-        {
-            position: "Traumatologist",
-            organization: "Hospital Central",
-            period: "1979 – 1984",
-            description:
-                "Atención clínica y guardias. Participación en protocolos de urgencias y formación de residentes.",
-        },
-        {
-            position: "Resident Physician",
-            organization: "Residencia Médica – Ortopedia",
-            period: "1975 – 1979",
-            description:
-                "Formación intensiva en ortopedia y traumatología, rotaciones quirúrgicas y práctica supervisada.",
-        },
-    ];
-
+function ExperienceCard({ experiences }: { experiences: ExperienceDTO[] }) {
     const { t } = useTranslation();
-
+    const formatDateRange = (start: string, end?: string) => {
+        const startYear = new Date(start).getFullYear();
+        const endYear = end ? new Date(end).getFullYear() : t("doctor.profile.present", "Present");
+        return `${startYear} – ${endYear}`;
+    };
     return (
         <Card className={card}>
             <div className={cardTitle}>
@@ -296,17 +325,17 @@ function ExperienceCard() {
             <div className={experienceContent}>
                 {experiences.length === 0 ? (
                     <p className={experienceEmpty}>
-                        No experience added yet.
+                        {t("doctor.profile.no_experiences")}
                     </p>
                 ) : (
                     <div className={timelineContainer}>
                         {experiences.map((e, idx) => (
                             <ExperienceItem
-                                key={`${e.position}-${idx}`}
-                                position={e.position}
-                                organization={e.organization}
-                                period={e.period}
-                                description={e.description}
+                                key={`${e.positionTitle}-${idx}`}
+                                position={e.positionTitle}
+                                organization={e.organizationName}
+                                period={formatDateRange(e.startDate, e.endDate)}
+                                description={""}
                                 isLast={idx === experiences.length - 1}
                             />
                         ))}
@@ -333,13 +362,7 @@ const careerPeriod =
 const careerDescription =
     "text-sm text-[var(--text-color)] leading-6";
 
-function ExperienceItem({
-                            position,
-                            organization,
-                            period,
-                            description,
-                            isLast,
-                        }: {
+function ExperienceItem({ position, organization, period, description, isLast }: {
     position: string;
     organization: string;
     period: string;
@@ -372,9 +395,8 @@ const certificatesScrollArea =
 const certificatesFadeBottom =
     "pointer-events-none absolute bottom-0 left-0 right-0 h-10 z-10 bg-linear-to-b from-transparent to-white";
 
-function CertificatesCard() {
+function CertificatesCard({ certifications }: { certifications: CertificationDTO[] }) {
     const { t } = useTranslation();
-
     return (
         <Card className={card}>
             <div className={cardTitle}>
@@ -384,9 +406,18 @@ function CertificatesCard() {
             <div className={certificatesScrollWrap}>
                 <ScrollArea className={certificatesScrollArea}>
                     <div className={certificatesContent}>
-                        <CertificateComponent certificate="Congreso Nacional de Traumatólogos" issuer="Asociación Nacional de Médicos Traumatólogos" date="12/04/2024"/>
-                        <CertificateComponent certificate="Congreso Nacional de Traumatólogos" issuer="Asociación Nacional de Médicos Traumatólogos" date="12/04/2024"/>
-                        <CertificateComponent certificate="Congreso Nacional de Traumatólogos" issuer="Asociación Nacional de Médicos Traumatólogos" date="12/04/2024"/>
+                        {certifications.length > 0 ? (
+                            certifications.map((cert, idx) => (
+                                <CertificateComponent
+                                    key={idx}
+                                    certificate={cert.certificateName}
+                                    issuer={cert.issuingEntity}
+                                    date={cert.issueDate}
+                                />
+                            ))
+                        ) : (
+                            <p className="text-sm text-[var(--text-light)]">{t("doctor.profile.no_certificates")}</p>
+                        )}
                     </div>
                 </ScrollArea>
                 <div className={certificatesFadeBottom} />
@@ -436,41 +467,11 @@ function CertificateComponent({certificate, issuer, date}:{
     )
 }
 
-const ratingsContent =
-    "w-full max-w-3xl mx-auto pt-6";
-const carousel =
-    "relative max-w-3xl w-full mx-auto px-12 -mt-5";
-const carouselContent =
-    "-ml-4 py-2";
-const carouselItem =
-    "pl-4 basis-full";
-
-function RatingsCard() {
-
-    const ratings = [
-        {
-            comment:
-                "Muy buena atención. Me atendieron rápido y el doctor explicó todo con claridad.",
-            rating: 5,
-            userName: "John Doe",
-            timeAgo: "2 days ago",
-        },
-        {
-            comment:
-                "Excelente plataforma. Encontré un especialista en minutos y conseguí turno para el mismo día.",
-            rating: 5,
-            userName: "María González",
-            timeAgo: "1 week ago",
-        },
-        {
-            comment:
-                "La experiencia fue muy simple y clara. Me gustó poder filtrar por especialidad y disponibilidad.",
-            rating: 4,
-            userName: "Lucas Pérez",
-            timeAgo: "3 weeks ago",
-        },
-    ];
-
+const ratingsContentWrapper = "w-full max-w-3xl mx-auto pt-6";
+const carousel = "relative max-w-3xl w-full mx-auto px-12 -mt-5";
+const carouselContentClass = "-ml-4 py-2";
+const carouselItemClass = "pl-4 basis-full";
+function RatingsCard({ ratings }: { ratings: RatingsDTO[] }) {
     const { t } = useTranslation();
 
     return (
@@ -479,26 +480,31 @@ function RatingsCard() {
                 <UserStar className={titleIcon}></UserStar>
                 <h1 className={cardTitleText}>{t("doctor.profile.ratings")}</h1>
             </div>
-            <div className={ratingsContent}>
-                <Carousel opts={{ align: "start", loop: true }} className={carousel}>
-                    <CarouselContent className={carouselContent}>
-                        {ratings.map((r, idx) => (
-                            <CarouselItem key={idx} className={carouselItem}>
-                                <div className="py-2">
-                                    <RatingCard
-                                        className="max-w-xl"
-                                        comment={r.comment}
-                                        rating={r.rating}
-                                        userName={r.userName}
-                                        timeAgo={r.timeAgo}
-                                    />
-                                </div>
-                            </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="left-2 cursor-pointer" />
-                    <CarouselNext className="right-2 cursor-pointer" />
-                </Carousel>
+            <div className={ratingsContentWrapper}>
+                {ratings && ratings.length > 0 ? (
+                    <Carousel opts={{ align: "start", loop: true }} className={carousel}>
+                        <CarouselContent className={carouselContentClass}>
+                            {ratings.map((r, idx) => (
+                                <CarouselItem key={idx} className={carouselItemClass}>
+                                    <div className="py-2">
+                                        <RatingCard
+                                            className="max-w-xl"
+                                            comment={r.comment}
+                                            rating={r.rating}
+                                            userName={ "Anonymous"}
+                                        />
+                                    </div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="left-2 cursor-pointer" />
+                        <CarouselNext className="right-2 cursor-pointer" />
+                    </Carousel>
+                ) : (
+                    <div className="p-6 text-center text-[var(--text-light)]">
+                        {t("doctor.profile.no_ratings", "No ratings yet.")}
+                    </div>
+                )}
             </div>
         </Card>
     );
