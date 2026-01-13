@@ -11,6 +11,7 @@ import {useTranslation} from "react-i18next";
 import {useDoctorsCount} from "@/hooks/useDoctors.ts";
 import {usePatientsCount} from "@/hooks/usePatients.ts";
 import {useAllRatings} from "@/hooks/useRatings.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
 
 // TODO: internacionalizacion
 
@@ -61,6 +62,11 @@ const heroSpace =
 function HeroSection() {
     const { t } = useTranslation();
 
+    const {claims, isAuthenticated} = useAuth()
+    const role = claims?.role?.toUpperCase();
+    const isDoctor = role === "ROLE_DOCTOR";
+
+
     const { data: doctors = 0, isLoading: loadingDoctors } = useDoctorsCount();
     const { data: patients = 0, isLoading: loadingPatients } = usePatientsCount();
 
@@ -89,32 +95,38 @@ function HeroSection() {
                 <p className={heroSubtitle}>
                     {t("landing.hero.subtitle")}
                 </p>
-                <div className={heroSearch}>
-                    <div className={searchBar}>
-                        <Input
-                            placeholder={t("landing.hero.search_placeholder")}
-                            className={heroInput}
-                            type="search"
-                            value={keyword}
-                            onChange={(e) => setKeyword(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") doSearch();
-                            }}
-                        />
-                        <SpecialtyCombobox
-                            className={heroCombo}
-                            value={specialtySelf}
-                            onValueChange={(self, id) => {
-                                setSpecialtySelf(self);
-                                setSpecialtyId(id);
-                            }}
-                        ></SpecialtyCombobox>
-                        <Button className={heroButton} onClick={doSearch}>
-                            <Search className="h-5 w-5"/>
-                            {t("landing.hero.search")}
-                        </Button>
+                {(!isAuthenticated || !isDoctor) && (
+                    <div className="flex items-center px-3">
+                        <div className={heroSearch}>
+                            <div className={searchBar}>
+
+                                <Input
+                                    placeholder={t("landing.hero.search_placeholder")}
+                                    className={heroInput}
+                                    type="search"
+                                    value={keyword}
+                                    onChange={(e) => setKeyword(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") doSearch();
+                                    }}
+                                />
+                                <SpecialtyCombobox
+                                    className={heroCombo}
+                                    value={specialtySelf}
+                                    onValueChange={(self, id) => {
+                                        setSpecialtySelf(self);
+                                        setSpecialtyId(id);
+                                    }}
+                                ></SpecialtyCombobox>
+                                <Button className={heroButton} onClick={doSearch}>
+                                    <Search className="h-5 w-5"/>
+                                    {t("landing.hero.search")}
+                                </Button>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )}
+
                 <div className="flex gap-10">
                     <div className="flex flex-col">
         <span className="text-4xl font-bold text-[var(--primary-color)]">
