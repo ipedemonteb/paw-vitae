@@ -95,8 +95,9 @@ public class RatingServiceImpl implements RatingService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Rating> getAllRatings(int page, int pageSize) {
-        return ratingDao.getAllRatings(page, pageSize);
+    public Page<Rating> getAllRatings(int page, int pageSize,Long doctorId) {
+        if (doctorId == null) return ratingDao.getAllRatings(page, pageSize);
+        return ratingDao.getRatingsByDoctorId(doctorId,page,pageSize);
     }
 
 }
