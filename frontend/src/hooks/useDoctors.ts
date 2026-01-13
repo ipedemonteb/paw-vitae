@@ -13,7 +13,7 @@ import {
     type ExperienceForm,
     putDoctorExperiences,
     putDoctorCertificates,
-    putDoctorProfile, type CertificateForm, type OfficeSpecialtyDTO
+    putDoctorProfile, type CertificateForm, type OfficeSpecialtyDTO, getDoctorOfficeAvailability, type AvailabilityDTO
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQueries, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
@@ -121,19 +121,10 @@ export function useDoctorOffices(url?: string | null) {
     });
 }
 
-export function useDoctorsCount() {
-    return useQuery<number>({
-        queryKey: ['counts', 'doctors'],
-        queryFn: () => fetchCountDoctors(),
-        staleTime: 1000 * 60,
-        retry: 1
-    });
-}
-
 export function useDoctorOfficeSpecialties(offices?: OfficeDTO[] | null) {
     const queries = useQueries({
         queries: (offices ?? []).map((office) => ({
-            queryKey: ["office", "specialties", office.officeSpecialties ?? []],
+            queryKey: ['doctor', 'office', 'specialties', office.officeSpecialties ?? []],
             queryFn: () => getDoctorOfficeSpecialties(office.officeSpecialties),
             enabled: !!office.officeSpecialties,
         })),
@@ -145,6 +136,32 @@ export function useDoctorOfficeSpecialties(offices?: OfficeDTO[] | null) {
     const data = queries.map((q) => (q.data ?? []) as OfficeSpecialtyDTO[]);
 
     return { data, isLoading, isError };
+}
+
+export function useDoctorOfficeAvailability(offices?: OfficeDTO[] | null) {
+    const queries = useQueries({
+        queries: (offices ?? []).map((office) => ({
+            queryKey: ['doctor', 'office', 'availability', office.officeAvailability ?? []],
+            queryFn: () => getDoctorOfficeAvailability(office.officeAvailability),
+            enabled: !!office.officeAvailability,
+        })),
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+    const isError = queries.some((q) => q.isError);
+
+    const data = queries.map((q) => (q.data ?? []) as AvailabilityDTO[]);
+
+    return { data, isLoading, isError };
+}
+
+export function useDoctorsCount() {
+    return useQuery<number>({
+        queryKey: ['counts', 'doctors'],
+        queryFn: () => fetchCountDoctors(),
+        staleTime: 1000 * 60,
+        retry: 1
+    });
 }
 
 export function  usePutDoctorExperience(url: string ) {

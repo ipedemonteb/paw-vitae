@@ -26,10 +26,12 @@ export function DatePicker({
                                value,
                                onChange,
                                placeholder = "Select a Date",
+                               disabled = false,
                            }: {
     value?: Date
     onChange?: (date: Date | undefined) => void
     placeholder?: string
+    disabled?: boolean
 }) {
     const [open, setOpen] = React.useState(false)
     const [month, setMonth] = React.useState<Date | undefined>(value ?? new Date())
@@ -41,13 +43,27 @@ export function DatePicker({
         if (value) setMonth(value)
     }, [value])
 
+    React.useEffect(() => {
+        if (disabled) setOpen(false)
+    }, [disabled])
+
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover
+            open={open}
+            onOpenChange={(next) => {
+                if (disabled) return
+                setOpen(next)
+            }}
+        >
             <PopoverTrigger asChild>
                 <Button
                     type="button"
                     variant="outline"
-                    className="w-full justify-between bg-background cursor-pointer"
+                    disabled={disabled}
+                    className={cn(
+                        "w-full justify-between bg-background",
+                        disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                    )}
                 >
           <span
               className={cn(
@@ -68,7 +84,9 @@ export function DatePicker({
                     captionLayout="dropdown"
                     month={month}
                     onMonthChange={setMonth}
+                    disabled={disabled}
                     onSelect={(d) => {
+                        if (disabled) return
                         onChange?.(d)
                         if (d) setMonth(d)
                         setOpen(false)

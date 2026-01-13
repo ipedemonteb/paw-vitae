@@ -1,8 +1,8 @@
 export interface OfficeDTO {
     name: string;
-    neighborhood: string;
     doctor: string;
-    officeSpecialties: string;
+    neighborhood: string;
     officeAvailability: string;
+    officeSpecialties: string;
     self: string;
 }
