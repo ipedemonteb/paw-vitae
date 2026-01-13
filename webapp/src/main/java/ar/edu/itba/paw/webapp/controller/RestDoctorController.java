@@ -168,15 +168,15 @@ public class RestDoctorController {
         return Response.ok(new GenericEntity<>(CertificationDTO.fromDoctorCertification(certifications, uriInfo)) {}).build();
     }
 
-    @GET
-    @Path("/{id:\\d+}/ratings")
-    @Produces(value = CustomMediaType.APPLICATION_RATING_LIST)
-    public Response getDoctorRatings(
-            @PathParam("id") final long id
-    ) {
-        Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, 1, 9);
-        return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
-    }
+//    @GET
+//    @Path("/{id:\\d+}/ratings")
+//    @Produces(value = CustomMediaType.APPLICATION_RATING_LIST)
+//    public Response getDoctorRatings(
+//            @PathParam("id") final long id
+//    ) {
+//        Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, 1, 9);
+//        return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
+//    }
 
     @GET
     @Path("/{id:\\d+}/image")

@@ -47,9 +47,11 @@ public class RestRatingsController {
 
             @QueryParam("size" )
             @DefaultValue("9")
-            int pageSize //TODO: control de tamaño o que no se pueda tocar. homogenizar en todos lados
+            int pageSize, //TODO: control de tamaño o que no se pueda tocar. homogenizar en todos lados
+            @QueryParam("doctorId")
+            Long doctorId
     ) {
-        Page<Rating> ratingPage = ratingService.getAllRatings(page, pageSize);
+        Page<Rating> ratingPage = ratingService.getAllRatings(page, pageSize,doctorId);
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
     }
 

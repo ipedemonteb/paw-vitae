@@ -24,5 +24,5 @@ public interface RatingService {
 
     List<Rating> getFiveTopRatingsByDoctorId(long doctorId);
 
-    Page<Rating> getAllRatings(int page, int pageSize);
+    Page<Rating> getAllRatings(int page, int pageSize,Long doctorId);
 }
