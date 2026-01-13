@@ -1,4 +1,4 @@
-import {listDoctors, type DoctorsQuery, getDoctor, getDoctorImage} from "@/data/doctors";
+import {listDoctors, type DoctorsQuery, getDoctor, getDoctorImage, listDoctorSpecialties} from "@/data/doctors";
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
 
@@ -16,6 +16,14 @@ export function useDoctor(userId?: string | null, options?: { enabled?: boolean 
         queryFn: () => getDoctor(userId!),
         enabled: !!userId && (options?.enabled ?? true),
     });
+}
+
+export function useDoctorSpecialties(url?: string) {
+    return useQuery({
+        queryKey: ['auth', 'doctor', 'specialties', url],
+        queryFn: () => listDoctorSpecialties(url!),
+        enabled: !!url
+    })
 }
 
 const isNumericId = (id?: string) => !!id && /^\d+$/.test(id);

@@ -6,7 +6,7 @@ export type PaginationParams = {
     pageSize: number;
 };
 
-type StringRecord = Record<string, string>;
+type StringRecord = Record<string, string | string[]>;
 
 function usePaginatedQueryParams<T extends StringRecord>(
     defaults: PaginationParams & T
@@ -20,7 +20,17 @@ function usePaginatedQueryParams<T extends StringRecord>(
 
     const extra = Object.keys(defaults).reduce((acc, key) => {
         if (key === "page" || key === "pageSize") return acc;
-        acc[key as keyof T] = (sp.get(key) ?? defaults[key]) as T[keyof T];
+        const def = defaults[key as keyof T];
+        if (Array.isArray(def)) {
+            const values = sp.getAll(key);
+            if (values.length === 0) {
+                acc[key as keyof T] = def;
+            } else {
+                acc[key as keyof T] = values as T[keyof T];
+            }
+        } else {
+            acc[key as keyof T] = (sp.get(key) ?? def) as T[keyof T];
+        }
         return acc;
     }, {} as T);
 
@@ -51,4 +61,26 @@ export function useAppointmentsQueryParams() {
         collection: "upcoming",
         filter: "all",
     });
+}
+
+export type DoctorQueryParams = {
+    specialty: string,
+    coverage: string,
+    weekdays: string[],
+    keyword: string,
+    orderBy: string,
+    direction: "asc" | "desc"
+}
+
+export function useDoctorQueryParams() {
+    return usePaginatedQueryParams<DoctorQueryParams>({
+        page: 1,
+        pageSize: 10,
+        specialty: "",
+        coverage: "",
+        weekdays: [],
+        keyword: "",
+        orderBy: "name",
+        direction: "asc"
+    })
 }

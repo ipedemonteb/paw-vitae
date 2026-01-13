@@ -1,8 +1,11 @@
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
-import { Calendar, Mail, Phone, Stethoscope, UserRoundSearch } from "lucide-react";
+import { Calendar, Mail, Phone, UserRoundSearch } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
+import type {SearchCardProps} from "@/components/SearchListCard.tsx";
+import {useDoctorSpecialties} from "@/hooks/useDoctors.ts";
+import SearchSpecialtyBadgeComponent from "@/components/SearchSpecialtyBadgeComponent.tsx";
 
 const cardContainer =
     "p-0 gap-0";
@@ -14,8 +17,6 @@ const dataContainer =
     "flex flex-col justify-center px-10 mb-2";
 const dataName =
     "font-[600]";
-const dataSpecialty =
-    "flex flex-row text-sm items-center gap-1 text-[var(--primary-color)] mb-1";
 const dataIcon =
     "h-4 w-4";
 const dataContact =
@@ -29,9 +30,10 @@ const scheduleButton =
 const viewProfileButton =
     "w-full bg-white text-[var(--primary-color)] border border-[var(--primary-color)] py-2 px-4 hover:text-white hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] cursor-pointer";
 
-function SearchGridCard() {
+function SearchGridCard({doctor}: SearchCardProps) {
 
     const rating = 4;
+    const specialties = useDoctorSpecialties(doctor.specialties);
 
     return (
         <Card className={cardContainer}>
@@ -42,18 +44,15 @@ function SearchGridCard() {
                 </Avatar>
             </div>
             <div className={dataContainer}>
-                <h3 className={dataName}>John Doe</h3>
-                <div className={dataSpecialty}>
-                    <Stethoscope className={dataIcon} />
-                    <p>Dermatology</p>
-                </div>
+                <h3 className={dataName}>{doctor.name} {doctor.lastName}</h3>
+                <SearchSpecialtyBadgeComponent specialties={specialties.data || []} maxDisplay={2}/>
                 <div className={dataContact}>
                     <Mail className={dataIcon} />
-                    <p>johndoe@gmail.com</p>
+                    <p>{doctor.email}</p>
                 </div>
                 <div className={dataContact}>
                     <Phone className={dataIcon} />
-                    <p>11 1234-5678</p>
+                    <p>{doctor.phone}</p>
                 </div>
                 <RatingStars rating={rating} className={ratingStars} sizeClassName="h-4 w-4"/>
             </div>
