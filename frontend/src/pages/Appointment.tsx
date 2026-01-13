@@ -15,12 +15,12 @@ import {
     useDoctorOffices,
     useDoctorSpecialties,
     useDoctorOfficeSpecialties,
-    useDoctorOfficeAvailability
+    useDoctorOfficeAvailability, useDoctorUnavailability
 } from "@/hooks/useDoctors.ts";
 import type {OfficeDTO} from "@/data/office.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
 import type {OfficeSpecialtyDTO} from "@/data/doctors.ts";
-import {buildTimeSlotsForDay, toBackendDayOfWeek} from "@/utils/dateUtils.ts";
+import {buildTimeSlotsForDay, dateKey, isoDateKey} from "@/utils/dateUtils.ts";
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -110,6 +110,7 @@ function Appointment() {
     const { data: officeSpecialties } = useDoctorOfficeSpecialties(offices ?? null);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties ?? null);
     const { data: officeAvailability } = useDoctorOfficeAvailability(offices ?? null);
+    const { data: doctorUnavailability } = useDoctorUnavailability(doctor?.unavailability ?? null);
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -145,16 +146,30 @@ function Appointment() {
         return officeAvailability?.[idx] ?? [];
     }, [selectedOffice, offices, officeAvailability]);
 
+    const isUnavailableDate = useMemo(() => {
+        const ranges = (doctorUnavailability ?? []).map((u) => ({
+            from: isoDateKey(u.startDate),
+            to: isoDateKey(u.endDate),
+        }));
+
+        return (d: Date) => {
+            const k = dateKey(d);
+            return ranges.some((r) => k >= r.from && k <= r.to);
+        };
+    }, [doctorUnavailability]);
+
     const availableTimeOptions = useMemo(() => {
         if (!selectedDate) return [];
-        const day = toBackendDayOfWeek(selectedDate);
+        if (isUnavailableDate(selectedDate)) return [];
+
+        const day = selectedDate.getDay();
 
         const dayAvailabilities = selectedOfficeAvailability.filter(
             (a) => a.dayOfWeek === day
         );
 
         return buildTimeSlotsForDay(dayAvailabilities, 60);
-    }, [selectedDate, selectedOfficeAvailability]);
+    }, [selectedDate, selectedOfficeAvailability, isUnavailableDate]);
 
     useEffect(() => {
         if (!selectedTime) return;
@@ -167,6 +182,7 @@ function Appointment() {
         setSelectedTime(null);
     }, [selectedOffice]);
 
+    //TODO: Handle better
     if (isLoading) {
         return (
             <div>Loading...</div>
@@ -208,6 +224,7 @@ function Appointment() {
                             setSelectedTime={setSelectedTime}
                             availableTimes={availableTimeOptions}
                             disabled={!selectedOffice}
+                            isDateDisabled={isUnavailableDate}
                         />
                         <div className={optionalsContainer}>
                             <ReasonInput />
@@ -314,13 +331,14 @@ function OfficeSelector({
     );
 }
 
-function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedTime, availableTimes, disabled}:{
+function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedTime, availableTimes, disabled, isDateDisabled}:{
     selectedDate: Date | undefined
     setSelectedDate: (date: Date | undefined) => void
     selectedTime: string | null
     setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
     availableTimes: string[];
-    disabled?: boolean
+    disabled?: boolean;
+    isDateDisabled?: (date: Date) => boolean;
 }) {
     const { t } = useTranslation();
 
@@ -368,6 +386,7 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
                             onChange={setSelectedDate}
                             placeholder={t("appointment.booking.select-date")}
                             disabled={disabled}
+                            isDateDisabled={isDateDisabled}
                         />
                     </div>
                 </div>

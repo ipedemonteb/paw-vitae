@@ -27,11 +27,13 @@ export function DatePicker({
                                onChange,
                                placeholder = "Select a Date",
                                disabled = false,
+                               isDateDisabled,
                            }: {
     value?: Date
     onChange?: (date: Date | undefined) => void
     placeholder?: string
     disabled?: boolean
+    isDateDisabled?: (date: Date) => boolean
 }) {
     const [open, setOpen] = React.useState(false)
     const [month, setMonth] = React.useState<Date | undefined>(value ?? new Date())
@@ -65,14 +67,14 @@ export function DatePicker({
                         disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
                     )}
                 >
-          <span
-              className={cn(
-                  "truncate font-[400]",
-                  value ? "text-[var(--text-color)]" : "text-[var(--text-light)]"
-              )}
-          >
-            {value ? label : placeholder}
-          </span>
+                    <span
+                        className={cn(
+                            "truncate font-[400]",
+                            value ? "text-[var(--text-color)]" : "text-[var(--text-light)]"
+                        )}
+                    >
+                        {value ? label : placeholder}
+                    </span>
                     <CalendarIcon className="h-4 w-4 text-[var(--text-light)]" />
                 </Button>
             </PopoverTrigger>
@@ -84,9 +86,10 @@ export function DatePicker({
                     captionLayout="dropdown"
                     month={month}
                     onMonthChange={setMonth}
-                    disabled={disabled}
+                    disabled={(d) => disabled || !!isDateDisabled?.(d)}
                     onSelect={(d) => {
                         if (disabled) return
+                        if (d && isDateDisabled?.(d)) return
                         onChange?.(d)
                         if (d) setMonth(d)
                         setOpen(false)

@@ -13,6 +13,7 @@ public class UnavailabilityDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private URI doctor;
+
     public static UnavailabilityDTO fromUnavailabilitySlot(UnavailabilitySlot slot, UriInfo uriInfo) {
         UnavailabilityDTO dto = new UnavailabilityDTO();
         dto.startDate = slot.getStartDate();

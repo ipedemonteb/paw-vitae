@@ -22,6 +22,7 @@ public class DoctorDTO {
     private URI experiences;
     private URI certifications;
     private URI appointments;
+    private URI unavailability;
     private URI self;
 
     public static DoctorDTO fromDoctor(Doctor doctor, UriInfo uriInfo) {
@@ -44,6 +45,7 @@ public class DoctorDTO {
         dto.certifications = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("certifications").build();
         dto.ratings = uriInfo.getBaseUriBuilder().path("ratings").queryParam("doctorId",doctorId).build();
         dto.appointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("doctorId", doctorId).build();
+        dto.unavailability = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("unavailability").build();
         dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).build();
 
         return dto;
@@ -164,6 +166,10 @@ public class DoctorDTO {
     public void setCertifications(URI certifications) {
         this.certifications = certifications;
     }
+
+    public URI getUnavailability() { return unavailability; }
+
+    public void setUnavailability(URI unavailability) { this.unavailability = unavailability; }
 
     public URI getSelf() {
         return self;
