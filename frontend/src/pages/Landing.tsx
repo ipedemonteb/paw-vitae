@@ -10,6 +10,7 @@ import { useState } from "react";
 import {useTranslation} from "react-i18next";
 import {useDoctorsCount} from "@/hooks/useDoctors.ts";
 import {usePatientsCount} from "@/hooks/usePatients.ts";
+import {useAllRatings} from "@/hooks/useRatings.ts";
 
 // TODO: internacionalizacion
 
@@ -321,29 +322,6 @@ function FeaturesSection() {
     )
 }
 
-const ratings = [
-    {
-        comment:
-            "Muy buena atención. Me atendieron rápido y el doctor explicó todo con claridad.",
-        rating: 5,
-        userName: "John Doe",
-        timeAgo: "2 days ago",
-    },
-    {
-        comment:
-            "Excelente plataforma. Encontré un especialista en minutos y conseguí turno para el mismo día.",
-        rating: 5,
-        userName: "María González",
-        timeAgo: "1 week ago",
-    },
-    {
-        comment:
-            "La experiencia fue muy simple y clara. Me gustó poder filtrar por especialidad y disponibilidad.",
-        rating: 4,
-        userName: "Lucas Pérez",
-        timeAgo: "3 weeks ago",
-    },
-];
 
 const ratingsContainer =
     "w-full max-w-[900px] mx-auto";
@@ -356,6 +334,8 @@ const carouselItem =
 
 function RatingsSection() {
     const { t } = useTranslation();
+
+    const { data: ratings = [], isLoading, isError } = useAllRatings();
 
     return (
         <div className={container}>
@@ -370,29 +350,42 @@ function RatingsSection() {
                     {t("landing.ratings.subtitle")}
                 </p>
             </div>
+
             <div className={ratingsContainer}>
-                <Carousel opts={{ align: "start", loop: true }} className={carousel}>
-                    <CarouselContent className={carouselContent}>
-                        {ratings.map((r, idx) => (
-                            <CarouselItem key={idx} className={carouselItem}>
-                                <div className="py-2">
-                                    <RatingCard
-                                        className="max-w-none"
-                                        comment={r.comment}
-                                        rating={r.rating}
-                                        userName={r.userName}
-                                        timeAgo={r.timeAgo}
-                                    />
-                                </div>
-                            </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="left-2 cursor-pointer" />
-                    <CarouselNext className="right-2 cursor-pointer" />
-                </Carousel>
+                {isLoading ? (
+                    <div className="text-center">…</div>
+                ) : isError ? (
+                    <div className="text-center text-red-500">
+                        {t("landing.ratings.error") ?? "Error al cargar reseñas"}
+                    </div>
+                ) : ratings.length === 0 ? (
+                    <div className="text-center">
+                        {t("landing.ratings.empty") ?? "Sin reseñas todavía"}
+                    </div>
+                ) : (
+                    <Carousel opts={{ align: "start", loop: true }} className={carousel}>
+                        <CarouselContent className={carouselContent}>
+                            {ratings.map((r, idx) => (
+                                <CarouselItem key={r.self || idx} className={carouselItem}>
+                                    <div className="py-2">
+                                        <RatingCard
+                                            className="max-w-none"
+                                            comment={r.comment}
+                                            rating={r.rating}
+                                            userName={`${r.patientName} ${r.patientLastName}`}
+                                            timeAgo={""}
+                                        />
+                                    </div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="left-2 cursor-pointer" />
+                        <CarouselNext className="right-2 cursor-pointer" />
+                    </Carousel>
+                )}
             </div>
         </div>
-    )
+    );
 }
 
 export default Landing;
