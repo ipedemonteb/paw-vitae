@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useSpecialties } from "@/hooks/useSpecialties.ts";
 import { useTranslation } from "react-i18next";
 import { Spinner } from "@/components/ui/spinner.tsx";
-import { specialtyIdFromSelf } from "@/utils/specialtyUtils.ts";
+import { specialtyIdFromSelf } from "@/utils/IdUtils.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
 
 type Props = {

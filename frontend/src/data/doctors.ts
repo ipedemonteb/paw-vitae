@@ -1,6 +1,9 @@
 import {api} from "@/data/Api.ts";
 import {ContentTypes} from "@/utils/contentTypes.js";
 import type {AxiosRequestConfig} from "axios";
+import type {PaginationData} from "@/lib/types.ts";
+import {parseLinkHeader} from "@/lib/utils.ts";
+import type {SpecialtyDTO} from "@/data/specialties.ts";
 
 
 export type ChangePasswordForm = {
@@ -36,7 +39,7 @@ export type DoctorsQuery = {
     page?: number;
 };
 
-export async function listDoctors(params: DoctorsQuery) {
+export async function listDoctors(params: DoctorsQuery): Promise<PaginationData<DoctorDTO[]>> {
     const res = await api.get<DoctorDTO[]>("/doctors", {
         params: {
             specialty: params.specialty ?? 0,
@@ -48,6 +51,23 @@ export async function listDoctors(params: DoctorsQuery) {
             page: params.page ?? 1,
         }
     });
+    const total = Number(res.headers["x-total-count"]);
+    const links = parseLinkHeader(res.headers["link"]);
+    return {
+        data: res.data,
+        pagination: {
+            next: links.next,
+            prev: links.prev,
+            first: links.first,
+            last: links.last,
+            self: links.self,
+            total: total
+        }
+    };
+}
+
+export async function listDoctorSpecialties(url: string) {
+    const res = await api.get<SpecialtyDTO[]>(url);
     return res.data;
 }
 

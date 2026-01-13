@@ -1,5 +1,6 @@
 import {api} from "@/data/Api.ts";
 import type {PaginationData} from "@/lib/types.ts";
+import {parseLinkHeader} from "@/lib/utils.ts";
 
 export type AppointmentDTO = {
     date: Date;
@@ -29,22 +30,6 @@ export type AppointmentsQuery = {
     filter?: AppointmentFilter;
     page?: number;
     pageSize?: number;
-}
-
-type Links = Partial<Record<"first" | "last" | "self" | "prev" | "next", string>>;
-
-function parseLinkHeader(header?: string): Links {
-    if (!header) return {};
-    const links: Links = {};
-
-    for (const part of header.split(",")) {
-        const section = part.split(";").map(s => s.trim());
-        const url = section[0]?.replace(/^<|>$/g, "");
-        const rel = section.find(s => s.startsWith("rel="))?.split("=")[1]?.replace(/"/g, "");
-
-        if (url && rel) (links as any)[rel] = url;
-    }
-    return links;
 }
 
 

@@ -7,21 +7,41 @@ import { Button } from "@/components/ui/button.tsx";
 import { ButtonGroup } from "@/components/ui/button-group.tsx";
 import SearchListCard from "@/components/SearchListCard.tsx";
 import SearchGridCard from "@/components/SearchGridCard.tsx";
-import { Pagination, PaginationContent, PaginationItem,
-    PaginationPrevious, PaginationLink, PaginationNext,
-    PaginationEllipsis } from "@/components/ui/pagination.tsx";
 import {useTranslation} from "react-i18next";
+import {
+    type DoctorQueryParams, type PaginationParams, useDoctorQueryParams,
+} from "@/hooks/useQueryParams.ts";
+import {useDoctors} from "@/hooks/useDoctors.ts";
+import type {PaginationData} from "@/lib/types.ts";
+import type {DoctorDTO} from "@/data/doctors.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+import PaginationComponent from "@/components/PaginationComponent.tsx";
 
 const container =
     "px-[24px] mx-auto max-w-6xl w-full";
 
+function transformWeekdays(weekdays: string[]) {
+    return weekdays.map(s => Number(s)).filter(n => !Number.isNaN(n));
+}
+
 function Search() {
+    const doctorsQuery = useDoctorQueryParams();
+    const {data: doctors, isLoading: isLoadingDoctors} = useDoctors({
+        specialty: Number(doctorsQuery.specialty),
+        coverage: Number(doctorsQuery.coverage),
+        weekdays: transformWeekdays(doctorsQuery.weekdays),
+        keyword: doctorsQuery.keyword,
+        orderBy: doctorsQuery.orderBy,
+        direction: doctorsQuery.direction,
+        page: doctorsQuery.page
+    })
+
     return (
-        <div className="bg-[var(--background-light)] pt-22">
+        <div className="bg-(--background-light) pt-22">
             <div className={container}>
                 <HeroSection />
-                <FilterSection />
-                <ResultSection />
+                <FilterSection searchParams={doctorsQuery} />
+                <ResultSection paginationData={doctors} isLoading={isLoadingDoctors} searchParams={doctorsQuery} />
             </div>
         </div>
     );
@@ -84,24 +104,25 @@ const applyButton =
     "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-dark)] " +
     "hover:border-[var(--primary-dark)] hover:text-white px-8 py-5 rounded-md font-[400] text-sm cursor-pointer";
 
-function FilterSection() {
+type FilterSectionProps =  {
+    searchParams: PaginationParams & {setParams: (updater: (p: URLSearchParams) => void) => void} & DoctorQueryParams
+}
+
+function FilterSection({searchParams}: FilterSectionProps) {
     const { t } = useTranslation();
 
     const days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] as const;
-    type DayKey = typeof days[number];
 
-    const [selectedDays, setSelectedDays] = useState<Record<DayKey, boolean>>({
-        monday: false,
-        tuesday: false,
-        wednesday: false,
-        thursday: false,
-        friday: false,
-        saturday: false,
-        sunday: false,
-    });
+    const weekdays = transformWeekdays(searchParams.weekdays)
 
-    const toggleDay = (day: DayKey) => {
-        setSelectedDays((prev) => ({ ...prev, [day]: !prev[day] }));
+    const toggleDay = (day: number) => {
+        searchParams.setParams((p) => {
+            const existing = p.getAll("weekdays");
+            const strDay = String(day);
+            const newVals = existing.includes(strDay) ? existing.filter(v => v !== strDay) : [...existing, strDay];
+            p.delete("weekdays");
+            newVals.forEach(v => p.append("weekdays", v));
+        });
     };
 
     return (
@@ -112,21 +133,39 @@ function FilterSection() {
                         <Stethoscope className={iconSize} />
                         <p>{t("search.specialty")}</p>
                     </div>
-                    <SpecialtyCombobox className={filterCombo} />
+                    <SpecialtyCombobox
+                        onValueChange={(_, derivedId) => {
+                            searchParams.setParams((p) => {
+                                if (derivedId) p.set("specialty", String(derivedId));
+                                else p.delete("specialty");
+                            });
+                        }}
+                        className={filterCombo}
+                    />
                 </div>
                 <div className={filterGroup}>
                     <div className={filterLabel}>
                         <ShieldPlus className={iconSize} />
                         <p>{t("search.coverage")}</p>
                     </div>
-                    <CoverageCombobox className={filterCombo} />
+                    <CoverageCombobox
+                        onValueChange={(coverageId) => {
+                            searchParams.setParams((p) => {
+                                if (coverageId) p.set("coverage", coverageId);
+                                else p.delete("coverage");
+                            });
+                        }}
+                        className={filterCombo}
+                    />
                 </div>
                 <div className={filterGroup}>
                     <div className={filterLabel}>
                         <ChevronsUpDown className={iconSize} />
                         <p>{t("search.sort")}</p>
                     </div>
-                    <SpecialtyCombobox className={filterCombo} />
+                    <SpecialtyCombobox
+                        className={filterCombo}
+                    />
                 </div>
             </div>
 
@@ -137,14 +176,14 @@ function FilterSection() {
                 </div>
                 <div className={availabilityContent}>
                     <div className={availabilityButtons}>
-                        {days.map((day) => (
+                        {days.map((day, index) => (
                             <Button
                                 key={day}
                                 type="button"
                                 variant="outline"
-                                data-selected={selectedDays[day]}
+                                data-selected={weekdays.includes(index)}
                                 className={`${availabilityButtonBase} ${availabilityButton}`}
-                                onClick={() => toggleDay(day)}
+                                onClick={() => toggleDay(index)}
                             >
                                 {t(`search.week.${day}`)}
                             </Button>
@@ -171,17 +210,21 @@ const formatBtnActive =
 const formatBtnInactive =
     "text-[var(--primary-color)] hover:bg-[var(--gray-100)] hover:text-[var(--primary-dark)]";
 
-function ResultSection() {
+type ResultSectionProps = {
+    paginationData?: PaginationData<DoctorDTO[]>
+    isLoading: boolean
+    searchParams: PaginationParams & {setParams: (updater: (p: URLSearchParams) => void) => void}
+}
+
+function ResultSection({paginationData, isLoading, searchParams}: ResultSectionProps ) {
     const { t } = useTranslation();
 
     const [view, setView] = useState<"list" | "grid">("list");
 
-    const found = 20;
-
     return (
         <div>
             <div className={resultHeader}>
-                <p className={resultText}>{t("search.found", { doctorsFound: found })}</p>
+                <p className={isLoading ? resultText + " invisible" : resultText}>{t("search.found", { doctorsFound: paginationData?.pagination.total })}</p>
                 <div>
                     <ButtonGroup orientation="horizontal">
                         <Button
@@ -201,8 +244,26 @@ function ResultSection() {
                     </ButtonGroup>
                 </div>
             </div>
-            {view === "list" ? <ResultList/> : <ResultGrid/>}
-            <PaginationSection />
+            {view === "list" ? isLoading ? (
+                <div className="h-full w-full flex flex-col gap-4 pb-6">
+                    {Array.from({length: 9}).map((_, i) => (
+                        <Skeleton key={i} className="h-52 w-full"/>
+                        ))}
+                </div>
+
+            ) : (
+                <ResultList data={paginationData?.data}/>
+            ) : isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    {Array.from({length: 9}).map((_, i) => (
+                        <Skeleton key={i} className="h-92 w-88 p-0 gap-0"/>
+                    ))}
+                </div>
+            ) : (
+                <ResultGrid data={paginationData?.data}/>
+            )
+            }
+            <PaginationComponent pagination={paginationData?.pagination} searchParams={searchParams}/>
         </div>
     );
 }
@@ -210,12 +271,16 @@ function ResultSection() {
 const resultContentList =
     "flex flex-col gap-4 pb-6";
 
-function ResultList() {
+type ResultProps = {
+    data?: DoctorDTO[]
+}
+
+function ResultList({data}: ResultProps) {
     return (
         <div className={resultContentList}>
-            <SearchListCard />
-            <SearchListCard />
-            <SearchListCard />
+            {data?.map(d => (
+                <SearchListCard doctor={d} key={d.self} />
+            ))}
         </div>
     )
 }
@@ -223,53 +288,15 @@ function ResultList() {
 const resultContentGrid =
     "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6";
 
-function ResultGrid() {
+function ResultGrid({data}: ResultProps) {
     return (
         <div className={resultContentGrid}>
-            <SearchGridCard />
-            <SearchGridCard />
-            <SearchGridCard />
-            <SearchGridCard />
-            <SearchGridCard />
-            <SearchGridCard />
+            {data?.map(d => (
+                <SearchGridCard doctor={d} key={d.self} />
+            ))}
         </div>
     )
 }
 
-const paginationContainer =
-    "pb-8";
-const paginantion =
-    "text-[var(--text-color)] gap-2"
-
-function PaginationSection() {
-    return (
-        <div className={paginationContainer}>
-            <Pagination>
-                <PaginationContent className={paginantion}>
-                    <PaginationItem>
-                        <PaginationPrevious href="#" />
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink href="#">1</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink href="#" isActive>
-                            2
-                        </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink href="#">3</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationEllipsis />
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationNext href="#" />
-                    </PaginationItem>
-                </PaginationContent>
-            </Pagination>
-        </div>
-    )
-}
 
 export default Search;

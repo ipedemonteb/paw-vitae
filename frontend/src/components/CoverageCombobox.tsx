@@ -21,16 +21,25 @@ import {
 import {useTranslation} from "react-i18next";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useCoverages} from "@/hooks/useCoverages.ts";
+import {coverageIdFromSelf} from "@/utils/IdUtils.ts";
 
 type ComboboxProps = {
     className?: string;
     buttonClassName?: string;
     contentClassName?: string;
+    onValueChange?: (coverageId: string | null) => void;
 };
 
-export function CoverageCombobox({ className, buttonClassName, contentClassName }: ComboboxProps) {
+export function CoverageCombobox({ className, buttonClassName, contentClassName, onValueChange }: ComboboxProps) {
     const [open, setOpen] = React.useState(false);
-    const [value, setValue] = React.useState("");
+    const [value, setValue] = React.useState<string | null>(null);
+
+    const setSelected = (v: string, self: string)=>  {
+        onValueChange?.(String(coverageIdFromSelf(self)))
+        setValue(v === value ? null : v)
+        setOpen(false);
+    }
+
     const { data: coverages, isLoading } = useCoverages();
     const { t } = useTranslation();
 
@@ -53,7 +62,7 @@ export function CoverageCombobox({ className, buttonClassName, contentClassName 
                 </Button>
             </PopoverTrigger>
 
-            <PopoverContent className={cn("w-[200px] p-0", contentClassName)}>
+            <PopoverContent className={cn("w-50 p-0", contentClassName)}>
                 <Command>
                     <CommandInput placeholder="Search coverage..." className="h-9" />
                     <CommandList>
@@ -70,8 +79,7 @@ export function CoverageCombobox({ className, buttonClassName, contentClassName 
                                             key={coverage.name}
                                             value={t(coverage.name)}
                                             onSelect={(currentValue) => {
-                                                setValue(currentValue === value ? "" : currentValue);
-                                                setOpen(false);
+                                                setSelected(currentValue, coverage.self)
                                             }}
                                             className="text-(--text-light)"
                                         >
