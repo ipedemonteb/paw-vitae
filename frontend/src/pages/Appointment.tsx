@@ -10,10 +10,17 @@ import {UploadFiles} from "@/components/UploadFiles.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {useTranslation} from "react-i18next";
-import {useDoctor, useDoctorOffices, useDoctorSpecialties, useDoctorOfficeSpecialties} from "@/hooks/useDoctors.ts";
+import {
+    useDoctor,
+    useDoctorOffices,
+    useDoctorSpecialties,
+    useDoctorOfficeSpecialties,
+    useDoctorOfficeAvailability
+} from "@/hooks/useDoctors.ts";
 import type {OfficeDTO} from "@/data/office.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
 import type {OfficeSpecialtyDTO} from "@/data/doctors.ts";
+import {buildTimeSlotsForDay, toBackendDayOfWeek} from "@/utils/dateUtils.ts";
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -74,7 +81,7 @@ const dateContainer =
     "flex flex-col md:items-center md:flex-row gap-5 md:gap-0";
 const dateUpperContainer =
     "flex flex-row items-center";
-const availableTimes =
+const availableTimesFormat =
     "flex flex-wrap items-center px-5 gap-2";
 const timeButton =
     "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-white cursor-pointer " +
@@ -102,6 +109,7 @@ function Appointment() {
     const { data: offices } = useDoctorOffices(doctor?.offices ?? null);
     const { data: officeSpecialties } = useDoctorOfficeSpecialties(offices ?? null);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties ?? null);
+    const { data: officeAvailability } = useDoctorOfficeAvailability(offices ?? null);
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -129,6 +137,35 @@ function Appointment() {
             setSelectedOffice(null);
         }
     }, [filteredOffices, selectedOffice]);
+
+    const selectedOfficeAvailability = useMemo(() => {
+        if (!selectedOffice || !offices) return [];
+        const idx = offices.findIndex((o) => o.self === selectedOffice);
+        if (idx === -1) return [];
+        return officeAvailability?.[idx] ?? [];
+    }, [selectedOffice, offices, officeAvailability]);
+
+    const availableTimeOptions = useMemo(() => {
+        if (!selectedDate) return [];
+        const day = toBackendDayOfWeek(selectedDate);
+
+        const dayAvailabilities = selectedOfficeAvailability.filter(
+            (a) => a.dayOfWeek === day
+        );
+
+        return buildTimeSlotsForDay(dayAvailabilities, 60);
+    }, [selectedDate, selectedOfficeAvailability]);
+
+    useEffect(() => {
+        if (!selectedTime) return;
+        const stillValid = availableTimeOptions.includes(selectedTime);
+        if (!stillValid) setSelectedTime(null);
+    }, [availableTimeOptions, selectedTime]);
+
+    useEffect(() => {
+        setSelectedDate(undefined);
+        setSelectedTime(null);
+    }, [selectedOffice]);
 
     if (isLoading) {
         return (
@@ -169,6 +206,8 @@ function Appointment() {
                             setSelectedDate={setSelectedDate}
                             selectedTime={selectedTime}
                             setSelectedTime={setSelectedTime}
+                            availableTimes={availableTimeOptions}
+                            disabled={!selectedOffice}
                         />
                         <div className={optionalsContainer}>
                             <ReasonInput />
@@ -275,11 +314,13 @@ function OfficeSelector({
     );
 }
 
-function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedTime}:{
+function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedTime, availableTimes, disabled}:{
     selectedDate: Date | undefined
     setSelectedDate: (date: Date | undefined) => void
     selectedTime: string | null
     setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
+    availableTimes: string[];
+    disabled?: boolean
 }) {
     const { t } = useTranslation();
 
@@ -322,24 +363,33 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
                     </div>
                     <div className={selectorContent}>
                         <p className={selectorTitle}>{t("appointment.booking.date")}</p>
-                        <DatePicker value={selectedDate} onChange={setSelectedDate} placeholder={t("appointment.booking.select-date")}/>
+                        <DatePicker
+                            value={selectedDate}
+                            onChange={setSelectedDate}
+                            placeholder={t("appointment.booking.select-date")}
+                            disabled={disabled}
+                        />
                     </div>
                 </div>
                 {selectedDate ? (
-                    <div className={availableTimes}>
-                        {[
-                            "10:00","11:00","12:00","13:00","14:00","15:00","16:00",
-                            "17:00","18:00","19:00","20:00"
-                        ].map((t) => (
-                            <Button
-                                key={t}
-                                className={timeButton}
-                                data-selected={selectedTime === t}
-                                onClick={() => setSelectedTime((prev) => (prev === t ? null : t))}
-                            >
-                                {t}
-                            </Button>
-                        ))}
+                    <div className={availableTimesFormat}>
+                        {availableTimes.length === 0 ? (
+                            <p className="px-5 text-sm text-[var(--text-light)]">
+                                {t("appointment.booking.no-times")}
+                            </p>
+                        ) : (
+                            availableTimes.map((x) => (
+                                <Button
+                                    key={x}
+                                    className={timeButton}
+                                    data-selected={selectedTime === x}
+                                    onClick={() => setSelectedTime((prev) => (prev === x ? null : x))}
+                                    disabled={disabled}
+                                >
+                                    {x}
+                                </Button>
+                            ))
+                        )}
                     </div>
                 ) : null}
             </div>

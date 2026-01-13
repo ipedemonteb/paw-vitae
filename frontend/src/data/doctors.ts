@@ -6,7 +6,6 @@ import type {CoverageDTO} from "@/data/coverages.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
 import type {OfficeDTO} from "@/data/office.ts";
 
-
 export type ChangePasswordForm = {
     password: string;
     repeatPassword: string;
@@ -70,19 +69,29 @@ export interface ExperienceDTO {
     endDate?: string;
     doctor: string;
 }
+
 export interface CertificationDTO {
     certificateName: string;
     issuingEntity: string;
     issueDate: string;
     doctor: string;
 }
+
 export interface DoctorProfileDTO {
     biography: string;
     description: string;
     doctor: string;
 }
+
 export interface OfficeSpecialtyDTO {
     specialty: string;
+    office: string;
+}
+
+export interface AvailabilityDTO {
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
     office: string;
 }
 
@@ -230,6 +239,14 @@ export async function getDoctorOfficeSpecialties(url: string) {
     } );
     return res.data;
 }
+
+export async function getDoctorOfficeAvailability(url: string) {
+    const res = await api.get<AvailabilityDTO[]>(url, {
+        headers: {"accept": ContentTypes.AVAILABILITY_LIST,}
+    });
+    return res.data
+}
+
 export async function putDoctorCertificates(certificationsUrl: string, certificatesList: CertificateForm[]) {
     const payload = {
         certificates: certificatesList // Debe coincidir con el nombre de la variable en DoctorCertificatesForm.java

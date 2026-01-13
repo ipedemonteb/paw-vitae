@@ -87,6 +87,7 @@
       "specialty": "Seleccionar Especialidad",
       "office": "Seleccionar Consultorio",
       "date": "Fecha y Hora",
+      "no-times": "No hay horarios disponibles para esta fecha.",
       "select-date": "Seleccione una Fecha",
       "your-appointment": "Tu Turno",
       "reason": "Motivo de la Visita (Opcional)",

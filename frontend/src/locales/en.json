@@ -99,6 +99,7 @@
       "specialty": "Select Specialty",
       "office": "Select Office",
       "date": "Date and Time",
+      "no-times": "No times available for this date.",
       "select-date": "Select a Date",
       "your-appointment": "Your Appointment",
       "reason": "Reason for Visit (Optional)",
