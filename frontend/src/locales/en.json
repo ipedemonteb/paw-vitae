@@ -441,7 +441,8 @@
       "card": {
         "rating": "reviews",
         "edit": "Edit",
-        "about": "About"
+        "about": "About",
+        "description": "Description"
       },
       "no_ratings": "No ratings yet.",
       "no_certificates": "No certificates uploaded.",
@@ -449,7 +450,8 @@
       "present": "Present",
       "no_offices": "This doctor has not added any offices yet.",
       "no_coverages": "This doctor has not added any coverages yet.",
-      "no_bio_available": "This doctor has not provided a bio yet."
+      "no_bio_available": "This doctor has not provided a bio yet.",
+      "no_description_available": "No description available."
     }
   },
   "search": {
