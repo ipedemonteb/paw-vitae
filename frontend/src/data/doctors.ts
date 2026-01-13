@@ -36,6 +36,7 @@ export type DoctorDTO = {
     certifications: string;
     ratings: string;
     appointments: string;
+    unavailability: string;
     self: string;
 
 };
@@ -93,6 +94,12 @@ export interface AvailabilityDTO {
     startTime: string;
     endTime: string;
     office: string;
+}
+
+export interface UnavailabilityDTO {
+    startDate: string;
+    endDate: string;
+    doctor: string;
 }
 
 const extractIdFromUrl = (url: string): string => {
@@ -243,6 +250,13 @@ export async function getDoctorOfficeSpecialties(url: string) {
 export async function getDoctorOfficeAvailability(url: string) {
     const res = await api.get<AvailabilityDTO[]>(url, {
         headers: {"accept": ContentTypes.AVAILABILITY_LIST,}
+    });
+    return res.data
+}
+
+export async function getDoctorUnavailability(url: string) {
+    const res = await api.get<UnavailabilityDTO[]>(url, {
+        headers: {"accept": ContentTypes.UNAVAILABILITY_LIST, }
     });
     return res.data
 }

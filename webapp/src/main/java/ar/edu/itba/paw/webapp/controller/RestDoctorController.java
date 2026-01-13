@@ -113,6 +113,14 @@ public class RestDoctorController {
     }
 
     @GET
+    @Path("/{id:\\d+}/unavailability")
+    @Produces(value = CustomMediaType.APPLICATION_UNAVAILABILITY_LIST)
+    public Response getDoctorUnavailability(@PathParam("id") final long id) {
+        List<UnavailabilitySlot> unavailability = this.unavailabilitySlotsService.getUnavailabilityByDoctorId(id);
+        return Response.ok(new GenericEntity<List<UnavailabilityDTO>>(UnavailabilityDTO.fromUnavailabilitySlot(unavailability, uriInfo)) {}).build();
+    }
+
+    @GET
     @Path("/{id:\\d+}/offices")
     @Produces(value = CustomMediaType.APPLICATION_OFFICE_LIST)
     public Response getDoctorOffices(@PathParam("id") final long id) {

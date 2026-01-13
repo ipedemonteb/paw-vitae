@@ -1,8 +1,3 @@
-export function toBackendDayOfWeek(date: Date): number {
-    const js = date.getDay();
-    return (js + 6) % 7;
-}
-
 export function timeToMinutes(t: string): number {
     const [hh, mm] = t.split(":").map(Number);
     return hh * 60 + mm;
@@ -31,4 +26,13 @@ export function buildTimeSlotsForDay(
     });
 
     return Array.from(new Set(slots)).sort();
+}
+
+export function dateKey(d: Date): number {
+    return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+
+export function isoDateKey(iso: string): number {
+    const [y, m, d] = iso.split("-").map(Number);
+    return y * 10000 + m * 100 + d;
 }
