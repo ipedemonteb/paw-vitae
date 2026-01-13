@@ -135,7 +135,7 @@
     "show_password": "Show password",
     "hide_password": "Hide password",
     "error_credentials": "Invalid credentials",
-    "error_generic": "An error occurred during login",
+    "error_generic": "An error occurred during login. Check your credentials and try again.",
     "aria_email": "Email address",
     "aria_password": "Password"
   },
@@ -273,6 +273,7 @@
     "doctor": {
       "dashboard": "Doctor Dashboard",
       "profile": "My Public Profile"
+
     },
     "patient": {
       "dashboard": "Dashboard"
@@ -441,7 +442,14 @@
         "rating": "reviews",
         "edit": "Edit",
         "about": "About"
-      }
+      },
+      "no_ratings": "No ratings yet.",
+      "no_certificates": "No certificates uploaded.",
+      "no_experiences": "No experiences added.",
+      "present": "Present",
+      "no_offices": "This doctor has not added any offices yet.",
+      "no_coverages": "This doctor has not added any coverages yet.",
+      "no_bio_available": "This doctor has not provided a bio yet."
     }
   },
   "search": {

@@ -1,6 +1,19 @@
-import {listDoctors, type DoctorsQuery, getDoctor, getDoctorImage, listDoctorSpecialties} from "@/data/doctors";
-import {keepPreviousData, useQuery} from "@tanstack/react-query";
+import {
+    listDoctors,
+    type DoctorsQuery,
+    getDoctor,
+    getDoctorImage,
+    type DoctorRegisterData,
+    getDoctorCertifications,
+    getDoctorBiography,
+    getDoctorCoverages,
+    getDoctorSpecialties, getDoctorOffices,
+    registerDoctor,
+    fetchCountDoctors, getDoctorExperiences
+} from "@/data/doctors";
+import {keepPreviousData, useMutation, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
+import type {AxiosError} from "axios";
 
 export function useDoctors(query: DoctorsQuery) {
     return useQuery({
@@ -12,18 +25,10 @@ export function useDoctors(query: DoctorsQuery) {
 
 export function useDoctor(userId?: string | null, options?: { enabled?: boolean }) {
     return useQuery({
-        queryKey: ["doctor", userId],
+        queryKey: ['auth', 'doctor', userId],
         queryFn: () => getDoctor(userId!),
         enabled: !!userId && (options?.enabled ?? true),
     });
-}
-
-export function useDoctorSpecialties(url?: string) {
-    return useQuery({
-        queryKey: ['auth', 'doctor', 'specialties', url],
-        queryFn: () => listDoctorSpecialties(url!),
-        enabled: !!url
-    })
 }
 
 const isNumericId = (id?: string) => !!id && /^\d+$/.test(id);
@@ -54,4 +59,68 @@ export function useDoctorImageUrl(id?: string | null, options?: { enabled?: bool
     }, [query.data]);
 
     return { ...query, url };
+}
+
+
+export function useRegisterDoctor() {
+    return useMutation<any, AxiosError<any>, DoctorRegisterData>({
+        mutationFn: (data: DoctorRegisterData) => registerDoctor(data)
+    });
+}
+
+export function useDoctorSpecialties(url?: string, opts?: { enabled?: boolean }) {
+    return useQuery({
+        queryKey: ['doctor', 'specialties', url],
+        queryFn: () => getDoctorSpecialties(url!),
+        enabled: (opts?.enabled ?? true) && !!url,
+    });
+}
+
+export function useDoctorCoverages(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'coverages', url],
+        queryFn: () => getDoctorCoverages(url!),
+        enabled: !!url,
+    });
+}
+
+export function useDoctorExperience(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'experiences', url],
+        queryFn: () => getDoctorExperiences(url!),
+        enabled: !!url,
+    });
+}
+
+export function useDoctorCertifications(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'certifications', url],
+        queryFn: () => getDoctorCertifications(url!),
+        enabled: !!url,
+    });
+}
+
+export function useDoctorBiography(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'bio', url],
+        queryFn: () => getDoctorBiography(url!),
+        enabled: !!url,
+    });
+}
+
+export function useDoctorOffices(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'offices', url],
+        queryFn: () => getDoctorOffices(url!),
+        enabled: !!url,
+    });
+}
+
+export function useDoctorsCount() {
+    return useQuery<number>({
+        queryKey: ['counts', 'doctors'],
+        queryFn: () => fetchCountDoctors(),
+        staleTime: 1000 * 60,
+        retry: 1
+    });
 }

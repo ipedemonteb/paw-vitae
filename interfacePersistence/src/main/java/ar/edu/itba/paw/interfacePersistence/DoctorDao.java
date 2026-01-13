@@ -27,7 +27,7 @@ public interface DoctorDao {
 
     Optional<Doctor> getByResetToken(String token);
 
-    int countAll();
+    long countAll();
 
     List<Doctor> search(String keyword, int results);
 

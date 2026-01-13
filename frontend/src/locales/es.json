@@ -123,7 +123,7 @@
     "show_password": "Mostrar contraseña",
     "hide_password": "Ocultar contraseña",
     "error_credentials": "Las credenciales son inválidas",
-    "error_generic": "Ocurrió un error al iniciar sesión",
+    "error_generic": "Ocurrió un error al iniciar sesión. Verifique sus credenciales y vuelva a intentarlo.",
     "aria_email": "Correo electrónico",
     "aria_password": "Contraseña"
   },
@@ -441,7 +441,14 @@
         "rating": "calificaciones",
         "edit": "Editar",
         "about": "Sobre Mí"
-      }
+      },
+      "no_ratings": "Este doctor aún no tiene calificaciones.",
+      "no_certificates": "Este doctor aún no ha subido certificados.",
+      "no_experiences": "Este doctor aún no ha agregado experiencias.",
+      "present": "Presente",
+      "no_offices": "Este doctor aún no ha agregado consultorios.",
+      "no_coverages": "Este doctor aún no ha agregado coberturas.",
+      "no_bio_available": "Este doctor aún no ha agregado una biografía."
     }
   },
   "search": {

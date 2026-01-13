@@ -43,11 +43,7 @@ public class DoctorCertificationServiceImpl implements DoctorCertificationServic
     @Transactional(readOnly = true)
     @Override
     public List<DoctorCertification> findByDoctorId(long id) {
-        List<DoctorCertification> certifications = this.doctorCertificationDao.getByDoctorId(id);
-        if(certifications.isEmpty()) {
-            throw new UserNotFoundException();
-        }
-        return certifications;
+       return doctorCertificationDao.getByDoctorId(id);
     }
 
     @Transactional

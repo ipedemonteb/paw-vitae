@@ -8,6 +8,10 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {useTranslation} from "react-i18next";
+import {useDoctorsCount} from "@/hooks/useDoctors.ts";
+import {usePatientsCount} from "@/hooks/usePatients.ts";
+import {useAllRatings} from "@/hooks/useRatings.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
 
 // TODO: internacionalizacion
 
@@ -52,19 +56,19 @@ const heroCombo =
     "h-12 border-0 min-w-58 rounded-none px-4 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
 const heroButton =
     "h-12 rounded-none px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)] cursor-pointer";
-const heroStats =
-    "flex gap-10";
-const statsItem =
-    "flex flex-col box-border";
-const statsNumber =
-    "text-4xl font-bold leading-[1.2] text-[var(--primary-color)]";
-const statsLabel =
-    "text-lg text-[var(--text-light)]";
 const heroSpace =
     "flex-1 flex justify-end relative";
 
 function HeroSection() {
     const { t } = useTranslation();
+
+    const {claims, isAuthenticated} = useAuth()
+    const role = claims?.role?.toUpperCase();
+    const isDoctor = role === "ROLE_DOCTOR";
+
+
+    const { data: doctors = 0, isLoading: loadingDoctors } = useDoctorsCount();
+    const { data: patients = 0, isLoading: loadingPatients } = usePatientsCount();
 
     const navigate = useNavigate();
     const [keyword, setKeyword] = useState("");
@@ -80,6 +84,8 @@ function HeroSection() {
         navigate(qs ? `/search?${qs}` : "/search");
     };
 
+
+
     return (
         <div className={heroContainer}>
             <div className={heroContent}>
@@ -89,40 +95,50 @@ function HeroSection() {
                 <p className={heroSubtitle}>
                     {t("landing.hero.subtitle")}
                 </p>
-                <div className={heroSearch}>
-                    <div className={searchBar}>
-                        <Input
-                            placeholder={t("landing.hero.search_placeholder")}
-                            className={heroInput}
-                            type="search"
-                            value={keyword}
-                            onChange={(e) => setKeyword(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") doSearch();
-                            }}
-                        />
-                        <SpecialtyCombobox
-                            className={heroCombo}
-                            value={specialtySelf}
-                            onValueChange={(self, id) => {
-                                setSpecialtySelf(self);
-                                setSpecialtyId(id);
-                            }}
-                        ></SpecialtyCombobox>
-                        <Button className={heroButton} onClick={doSearch}>
-                            <Search className="h-5 w-5"/>
-                            {t("landing.hero.search")}
-                        </Button>
+                {(!isAuthenticated || !isDoctor) && (
+                    <div className="flex items-center px-3">
+                        <div className={heroSearch}>
+                            <div className={searchBar}>
+
+                                <Input
+                                    placeholder={t("landing.hero.search_placeholder")}
+                                    className={heroInput}
+                                    type="search"
+                                    value={keyword}
+                                    onChange={(e) => setKeyword(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") doSearch();
+                                    }}
+                                />
+                                <SpecialtyCombobox
+                                    className={heroCombo}
+                                    value={specialtySelf}
+                                    onValueChange={(self, id) => {
+                                        setSpecialtySelf(self);
+                                        setSpecialtyId(id);
+                                    }}
+                                ></SpecialtyCombobox>
+                                <Button className={heroButton} onClick={doSearch}>
+                                    <Search className="h-5 w-5"/>
+                                    {t("landing.hero.search")}
+                                </Button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className={heroStats}>
-                    <div className={statsItem}>
-                        <span className={statsNumber}>268</span>
-                        <span className={statsLabel}>{t("landing.hero.doctors")}</span>
+                )}
+
+                <div className="flex gap-10">
+                    <div className="flex flex-col">
+        <span className="text-4xl font-bold text-[var(--primary-color)]">
+          {loadingDoctors ? '…' : doctors}
+        </span>
+                        <span className="text-lg text-[var(--text-light)]">Doctores</span>
                     </div>
-                    <div className={statsItem}>
-                        <span className={statsNumber}>1000</span>
-                        <span className={statsLabel}>{t("landing.hero.patients")}</span>
+                    <div className="flex flex-col">
+        <span className="text-4xl font-bold text-[var(--primary-color)]">
+          {loadingPatients ? '…' : patients}
+        </span>
+                        <span className="text-lg text-[var(--text-light)]">Pacientes</span>
                     </div>
                 </div>
             </div>
@@ -318,29 +334,6 @@ function FeaturesSection() {
     )
 }
 
-const ratings = [
-    {
-        comment:
-            "Muy buena atención. Me atendieron rápido y el doctor explicó todo con claridad.",
-        rating: 5,
-        userName: "John Doe",
-        timeAgo: "2 days ago",
-    },
-    {
-        comment:
-            "Excelente plataforma. Encontré un especialista en minutos y conseguí turno para el mismo día.",
-        rating: 5,
-        userName: "María González",
-        timeAgo: "1 week ago",
-    },
-    {
-        comment:
-            "La experiencia fue muy simple y clara. Me gustó poder filtrar por especialidad y disponibilidad.",
-        rating: 4,
-        userName: "Lucas Pérez",
-        timeAgo: "3 weeks ago",
-    },
-];
 
 const ratingsContainer =
     "w-full max-w-[900px] mx-auto";
@@ -353,6 +346,8 @@ const carouselItem =
 
 function RatingsSection() {
     const { t } = useTranslation();
+
+    const { data: ratings = [], isLoading, isError } = useAllRatings();
 
     return (
         <div className={container}>
@@ -367,29 +362,42 @@ function RatingsSection() {
                     {t("landing.ratings.subtitle")}
                 </p>
             </div>
+
             <div className={ratingsContainer}>
-                <Carousel opts={{ align: "start", loop: true }} className={carousel}>
-                    <CarouselContent className={carouselContent}>
-                        {ratings.map((r, idx) => (
-                            <CarouselItem key={idx} className={carouselItem}>
-                                <div className="py-2">
-                                    <RatingCard
-                                        className="max-w-none"
-                                        comment={r.comment}
-                                        rating={r.rating}
-                                        userName={r.userName}
-                                        timeAgo={r.timeAgo}
-                                    />
-                                </div>
-                            </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="left-2 cursor-pointer" />
-                    <CarouselNext className="right-2 cursor-pointer" />
-                </Carousel>
+                {isLoading ? (
+                    <div className="text-center">…</div>
+                ) : isError ? (
+                    <div className="text-center text-red-500">
+                        {t("landing.ratings.error") ?? "Error al cargar reseñas"}
+                    </div>
+                ) : ratings.length === 0 ? (
+                    <div className="text-center">
+                        {t("landing.ratings.empty") ?? "Sin reseñas todavía"}
+                    </div>
+                ) : (
+                    <Carousel opts={{ align: "start", loop: true }} className={carousel}>
+                        <CarouselContent className={carouselContent}>
+                            {ratings.map((r, idx) => (
+                                <CarouselItem key={r.self || idx} className={carouselItem}>
+                                    <div className="py-2">
+                                        <RatingCard
+                                            className="max-w-none"
+                                            comment={r.comment}
+                                            rating={r.rating}
+                                            userName={`${r.patientName} ${r.patientLastName}`}
+                                            timeAgo={""}
+                                        />
+                                    </div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="left-2 cursor-pointer" />
+                        <CarouselNext className="right-2 cursor-pointer" />
+                    </Carousel>
+                )}
             </div>
         </div>
-    )
+    );
 }
 
 export default Landing;

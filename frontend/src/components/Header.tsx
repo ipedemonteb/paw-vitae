@@ -11,6 +11,7 @@ import {Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader} from "@/
 import {Button} from "@/components/ui/button.tsx";
 import {useTranslation} from "react-i18next";
 import {useDoctor, useDoctorImageUrl} from "@/hooks/useDoctors.ts";
+import {usePatientById} from "@/hooks/usePatients.ts";
 
 type UserRole = "ANON" | "PATIENT" | "DOCTOR";
 
@@ -93,6 +94,8 @@ function Header() {
 
     const isLoggedIn = auth.isAuthenticated;
     const userRole = deriveUserRole(isLoggedIn, auth.role);
+    const shouldFetchPatient = isLoggedIn && userRole === "PATIENT" && !!auth.userId;
+    const { data: patient } = usePatientById(auth.userId, { enabled: shouldFetchPatient });
     const shouldFetchDoctor = isLoggedIn && userRole === "DOCTOR" && !!auth.userId;
     const { data: doctor } = useDoctor(auth.userId, { enabled: shouldFetchDoctor });
     const { url: getDoctorImgUrl } = useDoctorImageUrl(auth.userId, { enabled: shouldFetchDoctor });
@@ -103,11 +106,21 @@ function Header() {
             ? doctor
                 ? `${doctor.name} ${doctor.lastName}`
                 : auth.email ?? ""
-            : auth.email ?? "";
+            : userRole === "PATIENT"
+                ? patient
+                    ? `${patient.name} ${patient.lastName}`
+                    : auth.email ?? ""
+                : auth.email ?? "";
+
     const avatarFallbackText = (() => {
         if (userRole === "DOCTOR" && doctor) {
             const a = doctor.name?.trim()?.[0] ?? "";
             const b = doctor.lastName?.trim()?.[0] ?? "";
+            return (a + b).toUpperCase() || "U";
+        }
+        if (userRole === "PATIENT" && patient) {
+            const a = patient.name?.trim()?.[0] ?? "";
+            const b = patient.lastName?.trim()?.[0] ?? "";
             return (a + b).toUpperCase() || "U";
         }
         return auth.email?.trim()?.[0]?.toUpperCase() ?? "U";

@@ -49,6 +49,8 @@ const bookButton =
 function Appointment() {
     const selectedSpecialty = "General";
 
+    const doctorId = "24";
+
     const { t } = useTranslation();
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -63,7 +65,7 @@ function Appointment() {
                         <p>{t("appointment.booking.header.subtitle")}</p>
                     </div>
                     <div className={appointmentContent}>
-                        <DoctorProfileCard />
+                        <DoctorProfileCard doctorId={doctorId}/>
                         <div className={selectorsContainer}>
                             <SpecialtySelector selectedSpecialty={selectedSpecialty} />
                             <OfficeSelector />
