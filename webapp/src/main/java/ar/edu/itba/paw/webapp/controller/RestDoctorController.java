@@ -89,12 +89,19 @@ public class RestDoctorController {
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctorPage.getContent(), uriInfo)) {}), doctorPage, uriInfo);
     }
 
+    @HEAD
+    @Produces(value = CustomMediaType.APPLICATION_DOCTOR_LIST)
+    public Response getDoctorCount(){
+        long count = doctorService.getAllDoctorsDisplayCount();
+        return Response.ok().header("X-Total-Count", count).build();
+    }
+
     @GET
     @Path("/{id:\\d+}/specialties")
     @Produces(value = CustomMediaType.APPLICATION_SPECIALTY_LIST)
     public Response getDoctorSpecialties(@PathParam("id") final long id) {
         List<Specialty> specialties = this.specialtyService.getByDoctorId(id);
-        return Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialties, uriInfo)) {}).build();
+        return Response.ok(new GenericEntity<List<SpecialtyDTO>>(SpecialtyDTO.fromSpecialty(specialties, uriInfo)) {}).build();
     }
 
     @GET
@@ -102,7 +109,7 @@ public class RestDoctorController {
     @Produces(value = CustomMediaType.APPLICATION_COVERAGE_LIST)
     public Response getDoctorCoverages(@PathParam("id") final long id) {
         List<Coverage> coverages = this.coverageService.findByDoctorId(id);
-        return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
+        return Response.ok(new GenericEntity<List<CoverageDTO>>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
     }
 
     @GET
@@ -165,10 +172,9 @@ public class RestDoctorController {
     @Path("/{id:\\d+}/ratings")
     @Produces(value = CustomMediaType.APPLICATION_RATING_LIST)
     public Response getDoctorRatings(
-            @PathParam("id") final long id,
-            @QueryParam("page") @DefaultValue("1") @Min(1) final int page
+            @PathParam("id") final long id
     ) {
-        Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, page, 9);
+        Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, 1, 9);
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
     }
 

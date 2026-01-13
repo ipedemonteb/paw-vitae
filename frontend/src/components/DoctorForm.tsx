@@ -4,7 +4,6 @@ import React, {useEffect, useState} from "react"
 import {
     ArrowRight,
     ArrowLeft,
-    Upload,
     Check,
     Calendar,
     Loader2, AlertCircle
@@ -13,13 +12,13 @@ import { useTranslation } from "react-i18next"
 
 import { useSpecialties } from "@/hooks/useSpecialties"
 import { useCoverages } from "@/hooks/useCoverages"
-import { useUserService } from "@/hooks/userService"
-import { api } from "@/data/Api"
 
 import { FormInput } from "@/components/ui/FormInput"
 import { PasswordInput } from "@/components/ui/passwordInput"
 import { FormStepper } from "@/components/ui/FormStepper"
 import {PasswordStrengthMeter} from "@/components/ui/PasswordStrengthMeter.tsx";
+import {useRegisterDoctor} from "@/hooks/useDoctors.ts";
+import type {AxiosError} from "axios";
 
 interface DoctorFormProps {
     onSuccess: (email: string) => void;
@@ -27,10 +26,10 @@ interface DoctorFormProps {
 
 export function DoctorForm({ onSuccess }: DoctorFormProps) {
     const { t } = useTranslation()
-    const userService = useUserService(api)
 
     const [step, setStep] = useState(1)
-    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const {mutate: registerDoctor, isPending: isSubmitting} = useRegisterDoctor()
 
     const {data: specialties, isLoading: isLoadingSpecialties} = useSpecialties()
     const {data: coverages, isLoading: isLoadingCoverages} = useCoverages()
@@ -95,11 +94,6 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
         if(errors[name]) setErrors(prev => ({ ...prev, [name]: "" }))
     }
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setFormData(prev => ({ ...prev, image: e.target.files![0] }))
-        }
-    }
 
     const toggleSelection = (listName: 'selectedSpecialties' | 'selectedCoverages', url: string) => {
         setFormData(prev => {
@@ -131,59 +125,42 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
         }
 
         setErrors({});
-        setIsSubmitting(true)
-
-        try {
-            await userService.registerDoctor({
-                ...formData,
-                selectedSpecialties: formData.selectedSpecialties,
-                selectedCoverages: formData.selectedCoverages
-            });
-
-            // const locationUrl = response.headers['location'];
 
 
-            //TODO: DECIDE HOW TO HANDLE THE IMAGE
-            // if (formData.image && locationUrl) {
-            //     const uploadUrl = `${locationUrl}/image`;
-            //
-            //     await userService.uploadDoctorImage(uploadUrl, formData.image);
-            // }
+        registerDoctor(formData, {
+            onSuccess: () => onSuccess(formData.email),
+            onError: (error: AxiosError<any>) => {
+                let isEmailError = false;
+                let errorMessage = t('register.errors.generic');
 
-            onSuccess(formData.email);
-        } catch (error: any) {
-            let isEmailError = false;
-            let errorMessage = t('register.errors.generic');
+                if (error.response && error.response.data) {
 
-            if (error.response && error.response.data) {
+                    const backendMsg = error.response.data.message;
 
-                const backendMsg = error.response.data.message;
+                    if (backendMsg && backendMsg.toLowerCase().includes("email")) {
+                        isEmailError = true;
+                    } else if (backendMsg) {
+                        errorMessage = backendMsg;
+                    }
 
-                if (backendMsg && backendMsg.toLowerCase().includes("email")) {
-                    isEmailError = true;
-                } else if (backendMsg) {
-                    errorMessage = backendMsg;
+                    if (error.response.data.errors) {
+                        const apiErrors = error.response.data.errors;
+                        const foundEmailError = apiErrors.find((e: any) =>
+                            e.field === "email" || e.message?.toLowerCase().includes("email")
+                        );
+                        if (foundEmailError) isEmailError = true;
+                    }
                 }
 
-                if (error.response.data.errors) {
-                    const apiErrors = error.response.data.errors;
-                    const foundEmailError = apiErrors.find((e: any) =>
-                        e.field === "email" || e.message?.toLowerCase().includes("email")
-                    );
-                    if (foundEmailError) isEmailError = true;
+                if (isEmailError) {
+                    setStep(1);
+                    setErrors(prev => ({ ...prev, email: t('register.errors.email_taken') }));
+                } else {
+                    setGlobalError(errorMessage);
                 }
             }
+        })
 
-            if (isEmailError) {
-                setStep(1);
-                setErrors(prev => ({ ...prev, email: t('register.errors.email_taken') }));
-            } else {
-                setGlobalError(errorMessage);
-            }
-
-        } finally {
-            setIsSubmitting(false);
-        }
     }
 
 
@@ -281,18 +258,6 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                         />
                     </div>
 
-                    <div className="space-y-2 pt-2">
-                        <label className="text-sm font-medium text-gray-700">{t('register.label_profile_image')}</label>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 h-24 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors cursor-pointer relative group">
-                            <input type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                            <div className="flex flex-row items-center gap-2 group-hover:text-blue-600 transition-colors">
-                                <Upload className="h-5 w-5" />
-                                <span className="text-sm font-medium">
-                                    {formData.image ? formData.image.name : t('register.label_profile_image')}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
 
                     <div className="flex justify-end pt-6">
                         <button

@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
         LOGGER.debug("Setting verification token for email: {}", email);
         User user = getByEmail(email).orElseThrow(UserNotFoundException::new);
         String token = UUID.randomUUID().toString();
-        String verificationLink = BASE_URL + "/verify-confirmation?token=" + token + "&email=" + email;
+        String verificationLink = BASE_URL + "/verify?token=" + token + "&email=" + email;
         mailService.sendVerificationRegisterEmail(user, verificationLink);
         user.setVerificationToken(token);
         user.setTokenExpiration(LocalDateTime.now(ZoneId.systemDefault()).plusDays(30));

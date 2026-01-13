@@ -11,8 +11,6 @@ import java.util.List;
 public class ProfileDTO {
     private String bio;
     private String description;
-    private List<DoctorCertification> certifications;
-    private List<DoctorExperience> experiences;
     private URI doctor;
 
     public static ProfileDTO fromDoctorProfile(DoctorProfile profile, UriInfo uriInfo) {
