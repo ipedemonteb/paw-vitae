@@ -2,8 +2,7 @@ export interface OfficeDTO {
     name: string;
     neighborhood: string;
     doctor: string;
-    specialties: string;
-    availability: string;
+    officeSpecialties: string;
+    officeAvailability: string;
     self: string;
 }
-

@@ -7,18 +7,18 @@ import {
     getDoctorCertifications,
     getDoctorBiography,
     getDoctorCoverages,
-    getDoctorSpecialties,
-    getDoctorOffices,
+    getDoctorSpecialties, getDoctorOffices,
     registerDoctor,
-    fetchCountDoctors,
-    getDoctorExperiences,
+    fetchCountDoctors, getDoctorExperiences, getDoctorOfficeSpecialties,
     type ExperienceForm,
     putDoctorExperiences,
     putDoctorCertificates,
-    putDoctorProfile,type CertificateForm} from "@/data/doctors";
-import {keepPreviousData, useMutation, useQuery} from "@tanstack/react-query";
+    putDoctorProfile, type CertificateForm, type OfficeSpecialtyDTO
+} from "@/data/doctors";
+import {keepPreviousData, useMutation, useQueries, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
 import type {AxiosError} from "axios";
+import type {OfficeDTO} from "@/data/office.ts";
 
 export function useDoctors(query: DoctorsQuery) {
     return useQuery({
@@ -73,11 +73,11 @@ export function useRegisterDoctor() {
     });
 }
 
-export function useDoctorSpecialties(url?: string, opts?: { enabled?: boolean }) {
+export function useDoctorSpecialties(url?: string | null) {
     return useQuery({
         queryKey: ['doctor', 'specialties', url],
         queryFn: () => getDoctorSpecialties(url!),
-        enabled: (opts?.enabled ?? true) && !!url,
+        enabled: !!url,
     });
 }
 
@@ -129,6 +129,24 @@ export function useDoctorsCount() {
         retry: 1
     });
 }
+
+export function useDoctorOfficeSpecialties(offices?: OfficeDTO[] | null) {
+    const queries = useQueries({
+        queries: (offices ?? []).map((office) => ({
+            queryKey: ["office", "specialties", office.officeSpecialties ?? []],
+            queryFn: () => getDoctorOfficeSpecialties(office.officeSpecialties),
+            enabled: !!office.officeSpecialties,
+        })),
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+    const isError = queries.some((q) => q.isError);
+
+    const data = queries.map((q) => (q.data ?? []) as OfficeSpecialtyDTO[]);
+
+    return { data, isLoading, isError };
+}
+
 export function  usePutDoctorExperience(url: string ) {
     return useMutation<any, AxiosError<any>, ExperienceForm[]>({
         mutationFn: (data: ExperienceForm[]) => putDoctorExperiences(url,data)
