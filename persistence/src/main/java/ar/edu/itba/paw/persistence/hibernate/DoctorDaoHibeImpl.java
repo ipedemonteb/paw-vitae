@@ -216,9 +216,9 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     }
 
     @Override
-    public int countAll() {
+    public long countAll() {
         TypedQuery<Long> query = em.createQuery("SELECT COUNT(d) FROM Doctor d WHERE d.verified = true", Long.class);
-        return query.getSingleResult().intValue();
+        return query.getSingleResult();
     }
 
     @Override
