@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             isAuthenticated: !!claims,
             userId: claims?.userId,
             role: claims?.role,
-            email: claims?.email,
+            email: claims?.sub,
 
 
             login,

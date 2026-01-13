@@ -11,7 +11,17 @@ export type ChangePasswordForm = {
     password: string;
     repeatPassword: string;
 }
-
+export type CertificateForm = {
+    certificateName: string;
+    issuingEntity: string;
+    issueDate: string;
+}
+export type ExperienceForm = {
+    positionTitle: string;
+    organizationName: string;
+    startDate: string;
+    endDate?: string;
+}
 export type DoctorDTO = {
     name: string;
     lastName: string;
@@ -205,6 +215,36 @@ export async function getDoctorBiography(profileUrl: string) {
 export async function getDoctorOffices(officesUrl: string) {
     const res = await api.get<OfficeDTO[]>(officesUrl,{
         headers: {"accept": ContentTypes.OFFICE_LIST,}
+    } );
+    return res.data;
+}
+export async function putDoctorCertificates(certificationsUrl: string, certificate: CertificateForm[]) {
+    const res = await api.put(certificationsUrl,certificate,{
+        headers: {
+            "content-type":  ContentTypes.DOCTOR_CERTIFICATION_LIST
+        }
+    } );
+    return res.data;
+}
+
+export async function putDoctorProfile(profileUrl: string, biography: string, description: string) {
+    const payload = {
+        biography,
+        description
+    };
+    const res = await api.put(profileUrl,payload,{
+        headers: {
+            "content-type":  ContentTypes.DOCTOR_PROFILE
+        }
+    } );
+    return res.data;
+}
+
+export async function putDoctorExperiences(experiencesUrl: string, experiences: ExperienceForm[]) {
+    const res = await api.put(experiencesUrl,experiences,{
+        headers: {
+            "content-type":  ContentTypes.DOCTOR_EXPERIENCE_LIST
+        }
     } );
     return res.data;
 }

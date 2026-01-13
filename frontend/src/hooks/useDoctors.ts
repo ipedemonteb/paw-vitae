@@ -7,10 +7,15 @@ import {
     getDoctorCertifications,
     getDoctorBiography,
     getDoctorCoverages,
-    getDoctorSpecialties, getDoctorOffices,
+    getDoctorSpecialties,
+    getDoctorOffices,
     registerDoctor,
-    fetchCountDoctors, getDoctorExperiences
-} from "@/data/doctors";
+    fetchCountDoctors,
+    getDoctorExperiences,
+    type ExperienceForm,
+    putDoctorExperiences,
+    putDoctorCertificates,
+    putDoctorProfile,type CertificateForm} from "@/data/doctors";
 import {keepPreviousData, useMutation, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
 import type {AxiosError} from "axios";
@@ -122,5 +127,20 @@ export function useDoctorsCount() {
         queryFn: () => fetchCountDoctors(),
         staleTime: 1000 * 60,
         retry: 1
+    });
+}
+export function  usePutDoctorExperience(url: string ) {
+    return useMutation<any, AxiosError<any>, ExperienceForm[]>({
+        mutationFn: (data: ExperienceForm[]) => putDoctorExperiences(url,data)
+    });
+}
+export function  usePutDoctorProfile(url: string ) {
+    return useMutation<any, AxiosError<any>, {biography: string, description: string}>({
+        mutationFn: (data :{biography: string, description: string}) => putDoctorProfile(url,data.biography, data.description)
+    });
+}
+export function usePutDoctorCertificates(url: string ) {
+    return useMutation<any, AxiosError<any>, CertificateForm[]>({
+        mutationFn: (data: CertificateForm[]) => putDoctorCertificates(url,data)
     });
 }
