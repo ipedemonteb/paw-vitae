@@ -10,6 +10,7 @@ export type ChangePasswordForm = {
     password: string;
     repeatPassword: string;
 }
+
 export type DoctorDTO = {
     name: string;
     lastName: string;
