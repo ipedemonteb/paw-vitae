@@ -25,16 +25,14 @@ import { useTranslation } from "react-i18next";
 import {useDoctorImageUrl} from "@/hooks/useDoctors.ts";
 import {
     useDoctor,
-    useDoctorBiography, useDoctorCertifications,
-    useDoctorCoverages,
-    useDoctorExperience,
+    // useDoctorBiography, useDoctorCertifications,
+    // useDoctorCoverages,
+    // useDoctorExperience,
     useDoctorSpecialties
 } from "@/hooks/useDoctors.ts";
-import type { DoctorDTO, ExperienceDTO, CertificationDTO, DoctorProfileDTO } from "@/data/doctors.ts";
-import type {CoverageDTO} from "@/data/coverages.ts";
-import type {OfficeDTO} from "@/data/office.ts";
+import type { DoctorDTO, DoctorProfileDTO } from "@/data/doctors.ts";
 import GenericError from "@/pages/GenericError.tsx";
-import {useRatings} from "@/hooks/useRatings.ts";
+// import {useRatings} from "@/hooks/useRatings.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
 
 const profileContainer =
@@ -44,13 +42,15 @@ function PublicProfile() {
     const { id } = useParams<{ id: string }>();
     const { data: doctor, isLoading: isLoadingDoctor, isError } = useDoctor(id);
     const { data: specialties, isLoading: isLoadingSpecialties } = useDoctorSpecialties(doctor?.specialties);
-    const {data:coverages, isLoading: isLoadingCoverages} = useDoctorCoverages(doctor?.coverages);
-    const {data:experiences, isLoading: isLoadingExperiences} = useDoctorExperience(doctor?.experiences);
-    const {data:certifications, isLoading: isLoadingCertifications} = useDoctorCertifications(doctor?.certifications);
-    const {data:profile, isLoading: isLoadingProfile} = useDoctorBiography(doctor?.profile);
-    const {data:ratings, isLoading: isLoadingRatings} = useRatings(doctor?.ratings);
-    const {data:offices, isLoading: isLoadingOffices} = useDoctorCoverages(doctor?.offices);
-    if (isLoadingDoctor || isLoadingCertifications|| isLoadingCoverages || isLoadingExperiences  || isLoadingProfile || isLoadingRatings || isLoadingSpecialties) return <div>Loading...</div>;
+    //TODO: BORRAR ESTE IF CUANDO SE TERMINE
+    if (isLoadingDoctor || isLoadingSpecialties) return <div>Loading...</div>;
+    // const {data:coverages, isLoading: isLoadingCoverages} = useDoctorCoverages(doctor?.coverages);
+    // const {data:experiences, isLoading: isLoadingExperiences} = useDoctorExperience(doctor?.experiences);
+    // const {data:certifications, isLoading: isLoadingCertifications} = useDoctorCertifications(doctor?.certifications);
+    // const {data:profile, isLoading: isLoadingProfile} = useDoctorBiography(doctor?.profile);
+    // const {data:ratings, isLoading: isLoadingRatings} = useRatings(doctor?.ratings);
+    // const {data:offices, isLoading: isLoadingOffices} = useDoctorCoverages(doctor?.offices);
+    // if (isLoadingDoctor || isLoadingCertifications|| isLoadingCoverages || isLoadingExperiences  || isLoadingProfile || isLoadingRatings || isLoadingSpecialties) return <div>Loading...</div>;
     if (isError || !doctor) return <GenericError code={404} />;
     const rating = doctor.rating;
     const ratingCount = doctor.ratingCount; // Nota: en tu DTO era string, asegúrate de convertirlo si es necesario
@@ -60,11 +60,16 @@ function PublicProfile() {
     return (
       <div className={profileContainer}>
           <ProfileCard doctor={doctor} rating={rating} ratingCount={ratingCount} specialties={specialties} maxBadges={maxBadges}/>
-          <CoverageCard coverages={coverages || []} />
-          <OfficesCard offices={offices || []}/>
-          <ExperienceCard experiences={experiences || []} />
-          <CertificatesCard certifications={certifications || []} />
-          <RatingsCard ratings={ratings?.content || []} />
+          {/*<CoverageCard coverages={coverages || []} />*/}
+          {/*<OfficesCard offices={offices || []}/>*/}
+          {/*<ExperienceCard experiences={experiences || []} />*/}
+          {/*<CertificatesCard certifications={certifications || []} />*/}
+          {/*<RatingsCard ratings={ratings?.content || []} />*/}
+          <CoverageCard/>
+          <OfficesCard/>
+          <ExperienceCard/>
+          <CertificatesCard/>
+          <RatingsCard/>
       </div>
     );
 }
@@ -106,13 +111,15 @@ const aboutText =
 
 function ProfileCard({ doctor, rating, ratingCount, specialties, maxBadges }:{
     doctor: DoctorDTO ;
+    rating: number;
+    ratingCount: number;
     profile?: DoctorProfileDTO;
-    specialties: SpecialtyDTO[];
+    specialties: SpecialtyDTO[] | undefined;
     maxBadges: number;
 }) {
     const { t } = useTranslation();
     const { url: getDoctorImgUrl } = useDoctorImageUrl(String(doctor.self.split('/').pop()));
-    const specialtyNames = specialties.map(s => s.name);
+    const specialtyNames: string[] = (specialties ?? []).map((s) => s.name);
     return (
         <Card className={card}>
             <div className={cardTitle}>
@@ -141,7 +148,7 @@ function ProfileCard({ doctor, rating, ratingCount, specialties, maxBadges }:{
                         <p>{rating}</p>
                         <p className={ratingText}>({ratingCount} {t("doctor.profile.card.rating")})</p>
                     </div>
-                    <BadgeComponent specialties={specialties} maxBadges={maxBadges} />
+                    <BadgeComponent specialties={specialtyNames} maxBadges={maxBadges} />
                 </div>
                 <Button className={editButton}>
                     <SquarePen className="w-4 h-4" />
