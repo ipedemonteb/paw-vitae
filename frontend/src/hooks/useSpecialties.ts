@@ -8,7 +8,7 @@ export function useSpecialties() {
     })
 }
 
-export function useSpecialty(url?: string) {
+export function useSpecialty(url?: string | null) {
     return useQuery({
         queryKey: ['specialties', url],
         queryFn: () => getSpecialty(url!),

@@ -1,7 +1,5 @@
-import {type AppointmentsQuery, listAppointments} from "@/data/appointments.ts";
+import {type AppointmentsQuery, getAppointment, listAppointments} from "@/data/appointments.ts";
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
-
-
 
 export function useAppointments(query: AppointmentsQuery) {
     const { userId, doctorId, collection, filter, page, pageSize } = query ?? {};
@@ -21,4 +19,12 @@ export function useAppointments(query: AppointmentsQuery) {
         enabled: !!query.userId,
         placeholderData: keepPreviousData
     })
+}
+
+export function useAppointment(id?: string | null) {
+    return useQuery({
+        queryKey: ['appointment', id],
+        queryFn: () => getAppointment(id!),
+        enabled: !!id,
+    });
 }

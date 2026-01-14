@@ -20,7 +20,12 @@ import { Button } from "@/components/ui/button.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { UploadFiles } from "@/components/UploadFiles.tsx"
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useAppointment } from "@/hooks/useAppointments.ts";
+import { formatLongDate, formatTimeHM } from "@/utils/dateUtils.ts";
+import {useSpecialty} from "@/hooks/useSpecialties.ts";
+import {useDoctorOffice} from "@/hooks/useDoctors.ts";
+import {useNeighborhood} from "@/hooks/useNeighborhoods.ts";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -41,6 +46,16 @@ const appointmentData =
 function AppointmentDetails() {
     const { t } = useTranslation();
 
+    const appointmentId = "33";
+
+    // TODO: handle isLoading
+    const {data: appointment} = useAppointment(appointmentId);
+    const {data: specialty} = useSpecialty(appointment?.specialty ?? null);
+    const {data: office} = useDoctorOffice(appointment?.doctorOffice ?? null);
+    const {data: neighborhood} = useNeighborhood(office?.neighborhood ?? null);
+
+    if (!appointment) return <div>Loading...</div>;
+
     return (
             <div className={appointmentBackground}>
                 <div className={cardContainer}>
@@ -52,12 +67,12 @@ function AppointmentDetails() {
                         <div className={appointmentContent}>
                             <PatientProfileCard />
                             <div className={appointmentData}>
-                                <StatusCard />
-                                <DateCard />
-                                <SpecialtyCard />
-                                <OfficeCard />
+                                <StatusCard status={appointment.status} />
+                                <DateCard date={appointment.date}/>
+                                <SpecialtyCard specialty={specialty?.name}/>
+                                <OfficeCard name={office?.name} neighborhood={neighborhood.name}/>
                             </div>
-                            <VisitCard />
+                            <VisitCard reason={appointment.reason}/>
                             <PatientFileCard />
                             <PostVisitComponent />
                             <RatingComponent />
@@ -79,20 +94,31 @@ const componentData =
     "flex flex-col";
 const statusText =
     "text-[var(--text-color)] text-sm font-semibold";
-const badge =
+const badgeConfirmed =
     "bg-[var(--success-light)] text-[var(--success)] border border-[var(--success)]";
+const badgeCancelled =
+    "bg-[var(--danger-light)] text-[var(--danger)] border border-[var(--error)]";
+const badgeCompleted =
+    "bg-[var(--landing-light)] text-[var(--primary-color)] border border-[var(--primary-color)]";
 
-function StatusCard() {
+function StatusCard({ status }: { status: "completo" | "cancelado" | "confirmado" }) {
+
     const { t } = useTranslation();
+    const translatedStatus = t(`appointment.details.status.${status}`);
+    const badgeByStatus = {
+        confirmado: badgeConfirmed,
+        cancelado: badgeCancelled,
+        completo: badgeCompleted,
+    } as const;
 
     return (
         <Card className={appointmentComponent}>
             <div className={iconContainer}>
-                <ClipboardCheck className={icon}/>
+                <ClipboardCheck className={icon} />
             </div>
             <div className={componentData}>
-                <p className={statusText + " mb-1"}>{t("appointment.details.status")}</p>
-                <Badge className={badge}>Confirmed</Badge>
+                <p className={statusText + " mb-1"}>{t("appointment.details.status.title")}</p>
+                <Badge className={badgeByStatus[status]}>{translatedStatus}</Badge>
             </div>
         </Card>
     );
@@ -101,8 +127,11 @@ function StatusCard() {
 const dateText =
     "text-[var(--text-light)] text-sm";
 
-function DateCard() {
+function DateCard({date}:{date: string}) {
+
     const { t } = useTranslation();
+
+    const locale = typeof navigator === "undefined" ? "es-AR" : navigator.language || "es-AR";
 
     return (
         <Card className={appointmentComponent}>
@@ -112,15 +141,15 @@ function DateCard() {
             <div className={componentData}>
                 <p className={statusText}>{t("appointment.details.date")}</p>
                 <div>
-                    <p className={dateText}>2025-12-30</p>
-                    <p className={dateText}>14:00</p>
+                    <p className={dateText}>{formatLongDate(date, locale)}</p>
+                    <p className={dateText}>{formatTimeHM(date, locale)}</p>
                 </div>
             </div>
         </Card>
     );
 }
 
-function SpecialtyCard() {
+function SpecialtyCard({specialty}:{specialty: string | undefined}) {
     const { t } = useTranslation();
 
     return (
@@ -130,13 +159,13 @@ function SpecialtyCard() {
             </div>
             <div className={componentData}>
                 <p className={statusText}>{t("appointment.details.specialty")}</p>
-                <p className={dateText}>Dermatology</p>
+                <p className={dateText}>{t(specialty || "appointment.details.no-specialty")}</p>
             </div>
         </Card>
     );
 }
 
-function OfficeCard() {
+function OfficeCard({name, neighborhood}:{name: string | undefined, neighborhood: string | undefined}) {
     const { t } = useTranslation();
 
     return (
@@ -146,13 +175,13 @@ function OfficeCard() {
             </div>
             <div className={componentData}>
                 <p className={statusText}>{t("appointment.details.office")}</p>
-                <p className={dateText}>Parque Avellaneda</p>
+                <p className={dateText}>{name + " - " + neighborhood}</p>
             </div>
         </Card>
     );
 }
 
-function VisitCard() {
+function VisitCard({reason}:{reason?: string}) {
     const { t } = useTranslation();
 
     return (
@@ -161,8 +190,8 @@ function VisitCard() {
                 <MessageCircle className={icon}/>
             </div>
             <div className={componentData}>
-                <p className={statusText}>{t("appointment.details.reason")})</p>
-                <p className={dateText}>Voy porque me duele la cabeza.</p>
+                <p className={statusText}>{t("appointment.details.reason")}</p>
+                <p className={dateText}>{reason ?? "-"}</p>
             </div>
         </Card>
     );

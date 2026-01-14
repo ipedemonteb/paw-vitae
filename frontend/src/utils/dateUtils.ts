@@ -42,3 +42,25 @@ export function startOfDay(d: Date) {
     x.setHours(0, 0, 0, 0);
     return x;
 }
+
+export function formatLongDate(date: string, locale: string): string {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "";
+
+    return new Intl.DateTimeFormat(locale, {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+    }).format(d);
+}
+
+export function formatTimeHM(date: string, locale: string): string {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "";
+
+    return new Intl.DateTimeFormat(locale, {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    }).format(d);
+}

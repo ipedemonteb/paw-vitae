@@ -1,9 +1,10 @@
 import {api} from "@/data/Api.ts";
 import type {PaginationData} from "@/lib/types.ts";
 import {parseLinkHeader} from "@/lib/utils.ts";
+import {ContentTypes} from "@/utils/contentTypes.ts";
 
 export type AppointmentDTO = {
-    date: Date;
+    date: string;
     status: 'completo' | 'cancelado'  | 'confirmado';
     reason: string;
     allowFullHistory: string;
@@ -57,4 +58,11 @@ export async function listAppointments(params: AppointmentsQuery): Promise<Pagin
             total: total
         }
     };
+}
+
+export async function getAppointment(id: string) {
+    const res = await api.get<AppointmentDTO>(`/appointments/${id}`, {
+        headers: {"accept": ContentTypes.APPOINTMENT}
+    });
+    return res.data;
 }
