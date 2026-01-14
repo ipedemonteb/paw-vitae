@@ -2,7 +2,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 interface AuthGuardProps {
-    allowedRoles?: string[]; // Ejemplo: ['DOCTOR', 'PATIENT']
+    allowedRoles?: string[];
 }
 
 export const AuthGuard = ({ allowedRoles }: AuthGuardProps) => {
