@@ -82,7 +82,7 @@
       "status": {
         "title": "Status",
         "confirmado": "Confirmed",
-        "completado": "Completed",
+        "completo": "Completed",
         "cancelado": "Cancelled"
       },
       "date": "Date",

@@ -31,6 +31,7 @@ import {useAuth} from "@/hooks/useAuth.ts";
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
 import type {AppointmentFileDTO} from "@/data/appointments.ts";
 import {useMemo} from "react";
+import {useRating} from "@/hooks/useRatings.ts";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -49,18 +50,19 @@ const appointmentData =
     "grid w-full gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
 
 function AppointmentDetails() {
-    const appointmentId = "33";
+    const appointmentId = "31";
 
     const { t } = useTranslation();
     const auth = useAuth();
     const role = auth.role;
 
-    // TODO: handle isLoading
+    // TODO: handle isLoading and isError
     const {data: appointment} = useAppointment(appointmentId);
     const {data: specialty} = useSpecialty(appointment?.specialty ?? null);
     const {data: office} = useDoctorOffice(appointment?.doctorOffice ?? null);
     const {data: neighborhood} = useNeighborhood(office?.neighborhood ?? null);
     const {data: files} = useAppointmentFiles(appointmentId);
+    const {data: rating} = useRating(appointment?.rating ?? null);
 
     const patientId = userIdFromSelf(appointment?.patient ?? "");
     const doctorId = userIdFromSelf(appointment?.doctor ?? "");
@@ -97,7 +99,7 @@ function AppointmentDetails() {
                             <VisitCard reason={appointment.reason}/>
                             <PatientFileCard files={patientFiles} />
                             <PostVisitComponent files={doctorFiles} report={appointment.report} />
-                            <RatingComponent />
+                            <RatingComponent rating={rating?.rating} comment={rating?.comment}/>
                             <UploadComponent />
                         </div>
                     </Card>
@@ -335,10 +337,8 @@ const ratingContainer =
 const ratingNumber =
     "text-base text-[var(--primary-text)] font-[700] mt-1";
 
-function RatingComponent() {
+function RatingComponent({rating, comment}:{rating: number | undefined, comment: string | undefined}) {
     const { t } = useTranslation();
-
-    const rating = 3;
 
     return (
         <div>
@@ -347,10 +347,10 @@ function RatingComponent() {
                 <h1 className={cardTitle}>{t("appointment.details.rating")}</h1>
             </div>
             <Card className={cardContent}>
-                <p>Me atendió demasiado rapido, no me prestó atención</p>
+                <p>{comment}</p>
                 <Separator />
                 <div className={ratingContainer}>
-                    <RatingStars rating={rating} />
+                    <RatingStars rating={rating ?? 0} />
                     <p className={ratingNumber}>{rating}</p>
                 </div>
             </Card>

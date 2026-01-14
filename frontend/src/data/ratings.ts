@@ -29,3 +29,10 @@ export async function getAllRatings(){
     }as AxiosRequestConfig);
     return res.data;
 }
+
+export async function getRating(url: string) {
+    const res = await api.get<RatingsDTO>(url, {
+        headers: {"accept": ContentTypes.RATING}
+    });
+    return res.data;
+}
