@@ -25,7 +25,7 @@ const ratingContent =
 const ratingText =
     "font-medium text-[var(--text-light)]";
 
-function DoctorProfileCard( { doctorId } : { doctorId: string } ) {
+function DoctorProfileCard( { doctorId } : { doctorId: string | undefined} ) {
 
     const { url: getDoctorImgUrl } = useDoctorImageUrl(doctorId);
     const { data: doctor } = useDoctor(doctorId);

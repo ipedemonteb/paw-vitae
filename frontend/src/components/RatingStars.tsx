@@ -35,9 +35,8 @@ export function RatingStars({
             {Array.from({ length: max }).map((_, i) => {
                 const filled = i < fullStars;
                 return (
-                    <div className={cn("relative", sizeClassName)}>
+                    <div key={i} className={cn("relative", sizeClassName)}>
                         <Star
-                            key={i}
                             className={cn(
                                 starBase,
                                 sizeClassName,
