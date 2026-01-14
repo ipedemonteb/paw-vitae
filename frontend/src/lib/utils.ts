@@ -13,7 +13,7 @@ export function extractIdFromUrl(url: string): string {
 
 export function clampRating(rating: number) {
     if (Number.isNaN(rating)) return 0;
-    return Math.max(0, Math.min(5, Math.round(rating)));
+    return Math.max(0, Math.min(5, Math.floor(rating)));
 }
 
 

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import { Input } from "@/components/ui/input";
 import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2, SearchX } from "lucide-react";
 import { SpecialtyCombobox } from "@/components/SpecialtyCombobox.tsx";
@@ -73,6 +73,8 @@ function HeroSection({searchParams}: SectionProps) {
     const [debounced] = useDebounce(keyword, 500)
     const specialty = "All Specialties"
 
+    const dropdownRef = useRef<HTMLDivElement | null>(null);
+
     const {data: searchResults, isLoading} = useDoctors({
         keyword: debounced,
         pageSize: 5
@@ -87,11 +89,30 @@ function HeroSection({searchParams}: SectionProps) {
         setOpen(keyword.length > 0 && !isLoading);
     }, [keyword]);
 
+    useEffect(() => {
+        if (!open) return;
+
+        function handleClickOutside(e: MouseEvent) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(e.target as Node)
+            ) {
+                setOpen(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [open]);
+
     return (
         <div className={heroContainer}>
             <h1 className={heroTitle}>{t("search.title")}</h1>
             <p className={heroSubtitle}>{t("search.subtitle", { specialty: specialty })}</p>
-            <div className={searchWrapper}>
+            <div className={searchWrapper} ref={dropdownRef}>
                 <SearchIcon className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                 <form
                     onSubmit={(e) => {
@@ -119,7 +140,7 @@ function HeroSection({searchParams}: SectionProps) {
                     {!isLoading && searchResults && searchResults.data.length === 0 && (
                         <div className="h-20 w-full bg-gray-100 flex flex-col items-center justify-center gap-1">
                             <SearchX className="text-(--text-light)"/>
-                            <span className="text-(--text-light) text-sm">No Results Found</span>
+                            <span className="text-(--text-light) text-sm">{t("search.searchbar.empty")}</span>
                         </div>
                     )}
                 </div>
