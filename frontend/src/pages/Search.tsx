@@ -1,6 +1,6 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { Input } from "@/components/ui/input";
-import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2 } from "lucide-react";
+import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2, SearchX } from "lucide-react";
 import { SpecialtyCombobox } from "@/components/SpecialtyCombobox.tsx";
 import { CoverageCombobox } from "@/components/CoverageCombobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -16,6 +16,8 @@ import type {PaginationData} from "@/lib/types.ts";
 import type {DoctorDTO} from "@/data/doctors.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
+import {useDebounce} from "use-debounce";
+import SearchResultsCard from "@/components/SearchResultCard.tsx";
 
 const container =
     "px-[24px] mx-auto max-w-6xl w-full";
@@ -39,7 +41,7 @@ function Search() {
     return (
         <div className="bg-(--background-light) pt-22">
             <div className={container}>
-                <HeroSection />
+                <HeroSection searchParams={doctorsQuery} />
                 <FilterSection searchParams={doctorsQuery} />
                 <ResultSection paginationData={doctors} isLoading={isLoadingDoctors} searchParams={doctorsQuery} />
             </div>
@@ -55,14 +57,35 @@ const heroTitle =
 const heroSubtitle =
     "text-lg text-[var(--text-light)] mb-6 font-[300]";
 const searchWrapper =
-    "relative w-full max-w-2xl mx-auto";
+    "relative w-full max-w-2xl mx-auto z-50 rounded-3xl";
 const searchHero =
     "w-full bg-white rounded-full pr-6 pl-12 py-5 text-slate-900 placeholder:text-slate-400";
 
-function HeroSection() {
+type SectionProps =  {
+    searchParams: PaginationParams & {setParams: (updater: (p: URLSearchParams) => void) => void} & DoctorQueryParams
+}
+
+function HeroSection({searchParams}: SectionProps) {
     const { t } = useTranslation();
 
+    const [open, setOpen] = useState(false)
+    const [keyword, setKeyword] = useState(searchParams.keyword)
+    const [debounced] = useDebounce(keyword, 500)
     const specialty = "All Specialties"
+
+    const {data: searchResults, isLoading} = useDoctors({
+        keyword: debounced,
+        pageSize: 5
+    })
+
+    useEffect(() => {
+        const current = searchParams.keyword;
+        if (current !== keyword) setKeyword(current);
+    }, [searchParams.keyword]);
+
+    useEffect(() => {
+        setOpen(keyword.length > 0 && !isLoading);
+    }, [keyword]);
 
     return (
         <div className={heroContainer}>
@@ -70,8 +93,38 @@ function HeroSection() {
             <p className={heroSubtitle}>{t("search.subtitle", { specialty: specialty })}</p>
             <div className={searchWrapper}>
                 <SearchIcon className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-                <Input type="search" placeholder={t("search.search")} className={searchHero} />
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        searchParams.setParams((p) => {
+                            const val = keyword.trim();
+                            if (val.length > 0) p.set("keyword", keyword.trim())
+                            else p.delete("keyword")
+                        })
+                        setOpen(false)
+                    }}
+                >
+                    <Input type="search" value={keyword} onChange={(e) => (setKeyword(e.currentTarget.value))} placeholder={t("search.search")} className={searchHero} />
+                </form>
+                <div className={`${
+                    open
+                        ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
+                        : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
+                } absolute max-h-56 scrollbar overscroll-contain overflow-scroll border flex flex-col top-12 rounded-md bg-white w-full  transition-all duration-200 ease-out origin-top transform motion-reduce:transition-none`}>
+                    {!isLoading && searchResults && searchResults.data.length > 0 && (
+                        searchResults.data.map((d) => (
+                            <SearchResultsCard doctor={d} key={d.self}/>
+                        ))
+                    )}
+                    {!isLoading && searchResults && searchResults.data.length === 0 && (
+                        <div className="h-20 w-full bg-gray-100 flex flex-col items-center justify-center gap-1">
+                            <SearchX className="text-(--text-light)"/>
+                            <span className="text-(--text-light) text-sm">No Results Found</span>
+                        </div>
+                    )}
+                </div>
             </div>
+
         </div>
     );
 }
@@ -104,11 +157,7 @@ const applyButton =
     "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-dark)] " +
     "hover:border-[var(--primary-dark)] hover:text-white px-8 py-5 rounded-md font-[400] text-sm cursor-pointer";
 
-type FilterSectionProps =  {
-    searchParams: PaginationParams & {setParams: (updater: (p: URLSearchParams) => void) => void} & DoctorQueryParams
-}
-
-function FilterSection({searchParams}: FilterSectionProps) {
+function FilterSection({searchParams}: SectionProps) {
     const { t } = useTranslation();
 
     const days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] as const;

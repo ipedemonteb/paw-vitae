@@ -27,6 +27,7 @@ export type DoctorDTO = {
     certifications: string;
     ratings: string;
     appointments: string;
+    image: string;
     self: string;
 
 };
@@ -39,6 +40,7 @@ export type DoctorsQuery = {
     orderBy?: string;
     direction?: "asc" | "desc";
     page?: number;
+    pageSize?: number;
 };
 
 export interface DoctorRegisterData {
@@ -87,6 +89,7 @@ export async function listDoctors(params: DoctorsQuery): Promise<PaginationData<
             orderBy: params.orderBy ?? "name",
             direction: params.direction ?? "asc",
             page: params.page ?? 1,
+            pageSize: params.pageSize ?? 9
         },
         headers: {
             "accept": ContentTypes.DOCTOR_LIST

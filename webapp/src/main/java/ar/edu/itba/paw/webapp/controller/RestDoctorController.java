@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
@@ -79,13 +80,14 @@ public class RestDoctorController {
     public Response list(
             @QueryParam("specialty") @DefaultValue("0") @Min(0) long specialtyId,
             @QueryParam("page") @DefaultValue("1") @Min(1) int page,
+            @QueryParam("pageSize") @DefaultValue("9") @Min(1) @Max(25) int pageSize,
             @QueryParam("coverage") @DefaultValue("0") @Min(0) long coverageId,
             @QueryParam("weekdays") List<Integer> weekdays,
             @QueryParam("keyword") @DefaultValue("") String keyword,
             @QueryParam("orderBy") @DefaultValue("name") String orderBy,
             @QueryParam("direction") @DefaultValue("asc") String direction
     ) {
-        Page<Doctor> doctorPage = this.doctorService.getWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction, page, 9);
+        Page<Doctor> doctorPage = this.doctorService.getWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction, page, pageSize);
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctorPage.getContent(), uriInfo)) {}), doctorPage, uriInfo);
     }
 
