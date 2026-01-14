@@ -51,9 +51,10 @@ function DashboardTab({ to, end, icon: Icon, children }: {
 
 function PatientDashboardLayout() {
     const { t } = useTranslation();
+    const patientId = "23";
     return (
         <div className={dashboardContainer}>
-            <PatientProfileCard />
+            <PatientProfileCard patientId={patientId}/>
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>
                     <DashboardTab to="/patient/dashboard/upcoming" end icon={Calendar}>

@@ -70,6 +70,7 @@
       "status": "Estado",
       "date": "Fecha",
       "specialty": "Especialidad",
+      "no-specialty": "Sin especialidad",
       "office": "Consultorio",
       "reason": "Razón de la Visita (Opcional)",
       "patient-files": "Archivos del Paciente",

@@ -21,9 +21,7 @@ const contactData =
 const contactIcon =
     "w-4 h-4";
 
-function PatientProfileCard() {
-
-    const patientId = "23";
+function PatientProfileCard({patientId}:{patientId: string}) {
 
     const { data: patient, isLoading, isError } = usePatientById(patientId);
 

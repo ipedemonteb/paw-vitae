@@ -48,7 +48,7 @@ function DoctorDashboardLayout() {
     }
     return (
         <div className={dashboardCointainer}>
-            <DoctorProfileCard doctorId={doctorId} doctor={doctor}/>
+            <DoctorProfileCard doctorId={doctorId}/>
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>
                     <DashboardTab to="/doctor/dashboard/upcoming" end icon={Calendar}>

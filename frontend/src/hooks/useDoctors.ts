@@ -14,7 +14,7 @@ import {
     putDoctorExperiences,
     putDoctorCertificates,
     putDoctorProfile, type CertificateForm, type OfficeSpecialtyDTO, getDoctorOfficeAvailability, type AvailabilityDTO,
-    getDoctorUnavailability
+    getDoctorUnavailability, getDoctorOffice
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQueries, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
@@ -120,6 +120,14 @@ export function useDoctorOffices(url?: string | null) {
         queryFn: () => getDoctorOffices(url!),
         enabled: !!url,
     });
+}
+
+export function useDoctorOffice(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'office', url],
+        queryFn: () => getDoctorOffice(url!),
+        enabled: !!url,
+    })
 }
 
 export function useDoctorOfficeSpecialties(offices?: OfficeDTO[] | null) {
