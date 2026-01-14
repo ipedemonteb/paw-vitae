@@ -323,7 +323,7 @@ type LoggedInRole = Exclude<UserRole, "ANON">;
 const dialogHeader =
     "font-bold text-xl text-[var(--text-color)]";
 const dialogText =
-    "text-[var(--text-light)]";
+    "text-[var(--text-light)] text-lg font-normal";
 const dialogFooter =
     "mt-2";
 const dialogCancel =
