@@ -12,6 +12,7 @@ import {Button} from "@/components/ui/button.tsx";
 import {useTranslation} from "react-i18next";
 import {useDoctor, useDoctorImageUrl} from "@/hooks/useDoctors.ts";
 import {usePatientById} from "@/hooks/usePatients.ts";
+import {DialogDescription, DialogTitle} from "@radix-ui/react-dialog";
 
 type UserRole = "ANON" | "PATIENT" | "DOCTOR";
 
@@ -357,7 +358,7 @@ function LoggedInComponent({
         auth.logout();
         onOpenChange(false);
         setLogoutOpen(false);
-        navigate("/");
+        navigate("/", {replace : true});
     };
 
     return (
@@ -391,8 +392,16 @@ function LoggedInComponent({
                 }}
             >
                 <DialogContent>
-                    <DialogHeader className={dialogHeader}>{t("header.logout.title")}</DialogHeader>
-                    <p className={dialogText}>{t("header.logout.text")}</p>
+                    <DialogHeader className={dialogHeader}>
+                        <DialogTitle>
+                            {t("header.logout.title")}
+                        </DialogTitle>
+
+                        <DialogDescription className={dialogText}>
+                            {t("header.logout.text")}
+                        </DialogDescription>
+                    </DialogHeader>
+
                     <DialogFooter className={dialogFooter}>
                         <DialogClose asChild>
                             <Button className={dialogCancel}>{t("header.logout.cancel")}</Button>

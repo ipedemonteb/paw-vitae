@@ -349,7 +349,8 @@
     "ratings": {
       "tag": "Ratings",
       "title": "Doctor Ratings",
-      "subtitle": "See what our patients say about our doctors."
+      "subtitle": "See what our patients say about our doctors.",
+      "error": "There has been an error loading the ratings. Please try again later."
     }
   },
   "about": {
@@ -437,7 +438,10 @@
       "history": "History",
       "availability": "Availability",
       "offices": "Offices",
-      "account": "Account"
+      "account": "Account",
+      "noOfficesTitle" : "No Offices Configured",
+      "noOfficesMessage" : "You have not added any offices yet. Please add at least one office to manage your appointments.",
+      "addOffice" : "Go to add Offices"
     },
     "profile": {
       "doctor": "Doctor",

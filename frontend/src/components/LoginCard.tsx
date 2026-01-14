@@ -44,7 +44,6 @@ function LoginCard() {
     const from = (location.state as { from: string } )?.from || null;
 
 
-    //TODO: For some reason, theres a race condition in the navigate to /dashboard
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -59,12 +58,10 @@ function LoginCard() {
 
                 if (role === 'ROLE_DOCTOR') {
                     navigate("/doctor/dashboard/upcoming", { replace: true });
-                    console.log("Login exitoso capturado en UI");
                 } else if (role === 'ROLE_PATIENT') {
                     navigate("/patient/dashboard/upcoming", { replace: true });
                 } else {
                     navigate("/", { replace: true });
-
                 }
             }
 

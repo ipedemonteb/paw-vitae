@@ -348,7 +348,8 @@
     "ratings": {
       "tag": "Calificaciones",
       "title": "Calificaciones de Doctores",
-      "subtitle": "Vea lo que nuestros pacientes dicen sobre nuestros doctores."
+      "subtitle": "Vea lo que nuestros pacientes dicen sobre nuestros doctores.",
+      "error" : "Hubo un error cargando las calificaciones. Por favor intente de nuevo mas tarde"
     }
   },
   "about": {
@@ -436,7 +437,10 @@
       "history": "Historial",
       "availability": "Disponibilidad",
       "offices": "Consultorios",
-      "account": "Cuenta"
+      "account": "Cuenta",
+      "noOfficesTitle" : "No has configurado tus consultorios aún",
+      "noOfficesMessage" : "Configura por lo menos un consultorio para que los pacientes puedan reservar citas contigo.",
+      "addOffice" : "Ir a Agregar Consultorio"
     },
     "profile": {
       "doctor": "Doctor",

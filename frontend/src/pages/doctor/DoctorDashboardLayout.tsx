@@ -1,13 +1,21 @@
 import { Card } from "@/components/ui/card";
 import { ButtonGroup } from "@/components/ui/button-group.tsx";
-import { Calendar, History, CalendarCheck, HousePlus, User } from "lucide-react";
+import { Calendar, History, CalendarCheck, HousePlus, User, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { Link, Outlet, useMatch } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
-import {useTranslation} from "react-i18next";
-import React from "react";
-import {useDoctor} from "@/hooks/useDoctors.ts";
+import { useTranslation } from "react-i18next";
+import React, {useState} from "react";
+import { useDoctor, useDoctorOffices } from "@/hooks/useDoctors.ts";
+import { useAuth } from "@/hooks/useAuth.ts";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog.tsx";
 
 const dashboardCointainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -31,24 +39,61 @@ const tabIconInactive =
 
 function DoctorDashboardLayout() {
     const { t } = useTranslation();
+    const auth = useAuth();
+    const doctorId = auth.userId;
 
-    const doctorId = "24";
-    const { data: doctor, isLoading, isError } = useDoctor(doctorId);
+    const { data: doctor, isLoading: loadingDoctor, isError } = useDoctor(doctorId);
 
-    if (isLoading) {
-        return (
-            <div>Loading...</div>
-        );
+    const { data: offices, isLoading: loadingOffices } = useDoctorOffices(doctor?.offices);
+
+    const [isDismissed, setIsDismissed] = useState(false);
+
+
+    const showOfficeModal = !loadingOffices && offices && offices.length === 0 && !isDismissed;
+    if (loadingDoctor) {
+        return <div>Loading...</div>;
     }
 
     if (!doctor || isError) {
-        return (
-            <div>Error...</div>
-        )
+        return <div>Error loading profile...</div>;
     }
+
     return (
         <div className={dashboardCointainer}>
-            <DoctorProfileCard doctorId={doctorId}/>
+            <Dialog
+                open={showOfficeModal}
+                onOpenChange={(isOpen) => {
+                    if (!isOpen) {
+                        setIsDismissed(true);
+                    }
+                }}
+            >
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <div className="mx-auto bg-blue-100 p-3 rounded-full w-fit mb-4">
+                            <Building2 className="h-6 w-6 text-[var(--primary-color)]" />
+                        </div>
+                        <DialogTitle className="text-center">
+                            {t("doctor.dashboard.noOfficesTitle") || "Configura tu Consultorio"}
+                        </DialogTitle>
+                        <DialogDescription className="text-center">
+                            {t("doctor.dashboard.noOfficesMessage") || "Para comenzar a atender, necesitas crear al menos una oficina."}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-center mt-4">
+                        <Button asChild variant="default" className="w-full sm:w-auto"><Link
+                                to="/doctor/dashboard/offices"
+                                onClick={() => setIsDismissed(true)}
+                            >
+                                {t("doctor.dashboard.addOffice") || "Crear Oficina"}
+                            </Link>
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <DoctorProfileCard doctorId={doctorId} />
+
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>
                     <DashboardTab to="/doctor/dashboard/upcoming" end icon={Calendar}>
@@ -68,6 +113,7 @@ function DoctorDashboardLayout() {
                     </DashboardTab>
                 </ButtonGroup>
             </Card>
+
             <main className="flex-1">
                 <Outlet />
             </main>
