@@ -1,39 +1,29 @@
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import {
-    ShieldAlert,
-    FileQuestion,
-    ServerCrash,
-    Home,
-    ArrowLeft,
-    AlertTriangle
-} from "lucide-react";
+import { ShieldAlert, FileQuestion, ServerCrash, Home, ArrowLeft, AlertTriangle } from "lucide-react";
 
-// --- Configuración de Variantes ---
-// Definimos estilos e iconos según el código de error
-const errorVariants: Record<number, { icon: any, color: string, bg: string }> = {
+const errorVariants: Record<number, { icon: any; color: string; bg: string }> = {
     403: {
         icon: ShieldAlert,
-        color: "text-orange-600",
-        bg: "bg-orange-100"
+        color: "text-[var(--warning-dark)]",
+        bg: "bg-[var(--warning-light)]",
     },
     404: {
         icon: FileQuestion,
-        color: "text-blue-600",
-        bg: "bg-blue-100"
+        color: "text-[var(--primary-color)]",
+        bg: "bg-[var(--primary-bg)]",
     },
     500: {
         icon: ServerCrash,
-        color: "text-red-600",
-        bg: "bg-red-100"
+        color: "text-[var(--danger-dark)]",
+        bg: "bg-[var(--danger-light)]",
     },
-    // Default
     0: {
         icon: AlertTriangle,
         color: "text-[var(--primary-color)]",
-        bg: "bg-[var(--primary-color)]/10"
-    }
+        bg: "bg-[var(--primary-bg)]",
+    },
 };
 
 interface GenericErrorProps {
@@ -43,9 +33,10 @@ interface GenericErrorProps {
     showBackButton?: boolean;
 }
 
-// --- ESTILOS (Mismo patrón que ChangePassword/Verify) ---
-const pageContainer = "min-h-screen bg-gray-50/50 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8";
-const cardContainer = "w-full max-w-lg space-y-8 bg-white p-8 sm:p-10 rounded-xl border border-gray-200 shadow-xl text-center";
+const pageContainer =
+    "min-h-screen bg-[var(--background-light)] flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8";
+const cardContainer =
+    "w-full max-w-lg space-y-8 bg-[var(--white)] p-8 sm:p-10 rounded-xl border border-[var(--gray-200)] shadow-[var(--shadow-xl)] text-center";
 const iconContainerBase = "mx-auto h-24 w-24 rounded-full flex items-center justify-center mb-6";
 const titleText = "text-3xl font-bold tracking-tight text-[var(--text-color)]";
 const messageText = "mt-4 text-base text-[var(--text-light)] max-w-sm mx-auto";
@@ -56,7 +47,7 @@ export default function GenericError({
                                          code = 500,
                                          title,
                                          message,
-                                         showBackButton = true
+                                         showBackButton = true,
                                      }: GenericErrorProps) {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -70,29 +61,22 @@ export default function GenericError({
     return (
         <div className={pageContainer}>
             <div className={cardContainer}>
-
-                {/* Icono Dinámico */}
                 <div className={`${iconContainerBase} ${variant.bg} ${variant.color}`}>
                     <Icon className="h-12 w-12" />
                 </div>
 
-                {/* Contenido de Texto */}
                 <div>
                     <h1 className={titleText}>{displayTitle}</h1>
-                    <p className={`${errorCodeText} ${variant.color}`}>
-                        Error {code}
-                    </p>
-                    <p className={messageText}>
-                        {displayMessage}
-                    </p>
+                    <p className={`${errorCodeText} ${variant.color}`}>Error {code}</p>
+                    <p className={messageText}>{displayMessage}</p>
                 </div>
 
-                {/* Botones de Acción */}
                 <div className={buttonGroup}>
                     {showBackButton && (
                         <Button
+                            type="button"
                             variant="outline"
-                            className="w-full sm:w-auto border-gray-300"
+                            className="w-full sm:w-auto border border-[var(--gray-300)] text-[var(--text-color)] hover:bg-[var(--gray-100)] cursor-pointer"
                             onClick={() => navigate(-1)}
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -101,17 +85,12 @@ export default function GenericError({
                     )}
 
                     <Link to="/" className="w-full sm:w-auto">
-                        <Button className="w-full bg-[var(--primary-color)] hover:bg-[var(--primary-dark)]">
+                        <Button className="w-full bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white cursor-pointer">
                             <Home className="mr-2 h-4 w-4" />
                             {t("common.return_home", "Return Home")}
                         </Button>
                     </Link>
                 </div>
-            </div>
-
-            {/* Footer simple */}
-            <div className="mt-8 text-sm text-gray-400">
-                &copy; {new Date().getFullYear()} Vitae Medical
             </div>
         </div>
     );
