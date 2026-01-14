@@ -21,6 +21,9 @@ import type {OfficeDTO} from "@/data/office.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
 import type {OfficeSpecialtyDTO} from "@/data/doctors.ts";
 import {buildTimeSlotsForDay, dateKey, isoDateKey} from "@/utils/dateUtils.ts";
+import {startOfDay} from "date-fns";
+
+const SLOT_MINUTES = 60;
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -146,6 +149,20 @@ function Appointment() {
         return officeAvailability?.[idx] ?? [];
     }, [selectedOffice, offices, officeAvailability]);
 
+    const enabledDaysOfWeek = useMemo(() => {
+        const s = new Set<number>();
+
+        selectedOfficeAvailability.forEach((a) => {
+            const start = typeof a.startTime === "string" ? a.startTime : String(a.startTime);
+            const end = typeof a.endTime === "string" ? a.endTime : String(a.endTime);
+
+            const slots = buildTimeSlotsForDay([{ startTime: start, endTime: end }], SLOT_MINUTES);
+            if (slots.length > 0) s.add(a.dayOfWeek);
+        });
+
+        return s;
+    }, [selectedOfficeAvailability]);
+
     const isUnavailableDate = useMemo(() => {
         const ranges = (doctorUnavailability ?? []).map((u) => ({
             from: isoDateKey(u.startDate),
@@ -158,9 +175,20 @@ function Appointment() {
         };
     }, [doctorUnavailability]);
 
+    const isDateSelectable = useMemo(() => {
+        const today = startOfDay(new Date());
+
+        return (d: Date) => {
+            if (startOfDay(d) < today) return false;
+            if (isUnavailableDate(d)) return false;
+            const dow = d.getDay();
+            return enabledDaysOfWeek.has(dow);
+        };
+    }, [enabledDaysOfWeek, isUnavailableDate]);
+
     const availableTimeOptions = useMemo(() => {
         if (!selectedDate) return [];
-        if (isUnavailableDate(selectedDate)) return [];
+        if (!isDateSelectable(selectedDate)) return [];
 
         const day = selectedDate.getDay();
 
@@ -168,8 +196,8 @@ function Appointment() {
             (a) => a.dayOfWeek === day
         );
 
-        return buildTimeSlotsForDay(dayAvailabilities, 60);
-    }, [selectedDate, selectedOfficeAvailability, isUnavailableDate]);
+        return buildTimeSlotsForDay(dayAvailabilities, SLOT_MINUTES);
+    }, [selectedDate, selectedOfficeAvailability, isDateSelectable]);
 
     useEffect(() => {
         if (!selectedTime) return;
@@ -181,6 +209,14 @@ function Appointment() {
         setSelectedDate(undefined);
         setSelectedTime(null);
     }, [selectedOffice]);
+
+    useEffect(() => {
+        if (!selectedDate) return;
+        if (!isDateSelectable(selectedDate)) {
+            setSelectedDate(undefined);
+            setSelectedTime(null);
+        }
+    }, [selectedDate, isDateSelectable]);
 
     //TODO: Handle better
     if (isLoading) {
@@ -224,7 +260,7 @@ function Appointment() {
                             setSelectedTime={setSelectedTime}
                             availableTimes={availableTimeOptions}
                             disabled={!selectedOffice}
-                            isDateDisabled={isUnavailableDate}
+                            isDateDisabled={(d) => !isDateSelectable(d)}
                         />
                         <div className={optionalsContainer}>
                             <ReasonInput />
