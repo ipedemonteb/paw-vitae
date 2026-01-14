@@ -67,7 +67,12 @@
     "details": {
       "title": "Detalles del Turno",
       "subtitle": "Ver y gestionar la información de la cita",
-      "status": "Estado",
+      "status": {
+        "title": "Estado",
+        "confirmado": "Confirmado",
+        "completo": "Completo",
+        "cancelado": "Cancelado"
+      },
       "date": "Fecha",
       "specialty": "Especialidad",
       "no-specialty": "Sin especialidad",
