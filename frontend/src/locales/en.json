@@ -92,11 +92,21 @@
       "reason": "Reason for Visit (Optional)",
       "patient-files": "Patient Files",
       "post-visit": "Post Visit Information",
+      "report": "Your Medical Report",
+      "write-report": "Write your medical report here...",
+      "submit-report": "Submit",
       "no-report": "No visit report available.",
       "no-upload": "No uploaded files.",
       "rating": "Rating",
+      "no-rating": "No rating yet.",
+      "no-comment": "No comment.",
+      "rate": "Rate yor Appointment",
+      "rate-locked": "Rate yor Appointment (Locked)",
+      "review": "Your Review (Optional)",
+      "write-review": "Write your review here...",
       "upload": "Upload files for the appointment.",
-      "submit": "Submit"
+      "submit": "Submit",
+      "submit-rating": "Send Rating"
     },
     "booking": {
       "header": {
