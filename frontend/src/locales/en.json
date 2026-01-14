@@ -79,9 +79,15 @@
     "details": {
       "title": "Appointment Details",
       "subtitle": "View and manage your appointment information",
-      "status": "Status",
+      "status": {
+        "title": "Status",
+        "confirmado": "Confirmed",
+        "completado": "Completed",
+        "cancelado": "Cancelled"
+      },
       "date": "Date",
       "specialty": "Specialty",
+      "no-specialty": "No specialty",
       "office": "Office",
       "reason": "Reason for Visit (Optional)",
       "patient-files": "Patient Files",

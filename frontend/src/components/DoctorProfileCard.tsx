@@ -3,9 +3,8 @@ import { Mail, Phone } from "lucide-react";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import BadgeComponent from "@/components/BadgeComponent.tsx";
 import { Card } from "@/components/ui/card.tsx";
-import {useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
+import {useDoctor, useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
 import {initialsFallback} from "@/utils/userUtils.ts";
-import type {DoctorDTO} from "@/data/doctors.ts";
 
 const profileCard =
     "flex flex-col gap-0 items-center sm:flex-row";
@@ -26,12 +25,13 @@ const ratingContent =
 const ratingText =
     "font-medium text-[var(--text-light)]";
 
-function DoctorProfileCard( { doctorId, doctor } : { doctorId: string, doctor: DoctorDTO } ) {
+function DoctorProfileCard( { doctorId } : { doctorId: string } ) {
 
     const { url: getDoctorImgUrl } = useDoctorImageUrl(doctorId);
+    const { data: doctor } = useDoctor(doctorId);
     const { data: specialties } = useDoctorSpecialties(doctor?.specialties ?? null);
 
-    const avatarFallbackText = initialsFallback(doctor.name, doctor.lastName);
+    const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
     const specialtiesList: string[] = (specialties ?? []).map((s) => s.name);
 
     const maxBadges = 4;
@@ -43,21 +43,21 @@ function DoctorProfileCard( { doctorId, doctor } : { doctorId: string, doctor: D
                 <AvatarFallback>{avatarFallbackText}</AvatarFallback>
             </Avatar>
             <div className={userDataContainer}>
-                <h1 className={userName}>{doctor.name + " " + doctor.lastName}</h1>
+                <h1 className={userName}>{doctor?.name + " " + doctor?.lastName}</h1>
                 <div className={dataContainer}>
                     <div className={contactData}>
                         <Mail className={contactIcon} />
-                        <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">{doctor.email}</p>
+                        <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">{doctor?.email}</p>
                     </div>
                     <div className={contactData}>
                         <Phone className={contactIcon} />
-                        <p>{doctor.phone}</p>
+                        <p>{doctor?.phone}</p>
                     </div>
                 </div>
                 <div className={ratingContent}>
-                    <RatingStars rating={doctor.rating} sizeClassName="h-4 w-4" />
-                    <p>{doctor.rating}</p>
-                    <p className={ratingText}>({doctor.ratingCount})</p>
+                    <RatingStars rating={doctor?.rating ?? 0} sizeClassName="h-4 w-4" />
+                    <p>{doctor?.rating}</p>
+                    <p className={ratingText}>({doctor?.ratingCount})</p>
                 </div>
                 <BadgeComponent specialties={specialtiesList} maxBadges={maxBadges} />
             </div>
