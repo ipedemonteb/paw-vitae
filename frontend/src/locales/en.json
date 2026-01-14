@@ -473,6 +473,9 @@
       "sunday": "Sunday"
     },
     "filters": "Apply Filters",
-    "found": "{{ doctorsFound }} doctors found"
+    "found": "{{ doctorsFound }} doctors found",
+    "searchbar": {
+      "empty": "No Results Found"
+    }
   }
 }

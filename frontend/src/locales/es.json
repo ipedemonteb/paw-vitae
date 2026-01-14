@@ -472,6 +472,9 @@
       "sunday": "Domingo"
     },
     "filters": "Aplicar Filtros",
-    "found": "{{ doctorsFound }} doctores encontrados"
+    "found": "{{ doctorsFound }} doctores encontrados",
+    "searchbar": {
+      "empty": "No se han encontrado resultados"
+    }
   }
 }

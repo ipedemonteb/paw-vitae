@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Star } from "lucide-react";
+import {Star, StarHalf} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { clampRating } from "@/lib/utils";
 
@@ -21,29 +21,40 @@ export function RatingStars({
                                 sizeClassName = "h-5 w-5",
                                 ...props
                             }: RatingStarsProps) {
-    const r = clampRating(rating);
+
+    const fullStars = clampRating(rating);
+    const fraction = rating - fullStars;
+    const hasHalf = fraction >= 0.5;
 
     return (
         <div
             className={cn(starsContainer, className)}
-            aria-label={`${r} star rating`}
+            aria-label={`${rating} star rating`}
             {...props}
         >
             {Array.from({ length: max }).map((_, i) => {
-                const filled = i < r;
+                const filled = i < fullStars;
                 return (
-                    <Star
-                        key={i}
-                        className={cn(
-                            starBase,
+                    <div className={cn("relative", sizeClassName)}>
+                        <Star
+                            key={i}
+                            className={cn(
+                                starBase,
+                                sizeClassName,
+                                filled
+                                    ? "fill-(--primary-color) text-(--primary-color)"
+                                    : "text-(--primary-color)"
+                            )}
+                        />
+                        <StarHalf className={cn(
+                            "absolute top-0 left-0 fill-(--primary-color) text-(--primary-color)",
                             sizeClassName,
-                            filled
-                                ? "fill-[var(--primary-color)] text-[var(--primary-color)]"
-                                : "text-[var(--gray-300)]"
-                        )}
-                    />
+                            hasHalf && i === fullStars ? "" : "hidden"
+                        )}/>
+                    </div>
                 );
             })}
+
         </div>
     );
 }

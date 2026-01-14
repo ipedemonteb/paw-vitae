@@ -36,7 +36,6 @@ export type SearchCardProps = {
 
 function SearchListCard({doctor}: SearchCardProps) {
 
-    const rating = 4.5;
     const specialties = useDoctorSpecialties(doctor.specialties);
 
     return (
@@ -58,7 +57,7 @@ function SearchListCard({doctor}: SearchCardProps) {
                     <Phone className={dataIcon} />
                     <p>{doctor.phone}</p>
                 </div>
-                <RatingStars rating={rating} className={ratingStars} sizeClassName="h-4 w-4"/>
+                <RatingStars rating={doctor.rating} className={ratingStars} sizeClassName="h-4 w-4"/>
             </div>
             <div className={scheduleContainer}>
                 <Button className={scheduleButton}>
