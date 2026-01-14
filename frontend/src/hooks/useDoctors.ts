@@ -9,11 +9,17 @@ import {
     getDoctorCoverages,
     getDoctorSpecialties, getDoctorOffices,
     registerDoctor,
-    fetchCountDoctors, getDoctorExperiences
+    fetchCountDoctors, getDoctorExperiences, getDoctorOfficeSpecialties,
+    type ExperienceForm,
+    putDoctorExperiences,
+    putDoctorCertificates,
+    putDoctorProfile, type CertificateForm, type OfficeSpecialtyDTO, getDoctorOfficeAvailability, type AvailabilityDTO,
+    getDoctorUnavailability
 } from "@/data/doctors";
-import {keepPreviousData, useMutation, useQuery} from "@tanstack/react-query";
+import {keepPreviousData, useMutation, useQueries, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
 import type {AxiosError} from "axios";
+import type {OfficeDTO} from "@/data/office.ts";
 
 export function useDoctors(query: DoctorsQuery) {
     return useQuery({
@@ -68,11 +74,11 @@ export function useRegisterDoctor() {
     });
 }
 
-export function useDoctorSpecialties(url?: string, opts?: { enabled?: boolean }) {
+export function useDoctorSpecialties(url?: string | null) {
     return useQuery({
         queryKey: ['doctor', 'specialties', url],
         queryFn: () => getDoctorSpecialties(url!),
-        enabled: (opts?.enabled ?? true) && !!url,
+        enabled: !!url,
     });
 }
 
@@ -116,11 +122,69 @@ export function useDoctorOffices(url?: string | null) {
     });
 }
 
+export function useDoctorOfficeSpecialties(offices?: OfficeDTO[] | null) {
+    const queries = useQueries({
+        queries: (offices ?? []).map((office) => ({
+            queryKey: ['doctor', 'office', 'specialties', office.officeSpecialties ?? []],
+            queryFn: () => getDoctorOfficeSpecialties(office.officeSpecialties),
+            enabled: !!office.officeSpecialties,
+        })),
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+    const isError = queries.some((q) => q.isError);
+
+    const data = queries.map((q) => (q.data ?? []) as OfficeSpecialtyDTO[]);
+
+    return { data, isLoading, isError };
+}
+
+export function useDoctorOfficeAvailability(offices?: OfficeDTO[] | null) {
+    const queries = useQueries({
+        queries: (offices ?? []).map((office) => ({
+            queryKey: ['doctor', 'office', 'availability', office.officeAvailability ?? []],
+            queryFn: () => getDoctorOfficeAvailability(office.officeAvailability),
+            enabled: !!office.officeAvailability,
+        })),
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+    const isError = queries.some((q) => q.isError);
+
+    const data = queries.map((q) => (q.data ?? []) as AvailabilityDTO[]);
+
+    return { data, isLoading, isError };
+}
+
+export function useDoctorUnavailability(url?: string | null) {
+    return useQuery({
+        queryKey: ['doctor', 'unavailability', url],
+        queryFn: () => getDoctorUnavailability(url!),
+        enabled: !!url,
+    });
+}
+
 export function useDoctorsCount() {
     return useQuery<number>({
         queryKey: ['counts', 'doctors'],
         queryFn: () => fetchCountDoctors(),
         staleTime: 1000 * 60,
         retry: 1
+    });
+}
+
+export function  usePutDoctorExperience(url: string ) {
+    return useMutation<any, AxiosError<any>, ExperienceForm[]>({
+        mutationFn: (data: ExperienceForm[]) => putDoctorExperiences(url,data)
+    });
+}
+export function  usePutDoctorProfile(url: string ) {
+    return useMutation<any, AxiosError<any>, {biography: string, description: string}>({
+        mutationFn: (data :{biography: string, description: string}) => putDoctorProfile(url,data.biography, data.description)
+    });
+}
+export function usePutDoctorCertificates(url: string ) {
+    return useMutation<any, AxiosError<any>, CertificateForm[]>({
+        mutationFn: (data: CertificateForm[]) => putDoctorCertificates(url,data)
     });
 }

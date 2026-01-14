@@ -115,6 +115,14 @@ public class RestDoctorController {
     }
 
     @GET
+    @Path("/{id:\\d+}/unavailability")
+    @Produces(value = CustomMediaType.APPLICATION_UNAVAILABILITY_LIST)
+    public Response getDoctorUnavailability(@PathParam("id") final long id) {
+        List<UnavailabilitySlot> unavailability = this.unavailabilitySlotsService.getUnavailabilityByDoctorId(id);
+        return Response.ok(new GenericEntity<List<UnavailabilityDTO>>(UnavailabilityDTO.fromUnavailabilitySlot(unavailability, uriInfo)) {}).build();
+    }
+
+    @GET
     @Path("/{id:\\d+}/offices")
     @Produces(value = CustomMediaType.APPLICATION_OFFICE_LIST)
     public Response getDoctorOffices(@PathParam("id") final long id) {
@@ -170,15 +178,15 @@ public class RestDoctorController {
         return Response.ok(new GenericEntity<>(CertificationDTO.fromDoctorCertification(certifications, uriInfo)) {}).build();
     }
 
-    @GET
-    @Path("/{id:\\d+}/ratings")
-    @Produces(value = CustomMediaType.APPLICATION_RATING_LIST)
-    public Response getDoctorRatings(
-            @PathParam("id") final long id
-    ) {
-        Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, 1, 9);
-        return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
-    }
+//    @GET
+//    @Path("/{id:\\d+}/ratings")
+//    @Produces(value = CustomMediaType.APPLICATION_RATING_LIST)
+//    public Response getDoctorRatings(
+//            @PathParam("id") final long id
+//    ) {
+//        Page<Rating> ratingPage = this.ratingService.getRatingsByDoctorId(id, 1, 9);
+//        return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
+//    }
 
     @GET
     @Path("/{id:\\d+}/image")

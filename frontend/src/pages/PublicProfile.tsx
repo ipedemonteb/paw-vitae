@@ -63,6 +63,7 @@ function PublicProfile() {
     return (
       <div className={profileContainer}>
           <ProfileCard doctor={doctor} profile={profile} specialties={specialties || []} maxBadges={maxBadges}/>
+            <AboutMeCard bio={profile?.biography || ""} />
           <CoverageCard coverages={coverages || []} />
           <OfficesCard offices={offices || []}/>
           <ExperienceCard experiences={experiences || []} />
@@ -162,10 +163,24 @@ function ProfileCard({ doctor, profile, specialties, maxBadges }:{
                 ): null}
             </div>
             <div className={aboutContent}>
-                <h1 className={aboutTitle}>{t("doctor.profile.card.about")}</h1>
+                <h1 className={aboutTitle}>{t("doctor.profile.card.description")}</h1>
                 <p className={aboutText}>
-                    {profile?.biography || profile?.description || t("doctor.profile.no_bio_available", "No biography available.")}
+                    { profile?.description || t("doctor.profile.no_description_available", "No description available.")}
                 </p>
+            </div>
+        </Card>
+    );
+}
+function AboutMeCard({ bio }: { bio: string }) {
+    const { t } = useTranslation();
+    return (
+        <Card className={card}>
+            <div className={cardTitle}>
+                <Stethoscope className={titleIcon}></Stethoscope>
+                <h1 className={cardTitleText}>{t("doctor.profile.card.about")}</h1>
+            </div>
+            <div className={aboutContent}>
+                <p className={aboutText}>{bio || t("doctor.profile.no_bio_available", "No biography available.")}</p>
             </div>
         </Card>
     );

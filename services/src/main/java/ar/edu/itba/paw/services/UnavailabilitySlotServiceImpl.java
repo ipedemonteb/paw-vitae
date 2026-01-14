@@ -75,6 +75,7 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
         LOGGER.debug("Getting unavailability slots for doctor {}", doctorId);
         return unavailabilitySlotsDao.getUnavailabilityByDoctorId(doctorId);
     }
+
     @Transactional
     @Override
     public List<UnavailabilitySlotForm> getDoctorUnavailabilitySlots(Doctor doctor) {

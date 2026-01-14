@@ -25,7 +25,6 @@ public class HomeDTO implements Serializable {
     private String doctorImageUrl;
 
 
-    private String doctorRatingsUrl;
     private String doctorSpecialtiesUrl;
     private String doctorCoveragesUrl;
 
@@ -58,7 +57,7 @@ public class HomeDTO implements Serializable {
 
         dto.appointmentsUrl = baseUri + "appointments{?userId,collection,filter,page,pageSize}";
 
-        dto.ratingsUrl = baseUri + "ratings{?page,size}";
+        dto.ratingsUrl = baseUri + "ratings{?page,size,doctorId}";
 
         dto.patientsUrl = baseUri + "patients";
         dto.specialtiesUrl = baseUri + "specialties";
@@ -70,7 +69,6 @@ public class HomeDTO implements Serializable {
         dto.doctorExperiencesUrl = baseUri + "doctors/{id}/experiences";
         dto.doctorCertificationsUrl = baseUri + "doctors/{id}/certifications";
         dto.doctorImageUrl = baseUri + "doctors/{id}/image";
-        dto.doctorRatingsUrl = baseUri + "doctors/{id}/ratings{?page}";
 
         dto.doctorSpecialtiesUrl = baseUri + "doctors/{id}/specialties";
         dto.doctorCoveragesUrl = baseUri + "doctors/{id}/coverages";
@@ -127,8 +125,6 @@ public class HomeDTO implements Serializable {
     public void setDoctorCertificationsUrl(String doctorCertificationsUrl) { this.doctorCertificationsUrl = doctorCertificationsUrl; }
     public String getDoctorImageUrl() { return doctorImageUrl; }
     public void setDoctorImageUrl(String doctorImageUrl) { this.doctorImageUrl = doctorImageUrl; }
-    public String getDoctorRatingsUrl() { return doctorRatingsUrl; }
-    public void setDoctorRatingsUrl(String doctorRatingsUrl) { this.doctorRatingsUrl = doctorRatingsUrl; }
     public String getDoctorSpecialtiesUrl() { return doctorSpecialtiesUrl; }
     public void setDoctorSpecialtiesUrl(String doctorSpecialtiesUrl) { this.doctorSpecialtiesUrl = doctorSpecialtiesUrl; }
     public String getDoctorCoveragesUrl() { return doctorCoveragesUrl; }

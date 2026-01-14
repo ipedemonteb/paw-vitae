@@ -23,6 +23,7 @@ public class DoctorDTO {
     private URI certifications;
     private URI appointments;
     private URI image;
+    private URI unavailability;
     private URI self;
 
     public static DoctorDTO fromDoctor(Doctor doctor, UriInfo uriInfo) {
@@ -43,8 +44,9 @@ public class DoctorDTO {
         dto.profile = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("biography").build();
         dto.experiences = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("experiences").build();
         dto.certifications = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("certifications").build();
-        dto.ratings = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("ratings").build();
+        dto.ratings = uriInfo.getBaseUriBuilder().path("ratings").queryParam("doctorId",doctorId).build();
         dto.appointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("doctorId", doctorId).build();
+        dto.unavailability = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("unavailability").build();
         dto.image = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("image").build();
         dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).build();
 
@@ -174,6 +176,10 @@ public class DoctorDTO {
     public void setImage(URI image) {
         this.image = image;
     }
+
+    public URI getUnavailability() { return unavailability; }
+
+    public void setUnavailability(URI unavailability) { this.unavailability = unavailability; }
 
     public URI getSelf() {
         return self;

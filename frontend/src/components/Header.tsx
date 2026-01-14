@@ -379,6 +379,7 @@ function LoggedInComponent({
                         onOpenChange(false);
                         setLogoutOpen(true);
                     }}
+                    userId={auth.userId}
                 />
             </DropdownMenu>
 
@@ -410,17 +411,19 @@ function LoggedInDropdown({
                               userRole,
                               onLogoutClick,
                               closeDropdown,
+                              userId
                           }: {
     userRole: LoggedInRole;
     onLogoutClick: () => void;
     closeDropdown: () => void;
+    userId?: string;
 }) {
     const { t } = useTranslation();
     const items =
         userRole === "DOCTOR"
             ? [
                 { to: "/doctor/dashboard", label: t("header.doctor.dashboard"), icon: ChartPie },
-                { to: "/profile", label: t("header.doctor.profile"), icon: User },
+                { to: `/search/${userId}`, label: t("header.doctor.profile"), icon: User },
             ]
             : [{ to: "/patient/dashboard", label: t("header.patient.dashboard"), icon: ChartPie }];
 
