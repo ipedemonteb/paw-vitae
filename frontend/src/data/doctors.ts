@@ -6,12 +6,21 @@ import type {CoverageDTO} from "@/data/coverages.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
 import type {OfficeDTO} from "@/data/office.ts";
 
-
 export type ChangePasswordForm = {
     password: string;
     repeatPassword: string;
 }
-
+export type CertificateForm = {
+    certificateName: string;
+    issuingEntity: string;
+    issueDate: string;
+}
+export type ExperienceForm = {
+    positionTitle: string;
+    organizationName: string;
+    startDate: string;
+    endDate?: string;
+}
 export type DoctorDTO = {
     name: string;
     lastName: string;
@@ -28,6 +37,7 @@ export type DoctorDTO = {
     ratings: string;
     appointments: string;
     image: string;
+    unavailability: string;
     self: string;
 
 };
@@ -62,17 +72,38 @@ export interface ExperienceDTO {
     endDate?: string;
     doctor: string;
 }
+
 export interface CertificationDTO {
     certificateName: string;
     issuingEntity: string;
     issueDate: string;
     doctor: string;
 }
+
 export interface DoctorProfileDTO {
     biography: string;
     description: string;
     doctor: string;
 }
+
+export interface OfficeSpecialtyDTO {
+    specialty: string;
+    office: string;
+}
+
+export interface AvailabilityDTO {
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
+    office: string;
+}
+
+export interface UnavailabilityDTO {
+    startDate: string;
+    endDate: string;
+    doctor: string;
+}
+
 const extractIdFromUrl = (url: string): string => {
     if (!url) return "";
     const segments = url.replace(/\/$/, "").split("/");
@@ -208,6 +239,64 @@ export async function getDoctorBiography(profileUrl: string) {
 export async function getDoctorOffices(officesUrl: string) {
     const res = await api.get<OfficeDTO[]>(officesUrl,{
         headers: {"accept": ContentTypes.OFFICE_LIST,}
+    } );
+    return res.data;
+}
+
+export async function getDoctorOfficeSpecialties(url: string) {
+    const res = await api.get<OfficeSpecialtyDTO[]>(url, {
+        headers: {"accept": ContentTypes.OFFICE_SPECIALTY_LIST,}
+    } );
+    return res.data;
+}
+
+export async function getDoctorOfficeAvailability(url: string) {
+    const res = await api.get<AvailabilityDTO[]>(url, {
+        headers: {"accept": ContentTypes.AVAILABILITY_LIST,}
+    });
+    return res.data
+}
+
+export async function getDoctorUnavailability(url: string) {
+    const res = await api.get<UnavailabilityDTO[]>(url, {
+        headers: {"accept": ContentTypes.UNAVAILABILITY_LIST, }
+    });
+    return res.data
+}
+
+export async function putDoctorCertificates(certificationsUrl: string, certificatesList: CertificateForm[]) {
+    const payload = {
+        certificates: certificatesList // Debe coincidir con el nombre de la variable en DoctorCertificatesForm.java
+    };
+    const res = await api.put(certificationsUrl, payload, {
+        headers: {
+            "content-type":  ContentTypes.DOCTOR_CERTIFICATION_LIST
+        }
+    } );
+    return res.data;
+}
+
+export async function putDoctorProfile(profileUrl: string, biography: string, description: string) {
+    const payload = {
+        biography,
+        description
+    };
+    const res = await api.put(profileUrl,payload,{
+        headers: {
+            "content-type":  ContentTypes.DOCTOR_PROFILE
+        }
+    } );
+    return res.data;
+}
+
+export async function putDoctorExperiences(experiencesUrl: string, experiencesList: ExperienceForm[]) {
+    const payload = {
+        experiences: experiencesList
+    };
+    const res = await api.put(experiencesUrl, payload, {
+        headers: {
+            "content-type":  ContentTypes.DOCTOR_EXPERIENCE_LIST
+        }
     } );
     return res.data;
 }

@@ -6,6 +6,8 @@ import { Link, Outlet, useMatch } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
 import {useTranslation} from "react-i18next";
+import React from "react";
+import {useDoctor} from "@/hooks/useDoctors.ts";
 
 const dashboardCointainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -31,10 +33,22 @@ function DoctorDashboardLayout() {
     const { t } = useTranslation();
 
     const doctorId = "24";
+    const { data: doctor, isLoading, isError } = useDoctor(doctorId);
 
+    if (isLoading) {
+        return (
+            <div>Loading...</div>
+        );
+    }
+
+    if (!doctor || isError) {
+        return (
+            <div>Error...</div>
+        )
+    }
     return (
         <div className={dashboardCointainer}>
-            <DoctorProfileCard doctorId={doctorId}/>
+            <DoctorProfileCard doctorId={doctorId} doctor={doctor}/>
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>
                     <DashboardTab to="/doctor/dashboard/upcoming" end icon={Calendar}>

@@ -87,6 +87,7 @@
       "specialty": "Seleccionar Especialidad",
       "office": "Seleccionar Consultorio",
       "date": "Fecha y Hora",
+      "no-times": "No hay horarios disponibles para esta fecha.",
       "select-date": "Seleccione una Fecha",
       "your-appointment": "Tu Turno",
       "reason": "Motivo de la Visita (Opcional)",
@@ -440,7 +441,8 @@
       "card": {
         "rating": "calificaciones",
         "edit": "Editar",
-        "about": "Sobre Mí"
+        "about": "Sobre Mí",
+        "description": "Descripción"
       },
       "no_ratings": "Este doctor aún no tiene calificaciones.",
       "no_certificates": "Este doctor aún no ha subido certificados.",
@@ -448,7 +450,8 @@
       "present": "Presente",
       "no_offices": "Este doctor aún no ha agregado consultorios.",
       "no_coverages": "Este doctor aún no ha agregado coberturas.",
-      "no_bio_available": "Este doctor aún no ha agregado una biografía."
+      "no_bio_available": "Este doctor aún no ha agregado una biografía.",
+      "no_description_available": "Este doctor aún no ha agregado una descripción."
     }
   },
   "search": {

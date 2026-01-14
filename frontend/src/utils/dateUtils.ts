@@ -1,0 +1,44 @@
+export function timeToMinutes(t: string): number {
+    const [hh, mm] = t.split(":").map(Number);
+    return hh * 60 + mm;
+}
+
+export function minutesToTime(mm: number): string {
+    const hh = Math.floor(mm / 60);
+    const m = mm % 60;
+    return `${String(hh).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+export function buildTimeSlotsForDay(
+    availabilities: { startTime: string; endTime: string }[],
+    slotMinutes = 60
+): string[] {
+    const slots: string[] = [];
+
+    availabilities.forEach((a) => {
+        let start = timeToMinutes(a.startTime);
+        const end = timeToMinutes(a.endTime);
+
+        while (start + slotMinutes <= end) {
+            slots.push(minutesToTime(start));
+            start += slotMinutes;
+        }
+    });
+
+    return Array.from(new Set(slots)).sort();
+}
+
+export function dateKey(d: Date): number {
+    return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+
+export function isoDateKey(iso: string): number {
+    const [y, m, d] = iso.split("-").map(Number);
+    return y * 10000 + m * 100 + d;
+}
+
+export function startOfDay(d: Date) {
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+}
