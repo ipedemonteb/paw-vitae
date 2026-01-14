@@ -21,7 +21,7 @@ import { RatingStars } from "@/components/RatingStars.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { UploadFiles } from "@/components/UploadFiles.tsx"
 import { useTranslation } from "react-i18next";
-import { useAppointment } from "@/hooks/useAppointments.ts";
+import {useAppointment, useAppointmentFiles} from "@/hooks/useAppointments.ts";
 import { formatLongDate, formatTimeHM } from "@/utils/dateUtils.ts";
 import {useSpecialty} from "@/hooks/useSpecialties.ts";
 import {useDoctorOffice} from "@/hooks/useDoctors.ts";
@@ -29,6 +29,8 @@ import {useNeighborhood} from "@/hooks/useNeighborhoods.ts";
 import {userIdFromSelf} from "@/utils/IdUtils.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
+import type {AppointmentFileDTO} from "@/data/appointments.ts";
+import {useMemo} from "react";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -58,9 +60,18 @@ function AppointmentDetails() {
     const {data: specialty} = useSpecialty(appointment?.specialty ?? null);
     const {data: office} = useDoctorOffice(appointment?.doctorOffice ?? null);
     const {data: neighborhood} = useNeighborhood(office?.neighborhood ?? null);
+    const {data: files} = useAppointmentFiles(appointmentId);
 
     const patientId = userIdFromSelf(appointment?.patient ?? "");
     const doctorId = userIdFromSelf(appointment?.doctor ?? "");
+
+    const { patientFiles, doctorFiles } = useMemo(() => {
+        const all = files ?? [];
+        return {
+            patientFiles: all.filter((f) => f.uploaderRole === "patient"),
+            doctorFiles: all.filter((f) => f.uploaderRole === "doctor"),
+        };
+    }, [files]);
 
     if (!appointment) return <div>Loading...</div>;
 
@@ -84,8 +95,8 @@ function AppointmentDetails() {
                                 <OfficeCard name={office?.name} neighborhood={neighborhood?.name}/>
                             </div>
                             <VisitCard reason={appointment.reason}/>
-                            <PatientFileCard />
-                            <PostVisitComponent />
+                            <PatientFileCard files={patientFiles} />
+                            <PostVisitComponent files={doctorFiles} report={appointment.report} />
                             <RatingComponent />
                             <UploadComponent />
                         </div>
@@ -108,7 +119,7 @@ const statusText =
 const badgeConfirmed =
     "bg-[var(--success-light)] text-[var(--success)] border border-[var(--success)]";
 const badgeCancelled =
-    "bg-[var(--danger-light)] text-[var(--danger)] border border-[var(--error)]";
+    "bg-[var(--danger-light)] text-[var(--danger)] border border-[var(--danger)]";
 const badgeCompleted =
     "bg-[var(--landing-light)] text-[var(--primary-color)] border border-[var(--primary-color)]";
 
@@ -217,7 +228,7 @@ const cardTitle =
 const cardContent =
     "px-5 gap-4";
 
-function PatientFileCard() {
+function PatientFileCard({ files }: { files: AppointmentFileDTO[] }) {
     const { t } = useTranslation();
 
     return (
@@ -226,11 +237,15 @@ function PatientFileCard() {
                 <FileCheckCorner className={cardIcon}/>
                 <h1 className={cardTitle}>{t("appointment.details.patient-files")}</h1>
             </div>
+
             <Card className={cardContent}>
-                <FileComponent />
-                <FileComponent />
-                <FileComponent />
-                {/*<FileEmptyComponent />*/}
+                {files.length === 0 ? (
+                    <FileEmptyComponent />
+                ) : (
+                    files.map((f) => (
+                        <FileComponent key={f.id} file={f} />
+                    ))
+                )}
             </Card>
         </div>
     );
@@ -247,13 +262,18 @@ const fileDownload =
     "text-white bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 // TODO: add file view page?
-function FileComponent() {
+function FileComponent({ file }: { file: AppointmentFileDTO }) {
+    const href = file.download || file.view;
+
     return (
         <Card className={fileComponent}>
             <Paperclip className={fileIcon} />
-            <h3 className={fileTitle}>Estudio de Sangre - Paciente Rodriguez</h3>
-            <Button className={fileDownload}>
-                <Download />
+            <h3 className={fileTitle}>{file.fileName}</h3>
+
+            <Button className={fileDownload} asChild disabled={!href}>
+                <a href={href} target="_blank" rel="noreferrer">
+                    <Download />
+                </a>
             </Button>
         </Card>
     );
@@ -280,8 +300,10 @@ const asteriskIcon =
     "w-8 h-8 text-[var(--primary-color)] shrink-0 mr-3";
 const doctorComment =
     "text-md text-[var(--text-color)]";
+const noReport =
+    "text-sm text-[var(--text-light)]";
 
-function PostVisitComponent() {
+function PostVisitComponent({ files, report }: { files: AppointmentFileDTO[], report:string }) {
     const { t } = useTranslation();
 
     return (
@@ -290,12 +312,19 @@ function PostVisitComponent() {
                 <Cross className={cardIcon}/>
                 <h1 className={cardTitle}>{t("appointment.details.post-visit")}</h1>
             </div>
+
             <Card className={cardContent}>
                 <Card className={doctorCommentContainer}>
                     <Asterisk className={asteriskIcon} />
-                    <p className={doctorComment}>El paciente efectivamente, tiene dolor de cabeza, adjunto archivos de estudios.</p>
+                    {report.length == 0 ?
+                        <p className={noReport}>{t("appointment.details.no-report")}</p> :
+                        <p className={doctorComment}>{report}</p>
+                    }
                 </Card>
-                <FileEmptyComponent />
+
+                {files.length === 0 ? <FileEmptyComponent /> : files.map((f) => (
+                    <FileComponent key={f.id} file={f} />
+                ))}
             </Card>
         </div>
     );
