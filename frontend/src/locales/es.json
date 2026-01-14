@@ -75,6 +75,7 @@
       "reason": "Razón de la Visita (Opcional)",
       "patient-files": "Archivos del Paciente",
       "post-visit": "Información Post-Visita",
+      "no-report": "No hay reporte disponible para la visita.",
       "no-upload": "Todavía no se subieron archivos.",
       "rating": "Calificación",
       "upload": "Subir archivos para la cita.",

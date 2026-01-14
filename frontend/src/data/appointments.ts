@@ -20,6 +20,14 @@ export type AppointmentDTO = {
     rating: string;
 }
 
+export type AppointmentFileDTO = {
+    id: string;
+    fileName: string;
+    uploaderRole: string;
+    download: string;
+    view: string;
+}
+
 export type AppointmentCollection = "upcoming" | "history";
 export type AppointmentFilter = "all" | "today" | "week" | "month" | "cancelled" | "completed";
 
@@ -64,5 +72,12 @@ export async function getAppointment(id: string) {
     const res = await api.get<AppointmentDTO>(`/appointments/${id}`, {
         headers: {"accept": ContentTypes.APPOINTMENT}
     });
+    return res.data;
+}
+
+export async function getAppointmentFiles(id: string) {
+    const res = await api.get<AppointmentFileDTO[]>(`/appointments/${id}/files`, {
+        headers: {"accept": ContentTypes.APPOINTMENT_FILE_LIST}
+    })
     return res.data;
 }

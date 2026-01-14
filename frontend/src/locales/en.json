@@ -92,6 +92,7 @@
       "reason": "Reason for Visit (Optional)",
       "patient-files": "Patient Files",
       "post-visit": "Post Visit Information",
+      "no-report": "No visit report available.",
       "no-upload": "No uploaded files.",
       "rating": "Rating",
       "upload": "Upload files for the appointment.",

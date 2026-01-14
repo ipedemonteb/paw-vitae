@@ -1,4 +1,4 @@
-import {type AppointmentsQuery, getAppointment, listAppointments} from "@/data/appointments.ts";
+import {type AppointmentsQuery, getAppointment, getAppointmentFiles, listAppointments} from "@/data/appointments.ts";
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
 
 export function useAppointments(query: AppointmentsQuery) {
@@ -27,4 +27,12 @@ export function useAppointment(id?: string | null) {
         queryFn: () => getAppointment(id!),
         enabled: !!id,
     });
+}
+
+export function useAppointmentFiles(id?: string | null) {
+    return useQuery({
+        queryKey: ['appointment', id, 'files'],
+        queryFn: () => getAppointmentFiles(id!),
+        enabled: !!id,
+    })
 }
