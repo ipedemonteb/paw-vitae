@@ -26,6 +26,9 @@ import { formatLongDate, formatTimeHM } from "@/utils/dateUtils.ts";
 import {useSpecialty} from "@/hooks/useSpecialties.ts";
 import {useDoctorOffice} from "@/hooks/useDoctors.ts";
 import {useNeighborhood} from "@/hooks/useNeighborhoods.ts";
+import {userIdFromSelf} from "@/utils/IdUtils.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -44,15 +47,20 @@ const appointmentData =
     "grid w-full gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
 
 function AppointmentDetails() {
-    const { t } = useTranslation();
-
     const appointmentId = "33";
+
+    const { t } = useTranslation();
+    const auth = useAuth();
+    const role = auth.role;
 
     // TODO: handle isLoading
     const {data: appointment} = useAppointment(appointmentId);
     const {data: specialty} = useSpecialty(appointment?.specialty ?? null);
     const {data: office} = useDoctorOffice(appointment?.doctorOffice ?? null);
     const {data: neighborhood} = useNeighborhood(office?.neighborhood ?? null);
+
+    const patientId = userIdFromSelf(appointment?.patient ?? "");
+    const doctorId = userIdFromSelf(appointment?.doctor ?? "");
 
     if (!appointment) return <div>Loading...</div>;
 
@@ -65,12 +73,15 @@ function AppointmentDetails() {
                             <p>{t("appointment.details.subtitle")}</p>
                         </div>
                         <div className={appointmentContent}>
-                            <PatientProfileCard />
+                            {role === "ROLE_DOCTOR" ?
+                                <PatientProfileCard patientId={patientId ?? ""}/> :
+                                <DoctorProfileCard doctorId={doctorId ?? ""}/>
+                            }
                             <div className={appointmentData}>
                                 <StatusCard status={appointment.status} />
                                 <DateCard date={appointment.date}/>
                                 <SpecialtyCard specialty={specialty?.name}/>
-                                <OfficeCard name={office?.name} neighborhood={neighborhood.name}/>
+                                <OfficeCard name={office?.name} neighborhood={neighborhood?.name}/>
                             </div>
                             <VisitCard reason={appointment.reason}/>
                             <PatientFileCard />
