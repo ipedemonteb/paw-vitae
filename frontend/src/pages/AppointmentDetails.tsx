@@ -30,8 +30,9 @@ import {userIdFromSelf} from "@/utils/IdUtils.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
 import type {AppointmentFileDTO} from "@/data/appointments.ts";
-import {useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {useRating} from "@/hooks/useRatings.ts";
+import {Textarea} from "@/components/ui/textarea.tsx";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -50,19 +51,19 @@ const appointmentData =
     "grid w-full gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
 
 function AppointmentDetails() {
-    const appointmentId = "31";
+    const appointmentId = "45";
 
     const { t } = useTranslation();
     const auth = useAuth();
     const role = auth.role;
 
-    // TODO: handle isLoading and isError
-    const {data: appointment} = useAppointment(appointmentId);
-    const {data: specialty} = useSpecialty(appointment?.specialty ?? null);
-    const {data: office} = useDoctorOffice(appointment?.doctorOffice ?? null);
-    const {data: neighborhood} = useNeighborhood(office?.neighborhood ?? null);
-    const {data: files} = useAppointmentFiles(appointmentId);
-    const {data: rating} = useRating(appointment?.rating ?? null);
+    //TODO: handle isLoading and isError
+    const { data: appointment } = useAppointment(appointmentId);
+    const { data: specialty } = useSpecialty(appointment?.specialty ?? null);
+    const { data: office } = useDoctorOffice(appointment?.doctorOffice ?? null);
+    const { data: neighborhood } = useNeighborhood(office?.neighborhood ?? null);
+    const { data: files } = useAppointmentFiles(appointmentId);
+    const { data: rating } = useRating(appointment?.rating ?? null);
 
     const patientId = userIdFromSelf(appointment?.patient ?? "");
     const doctorId = userIdFromSelf(appointment?.doctor ?? "");
@@ -75,37 +76,67 @@ function AppointmentDetails() {
         };
     }, [files]);
 
+    const [newRating, setNewRating] = useState<number>(0);
+
     if (!appointment) return <div>Loading...</div>;
 
+    const hasRating = typeof rating?.rating === "number" && !Number.isNaN(rating.rating);
+
+    const isDoctor = role === "ROLE_DOCTOR";
+    const isCompleted = appointment.status === "completo";
+    const isCancelled = appointment.status === "cancelado";
+    const showPostVisit = !isCancelled;
+    const showRatingBlock = !isCancelled;
+    const showUpload = isDoctor && isCompleted;
+
     return (
-            <div className={appointmentBackground}>
-                <div className={cardContainer}>
-                    <Card className={appointmentContainer}>
-                        <div className={appointmentHeader}>
-                            <h1 className={appointmentTitle}>{t("appointment.details.title")}</h1>
-                            <p>{t("appointment.details.subtitle")}</p>
+        <div className={appointmentBackground}>
+            <div className={cardContainer}>
+                <Card className={appointmentContainer}>
+                    <div className={appointmentHeader}>
+                        <h1 className={appointmentTitle}>{t("appointment.details.title")}</h1>
+                        <p>{t("appointment.details.subtitle")}</p>
+                    </div>
+
+                    <div className={appointmentContent}>
+                        {isDoctor ? (
+                            <PatientProfileCard patientId={patientId ?? ""} />
+                        ) : (
+                            <DoctorProfileCard doctorId={doctorId ?? ""} />
+                        )}
+
+                        <div className={appointmentData}>
+                            <StatusCard status={appointment.status} />
+                            <DateCard date={appointment.date} />
+                            <SpecialtyCard specialty={specialty?.name} />
+                            <OfficeCard name={office?.name} neighborhood={neighborhood?.name} />
                         </div>
-                        <div className={appointmentContent}>
-                            {role === "ROLE_DOCTOR" ?
-                                <PatientProfileCard patientId={patientId ?? ""}/> :
-                                <DoctorProfileCard doctorId={doctorId ?? ""}/>
-                            }
-                            <div className={appointmentData}>
-                                <StatusCard status={appointment.status} />
-                                <DateCard date={appointment.date}/>
-                                <SpecialtyCard specialty={specialty?.name}/>
-                                <OfficeCard name={office?.name} neighborhood={neighborhood?.name}/>
-                            </div>
-                            <VisitCard reason={appointment.reason}/>
-                            <PatientFileCard files={patientFiles} />
-                            <PostVisitComponent files={doctorFiles} report={appointment.report} />
-                            <RatingComponent rating={rating?.rating} comment={rating?.comment}/>
-                            <UploadComponent />
-                        </div>
-                    </Card>
-                </div>
+
+                        <VisitCard reason={appointment.reason} />
+                        <PatientFileCard files={patientFiles} />
+
+                        {showPostVisit ? (
+                            <PostVisitComponent files={doctorFiles} report={appointment.report} isDoctor={role === "ROLE_DOCTOR"}/>
+                        ) : null}
+
+                        {showRatingBlock ? (
+                            hasRating ? (
+                                <RatingComponent rating={rating?.rating} comment={rating?.comment} />
+                            ) : isDoctor ? (
+                                <RatingComponent rating={undefined} comment={undefined} />
+                            ) : isCompleted ? (
+                                <RateComponent rating={newRating} setRating={setNewRating} />
+                            ) : (
+                                <LockedRateComponent rating={undefined} setRating={undefined} />
+                            )
+                        ) : null}
+
+                        {showUpload ? <UploadComponent /> : null}
+                    </div>
+                </Card>
             </div>
-    )
+        </div>
+    );
 }
 
 const appointmentComponent =
@@ -304,24 +335,58 @@ const doctorComment =
     "text-md text-[var(--text-color)]";
 const noReport =
     "text-sm text-[var(--text-light)]";
+const reportTitle =
+    "text-md font-[500]";
+const submitReportButton =
+    "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white cursor-pointer";
 
-function PostVisitComponent({ files, report }: { files: AppointmentFileDTO[], report:string }) {
+function PostVisitComponent({ files, report, isDoctor }: { files: AppointmentFileDTO[], report:string, isDoctor: boolean; }) {
     const { t } = useTranslation();
+
+    const hasReport = (report ?? "").trim().length > 0;
+
+    const [draft, setDraft] = useState<string>(report ?? "");
+
+    useEffect(() => {
+        setDraft(report ?? "");
+    }, [report]);
+
+    const canSubmit = isDoctor && !hasReport && draft.trim().length > 0;
+
+    const handleSubmit = () => {
+        if (!canSubmit) return;
+        // TODO: llamar a tu mutation/endpoint para guardar el report
+    };
 
     return (
         <div>
             <div className={cardIconContainer}>
-                <Cross className={cardIcon}/>
+                <Cross className={cardIcon} />
                 <h1 className={cardTitle}>{t("appointment.details.post-visit")}</h1>
             </div>
 
             <Card className={cardContent}>
                 <Card className={doctorCommentContainer}>
                     <Asterisk className={asteriskIcon} />
-                    {report.length == 0 ?
-                        <p className={noReport}>{t("appointment.details.no-report")}</p> :
+                    {hasReport ? (
                         <p className={doctorComment}>{report}</p>
-                    }
+                    ) : isDoctor ? (
+                        <div className="flex flex-col w-full gap-3">
+                            <p className={reportTitle}>{t("appointment.details.report")}</p>
+                            <Textarea
+                                value={draft}
+                                onChange={(e) => setDraft(e.target.value)}
+                                placeholder={t("appointment.details.write-report")}
+                            />
+                            <div className="flex justify-end">
+                                <Button className={submitReportButton} onClick={handleSubmit} disabled={!canSubmit}>
+                                    {t("appointment.details.submit-report")}
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className={noReport}>{t("appointment.details.no-report")}</p>
+                    )}
                 </Card>
 
                 {files.length === 0 ? <FileEmptyComponent /> : files.map((f) => (
@@ -337,23 +402,160 @@ const ratingContainer =
 const ratingNumber =
     "text-base text-[var(--primary-text)] font-[700] mt-1";
 
-function RatingComponent({rating, comment}:{rating: number | undefined, comment: string | undefined}) {
+function RatingComponent({ rating, comment }: { rating: number | undefined; comment: string | undefined }) {
+    const { t } = useTranslation();
+
+    const hasRating = typeof rating === "number" && !Number.isNaN(rating);
+    const hasComment = (comment ?? "").trim().length > 0;
+
+    return (
+        <div>
+            <div className={cardIconContainer}>
+                <Star className={cardIcon} />
+                <h1 className={cardTitle}>{t("appointment.details.rating")}</h1>
+            </div>
+            <Card className={cardContent}>
+                {!hasRating ? (
+                    <p className={noReport}>{t("appointment.details.no-rating")}</p>
+                ) : (
+                    <>
+                        <p className={hasComment ? "" : noReport}>
+                            {hasComment ? comment : t("appointment.details.no-comment")}
+                        </p>
+                        <Separator />
+                        <div className={ratingContainer}>
+                            <RatingStars rating={rating} />
+                            <p className={ratingNumber}>{rating}</p>
+                        </div>
+                    </>
+                )}
+            </Card>
+        </div>
+    );
+}
+
+const rateText =
+    "text-md font-[500]";
+
+function RateComponent({
+    rating,
+    setRating,
+}: {
+    rating: number;
+    setRating: React.Dispatch<React.SetStateAction<number>>;
+}) {
     const { t } = useTranslation();
 
     return (
         <div>
             <div className={cardIconContainer}>
-                <Star className={cardIcon}/>
-                <h1 className={cardTitle}>{t("appointment.details.rating")}</h1>
+                <Star className={cardIcon} />
+                <h1 className={cardTitle}>{t("appointment.details.rate")}</h1>
             </div>
             <Card className={cardContent}>
-                <p>{comment}</p>
-                <Separator />
-                <div className={ratingContainer}>
-                    <RatingStars rating={rating ?? 0} />
-                    <p className={ratingNumber}>{rating}</p>
+                <p className={rateText}>{t("appointment.details.rating")}</p>
+                <SelectStars value={rating} onChange={setRating} />
+                <p className={rateText}>{t("appointment.details.review")}</p>
+                <Textarea placeholder={t("appointment.details.write-review")} />
+                <div className={submitContainer}>
+                    <Button className={submitButton}>
+                        {t("appointment.details.submit-rating")}
+                    </Button>
                 </div>
             </Card>
+        </div>
+    );
+}
+
+const lockedText =
+    " text-[var(--gray-500)]";
+const lockedHover =
+    " cursor-not-allowed bg-[var(--gray-100)]";
+const lockedButton =
+    " bg-[var(--gray-400)] hover:bg-[var(--gray-200)]";
+
+function LockedRateComponent({
+    rating,
+    setRating,
+}: {
+    rating: undefined;
+    setRating: undefined;
+}) {
+    const { t } = useTranslation();
+
+    return (
+        <div>
+            <div className={cardIconContainer}>
+                <Star className={cardIcon + lockedText} />
+                <h1 className={cardTitle + lockedText}>{t("appointment.details.rate-locked")}</h1>
+            </div>
+            <Card className={cardContent + lockedHover}>
+                <p className={rateText + lockedText}>{t("appointment.details.rating")}</p>
+                <SelectStars value={rating} onChange={setRating} disabled />
+                <p className={rateText + lockedText}>{t("appointment.details.review")}</p>
+                <Textarea placeholder={t("appointment.details.write-review")} disabled />
+                <div className={submitContainer}>
+                    <Button className={submitButton + lockedButton} disabled>
+                        {t("appointment.details.submit-rating")}
+                    </Button>
+                </div>
+            </Card>
+        </div>
+    );
+}
+
+const starsContainer =
+    "flex flex-row items-center gap-1 mb-2";
+const starButton =
+    "rounded-md cursor-pointer transition-transform hover:scale-110 outline-none focus:outline-none focus:ring-0";
+const starIconBase =
+    "w-6 h-6";
+const starFilled =
+    "fill-[var(--primary-color)] text-[var(--primary-color)]";
+const starEmpty =
+    "fill-transparent text-[var(--gray-400)]";
+
+export function SelectStars({
+                                value,
+                                onChange,
+                                disabled = false,
+                            }: {
+    value?: number;
+    onChange?: (value: number) => void;
+    disabled?: boolean;
+}) {
+    const [hover, setHover] = useState<number | null>(null);
+
+    const selected = value ?? 0;
+    const active = hover ?? selected;
+
+    return (
+        <div
+            className={starsContainer}
+            onMouseLeave={() => setHover(null)}
+            aria-label="Rating selector"
+            role="radiogroup"
+        >
+            {Array.from({ length: 5 }).map((_, i) => {
+                const v = i + 1;
+                const filled = v <= active;
+
+                return (
+                    <button
+                        key={v}
+                        type="button"
+                        className={starButton}
+                        disabled={disabled}
+                        onMouseEnter={() => !disabled && setHover(v)}
+                        onClick={() => !disabled && onChange?.(v)}
+                        aria-label={`Rate ${v} star${v === 1 ? "" : "s"}`}
+                        aria-checked={v === selected}
+                        role="radio"
+                    >
+                        <Star className={`${starIconBase} ${filled ? starFilled : starEmpty}`} />
+                    </button>
+                );
+            })}
         </div>
     );
 }
