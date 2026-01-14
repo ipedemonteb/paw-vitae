@@ -35,9 +35,7 @@ export const router = createBrowserRouter([
     {
         element: <AppLayout />,
         children: [
-            // ============================================================
-            // 1. RUTAS TOTALMENTE PÚBLICAS (Accesibles para TODOS)
-            // ============================================================
+            // Rutas Públicas
             {
                 index: true,
                 element: <Landing />
@@ -51,10 +49,7 @@ export const router = createBrowserRouter([
                 element: <PublicProfile />
             },
 
-            // ============================================================
-            // 2. RUTAS PÚBLICAS RESTRINGIDAS (Search)
-            // Pacientes e Invitados PUEDEN entrar. Doctores NO.
-            // ============================================================
+            // Rutas Restringidas
             {
                 element: <ExcludeRolesGuard forbiddenRoles={['ROLE_DOCTOR']}  />,
                 children: [
@@ -74,10 +69,7 @@ export const router = createBrowserRouter([
                 ]
             },
 
-            // ============================================================
-            // 3. RUTAS DE INVITADO (Solo si NO estás logueado)
-            // Si ya tienes sesión, te rebota al Home
-            // ============================================================
+            // Rutas sin Logueo Requerido
             {
                 element: <GuestGuard />,
                 children: [
@@ -104,16 +96,10 @@ export const router = createBrowserRouter([
                 ]
             },
 
-            // ============================================================
-            // 4. RUTAS PROTEGIDAS GENERALES (Cualquier usuario logueado)
-            // ============================================================
+            // Rutas de Usuario Logueado (Paciente o Doctor)
             {
                 element: <AuthGuard />,
                 children: [
-                    {
-                        path: "appointment-details",
-                        element: <AppointmentDetails/>
-                    },
                     {
                         path: "appointment",
                         element: <Appointment />
@@ -121,9 +107,7 @@ export const router = createBrowserRouter([
                 ]
             },
 
-            // ============================================================
-            // 5. RUTAS DE PACIENTE (Solo Rol PATIENT)
-            // ============================================================
+            // Rutas de Paciente
             {
                 element: <AuthGuard allowedRoles={['ROLE_PATIENT']} />,
                 children: [
@@ -152,13 +136,15 @@ export const router = createBrowserRouter([
                                 element: <PatientAccount/>
                             },
                         ]
+                    },
+                    {
+                        path: "patient/dashboard/appointment-details/:id",
+                        element: <AppointmentDetails />,
                     }
                 ]
             },
 
-            // ============================================================
-            // 6. RUTAS DE DOCTOR (Solo Rol DOCTOR)
-            // ============================================================
+            // Rutas de Doctor
             {
                 element: <AuthGuard allowedRoles={['ROLE_DOCTOR']} />,
                 children: [
@@ -191,13 +177,15 @@ export const router = createBrowserRouter([
                                 element: <DoctorAccount/>
                             }
                         ]
+                    },
+                    {
+                        path: "doctor/dashboard/appointment-details/:id",
+                        element: <AppointmentDetails />,
                     }
                 ]
             },
 
-            // ============================================================
-            // 7. MANEJO DE ERRORES
-            // ============================================================
+            // Manejo de Errores
             {
                 path: "/unauthorized",
                 element: <GenericError code={403} />

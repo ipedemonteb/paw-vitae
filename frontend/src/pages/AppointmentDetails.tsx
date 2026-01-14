@@ -33,6 +33,7 @@ import type {AppointmentFileDTO} from "@/data/appointments.ts";
 import React, {useEffect, useMemo, useState} from "react";
 import {useRating} from "@/hooks/useRatings.ts";
 import {Textarea} from "@/components/ui/textarea.tsx";
+import { useParams } from "react-router-dom";
 
 const appointmentBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -51,7 +52,9 @@ const appointmentData =
     "grid w-full gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
 
 function AppointmentDetails() {
-    const appointmentId = "45";
+    const { id } = useParams<{ id: string }>();
+    if (!id) return null;
+    const appointmentId = id;
 
     const { t } = useTranslation();
     const auth = useAuth();

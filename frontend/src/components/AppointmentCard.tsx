@@ -5,6 +5,9 @@ import { useTranslation } from "react-i18next";
 import {usePatient} from "@/hooks/usePatients.ts";
 import {useSpecialty} from "@/hooks/useSpecialties.ts";
 import {useCoverage} from "@/hooks/useCoverages.ts";
+import { useNavigate } from "react-router-dom";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {appointmentIdFromSelf} from "@/utils/IdUtils.ts";
 
 const statusClassname =
     "h-7 font-medium border-solid border text-xs w-3/4 rounded-2xl flex items-center justify-center";
@@ -96,6 +99,8 @@ function transformStatus(status: string) {
 
 export default function AppointmentCard({ appointment }: AppointmentCardProps) {
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
+    const auth = useAuth();
     const {data: patient} = usePatient(appointment.patient)
     const {data: specialty} = useSpecialty(appointment.specialty)
     const {data: coverage} = useCoverage(patient?.coverages)
@@ -110,6 +115,8 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
     const fullName = patient?.name + " " + patient?.lastName;
 
     const status = "appointment.filters." + transformStatus(appointment.status);
+
+    const base = auth.role === "ROLE_DOCTOR" ? "/doctor/dashboard" : "/patient/dashboard";
 
     return (
         <div className={cardContainer}>
@@ -174,7 +181,7 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
                     <div className={specialtyPill}>
                         {t(specialty?.name || "")}
                     </div>
-                    <Button className={detailsButton}>
+                    <Button className={detailsButton} onClick={() => navigate(`${base}/appointment-details/${appointmentIdFromSelf(appointment.self)}`)}>
                         <EyeIcon />
                         View Details
                     </Button>
