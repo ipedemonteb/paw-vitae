@@ -36,3 +36,9 @@ export function isoDateKey(iso: string): number {
     const [y, m, d] = iso.split("-").map(Number);
     return y * 10000 + m * 100 + d;
 }
+
+export function startOfDay(d: Date) {
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+}
