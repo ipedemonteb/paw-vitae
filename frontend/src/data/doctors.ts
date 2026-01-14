@@ -243,6 +243,13 @@ export async function getDoctorOffices(officesUrl: string) {
     return res.data;
 }
 
+export async function getDoctorOffice(url: string) {
+    const res = await api.get<OfficeDTO>(url, {
+        headers: {"accept": ContentTypes.OFFICE,}
+    });
+    return res.data;
+}
+
 export async function getDoctorOfficeSpecialties(url: string) {
     const res = await api.get<OfficeSpecialtyDTO[]>(url, {
         headers: {"accept": ContentTypes.OFFICE_SPECIALTY_LIST,}
