@@ -14,14 +14,12 @@ export function useAuth () {
 
 export function useLogin() {
     const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: ({ email, password }: {email: string, password: string}) =>
             login(email, password),
 
         onSuccess: (data) => {
             setAuth(data.jwt, data.refresh);
-
             queryClient.invalidateQueries({ queryKey: ["auth"] });
         },
         onError: (error: AxiosError) => {

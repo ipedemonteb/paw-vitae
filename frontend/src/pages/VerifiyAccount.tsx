@@ -51,7 +51,7 @@ export default function VerifyAccount() {
             }
 
             try {
-                 await login(email, token);
+                 login.mutate({email, password: token});
 
 
             } catch (e) {
