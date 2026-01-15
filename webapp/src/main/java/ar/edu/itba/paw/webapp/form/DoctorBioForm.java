@@ -3,10 +3,10 @@ package ar.edu.itba.paw.webapp.form;
 import javax.validation.constraints.Size;
 
 public class DoctorBioForm {
-    @Size(max = 220)
+    @Size(max = 2600)
     private String biography;
 
-    @Size(max = 2600)
+    @Size(max = 220)
     private String description;
 
     public String getBiography() {
