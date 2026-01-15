@@ -64,6 +64,10 @@
       "past": "Cargando sus citas pasadas...",
       "upcoming": "Cargando sus citas próximas..."
     },
+    "card":{
+      "reason": "Razón de la Visita:",
+      "details": "Ver Detalles"
+    },
     "details": {
       "title": "Detalles del Turno",
       "subtitle": "Ver y gestionar la información de la cita",

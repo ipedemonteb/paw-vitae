@@ -76,6 +76,10 @@
       "past": "Loading your past appointments...",
       "upcoming": "Loading your upcoming appointments..."
     },
+    "card":{
+      "reason": "Reason for Visit:",
+      "details": "View Details"
+    },
     "details": {
       "title": "Appointment Details",
       "subtitle": "View and manage your appointment information",
