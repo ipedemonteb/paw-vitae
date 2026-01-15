@@ -30,11 +30,13 @@ import GenericError from "@/pages/GenericError.tsx";
 import { GuestGuard } from "@/guards/guestGuard";
 import { AuthGuard } from "@/guards/authGuard";
 import { ExcludeRolesGuard } from "@/guards/excludedRolesGuard.tsx";
+import MedicalHistory from "@/pages/MedicalHistory.tsx";
 
 export const router = createBrowserRouter([
     {
         element: <AppLayout />,
         children: [
+
             // Rutas Públicas
             {
                 index: true,
@@ -47,6 +49,10 @@ export const router = createBrowserRouter([
             {
                 path: "profile",
                 element: <PublicProfile />
+            },
+            {
+                path: "medical-history",
+                element: <MedicalHistory />
             },
 
             // Rutas Restringidas
