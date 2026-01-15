@@ -44,30 +44,31 @@ function LoginCard() {
     const from = (location.state as { from: string } )?.from || null;
 
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        try {
-            login.mutate({email, password});
 
-            if (from) {
-                navigate(from, { replace: true });
-            } else {
-                const claims = getClaims();
-                const role = claims?.role?.toUpperCase();
-
-                if (role === 'ROLE_DOCTOR') {
-                    navigate("/doctor/dashboard/upcoming", { replace: true });
-                } else if (role === 'ROLE_PATIENT') {
-                    navigate("/patient/dashboard/upcoming", { replace: true });
+        login.mutate({ email, password }, {
+            onSuccess: () => {
+                if (from) {
+                    navigate(from, { replace: true });
                 } else {
-                    navigate("/", { replace: true });
-                }
-            }
+                    const claims = getClaims();
+                    const role = claims?.role?.toUpperCase();
 
-        } catch (error) {
-            console.log("Login fallido capturado en UI");
-        }
+                    if (role === 'ROLE_DOCTOR') {
+                        navigate("/doctor/dashboard/upcoming", { replace: true });
+                    } else if (role === 'ROLE_PATIENT') {
+                        navigate("/patient/dashboard/upcoming", { replace: true });
+                    } else {
+                        navigate("/", { replace: true });
+                    }
+                }
+            },
+            onError: (error) => {
+
+            }
+        });
     };
 
     return (

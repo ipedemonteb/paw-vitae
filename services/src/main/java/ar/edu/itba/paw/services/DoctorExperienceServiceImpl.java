@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.Objects; // <--- IMPORTANTE: Agregar este import
 
 @Service
 public class DoctorExperienceServiceImpl implements DoctorExperienceService {
@@ -65,10 +66,11 @@ public class DoctorExperienceServiceImpl implements DoctorExperienceService {
         for(ExperienceForm form : experiences) {
             DoctorExperience match = existingById.values().stream().filter(e ->
                     e.getPositionTitle().equals(form.getPositionTitle()) &&
-                    e.getOrganizationName().equals(form.getOrganizationName()) &&
-                    e.getStartDate().equals(form.getStartDate()) &&
-                            (e.getEndDate() == null || e.getEndDate().equals(form.getEndDate()))
+                            e.getOrganizationName().equals(form.getOrganizationName()) &&
+                            e.getStartDate().equals(form.getStartDate()) &&
+                            Objects.equals(e.getEndDate(), form.getEndDate())
             ).findFirst().orElse(null);
+
             if(match == null) {
                 DoctorExperience created = doctorExperienceDao.create(doctor, form.getPositionTitle(), form.getOrganizationName(), form.getStartDate(), form.getEndDate());
                 keepIds.add(created.getId());
