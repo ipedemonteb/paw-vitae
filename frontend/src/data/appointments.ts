@@ -46,13 +46,8 @@ export type AppointmentsQuery = {
 //as a filter it will be sent to the api without a care in the world. Please take precautions if handling
 //query params dynamically as i am.
 function normalizeAppointmentsQuery(query: AppointmentsQuery) {
-    if (typeof query.page !== "number" || Number.isNaN(query.page)) {
-        query.page = 1;
-    }
-
-    if (typeof query.pageSize !== "number" || Number.isNaN(query.pageSize)) {
-        query.pageSize = APPOINTMENTS_PAGE_SIZE;
-    }
+    if (Number.isNaN(query.page)) query.page = 1;
+    if (Number.isNaN(query.pageSize)) query.pageSize = APPOINTMENTS_PAGE_SIZE;
 
     const allowedFilters: AppointmentFilter[] = ["all", "today", "week", "month", "cancelled", "completed"];
     if (query.filter && !allowedFilters.includes(query.filter)) {
