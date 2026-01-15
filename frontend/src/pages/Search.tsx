@@ -18,6 +18,7 @@ import {Skeleton} from "@/components/ui/skeleton.tsx";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useDebounce} from "use-debounce";
 import SearchResultsCard from "@/components/SearchResultCard.tsx";
+import {SearchSpecialtyCombobox} from "@/components/SearchSpecialtyCombobox.tsx";
 
 const container =
     "px-[24px] mx-auto max-w-6xl w-full";
@@ -201,30 +202,20 @@ function FilterSection({searchParams}: SectionProps) {
                 <div className={filterGroup}>
                     <div className={filterLabel}>
                         <Stethoscope className={iconSize} />
-                        <p>{t("search.specialty")}</p>
+                        <p>{t("search.specialty.title")}</p>
                     </div>
-                    <SpecialtyCombobox
-                        onValueChange={(_, derivedId) => {
-                            searchParams.setParams((p) => {
-                                if (derivedId) p.set("specialty", String(derivedId));
-                                else p.delete("specialty");
-                            });
-                        }}
+                    <SearchSpecialtyCombobox
+                        searchParams={searchParams}
                         className={filterCombo}
                     />
                 </div>
                 <div className={filterGroup}>
                     <div className={filterLabel}>
                         <ShieldPlus className={iconSize} />
-                        <p>{t("search.coverage")}</p>
+                        <p>{t("search.coverage.title")}</p>
                     </div>
                     <CoverageCombobox
-                        onValueChange={(coverageId) => {
-                            searchParams.setParams((p) => {
-                                if (coverageId) p.set("coverage", coverageId);
-                                else p.delete("coverage");
-                            });
-                        }}
+                        searchParams={searchParams}
                         className={filterCombo}
                     />
                 </div>
