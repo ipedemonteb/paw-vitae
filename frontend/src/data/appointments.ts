@@ -2,6 +2,7 @@ import {api} from "@/data/Api.ts";
 import type {PaginationData} from "@/lib/types.ts";
 import {parseLinkHeader} from "@/lib/utils.ts";
 import {ContentTypes} from "@/utils/contentTypes.ts";
+import {APPOINTMENTS_PAGE_SIZE} from "@/lib/constants.ts";
 
 export type AppointmentDTO = {
     date: string;
@@ -41,8 +42,27 @@ export type AppointmentsQuery = {
     pageSize?: number;
 }
 
+//Hello fellow coder who is reading this. Typescript erases types at runtime so if i pass "lol"
+//as a filter it will be sent to the api without a care in the world. Please take precautions if handling
+//query params dynamically as i am.
+function normalizeAppointmentsQuery(query: AppointmentsQuery) {
+    if (typeof query.page !== "number" || Number.isNaN(query.page)) {
+        query.page = 1;
+    }
+
+    if (typeof query.pageSize !== "number" || Number.isNaN(query.pageSize)) {
+        query.pageSize = APPOINTMENTS_PAGE_SIZE;
+    }
+
+    const allowedFilters: AppointmentFilter[] = ["all", "today", "week", "month", "cancelled", "completed"];
+    if (query.filter && !allowedFilters.includes(query.filter)) {
+        query.filter = "all";
+    }
+}
+
 
 export async function listAppointments(params: AppointmentsQuery): Promise<PaginationData<AppointmentDTO[]>> {
+    normalizeAppointmentsQuery(params)
     const res = await api.get<AppointmentDTO[]>("/appointments", {
         params: {
             userId: params.userId,

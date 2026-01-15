@@ -6,7 +6,7 @@ import {
     type JWTClaims,
     subscribeAuth,
 } from "@/context/auth-store";
-import { useQueryClient } from "@tanstack/react-query";
+import {type UseMutationResult, useQueryClient} from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import {useLogin} from "@/hooks/useAuth.ts";
 
@@ -17,9 +17,7 @@ interface AuthContextType {
     email?: string;
     role?: string;
 
-    login: (email: string, password: string) => Promise<void>;
-    isLoggingIn: boolean;
-    loginError: AxiosError<any> | null;
+    login:  UseMutationResult<{jwt: any, refresh: any}, AxiosError<unknown, any>, {email: string, password: string}, unknown>
 
     logout: () => void;
 }
@@ -37,16 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return subscribeAuth((s) => setClaims(s.claims));
     }, []);
 
-
-    const {
-        mutateAsync: performLoginMutation,
-        isPending: isLoggingIn,
-        error: loginError
-    } = useLogin();
-
-    const login = useCallback(async (email: string, password: string) => {
-        await performLoginMutation({ email, password });
-    }, [performLoginMutation]);
+    const login = useLogin()
 
     const logout = useCallback(() => {
         clearAuth();
@@ -60,14 +49,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             userId: claims?.userId,
             role: claims?.role,
             email: claims?.sub,
-
-
             login,
-            logout,
-            isLoggingIn,
-            loginError
+            logout
         }),
-        [claims, login, logout, isLoggingIn, loginError]
+        [claims, login, logout]
     );
 
     return (

@@ -34,7 +34,7 @@ function LoginCard() {
     const location = useLocation();
 
 
-    const { login, isLoggingIn, loginError } = useAuth();
+    const { login } = useAuth();
 
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
@@ -48,7 +48,7 @@ function LoginCard() {
         e.preventDefault();
 
         try {
-            await login(email, password);
+            login.mutate({email, password});
 
             if (from) {
                 navigate(from, { replace: true });
@@ -87,7 +87,7 @@ function LoginCard() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        disabled={isLoggingIn}
+                        disabled={login.isPending}
                         aria-label={t('login.aria_email')}
                     />
                 </div>
@@ -101,7 +101,7 @@ function LoginCard() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        disabled={isLoggingIn}
+                        disabled={login.isPending}
                         aria-label={t('login.aria_password')}
                     />
                     <button
@@ -124,20 +124,20 @@ function LoginCard() {
                     </Link>
                 </div>
 
-                {loginError && (
+                {login.isError && (
                     <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-md flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
                         <AlertCircle className="h-4 w-4 shrink-0" />
                         <span>
-                            {loginError.response?.data?.message
-                                ? t(loginError.response.data.message)
+                            {login.failureReason?.message
+                                ? t(login.failureReason.message)
                                 : t('login.error_generic')
                             }
                         </span>
                     </div>
                 )}
 
-                <Button type="submit" className={submitButtonStyles} disabled={isLoggingIn}>
-                    {isLoggingIn ? t('login.logging_in') : t('login.button_login')}
+                <Button type="submit" className={submitButtonStyles} disabled={login.isPending}>
+                    {login.isPending ? t('login.logging_in') : t('login.button_login')}
                 </Button>
             </form>
 

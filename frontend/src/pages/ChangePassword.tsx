@@ -76,7 +76,7 @@ export default function ChangePassword() {
         setApiError(null);
 
         try {
-            await login(email, token);
+            login.mutate({email, password})
 
             const accessToken = getAccessToken();
             const claims = parseJwt(accessToken || "");
