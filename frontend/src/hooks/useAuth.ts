@@ -23,7 +23,7 @@ export function useLogin() {
             queryClient.invalidateQueries({ queryKey: ["auth"] });
         },
         onError: (error: AxiosError) => {
-            console.error("Login falló", error);
+
         }
     });
 }

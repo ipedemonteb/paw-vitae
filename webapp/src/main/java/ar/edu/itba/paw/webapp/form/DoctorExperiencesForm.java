@@ -8,7 +8,7 @@ import java.util.List;
 
 public class DoctorExperiencesForm {
     @ValidExperience(message = "experiences.invalid")
-    @Size(max = 10)
+    @Size(max = 8)
     private List<ExperienceForm> experiences;
 
     public List<ExperienceForm> getExperiences() {

@@ -82,7 +82,7 @@ export interface CertificationDTO {
 }
 
 export interface DoctorProfileDTO {
-    biography: string;
+    bio: string;
     description: string;
     doctor: string;
 }

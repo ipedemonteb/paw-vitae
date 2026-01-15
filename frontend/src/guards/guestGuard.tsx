@@ -26,7 +26,6 @@ export const GuestGuard = () => {
         if (role === 'ROLE_PATIENT') {
             return <Navigate to="/patient/dashboard/upcoming" replace />;
         }
-
         return <Navigate to="/" replace />;
     }
 
