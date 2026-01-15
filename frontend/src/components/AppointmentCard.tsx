@@ -160,7 +160,7 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
                             {appointment.reason.trim().length > 0 ? (
                                 <>
                                     <span className={reasonLabel}>
-                                Reason for Visit:
+                                {t("appointment.card.reason")}
                             </span>
                                     <div className={reasonTextWrap}>
                                 <span className={reasonText}>
@@ -183,7 +183,7 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
                     </div>
                     <Button className={detailsButton} onClick={() => navigate(`${base}/appointment-details/${appointmentIdFromSelf(appointment.self)}`)}>
                         <EyeIcon />
-                        View Details
+                        {t("appointment.card.details")}
                     </Button>
                 </div>
             </div>
