@@ -17,7 +17,7 @@ import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
 const typeDictionary = {
     history: {
         title: "appointment.history",
-        popoverData: appointmentStatus.filter(s => s !== "appointment.status.confirmado"),
+        popoverData: appointmentStatus.filter(s => s !== "confirmed"),
         filterMessage: "appointment.history_filter_message",
         emptyTitle: "appointment.empty.title.past",
         emptyText: "appointment.empty.text.past",
@@ -38,16 +38,16 @@ type AppointmentComponentProps = {
     type: "history" | "upcoming"
 }
 
-
-function transformFilter(filterValue: string) {
-    return "appointment.filters." + filterValue
-}
-
 export default function AppointmentComponent({type}: AppointmentComponentProps) {
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
     const componentType = typeDictionary[type]
     const auth = useAuth()
+
+    const transformFilter = (filterValue: string) => {
+        if (!componentType.popoverData.includes(filterValue)) return "appointment.filters.all"
+        return "appointment.filters." + filterValue
+    }
 
     const searchParams = useAppointmentsQueryParams();
     const filterValue = searchParams.filter;

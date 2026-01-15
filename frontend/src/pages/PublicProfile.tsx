@@ -63,13 +63,13 @@ import {
     DialogFooter,
     DialogTitle,
     DialogTrigger,
-    DialogHeader // Asegúrate de importar esto
+    DialogHeader
 } from "@/components/ui/dialog.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner"; // O el import que estés usando para tus toasts
+import { toast } from "sonner";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
@@ -78,8 +78,6 @@ function PublicProfile() {
     const auth = useAuth();
     const { id } = useParams<{ id: string }>();
     const { data: doctor, isLoading: isLoadingDoctor, isError } = useDoctor(id);
-
-    // Hooks siempre al top level
     const { data: specialties, isLoading: isLoadingSpecialties } = useDoctorSpecialties(doctor?.specialties);
     const { data: coverages, isLoading: isLoadingCoverages } = useDoctorCoverages(doctor?.coverages);
     const { data: experiences, isLoading: isLoadingExperiences } = useDoctorExperience(doctor?.experiences);
@@ -109,7 +107,7 @@ function PublicProfile() {
     );
 }
 
-// Estilos constantes
+
 const titleIcon = "w-5 h-5";
 const avatarContainer = "flex items-center w-20 h-20 mx-6 mb-2 border border-[var(--primary-light)] border-4 rounded-full sm:mb-0";
 const userDataContainer = "flex flex-col items-center md:items-start";
@@ -254,7 +252,7 @@ function CoverageCard({ coverages }: { coverages: CoverageDTO[] }) {
 }
 
 const componentContainer = "flex w-full max-w-3xs flex-col px-10 py-4 items-center border border-[var(--gray-300)] rounded-lg";
-const coverageAvatar = "w-16 h-16 mb-2 object-contain"; // Aseguramos que el logo se vea bien
+const coverageAvatar = "w-16 h-16 mb-2 object-contain";
 
 function CoverageComponent({ coverageImage, coverageName }: {
     coverageImage: string;
@@ -661,7 +659,6 @@ function EditExperienceDialog({
     };
 
     const handleSave = () => {
-        // Limpiamos los datos: convertimos "" a undefined para que no se envíe como string vacío
         const payload = items.map(item => ({
             ...item,
             endDate: item.endDate === "" ? undefined : item.endDate
