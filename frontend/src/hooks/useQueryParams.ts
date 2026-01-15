@@ -1,5 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import type { AppointmentCollection, AppointmentFilter } from "@/data/appointments";
+import {APPOINTMENTS_PAGE_SIZE, DOCTORS_PAGE_SIZE} from "@/lib/constants.ts";
 
 export type PaginationParams = {
     page: number;
@@ -55,7 +56,7 @@ export function useAppointmentsQueryParams() {
         filter: AppointmentFilter;
     }>({
         page: 1,
-        pageSize: 10,
+        pageSize: APPOINTMENTS_PAGE_SIZE,
         userId: "",
         doctorId: "",
         collection: "upcoming",
@@ -75,7 +76,7 @@ export type DoctorQueryParams = {
 export function useDoctorQueryParams() {
     return usePaginatedQueryParams<DoctorQueryParams>({
         page: 1,
-        pageSize: 10,
+        pageSize: DOCTORS_PAGE_SIZE,
         specialty: "",
         coverage: "",
         weekdays: [],

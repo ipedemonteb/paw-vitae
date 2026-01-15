@@ -1,6 +1,8 @@
 import {type AppointmentsQuery, getAppointment, getAppointmentFiles, listAppointments} from "@/data/appointments.ts";
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
 
+
+
 export function useAppointments(query: AppointmentsQuery) {
     const { userId, doctorId, collection, filter, page, pageSize } = query ?? {};
 
