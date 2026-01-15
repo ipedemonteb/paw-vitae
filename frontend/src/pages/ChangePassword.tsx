@@ -4,20 +4,9 @@ import { Link, useSearchParams } from "react-router-dom"
 import {Lock, CheckCircle2, ArrowLeft, Check, X, AlertCircle, Loader2} from "lucide-react"
 import { PasswordInput } from "@/components/ui/passwordInput"
 import { Button } from "@/components/ui/button"
-import { changePatientPassword } from "@/data/patients.ts"
-import { useAuth } from "@/hooks/useAuth"
-import { changeDoctorPassword } from "@/data/doctors"
-import { getAccessToken } from "@/context/auth-store"
+import {useAuth, useChangePasswordMutation} from "@/hooks/useAuth"
 
 import { PasswordStrengthMeter } from "@/components/ui/PasswordStrengthMeter"
-
-function parseJwt(token: string) {
-    try {
-        return JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
-        return null;
-    }
-}
 
 const pageContainer = "min-h-screen bg-gray-50/50 flex flex-col items-center pt-32 pb-12 px-4 sm:px-6 lg:px-8";
 const cardContainer = "w-full max-w-lg space-y-8 bg-white p-8 sm:p-12 rounded-xl border border-gray-200 shadow-xl ";
@@ -35,7 +24,8 @@ const backLink = "flex items-center gap-2 text-sm font-medium text-[var(--text-l
 export default function ChangePassword() {
     const { t } = useTranslation()
     const [searchParams] = useSearchParams()
-    const { login, logout } = useAuth()
+    const { logout } = useAuth()
+    const changePassword = useChangePasswordMutation()
 
     const token = searchParams.get("token")
     const email = searchParams.get("email")
@@ -75,46 +65,11 @@ export default function ChangePassword() {
         setIsLoading(true);
         setApiError(null);
 
-        try {
-            login.mutate({email, password})
-
-            const accessToken = getAccessToken();
-            const claims = parseJwt(accessToken || "");
-
-            if (!claims || !claims.role || !claims.userId) {
-                throw new Error("No se pudo verificar la identidad del usuario.");
-            }
-
-            const userId = claims.userId;
-            const userRole = claims.role;
-
-            const formPayload = {
-                password: password,
-                repeatPassword: repeatPassword
-            };
-
-            const roleUpper = String(userRole).toUpperCase();
-
-            if (roleUpper.includes('DOCTOR')) {
-                await changeDoctorPassword(`/doctors/${userId}`, formPayload);
-            }
-            else if (roleUpper.includes('PATIENT')) {
-                await changePatientPassword(`/patients/${userId}/`, formPayload);
-            }
-            else {
-                throw new Error("Rol de usuario desconocido.");
-            }
-
-            setIsSubmitted(true);
-            logout();
-
-        } catch (error: any) {
-
-            setApiError( t("change_password.error_token_expired") || "Error al cambiar la contraseña.");
-            logout();
-        } finally {
-            setIsLoading(false);
-        }
+        changePassword.mutate({email, password, repeatPassword}, {
+            onSuccess: () => setIsSubmitted(true),
+            onError: () => setApiError( t("change_password.error_token_expired") || "Error al cambiar la contraseña."),
+            onSettled: () => logout()
+        })
     };
 
     if (isSubmitted) {

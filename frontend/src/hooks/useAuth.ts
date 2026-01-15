@@ -1,9 +1,10 @@
 import {useContext} from "react";
 import {AuthContext} from "@/context/authContext.tsx";
-import {setAuth} from "@/context/auth-store.ts";
+import {getClaims, setAuth} from "@/context/auth-store.ts";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {changePassword, login} from "@/data/auth.ts";
+import {ROLE_DOCTOR} from "@/lib/constants.ts";
 import type {AxiosError} from "axios";
-import {login} from "@/data/auth.ts";
 
 export function useAuth () {
     const context = useContext(AuthContext);
@@ -14,16 +15,41 @@ export function useAuth () {
 
 export function useLogin() {
     const queryClient = useQueryClient();
-    return useMutation({
+    return useMutation<{jwt: any, refresh: any}, AxiosError<unknown, any>, {email: string, password: string}, unknown>({
         mutationFn: ({ email, password }: {email: string, password: string}) =>
             login(email, password),
 
         onSuccess: (data) => {
             setAuth(data.jwt, data.refresh);
             queryClient.invalidateQueries({ queryKey: ["auth"] });
-        },
-        onError: (error: AxiosError) => {
-
         }
     });
+}
+
+export function useChangePasswordMutation() {
+    const {logout} = useAuth()
+    return useMutation({
+        mutationFn: async ({email, password, repeatPassword}: {email: string, password: string, repeatPassword: string}) => {
+            const {jwt, refresh} = await login(email, password)
+
+            setAuth(jwt, refresh)
+
+            const claims = getClaims()!;
+            const userId = claims.userId;
+            const userRole = claims.role;
+
+            const formPayload = {
+                password: password,
+                repeatPassword: repeatPassword
+            };
+
+            let url;
+
+            if (userRole === ROLE_DOCTOR) url = `/doctors/${userId}` //I CHECK IF ROLE VALID WHEN LOGIN SO NO OTHER POSSIBLE ROLE
+            else url = `/patients/${userId}`
+
+            await changePassword(url, formPayload)
+        },
+        onSettled: () => logout()
+    })
 }
