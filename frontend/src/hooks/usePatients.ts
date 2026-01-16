@@ -3,8 +3,8 @@ import {
     fetchCountsPatient,
     getPatient,
     getPatientById,
-    type PatientRegisterData,
-    registerPatient
+    type PatientRegisterData, type PatientUpdateData,
+    registerPatient, updatePatient
 } from "@/data/patients.ts";
 import type {AxiosError} from "axios";
 
@@ -40,5 +40,10 @@ export function usePatientsCount() {
         queryFn: () => fetchCountsPatient(),
         staleTime: 1000 * 60,
         retry: 1
+    });
+}
+export function useUpdatePatient(url:string){
+    return useMutation<any, AxiosError<any>, PatientUpdateData>({
+        mutationFn:(data :PatientUpdateData) => { updatePatient(url,data)}
     });
 }

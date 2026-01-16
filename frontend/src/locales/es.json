@@ -24,6 +24,18 @@
       "search": "Buscar Especialidad..."
     }
   },
+  "dashboard": {
+    "profile": {
+      "title": "Mi Perfil",
+      "personalInfo": "Información Personal",
+      "edit": "Editar",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "specialties": "Especialidades",
+      "coverages": "Obras Sociales",
+      "coverage": "Obra Social"
+    }
+  },
   "files": {
     "title": "Arrastrar y soltar archivos aquí",
     "subtitle": "Solamente archivos PDF · Hasta {{maxFiles}} archivos · Máximo {{maxSize}} cada uno.",
@@ -63,6 +75,9 @@
     "loading": {
       "past": "Cargando sus citas pasadas...",
       "upcoming": "Cargando sus citas próximas..."
+    },
+    "form": {
+      "save": "Guardar"
     },
     "details": {
       "title": "Detalles del Turno",
@@ -227,6 +242,8 @@
     "section_security": "Seguridad",
     "section_coverage": "Cobertura",
     "label_name": "Nombre",
+    "lastName": "Apellido",
+    "name": "Nombre",
     "label_lastname": "Apellido",
     "label_email": "Correo electrónico",
     "label_phone": "Teléfono",
@@ -261,7 +278,7 @@
     "loader_coverages": "Cargando obras sociales...",
     "loader_neighborhoods": "Cargando barrios...",
     "no_neighborhoods": "No se encontraron barrios",
-
+    "chooseImage": "Click para seleccionar imagen",
     "errors": {
       "passwords_mismatch": "Las contraseñas no coinciden",
       "password_requirements": "La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.",
@@ -270,7 +287,11 @@
       "generic": "Ocurrió un error al registrar.",
       "missing_fields": "Por favor complete todos los campos obligatorios antes de continuar.",
       "required": "Este campo es obligatorio",
+      "name_required": "El nombre es obligatorio.",
+      "lastname_required": "El apellido es obligatorio.",
+      "phone_required": "El teléfono es obligatorio.",
       "select_coverage": "Por favor seleccione una obra social.",
+      "select_specialties": "Por favor seleccione al menos una especialidad.",
       "select_neighborhoods": "Por favor seleccione un barrio.",
       "no_specialties_available": "No se encontraron especialidades en este momento. Intente denuevo mas tarde",
       "no_coverages_available": "No se encontraron obras sociales en este momento. Intente denuevo mas tarde",
@@ -471,13 +492,6 @@
       "edit_certificates": "Editar Certificados",
       "update_success": "Perfil actualizado exitosamente.",
       "update_error": "Error al actualizar el perfil. Por favor, inténtalo de nuevo.",
-      "certificateName": "Nombre del Certificado",
-      "issuingEntity": "Entidad Emisora",
-      "issueDate": "Fecha de Emisión",
-      "endDate": "Fecha de fin",
-      "startDate": "Fecha de inicio",
-      "position": "Posición",
-      "organization": "Organización",
       "card": {
         "rating": "calificaciones",
         "edit": "Editar",

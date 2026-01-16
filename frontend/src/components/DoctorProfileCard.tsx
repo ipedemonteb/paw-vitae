@@ -54,11 +54,14 @@ function DoctorProfileCard( { doctorId } : { doctorId: string | undefined} ) {
                         <p>{doctor?.phone}</p>
                     </div>
                 </div>
+                {doctor?.ratingCount > 0 && (
                 <div className={ratingContent}>
-                    <RatingStars rating={doctor?.rating ?? 0} sizeClassName="h-4 w-4" />
+
+                    <RatingStars rating={doctor?.rating || 0} sizeClassName="h-4 w-4" />
                     <p>{doctor?.rating}</p>
                     <p className={ratingText}>({doctor?.ratingCount})</p>
                 </div>
+                    )}
                 <BadgeComponent specialties={specialtiesList} maxBadges={maxBadges} />
             </div>
         </Card>
