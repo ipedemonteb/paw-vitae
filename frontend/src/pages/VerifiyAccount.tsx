@@ -50,13 +50,9 @@ export default function VerifyAccount() {
                 return
             }
 
-            try {
-                 login.mutate({email, password: token});
-
-
-            } catch (e) {
-                setStatus('error')
-            }
+            login.mutate({email, password: token}, {
+                onError: () => setStatus('error')
+            })
         }
 
         verify()

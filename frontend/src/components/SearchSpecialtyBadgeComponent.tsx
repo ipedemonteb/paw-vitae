@@ -19,7 +19,7 @@ export default function SearchSpecialtyBadgeComponent({specialties, maxDisplay}:
     return (
        <div className="flex flex-row items-center text-ellipsis gap-2">
            {specialties.slice(0, maxDisplay).map(s => (
-               <div className={dataSpecialty}>
+               <div key={s.self} className={dataSpecialty}>
                    <Stethoscope className={dataIcon} />
                    <p>{t(s.name)}</p>
                </div>

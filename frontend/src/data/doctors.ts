@@ -5,6 +5,7 @@ import {parseLinkHeader} from "@/lib/utils.ts";
 import type {CoverageDTO} from "@/data/coverages.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
 import type {OfficeDTO} from "@/data/office.ts";
+import {DOCTORS_PAGE_SIZE} from "@/lib/constants.ts";
 
 export type ChangePasswordForm = {
     password: string;
@@ -115,17 +116,26 @@ const extractIdFromUrl = (url: string): string => {
     return segments.pop() || "";
 }
 
+function normalizeDoctorsQuery(query: DoctorsQuery) {
+    if (Number.isNaN(query.specialty)) query.specialty = 0;
+    if (Number.isNaN(query.coverage)) query.coverage = 0;
+    if (Number.isNaN(query.page)) query.page = 1;
+    if (Number.isNaN(query.pageSize)) query.pageSize = DOCTORS_PAGE_SIZE;
+    if (query.weekdays?.length === 0) query.weekdays = undefined;
+}
+
 export async function listDoctors(params: DoctorsQuery): Promise<PaginationData<DoctorDTO[]>> {
+    normalizeDoctorsQuery(params)
     const res = await api.get<DoctorDTO[]>("/doctors", {
         params: {
-            specialty: params.specialty ?? 0,
-            coverage: params.coverage ?? 0,
-            weekdays: params.weekdays, // axios will repeat ?weekdays=1&weekdays=2
-            keyword: params.keyword ?? "",
-            orderBy: params.orderBy ?? "name",
-            direction: params.direction ?? "asc",
-            page: params.page ?? 1,
-            pageSize: params.pageSize ?? 9
+            specialty: params.specialty,
+            coverage: params.coverage,
+            weekdays: params.weekdays,
+            keyword: params.keyword,
+            orderBy: params.orderBy,
+            direction: params.direction,
+            page: params.page,
+            pageSize: params.pageSize
         },
         headers: {
             "accept": ContentTypes.DOCTOR_LIST

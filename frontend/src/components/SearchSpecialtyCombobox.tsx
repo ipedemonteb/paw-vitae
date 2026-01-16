@@ -20,10 +20,10 @@ import {
 } from "@/components/ui/popover.tsx"
 import {useTranslation} from "react-i18next";
 import {Spinner} from "@/components/ui/spinner.tsx";
-import {useCoverages} from "@/hooks/useCoverages.ts";
-import {coverageIdFromSelf} from "@/utils/IdUtils.ts";
+import {specialtyIdFromSelf} from "@/utils/IdUtils.ts";
 import type {DoctorQueryParams, PaginationParams} from "@/hooks/useQueryParams.ts";
 import {useEffect} from "react";
+import {useSpecialties} from "@/hooks/useSpecialties.ts";
 
 type ComboboxProps = {
     className?: string;
@@ -32,34 +32,34 @@ type ComboboxProps = {
     searchParams: PaginationParams & {setParams: (updater: (p: URLSearchParams) => void) => void} & DoctorQueryParams
 };
 
-export function CoverageCombobox({ className, buttonClassName, contentClassName, searchParams }: ComboboxProps) {
+export function SearchSpecialtyCombobox({ className, buttonClassName, contentClassName, searchParams }: ComboboxProps) {
     const [open, setOpen] = React.useState(false);
 
-    let coverage = searchParams.coverage
+    let specialty = searchParams.specialty
 
     const setSelected = (self?: string)=>  {
         searchParams.setParams((p) => {
-            if (!self) p.delete("coverage")
-            else p.set("coverage", String(coverageIdFromSelf(self)));
+            if (!self) p.delete("specialty")
+            else p.set("specialty", String(specialtyIdFromSelf(self)));
             p.set("page", "1")
         })
         setOpen(false);
     }
 
-    const transformCoverage = (id?: string) => {
+    const transformSpecialty = (id?: string) => {
         const numberId = Number(id);
         if (Number.isNaN(numberId)) return undefined;
-        return coverages?.find((value) => (coverageIdFromSelf(value.self) === numberId))
+        return specialties?.find((value) => (specialtyIdFromSelf(value.self) === numberId))
     }
 
-    const { data: coverages, isLoading } = useCoverages();
+    const { data: specialties, isLoading } = useSpecialties();
     const { t } = useTranslation();
 
     useEffect(() => {
         if (isLoading) return;
-        const c = transformCoverage(coverage);
-        setSelected(c?.self)
-    }, [coverage])
+        const s = transformSpecialty(specialty);
+        setSelected(s?.self)
+    }, [specialty])
 
 
     const triggerClass = cn("w-[200px] justify-between", buttonClassName, className);
@@ -73,14 +73,14 @@ export function CoverageCombobox({ className, buttonClassName, contentClassName,
                     aria-expanded={open}
                     className={triggerClass}
                 >
-                    {transformCoverage(coverage)?.name ?? t("search.coverage.select")}
+                    {t(transformSpecialty(specialty)?.name ?? "search.specialty.select")}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
 
             <PopoverContent className={cn("w-50 p-0", contentClassName)}>
                 <Command>
-                    <CommandInput placeholder="Search coverage..." className="h-9" />
+                    <CommandInput placeholder={t("search.specialty.search")} className="h-9" />
                     <CommandList>
                         {isLoading ? (
                             <div className="py-3 flex items-center justify-center space-x-1">
@@ -88,38 +88,38 @@ export function CoverageCombobox({ className, buttonClassName, contentClassName,
                             </div>
                         ) : (
                             <>
-                                <CommandEmpty>No Coverages Found</CommandEmpty>
+                                <CommandEmpty>{t("search.specialty.empty")}</CommandEmpty>
                                 <CommandGroup>
                                     <CommandItem
-                                        key={t("search.coverage.all")}
-                                        value={t("search.coverage.all")}
+                                        key={t("search.specialty.all")}
+                                        value={t("search.specialty.all")}
                                         onSelect={(currentValue) => {
                                             setSelected(currentValue)
                                         }}
                                         className="text-(--text-light)"
                                     >
-                                        {t("search.coverage.all")}
+                                        {t("search.specialty.all")}
                                         <Check
                                             className={cn(
                                                 "ml-auto",
-                                                !transformCoverage(coverage) ? "opacity-100" : "opacity-0"
+                                                !transformSpecialty(specialty) ? "opacity-100" : "opacity-0"
                                             )}
                                         />
                                     </CommandItem>
-                                    {coverages?.map((c) => (
+                                    {specialties?.map((s) => (
                                         <CommandItem
-                                            key={c.name}
-                                            value={c.self}
+                                            key={s.name}
+                                            value={s.self}
                                             onSelect={(currentValue) => {
                                                 setSelected(currentValue)
                                             }}
                                             className="text-(--text-light)"
                                         >
-                                            {c.name}
+                                            {t(s.name)}
                                             <Check
                                                 className={cn(
                                                     "ml-auto",
-                                                    coverage === String(coverageIdFromSelf(c.self)) ? "opacity-100" : "opacity-0"
+                                                    specialty === String(specialtyIdFromSelf(s.self)) ? "opacity-100" : "opacity-0"
                                                 )}
                                             />
                                         </CommandItem>
