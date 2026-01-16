@@ -6,7 +6,6 @@ export type PatientDTO = {
     lastName: string;
     email: string;
     phone: string;
-
     coverages: string;
     neighborhood: string;
     appointments: string;
@@ -25,8 +24,14 @@ export interface PatientRegisterData {
     phone: string;
     password: string;
     repeatPassword: string;
-    coverageUrl: string;
-    neighborhoodUrl: string;
+    coverage: string;
+    neighborhoodId: string;
+}
+export interface PatientUpdateData {
+    name?: string;
+    lastName?: string;
+    phone?: string;
+    coverage?: string;
 }
 
 const extractIdFromUrl = (url: string): string => {
@@ -85,4 +90,12 @@ export async function fetchCountsPatient(): Promise<number> {
     const header = res.headers['x-total-count'] ?? res.headers['X-Total-Count'];
     const parsed = parseInt(String(header ?? ''), 10);
     return Number.isNaN(parsed) ? 0 : parsed;
+}
+export async function updatePatient(url: string, data: PatientUpdateData) {
+    const res = await api.patch(url, data, {
+        headers: {
+            'Content-Type': ContentTypes.PATIENT
+        }
+    });
+    return res.data;
 }
