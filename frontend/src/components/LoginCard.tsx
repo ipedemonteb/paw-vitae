@@ -64,9 +64,6 @@ function LoginCard() {
                         navigate("/", { replace: true });
                     }
                 }
-            },
-            onError: (error) => {
-
             }
         });
     };

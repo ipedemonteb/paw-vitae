@@ -79,6 +79,10 @@
     "form": {
       "save": "Guardar"
     },
+    "card":{
+      "reason": "Razón de la Visita:",
+      "details": "Ver Detalles"
+    },
     "details": {
       "title": "Detalles del Turno",
       "subtitle": "Ver y gestionar la información de la cita",
@@ -513,7 +517,11 @@
     "subtitle": "Médicos de la especialidad: {{ specialty }}",
     "search": "Buscar Doctores",
     "specialty": "Especialidad",
-    "coverage": "Cobertura",
+    "coverage": {
+      "title": "Cobertura",
+      "select": "Seleccionar cobertura...",
+      "all": "Todas las Coberturas"
+    },
     "sort": "Ordenar Por",
     "availability": "Disponibilidad",
     "week": {

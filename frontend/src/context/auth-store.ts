@@ -1,4 +1,5 @@
 import { jwtDecode } from "jwt-decode";
+import {ROLE_DOCTOR, ROLE_PATIENT} from "@/lib/constants.ts";
 type Claims = {
     sub: string;
     email?: string;
@@ -42,14 +43,31 @@ export const getAccessToken = () => state.accessToken;
 export const getRefreshToken = () => state.refreshToken;
 export const getClaims = () => state.claims;
 
+function validateJWTClaims(claims: JWTClaims) {
+    if (!claims.userId || !claims.role || !claims.sub) throw new Error("Missing Claims");
+    if (claims.role.toUpperCase() !== ROLE_DOCTOR && claims.role.toUpperCase() !== ROLE_PATIENT) throw new Error("Invalid Role")
+}
+
+
 export function setAuth(token?: string, refresh?: string) {
+    let claims: JWTClaims | null = null;
+    if (token) {
+        try {
+            claims = jwtDecode(token)
+        } catch (e) {
+            throw new Error("Ivalid JWT Format")
+        }
+        validateJWTClaims(claims!)
+    }
+
+    state.claims = claims;
+
     state.accessToken = token;
     state.refreshToken = refresh;
 
     if (token) localStorage.setItem(TOKEN_KEY, token);
     if (refresh) localStorage.setItem(REFRESH_KEY, refresh);
 
-    state.claims = token ? jwtDecode<Claims>(token) : null;
     emit();
 }
 

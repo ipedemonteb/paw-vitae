@@ -88,6 +88,10 @@
       "past": "Loading your past appointments...",
       "upcoming": "Loading your upcoming appointments..."
     },
+    "card":{
+      "reason": "Reason for Visit:",
+      "details": "View Details"
+    },
     "form": {
       "save": "Save"
     },
@@ -520,8 +524,20 @@
     "title": "Specialist Doctors",
     "subtitle": "Doctors specializing in: {{ specialty }}",
     "search": "Search for doctors",
-    "specialty": "Specialty",
-    "coverage": "Coverage",
+    "specialty": {
+      "title": "Specialty",
+      "select": "Select specialty...",
+      "all": "All Specialties",
+      "empty": "No Specialties Found",
+      "search": "Search for specialties..."
+    },
+    "coverage": {
+      "title": "Coverage",
+      "select": "Select coverage...",
+      "all": "All Coverages",
+      "empty": "No Coverages Found",
+      "search": "Search for coverages"
+    },
     "sort": "Sort By",
     "availability": "Availability",
     "week": {
