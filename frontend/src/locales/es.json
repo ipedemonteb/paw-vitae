@@ -389,7 +389,8 @@
       "tag": "Calificaciones",
       "title": "Calificaciones de Doctores",
       "subtitle": "Vea lo que nuestros pacientes dicen sobre nuestros doctores.",
-      "error" : "Hubo un error cargando las calificaciones. Por favor intente de nuevo mas tarde"
+      "error" : "Hubo un error cargando las calificaciones. Por favor intente de nuevo mas tarde",
+      "anonymous": "Paciente Anónimo"
     }
   },
   "about": {

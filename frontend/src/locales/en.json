@@ -389,7 +389,8 @@
       "tag": "Ratings",
       "title": "Doctor Ratings",
       "subtitle": "See what our patients say about our doctors.",
-      "error": "There has been an error loading the ratings. Please try again later."
+      "error": "There has been an error loading the ratings. Please try again later.",
+      "anonymous": "Anonymous User"
     }
   },
   "about": {

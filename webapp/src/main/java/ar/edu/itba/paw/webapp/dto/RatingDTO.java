@@ -11,8 +11,6 @@ public class RatingDTO {
     private long rating;
     private String comment;
 
-    private String patientName;
-    private String patientLastName;
 
     private URI self;
     private URI doctor;
@@ -24,8 +22,6 @@ public class RatingDTO {
         res.rating = rating.getRating();
         res.comment = rating.getComment();
 
-        res.patientName = rating.getPatient().getName();
-        res.patientLastName = rating.getPatient().getLastName();
 
         res.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(rating.getDoctor().getId())).build();
         res.patient = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(rating.getPatient().getId())).build();
@@ -87,17 +83,6 @@ public class RatingDTO {
         this.appointment = appointment;
     }
 
-    public String getPatientName() {
-        return patientName;
-    }
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
-    }
-    public String getPatientLastName() {
-        return patientLastName;
-    }
-    public void setPatientLastName(String patientLastName) {
-        this.patientLastName = patientLastName;
-    }
+
 
 }
