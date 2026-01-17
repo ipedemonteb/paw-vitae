@@ -207,10 +207,12 @@
       "old-first": "Más Antiguo",
       "new-first": "Más Reciente"
     },
+    "no-appointments": "No tiene consultas anteriores.",
     "component": {
       "reason": "Motivo de la Consulta:",
       "no-reason": "Sin Motivo Especificado",
       "files": "archivos",
+      "no-files": "No hay archivos subidos.",
       "details": "Ver Detalles",
       "report": "Reporte de la Consulta",
       "uploaded": "Subido por",
