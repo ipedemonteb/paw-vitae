@@ -198,6 +198,25 @@
     "error_generic": "Ocurrió un error al cambiar la contraseña. Inténtalo de nuevo.",
     "error_token_expired": "El token ha expirado o es inválido."
   },
+  "medical-history": {
+    "title": "Historial Médico",
+    "subtitle": "Visualiza los archivos médicos del paciente y registros de consultas",
+    "past": "Consultas Pasadas",
+    "sort": {
+      "title": "Ordenar Por",
+      "old-first": "Más Antiguo",
+      "new-first": "Más Reciente"
+    },
+    "component": {
+      "reason": "Motivo de la Consulta:",
+      "no-reason": "Sin Motivo Especificado",
+      "files": "archivos",
+      "details": "Ver Detalles",
+      "report": "Reporte de la Consulta",
+      "uploaded": "Subido por",
+      "view": "Ver"
+    }
+  },
   "common": {
     "go_back": "Volver atrás",
     "return_home": "Ir al Inicio"

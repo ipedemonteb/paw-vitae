@@ -270,6 +270,25 @@
     "error_generic": "An error occurred while changing the password. Please try again.",
     "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
   },
+  "medical-history": {
+    "title": "Medical History",
+    "subtitle": "View all your patients' medical files and appointment records",
+    "past": "Past Appointments",
+    "sort": {
+      "title": "Sort By",
+      "old-first": "Oldest First",
+      "new-first": "Newest First"
+    },
+    "component": {
+      "reason": "Reason for Visit:",
+      "no-reason": "No Reason Specified",
+      "files": "files",
+      "details": "View Details",
+      "report": "Visit Report",
+      "uploaded": "Uploaded By",
+      "view": "View"
+    }
+  },
   "common": {
     "go_back": "Go Back",
     "return_home": "Return Home"

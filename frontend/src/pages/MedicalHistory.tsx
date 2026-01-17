@@ -39,6 +39,7 @@ const pastAppointmentsContainer =
     "flex flex-col gap-4"
 
 function MedicalHistory() {
+    const { t } = useTranslation();
     const patientId = "23";
 
     return (
@@ -46,20 +47,20 @@ function MedicalHistory() {
           <div className={cardContainer}>
               <Card className={historyContainer}>
                   <div className={historyHeader}>
-                      <h1 className={historyTitle}>Medical History</h1>
-                      <p className={historySubtitle}>View all your patients' medical files and appointment records</p>
+                      <h1 className={historyTitle}>{t("medical-history.title")}</h1>
+                      <p className={historySubtitle}>{t("medical-history.subtitle")}</p>
                   </div>
                   <div className={historyContent}>
                       <PatientProfileCard patientId={patientId ?? ""} />
                       <Card className={historyAppointmentsCard}>
                           <div className={historyUpperContainer}>
-                              <p className={pastAppointments}>Past Appointments</p>
+                              <p className={pastAppointments}>{t("medical-history.past")}</p>
                               <div className={historySort}>
                                   <ChevronsUpDown className={historySortIcon}></ChevronsUpDown>
-                                  <p className={sortText}>Sort By</p>
+                                  <p className={sortText}>{t("medical-history.sort.title")}</p>
                                   <NativeSelect className="cursor-pointer">
-                                      <NativeSelectOption value="oldest">Oldest First</NativeSelectOption>
-                                      <NativeSelectOption value="newest">Newest First</NativeSelectOption>
+                                      <NativeSelectOption value="oldest">{t("medical-history.sort.old-first")}</NativeSelectOption>
+                                      <NativeSelectOption value="newest">{t("medical-history.sort.new-first")}</NativeSelectOption>
                                   </NativeSelect>
                               </div>
                           </div>
@@ -155,7 +156,7 @@ const upperBorderWhenOpen =
     "border-b border-[var(--gray-300)]";
 
 function PastAppointmentComponent() {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const locale = i18n?.language || "en-US";
     const d = new Date("2025-01-01T12:00:00");
     const day = d.getDate();
@@ -174,7 +175,7 @@ function PastAppointmentComponent() {
                     </div>
                     <div className={statusRow}>
                         <Badge className={badge}>
-                            Endocrinology
+                            Cardiology
                         </Badge>
                     </div>
                 </div>
@@ -201,7 +202,7 @@ function PastAppointmentComponent() {
                                 {"adasdasdasdasd".trim().length > 0 ? (
                                     <>
                                         <span className={reasonLabel}>
-                                    Reason for Visit:
+                                    {t("medical-history.component.reason")}
                                 </span>
                                         <div className={reasonTextWrap}>
                                     <span className={reasonText}>
@@ -211,7 +212,7 @@ function PastAppointmentComponent() {
                                         </div>
                                     </>
                                 ) : (
-                                    <span className="text-(--text-light)">No Reason Specified</span>
+                                    <span className="text-(--text-light)">{t("medical-history.component.no-reason")}</span>
                                 )}
                             </div>
                         </div>
@@ -219,7 +220,7 @@ function PastAppointmentComponent() {
                     <div className={bottomRow}>
                         <div className={specialtyPill}>
                             <Paperclip className={filesIcon}/>
-                            2 Files
+                            2 {t("medical-history.component.files")}
                         </div>
                         <Button
                             className={detailsButton}
@@ -228,7 +229,7 @@ function PastAppointmentComponent() {
                             aria-expanded={open}
                         >
                             <ChevronDown className={open ? "rotate-180 transition-transform" : "transition-transform"} />
-                            View Details
+                            {t("medical-history.component.details")}
                         </Button>
                     </div>
                 </div>
@@ -239,7 +240,7 @@ function PastAppointmentComponent() {
                         <Card className={reportContainer}>
                             <div className={reportTitle}>
                                 <ClipboardPenLine className={reportIcon}/>
-                                <h3>Visit Report</h3>
+                                <h3>{t("medical-history.component.report")}</h3>
                             </div>
                             <p>El paciente efectivamente, tiene dolor de cabeza, adjunto archivos de estudios.</p>
                         </Card>
@@ -280,6 +281,8 @@ const downloadButton =
     "border border-[var(--primary-color)] hover:border-[var(--primary-dark)] cursor-pointer";
 
 function FileComponent() {
+    const { t } = useTranslation();
+
     return (
         <Card className={fileCard}>
             <div className={fileUpperContainer}>
@@ -290,12 +293,12 @@ function FileComponent() {
                     <h3 className={reportFileTitle}>informe.pdf</h3>
                     <div className={uploadedByContainer}>
                         <User className={userIcon}/>
-                        <p>Uploaded By Patient</p>
+                        <p>{t("medical-history.component.uploaded")} Patient</p>
                     </div>
                 </div>
             </div>
             <div className={fileLowerContainer}>
-                <Button className={viewButton}><Eye/>View</Button>
+                <Button className={viewButton}><Eye/>{t("medical-history.component.view")}</Button>
                 <Button className={downloadButton}><Download/></Button>
             </div>
         </Card>
