@@ -7,6 +7,7 @@ import javax.swing.text.View;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -137,5 +138,8 @@ public abstract class User {
 
     public void setTokenExpiration(LocalDateTime tokenExpiration) { this.tokenExpiration = tokenExpiration; }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, name, lastName, password, phone, language, verified);
+    }
 }

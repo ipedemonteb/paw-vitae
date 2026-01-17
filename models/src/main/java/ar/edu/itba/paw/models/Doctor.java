@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "doctors")
@@ -141,5 +142,45 @@ public class Doctor extends User {
     public List<DoctorCertification> getCertifications() { return certifications; }
 
     public void setCertifications(List<DoctorCertification> certifications) { this.certifications = certifications; }
+
+
+    private int specialtiesHashCode() {
+        return specialtyList == null ? 0 :
+                specialtyList.stream()
+                        .mapToInt(Specialty::hashCode)
+                        .sum();
+    }
+
+    private int coveragesHashCode() {
+        return coverageList == null ? 0 :
+                coverageList.stream()
+                        .mapToInt(Coverage::hashCode)
+                        .sum();
+    }
+
+    private int officesHashCode() {
+        return doctorOffices == null ? 0 :
+                doctorOffices.stream()
+                        .mapToInt(DoctorOffice::hashCode)
+                        .sum();
+    }
+
+    private int experiencesHashCode() {
+        return experiences == null ? 0 :
+                experiences.stream()
+                        .mapToInt(DoctorExperience::hashCode)
+                        .sum();
+    }
+
+    private int certificationsHashCode() {
+        return certifications == null ? 0 :
+                certifications.stream()
+                        .mapToInt(DoctorCertification::hashCode)
+                        .sum();
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), specialtiesHashCode(), coveragesHashCode(), officesHashCode(), rating, ratingCount, imageId, profile.hashCode(), experiencesHashCode(), certificationsHashCode());
+    }
 
 }

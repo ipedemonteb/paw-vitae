@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "doctor_experience")
@@ -83,5 +84,10 @@ public class DoctorExperience {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(doctor.hashCode(), positionTitle, organizationName, startDate, endDate);
     }
 }
