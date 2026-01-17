@@ -517,7 +517,13 @@
     "title": "Médicos Especialistas",
     "subtitle": "Médicos de la especialidad: {{ specialty }}",
     "search": "Buscar Doctores",
-    "specialty": "Especialidad",
+    "specialty": {
+      "title": "Especialidad",
+      "select": "Seleccionar especialidad...",
+      "all": "Todas las Especialidades",
+      "empty": "No se encontraron especialidades",
+      "search": "Buscar por especialidades..."
+    },
     "coverage": {
       "title": "Cobertura",
       "select": "Seleccionar cobertura...",

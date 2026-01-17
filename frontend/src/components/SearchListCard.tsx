@@ -4,8 +4,9 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Calendar, UserRoundSearch, Mail, Phone} from "lucide-react";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import type {DoctorDTO} from "@/data/doctors.ts";
-import {useDoctorSpecialties} from "@/hooks/useDoctors.ts";
+import {useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
 import SearchSpecialtyBadgeComponent from "@/components/SearchSpecialtyBadgeComponent.tsx";
+import {initialsFallback} from "@/utils/userUtils.ts";
 
 const cardContainer =
     "flex flex-col items-stretch p-0 sm:flex-row";
@@ -35,15 +36,16 @@ export type SearchCardProps = {
 }
 
 function SearchListCard({doctor}: SearchCardProps) {
+    const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
 
     const specialties = useDoctorSpecialties(doctor.specialties);
-
+    const {url:imageUrl} = useDoctorImageUrl(doctor.self.split("/").pop());
     return (
         <Card className={cardContainer}>
             <div className={iconContainer}>
                 <Avatar className={icon}>
-                    <AvatarImage src="https://picsum.photos/200" />
-                    <AvatarFallback>A</AvatarFallback>
+                    <AvatarImage src={imageUrl || undefined} />
+                    <AvatarFallback>{avatarFallbackText}</AvatarFallback>
                 </Avatar>
             </div>
             <div className={dataContainer}>
