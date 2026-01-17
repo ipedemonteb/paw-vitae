@@ -279,10 +279,12 @@
       "old-first": "Oldest First",
       "new-first": "Newest First"
     },
+    "no-appointments": "No past appointments.",
     "component": {
       "reason": "Reason for Visit:",
       "no-reason": "No Reason Specified",
       "files": "files",
+      "no-files": "No files uploaded.",
       "details": "View Details",
       "report": "Visit Report",
       "uploaded": "Uploaded By",
