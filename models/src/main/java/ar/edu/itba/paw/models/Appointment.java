@@ -3,6 +3,7 @@ package ar.edu.itba.paw.models;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "appointments")
@@ -155,5 +156,11 @@ public class Appointment {
     public Rating getRating() {
         return rating;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, date, status, reason, specialty.hashCode(), doctor.hashCode(), patient.hashCode(), report, doctorOffice.hashCode(), allowFullHistory, (long) appointmentFiles.size());
+    }
+
 
 }

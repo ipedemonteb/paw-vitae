@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "doctor_certifications")
@@ -70,5 +71,10 @@ public class DoctorCertification {
 
     public void setIssueDate(LocalDate issueDate) {
         this.issueDate = issueDate;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(doctor.hashCode(), certificateName, issuingEntity, issueDate);
     }
 }

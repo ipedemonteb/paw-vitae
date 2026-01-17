@@ -48,6 +48,7 @@ public class Specialty {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id, key);
     }
+
 }
