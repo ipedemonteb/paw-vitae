@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card.tsx";
 import PatientProfileCard from "@/components/PatientProfileCard.tsx";
-import {ChevronsUpDown, Paperclip, ChevronDown, ClipboardPenLine, File, User, Download, Eye} from "lucide-react";
+import {ChevronsUpDown, Paperclip, ChevronDown, ClipboardPenLine, File, User, Download, Eye, Info} from "lucide-react";
 import {NativeSelect, NativeSelectOption} from "@/components/ui/native-select.tsx";
 import {useTranslation} from "react-i18next";
 import {Badge} from "@/components/ui/badge.tsx";
@@ -251,6 +251,7 @@ function PastAppointmentComponent() {
                             <FileComponent />
                             <FileComponent />
                         </div>
+                        {/*<NoFilesComponent />*/}
                     </div>
                 </div>
             </div>
@@ -302,6 +303,19 @@ function FileComponent() {
                 <Button className={downloadButton}><Download/></Button>
             </div>
         </Card>
+    );
+}
+
+const noFiles =
+    "flex flex-row items-center justify-center px-4 py-10 text-[var(--gray-500)] " +
+    " bg-[var(--gray-100)] rounded-lg gap-2 border border-dashed border-[var(--gray-400)]";
+
+function NoFilesComponent() {
+    return (
+        <div className={noFiles}>
+            <Info />
+            <p>No files uploaded.</p>
+        </div>
     );
 }
 
