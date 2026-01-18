@@ -48,6 +48,6 @@ public class Coverage {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id, name);
     }
 }

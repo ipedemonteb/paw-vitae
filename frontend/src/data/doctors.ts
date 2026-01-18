@@ -61,11 +61,16 @@ export interface DoctorRegisterData {
     phone: string;
     password: string;
     repeatPassword: string;
-    image: File | null;
-    selectedSpecialties: string[];
-    selectedCoverages: string[];
+    specialties: string[];
+    coverages: string[];
 }
-
+export interface DoctorUpdateForm{
+    name?: string;
+    lastName?: string;
+    phone?: string;
+    specialties?: string[];
+    coverages?: string[];
+}
 export interface ExperienceDTO {
     positionTitle: string;
     organizationName: string;
@@ -292,7 +297,7 @@ export async function getDoctorUnavailability(url: string) {
 
 export async function putDoctorCertificates(certificationsUrl: string, certificatesList: CertificateForm[]) {
     const payload = {
-        certificates: certificatesList // Debe coincidir con el nombre de la variable en DoctorCertificatesForm.java
+        certificates: certificatesList
     };
     const res = await api.put(certificationsUrl, payload, {
         headers: {
@@ -325,4 +330,33 @@ export async function putDoctorExperiences(experiencesUrl: string, experiencesLi
         }
     } );
     return res.data;
+}
+
+export async function updateDoctor(doctorUrl:string, form: DoctorUpdateForm){
+    const res =await api.patch(doctorUrl,form,{
+        headers: {
+            "content-type": ContentTypes.DOCTOR
+        }
+    });
+    return res.data;
+}
+
+export async function putDoctorImage(doctorImageUrl: string, image: File) {
+    const formData = new FormData();
+    formData.append("file", image);
+
+    const res = await api.put(doctorImageUrl, formData);
+    return res.data;
+}
+export async function updateDoctorProfileComplete(params: {
+    doctorUrl: string;
+    imageUrl: string;
+    data: DoctorUpdateForm;
+    imageFile?: File | null;
+}) {
+    if (params.imageFile) {
+        await putDoctorImage(params.imageUrl, params.imageFile);
+    }
+
+    return updateDoctor(params.doctorUrl, params.data);
 }

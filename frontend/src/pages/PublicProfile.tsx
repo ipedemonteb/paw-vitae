@@ -107,7 +107,6 @@ function PublicProfile() {
     );
 }
 
-
 const titleIcon = "w-5 h-5";
 const avatarContainer = "flex items-center w-20 h-20 mx-6 mb-2 border border-[var(--primary-light)] border-4 rounded-full sm:mb-0";
 const userDataContainer = "flex flex-col items-center md:items-start";
@@ -125,8 +124,16 @@ const cardTitleText = "text-lg font-[500]";
 const profileContent = "flex flex-col gap-0 items-center sm:flex-row pt-6";
 const aboutTitle = "text-lg font-[500]";
 const aboutText = "text-[var(--text-light)] text-md";
-
 const saveButtonStyle = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white sm:ml-auto";
+
+function EmptySection({ icon: Icon, text }: { icon: React.ElementType, text: string }) {
+    return (
+        <div className="flex flex-col items-center justify-center w-full py-8 text-[var(--text-light)] opacity-60">
+            <Icon className="w-10 h-10 mb-3 stroke-1" />
+            <p className="text-sm font-medium text-center">{text}</p>
+        </div>
+    );
+}
 
 function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
     doctor: DoctorDTO;
@@ -244,7 +251,7 @@ function CoverageCard({ coverages }: { coverages: CoverageDTO[] }) {
                         />
                     ))
                 ) : (
-                    <p className="text-[var(--text-light)]">{t("doctor.profile.no_coverages")}</p>
+                    <EmptySection icon={ShieldPlus} text={t("doctor.profile.no_coverages")} />
                 )}
             </div>
         </Card>
@@ -288,7 +295,7 @@ function OfficesCard({ offices }: { offices: OfficeDTO[] }) {
                         />
                     ))
                 ) : (
-                    <p className="text-[var(--text-light)]">{t("doctor.profile.no_offices", "No registered offices.")}</p>
+                    <EmptySection icon={Hospital} text={t("doctor.profile.no_offices", "No registered offices.")} />
                 )}
             </div>
         </Card>
@@ -331,7 +338,6 @@ function OfficeComponent({ officeTitle, neighborhoodUrl }: {
 }
 
 const experienceContent = "pr-6 py-6";
-const experienceEmpty = "text-sm text-[var(--text-light)]";
 const timelineContainer = "relative pl-10 before:content-[''] before:absolute before:top-3 before:bottom-3 before:left-14 before:w-[2px] before:-translate-x-1/2 before:bg-[var(--gray-300)]";
 
 function ExperienceCard({ experiences, isOwner, updateUrl }: {
@@ -365,9 +371,7 @@ function ExperienceCard({ experiences, isOwner, updateUrl }: {
             </div>
             <div className={experienceContent}>
                 {experiences.length === 0 ? (
-                    <p className={experienceEmpty}>
-                        {t("doctor.profile.no_experiences")}
-                    </p>
+                    <EmptySection icon={BriefcaseBusiness} text={t("doctor.profile.no_experiences")} />
                 ) : (
                     <div className={timelineContainer}>
                         {experiences.map((e, idx) => (
@@ -449,23 +453,27 @@ function CertificatesCard({ certifications, isOwner, updateUrl }: {
                 )}
             </div>
             <div className={certificatesScrollWrap}>
-                <ScrollArea className={certificatesScrollArea}>
-                    <div className={certificatesContent}>
-                        {certifications.length > 0 ? (
-                            certifications.map((cert, idx) => (
-                                <CertificateComponent
-                                    key={idx}
-                                    certificate={cert.certificateName}
-                                    issuer={cert.issuingEntity}
-                                    date={cert.issueDate}
-                                />
-                            ))
-                        ) : (
-                            <p className="text-sm text-[var(--text-light)]">{t("doctor.profile.no_certificates")}</p>
-                        )}
+                {certifications.length > 0 ? (
+                    <>
+                        <ScrollArea className={certificatesScrollArea}>
+                            <div className={certificatesContent}>
+                                {certifications.map((cert, idx) => (
+                                    <CertificateComponent
+                                        key={idx}
+                                        certificate={cert.certificateName}
+                                        issuer={cert.issuingEntity}
+                                        date={cert.issueDate}
+                                    />
+                                ))}
+                            </div>
+                        </ScrollArea>
+                        <div className={certificatesFadeBottom} />
+                    </>
+                ) : (
+                    <div className="h-68 flex items-center justify-center">
+                        <EmptySection icon={FileBadge} text={t("doctor.profile.no_certificates")} />
                     </div>
-                </ScrollArea>
-                <div className={certificatesFadeBottom} />
+                )}
             </div>
         </Card>
     );
@@ -538,8 +546,8 @@ function RatingsCard({ ratings }: { ratings: RatingsDTO[] }) {
                         <CarouselNext className="right-2 cursor-pointer" />
                     </Carousel>
                 ) : (
-                    <div className="p-6 text-center text-[var(--text-light)]">
-                        {t("doctor.profile.no_ratings", "No ratings yet.")}
+                    <div className="pb-6">
+                        <EmptySection icon={UserStar} text={t("doctor.profile.no_ratings", "No ratings yet.")} />
                     </div>
                 )}
             </div>

@@ -3,6 +3,7 @@ package ar.edu.itba.paw.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "doctor_profile")
@@ -59,5 +60,10 @@ public class DoctorProfile {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(doctor.hashCode(), bio, description);
     }
 }

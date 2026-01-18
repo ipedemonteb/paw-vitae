@@ -24,6 +24,18 @@
       "search": "Search specialty..."
     }
   },
+  "dashboard": {
+    "profile": {
+      "title": "My Profile",
+      "personalInfo": "Personal Information",
+      "edit": "Edit",
+      "email": "Email",
+      "phone": "Phone",
+      "specialties": "Specialties",
+      "coverages": "Coverages",
+      "coverage": "Medical Coverage"
+    }
+  },
   "files": {
     "title": "Drag & drop files here",
     "subtitle": "Only PDF files · Up to {{maxFiles}} files · Max {{maxSize}} each.",
@@ -79,6 +91,9 @@
     "card":{
       "reason": "Reason for Visit:",
       "details": "View Details"
+    },
+    "form": {
+      "save": "Save"
     },
     "details": {
       "title": "Appointment Details",
@@ -177,6 +192,7 @@
     "section_security": "Security",
     "section_coverage": "Coverage",
     "label_name": "Name",
+    "chooseImage": "Click to select an image",
     "label_lastname": "Last Name",
     "label_email": "Email",
     "label_phone": "Phone",
@@ -219,35 +235,60 @@
       "generic": "An error occurred during registration.",
       "missing_fields": "Please complete all required fields before continuing.",
       "required": "This field is required.",
+      "name_required": "Name is required.",
+      "lastname_required": "Last name is required.",
+      "phone_required": "Phone number is required.",
       "select_coverage": "Please select an insurance plan.",
+      "select_specialties": "Please select at least one specialty.",
       "select_neighborhoods": "Please select a neighborhood.",
       "no_specialties_available": "No specialties found at the moment. Please try again later.",
       "no_coverages_available": "No insurance plans found at the moment. Please try again later.",
       "terms_required" : "You must accept the terms and conditions to continue.",
       "select_neighborhood": "Please select a neighborhood."
 
+    }
+  },
+  "change_password": {
+    "title": "Change Password",
+    "subtitle": "Please enter a new secure password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm Password",
+    "submit": "Change Password",
+    "back_to_login": "Back to login",
+    "strength": {
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong"
     },
-    "change_password": {
-      "title": "Change Password",
-      "subtitle": "Please enter a new secure password",
-      "new_password": "New Password",
-      "confirm_password": "Confirm Password",
-      "submit": "Change Password",
-      "back_to_login": "Back to login",
-      "strength": {
-        "weak": "Weak",
-        "medium": "Medium",
-        "strong": "Strong"
-      },
-      "req_length": "Minimum 8 characters",
-      "passwords_match": "Passwors match",
-      "req_uppercase": "At least one uppercase letter",
-      "req_number": "At least one number",
-      "error_mismatch": "Passwords do not match",
-      "success_title": "Password Updated!",
-      "success_message": "Your password has been changed successfully. You can now login with your new credentials.",
-      "error_generic": "An error occurred while changing the password. Please try again.",
-      "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
+    "req_length": "Minimum 8 characters",
+    "passwords_match": "Passwors match",
+    "req_uppercase": "At least one uppercase letter",
+    "req_number": "At least one number",
+    "error_mismatch": "Passwords do not match",
+    "success_title": "Password Updated!",
+    "success_message": "Your password has been changed successfully. You can now login with your new credentials.",
+    "error_generic": "An error occurred while changing the password. Please try again.",
+    "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
+  },
+  "medical-history": {
+    "title": "Medical History",
+    "subtitle": "View all your patients' medical files and appointment records",
+    "past": "Past Appointments",
+    "sort": {
+      "title": "Sort By",
+      "old-first": "Oldest First",
+      "new-first": "Newest First"
+    },
+    "no-appointments": "No past appointments.",
+    "component": {
+      "reason": "Reason for Visit:",
+      "no-reason": "No Reason Specified",
+      "files": "files",
+      "no-files": "No files uploaded.",
+      "details": "View Details",
+      "report": "Visit Report",
+      "uploaded": "Uploaded By",
+      "view": "View"
     }
   },
   "common": {
@@ -369,7 +410,8 @@
       "tag": "Ratings",
       "title": "Doctor Ratings",
       "subtitle": "See what our patients say about our doctors.",
-      "error": "There has been an error loading the ratings. Please try again later."
+      "error": "There has been an error loading the ratings. Please try again later.",
+      "anonymous": "Anonymous User"
     }
   },
   "about": {
@@ -492,6 +534,7 @@
       "no_ratings": "No ratings yet.",
       "no_certificates": "No certificates uploaded.",
       "no_experiences": "No experiences added.",
+      "no_specialties": "No specialties added.",
       "present": "Present",
       "no_offices": "This doctor has not added any offices yet.",
       "no_coverages": "This doctor has not added any coverages yet.",

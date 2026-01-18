@@ -350,6 +350,9 @@ function RatingsSection() {
     const { data: ratings = [], isLoading, isError } = useAllRatings();
 
     return (
+        ratings.length === 0 ? (
+                null
+            ) : (
         <div className={container}>
             <div className={sectionHeader}>
                 <span className={sectionTag}>
@@ -370,11 +373,7 @@ function RatingsSection() {
                     <div className="text-center text-red-500">
                         {t("landing.ratings.error") ?? "Error al cargar reseñas"}
                     </div>
-                ) : ratings.length === 0 ? (
-                    <div className="text-center">
-                        {t("landing.ratings.empty") ?? "Sin reseñas todavía"}
-                    </div>
-                ) : (
+                ) :  (
                     <Carousel opts={{ align: "start", loop: true }} className={carousel}>
                         <CarouselContent className={carouselContent}>
                             {ratings.map((r, idx) => (
@@ -384,7 +383,7 @@ function RatingsSection() {
                                             className="max-w-none"
                                             comment={r.comment}
                                             rating={r.rating}
-                                            userName={`${r.patientName} ${r.patientLastName}`}
+                                            userName={t("landing.ratings.anonymous","Anónimo")}
                                             timeAgo={""}
                                         />
                                     </div>
@@ -397,7 +396,7 @@ function RatingsSection() {
                 )}
             </div>
         </div>
-    );
+    ));
 }
 
 export default Landing;

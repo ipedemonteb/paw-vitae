@@ -9,8 +9,6 @@ export interface RatingsDTO {
     appointment: string;
     doctor: string;
     patient: string;
-    patientName: string;
-    patientLastName: string;
 }
 export async function getDoctorRatings(url: string) {
     const res = await api.get<RatingsDTO[]>(url,{
