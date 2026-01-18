@@ -2,6 +2,10 @@ import React, { useMemo, useRef, useState } from "react";
 import { Upload, FileText, X, AlertTriangle } from "lucide-react";
 import {useTranslation} from "react-i18next";
 
+interface UploadFilesProps {
+    onChange?: (files: File[]) => void;
+}
+
 type PickedFile = {
     file: File;
     id: string;
@@ -21,7 +25,7 @@ function dedupId(f: File) {
 
 const uploadContainer = "w-full";
 
-export function UploadFiles() {
+export function UploadFiles({ onChange }: UploadFilesProps) {
     const { t } = useTranslation();
 
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -41,13 +45,17 @@ export function UploadFiles() {
         }
 
         const merged = Array.from(currentMap.values());
+
         if (merged.length > maxFiles) {
             setError(t("files.error.many", { maxFiles }));
-            setItems(merged.slice(0, maxFiles));
+            const sliced = merged.slice(0, maxFiles);
+            setItems(sliced);
+            if (onChange) onChange(sliced.map(x => x.file));
             return;
         }
 
         setItems(merged);
+        if (onChange) onChange(merged.map(x => x.file));
     }
 
     function validateAndAdd(incoming: File[]) {
@@ -87,8 +95,17 @@ export function UploadFiles() {
     }
 
     function removeById(id: string) {
-        setItems((prev) => prev.filter((it) => it.id !== id));
+        const newItems = items.filter((it) => it.id !== id);
+        setItems(newItems);
         setError(null);
+
+        if (onChange) onChange(newItems.map(x => x.file));
+    }
+
+    function handleClearAll() {
+        setItems([]);
+        setError(null);
+        if (onChange) onChange([]);
     }
 
     const dropzone =
@@ -138,7 +155,7 @@ export function UploadFiles() {
 
                 <div className="flex flex-col items-center text-center sm:text-left sm:flex-row sm:items-center sm:justify-start gap-4">
 
-                <div className="shrink-0 h-12 w-12 rounded-full bg-[var(--primary-bg)] flex items-center justify-center">
+                    <div className="shrink-0 h-12 w-12 rounded-full bg-[var(--primary-bg)] flex items-center justify-center">
                         <Upload className="h-6 w-6 text-[var(--primary-color)]" />
                     </div>
 
@@ -170,10 +187,7 @@ export function UploadFiles() {
                         <button
                             type="button"
                             className="text-sm text-[var(--danger-dark)] hover:text-[var(--danger)] transition cursor-pointer"
-                            onClick={() => {
-                                setItems([]);
-                                setError(null);
-                            }}
+                            onClick={handleClearAll}
                         >
                             {t("files.clear")}
                         </button>

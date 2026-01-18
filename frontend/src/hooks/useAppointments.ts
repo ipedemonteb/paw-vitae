@@ -3,9 +3,9 @@ import {
     type AppointmentsQuery, createAppointment,
     getAppointment,
     getAppointmentFiles,
-    listAppointments
+    listAppointments, uploadAppointmentFile
 } from "@/data/appointments.ts";
-import {keepPreviousData, useMutation, useQuery} from "@tanstack/react-query";
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 
 
@@ -45,8 +45,27 @@ export function useAppointmentFiles(id?: string | null) {
         enabled: !!id,
     })
 }
-export function createAppointmentMutation() {
-    return useMutation<any, AxiosError<any>, AppointmentForm>({
-        mutationFn: (data: AppointmentForm) => createAppointment(data),
+export function useBookAppointment() {
+    const queryClient = useQueryClient();
+
+    return useMutation<string, AxiosError<any>, { form: AppointmentForm, files: File[] }>({
+        mutationFn: async ({ form, files }) => {
+            const res = await createAppointment(form);
+            const location = res.headers['location'] || res.headers['Location'];
+            const newId = location?.split('/').pop();
+            if (!newId) {
+                throw new Error("No se pudo obtener el ID del turno creado");
+            }
+            console.log("aca antes")
+            for (const file of files) {
+                console.log("entree")
+                await uploadAppointmentFile(newId, file, 'patient');
+            }
+
+            return newId;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['auth', 'appointments'] });
+        }
     });
 }
