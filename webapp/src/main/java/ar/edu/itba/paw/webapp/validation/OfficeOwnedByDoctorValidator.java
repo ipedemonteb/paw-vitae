@@ -23,7 +23,7 @@ public class OfficeOwnedByDoctorValidator {
 
         @Override
         public boolean isValid(AppointmentForm form, javax.validation.ConstraintValidatorContext context) {
-            List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(form.getDoctorId());
+            List<DoctorOffice> offices = doctorOfficeService.getActiveByDoctorId(form.getDoctorId());
             if (offices.stream().noneMatch(office -> office.getId() == form.getOfficeId())) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("appointment.office.valid")
@@ -47,7 +47,7 @@ public class OfficeOwnedByDoctorValidator {
 
         @Override
         public boolean isValid(AppointmentForm form, javax.validation.ConstraintValidatorContext context) {
-            List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(form.getDoctorId());
+            List<DoctorOffice> offices = doctorOfficeService.getActiveByDoctorId(form.getDoctorId());
             if (offices.stream().noneMatch(office -> office.getId() == form.getOfficeId())) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("{appointment.office.valid}")

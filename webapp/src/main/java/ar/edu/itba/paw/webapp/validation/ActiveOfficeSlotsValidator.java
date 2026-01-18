@@ -26,7 +26,7 @@ public class ActiveOfficeSlotsValidator implements ConstraintValidator<ActiveOff
 
         Set<Long> ids = form.getDoctorOfficeAvailabilities().stream().map(DoctorOfficeAvailabilityForm::getOfficeId).collect(Collectors.toSet());
 
-        List<DoctorOffice> offices = doctorOfficeService.getByDoctorId(form.getDoctorId());
+        List<DoctorOffice> offices = doctorOfficeService.getActiveByDoctorId(form.getDoctorId());
 
         for (DoctorOffice office : offices) {
             if (!ids.contains(office.getId())) {

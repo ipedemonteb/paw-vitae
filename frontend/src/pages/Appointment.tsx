@@ -14,7 +14,7 @@ import {
     useDoctor,
     useDoctorOffices,
     useDoctorSpecialties,
-    useDoctorOfficeSpecialties,
+    useDoctorOfficesSpecialties,
     useDoctorOfficeAvailability, useDoctorUnavailability
 } from "@/hooks/useDoctors.ts";
 import type {OfficeDTO} from "@/data/office.ts";
@@ -110,7 +110,7 @@ function Appointment() {
     const { data: doctor, isLoading, isError } = useDoctor(doctorId);
     // TODO: Handle isLoading and isError
     const { data: offices } = useDoctorOffices(doctor?.offices ?? null);
-    const { data: officeSpecialties } = useDoctorOfficeSpecialties(offices ?? null);
+    const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices ?? null);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties ?? null);
     const { data: officeAvailability } = useDoctorOfficeAvailability(offices ?? null);
     const { data: doctorUnavailability } = useDoctorUnavailability(doctor?.unavailability ?? null);

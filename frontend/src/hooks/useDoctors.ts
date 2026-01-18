@@ -14,7 +14,7 @@ import {
     putDoctorExperiences,
     putDoctorCertificates,
     putDoctorProfile, type CertificateForm, type OfficeSpecialtyDTO, getDoctorOfficeAvailability, type AvailabilityDTO,
-    getDoctorUnavailability, getDoctorOffice
+    getDoctorUnavailability, getDoctorOffice, type DoctorOfficeQuery
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQueries, useQuery} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
@@ -82,6 +82,14 @@ export function useDoctorSpecialties(url?: string | null) {
     });
 }
 
+export function useDoctorOfficeSpecialties(url?: string) {
+    return useQuery({
+        queryKey: ['doctor', 'office', 'specialties', url],
+        queryFn: () => getDoctorOfficeSpecialties(url!),
+        enabled: !!url
+    })
+}
+
 export function useDoctorCoverages(url?: string | null) {
     return useQuery({
         queryKey: ['doctor', 'coverages', url],
@@ -114,11 +122,12 @@ export function useDoctorBiography(url?: string | null) {
     });
 }
 
-export function useDoctorOffices(url?: string | null) {
+export function useDoctorOffices(url?: string, query?: DoctorOfficeQuery) {
     return useQuery({
-        queryKey: ['doctor', 'offices', url],
-        queryFn: () => getDoctorOffices(url!),
+        queryKey: ['doctor', 'offices', url, query?.status],
+        queryFn: () => getDoctorOffices(url!, query),
         enabled: !!url,
+        placeholderData: keepPreviousData
     });
 }
 
@@ -130,7 +139,7 @@ export function useDoctorOffice(url?: string | null) {
     })
 }
 
-export function useDoctorOfficeSpecialties(offices?: OfficeDTO[] | null) {
+export function useDoctorOfficesSpecialties(offices?: OfficeDTO[] | null) {
     const queries = useQueries({
         queries: (offices ?? []).map((office) => ({
             queryKey: ['doctor', 'office', 'specialties', office.officeSpecialties ?? []],

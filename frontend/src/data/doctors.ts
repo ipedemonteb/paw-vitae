@@ -105,6 +105,10 @@ export interface UnavailabilityDTO {
     doctor: string;
 }
 
+export type DoctorOfficeQuery = {
+    status: string
+}
+
 const extractIdFromUrl = (url: string): string => {
     if (!url) return "";
     const segments = url.replace(/\/$/, "").split("/");
@@ -246,9 +250,14 @@ export async function getDoctorBiography(profileUrl: string) {
     } );
     return res.data;
 }
-export async function getDoctorOffices(officesUrl: string) {
+export async function getDoctorOffices(officesUrl: string, query?: DoctorOfficeQuery) {
     const res = await api.get<OfficeDTO[]>(officesUrl,{
-        headers: {"accept": ContentTypes.OFFICE_LIST,}
+        headers: {
+            Accept: ContentTypes.OFFICE_LIST
+        },
+        params: {
+            status: query?.status
+        }
     } );
     return res.data;
 }

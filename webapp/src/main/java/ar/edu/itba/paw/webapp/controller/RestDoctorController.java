@@ -125,8 +125,11 @@ public class RestDoctorController {
     @GET
     @Path("/{id:\\d+}/offices")
     @Produces(value = CustomMediaType.APPLICATION_OFFICE_LIST)
-    public Response getDoctorOffices(@PathParam("id") final long id) {
-        List<DoctorOffice> offices = this.doctorOfficeService.getAllByDoctorId(id);
+    public Response getDoctorOffices(
+            @PathParam("id") final long id,
+            @QueryParam("status") @DefaultValue("all") final String status
+    ) {
+        List<DoctorOffice> offices = this.doctorOfficeService.getByDoctorId(id, status);
         return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(offices, uriInfo)) {}).build();
     }
 

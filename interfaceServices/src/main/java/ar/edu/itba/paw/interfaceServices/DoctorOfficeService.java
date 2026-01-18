@@ -19,7 +19,11 @@ public interface DoctorOfficeService {
 
     Optional<DoctorOffice> getById(long id);
 
-    List<DoctorOffice> getByDoctorId(long doctorId);
+    List<DoctorOffice> getByDoctorId(long doctorId, String status);
+
+    List<DoctorOffice> getActiveByDoctorId(long doctorId);
+
+    List<DoctorOffice> getInactiveByDoctorId(long doctorId);
 
     List<DoctorOffice> getAllByDoctorId(long doctorId);
 

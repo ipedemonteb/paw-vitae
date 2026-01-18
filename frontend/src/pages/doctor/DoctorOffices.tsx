@@ -1,6 +1,8 @@
+import OfficesComponent from "@/components/OfficesComponent.tsx";
+
 function DoctorOffices() {
     return (
-        <div/>
+        <OfficesComponent/>
     )
 }
 

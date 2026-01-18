@@ -533,5 +533,24 @@
     "searchbar": {
       "empty": "No Results Found"
     }
+  },
+  "offices": {
+    "headerTitle": "Offices",
+    "filter": {
+      "message": "Status",
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "loadingText": "Loading your offices...",
+    "empty": {
+      "title": "No Offices Found",
+      "text": "There are no offices that match your search",
+      "textAll": "You haven't added any offices yet. Load an office to start having appointments"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    }
   }
 }

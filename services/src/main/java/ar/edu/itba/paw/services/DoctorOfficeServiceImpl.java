@@ -86,8 +86,25 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<DoctorOffice> getByDoctorId(long doctorId) {
+    public List<DoctorOffice> getByDoctorId(long doctorId, String status) {
+        String statusLower = status.toLowerCase();
+        return switch (statusLower) {
+            case "active" -> this.doctorOfficeDao.getActiveByDoctorId(doctorId);
+            case "inactive" -> this.doctorOfficeDao.getInactiveByDoctorId(doctorId);
+            default -> this.doctorOfficeDao.getByDoctorId(doctorId);
+        };
+    }
+
+    @Transactional
+    @Override
+    public List<DoctorOffice> getActiveByDoctorId(long doctorId) {
         return doctorOfficeDao.getActiveByDoctorId(doctorId);
+    }
+
+    @Transactional
+    @Override
+    public List<DoctorOffice> getInactiveByDoctorId(long doctorId) {
+        return doctorOfficeDao.getInactiveByDoctorId(doctorId);
     }
 
     @Transactional(readOnly = true)

@@ -8,6 +8,7 @@ import java.util.List;
 
 public class OfficeDTO {
     private String name;
+    private String status;
 
     private URI doctor;
     private URI neighborhood;
@@ -20,6 +21,7 @@ public class OfficeDTO {
         OfficeDTO dto = new OfficeDTO();
 
         dto.name = office.getOfficeName();
+        dto.status = office.isActive() ? "active" : "inactive"; //TODO this good?
 
         String doctorId = String.valueOf(office.getDoctor().getId());
         String officeId = String.valueOf(office.getId());
@@ -84,5 +86,13 @@ public class OfficeDTO {
 
     public void setNeighborhood(URI neighborhood) {
         this.neighborhood = neighborhood;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
