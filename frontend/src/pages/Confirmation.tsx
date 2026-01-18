@@ -1,9 +1,17 @@
 import { Card } from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {Check, Mail, Phone, Calendar, Clock, Stethoscope, Hospital, Info} from "lucide-react";
-import {useDoctor, useDoctorImageUrl} from "@/hooks/useDoctors.ts";
+import {useDoctor, useDoctorImageUrl, useDoctorOffice} from "@/hooks/useDoctors.ts";
 import {initialsFallback} from "@/utils/userUtils.ts";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
+import {useAppointment} from "@/hooks/useAppointments.ts";
+import {useSpecialty} from "@/hooks/useSpecialties.ts";
+import {useNeighborhood} from "@/hooks/useNeighborhoods.ts";
+import GenericError from "@/pages/GenericError.tsx";
+import {formatLongDate} from "@/utils/dateUtils.ts";
+import {Loader2} from "lucide-react";
+import {useTranslation} from "react-i18next";
+import {useParams} from "react-router-dom";
 
 const confirmationBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -45,7 +53,7 @@ const itemInfo =
 const infoContainer =
     "flex flex-row items-center gap-2 text-sm text-[var(--primary-color)] justify-center border border-[var(--primary-color)] rounded-lg p-2 bg-[var(--primary-bg)] mt-1";
 const buttonsContainer =
-    "flex flex-col sm:flex-row items-center justify-center mt-3 sm:mt-6 gap-4";
+    "flex flex-col sm:flex-row items-center justify-center mt-3 sm:mt-2 gap-4";
 const dashboardButton =
     "w-3xs cursor-pointer text-[var(--primary-color)] border border-[var(--primary-color)] bg-white hover:text-white hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)]";
 const detailsButton =
@@ -53,7 +61,44 @@ const detailsButton =
 
 function Confirmation() {
 
-    const doctorId = "24";
+    const { t } = useTranslation();
+    const { id } = useParams();
+
+    const { data: appointment, isError, isLoading } = useAppointment(id);
+
+    const locale = typeof navigator === "undefined" ? "es-AR" : navigator.language || "es-AR";
+
+    const {
+        data: specialty,
+        isLoading: isLoadingSpecialty,
+        isError: isErrorSpecialty
+    } = useSpecialty(appointment?.specialty);
+
+    const {
+        data: office,
+        isLoading: isLoadingOffice,
+        isError: isErrorOffice
+    } = useDoctorOffice(appointment?.doctorOffice);
+
+    const {
+        data:neighborhood,
+        isLoading: isLoadingNeighborhood,
+        isError: isErrorNeighborhood
+    } =useNeighborhood(office?.neighborhood);
+
+    if (isLoading || isLoadingSpecialty || isLoadingOffice || isLoadingNeighborhood) {
+        return <div className="flex justify-center mt-36"><Loader2 className="animate-spin h-8 w-8" /></div>;
+    }
+
+    if (isError || !appointment || isErrorSpecialty || isErrorOffice || isErrorNeighborhood) {
+        return <GenericError code={404} />;
+    }
+
+    const formattedDate = appointment.date
+        ? formatLongDate(new Date(appointment.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),locale)
+        : "";
+
+    const doctorId = appointment.doctor.split('/').pop() || "";
 
     return (
         <div className={confirmationBackground}>
@@ -77,7 +122,7 @@ function Confirmation() {
                                     </div>
                                     <div className={itemContent}>
                                         <p className={itemTitle}>Date</p>
-                                        <p className={itemInfo}>27/01/2026</p>
+                                        <p className={itemInfo}>{formattedDate}</p>
                                     </div>
                                 </div>
                                 <div className={itemContainer}>
@@ -86,7 +131,7 @@ function Confirmation() {
                                     </div>
                                     <div className={itemContent}>
                                         <p className={itemTitle}>Time</p>
-                                        <p className={itemInfo}>14:00</p>
+                                        <p className={itemInfo}>{new Date(appointment.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
                                     </div>
                                 </div>
                             </div>
@@ -97,7 +142,7 @@ function Confirmation() {
                                     </div>
                                     <div className={itemContent}>
                                         <p className={itemTitle}>Specialty</p>
-                                        <p className={itemInfo}>Endocrinology</p>
+                                        <p className={itemInfo}>{specialty?.name ? t(specialty.name) : "No specialty"}</p>
                                     </div>
                                 </div>
                                 <div className={itemContainer}>
@@ -106,7 +151,7 @@ function Confirmation() {
                                     </div>
                                     <div className={itemContent}>
                                         <p className={itemTitle}>Office</p>
-                                        <p className={itemInfo}>Main - Almagro</p>
+                                        <p className={itemInfo}>{`${office?.name}, ${neighborhood?.name}`|| "Consultorio"}</p>
                                     </div>
                                 </div>
                             </div>
