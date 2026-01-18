@@ -185,7 +185,7 @@ function StatusCard({ status }: { status: "completo" | "cancelado" | "confirmado
 const dateText =
     "text-[var(--text-light)] text-sm";
 
-function DateCard({date}:{date: string}) {
+export function DateCard({date}:{date: string}) {
 
     const { t } = useTranslation();
 

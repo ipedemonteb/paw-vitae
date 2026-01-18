@@ -31,6 +31,7 @@ import { GuestGuard } from "@/guards/guestGuard";
 import { AuthGuard } from "@/guards/authGuard";
 import { ExcludeRolesGuard } from "@/guards/excludedRolesGuard.tsx";
 import MedicalHistory from "@/pages/MedicalHistory.tsx";
+import AppointmentConfirmation from "@/pages/AppointmentConfirmation.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -146,6 +147,10 @@ export const router = createBrowserRouter([
                     {
                         path: "patient/dashboard/appointment-details/:id",
                         element: <AppointmentDetails />,
+                    },
+                    {
+                        path: "/appointment-confirmation/:appointmentId",
+                        element: <AppointmentConfirmation />,
                     }
                 ]
             },

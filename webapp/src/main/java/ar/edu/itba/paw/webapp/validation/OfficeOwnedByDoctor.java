@@ -6,7 +6,7 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = { OfficeOwnedByDoctorValidator.ForDoctorOfficeForm.class,
+@Constraint(validatedBy = {
                             OfficeOwnedByDoctorValidator.ForDoctorOfficeAvailabilityForm.class,
                             OfficeOwnedByDoctorValidator.ForCreateAppointmentForm.class
 })

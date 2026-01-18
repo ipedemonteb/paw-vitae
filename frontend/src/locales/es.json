@@ -534,6 +534,9 @@
       "no_description_available": "Este doctor aún no ha agregado una descripción."
     }
   },
+  "appointment_confirmation": {
+    "dashboard": "Volver al Panel"
+  },
   "search": {
     "title": "Médicos Especialistas",
     "subtitle": "Médicos de la especialidad: {{ specialty }}",
@@ -550,6 +553,7 @@
       "select": "Seleccionar cobertura...",
       "all": "Todas las Coberturas"
     },
+
     "sort": "Ordenar Por",
     "availability": "Disponibilidad",
     "week": {

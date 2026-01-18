@@ -1,5 +1,12 @@
-import {type AppointmentsQuery, getAppointment, getAppointmentFiles, listAppointments} from "@/data/appointments.ts";
-import {keepPreviousData, useQuery} from "@tanstack/react-query";
+import {
+    type AppointmentForm,
+    type AppointmentsQuery, createAppointment,
+    getAppointment,
+    getAppointmentFiles,
+    listAppointments
+} from "@/data/appointments.ts";
+import {keepPreviousData, useMutation, useQuery} from "@tanstack/react-query";
+import {AxiosError} from "axios";
 
 
 
@@ -37,4 +44,9 @@ export function useAppointmentFiles(id?: string | null) {
         queryFn: () => getAppointmentFiles(id!),
         enabled: !!id,
     })
+}
+export function createAppointmentMutation() {
+    return useMutation<any, AxiosError<any>, AppointmentForm>({
+        mutationFn: (data: AppointmentForm) => createAppointment(data),
+    });
 }
