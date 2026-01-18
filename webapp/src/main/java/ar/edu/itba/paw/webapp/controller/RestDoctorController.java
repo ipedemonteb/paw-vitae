@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.FileUtils;
+import ar.edu.itba.paw.webapp.utils.ResponseUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
@@ -80,7 +81,7 @@ public class RestDoctorController {
     public Response list(
             @QueryParam("specialty") @DefaultValue("0") @Min(0) long specialtyId,
             @QueryParam("page") @DefaultValue("1") @Min(1) int page,
-            @QueryParam("pageSize") @DefaultValue("9") @Min(1) @Max(25) int pageSize,
+            @QueryParam("pageSize") @DefaultValue("9") @Min(1) @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE) int pageSize,
             @QueryParam("coverage") @DefaultValue("0") @Min(0) long coverageId,
             @QueryParam("weekdays") List<Integer> weekdays,
             @QueryParam("keyword") @DefaultValue("") String keyword,
