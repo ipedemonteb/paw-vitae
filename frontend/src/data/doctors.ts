@@ -6,6 +6,7 @@ import type {CoverageDTO} from "@/data/coverages.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
 import type {OfficeDTO} from "@/data/office.ts";
 import {DOCTORS_PAGE_SIZE} from "@/lib/constants.ts";
+import qs from 'qs';
 
 export type ChangePasswordForm = {
     password: string;
@@ -61,8 +62,8 @@ export interface DoctorRegisterData {
     phone: string;
     password: string;
     repeatPassword: string;
-    specialties: string[];
-    coverages: string[];
+    selectedSpecialties: string[];
+    selectedCoverages: string[];
 }
 export interface DoctorUpdateForm{
     name?: string;
@@ -126,10 +127,12 @@ function normalizeDoctorsQuery(query: DoctorsQuery) {
     if (Number.isNaN(query.page)) query.page = 1;
     if (Number.isNaN(query.pageSize)) query.pageSize = DOCTORS_PAGE_SIZE;
     if (query.weekdays?.length === 0) query.weekdays = undefined;
+    query.weekdays = query.weekdays?.filter(w => !Number.isNaN(w))
 }
 
 export async function listDoctors(params: DoctorsQuery): Promise<PaginationData<DoctorDTO[]>> {
     normalizeDoctorsQuery(params)
+    console.log(params)
     const res = await api.get<DoctorDTO[]>("/doctors", {
         params: {
             specialty: params.specialty,
@@ -141,8 +144,9 @@ export async function listDoctors(params: DoctorsQuery): Promise<PaginationData<
             page: params.page,
             pageSize: params.pageSize
         },
+        paramsSerializer: (p) => qs.stringify(p, { arrayFormat: "repeat" }),
         headers: {
-            "accept": ContentTypes.DOCTOR_LIST
+            Accept: ContentTypes.DOCTOR_LIST
         }
     });
     const total = Number(res.headers["x-total-count"]);

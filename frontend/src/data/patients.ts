@@ -24,8 +24,8 @@ export interface PatientRegisterData {
     phone: string;
     password: string;
     repeatPassword: string;
-    coverage: string;
-    neighborhoodId: string;
+    coverageUrl: string;
+    neighborhoodUrl: string;
 }
 export interface PatientUpdateData {
     name?: string;

@@ -27,6 +27,7 @@ import type { SpecialtyDTO } from "@/data/specialties.ts";
 import type { OfficeSpecialtyDTO } from "@/data/doctors.ts";
 import { buildTimeSlotsForDay, dateKey, isoDateKey } from "@/utils/dateUtils.ts";
 import { startOfDay } from "date-fns";
+import {useParams} from "react-router-dom";
 
 const SLOT_MINUTES = 60;
 
@@ -102,8 +103,8 @@ const bookButton =
     "mt-6 py-4 w-xs bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 function Appointment() {
-    // TODO: Obtener el ID del doctor dinámicamente desde la URL o props si esta página se reutiliza
-    const doctorId = "6";
+
+    const {id: doctorId} = useParams<{ id: string }>();
 
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -121,6 +122,7 @@ function Appointment() {
 
     const { data: doctor, isLoading, isError } = useDoctor(doctorId);
     const { data: offices } = useDoctorOffices(doctor?.offices);
+    // TODO: Handle isLoading and isError
     const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices ?? null);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties ?? null);
     const { data: officeAvailability } = useDoctorOfficeAvailability(offices ?? null);
@@ -493,7 +495,7 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
                 {selectedDate ? (
                     <div className={availableTimesFormat}>
                         {availableTimes.length === 0 ? (
-                            <p className="px-5 text-sm text-[var(--text-light)]">
+                            <p className="px-5 text-sm text-(--text-light)">
                                 {t("appointment.booking.no-times")}
                             </p>
                         ) : (
@@ -572,7 +574,7 @@ function MedicalHistory({ checked, onCheckedChange }: { checked: boolean, onChec
 
     return (
         <div className={medicalCointainer}>
-            <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-[var(--primary-color)] has-[[aria-checked=true]]:bg-[var(--primary-bg)] dark:has-[[aria-checked=true]]:border-[var(--primary-light)] dark:has-[[aria-checked=true]]:bg-[var(--primary-dark)]">
+            <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-aria-checked:border-(--primary-color) has-aria-checked:bg-(--primary-bg) dark:has-aria-checked:border-(--primary-light) dark:has-aria-checked:bg-(--primary-dark)">
                 <Checkbox
                     id="toggle-2"
                     checked={checked}
