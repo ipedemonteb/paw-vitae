@@ -295,6 +295,9 @@
     "go_back": "Go Back",
     "return_home": "Return Home"
   },
+  "appointment_confirmation": {
+    "dashboard": "Go to Dashboard"
+  },
   "error": {
     "403": {
       "title": "Access Denied",

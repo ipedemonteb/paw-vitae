@@ -29,6 +29,18 @@ export type AppointmentFileDTO = {
     view: string;
 }
 
+export type AppointmentForm={
+    appointmentDate: string;
+    appointmentHour: string;
+    reason: string;
+    specialtyId: string;
+    doctorId: string;
+    officeId: string;
+    patientId: string;
+    allowFullHistory: boolean;
+
+}
+
 export type AppointmentCollection = "upcoming" | "history";
 export type AppointmentFilter = "all" | "today" | "week" | "month" | "cancelled" | "completed";
 
@@ -95,4 +107,9 @@ export async function getAppointmentFiles(id: string) {
         headers: {"accept": ContentTypes.APPOINTMENT_FILE_LIST}
     })
     return res.data;
+}
+export async function createAppointment(appointment: AppointmentForm) {
+    return await api.post<AppointmentDTO>("/appointments", appointment, {
+    headers: {"Content-Type": ContentTypes.APPOINTMENT}
+});
 }

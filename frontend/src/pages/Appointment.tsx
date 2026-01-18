@@ -5,23 +5,28 @@ import { Stethoscope, Hospital, CalendarDays } from "lucide-react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import { DatePicker } from "@/components/ui/date-picker.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import {Textarea} from "@/components/ui/textarea.tsx";
-import {UploadFiles} from "@/components/UploadFiles.tsx";
-import {Label} from "@/components/ui/label.tsx";
-import {Checkbox} from "@/components/ui/checkbox.tsx";
-import {useTranslation} from "react-i18next";
+import { Textarea } from "@/components/ui/textarea.tsx";
+import { UploadFiles } from "@/components/UploadFiles.tsx";
+import { Label } from "@/components/ui/label.tsx";
+import { Checkbox } from "@/components/ui/checkbox.tsx";
+import { useTranslation } from "react-i18next";
 import {
     useDoctor,
     useDoctorOffices,
     useDoctorSpecialties,
     useDoctorOfficesSpecialties,
-    useDoctorOfficeAvailability, useDoctorUnavailability
+    useDoctorOfficeAvailability,
+    useDoctorUnavailability
 } from "@/hooks/useDoctors.ts";
-import type {OfficeDTO} from "@/data/office.ts";
-import type {SpecialtyDTO} from "@/data/specialties.ts";
-import type {OfficeSpecialtyDTO} from "@/data/doctors.ts";
-import {buildTimeSlotsForDay, dateKey, isoDateKey} from "@/utils/dateUtils.ts";
-import {startOfDay} from "date-fns";
+import { createAppointmentMutation } from "@/hooks/useAppointments.ts";
+import { useAuth } from "@/hooks/useAuth.ts";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import type { OfficeDTO } from "@/data/office.ts";
+import type { SpecialtyDTO } from "@/data/specialties.ts";
+import type { OfficeSpecialtyDTO } from "@/data/doctors.ts";
+import { buildTimeSlotsForDay, dateKey, isoDateKey } from "@/utils/dateUtils.ts";
+import { startOfDay } from "date-fns";
 
 const SLOT_MINUTES = 60;
 
@@ -97,19 +102,25 @@ const bookButton =
     "mt-6 py-4 w-xs bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 function Appointment() {
-
-    const doctorId = "24";
+    // TODO: Obtener el ID del doctor dinámicamente desde la URL o props si esta página se reutiliza
+    const doctorId = "6";
 
     const { t } = useTranslation();
+    const navigate = useNavigate();
+    const auth = useAuth();
+    const { mutate: bookAppointment, isPending: isBooking } = createAppointmentMutation();
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null);
     const [selectedOffice, setSelectedOffice] = useState<string | null>(null);
 
+    // Estados elevados de los componentes hijos
+    const [reason, setReason] = useState("");
+    const [allowFullHistory, setAllowFullHistory] = useState(true);
+
     const { data: doctor, isLoading, isError } = useDoctor(doctorId);
-    // TODO: Handle isLoading and isError
-    const { data: offices } = useDoctorOffices(doctor?.offices ?? null);
+    const { data: offices } = useDoctorOffices(doctor?.offices);
     const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices ?? null);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties ?? null);
     const { data: officeAvailability } = useDoctorOfficeAvailability(offices ?? null);
@@ -218,7 +229,56 @@ function Appointment() {
         }
     }, [selectedDate, isDateSelectable]);
 
-    //TODO: Handle better
+    const handleBook = () => {
+        if (!auth.userId) {
+            toast.error(t("error"), { description: "Debe iniciar sesión para reservar." });
+            navigate("/login");
+            return;
+        }
+
+        if (!selectedDate || !selectedTime || !selectedSpecialty || !selectedOffice) {
+            toast.error(t("error"), { description: t("register.errors.missing_fields", "Complete todos los campos") });
+            return;
+        }
+
+        // Extracción de IDs desde las URLs (HATEOAS)
+        const specialtyId = selectedSpecialty.split('/').pop() || "";
+        const officeId = selectedOffice.split('/').pop() || "";
+
+        // Formateo de fecha y hora para el Backend (Java espera LocalDate 'yyyy-MM-dd' e Integer hora)
+        // Ajustamos la fecha local para evitar problemas de timezone al convertir a ISO
+        const year = selectedDate.getFullYear();
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+
+        // Extraemos solo la hora "14" de "14:00"
+        const hourStr = selectedTime.split(':')[0];
+
+        const appointmentForm = {
+            appointmentDate: dateStr,
+            appointmentHour: hourStr,
+            reason: reason,
+            specialtyId: specialtyId,
+            doctorId: doctorId,
+            officeId: officeId,
+            patientId: auth.userId,
+            allowFullHistory: allowFullHistory
+        };
+
+        bookAppointment(appointmentForm, {
+            onSuccess: (data) => {
+                console.log("acaaa")
+                const newId = data.headers.get("Location")?.split('/').pop();
+                navigate(`/appointment-confirmation/${newId}`);
+            },
+            onError: (error) => {
+                console.error(error);
+                toast.error(t("error"), { description: "Error al reservar el turno. Intente nuevamente." });
+            }
+        });
+    };
+
     if (isLoading) {
         return (
             <div>Loading...</div>
@@ -263,13 +323,17 @@ function Appointment() {
                             isDateDisabled={(d) => !isDateSelectable(d)}
                         />
                         <div className={optionalsContainer}>
-                            <ReasonInput />
+                            <ReasonInput value={reason} onChange={setReason} />
                             <FilesUpload />
-                            <MedicalHistory />
+                            <MedicalHistory checked={allowFullHistory} onCheckedChange={setAllowFullHistory} />
                         </div>
                         <div className={bookContainer}>
-                            <Button className={bookButton}>
-                                {t("appointment.booking.book")}
+                            <Button
+                                className={bookButton}
+                                onClick={handleBook}
+                                disabled={isBooking || !selectedTime}
+                            >
+                                {isBooking ? t("saving") : t("appointment.booking.book")}
                             </Button>
                         </div>
                     </div>
@@ -474,13 +538,17 @@ function Confirmation({ text }: { text: string }) {
 const reasonCard =
     "flex flex-col gap-2";
 
-function ReasonInput() {
+function ReasonInput({ value, onChange }: { value: string, onChange: (v: string) => void }) {
     const { t } = useTranslation();
 
     return (
         <div className={reasonCard}>
             <h3 className={selectorTitle}>{t("appointment.booking.reason")}</h3>
-            <Textarea placeholder={t("appointment.booking.enter-reason")}/>
+            <Textarea
+                placeholder={t("appointment.booking.enter-reason")}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+            />
         </div>
     );
 }
@@ -499,7 +567,7 @@ function FilesUpload() {
 const medicalCointainer =
     "flex flex-col";
 
-function MedicalHistory() {
+function MedicalHistory({ checked, onCheckedChange }: { checked: boolean, onCheckedChange: (v: boolean) => void }) {
     const { t } = useTranslation();
 
     return (
@@ -507,7 +575,8 @@ function MedicalHistory() {
             <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-[var(--primary-color)] has-[[aria-checked=true]]:bg-[var(--primary-bg)] dark:has-[[aria-checked=true]]:border-[var(--primary-light)] dark:has-[[aria-checked=true]]:bg-[var(--primary-dark)]">
                 <Checkbox
                     id="toggle-2"
-                    defaultChecked
+                    checked={checked}
+                    onCheckedChange={onCheckedChange}
                     className="data-[state=checked]:border-[var(--primary-color)] data-[state=checked]:bg-[var(--primary-color)] data-[state=checked]:text-white dark:data-[state=checked]:border-[var(--primary-light)] dark:data-[state=checked]:bg-[var(--primary-light)] dark:data-[state=checked]:text-[var(--text-color)] cursor-pointer"
                 />
                 <div className="grid gap-1.5 font-normal">
