@@ -170,7 +170,7 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
                                     </div>
                                 </>
                             ) : (
-                                <span className="text-(--text-light)">No Reason Specified</span>
+                                <span className="text-(--text-light)">{t("medical-history.component.no-reason")}</span>
                             )}
 
                         </div>
