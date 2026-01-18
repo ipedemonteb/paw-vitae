@@ -71,7 +71,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={t(componentType.title)}>
-                <div className="flex felx-col items-center sm:justify-center gap-2 mt-2 sm:mt-0">
+                <div className="flex items-center sm:justify-center gap-2 mt-2 sm:mt-0">
                     <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
                         {t(componentType.filterMessage)}:
                     </span>

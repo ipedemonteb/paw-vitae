@@ -56,6 +56,13 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
     }
 
     @Override
+    public List<DoctorOffice> getInactiveByDoctorId(long doctorId) {
+        return em.createQuery("FROM DoctorOffice d WHERE d.doctor.id = :doctorId AND d.active = false AND d.removed IS NULL", DoctorOffice.class)
+                .setParameter("doctorId", doctorId)
+                .getResultList();
+    }
+
+    @Override
     public DoctorOffice update(DoctorOffice o) {
         o.setNeighborhood(em.getReference(Neighborhood.class, o.getNeighborhood().getId()));
         List<Specialty> specialtiesRefs = o.getSpecialties().stream()

@@ -524,5 +524,24 @@
     "searchbar": {
       "empty": "No se han encontrado resultados"
     }
+  },
+  "offices": {
+    "headerTitle": "Oficinas",
+    "filter": {
+      "message": "Estado",
+      "all": "Todas",
+      "active": "Activas",
+      "inactive": "Inactivas"
+    },
+    "loadingText": "Cargando sus oficinas...",
+    "empty": {
+      "title": "No se han encontrado oficinas",
+      "text": "No se han encontrado oficinas que satisfagan su búsqueda",
+      "textAll": "No ha agregado ninguna oficina aun. Cargue una oficina para comenzar a atender citas"
+    },
+    "status": {
+      "active": "Activa",
+      "inactive": "Inactiva"
+    }
   }
 }
