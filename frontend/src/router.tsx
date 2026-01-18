@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
                 element: <About />
             },
             {
-                path: "profile",
+                path: "profile/:id",
                 element: <PublicProfile />
             },
             {
@@ -108,7 +108,7 @@ export const router = createBrowserRouter([
                 element: <AuthGuard />,
                 children: [
                     {
-                        path: "appointment",
+                        path: "appointment/:id",
                         element: <Appointment />
                     },
                 ]
