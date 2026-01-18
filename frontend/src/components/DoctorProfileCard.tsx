@@ -54,7 +54,7 @@ function DoctorProfileCard( { doctorId } : { doctorId: string | undefined} ) {
                         <p>{doctor?.phone}</p>
                     </div>
                 </div>
-                {doctor?.ratingCount > 0 && (
+                {(doctor?.ratingCount ?? 0) > 0 && (
                 <div className={ratingContent}>
 
                     <RatingStars rating={doctor?.rating || 0} sizeClassName="h-4 w-4" />

@@ -16,7 +16,6 @@ import {
     Save,
     Pencil,
     ShieldPlus,
-    Check
 } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card.tsx";
@@ -35,7 +34,6 @@ const cardHeaderStyles = "flex items-center justify-between px-6 py-4 bg-white b
 const cardTitleStyles = "text-xl font-semibold text-gray-800 flex items-center gap-2";
 const sectionStyles = "p-6";
 const gridStyles = "grid grid-cols-1 md:grid-cols-2 gap-6";
-const infoLabelStyles = "text-sm font-medium text-gray-500 mb-1";
 const infoValueStyles = "text-base font-medium text-gray-900";
 const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white";
 

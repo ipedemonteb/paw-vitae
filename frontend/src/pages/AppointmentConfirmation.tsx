@@ -13,11 +13,9 @@ import {
 } from "lucide-react";
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
 import {useAppointment} from "@/hooks/useAppointments.ts";
-import {useDoctor, useDoctorOffice} from "@/hooks/useDoctors.ts";
-import {usePatient} from "@/hooks/usePatients.ts";
+import { useDoctorOffice} from "@/hooks/useDoctors.ts";
 import GenericError from "@/pages/GenericError.tsx";
 import {useSpecialty} from "@/hooks/useSpecialties.ts";
-import {DateCard} from "@/pages/AppointmentDetails.tsx";
 import {formatLongDate} from "@/utils/dateUtils.ts";
 import {useNeighborhood} from "@/hooks/useNeighborhoods.ts";
 

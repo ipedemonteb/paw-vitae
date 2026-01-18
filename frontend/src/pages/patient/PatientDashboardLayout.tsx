@@ -56,7 +56,7 @@ function PatientDashboardLayout() {
     const patientId=auth.userId
     return (
         <div className={dashboardContainer}>
-            <PatientProfileCard patientId={patientId}/>
+            <PatientProfileCard patientId={patientId || ""}/>
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>
                     <DashboardTab to="/patient/dashboard/upcoming" end icon={Calendar}>
