@@ -33,7 +33,6 @@ import { Label } from "@/components/ui/label.tsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import GenericError from "@/pages/GenericError.tsx";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full pb-10";
@@ -42,25 +41,43 @@ const cardHeaderStyles = "flex items-center justify-between px-6 py-4 bg-white b
 const cardTitleStyles = "text-xl font-semibold text-gray-800 flex items-center gap-2";
 const sectionStyles = "p-6";
 const gridStyles = "grid grid-cols-1 md:grid-cols-2 gap-6";
-const infoLabelStyles = "text-sm font-medium text-gray-500 mb-1";
 const infoValueStyles = "text-base font-medium text-gray-900";
 const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white";
 
 function DoctorAccount() {
     const { t } = useTranslation();
     const auth = useAuth();
-    const queryClient = useQueryClient();
     const [isEditing, setIsEditing] = useState(false);
 
-    const { data: doctor, isLoading, isError } = useDoctor(auth.userId);
-    const { data: currentSpecialties } = useDoctorSpecialties(doctor?.specialties);
-    const { data: currentCoverages } = useDoctorCoverages(doctor?.coverages);
-    const updateProfileMutation = useUpdateDoctorProfile();
-    const { data: allSpecialtiesList } = useSpecialties();
-    const { data: allCoveragesList } = useCoverages();
+    const {
+        data: doctor,
+        isLoading: isLoadingDoctor,
+        isError
+    } = useDoctor(auth.userId);
 
+    const {
+        data: currentSpecialties,
+        isLoading: isLoadingCurrentSpecs
+    } = useDoctorSpecialties(doctor?.specialties);
+
+    const {
+        data: currentCoverages,
+        isLoading: isLoadingCurrentCovs
+    } = useDoctorCoverages(doctor?.coverages);
+
+    const {
+        data: allSpecialtiesList,
+        isLoading: isLoadingAllSpecs
+    } = useSpecialties();
+
+    const {
+        data: allCoveragesList,
+        isLoading: isLoadingAllCovs
+    } = useCoverages();
+
+    const updateProfileMutation = useUpdateDoctorProfile();
     const updateDoctorMutation = useUpdateDoctor(doctor?.self || "");
-    const updateImageMutation = usePutDoctorImage(doctor?.image|| "");
+    const updateImageMutation = usePutDoctorImage(doctor?.image || "");
 
     const [formData, setFormData] = useState({
         name: "",
@@ -76,7 +93,6 @@ function DoctorAccount() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { url: doctorImageUrl } = useDoctorImageUrl(auth.userId);
-
     useEffect(() => {
         if (doctor) {
             setFormData({
@@ -93,6 +109,7 @@ function DoctorAccount() {
             setSelectedCovIds(currentCoverages.map(c => Number(c.self.split('/').pop())));
         }
     }, [doctor, currentSpecialties, currentCoverages, isEditing]);
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -161,9 +178,12 @@ function DoctorAccount() {
         });
     };
 
-    if (isLoading) return <div className="flex justify-center mt-36"><Loader2 className="animate-spin h-8 w-8" /></div>;
-    if (isError || !doctor) return <GenericError code={404} />;
 
+    if (isLoadingDoctor || isLoadingCurrentSpecs || isLoadingCurrentCovs || isLoadingAllSpecs || isLoadingAllCovs) {
+        return <div className="flex justify-center mt-36"><Loader2 className="animate-spin h-8 w-8" /></div>;
+    }
+
+    if (isError || !doctor) return <GenericError code={404} />;
     const isSaving = updateDoctorMutation.isPending || updateImageMutation.isPending;
 
     return (

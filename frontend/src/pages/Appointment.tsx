@@ -262,7 +262,7 @@ function Appointment() {
             appointmentHour: hourStr,
             reason: reason,
             specialtyId: specialtyId,
-            doctorId: doctorId,
+            doctorId: doctorId || "",
             officeId: officeId,
             patientId: auth.userId,
             allowFullHistory: allowFullHistory
