@@ -26,11 +26,12 @@ import type { OfficeDTO } from "@/data/office.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
 import type { OfficeSpecialtyDTO } from "@/data/doctors.ts";
 import { buildTimeSlotsForDay, dateKey, isoDateKey } from "@/utils/dateUtils.ts";
-import { startOfDay } from "date-fns";
+import { startOfDay, addDays } from "date-fns";
 import { useParams } from "react-router-dom";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 
 const SLOT_MINUTES = 60;
+const MAX_DAYS_IN_FUTURE = 30;
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -91,7 +92,6 @@ function Appointment() {
     const navigate = useNavigate();
     const auth = useAuth();
 
-
     const { mutate: bookAppointment, isPending: isBooking } = useBookAppointment();
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -102,12 +102,16 @@ function Appointment() {
     const [reason, setReason] = useState("");
     const [allowFullHistory, setAllowFullHistory] = useState(true);
     const [files, setFiles] = useState<File[]>([]);
+
     const { data: doctor, isLoading, isError } = useDoctor(doctorId);
     const { data: offices } = useDoctorOffices(doctor?.offices);
     const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices ?? null);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties ?? null);
     const { data: officeAvailability } = useDoctorOfficeAvailability(offices ?? null);
     const { data: doctorUnavailability } = useDoctorUnavailability(doctor?.unavailability ?? null);
+
+    const today = useMemo(() => startOfDay(new Date()), []);
+    const maxDate = useMemo(() => addDays(today, MAX_DAYS_IN_FUTURE), [today]);
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -166,14 +170,15 @@ function Appointment() {
     }, [doctorUnavailability]);
 
     const isDateSelectable = useMemo(() => {
-        const today = startOfDay(new Date());
         return (d: Date) => {
-            if (startOfDay(d) < today) return false;
+            const dayToCheck = startOfDay(d);
+            if (dayToCheck < today) return false;
+            if (dayToCheck > maxDate) return false;
             if (isUnavailableDate(d)) return false;
             const dow = d.getDay();
             return enabledDaysOfWeek.has(dow);
         };
-    }, [enabledDaysOfWeek, isUnavailableDate]);
+    }, [enabledDaysOfWeek, isUnavailableDate, today, maxDate]);
 
     const availableTimeOptions = useMemo(() => {
         if (!selectedDate) return [];
@@ -280,10 +285,11 @@ function Appointment() {
                             availableTimes={availableTimeOptions}
                             disabled={!selectedOffice}
                             isDateDisabled={(d) => !isDateSelectable(d)}
+                            fromDate={today}
+                            toDate={maxDate}
                         />
                         <div className={optionalsContainer}>
                             <ReasonInput value={reason} onChange={setReason} />
-                            {/* Pasamos setFiles al componente de subida */}
                             <FilesUpload onFilesChange={setFiles} />
                             <MedicalHistory checked={allowFullHistory} onCheckedChange={setAllowFullHistory} />
                         </div>
@@ -302,8 +308,6 @@ function Appointment() {
         </div>
     )
 }
-
-
 
 const selectorCard = "flex flex-row items-center w-full gap-0";
 const iconContainer = "flex items-center bg-[var(--primary-bg)] rounded-full p-5 text-[var(--primary-color)] mx-5";
@@ -368,7 +372,6 @@ function OfficeSelector({
     );
 }
 
-
 function SpecialtySelector({options, selectedSpecialty, setSelectedSpecialty}: {
     options: SpecialtyDTO[];
     selectedSpecialty: string | null;
@@ -402,7 +405,17 @@ function SpecialtySelector({options, selectedSpecialty, setSelectedSpecialty}: {
     );
 }
 
-function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedTime, availableTimes, disabled, isDateDisabled}:{
+function DateSelector({
+                          selectedDate,
+                          setSelectedDate,
+                          selectedTime,
+                          setSelectedTime,
+                          availableTimes,
+                          disabled,
+                          isDateDisabled,
+                          fromDate,
+                          toDate
+                      }:{
     selectedDate: Date | undefined
     setSelectedDate: (date: Date | undefined) => void
     selectedTime: string | null
@@ -410,6 +423,8 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
     availableTimes: string[];
     disabled?: boolean;
     isDateDisabled?: (date: Date) => boolean;
+    fromDate?: Date;
+    toDate?: Date;
 }) {
     const { t } = useTranslation();
 
@@ -458,6 +473,8 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
                             placeholder={t("appointment.booking.select-date")}
                             disabled={disabled}
                             isDateDisabled={isDateDisabled}
+                            fromDate={fromDate}
+                            toDate={toDate}
                         />
                     </div>
                 </div>
@@ -488,12 +505,9 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
     );
 }
 
-const confirmation =
-    "mx-6 py-2 px-5 bg-[var(--success-light)] rounded-lg border border-[var(--success)]";
-const confirmationTitle =
-    "text-[var(--text-color)] text-md font-[500]";
-const confirmationText =
-    "text-[var(--text-color)] text-sm font-[300]";
+const confirmation = "mx-6 py-2 px-5 bg-[var(--success-light)] rounded-lg border border-[var(--success)]";
+const confirmationTitle = "text-[var(--text-color)] text-md font-[500]";
+const confirmationText = "text-[var(--text-color)] text-sm font-[300]";
 
 function Confirmation({ text }: { text: string }) {
     const { t } = useTranslation();
@@ -506,8 +520,7 @@ function Confirmation({ text }: { text: string }) {
     );
 }
 
-const reasonCard =
-    "flex flex-col gap-2";
+const reasonCard = "flex flex-col gap-2";
 
 function ReasonInput({ value, onChange }: { value: string, onChange: (v: string) => void }) {
     const { t } = useTranslation();
