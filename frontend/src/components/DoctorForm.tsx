@@ -17,7 +17,7 @@ import { FormInput } from "@/components/ui/FormInput"
 import { PasswordInput } from "@/components/ui/passwordInput"
 import { FormStepper } from "@/components/ui/FormStepper"
 import {PasswordStrengthMeter} from "@/components/ui/PasswordStrengthMeter.tsx";
-import {useRegisterDoctor} from "@/hooks/useDoctors.ts";
+import {useRegisterDoctorMutation} from "@/hooks/useDoctors.ts";
 import type {AxiosError} from "axios";
 
 interface DoctorFormProps {
@@ -29,7 +29,7 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
 
     const [step, setStep] = useState(1)
 
-    const {mutate: registerDoctor, isPending: isSubmitting} = useRegisterDoctor()
+    const {mutate: registerDoctor, isPending: isSubmitting} = useRegisterDoctorMutation()
 
     const {data: specialties, isLoading: isLoadingSpecialties} = useSpecialties()
     const {data: coverages, isLoading: isLoadingCoverages} = useCoverages()

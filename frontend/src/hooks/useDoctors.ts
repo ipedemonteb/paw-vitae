@@ -29,8 +29,9 @@ import type {AxiosError} from "axios";
 import type {OfficeDTO} from "@/data/office.ts";
 
 export function useDoctors(query: DoctorsQuery) {
+    const stableQueryKey = useMemo(() => JSON.stringify(query ?? {}), [query]);
     return useQuery({
-        queryKey: ['auth', 'doctors', query],
+        queryKey: ['auth', 'doctors', stableQueryKey],
         queryFn: () => listDoctors(query),
         placeholderData: keepPreviousData
     })
@@ -75,7 +76,7 @@ export function useDoctorImageUrl(id?: string | null, options?: { enabled?: bool
 }
 
 
-export function useRegisterDoctor() {
+export function useRegisterDoctorMutation() {
     return useMutation<any, AxiosError<any>, DoctorRegisterData>({
         mutationFn: (data: DoctorRegisterData) => registerDoctor(data)
     });

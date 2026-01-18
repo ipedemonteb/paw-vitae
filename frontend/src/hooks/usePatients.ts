@@ -44,6 +44,6 @@ export function usePatientsCount() {
 }
 export function useUpdatePatient(url:string){
     return useMutation<any, AxiosError<any>, PatientUpdateData>({
-        mutationFn:(data :PatientUpdateData) => { updatePatient(url,data)}
+        mutationFn:(data :PatientUpdateData) =>  updatePatient(url,data)
     });
 }
