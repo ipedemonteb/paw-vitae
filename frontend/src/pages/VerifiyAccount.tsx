@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useSearchParams } from "react-router-dom"
 import { CheckCircle2, XCircle, Loader2, Home, ArrowLeft } from "lucide-react"
@@ -38,25 +38,33 @@ export default function VerifyAccount() {
     const [searchParams] = useSearchParams()
     const { login } = useAuth()
 
+    const hasAttemptedVerify = useRef(false)
+
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
 
     useEffect(() => {
-        const verify = async () => {
-            const token = searchParams.get("token")
-            const email = searchParams.get("email")
+        if (hasAttemptedVerify.current) return;
 
-            if (!token || !email) {
-                setStatus('error')
-                return
-            }
+        const token = searchParams.get("token")
+        const email = searchParams.get("email")
 
-            login.mutate({email, password: token}, {
-                onError: () => setStatus('error')
-            })
+        if (!token || !email) {
+            setStatus('error')
+            return
         }
 
-        verify()
-    }, [searchParams, login])
+        hasAttemptedVerify.current = true;
+
+        login.mutate({email, password: token}, {
+            onSuccess: () => {
+                setStatus('success')
+            },
+            onError: () => {
+                setStatus('error')
+            }
+        })
+
+    }, [])
 
 
     if (status === 'loading') {
