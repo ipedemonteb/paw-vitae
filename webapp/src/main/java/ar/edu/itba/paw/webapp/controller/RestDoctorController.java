@@ -87,6 +87,8 @@ public class RestDoctorController {
             @QueryParam("orderBy") @DefaultValue("name") String orderBy,
             @QueryParam("direction") @DefaultValue("asc") String direction
     ) {
+        System.out.println("HERE I AM: " + weekdays.size());
+        weekdays.forEach(System.out::println);
         Page<Doctor> doctorPage = this.doctorService.getWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction, page, pageSize);
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctorPage.getContent(), uriInfo)) {}), doctorPage, uriInfo);
     }

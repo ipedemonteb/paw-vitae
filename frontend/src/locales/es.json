@@ -565,6 +565,10 @@
     "found": "{{ doctorsFound }} doctores encontrados",
     "searchbar": {
       "empty": "No se han encontrado resultados"
+    },
+    "empty": {
+      "title": "No se han encontrado resultados",
+      "message": "Ningún doctor coincide con sus criterios de busqueda actual, intente buscar algo distinto"
     }
   },
   "offices": {

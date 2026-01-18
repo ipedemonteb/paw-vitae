@@ -22,6 +22,7 @@ import type {SpecialtyDTO} from "@/data/specialties.ts";
 import type {OfficeSpecialtyDTO} from "@/data/doctors.ts";
 import {buildTimeSlotsForDay, dateKey, isoDateKey} from "@/utils/dateUtils.ts";
 import {startOfDay} from "date-fns";
+import {useParams} from "react-router-dom";
 
 const SLOT_MINUTES = 60;
 
@@ -98,7 +99,7 @@ const bookButton =
 
 function Appointment() {
 
-    const doctorId = "24";
+    const {id: doctorId} = useParams<{ id: string }>();
 
     const { t } = useTranslation();
 
@@ -109,7 +110,7 @@ function Appointment() {
 
     const { data: doctor, isLoading, isError } = useDoctor(doctorId);
     // TODO: Handle isLoading and isError
-    const { data: offices } = useDoctorOffices(doctor?.offices ?? null);
+    const { data: offices } = useDoctorOffices(doctor?.offices);
     const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices ?? null);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties ?? null);
     const { data: officeAvailability } = useDoctorOfficeAvailability(offices ?? null);
@@ -429,7 +430,7 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
                 {selectedDate ? (
                     <div className={availableTimesFormat}>
                         {availableTimes.length === 0 ? (
-                            <p className="px-5 text-sm text-[var(--text-light)]">
+                            <p className="px-5 text-sm text-(--text-light)">
                                 {t("appointment.booking.no-times")}
                             </p>
                         ) : (
@@ -504,11 +505,11 @@ function MedicalHistory() {
 
     return (
         <div className={medicalCointainer}>
-            <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-[var(--primary-color)] has-[[aria-checked=true]]:bg-[var(--primary-bg)] dark:has-[[aria-checked=true]]:border-[var(--primary-light)] dark:has-[[aria-checked=true]]:bg-[var(--primary-dark)]">
+            <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-aria-checked:border-(--primary-color) has-aria-checked:bg-(--primary-bg) dark:has-aria-checked:border-(--primary-light) dark:has-aria-checked:bg-(--primary-dark)">
                 <Checkbox
                     id="toggle-2"
                     defaultChecked
-                    className="data-[state=checked]:border-[var(--primary-color)] data-[state=checked]:bg-[var(--primary-color)] data-[state=checked]:text-white dark:data-[state=checked]:border-[var(--primary-light)] dark:data-[state=checked]:bg-[var(--primary-light)] dark:data-[state=checked]:text-[var(--text-color)] cursor-pointer"
+                    className="data-[state=checked]:border-(--primary-color) data-[state=checked]:bg-(--primary-color) data-[state=checked]:text-white dark:data-[state=checked]:border-(--primary-light) dark:data-[state=checked]:bg-(--primary-light) dark:data-[state=checked]:text-(--text-color) cursor-pointer"
                 />
                 <div className="grid gap-1.5 font-normal">
                     <p className="text-sm leading-none font-medium">{t("appointment.booking.allow.title")}</p>

@@ -575,6 +575,10 @@
     "found": "{{ doctorsFound }} doctors found",
     "searchbar": {
       "empty": "No Results Found"
+    },
+    "empty": {
+      "title": "No results found",
+      "message": "No doctors match your current filters, try searching for something else"
     }
   },
   "offices": {

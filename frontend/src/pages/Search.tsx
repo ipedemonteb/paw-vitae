@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import { Input } from "@/components/ui/input";
-import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2, SearchX } from "lucide-react";
+import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2 } from "lucide-react";
 import { SpecialtyCombobox } from "@/components/SpecialtyCombobox.tsx";
 import { CoverageCombobox } from "@/components/CoverageCombobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -19,6 +19,7 @@ import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useDebounce} from "use-debounce";
 import SearchResultsCard from "@/components/SearchResultCard.tsx";
 import {SearchSpecialtyCombobox} from "@/components/SearchSpecialtyCombobox.tsx";
+import SearchEmpty from "@/components/SearchEmpty.tsx";
 
 const container =
     "px-[24px] mx-auto max-w-6xl w-full";
@@ -139,8 +140,7 @@ function HeroSection({searchParams}: SectionProps) {
                         ))
                     )}
                     {!isLoading && searchResults && searchResults.data.length === 0 && (
-                        <div className="h-20 w-full bg-gray-100 flex flex-col items-center justify-center gap-1">
-                            <SearchX className="text-(--text-light)"/>
+                        <div className="h-20 w-full bg-gray-100 flex items-center justify-center gap-1">
                             <span className="text-(--text-light) text-sm">{t("search.searchbar.empty")}</span>
                         </div>
                     )}
@@ -337,10 +337,29 @@ type ResultProps = {
 }
 
 function ResultList({data}: ResultProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(false);
+        const id = requestAnimationFrame(() => setMounted(true));
+        return () => cancelAnimationFrame(id);
+    }, [data]);
+
+    if (data?.length === 0) {
+        return (
+            <SearchEmpty/>
+        )
+    }
     return (
         <div className={resultContentList}>
-            {data?.map(d => (
-                <SearchListCard doctor={d} key={d.self} />
+            {data?.map((d, i) => (
+                <div
+                    key={d.self}
+                    style={{ transitionDelay: `${i * 80}ms` }}
+                    className={`transform transition-all duration-300 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
+                >
+                    <SearchListCard doctor={d} />
+                </div>
             ))}
         </div>
     )
@@ -350,10 +369,29 @@ const resultContentGrid =
     "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6";
 
 function ResultGrid({data}: ResultProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(false);
+        const id = requestAnimationFrame(() => setMounted(true));
+        return () => cancelAnimationFrame(id);
+    }, [data]);
+
+    if (data?.length === 0) {
+        return (
+            <SearchEmpty/>
+        )
+    }
     return (
         <div className={resultContentGrid}>
-            {data?.map(d => (
-                <SearchGridCard doctor={d} key={d.self} />
+            {data?.map((d, i) => (
+                <div
+                    key={d.self}
+                    style={{ transitionDelay: `${i * 60}ms` }}
+                    className={`transform transition-all duration-300 ${mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'}`}
+                >
+                    <SearchGridCard doctor={d} key={d.self} />
+                </div>
             ))}
         </div>
     )

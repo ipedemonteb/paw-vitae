@@ -7,6 +7,8 @@ import type {DoctorDTO} from "@/data/doctors.ts";
 import {useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
 import SearchSpecialtyBadgeComponent from "@/components/SearchSpecialtyBadgeComponent.tsx";
 import {initialsFallback} from "@/utils/userUtils.ts";
+import {generatePath, Link} from "react-router-dom";
+import {extractIdFromUrl} from "@/lib/utils.ts";
 
 const cardContainer =
     "flex flex-col items-stretch p-0 sm:flex-row";
@@ -40,6 +42,9 @@ function SearchListCard({doctor}: SearchCardProps) {
 
     const specialties = useDoctorSpecialties(doctor.specialties);
     const {url:imageUrl} = useDoctorImageUrl(doctor.self.split("/").pop());
+    const doctorId = extractIdFromUrl(doctor.self)
+    const profilePath = generatePath("/profile/:id", { id: doctorId })
+    const schedulePath = generatePath("/appointment/:id", { id: doctorId })
     return (
         <Card className={cardContainer}>
             <div className={iconContainer}>
@@ -62,13 +67,17 @@ function SearchListCard({doctor}: SearchCardProps) {
                 <RatingStars rating={doctor.rating} className={ratingStars} sizeClassName="h-4 w-4"/>
             </div>
             <div className={scheduleContainer}>
-                <Button className={scheduleButton}>
-                    <Calendar className={dataIcon} />
-                    Schedule
+                <Button asChild className={scheduleButton}>
+                    <Link to={schedulePath}>
+                        <Calendar className={dataIcon} />
+                        Schedule
+                    </Link>
                 </Button>
-                <Button className={viewProfileButton}>
-                    <UserRoundSearch className={dataIcon} />
-                    View Profile
+                <Button asChild className={viewProfileButton}>
+                    <Link to={profilePath}>
+                        <UserRoundSearch className={dataIcon} />
+                        View Profile
+                    </Link>
                 </Button>
             </div>
         </Card>

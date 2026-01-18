@@ -7,6 +7,8 @@ import type {SearchCardProps} from "@/components/SearchListCard.tsx";
 import {useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
 import SearchSpecialtyBadgeComponent from "@/components/SearchSpecialtyBadgeComponent.tsx";
 import {initialsFallback} from "@/utils/userUtils.ts";
+import {generatePath, Link} from "react-router-dom";
+import {extractIdFromUrl} from "@/lib/utils.ts";
 
 const cardContainer =
     "p-0 gap-0";
@@ -37,6 +39,9 @@ function SearchGridCard({doctor}: SearchCardProps) {
     const rating = doctor.rating;
     const specialties = useDoctorSpecialties(doctor.specialties);
     const {url:imageUrl} = useDoctorImageUrl(doctor.self.split("/").pop());
+    const doctorId = extractIdFromUrl(doctor.self)
+    const profilePath = generatePath("/profile/:id", { id: doctorId })
+    const schedulePath = generatePath("/appointment/:id", { id: doctorId })
     return (
         <Card className={cardContainer}>
             <div className={iconContainer}>
@@ -59,13 +64,17 @@ function SearchGridCard({doctor}: SearchCardProps) {
                 <RatingStars rating={rating} className={ratingStars} sizeClassName="h-4 w-4"/>
             </div>
             <div className={scheduleContainer}>
-                <Button className={scheduleButton}>
-                    <Calendar className={dataIcon} />
-                    Schedule
+                <Button asChild className={scheduleButton}>
+                    <Link to={schedulePath}>
+                        <Calendar className={dataIcon} />
+                        Schedule
+                    </Link>
                 </Button>
-                <Button className={viewProfileButton}>
-                    <UserRoundSearch className={dataIcon} />
-                    View Profile
+                <Button asChild className={viewProfileButton}>
+                    <Link to={profilePath}>
+                        <UserRoundSearch className={dataIcon} />
+                        View Profile
+                    </Link>
                 </Button>
             </div>
         </Card>
