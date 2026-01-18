@@ -14,6 +14,7 @@ import ChangePassword from "@/pages/ChangePassword.tsx";
 import Search from "@/pages/Search.tsx";
 
 import Appointment from "@/pages/Appointment.tsx";
+import Confirmation from "@/pages/Confirmation.tsx";
 import AppointmentDetails from "@/pages/AppointmentDetails.tsx";
 import PatientDashboardLayout from "@/pages/patient/PatientDashboardLayout.tsx";
 import UserUpcoming from "@/pages/common/UserUpcoming.tsx";
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
                 path: "profile/:id",
                 element: <PublicProfile />
             },
+            // TODO: CHANGE
             {
                 path: "medical-history",
                 element: <MedicalHistory />
@@ -104,15 +106,15 @@ export const router = createBrowserRouter([
             },
 
             // Rutas de Usuario Logueado (Paciente o Doctor)
-            {
-                element: <AuthGuard />,
-                children: [
-                    {
-                        path: "appointment/:id",
-                        element: <Appointment />
-                    },
-                ]
-            },
+            // {
+            //     element: <AuthGuard />,
+            //     children: [
+            //         {
+            //             path: "appointment/:id",
+            //             element: <Appointment />
+            //         },
+            //     ]
+            // },
 
             // Rutas de Paciente
             {
@@ -143,6 +145,14 @@ export const router = createBrowserRouter([
                                 element: <PatientAccount/>
                             },
                         ]
+                    },
+                    {
+                        path: "appointment/:id",
+                        element: <Appointment />,
+                    },
+                    {
+                        path: "appointment/:id/confirmation",
+                        element: <Confirmation />,
                     },
                     {
                         path: "patient/dashboard/appointment-details/:id",
