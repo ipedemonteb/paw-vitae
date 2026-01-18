@@ -11,7 +11,7 @@ const profileCard =
 const avatarContainer =
     "flex items-center w-20 h-20 mx-6 mb-2 border border-[var(--primary-light)] border-4 rounded-full sm:mb-0";
 const userDataContainer =
-    "flex flex-col items-center gap-1 md:items-start";
+    "flex flex-col items-center gap-1 sm:items-start";
 const userName =
     "text-[var(--text-color)] text-xl font-[700]";
 const dataContainer =
