@@ -630,6 +630,15 @@
     "SUNDAY": "Domingo"
   },
   "unavailability" : {
-    "headerTitle" : "No disponibilidad"
+    "headerTitle" : "No disponibilidad",
+    "startEndOrSingle": "Inicio/Fin o Día único",
+    "inRange": "En Rango",
+    "pastDates": "Fechas Pasadas",
+    "selectedDates": "Fechas Seleccionadas",
+    "items": "items",
+    "noDatesSelected": "No hay fechas seleccionadas",
+    "singleDay": "Día único",
+    "range": "Rango",
+    "saveChanges": "Guardar Cambios"
   }
 }

@@ -636,6 +636,15 @@
     "SUNDAY" : "Sunday"
   },
   "unavailability" : {
-    "headerTitle" : "Unavailability"
+    "headerTitle" : "Unavailability",
+    "startEndOrSingle": "Start/End or Single Day",
+    "inRange": "In Range",
+    "pastDates": "Past Dates",
+    "selectedDates": "Selected Dates",
+    "items": "items",
+    "noDatesSelected": "No dates selected",
+    "singleDay": "Single Day",
+    "range": "Range",
+    "saveChanges": "Save Changes"
   }
 }
