@@ -11,7 +11,7 @@ import GenericError from "@/pages/GenericError.tsx";
 import {formatLongDate} from "@/utils/dateUtils.ts";
 import {Loader2} from "lucide-react";
 import {useTranslation} from "react-i18next";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
 const confirmationBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -108,20 +108,20 @@ function Confirmation() {
                         <div className={checkContainer}>
                             <Check className={checkIcon}/>
                         </div>
-                        <h1 className={confirmationTitle}>Appointment Confirmed!</h1>
-                        <p className={confirmationSubtitle}>Your appointment has been confirmed. Here are the details.</p>
+                        <h1 className={confirmationTitle}>{t("appointment.confirmation.title")}</h1>
+                        <p className={confirmationSubtitle}>{t("appointment.confirmation.subtitle")}</p>
                     </div>
                     <div className={confirmationContent}>
                         <DoctorConfirmationCard doctorId={doctorId} />
                         <Card className={detailsCard}>
-                            <h3 className={detailsTitle}>Appointment Details</h3>
+                            <h3 className={detailsTitle}>{t("appointment.confirmation.details")}</h3>
                             <div className={rowDetails + " mb-2"}>
                                 <div className={itemContainer}>
                                     <div className={iconContainer}>
                                         <Calendar className={icon}/>
                                     </div>
                                     <div className={itemContent}>
-                                        <p className={itemTitle}>Date</p>
+                                        <p className={itemTitle}>{t("appointment.confirmation.date")}</p>
                                         <p className={itemInfo}>{formattedDate}</p>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@ function Confirmation() {
                                         <Clock className={icon} />
                                     </div>
                                     <div className={itemContent}>
-                                        <p className={itemTitle}>Time</p>
+                                        <p className={itemTitle}>{t("appointment.confirmation.time")}</p>
                                         <p className={itemInfo}>{new Date(appointment.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
                                     </div>
                                 </div>
@@ -141,7 +141,7 @@ function Confirmation() {
                                         <Stethoscope className={icon}/>
                                     </div>
                                     <div className={itemContent}>
-                                        <p className={itemTitle}>Specialty</p>
+                                        <p className={itemTitle}>{t("appointment.confirmation.specialty")}</p>
                                         <p className={itemInfo}>{specialty?.name ? t(specialty.name) : "No specialty"}</p>
                                     </div>
                                 </div>
@@ -150,7 +150,7 @@ function Confirmation() {
                                         <Hospital className={icon} />
                                     </div>
                                     <div className={itemContent}>
-                                        <p className={itemTitle}>Office</p>
+                                        <p className={itemTitle}>{t("appointment.confirmation.office")}</p>
                                         <p className={itemInfo}>{`${office?.name}, ${neighborhood?.name}`|| "Consultorio"}</p>
                                     </div>
                                 </div>
@@ -158,14 +158,18 @@ function Confirmation() {
                         </Card>
                         <div className={infoContainer}>
                             <Info />
-                            <p>An email has been sent to your inbox with all appointment details.</p>
+                            <p>{t("appointment.confirmation.info")}</p>
                         </div>
                         <div className={buttonsContainer}>
                             <Button className={dashboardButton}>
-                                Go to Dashboard
+                                <Link to="/patient/dashboard">
+                                    {t("appointment.confirmation.dashboard")}
+                                </Link>
                             </Button>
                             <Button className={detailsButton}>
-                                View Details
+                                <Link to={`/patient/dashboard/appointment-details/${id}`}>
+                                    {t("appointment.confirmation.view-details")}
+                                </Link>
                             </Button>
                         </div>
                     </div>
