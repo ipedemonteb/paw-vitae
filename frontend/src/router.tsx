@@ -14,7 +14,7 @@ import ChangePassword from "@/pages/ChangePassword.tsx";
 import Search from "@/pages/Search.tsx";
 
 import Appointment from "@/pages/Appointment.tsx";
-import Confirmation from "@/pages/Confirmation.tsx";
+import AppointmentConfirmation from "@/pages/AppointmentConfirmation.tsx";
 import AppointmentDetails from "@/pages/AppointmentDetails.tsx";
 import PatientDashboardLayout from "@/pages/patient/PatientDashboardLayout.tsx";
 import UserUpcoming from "@/pages/common/UserUpcoming.tsx";
@@ -151,7 +151,7 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: "appointment/:id/confirmation",
-                        element: <Confirmation />,
+                        element: <AppointmentConfirmation />,
                     },
                     {
                         path: "patient/dashboard/appointment-details/:id",

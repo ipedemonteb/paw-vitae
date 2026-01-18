@@ -109,7 +109,7 @@ function PublicProfile() {
 
 const titleIcon = "w-5 h-5";
 const avatarContainer = "flex items-center w-20 h-20 mx-6 mb-2 border border-[var(--primary-light)] border-4 rounded-full sm:mb-0";
-const userDataContainer = "flex flex-col items-center md:items-start";
+const userDataContainer = "flex flex-col items-center sm:items-start";
 const userName = "text-[var(--text-color)] text-xl font-[700] mb-1";
 const dataContainer = "flex flex-row gap-5 text-sm text-[var(--text-light)]";
 const contactData = "flex flex-row items-center gap-1";
