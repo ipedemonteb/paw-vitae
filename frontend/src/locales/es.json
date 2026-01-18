@@ -134,6 +134,18 @@
         "subtitle": "Al seleccionar esta opción, se habilita el acceso completo de su médico a su historial médico."
       },
       "book": "Reservar Turno"
+    },
+    "confirmation": {
+      "title": "¡Consulta Confirmada!",
+      "subtitle": "Tu consulta ha sido confirmada. Aquí están algunos detalles del turno.",
+      "details": "Detalles de la Consulta",
+      "date": "Fecha",
+      "time": "Hora",
+      "specialty": "Especialidad",
+      "office": "Oficina",
+      "info": "Se ha enviado un mail a tu casilla con todos los detalles de la consulta.",
+      "dashboard": "Ir al Panel",
+      "view-details": "Ver Detalles"
     }
   },
   "login": {

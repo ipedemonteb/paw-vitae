@@ -113,3 +113,12 @@ export async function createAppointment(appointment: AppointmentForm) {
     headers: {"Content-Type": ContentTypes.APPOINTMENT}
 });
 }
+
+export async function uploadAppointmentFile(appointmentId: string, doc: File, role: 'patient' | 'doctor') {
+    const formData = new FormData();
+    const paramName = role === 'patient' ? 'file' : 'files';
+    formData.append(paramName, doc);
+    return await api.post<AppointmentFileDTO>(`/appointments/${appointmentId}/files/${role}`, formData, {
+        headers: {"Content-Type": "multipart/form-data"}
+    });
+}

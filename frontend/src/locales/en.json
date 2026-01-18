@@ -146,6 +146,18 @@
         "subtitle": "By selecting this option, you are allowing full access to your medical history for your doctor."
       },
       "book": "Book Appointment"
+    },
+    "confirmation": {
+      "title": "Appointment Confirmed!",
+      "subtitle": "Your appointment has been confirmed. Here are the details.",
+      "details": "Appointment Details",
+      "date": "Date",
+      "time": "Time",
+      "specialty": "Specialty",
+      "office": "Office",
+      "info": "An email has been sent to your inbox with all appointment details.",
+      "dashboard": "Go to Dashboard",
+      "view-details": "View Details"
     }
   },
   "login": {
@@ -294,9 +306,6 @@
   "common": {
     "go_back": "Go Back",
     "return_home": "Return Home"
-  },
-  "appointment_confirmation": {
-    "dashboard": "Go to Dashboard"
   },
   "error": {
     "403": {
