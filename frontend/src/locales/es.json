@@ -316,7 +316,7 @@
       "lastname_required": "El apellido es obligatorio.",
       "phone_required": "El teléfono es obligatorio.",
       "select_coverage": "Por favor seleccione una obra social.",
-      "select_specialties": "Por favor seleccione al menos una especialidad.",
+      "select_specialty": "Por favor seleccione al menos una especialidad.",
       "select_neighborhoods": "Por favor seleccione un barrio.",
       "no_specialties_available": "No se encontraron especialidades en este momento. Intente denuevo mas tarde",
       "no_coverages_available": "No se encontraron obras sociales en este momento. Intente denuevo mas tarde",
@@ -593,5 +593,31 @@
       "active": "Activa",
       "inactive": "Inactiva"
     }
+  },
+  "availability": {
+    "headerTitle": "Disponibilidad",
+    "selectPlaceholder": "Seleccionar...",
+    "office": "Oficina",
+    "dayOfWeek": "Día",
+    "startTime": "Inicio",
+    "endTime": "Fin",
+    "save": "Guardar cambios",
+    "addSchedule": "Agregar disponibilidad",
+    "emptyContent": "No hay disponibilidad configurada",
+    "emptyContentText": "Tus horarios de atención aparecerán aquí una vez que agregues uno.",
+    "errorTimeOrder": "La hora de fin debe ser posterior al inicio",
+    "errorOverlap": "Horario superpuesto con otro intervalo"
+  },
+  "days": {
+    "MONDAY": "Lunes",
+    "TUESDAY": "Martes",
+    "WEDNESDAY": "Miércoles",
+    "THURSDAY": "Jueves",
+    "FRIDAY": "Viernes",
+    "SATURDAY": "Sábado",
+    "SUNDAY": "Domingo"
+  },
+  "unavailability" : {
+    "headerTitle" : "No disponibilidad"
   }
 }

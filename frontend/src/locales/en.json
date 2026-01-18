@@ -239,7 +239,7 @@
       "lastname_required": "Last name is required.",
       "phone_required": "Phone number is required.",
       "select_coverage": "Please select an insurance plan.",
-      "select_specialties": "Please select at least one specialty.",
+      "select_specialty": "Please select at least one specialty.",
       "select_neighborhoods": "Please select a neighborhood.",
       "no_specialties_available": "No specialties found at the moment. Please try again later.",
       "no_coverages_available": "No insurance plans found at the moment. Please try again later.",
@@ -602,5 +602,31 @@
       "active": "Active",
       "inactive": "Inactive"
     }
+  },
+  "availability" : {
+    "headerTitle": "Availability",
+    "selectPlaceholder" : "select...",
+    "office" : "Office",
+    "dayOfWeek" : "Day",
+    "startTime" : "Start Time",
+    "endTime" : "End Time",
+    "save" : "Save changes",
+    "addSchedule" : "Add availability",
+    "emptyContent" : "No availability set up",
+    "emptyContentText" : "Your availability will appear here once you have added one.",
+    "errorTimeOrder": "Starting time must be before end time",
+    "errorOverlap": "Time overlaps with another"
+  },
+  "days" : {
+    "MONDAY" : "Monday",
+    "TUESDAY" : "Tuesday",
+    "WEDNESDAY" : "Wednesday",
+    "THURSDAY" : "Thursday",
+    "FRIDAY" : "Friday",
+    "SATURDAY" : "Saturday",
+    "SUNDAY" : "Sunday"
+  },
+  "unavailability" : {
+    "headerTitle" : "Unavailability"
   }
 }
