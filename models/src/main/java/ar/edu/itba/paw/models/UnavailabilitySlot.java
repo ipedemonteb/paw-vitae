@@ -54,7 +54,7 @@ public class UnavailabilitySlot {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, doctor, getStartDate(), getEndDate());
     }
 }
 

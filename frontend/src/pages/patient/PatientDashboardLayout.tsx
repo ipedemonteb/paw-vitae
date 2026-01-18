@@ -6,6 +6,7 @@ import {Link, Outlet, useMatch} from "react-router-dom";
 import { cn } from "@/lib/utils";
 import PatientProfileCard from "@/components/PatientProfileCard.tsx";
 import {useTranslation} from "react-i18next";
+import {useAuth} from "@/hooks/useAuth.ts";
 
 const dashboardContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -50,8 +51,9 @@ function DashboardTab({ to, end, icon: Icon, children }: {
 }
 
 function PatientDashboardLayout() {
+    const auth=useAuth();
     const { t } = useTranslation();
-    const patientId = "23";
+    const patientId=auth.userId
     return (
         <div className={dashboardContainer}>
             <PatientProfileCard patientId={patientId}/>

@@ -4,8 +4,9 @@ import { Calendar, Mail, Phone, UserRoundSearch } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import type {SearchCardProps} from "@/components/SearchListCard.tsx";
-import {useDoctorSpecialties} from "@/hooks/useDoctors.ts";
+import {useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
 import SearchSpecialtyBadgeComponent from "@/components/SearchSpecialtyBadgeComponent.tsx";
+import {initialsFallback} from "@/utils/userUtils.ts";
 
 const cardContainer =
     "p-0 gap-0";
@@ -31,16 +32,17 @@ const viewProfileButton =
     "w-full bg-white text-[var(--primary-color)] border border-[var(--primary-color)] py-2 px-4 hover:text-white hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] cursor-pointer";
 
 function SearchGridCard({doctor}: SearchCardProps) {
+    const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
 
-    const rating = 4;
+    const rating = doctor.rating;
     const specialties = useDoctorSpecialties(doctor.specialties);
-
+    const {url:imageUrl} = useDoctorImageUrl(doctor.self.split("/").pop());
     return (
         <Card className={cardContainer}>
             <div className={iconContainer}>
                 <Avatar className={icon}>
-                    <AvatarImage src="https://picsum.photos/200" />
-                    <AvatarFallback>A</AvatarFallback>
+                    <AvatarImage src={imageUrl || undefined} />
+                    <AvatarFallback>{avatarFallbackText}</AvatarFallback>
                 </Avatar>
             </div>
             <div className={dataContainer}>

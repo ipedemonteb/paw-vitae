@@ -315,6 +315,8 @@ const loggedInContainer =
     "flex items-center gap-2 cursor-pointer hover:bg-[var(--gray-100)] rounded-sm px-3 py-2";
 const headerAvatar = "w-8 h-8";
 const userName = "max-w-[120px] truncate text-base text-[var(--text-color)]";
+const chevronDown =
+    "h-4 w-4 text-[var(--text-color)]";
 const logoutItem =
     "flex items-center gap-2 text-base text-[var(--danger)] cursor-pointer data-[highlighted]:text-[var(--danger-dark)] data-[highlighted]:bg-[var(--danger-light)]";
 
@@ -370,7 +372,7 @@ function LoggedInComponent({
                         <AvatarFallback>{avatarFallbackText}</AvatarFallback>
                     </Avatar>
                     <p className={userName}>{displayName}</p>
-                    <ChevronDown className="h-4 w-4 text-[var(--text-color)]" />
+                    <ChevronDown className={open ? (chevronDown + " rotate-180 transition-transform") : (chevronDown + " transition-transform")} />
                 </DropdownMenuTrigger>
 
                 <LoggedInDropdown

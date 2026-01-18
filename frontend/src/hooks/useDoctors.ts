@@ -7,16 +7,23 @@ import {
     getDoctorCertifications,
     getDoctorBiography,
     getDoctorCoverages,
-    getDoctorSpecialties, getDoctorOffices,
+    getDoctorSpecialties,
+    getDoctorOffices,
     registerDoctor,
-    fetchCountDoctors, getDoctorExperiences, getDoctorOfficeSpecialties,
+    fetchCountDoctors,
+    getDoctorExperiences,
+    getDoctorOfficeSpecialties,
     type ExperienceForm,
     putDoctorExperiences,
     putDoctorCertificates,
     putDoctorProfile, type CertificateForm, type OfficeSpecialtyDTO, getDoctorOfficeAvailability, type AvailabilityDTO,
-    getDoctorUnavailability, getDoctorOffice, type DoctorOfficeQuery
+    getDoctorUnavailability, getDoctorOffice, type DoctorOfficeQuery,
+    type DoctorUpdateForm,
+    updateDoctor,
+    putDoctorImage,
+    updateDoctorProfileComplete
 } from "@/data/doctors";
-import {keepPreviousData, useMutation, useQueries, useQuery} from "@tanstack/react-query";
+import {keepPreviousData, useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
 import type {AxiosError} from "axios";
 import type {OfficeDTO} from "@/data/office.ts";
@@ -203,5 +210,37 @@ export function  usePutDoctorProfile(url: string ) {
 export function usePutDoctorCertificates(url: string ) {
     return useMutation<any, AxiosError<any>, CertificateForm[]>({
         mutationFn: (data: CertificateForm[]) => putDoctorCertificates(url,data)
+    });
+}
+
+export function useUpdateDoctor(url:string){
+    return useMutation<any,AxiosError<any>,DoctorUpdateForm>({
+        mutationFn: (data: DoctorUpdateForm) => updateDoctor(url,data)
+    });
+}
+export function usePutDoctorImage(url:string){
+    return useMutation<any,AxiosError<any>,File>({
+        mutationFn: (data: File) => putDoctorImage(url,data)
+        });
+}
+export function useUpdateDoctorProfile() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (params: {
+            doctorUrl: string;
+            imageUrl: string;
+            data: DoctorUpdateForm;
+            imageFile?: File | null;
+            doctorId: string;
+        }) => updateDoctorProfileComplete(params),
+
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['auth', 'doctor', variables.doctorId] });
+            queryClient.invalidateQueries({ queryKey: ['doctor', 'image', variables.doctorId] });
+            queryClient.invalidateQueries({ queryKey: ['doctor', 'specialties'] });
+            queryClient.invalidateQueries({ queryKey: ['doctor', 'coverages'] });
+        }
+
     });
 }
