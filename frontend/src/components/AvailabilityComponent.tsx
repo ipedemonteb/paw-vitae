@@ -126,7 +126,6 @@ export default function AvailabilityComponent() {
                             <div className="space-y-4">
                                 {fields.map((field, index) => (
                                     <Card key={field.id} className="relative bg-white shadow-sm border border-gray-200">
-                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500/20" />
 
                                         <CardContent className="p-4 pl-6">
                                             <Button
