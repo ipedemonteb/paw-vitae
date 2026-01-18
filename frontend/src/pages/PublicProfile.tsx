@@ -118,12 +118,12 @@ const ratingContent = "flex flex-row items-center gap-2 font-bold";
 const ratingText = "font-medium text-sm text-[var(--text-light)]";
 const editButton = "mt-4 w-26 h-10 sm:mt-0 sm:mx-6 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] sm:ml-auto cursor-pointer";
 const card = "p-0 gap-0";
-const cardTitle = "flex items-center px-6 py-2 bg-[var(--primary-color)] text-white gap-1 border border-[var(--primary-color)] rounded-t-xl";
+const cardTitle = "flex flex-wrap items-center gap-1 px-6 py-2 bg-[var(--primary-bg)] text-[var(--primary-dark)] rounded-t-xl";
 const aboutContent = "px-7 pt-4 pb-6";
-const cardTitleText = "text-lg font-[500]";
+const cardTitleText = "text-lg font-[500] min-w-0";
 const profileContent = "flex flex-col gap-0 items-center sm:flex-row pt-6";
 const aboutTitle = "text-lg font-[500]";
-const aboutText = "text-[var(--text-light)] text-md";
+const aboutText = "text-[var(--text-color)] text-md";
 const saveButtonStyle = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white sm:ml-auto";
 
 function EmptySection({ icon: Icon, text }: { icon: React.ElementType, text: string }) {
@@ -339,6 +339,7 @@ function OfficeComponent({ officeTitle, neighborhoodUrl }: {
 
 const experienceContent = "pr-6 py-6";
 const timelineContainer = "relative pl-10 before:content-[''] before:absolute before:top-3 before:bottom-3 before:left-14 before:w-[2px] before:-translate-x-1/2 before:bg-[var(--gray-300)]";
+const editComponentButton = "ml-auto shrink-0 w-26 h-10 bg-transparent text-[var(--primary-dark)] hover:border hover:border-[var(--primary-dark)] hover:bg-transparent cursor-pointer";
 
 function ExperienceCard({ experiences, isOwner, updateUrl }: {
     experiences: ExperienceDTO[];
@@ -361,7 +362,7 @@ function ExperienceCard({ experiences, isOwner, updateUrl }: {
                         experiencesUrl={updateUrl}
                         initialData={experiences}
                         trigger={
-                            <Button className={editButton}>
+                            <Button className={editComponentButton}>
                                 <SquarePen className="w-4 h-4 mr-2" />
                                 {t("doctor.profile.card.edit")}
                             </Button>
@@ -444,7 +445,7 @@ function CertificatesCard({ certifications, isOwner, updateUrl }: {
                         certsUrl={updateUrl}
                         initialData={certifications}
                         trigger={
-                            <Button className={editButton}>
+                            <Button className={editComponentButton}>
                                 <SquarePen className="w-4 h-4 mr-2" />
                                 {t("doctor.profile.card.edit")}
                             </Button>
