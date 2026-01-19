@@ -21,7 +21,7 @@ import {
     type DoctorUpdateForm,
     updateDoctor,
     putDoctorImage,
-    updateDoctorProfileComplete
+    updateDoctorProfileComplete, type DoctorAvailabilityFormDTO, putDoctorOfficeAvailability
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
@@ -224,6 +224,20 @@ export function usePutDoctorImage(url:string){
         mutationFn: (data: File) => putDoctorImage(url,data)
         });
 }
+
+
+export function usePutDoctorOfficeAvailability(url: string) {
+    const queryClient = useQueryClient();
+
+    return useMutation<any, AxiosError<any>, DoctorAvailabilityFormDTO>({
+        mutationFn: (data: DoctorAvailabilityFormDTO) => putDoctorOfficeAvailability(url, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['doctor', 'office', 'availability'] });
+        }
+    });
+}
+
+
 export function useUpdateDoctorProfile() {
     const queryClient = useQueryClient();
 

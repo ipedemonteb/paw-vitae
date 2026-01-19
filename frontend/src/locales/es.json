@@ -618,7 +618,9 @@
     "emptyContent": "No hay disponibilidad configurada",
     "emptyContentText": "Tus horarios de atención aparecerán aquí una vez que agregues uno.",
     "errorTimeOrder": "La hora de fin debe ser posterior al inicio",
-    "errorOverlap": "Horario superpuesto con otro intervalo"
+    "errorOverlap": "Horario superpuesto con otro intervalo",
+    "success"  : "Horarios actualizados con exito",
+    "error" : "Hubo un error actualizando sus horarios. Pruebe de nuevo mas tarde."
   },
   "days": {
     "MONDAY": "Lunes",
