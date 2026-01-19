@@ -149,9 +149,7 @@
       "dashboard": "Ir al Panel",
       "view-details": "Ver Detalles"
     },
-    "created": "Cita creada exitosamente.",
-
-
+    "created": "Cita creada exitosamente."
   },
   "login": {
     "welcome_title": "Bienvenido de nuevo!",
@@ -649,6 +647,9 @@
     "noDatesSelected": "No hay fechas seleccionadas",
     "singleDay": "Día único",
     "range": "Rango",
-    "saveChanges": "Guardar Cambios"
-  }
+    "saveChanges": "Guardar Cambios",
+    "success"  : "Fechas actualizadas con exito",
+    "error" : "Hubo un error actualizando sus fechas no disponibles. Pruebe de nuevo mas tarde."
+  },
+  "Error" : "Error"
 }

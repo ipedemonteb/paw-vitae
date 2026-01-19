@@ -7,21 +7,18 @@ import { CalendarClock, Plus, Loader2, AlertCircle, RefreshCw } from "lucide-rea
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
-import { useDoctorOfficeAvailability, useDoctorOffices } from "@/hooks/useDoctors.ts";
+import { useDoctorOfficeAvailability, useDoctorOffices, usePutDoctorOfficeAvailability } from "@/hooks/useDoctors.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { useEffect, useState } from "react";
-import { type DoctorAvailabilityFormDTO, putDoctorOfficeAvailability } from "@/data/doctors.ts";
+import { type DoctorAvailabilityFormDTO } from "@/data/doctors.ts";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {type AvailabilityFormValues, formSchema, DB_DAY_TO_FORM, FORM_DAY_TO_DB, extractIdFromUrl } from "./availability-schema";
+import { type AvailabilityFormValues, formSchema, DB_DAY_TO_FORM, FORM_DAY_TO_DB, extractIdFromUrl } from "../lib/availability-schema.ts";
 import { AvailabilityItem } from "./AvailabilityItem";
-
-//TODO: Right now, if there is no slot belonging to an active office, the query goes kaboom because of backend managin. Decide how we handle that logic.
 
 export default function AvailabilityComponent() {
     const { t } = useTranslation();
     const auth = useAuth();
-    const [isSaving, setIsSaving] = useState(false);
     const [isDataReady, setIsDataReady] = useState(false);
     const queryClient = useQueryClient();
 
@@ -37,6 +34,8 @@ export default function AvailabilityComponent() {
         isLoading: loadingAvailability,
         isError: isErrorAvailability
     } = useDoctorOfficeAvailability(offices);
+
+    const { mutateAsync: updateAvailability, isPending: isSaving } = usePutDoctorOfficeAvailability(`/doctors/${auth.userId}/availability`);
 
     const isLoading = loadingOffices || loadingAvailability;
     const isError = isErrorOffices || isErrorAvailability;
@@ -97,7 +96,7 @@ export default function AvailabilityComponent() {
 
     async function onSubmit(data: AvailabilityFormValues) {
         if (!offices) return;
-        setIsSaving(true);
+
         try {
             const payload: DoctorAvailabilityFormDTO = {
                 doctorOfficeAvailabilities: data.schedules.map(slot => ({
@@ -108,9 +107,7 @@ export default function AvailabilityComponent() {
                 }))
             };
 
-            const url = `/doctors/${auth.userId}/availability`;
-            await putDoctorOfficeAvailability(url, payload);
-            await queryClient.invalidateQueries({ queryKey: ['doctor', 'office', 'availability'] });
+            await updateAvailability(payload);
 
             form.reset(data);
 
@@ -120,11 +117,9 @@ export default function AvailabilityComponent() {
 
         } catch (error) {
             console.error("Error guardando", error);
-            toast.error(t("error", "Error"), {
+            toast.error(t("Error", "Error"), {
                 description: t("doctor.profile.update_error", "Failed to update availability.")
             });
-        } finally {
-            setIsSaving(false);
         }
     }
 
