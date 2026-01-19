@@ -9,6 +9,7 @@ import SearchSpecialtyBadgeComponent from "@/components/SearchSpecialtyBadgeComp
 import {initialsFallback} from "@/utils/userUtils.ts";
 import {generatePath, Link} from "react-router-dom";
 import {extractIdFromUrl} from "@/lib/utils.ts";
+import {useTranslation} from "react-i18next";
 
 const cardContainer =
     "p-0 gap-0";
@@ -35,7 +36,7 @@ const viewProfileButton =
 
 function SearchGridCard({doctor}: SearchCardProps) {
     const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
-
+    const {t} = useTranslation();
     const rating = doctor.rating;
     const specialties = useDoctorSpecialties(doctor.specialties);
     const {url:imageUrl} = useDoctorImageUrl(doctor.self.split("/").pop());
@@ -67,13 +68,13 @@ function SearchGridCard({doctor}: SearchCardProps) {
                 <Button asChild className={scheduleButton}>
                     <Link to={schedulePath}>
                         <Calendar className={dataIcon} />
-                        Schedule
+                        {t("search.schedule")}
                     </Link>
                 </Button>
                 <Button asChild className={viewProfileButton}>
                     <Link to={profilePath}>
                         <UserRoundSearch className={dataIcon} />
-                        View Profile
+                        {t("search.view_profile")}
                     </Link>
                 </Button>
             </div>

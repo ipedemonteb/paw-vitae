@@ -564,6 +564,8 @@
   "search": {
     "title": "Specialist Doctors",
     "subtitle": "Doctors specializing in: {{ specialty }}",
+    "schedule" : "Schedule",
+    "view_profile" : "View profile",
     "search": "Search for doctors",
     "specialty": {
       "title": "Specialty",

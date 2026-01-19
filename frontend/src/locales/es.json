@@ -559,6 +559,8 @@
     "title": "Médicos Especialistas",
     "subtitle": "Médicos de la especialidad: {{ specialty }}",
     "search": "Buscar Doctores",
+    "schedule" : "Calendario",
+    "view_profile" : "Ver perfil",
     "specialty": {
       "title": "Especialidad",
       "select": "Seleccionar especialidad...",
