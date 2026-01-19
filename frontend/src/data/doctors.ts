@@ -115,6 +115,15 @@ export type DoctorOfficeQuery = {
     status: string
 }
 
+export interface AvailabilitySlotForm {
+    dayOfWeek: number;
+    startTime: string; // Formato "HH:mm:00"
+    endTime: string;   // Formato "HH:mm:00"
+}
+export interface DoctorAvailabilityFormDTO {
+    doctorOfficeAvailabilities: AvailabilitySlotForm[];
+}
+
 const extractIdFromUrl = (url: string): string => {
     if (!url) return "";
     const segments = url.replace(/\/$/, "").split("/");
@@ -350,6 +359,16 @@ export async function putDoctorImage(doctorImageUrl: string, image: File) {
     formData.append("file", image);
 
     const res = await api.put(doctorImageUrl, formData);
+    return res.data;
+}
+
+
+export async function putDoctorOfficeAvailability(url: string, data: DoctorAvailabilityFormDTO) {
+    const res = await api.put(url, data, {
+        headers: {
+            "content-type": ContentTypes.AVAILABILITY_LIST
+        }
+    });
     return res.data;
 }
 export async function updateDoctorProfileComplete(params: {

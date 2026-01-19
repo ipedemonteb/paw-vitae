@@ -624,7 +624,9 @@
     "emptyContent" : "No availability set up",
     "emptyContentText" : "Your availability will appear here once you have added one.",
     "errorTimeOrder": "Starting time must be before end time",
-    "errorOverlap": "Time overlaps with another"
+    "errorOverlap": "Time overlaps with another",
+    "success" : "Availability correctly updated",
+    "error" : "There was an error updating your availability. Please try again later."
   },
   "days" : {
     "MONDAY" : "Monday",
