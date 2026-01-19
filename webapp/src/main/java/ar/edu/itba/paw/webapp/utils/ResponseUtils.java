@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-public class ResponseUtils {
-
+public final class ResponseUtils {
+    public static final int MAX_PAGINATION_PAGE_SIZE = 100;
     public static Response buildPaginationHeaders(Response.ResponseBuilder rb, Page<?> items, UriInfo uriInfo) {
 
         UriBuilder uri = uriInfo.getRequestUriBuilder().clone();

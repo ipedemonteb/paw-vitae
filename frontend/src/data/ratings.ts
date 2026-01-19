@@ -10,6 +10,11 @@ export interface RatingsDTO {
     doctor: string;
     patient: string;
 }
+export interface RatingForm{
+    rating: number;
+    comment: string;
+    appointmentId: string;
+}
 export async function getDoctorRatings(url: string) {
     const res = await api.get<RatingsDTO[]>(url,{
         headers: {
@@ -33,4 +38,12 @@ export async function getRating(url: string) {
         headers: {"accept": ContentTypes.RATING}
     });
     return res.data;
+}
+export async function createRating(ratingData:RatingForm) {
+    return await api.post<RatingForm>(`/ratings`, ratingData, {
+        headers: {
+            "Content-Type": ContentTypes.RATING
+        }
+    });
+
 }
