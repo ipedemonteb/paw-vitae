@@ -141,7 +141,6 @@ function normalizeDoctorsQuery(query: DoctorsQuery) {
 
 export async function listDoctors(params: DoctorsQuery): Promise<PaginationData<DoctorDTO[]>> {
     normalizeDoctorsQuery(params)
-    console.log(params)
     const res = await api.get<DoctorDTO[]>("/doctors", {
         params: {
             specialty: params.specialty,

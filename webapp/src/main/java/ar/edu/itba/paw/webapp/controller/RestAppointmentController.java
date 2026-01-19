@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.CancelAppointmentForm;
 import ar.edu.itba.paw.webapp.form.AppointmentReportForm;
 import ar.edu.itba.paw.webapp.CustomMediaType;
+import ar.edu.itba.paw.webapp.utils.ResponseUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
@@ -59,8 +61,8 @@ public class RestAppointmentController {
             @QueryParam("doctorId") Long doctorId,
             @QueryParam("collection") @DefaultValue("upcoming") String collection,
             @QueryParam("filter") @DefaultValue("all") String filter,
-            @QueryParam("page") @DefaultValue("1") @Min(1) int page,
-            @QueryParam("pageSize") @DefaultValue("10") @Min(1) int pageSize
+            @QueryParam("page") @DefaultValue("1") @Min(1)  int page,
+            @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE) int pageSize
     ) {
         Page<Appointment> appointmentPage = appointmentService.getAppointments(userId, "upcoming".equalsIgnoreCase(collection), page, pageSize, filter);
         Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointmentPage.getContent(), uriInfo)) {});

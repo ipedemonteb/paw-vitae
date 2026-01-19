@@ -125,7 +125,9 @@
       "write-review": "Write your review here...",
       "upload": "Upload files for the appointment.",
       "submit": "Submit",
-      "submit-rating": "Send Rating"
+      "submit-rating": "Send Rating",
+      "rating-success": "Your rating has been submitted successfully.",
+        "rating-error": "An error occurred while submitting your rating. Please try again."
     },
     "booking": {
       "header": {
@@ -157,7 +159,8 @@
       "office": "Office",
       "info": "An email has been sent to your inbox with all appointment details.",
       "dashboard": "Go to Dashboard",
-      "view-details": "View Details"
+      "view-details": "View Details",
+      "created": "Appointment successfully created."
     }
   },
   "login": {
@@ -282,6 +285,7 @@
     "error_generic": "An error occurred while changing the password. Please try again.",
     "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
   },
+
   "medical-history": {
     "title": "Medical History",
     "subtitle": "View all your patients' medical files and appointment records",
@@ -291,6 +295,7 @@
       "old-first": "Oldest First",
       "new-first": "Newest First"
     },
+
     "no-appointments": "No past appointments.",
     "component": {
       "reason": "Reason for Visit:",
@@ -305,7 +310,9 @@
   },
   "common": {
     "go_back": "Go Back",
-    "return_home": "Return Home"
+    "return_home": "Return Home",
+    "download": "Download",
+    "view": "View"
   },
   "error": {
     "403": {
@@ -323,7 +330,8 @@
     "default": {
       "title": "An Error Occurred",
       "message": "An unexpected error has occurred. Please try again."
-    }
+    },
+    "try_again": "Try Again"
   },
   "verify": {
     "loading_title": "Verifying account...",
@@ -339,7 +347,6 @@
   "save": "Save Changes",
   "saving": "Saving...",
   "success": "Success",
-  "error": "Error",
   "add_new": "Add New",
   "header": {
     "home": "Home",
