@@ -28,12 +28,16 @@ export function DatePicker({
                                placeholder = "Select a Date",
                                disabled = false,
                                isDateDisabled,
+                               fromDate,
+                               toDate,
                            }: {
     value?: Date
     onChange?: (date: Date | undefined) => void
     placeholder?: string
     disabled?: boolean
     isDateDisabled?: (date: Date) => boolean
+    fromDate?: Date
+    toDate?: Date
 }) {
     const [open, setOpen] = React.useState(false)
     const [month, setMonth] = React.useState<Date | undefined>(value ?? new Date())
@@ -86,10 +90,28 @@ export function DatePicker({
                     captionLayout="dropdown"
                     month={month}
                     onMonthChange={setMonth}
-                    disabled={(d) => disabled || !!isDateDisabled?.(d)}
+                    fromDate={fromDate}
+                    toDate={toDate}
+                    disabled={(date) => {
+                        if (disabled) return true
+                        if (isDateDisabled && isDateDisabled(date)) return true
+                        if (fromDate) {
+                            const from = new Date(fromDate)
+                            from.setHours(0, 0, 0, 0)
+                            if (date < from) return true
+                        }
+                        if (toDate) {
+                            const to = new Date(toDate)
+                            to.setHours(23, 59, 59, 999)
+                            if (date > to) return true
+                        }
+
+                        return false
+                    }}
                     onSelect={(d) => {
                         if (disabled) return
                         if (d && isDateDisabled?.(d)) return
+
                         onChange?.(d)
                         if (d) setMonth(d)
                         setOpen(false)

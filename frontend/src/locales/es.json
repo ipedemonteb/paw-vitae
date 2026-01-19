@@ -113,7 +113,9 @@
       "write-review": "Escribe tu reseña aquí...",
       "upload": "Subir archivos para la cita.",
       "submit": "Enviar",
-      "submit-rating": "Enviar Calificación"
+      "submit-rating": "Enviar Calificación",
+      "rating-success": "Calificación enviada exitosamente.",
+      "rating-error": "Error al enviar la calificación. Por favor, inténtalo de nuevo."
     },
     "booking": {
       "header": {
@@ -146,7 +148,10 @@
       "info": "Se ha enviado un mail a tu casilla con todos los detalles de la consulta.",
       "dashboard": "Ir al Panel",
       "view-details": "Ver Detalles"
-    }
+    },
+    "created": "Cita creada exitosamente.",
+
+
   },
   "login": {
     "welcome_title": "Bienvenido de nuevo!",
@@ -233,7 +238,9 @@
   },
   "common": {
     "go_back": "Volver atrás",
-    "return_home": "Ir al Inicio"
+    "return_home": "Ir al Inicio",
+    "download": "Download",
+    "view": "View"
   },
   "error": {
     "403": {
@@ -251,7 +258,8 @@
     "default": {
       "title": "Ocurrió un error",
       "message": "Ha ocurrido un error inesperado. Por favor intenta nuevamente."
-    }
+    },
+    "try-again": "Intentar de nuevo"
   },
   "verify": {
     "loading_title": "Verificando cuenta...",
@@ -263,6 +271,7 @@
     "go_home": "Ir al Inicio",
     "back_to_login": "Volver al inicio de sesión"
   },
+
   "register": {
     "title_register" : "Registrarse",
     "subtitle_register" : "Crea tu cuenta para acceder a nuestros servicios de salud.",
@@ -340,7 +349,6 @@
   "save": "Guardar Cambios",
   "saving": "Guardando...",
   "success": "Éxito",
-  "error": "Error",
   "add_new": "Agregar Nuevo",
   "header": {
     "home": "Inicio",

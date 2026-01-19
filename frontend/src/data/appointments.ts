@@ -122,3 +122,18 @@ export async function uploadAppointmentFile(appointmentId: string, doc: File, ro
         headers: {"Content-Type": "multipart/form-data"}
     });
 }
+export async function fetchFileBlob(url: string) {
+    const res = await api.get(url, {
+        responseType: 'blob'
+    });
+
+    return {
+        data: res.data as Blob,
+        contentType: res.headers['content-type']
+    };
+}
+export async function updateAppointmentReport(id: string, report: string) {
+    return await api.patch(`/appointments/${id}`, { report }, {
+        headers: { "Content-Type": ContentTypes.APPOINTMENT_REPORT }
+    });
+}
