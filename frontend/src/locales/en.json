@@ -654,6 +654,9 @@
     "noDatesSelected": "No dates selected",
     "singleDay": "Single Day",
     "range": "Range",
-    "saveChanges": "Save Changes"
-  }
+    "saveChanges": "Save Changes",
+    "success"  : "Dates correctly updated",
+    "error" : "There was an error updating your unavailability dates. Please try again later"
+  },
+  "Error" : "Error"
 }

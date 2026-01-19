@@ -124,6 +124,15 @@ export interface DoctorAvailabilityFormDTO {
     doctorOfficeAvailabilities: AvailabilitySlotForm[];
 }
 
+export interface UnavailabilityForm {
+    endDate: string;
+    startDate: string;
+}
+
+export interface DoctorUnavailabilityFormDTO{
+    unavailabilitySlots: UnavailabilityForm[];
+}
+
 const extractIdFromUrl = (url: string): string => {
     if (!url) return "";
     const segments = url.replace(/\/$/, "").split("/");
@@ -370,6 +379,16 @@ export async function putDoctorOfficeAvailability(url: string, data: DoctorAvail
     });
     return res.data;
 }
+
+export async function putDoctorUnavailability(url: string, data:DoctorUnavailabilityFormDTO){
+    const res = await api.put(url, data, {
+        headers: {
+            "content-type" : ContentTypes.UNAVAILABILITY_LIST
+        }
+    });
+    return res.data;
+}
+
 export async function updateDoctorProfileComplete(params: {
     doctorUrl: string;
     imageUrl: string;
