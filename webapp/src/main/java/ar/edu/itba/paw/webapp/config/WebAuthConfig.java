@@ -167,9 +167,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.HEAD, UriUtils.PATIENTS).permitAll()
                 .antMatchers(HttpMethod.PATCH,UriUtils.PATIENTS +"/{id:\\d+}").access("hasRole('PATIENT') and @accessHandler.isUser(authentication, #id)")
                 .antMatchers(HttpMethod.GET, UriUtils.PATIENTS +"/{id:\\d+}").access("@accessHandler.isUser(authentication, #id) or (hasRole('DOCTOR') and @accessHandler.hasAppointmentWithPatient(authentication, #id))")
-                .antMatchers(HttpMethod.POST,UriUtils.RATINGS).access("hasRole('PATIENT') and @accessHandler.canRateAppointment(authentication, request)")
+                .antMatchers(HttpMethod.POST,UriUtils.RATINGS).access("hasRole('PATIENT')")
                 .antMatchers(HttpMethod.GET, UriUtils.RATINGS +"/**").permitAll()
-                //TODO: REVISAR VALIDACION DE RATING
                 .antMatchers("/images/**").permitAll()
                 .antMatchers(UriUtils.COVERAGES +"/**").permitAll()
                 .antMatchers(UriUtils.SPECIALTIES + "/**").permitAll()

@@ -1,5 +1,6 @@
-import {useQuery} from "@tanstack/react-query";
-import {getAllRatings, getDoctorRatings, getRating} from "@/data/ratings.ts";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import {createRating, getAllRatings, getDoctorRatings, getRating,type RatingForm} from "@/data/ratings.ts";
+import type {AxiosError} from "axios";
 
 export function useRatings(url?: string | null) {
     return useQuery({
@@ -22,4 +23,9 @@ export function useRating(id?: string | null) {
         queryFn: () => getRating(id!),
         enabled: !!id,
     });
+}
+export function useCreateRating(){
+    return useMutation<any,AxiosError<any>,RatingForm>({
+        mutationFn: async (ratingData:RatingForm) => createRating(ratingData)
+    })
 }

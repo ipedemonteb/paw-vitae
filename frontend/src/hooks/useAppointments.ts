@@ -1,14 +1,16 @@
 import {
     type AppointmentForm,
-    type AppointmentsQuery, createAppointment,
+    type AppointmentsQuery,
+    createAppointment,
+    fetchFileBlob,
     getAppointment,
     getAppointmentFiles,
-    listAppointments, uploadAppointmentFile
+    listAppointments,
+    uploadAppointmentFile,
+    updateAppointmentReport
 } from "@/data/appointments.ts";
-import {keepPreviousData, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {AxiosError} from "axios";
-
-
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 export function useAppointments(query: AppointmentsQuery) {
     const { userId, doctorId, collection, filter, page, pageSize } = query ?? {};
@@ -45,27 +47,70 @@ export function useAppointmentFiles(id?: string | null) {
         enabled: !!id,
     })
 }
-export function useBookAppointment() {
-    const queryClient = useQueryClient();
 
+
+
+export function useBookAppointment() {
     return useMutation<string, AxiosError<any>, { form: AppointmentForm, files: File[] }>({
         mutationFn: async ({ form, files }) => {
             const res = await createAppointment(form);
             const location = res.headers['location'] || res.headers['Location'];
             const newId = location?.split('/').pop();
+
             if (!newId) {
                 throw new Error("No se pudo obtener el ID del turno creado");
             }
-            console.log("aca antes")
+
             for (const file of files) {
-                console.log("entree")
                 await uploadAppointmentFile(newId, file, 'patient');
             }
 
             return newId;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['auth', 'appointments'] });
         }
+    });
+}
+
+export function useUpdateReport() {
+    return useMutation({
+        mutationFn: async ({ id, report }: { id: string, report: string }) => {
+            return await updateAppointmentReport(id, report);
+        }
+    });
+}
+
+export function useUploadDoctorFiles() {
+    return useMutation({
+        mutationFn: async ({ id, files }: { id: string, files: File[] }) => {
+            for (const file of files) {
+                await uploadAppointmentFile(id, file, 'doctor');
+            }
+        }
+    });
+}
+
+
+export function useAppointmentFileHandler() {
+    return useMutation({
+        mutationFn: async ({ url, action, fileName }: { url: string, action: 'view' | 'download', fileName: string }) => {
+            const { data, contentType } = await fetchFileBlob(url);
+
+            const type = action === 'view' ? 'application/pdf' : contentType;
+            const blob = new Blob([data], { type });
+            const tempUrl = window.URL.createObjectURL(blob);
+            return { tempUrl, action, fileName };
+        },
+        onSuccess: ({ tempUrl, action, fileName }) => {
+            if (action === 'view') {
+                window.open(tempUrl, '_blank');
+            } else {
+                const link = document.createElement('a');
+                link.href = tempUrl;
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            }
+            setTimeout(() => window.URL.revokeObjectURL(tempUrl), 100);
+        },
     });
 }
