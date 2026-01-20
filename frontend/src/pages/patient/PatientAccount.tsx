@@ -33,10 +33,10 @@ import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
 const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
 const cardHeaderStyles = "flex items-center justify-between px-6 py-4 bg-white border-b";
-const cardTitleStyles = "text-xl font-semibold text-gray-800 flex items-center gap-2";
+const cardTitleStyles = "text-xl font-[500] text-(--text-color) flex items-center gap-2";
 const sectionStyles = "p-6";
 const gridStyles = "grid grid-cols-1 md:grid-cols-2 gap-6";
-const infoValueStyles = "text-(--text-light) font-[400]";
+const infoValueStyles = "flex flex-row items-center gap-1 text-(--text-light) font-[400]";
 const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white";
 
 function PatientAccount() {
@@ -145,7 +145,7 @@ function PatientAccount() {
 
     return (
         <DashboardNavContainer>
-            <DashboardNavHeader title="Account">
+            <DashboardNavHeader title={t("patient.dashboard.account")}>
                 <div className="h-9"/>
             </DashboardNavHeader>
             <div className={containerStyles}>
@@ -173,7 +173,7 @@ function PatientAccount() {
                         </div>
 
                         <div className={sectionStyles}>
-                            <h3 className="text-lg font-semibold mb-4 border-b pb-2">
+                            <h3 className="text-lg font-[500] mb-4 border-b pb-2">
                                 {t("dashboard.profile.personalInfo", "Personal Information")}
                             </h3>
 
@@ -210,14 +210,14 @@ function PatientAccount() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="email" className="flex items-center gap-2">
-                                        <Mail className="h-4 w-4" /> {t("dashboard.profile.email", "Email")}
+                                        {t("dashboard.profile.email", "Email")}
                                     </Label>
-                                    <div className={`${infoValueStyles}`}>{patient.email}</div>
+                                    <div className={`${infoValueStyles}`}><Mail className="h-4 w-4" />{patient.email}</div>
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="phone" className="flex items-center gap-2">
-                                        <Phone className="h-4 w-4" /> {t("dashboard.profile.phone", "Phone")}
+                                        {t("dashboard.profile.phone", "Phone")}
                                     </Label>
                                     {isEditing ? (
                                         <Input
@@ -228,7 +228,7 @@ function PatientAccount() {
                                             disabled={isSaving}
                                         />
                                     ) : (
-                                        <div className={infoValueStyles}>{patient.phone}</div>
+                                        <div className={infoValueStyles}><Phone className="h-4 w-4" />{patient.phone}</div>
                                     )}
                                 </div>
                             </div>
