@@ -37,7 +37,7 @@ const cardTitleStyles = "text-xl font-[500] text-(--text-color) flex items-cente
 const sectionStyles = "p-6";
 const gridStyles = "grid grid-cols-1 md:grid-cols-2 gap-6";
 const infoValueStyles = "flex flex-row items-center gap-1 text-(--text-light) font-[400]";
-const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white";
+const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer text-white";
 
 function PatientAccount() {
     const { t } = useTranslation();
@@ -146,8 +146,15 @@ function PatientAccount() {
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={t("patient.dashboard.account")}>
-                <div className="h-9"/>
+                {!isEditing && (
+                    <Button onClick={() => setIsEditing(true)} className={actionButtonStyles}>
+                        <Pencil className="w-4 h-4 mr-2" />
+                        {t("dashboard.profile.edit", "Edit")}
+                    </Button>
+                )}
+                {isEditing && <div className="h-9" />}
             </DashboardNavHeader>
+
             <div className={containerStyles}>
                 <Card className={cardStyles}>
                     <div className={cardHeaderStyles}>
@@ -155,19 +162,14 @@ function PatientAccount() {
                             <User className="h-5 w-5 text-[var(--primary-color)]" />
                             {t("dashboard.profile.title", "My Profile")}
                         </h2>
-                        {!isEditing && (
-                            <Button onClick={() => setIsEditing(true)} className={actionButtonStyles}>
-                                <Pencil className="w-4 h-4 mr-2" />
-                                {t("dashboard.profile.edit", "Edit")}
-                            </Button>
-                        )}
                     </div>
 
-                    <CardContent className="p-0 flex flex-col gap-2 mb-2">
+                    <CardContent className="p-0 flex flex-col gap-2">
                         <div className="flex flex-col items-center justify-center py-8 bg-gray-50 border-b">
                             <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
                                 <AvatarFallback className="text-3xl bg-gray-200 text-gray-500">
-                                    {patient.name?.[0]}{patient.lastName?.[0]}
+                                    {patient.name?.[0]}
+                                    {patient.lastName?.[0]}
                                 </AvatarFallback>
                             </Avatar>
                         </div>
@@ -212,7 +214,10 @@ function PatientAccount() {
                                     <Label htmlFor="email" className="flex items-center gap-2">
                                         {t("dashboard.profile.email", "Email")}
                                     </Label>
-                                    <div className={`${infoValueStyles}`}><Mail className="h-4 w-4" />{patient.email}</div>
+                                    <div className={infoValueStyles}>
+                                        <Mail className="h-4 w-4" />
+                                        {patient.email}
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">
@@ -228,33 +233,14 @@ function PatientAccount() {
                                             disabled={isSaving}
                                         />
                                     ) : (
-                                        <div className={infoValueStyles}><Phone className="h-4 w-4" />{patient.phone}</div>
+                                        <div className={infoValueStyles}>
+                                            <Phone className="h-4 w-4" />
+                                            {patient.phone}
+                                        </div>
                                     )}
                                 </div>
                             </div>
                         </div>
-
-                        {isEditing && (
-                            <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
-                                <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
-                                    <X className="w-4 h-4 mr-2" />
-                                    {t("logout.confirmation.cancel", "Cancel")}
-                                </Button>
-                                <Button onClick={handleSave} className={actionButtonStyles} disabled={isSaving}>
-                                    {isSaving ? (
-                                        <>
-                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                            {t("saving", "Saving...")}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Save className="w-4 h-4 mr-2" />
-                                            {t("appointment.form.save", "Save")}
-                                        </>
-                                    )}
-                                </Button>
-                            </div>
-                        )}
                     </CardContent>
                 </Card>
 
@@ -270,7 +256,7 @@ function PatientAccount() {
                             {isEditing ? (
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto pr-2">
                                     {allCoveragesList?.map((c) => {
-                                        const cId = Number(c.self.split('/').pop());
+                                        const cId = Number(c.self.split("/").pop());
                                         const isSelected = selectedCoverageId === cId;
                                         return (
                                             <div
@@ -278,34 +264,75 @@ function PatientAccount() {
                                                 onClick={() => selectCoverage(cId)}
                                                 className={cn(
                                                     "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-green-300 select-none",
-                                                    isSelected ? "bg-green-50 border-green-500 text-green-700 font-medium shadow-sm" : "bg-white text-gray-600 border-gray-200"
+                                                    isSelected
+                                                        ? "bg-green-50 border-green-500 text-green-700 font-medium shadow-sm"
+                                                        : "bg-white text-gray-600 border-gray-200"
                                                 )}
                                             >
-                                                <div className={cn("w-4 h-4 rounded-full border flex items-center justify-center shrink-0", isSelected ? "bg-green-500 border-green-500" : "border-gray-300")}>
+                                                <div
+                                                    className={cn(
+                                                        "w-4 h-4 rounded-full border flex items-center justify-center shrink-0",
+                                                        isSelected ? "bg-green-500 border-green-500" : "border-gray-300"
+                                                    )}
+                                                >
                                                     {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
                                                 </div>
                                                 <span className="truncate">{c.name}</span>
                                             </div>
-                                        )
+                                        );
                                     })}
                                 </div>
                             ) : (
                                 <div className="flex flex-wrap gap-2">
                                     {coverage ? (
-                                        <span key={coverage.name} className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium border border-green-100">
-                                                {coverage.name}
-                                            </span>
+                                        <span
+                                            key={coverage.name}
+                                            className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium border border-green-100"
+                                        >
+                    {coverage.name}
+                  </span>
                                     ) : (
-                                        <p className="text-gray-400 text-sm">{t("doctor.profile.no_coverages", "No coverage listed")}</p>
+                                        <p className="text-gray-400 text-sm">
+                                            {t("doctor.profile.no_coverages", "No coverage listed")}
+                                        </p>
                                     )}
                                 </div>
                             )}
                         </CardContent>
                     </Card>
                 </div>
+                {isEditing && (
+                    <div className="flex justify-center gap-3 mt-4 flex-col sm:flex-row items-center">
+                        <Button
+                            variant="outline"
+                            className="w-3xs cursor-pointer border border-(--danger) text-(--danger) hover:text-white hover:bg-(--danger)"
+                            onClick={handleCancel}
+                            disabled={isSaving}
+                        >
+                            <X className="w-4 h-4 mr-2" />
+                            {t("logout.confirmation.cancel", "Cancel")}
+                        </Button>
+
+                        <Button onClick={handleSave} className={actionButtonStyles + " w-3xs"} disabled={isSaving}>
+                            {isSaving ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    {t("saving", "Saving...")}
+                                </>
+                            ) : (
+                                <>
+                                    <Save className="w-4 h-4 mr-2" />
+                                    {t("appointment.form.save", "Save")}
+                                </>
+                            )}
+                        </Button>
+                    </div>
+                )}
+
             </div>
         </DashboardNavContainer>
     );
+
 }
 
 export default PatientAccount;
