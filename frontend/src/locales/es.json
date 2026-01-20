@@ -628,7 +628,9 @@
     "errorTimeOrder": "La hora de fin debe ser posterior al inicio",
     "errorOverlap": "Horario superpuesto con otro intervalo",
     "success"  : "Horarios actualizados con exito",
-    "error" : "Hubo un error actualizando sus horarios. Pruebe de nuevo mas tarde."
+    "error" : "Hubo un error actualizando sus horarios. Pruebe de nuevo mas tarde.",
+    "warning_title": "Advertencia de Status de Consultorio",
+    "warning_text" : "Si un consultorio no tiene horarios, automaticamente esta se volverá inactiva. Para reactivarla, edite la oficina en la seccion de consultorios y agregue un horario para este."
   },
   "days": {
     "MONDAY": "Lunes",
@@ -652,6 +654,7 @@
     "saveChanges": "Guardar Cambios",
     "success"  : "Fechas actualizadas con exito",
     "error" : "Hubo un error actualizando sus fechas no disponibles. Pruebe de nuevo mas tarde."
+
   },
   "Error" : "Error"
 }
