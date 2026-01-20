@@ -82,7 +82,8 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
         }
         for (DoctorOffice office : offices) {
             if (office.isActive() && !incomingOfficeIds.contains(office.getId())) {
-                throw new BussinesRuleException("exception.business.officeAvailabilitySlot.active");
+                office.setActive(false);
+//                throw new BussinesRuleException("exception.business.officeAvailabilitySlot.active"); // you muist provide slots for all active offices
             }
         }
         Map<Long,DoctorOfficeAvailability> existingById =

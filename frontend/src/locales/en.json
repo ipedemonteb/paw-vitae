@@ -635,7 +635,9 @@
     "errorTimeOrder": "Starting time must be before end time",
     "errorOverlap": "Time overlaps with another",
     "success" : "Availability correctly updated",
-    "error" : "There was an error updating your availability. Please try again later."
+    "error" : "There was an error updating your availability. Please try again later.",
+    "warning_title" :  "Office Status Warning",
+    "warning_text" : "If you remove all slots for an office, it will be automatically set to inactive. To reactivate an office, simply do so in the offices section and remember to add a timeslot for it."
   },
   "days" : {
     "MONDAY" : "Monday",

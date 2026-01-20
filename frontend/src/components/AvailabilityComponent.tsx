@@ -3,7 +3,7 @@ import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button.tsx";
 import { Form } from "../components/ui/form.tsx";
-import { CalendarClock, Plus, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import {CalendarClock, Plus, Loader2, AlertCircle, RefreshCw, AlertTriangle} from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
@@ -168,6 +168,25 @@ export default function AvailabilityComponent() {
         <DashboardNavContainer>
             <DashboardNavHeader title={t("availability.headerTitle")} children={undefined}/>
             <div className="w-full max-w-5xl mx-auto">
+                <div className="mb-6 rounded-lg bg-amber-50 p-4 border border-amber-200 shadow-sm animate-in fade-in slide-in-from-top-2">
+                    <div className="flex items-start gap-3">
+                        <div className="shrink-0">
+                            <AlertTriangle className="h-5 w-5 text-amber-600" aria-hidden="true" />
+                        </div>
+                        <div className="flex-1 md:flex md:justify-between">
+                            <div>
+                                <h3 className="text-sm font-medium text-amber-800">
+                                    {t("availability.warning_title")}
+                                </h3>
+                                <div className="mt-1 text-sm text-amber-700">
+                                    <p>
+                                        {t("availability.warning_text")}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {fields.length === 0 ? (
                     <div className="flex flex-col items-center justify-center p-8 animate-in fade-in-50">
                         <DashboardNavEmptyContent
