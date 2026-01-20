@@ -113,7 +113,9 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
             ) : (
                 <DashboardNavEmptyContent Icon={CalendarFoldIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>
             )}
-            <PaginationComponent pagination={appointments?.pagination} searchParams={searchParams}/>
+            {!isLoading && appointments?.data !== undefined && appointments?.data?.length > 0 && appointments?.pagination && (
+                <PaginationComponent pagination={appointments.pagination} searchParams={searchParams} />
+            )}
         </DashboardNavContainer>
     );
 }
