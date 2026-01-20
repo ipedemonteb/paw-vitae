@@ -27,14 +27,16 @@ import GenericError from "@/pages/GenericError.tsx";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
+import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
+import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 
-const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full pb-10";
-const cardStyles = "p-0 overflow-hidden shadow-md";
+const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
+const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
 const cardHeaderStyles = "flex items-center justify-between px-6 py-4 bg-white border-b";
 const cardTitleStyles = "text-xl font-semibold text-gray-800 flex items-center gap-2";
 const sectionStyles = "p-6";
 const gridStyles = "grid grid-cols-1 md:grid-cols-2 gap-6";
-const infoValueStyles = "text-base font-medium text-gray-900";
+const infoValueStyles = "text-(--text-light) font-[400]";
 const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white";
 
 function PatientAccount() {
@@ -142,162 +144,167 @@ function PatientAccount() {
     const isSaving = updatePatientMutation.isPending;
 
     return (
-        <div className={containerStyles}>
-            <Card className={cardStyles}>
-                <div className={cardHeaderStyles}>
-                    <h2 className={cardTitleStyles}>
-                        <User className="h-5 w-5 text-[var(--primary-color)]" />
-                        {t("dashboard.profile.title", "My Profile")}
-                    </h2>
-                    {!isEditing && (
-                        <Button onClick={() => setIsEditing(true)} className={actionButtonStyles}>
-                            <Pencil className="w-4 h-4 mr-2" />
-                            {t("dashboard.profile.edit", "Edit")}
-                        </Button>
-                    )}
-                </div>
-
-                <CardContent className="p-0">
-                    <div className="flex flex-col items-center justify-center py-8 bg-gray-50 border-b">
-                        <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
-                            <AvatarFallback className="text-3xl bg-gray-200 text-gray-500">
-                                {patient.name?.[0]}{patient.lastName?.[0]}
-                            </AvatarFallback>
-                        </Avatar>
-                    </div>
-
-                    <div className={sectionStyles}>
-                        <h3 className="text-lg font-semibold mb-4 border-b pb-2">
-                            {t("dashboard.profile.personalInfo", "Personal Information")}
-                        </h3>
-
-                        <div className={gridStyles}>
-                            <div className="space-y-2">
-                                <Label htmlFor="name">{t("register.label_name", "Name")}</Label>
-                                {isEditing ? (
-                                    <Input
-                                        id="name"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        disabled={isSaving}
-                                    />
-                                ) : (
-                                    <div className={infoValueStyles}>{patient.name}</div>
-                                )}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="lastName">{t("register.label_lastname", "Last Name")}</Label>
-                                {isEditing ? (
-                                    <Input
-                                        id="lastName"
-                                        name="lastName"
-                                        value={formData.lastName}
-                                        onChange={handleInputChange}
-                                        disabled={isSaving}
-                                    />
-                                ) : (
-                                    <div className={infoValueStyles}>{patient.lastName}</div>
-                                )}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="email" className="flex items-center gap-2">
-                                    <Mail className="h-4 w-4" /> {t("dashboard.profile.email", "Email")}
-                                </Label>
-                                <div className={`${infoValueStyles} text-gray-600`}>{patient.email}</div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="phone" className="flex items-center gap-2">
-                                    <Phone className="h-4 w-4" /> {t("dashboard.profile.phone", "Phone")}
-                                </Label>
-                                {isEditing ? (
-                                    <Input
-                                        id="phone"
-                                        name="phone"
-                                        value={formData.phone}
-                                        onChange={handleInputChange}
-                                        disabled={isSaving}
-                                    />
-                                ) : (
-                                    <div className={infoValueStyles}>{patient.phone}</div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {isEditing && (
-                        <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
-                            <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
-                                <X className="w-4 h-4 mr-2" />
-                                {t("logout.confirmation.cancel", "Cancel")}
-                            </Button>
-                            <Button onClick={handleSave} className={actionButtonStyles} disabled={isSaving}>
-                                {isSaving ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                        {t("saving", "Saving...")}
-                                    </>
-                                ) : (
-                                    <>
-                                        <Save className="w-4 h-4 mr-2" />
-                                        {t("appointment.form.save", "Save")}
-                                    </>
-                                )}
-                            </Button>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-
-            <div className="grid grid-cols-1 gap-6">
+        <DashboardNavContainer>
+            <DashboardNavHeader title="Account">
+                <div className="h-9"/>
+            </DashboardNavHeader>
+            <div className={containerStyles}>
                 <Card className={cardStyles}>
                     <div className={cardHeaderStyles}>
-                        <h3 className={cardTitleStyles}>
-                            <ShieldPlus className="h-5 w-5 text-[var(--primary-color)]" />
-                            {t("dashboard.profile.coverage", "Medical Coverage")}
-                        </h3>
+                        <h2 className={cardTitleStyles}>
+                            <User className="h-5 w-5 text-[var(--primary-color)]" />
+                            {t("dashboard.profile.title", "My Profile")}
+                        </h2>
+                        {!isEditing && (
+                            <Button onClick={() => setIsEditing(true)} className={actionButtonStyles}>
+                                <Pencil className="w-4 h-4 mr-2" />
+                                {t("dashboard.profile.edit", "Edit")}
+                            </Button>
+                        )}
                     </div>
-                    <CardContent className="p-6">
-                        {isEditing ? (
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto pr-2">
-                                {allCoveragesList?.map((c) => {
-                                    const cId = Number(c.self.split('/').pop());
-                                    const isSelected = selectedCoverageId === cId;
-                                    return (
-                                        <div
-                                            key={cId}
-                                            onClick={() => selectCoverage(cId)}
-                                            className={cn(
-                                                "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-green-300 select-none",
-                                                isSelected ? "bg-green-50 border-green-500 text-green-700 font-medium shadow-sm" : "bg-white text-gray-600 border-gray-200"
-                                            )}
-                                        >
-                                            <div className={cn("w-4 h-4 rounded-full border flex items-center justify-center shrink-0", isSelected ? "bg-green-500 border-green-500" : "border-gray-300")}>
-                                                {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
-                                            </div>
-                                            <span className="truncate">{c.name}</span>
-                                        </div>
-                                    )
-                                })}
+
+                    <CardContent className="p-0 flex flex-col gap-2 mb-2">
+                        <div className="flex flex-col items-center justify-center py-8 bg-gray-50 border-b">
+                            <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
+                                <AvatarFallback className="text-3xl bg-gray-200 text-gray-500">
+                                    {patient.name?.[0]}{patient.lastName?.[0]}
+                                </AvatarFallback>
+                            </Avatar>
+                        </div>
+
+                        <div className={sectionStyles}>
+                            <h3 className="text-lg font-semibold mb-4 border-b pb-2">
+                                {t("dashboard.profile.personalInfo", "Personal Information")}
+                            </h3>
+
+                            <div className={gridStyles}>
+                                <div className="space-y-2">
+                                    <Label htmlFor="name">{t("register.label_name", "Name")}</Label>
+                                    {isEditing ? (
+                                        <Input
+                                            id="name"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleInputChange}
+                                            disabled={isSaving}
+                                        />
+                                    ) : (
+                                        <div className={infoValueStyles}>{patient.name}</div>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="lastName">{t("register.label_lastname", "Last Name")}</Label>
+                                    {isEditing ? (
+                                        <Input
+                                            id="lastName"
+                                            name="lastName"
+                                            value={formData.lastName}
+                                            onChange={handleInputChange}
+                                            disabled={isSaving}
+                                        />
+                                    ) : (
+                                        <div className={infoValueStyles}>{patient.lastName}</div>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="email" className="flex items-center gap-2">
+                                        <Mail className="h-4 w-4" /> {t("dashboard.profile.email", "Email")}
+                                    </Label>
+                                    <div className={`${infoValueStyles}`}>{patient.email}</div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="phone" className="flex items-center gap-2">
+                                        <Phone className="h-4 w-4" /> {t("dashboard.profile.phone", "Phone")}
+                                    </Label>
+                                    {isEditing ? (
+                                        <Input
+                                            id="phone"
+                                            name="phone"
+                                            value={formData.phone}
+                                            onChange={handleInputChange}
+                                            disabled={isSaving}
+                                        />
+                                    ) : (
+                                        <div className={infoValueStyles}>{patient.phone}</div>
+                                    )}
+                                </div>
                             </div>
-                        ) : (
-                            <div className="flex flex-wrap gap-2">
-                                {coverage ? (
-                                    <span key={coverage.name} className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium border border-green-100">
-                                        {coverage.name}
-                                    </span>
-                                ) : (
-                                    <p className="text-gray-400 text-sm">{t("doctor.profile.no_coverages", "No coverage listed")}</p>
-                                )}
+                        </div>
+
+                        {isEditing && (
+                            <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
+                                <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
+                                    <X className="w-4 h-4 mr-2" />
+                                    {t("logout.confirmation.cancel", "Cancel")}
+                                </Button>
+                                <Button onClick={handleSave} className={actionButtonStyles} disabled={isSaving}>
+                                    {isSaving ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            {t("saving", "Saving...")}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Save className="w-4 h-4 mr-2" />
+                                            {t("appointment.form.save", "Save")}
+                                        </>
+                                    )}
+                                </Button>
                             </div>
                         )}
                     </CardContent>
                 </Card>
+
+                <div className="grid grid-cols-1 gap-6">
+                    <Card className={cardStyles}>
+                        <div className={cardHeaderStyles}>
+                            <h3 className={cardTitleStyles}>
+                                <ShieldPlus className="h-5 w-5 text-[var(--primary-color)]" />
+                                {t("dashboard.profile.coverage", "Medical Coverage")}
+                            </h3>
+                        </div>
+                        <CardContent className="p-6">
+                            {isEditing ? (
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto pr-2">
+                                    {allCoveragesList?.map((c) => {
+                                        const cId = Number(c.self.split('/').pop());
+                                        const isSelected = selectedCoverageId === cId;
+                                        return (
+                                            <div
+                                                key={cId}
+                                                onClick={() => selectCoverage(cId)}
+                                                className={cn(
+                                                    "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-green-300 select-none",
+                                                    isSelected ? "bg-green-50 border-green-500 text-green-700 font-medium shadow-sm" : "bg-white text-gray-600 border-gray-200"
+                                                )}
+                                            >
+                                                <div className={cn("w-4 h-4 rounded-full border flex items-center justify-center shrink-0", isSelected ? "bg-green-500 border-green-500" : "border-gray-300")}>
+                                                    {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
+                                                </div>
+                                                <span className="truncate">{c.name}</span>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex flex-wrap gap-2">
+                                    {coverage ? (
+                                        <span key={coverage.name} className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium border border-green-100">
+                                                {coverage.name}
+                                            </span>
+                                    ) : (
+                                        <p className="text-gray-400 text-sm">{t("doctor.profile.no_coverages", "No coverage listed")}</p>
+                                    )}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </DashboardNavContainer>
     );
 }
 
