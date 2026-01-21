@@ -115,6 +115,13 @@ export type DoctorOfficeQuery = {
     status: string
 }
 
+export type UpdateDoctorOfficeForm = {
+    doctorOfficeForm: OfficeForm;
+}
+
+export type OfficeForm = {
+}
+
 const extractIdFromUrl = (url: string): string => {
     if (!url) return "";
     const segments = url.replace(/\/$/, "").split("/");
@@ -165,7 +172,7 @@ export async function listDoctors(params: DoctorsQuery): Promise<PaginationData<
 }
 
 export async function changeDoctorPassword(url: string, form: ChangePasswordForm) {
-    const res = await api.patch(`${url}`,form,{
+    const res = await api.patch(url, form,{
         headers: {
             "content-type":  ContentTypes.USER_PASSWORD
         }
@@ -363,4 +370,11 @@ export async function updateDoctorProfileComplete(params: {
     }
 
     return updateDoctor(params.doctorUrl, params.data);
+}
+
+export async function updateDoctorOffice(url: string, form: UpdateDoctorOfficeForm) {
+    const res = await api.patch(url, form, {
+        headers: {"Content-Type": ContentTypes.OFFICE}
+    })
+    return res.data;
 }
