@@ -32,7 +32,7 @@ function PatientMedicalHistory() {
             {isLoading ? (
                 <DashboardNavLoader/>
             ) : (
-                <div>
+                <div className="flex flex-col gap-6">
                     <PastAppointmentComponent />
                     <PastAppointmentComponent />
                     <PastAppointmentComponent />
