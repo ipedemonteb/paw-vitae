@@ -122,6 +122,24 @@ export type UpdateDoctorOfficeForm = {
 export type OfficeForm = {
 }
 
+export interface AvailabilitySlotForm {
+    dayOfWeek: number;
+    startTime: string; // Formato "HH:mm:00"
+    endTime: string;   // Formato "HH:mm:00"
+}
+export interface DoctorAvailabilityFormDTO {
+    doctorOfficeAvailabilities: AvailabilitySlotForm[];
+}
+
+export interface UnavailabilityForm {
+    endDate: string;
+    startDate: string;
+}
+
+export interface DoctorUnavailabilityFormDTO{
+    unavailabilitySlots: UnavailabilityForm[];
+}
+
 const extractIdFromUrl = (url: string): string => {
     if (!url) return "";
     const segments = url.replace(/\/$/, "").split("/");
@@ -139,7 +157,6 @@ function normalizeDoctorsQuery(query: DoctorsQuery) {
 
 export async function listDoctors(params: DoctorsQuery): Promise<PaginationData<DoctorDTO[]>> {
     normalizeDoctorsQuery(params)
-    console.log(params)
     const res = await api.get<DoctorDTO[]>("/doctors", {
         params: {
             specialty: params.specialty,
@@ -359,6 +376,26 @@ export async function putDoctorImage(doctorImageUrl: string, image: File) {
     const res = await api.put(doctorImageUrl, formData);
     return res.data;
 }
+
+
+export async function putDoctorOfficeAvailability(url: string, data: DoctorAvailabilityFormDTO) {
+    const res = await api.put(url, data, {
+        headers: {
+            "content-type": ContentTypes.AVAILABILITY_LIST
+        }
+    });
+    return res.data;
+}
+
+export async function putDoctorUnavailability(url: string, data:DoctorUnavailabilityFormDTO){
+    const res = await api.put(url, data, {
+        headers: {
+            "content-type" : ContentTypes.UNAVAILABILITY_LIST
+        }
+    });
+    return res.data;
+}
+
 export async function updateDoctorProfileComplete(params: {
     doctorUrl: string;
     imageUrl: string;
