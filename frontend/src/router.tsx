@@ -14,6 +14,7 @@ import ChangePassword from "@/pages/ChangePassword.tsx";
 import Search from "@/pages/Search.tsx";
 
 import Appointment from "@/pages/Appointment.tsx";
+import AppointmentConfirmation from "@/pages/AppointmentConfirmation.tsx";
 import AppointmentDetails from "@/pages/AppointmentDetails.tsx";
 import PatientDashboardLayout from "@/pages/patient/PatientDashboardLayout.tsx";
 import UserUpcoming from "@/pages/common/UserUpcoming.tsx";
@@ -31,7 +32,6 @@ import { GuestGuard } from "@/guards/guestGuard";
 import { AuthGuard } from "@/guards/authGuard";
 import { ExcludeRolesGuard } from "@/guards/excludedRolesGuard.tsx";
 import MedicalHistory from "@/pages/MedicalHistory.tsx";
-import AppointmentConfirmation from "@/pages/AppointmentConfirmation.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -51,6 +51,7 @@ export const router = createBrowserRouter([
                 path: "profile/:id",
                 element: <PublicProfile />
             },
+            // TODO: CHANGE
             {
                 path: "medical-history",
                 element: <MedicalHistory />
@@ -104,15 +105,15 @@ export const router = createBrowserRouter([
             },
 
             // Rutas de Usuario Logueado (Paciente o Doctor)
-            {
-                element: <AuthGuard />,
-                children: [
-                    {
-                        path: "appointment/:id",
-                        element: <Appointment />
-                    },
-                ]
-            },
+            // {
+            //     element: <AuthGuard />,
+            //     children: [
+            //         {
+            //             path: "appointment/:id",
+            //             element: <Appointment />
+            //         },
+            //     ]
+            // },
 
             // Rutas de Paciente
             {
@@ -145,13 +146,17 @@ export const router = createBrowserRouter([
                         ]
                     },
                     {
+                        path: "appointment/:id",
+                        element: <Appointment />,
+                    },
+                    {
+                        path: "appointment/:id/confirmation",
+                        element: <AppointmentConfirmation />,
+                    },
+                    {
                         path: "patient/dashboard/appointment-details/:id",
                         element: <AppointmentDetails />,
                     },
-                    {
-                        path: "/appointment-confirmation/:appointmentId",
-                        element: <AppointmentConfirmation />,
-                    }
                 ]
             },
 

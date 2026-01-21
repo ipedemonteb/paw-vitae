@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -43,10 +45,13 @@ public class RestRatingsController {
     public Response getAll(
             @QueryParam("page")
             @DefaultValue("1")
+            @Min(1)
             int page,
 
             @QueryParam("size" )
             @DefaultValue("9")
+            @Min(1)
+            @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE)
             int pageSize, //TODO: control de tamaño o que no se pueda tocar. homogenizar en todos lados
             @QueryParam("doctorId")
             Long doctorId

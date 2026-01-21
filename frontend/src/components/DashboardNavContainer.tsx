@@ -6,7 +6,7 @@ interface AppointmentContainerProps {
 }
 
 const cardContainer =
-    "w-full flex flex-col px-6";
+    "w-full flex flex-col px-6 pt-2 pb-6 mb-6";
 
 export default function DashboardNavContainer({children}: AppointmentContainerProps) {
     return (

@@ -1,7 +1,7 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card.tsx"
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
-import { Stethoscope, Hospital, CalendarDays } from "lucide-react";
+import { Stethoscope, Hospital, CalendarDays, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import { DatePicker } from "@/components/ui/date-picker.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -18,18 +18,22 @@ import {
     useDoctorOfficeAvailability,
     useDoctorUnavailability
 } from "@/hooks/useDoctors.ts";
-import { createAppointmentMutation } from "@/hooks/useAppointments.ts";
+import { useBookAppointment } from "@/hooks/useAppointments.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import type { OfficeDTO } from "@/data/office.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
 import type { OfficeSpecialtyDTO } from "@/data/doctors.ts";
 import { buildTimeSlotsForDay, dateKey, isoDateKey } from "@/utils/dateUtils.ts";
-import { startOfDay } from "date-fns";
-import {useParams} from "react-router-dom";
+import { startOfDay, addDays } from "date-fns";
+import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
+import GenericError from "@/pages/GenericError.tsx";
 
 const SLOT_MINUTES = 60;
+const MAX_DAYS_IN_FUTURE = 30;
+const EMPTY_LIST: any[] = [];
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -67,66 +71,58 @@ function isOfficeValid(offices: OfficeDTO[], selectedOffice: string | null) {
     return offices.some((o) => o.self === selectedOffice);
 }
 
-const appointmentBackground =
-    "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
-const cardContainer =
-    "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
-const appointmentContainer =
-    "p-0 pb-8";
-const appointmentHeader =
-    "flex flex-col items-center py-8 rounded-t-xl gap-3 " +
-    "bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]"
-const appointmentTitle =
-    "font-bold text-4xl text-center text-[var(--text-color)]";
-const appointmentContent =
-    "flex flex-col px-8 gap-4";
-const selectorTitle =
-    "text-[var(--text-color)] text-md font-[500]";
-const selectorsContainer =
-    "flex flex-col md:flex-row gap-6";
-const dateCard =
-    "flex flex-col";
-const dateContainer =
-    "flex flex-col md:items-center md:flex-row gap-5 md:gap-0";
-const dateUpperContainer =
-    "flex flex-row items-center";
-const availableTimesFormat =
-    "flex flex-wrap items-center px-5 gap-2";
-const timeButton =
-    "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-white cursor-pointer " +
-    "data-[selected=true]:bg-[var(--primary-color)] data-[selected=true]:text-white data-[selected=true]:border-[var(--primary-color)]";
-const optionalsContainer =
-    "flex flex-col gap-8 mt-4";
-const bookContainer =
-    "flex flex-col items-center w-full";
-const bookButton =
-    "mt-6 py-4 w-xs bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
+const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
+const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
+const appointmentContainer = "p-0 pb-8";
+const appointmentHeader = "flex flex-col items-center py-8 rounded-t-xl gap-3 bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
+const appointmentTitle = "font-bold text-4xl text-center text-[var(--text-color)]";
+const appointmentContent = "flex flex-col px-8 gap-4";
+const selectorTitle = "text-[var(--text-color)] text-md font-[500]";
+const selectorsContainer = "flex flex-col md:flex-row gap-6";
+const dateCard = "flex flex-col";
+const dateContainer = "flex flex-col md:items-center md:flex-row gap-5 md:gap-0";
+const dateUpperContainer = "flex flex-row items-center";
+const availableTimesFormat = "flex flex-wrap items-center px-5 gap-2";
+const timeButton = "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-white cursor-pointer data-[selected=true]:bg-[var(--primary-color)] data-[selected=true]:text-white data-[selected=true]:border-[var(--primary-color)]";
+const optionalsContainer = "flex flex-col gap-8 mt-4";
+const bookContainer = "flex flex-col items-center w-full";
+const bookButton = "mt-6 py-4 w-xs bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 function Appointment() {
-
-    const {id: doctorId} = useParams<{ id: string }>();
-
+    const { id: doctorId } = useParams<{ id: string }>();
     const { t } = useTranslation();
     const navigate = useNavigate();
     const auth = useAuth();
-    const { mutate: bookAppointment, isPending: isBooking } = createAppointmentMutation();
+    const queryClient = useQueryClient();
+
+    const { mutate: bookAppointment, isPending: isBooking } = useBookAppointment();
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null);
     const [selectedOffice, setSelectedOffice] = useState<string | null>(null);
 
-    // Estados elevados de los componentes hijos
     const [reason, setReason] = useState("");
     const [allowFullHistory, setAllowFullHistory] = useState(true);
+    const [files, setFiles] = useState<File[]>([]);
 
-    const { data: doctor, isLoading, isError } = useDoctor(doctorId);
-    const { data: offices } = useDoctorOffices(doctor?.offices);
-    // TODO: Handle isLoading and isError
+    const {
+        data: doctor,
+        isLoading: loadingDoctor,
+        isError: errorDoctor,
+        error: doctorError
+    } = useDoctor(doctorId);
+
+    const { data: offices, isLoading: loadingOffices } = useDoctorOffices(doctor?.offices);
     const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices ?? null);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties ?? null);
     const { data: officeAvailability } = useDoctorOfficeAvailability(offices ?? null);
     const { data: doctorUnavailability } = useDoctorUnavailability(doctor?.unavailability ?? null);
+
+    const isLoading = loadingDoctor || loadingOffices;
+
+    const today = useMemo(() => startOfDay(new Date()), []);
+    const maxDate = useMemo(() => addDays(today, MAX_DAYS_IN_FUTURE), [today]);
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -156,23 +152,20 @@ function Appointment() {
     }, [filteredOffices, selectedOffice]);
 
     const selectedOfficeAvailability = useMemo(() => {
-        if (!selectedOffice || !offices) return [];
+        if (!selectedOffice || !offices) return EMPTY_LIST;
         const idx = offices.findIndex((o) => o.self === selectedOffice);
-        if (idx === -1) return [];
-        return officeAvailability?.[idx] ?? [];
+        if (idx === -1) return EMPTY_LIST;
+        return officeAvailability?.[idx] ?? EMPTY_LIST;
     }, [selectedOffice, offices, officeAvailability]);
 
     const enabledDaysOfWeek = useMemo(() => {
         const s = new Set<number>();
-
-        selectedOfficeAvailability.forEach((a) => {
+        selectedOfficeAvailability.forEach((a: any) => {
             const start = typeof a.startTime === "string" ? a.startTime : String(a.startTime);
             const end = typeof a.endTime === "string" ? a.endTime : String(a.endTime);
-
             const slots = buildTimeSlotsForDay([{ startTime: start, endTime: end }], SLOT_MINUTES);
             if (slots.length > 0) s.add(a.dayOfWeek);
         });
-
         return s;
     }, [selectedOfficeAvailability]);
 
@@ -181,7 +174,6 @@ function Appointment() {
             from: isoDateKey(u.startDate),
             to: isoDateKey(u.endDate),
         }));
-
         return (d: Date) => {
             const k = dateKey(d);
             return ranges.some((r) => k >= r.from && k <= r.to);
@@ -189,26 +181,27 @@ function Appointment() {
     }, [doctorUnavailability]);
 
     const isDateSelectable = useMemo(() => {
-        const today = startOfDay(new Date());
-
         return (d: Date) => {
-            if (startOfDay(d) < today) return false;
+            const dayToCheck = startOfDay(d);
+            if (dayToCheck < today) return false;
+            if (dayToCheck > maxDate) return false;
             if (isUnavailableDate(d)) return false;
             const dow = d.getDay();
             return enabledDaysOfWeek.has(dow);
         };
-    }, [enabledDaysOfWeek, isUnavailableDate]);
+    }, [enabledDaysOfWeek, isUnavailableDate, today, maxDate]);
+
+    const isDateDisabled = useCallback((d: Date) => {
+        return !isDateSelectable(d);
+    }, [isDateSelectable]);
 
     const availableTimeOptions = useMemo(() => {
         if (!selectedDate) return [];
         if (!isDateSelectable(selectedDate)) return [];
-
         const day = selectedDate.getDay();
-
         const dayAvailabilities = selectedOfficeAvailability.filter(
-            (a) => a.dayOfWeek === day
+            (a: any) => a.dayOfWeek === day
         );
-
         return buildTimeSlotsForDay(dayAvailabilities, SLOT_MINUTES);
     }, [selectedDate, selectedOfficeAvailability, isDateSelectable]);
 
@@ -243,18 +236,13 @@ function Appointment() {
             return;
         }
 
-        // Extracción de IDs desde las URLs (HATEOAS)
         const specialtyId = selectedSpecialty.split('/').pop() || "";
         const officeId = selectedOffice.split('/').pop() || "";
 
-        // Formateo de fecha y hora para el Backend (Java espera LocalDate 'yyyy-MM-dd' e Integer hora)
-        // Ajustamos la fecha local para evitar problemas de timezone al convertir a ISO
         const year = selectedDate.getFullYear();
         const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
         const day = String(selectedDate.getDate()).padStart(2, '0');
         const dateStr = `${year}-${month}-${day}`;
-
-        // Extraemos solo la hora "14" de "14:00"
         const hourStr = selectedTime.split(':')[0];
 
         const appointmentForm = {
@@ -268,29 +256,34 @@ function Appointment() {
             allowFullHistory: allowFullHistory
         };
 
-        bookAppointment(appointmentForm, {
-            onSuccess: (data) => {
-                console.log("acaaa")
-                const newId = data.headers.get("Location")?.split('/').pop();
+        bookAppointment({ form: appointmentForm, files: files }, {
+            onSuccess: (newId) => {
+                queryClient.invalidateQueries({ queryKey: ['auth', 'appointments'] });
+                toast.success(t("success.appointment_created", "Turno reservado exitosamente"));
                 navigate(`/appointment-confirmation/${newId}`);
             },
             onError: (error) => {
-                console.error(error);
-                toast.error(t("error"), { description: "Error al reservar el turno. Intente nuevamente." });
+                toast.error(t("error.appointment_failed", "Error al reservar el turno"), {
+                    description: t("error.try_again", "Intente nuevamente.")
+                });
             }
         });
     };
 
     if (isLoading) {
         return (
-            <div>Loading...</div>
+            <div className={appointmentBackground}>
+                <div className="flex flex-col items-center justify-center h-screen gap-4">
+                    <Loader2 className="h-12 w-12 animate-spin text-[var(--primary-color)]" />
+                    <p className="text-[var(--text-light)] font-medium">{t("common.loading", "Cargando...")}</p>
+                </div>
+            </div>
         );
     }
 
-    if (!doctor || isError) {
-        return (
-            <div>Error</div>
-        );
+    if (errorDoctor || !doctor) {
+        const status = doctorError ? (doctorError as any).response?.status : 404;
+        return <GenericError code={status} />;
     }
 
     return (
@@ -322,11 +315,13 @@ function Appointment() {
                             setSelectedTime={setSelectedTime}
                             availableTimes={availableTimeOptions}
                             disabled={!selectedOffice}
-                            isDateDisabled={(d) => !isDateSelectable(d)}
+                            isDateDisabled={isDateDisabled}
+                            fromDate={today}
+                            toDate={maxDate}
                         />
                         <div className={optionalsContainer}>
                             <ReasonInput value={reason} onChange={setReason} />
-                            <FilesUpload />
+                            <FilesUpload onFilesChange={setFiles} />
                             <MedicalHistory checked={allowFullHistory} onCheckedChange={setAllowFullHistory} />
                         </div>
                         <div className={bookContainer}>
@@ -335,7 +330,14 @@ function Appointment() {
                                 onClick={handleBook}
                                 disabled={isBooking || !selectedTime}
                             >
-                                {isBooking ? t("saving") : t("appointment.booking.book")}
+                                {isBooking ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        {t("saving")}
+                                    </>
+                                ) : (
+                                    t("appointment.booking.book")
+                                )}
                             </Button>
                         </div>
                     </div>
@@ -345,47 +347,24 @@ function Appointment() {
     )
 }
 
-const selectorCard =
-    "flex flex-row items-center w-full gap-0";
-const iconContainer =
-    "flex items-center bg-[var(--primary-bg)] rounded-full p-5 text-[var(--primary-color)] mx-5";
-const icon =
-    "w-8 h-8";
-const selectorContent =
-    "flex flex-col gap-1 min-w-56";
-const selectorButton =
-    "cursor-pointer";
+// ... Resto de componentes (SpecialtySelector, OfficeItem, OfficeSelector, DateSelector, etc.) permanecen igual ...
 
-function SpecialtySelector({options, selectedSpecialty, setSelectedSpecialty}: {
-    options: SpecialtyDTO[];
-    selectedSpecialty: string | null;
-    setSelectedSpecialty: React.Dispatch<React.SetStateAction<string | null>>;
-}) {
-    const { t } = useTranslation();
+const selectorCard = "flex flex-row items-center w-full gap-0";
+const iconContainer = "flex items-center bg-[var(--primary-bg)] rounded-full p-5 text-[var(--primary-color)] mx-5";
+const icon = "w-8 h-8";
+const selectorContent = "flex flex-col gap-1 min-w-56";
+const selectorButton = "cursor-pointer";
+
+function OfficeItem({ office }: { office: OfficeDTO }) {
+    const { data: neighborhood } = useNeighborhood(office.neighborhood);
 
     return (
-        <Card className={selectorCard}>
-            <div className={iconContainer}>
-                <Stethoscope className={icon}/>
-            </div>
-            <div className={selectorContent}>
-                <p className={selectorTitle}>{t("appointment.booking.specialty")}</p>
-                <Select value={selectedSpecialty ?? ""} onValueChange={(v) => setSelectedSpecialty(v)}>
-                    <SelectTrigger className={selectorButton}>
-                        <SelectValue placeholder={t("appointment.booking.specialty")}/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            {options.map((s) => (
-                                <SelectItem key={s.self} value={s.self}>
-                                    {t(s.name)}
-                                </SelectItem>
-                            ))}
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
-        </Card>
+        <span className="flex items-center gap-2">
+            <span>{office.name}</span>
+            {neighborhood && (
+                <span className="text-gray-500 text-xs">({neighborhood.name})</span>
+            )}
+        </span>
     );
 }
 
@@ -422,7 +401,7 @@ function OfficeSelector({
                         <SelectGroup>
                             {options.map((o) => (
                                 <SelectItem key={o.self} value={o.self}>
-                                    {o.name}
+                                    <OfficeItem office={o} />
                                 </SelectItem>
                             ))}
                         </SelectGroup>
@@ -433,7 +412,50 @@ function OfficeSelector({
     );
 }
 
-function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedTime, availableTimes, disabled, isDateDisabled}:{
+function SpecialtySelector({options, selectedSpecialty, setSelectedSpecialty}: {
+    options: SpecialtyDTO[];
+    selectedSpecialty: string | null;
+    setSelectedSpecialty: React.Dispatch<React.SetStateAction<string | null>>;
+}) {
+    const { t } = useTranslation();
+
+    return (
+        <Card className={selectorCard}>
+            <div className={iconContainer}>
+                <Stethoscope className={icon}/>
+            </div>
+            <div className={selectorContent}>
+                <p className={selectorTitle}>{t("appointment.booking.specialty")}</p>
+                <Select value={selectedSpecialty ?? ""} onValueChange={(v) => setSelectedSpecialty(v)}>
+                    <SelectTrigger className={selectorButton}>
+                        <SelectValue placeholder={t("appointment.booking.specialty")}/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            {options.map((s) => (
+                                <SelectItem key={s.self} value={s.self}>
+                                    {t(s.name)}
+                                </SelectItem>
+                            ))}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
+        </Card>
+    );
+}
+
+function DateSelector({
+                          selectedDate,
+                          setSelectedDate,
+                          selectedTime,
+                          setSelectedTime,
+                          availableTimes,
+                          disabled,
+                          isDateDisabled,
+                          fromDate,
+                          toDate
+                      }:{
     selectedDate: Date | undefined
     setSelectedDate: (date: Date | undefined) => void
     selectedTime: string | null
@@ -441,6 +463,8 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
     availableTimes: string[];
     disabled?: boolean;
     isDateDisabled?: (date: Date) => boolean;
+    fromDate?: Date;
+    toDate?: Date;
 }) {
     const { t } = useTranslation();
 
@@ -489,13 +513,15 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
                             placeholder={t("appointment.booking.select-date")}
                             disabled={disabled}
                             isDateDisabled={isDateDisabled}
+                            fromDate={fromDate }
+                            toDate={toDate}
                         />
                     </div>
                 </div>
                 {selectedDate ? (
                     <div className={availableTimesFormat}>
                         {availableTimes.length === 0 ? (
-                            <p className="px-5 text-sm text-(--text-light)">
+                            <p className="px-5 text-sm text-[var(--text-light)]">
                                 {t("appointment.booking.no-times")}
                             </p>
                         ) : (
@@ -519,12 +545,9 @@ function DateSelector({selectedDate, setSelectedDate, selectedTime, setSelectedT
     );
 }
 
-const confirmation =
-    "mx-6 py-2 px-5 bg-[var(--success-light)] rounded-lg border border-[var(--success)]";
-const confirmationTitle =
-    "text-[var(--text-color)] text-md font-[500]";
-const confirmationText =
-    "text-[var(--text-color)] text-sm font-[300]";
+const confirmation = "mx-6 py-2 px-5 bg-[var(--success-light)] rounded-lg border border-[var(--success)]";
+const confirmationTitle = "text-[var(--text-color)] text-md font-[500]";
+const confirmationText = "text-[var(--text-color)] text-sm font-[300]";
 
 function Confirmation({ text }: { text: string }) {
     const { t } = useTranslation();
@@ -537,8 +560,7 @@ function Confirmation({ text }: { text: string }) {
     );
 }
 
-const reasonCard =
-    "flex flex-col gap-2";
+const reasonCard = "flex flex-col gap-2";
 
 function ReasonInput({ value, onChange }: { value: string, onChange: (v: string) => void }) {
     const { t } = useTranslation();
@@ -555,26 +577,25 @@ function ReasonInput({ value, onChange }: { value: string, onChange: (v: string)
     );
 }
 
-function FilesUpload() {
+function FilesUpload({ onFilesChange }: { onFilesChange: (files: File[]) => void }) {
     const { t } = useTranslation();
 
     return (
         <div>
             <h3 className={selectorTitle + " mb-2"}>{t("appointment.booking.upload")}</h3>
-            <UploadFiles />
+            <UploadFiles onChange={onFilesChange} />
         </div>
     );
 }
 
-const medicalCointainer =
-    "flex flex-col";
+const medicalCointainer = "flex flex-col";
 
 function MedicalHistory({ checked, onCheckedChange }: { checked: boolean, onCheckedChange: (v: boolean) => void }) {
     const { t } = useTranslation();
 
     return (
         <div className={medicalCointainer}>
-            <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-aria-checked:border-(--primary-color) has-aria-checked:bg-(--primary-bg) dark:has-aria-checked:border-(--primary-light) dark:has-aria-checked:bg-(--primary-dark)">
+            <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-[var(--primary-color)] has-[[aria-checked=true]]:bg-[var(--primary-bg)] dark:has-[[aria-checked=true]]:border-[var(--primary-light)] dark:has-[[aria-checked=true]]:bg-[var(--primary-dark)]">
                 <Checkbox
                     id="toggle-2"
                     checked={checked}

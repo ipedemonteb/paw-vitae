@@ -125,7 +125,9 @@
       "write-review": "Write your review here...",
       "upload": "Upload files for the appointment.",
       "submit": "Submit",
-      "submit-rating": "Send Rating"
+      "submit-rating": "Send Rating",
+      "rating-success": "Your rating has been submitted successfully.",
+        "rating-error": "An error occurred while submitting your rating. Please try again."
     },
     "booking": {
       "header": {
@@ -146,6 +148,19 @@
         "subtitle": "By selecting this option, you are allowing full access to your medical history for your doctor."
       },
       "book": "Book Appointment"
+    },
+    "confirmation": {
+      "title": "Appointment Confirmed!",
+      "subtitle": "Your appointment has been confirmed. Here are the details.",
+      "details": "Appointment Details",
+      "date": "Date",
+      "time": "Time",
+      "specialty": "Specialty",
+      "office": "Office",
+      "info": "An email has been sent to your inbox with all appointment details.",
+      "dashboard": "Go to Dashboard",
+      "view-details": "View Details",
+      "created": "Appointment successfully created."
     }
   },
   "login": {
@@ -239,7 +254,7 @@
       "lastname_required": "Last name is required.",
       "phone_required": "Phone number is required.",
       "select_coverage": "Please select an insurance plan.",
-      "select_specialties": "Please select at least one specialty.",
+      "select_specialty": "Please select at least one specialty.",
       "select_neighborhoods": "Please select a neighborhood.",
       "no_specialties_available": "No specialties found at the moment. Please try again later.",
       "no_coverages_available": "No insurance plans found at the moment. Please try again later.",
@@ -270,6 +285,7 @@
     "error_generic": "An error occurred while changing the password. Please try again.",
     "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
   },
+
   "medical-history": {
     "title": "Medical History",
     "subtitle": "View all your patients' medical files and appointment records",
@@ -279,6 +295,7 @@
       "old-first": "Oldest First",
       "new-first": "Newest First"
     },
+
     "no-appointments": "No past appointments.",
     "component": {
       "reason": "Reason for Visit:",
@@ -293,10 +310,9 @@
   },
   "common": {
     "go_back": "Go Back",
-    "return_home": "Return Home"
-  },
-  "appointment_confirmation": {
-    "dashboard": "Go to Dashboard"
+    "return_home": "Return Home",
+    "download": "Download",
+    "view": "View"
   },
   "error": {
     "403": {
@@ -314,7 +330,8 @@
     "default": {
       "title": "An Error Occurred",
       "message": "An unexpected error has occurred. Please try again."
-    }
+    },
+    "try_again": "Try Again"
   },
   "verify": {
     "loading_title": "Verifying account...",
@@ -330,7 +347,6 @@
   "save": "Save Changes",
   "saving": "Saving...",
   "success": "Success",
-  "error": "Error",
   "add_new": "Add New",
   "header": {
     "home": "Home",
@@ -548,6 +564,8 @@
   "search": {
     "title": "Specialist Doctors",
     "subtitle": "Doctors specializing in: {{ specialty }}",
+    "schedule" : "Schedule",
+    "view_profile" : "View profile",
     "search": "Search for doctors",
     "specialty": {
       "title": "Specialty",
@@ -606,5 +624,47 @@
       "all": "All Neighborhoods",
       "placeholder": "Search neighborhoods..."
     }
-  }
+  },
+  "availability" : {
+    "headerTitle": "Availability",
+    "selectPlaceholder" : "select...",
+    "office" : "Office",
+    "dayOfWeek" : "Day",
+    "startTime" : "Start Time",
+    "endTime" : "End Time",
+    "save" : "Save changes",
+    "addSchedule" : "Add availability",
+    "emptyContent" : "No availability set up",
+    "emptyContentText" : "Your availability will appear here once you have added one.",
+    "errorTimeOrder": "Starting time must be before end time",
+    "errorOverlap": "Time overlaps with another",
+    "success" : "Availability correctly updated",
+    "error" : "There was an error updating your availability. Please try again later.",
+    "warning_title" :  "Office Status Warning",
+    "warning_text" : "If you remove all slots for an office, it will be automatically set to inactive. To reactivate an office, simply do so in the offices section and remember to add a timeslot for it."
+  },
+  "days" : {
+    "MONDAY" : "Monday",
+    "TUESDAY" : "Tuesday",
+    "WEDNESDAY" : "Wednesday",
+    "THURSDAY" : "Thursday",
+    "FRIDAY" : "Friday",
+    "SATURDAY" : "Saturday",
+    "SUNDAY" : "Sunday"
+  },
+  "unavailability" : {
+    "headerTitle" : "Unavailability",
+    "startEndOrSingle": "Start/End or Single Day",
+    "inRange": "In Range",
+    "pastDates": "Past Dates",
+    "selectedDates": "Selected Dates",
+    "items": "items",
+    "noDatesSelected": "No dates selected",
+    "singleDay": "Single Day",
+    "range": "Range",
+    "saveChanges": "Save Changes",
+    "success"  : "Dates correctly updated",
+    "error" : "There was an error updating your unavailability dates. Please try again later"
+  },
+  "Error" : "Error"
 }
