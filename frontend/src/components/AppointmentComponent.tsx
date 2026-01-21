@@ -1,9 +1,6 @@
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
-import {Button} from "@/components/ui/button.tsx";
-import {Popover, PopoverTrigger, PopoverContent} from "@/components/ui/popover.tsx";
-import {CalendarFoldIcon, ChevronDown} from "lucide-react";
-import {useState} from "react";
+import {CalendarFoldIcon} from "lucide-react";
 import AppointmentCard from "@/components/AppointmentCard.tsx";
 import {appointmentStatus, appointmentUpcomingFilters} from "@/lib/constants.ts";
 import {useTranslation} from "react-i18next";
@@ -13,6 +10,7 @@ import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 
 const typeDictionary = {
     history: {
@@ -40,7 +38,6 @@ type AppointmentComponentProps = {
 
 export default function AppointmentComponent({type}: AppointmentComponentProps) {
     const {t} = useTranslation();
-    const [open, setOpen] = useState(false);
     const componentType = typeDictionary[type]
     const auth = useAuth()
 
@@ -75,37 +72,27 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                     <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
                         {t(componentType.filterMessage)}:
                     </span>
-                    <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild>
-                            <Button
-                                className="flex bg-white text-black hover:bg-gray-100 flex-row font-light items-center justify-center text-sm gap-1 border rounded-md cursor-pointer"
-                                variant="outline"
-                                role="combobox"
-                                aria-expanded={open}
-                            >
-                                {t(transformFilter(filterValue))}
-                                <ChevronDown size={20}/>
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="min-w-fit max-w-28 p-0">
-                            <Button value={"all"} onClick={(e) => {
-                                setFilter(e.currentTarget.value)
-                                setOpen(false)
-                            }}
-                                    className="w-full text-xs bg-white font-light hover:bg-gray-100 hover:text-black flex text-(--text-light) justify-baseline">{t("appointment.filters.all")}</Button>
-                            {componentType.popoverData.map(a => (
-                                <Button value={a} onClick={(e) => {
-                                    setFilter(e.currentTarget.value)
-                                    setOpen(false)
-                                }}
-                                        className="w-full text-xs bg-white font-light hover:bg-gray-100 hover:text-black flex text-(--text-light) justify-baseline">{t(transformFilter(a))}</Button>
+                    <Select
+                        value={filterValue}
+                        onValueChange={(val) => setFilter(val)}
+                    >
+                        <SelectTrigger className="bg-white text-black hover:bg-gray-100 font-light text-sm border rounded-md cursor-pointer">
+                            <SelectValue />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                            <SelectItem value="all">{t("appointment.filters.all")}</SelectItem>
+                            {componentType.popoverData.map((a) => (
+                                <SelectItem key={a} value={a}>
+                                    {t(transformFilter(a))}
+                                </SelectItem>
                             ))}
-                        </PopoverContent>
-                    </Popover>
+                        </SelectContent>
+                    </Select>
                 </div>
             </DashboardNavHeader>
             {(isLoading) ? (
-                <DashboardNavLoader item={t(componentType.loadingText)}/>
+                <DashboardNavLoader/>
             ) : (appointments?.data !== undefined && appointments.data.length > 0) ? (
                 appointments.data.map(a => (
                     <AppointmentCard key={a.self} appointment={a}/>

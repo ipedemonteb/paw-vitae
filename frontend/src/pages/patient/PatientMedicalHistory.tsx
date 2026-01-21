@@ -2,10 +2,15 @@ import {useTranslation} from "react-i18next";
 import PastAppointmentComponent from "@/components/PastAppointmentComponent.tsx";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
-import {NativeSelect, NativeSelectOption} from "@/components/ui/native-select.tsx";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
+import {useState} from "react";
+import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 
 function PatientMedicalHistory() {
     const { t } = useTranslation();
+    const [sort, setSort] = useState<"oldest" | "newest">("oldest");
+    const isLoading = false;
+
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={t("medical-history.title")}>
@@ -13,16 +18,27 @@ function PatientMedicalHistory() {
                     <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
                         {t("medical-history.sort.title")}
                     </span>
-                    <NativeSelect className="font-normal cursor-pointer">
-                        <NativeSelectOption value="oldest">{t("medical-history.sort.old-first")}</NativeSelectOption>
-                        <NativeSelectOption value="newest">{t("medical-history.sort.new-first")}</NativeSelectOption>
-                    </NativeSelect>
+                    <Select value={sort} onValueChange={(v) => setSort(v as "oldest" | "newest")}>
+                        <SelectTrigger className="font-light text-normal cursor-pointer">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="oldest">{t("medical-history.sort.old-first")}</SelectItem>
+                            <SelectItem value="newest">{t("medical-history.sort.new-first")}</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </DashboardNavHeader>
-            <PastAppointmentComponent />
-            <PastAppointmentComponent />
-            <PastAppointmentComponent />
-            <PastAppointmentComponent />
+            {isLoading ? (
+                <DashboardNavLoader/>
+            ) : (
+                <div>
+                    <PastAppointmentComponent />
+                    <PastAppointmentComponent />
+                    <PastAppointmentComponent />
+                    <PastAppointmentComponent />
+                </div>
+            )}
         </DashboardNavContainer>
     );
 }
