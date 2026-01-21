@@ -10,7 +10,7 @@ import {useDoctorOffices} from "@/hooks/useDoctors.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
-import OfficeCard from "@/components/OfficeCard.tsx";
+import EditOfficeDialog from "@/components/EditOfficeDialog.tsx";
 
 const officeStatusEnum = ['all', 'active', 'inactive']
 
@@ -68,7 +68,7 @@ export default function OfficesComponent() {
             ) : offices && offices.length > 0 ? (
                 <div className="grid grid-cols-3">
                     {offices.map(o => (
-                        <OfficeCard office={o}/>
+                        <EditOfficeDialog key={o.self} office={o}/>
                     ))}
                 </div>
             ) : (

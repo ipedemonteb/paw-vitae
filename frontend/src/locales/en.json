@@ -601,6 +601,10 @@
     "status": {
       "active": "Active",
       "inactive": "Inactive"
+    },
+    "neighborhoods": {
+      "all": "All Neighborhoods",
+      "placeholder": "Search neighborhoods..."
     }
   }
 }

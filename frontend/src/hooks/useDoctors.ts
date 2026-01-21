@@ -21,7 +21,7 @@ import {
     type DoctorUpdateForm,
     updateDoctor,
     putDoctorImage,
-    updateDoctorProfileComplete
+    updateDoctorProfileComplete, type UpdateDoctorOfficeForm, updateDoctorOffice
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
@@ -244,4 +244,12 @@ export function useUpdateDoctorProfile() {
         }
 
     });
+}
+
+export function useUpdateOfficeMutation(url: string, form: UpdateDoctorOfficeForm) {
+    const stableKey = useMemo(() => JSON.stringify(form), [form])
+    return useMutation({
+        mutationKey: ['doctor', 'offices', stableKey],
+        mutationFn: () => updateDoctorOffice(url, form)
+    })
 }

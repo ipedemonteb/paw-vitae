@@ -42,7 +42,6 @@ export type ContentType = (typeof ContentTypes)[keyof typeof ContentTypes];
 export function buildHeaders(
     contentType?: string | null,
     acceptType?: string | null,
-    token: string | null = null
 ): Record<string, string> {
     const headers: Record<string, string> = {
         Accept: acceptType || ContentTypes.JSON,
@@ -50,10 +49,6 @@ export function buildHeaders(
 
     if (contentType && contentType !== ContentTypes.MULTIPART) {
         headers["Content-Type"] = contentType;
-    }
-
-    if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
     }
 
     return headers;
