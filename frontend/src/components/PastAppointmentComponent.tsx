@@ -1,10 +1,18 @@
-import {ChevronDown, ClipboardPenLine, Download, Eye, File, Paperclip, User} from "lucide-react";
+import {ChevronDown, ClipboardPenLine, Download, Eye, File, Paperclip, User, Info} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
 import {useTranslation} from "react-i18next";
 import {useState} from "react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
+import {useAppointment, useAppointmentFileHandler, useAppointmentFiles} from "@/hooks/useAppointments.ts";
+import {appointmentIdFromSelf, userIdFromSelf} from "@/utils/IdUtils.ts";
+import {useDoctor, useDoctorImageUrl} from "@/hooks/useDoctors.ts";
+import {initialsFallback} from "@/utils/userUtils.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {usePatient} from "@/hooks/usePatients.ts";
+import {useSpecialty} from "@/hooks/useSpecialties.ts";
+import {useCoverage} from "@/hooks/useCoverages.ts";
 
 const appointmentContainer =
     "p-0 border border-solid shadow gap-0";
@@ -83,14 +91,50 @@ const detailsInner =
 const upperBorderWhenOpen =
     "border-b border-[var(--gray-300)]";
 
-function PastAppointmentComponent() {
+function PastAppointmentComponent({appointmentUrl} : {appointmentUrl: string}) {
     const { t, i18n } = useTranslation();
     const locale = i18n?.language || "en-US";
-    const d = new Date("2025-01-01T12:00:00");
-    const day = d.getDate();
-    const month = new Intl.DateTimeFormat(locale, { month: "long" }).format(d).toUpperCase();
-    const year = d.getFullYear()
+    const auth = useAuth();
+    const isDoctor = auth.role === "ROLE_DOCTOR";
+
+    const appointmentId = appointmentIdFromSelf(appointmentUrl);
+
+    // const {data: appointment, isLoading, isError} = useAppointment(appointmentId);
+    const {data: appointment, isError} = useAppointment(appointmentId);
+
+    const doctorId = userIdFromSelf(appointment?.doctor);
+
+    const { data: patient } = usePatient(appointment?.patient);
+    const { data: doctor } = useDoctor(doctorId);
+    const { url: doctorImgUrl } = useDoctorImageUrl(doctorId);
+    const { data: specialty } = useSpecialty(appointment?.specialty);
+    const { data: coverage } = useCoverage(patient?.coverages);
+    const { data: files } = useAppointmentFiles(appointmentId);
+
     const [open, setOpen] = useState(false);
+
+    if (isError || !appointment) return (<div></div>);
+
+    const dateObj = new Date(appointment.date);
+    const isValidDate = !Number.isNaN(dateObj.getTime());
+
+    const day = isValidDate ? dateObj.getDate() : "--";
+    const month = isValidDate
+        ? new Intl.DateTimeFormat(locale, { month: "long" }).format(dateObj).toUpperCase()
+        : "--";
+    const year = isValidDate ? dateObj.getFullYear() : "--";
+
+    const displayName = isDoctor
+        ? `${patient?.name ?? ""} ${patient?.lastName ?? ""}`.trim()
+        : `${doctor?.name ?? ""} ${doctor?.lastName ?? ""}`.trim();
+
+    const fallbackText = isDoctor
+        ? initialsFallback(patient?.name, patient?.lastName)
+        : initialsFallback(doctor?.name, doctor?.lastName);
+
+    const avatarSrc = isDoctor ? undefined : (doctorImgUrl || undefined);
+
+    const fileCount = files?.length ?? 0;
 
     return (
         <Card className={appointmentContainer}>
@@ -103,23 +147,23 @@ function PastAppointmentComponent() {
                     </div>
                     <div className={statusRow}>
                         <Badge className={badge}>
-                            Cardiology
+                            {t(specialty?.name || "")}
                         </Badge>
                     </div>
                 </div>
                 <div className={middleSection}>
                     <div className={doctorAvatar}>
                         <Avatar className={avatarContainer}>
-                            <AvatarImage src="https://avatars.dicebear.com/api/jdenticon/JD.svg" />
-                            <AvatarFallback>JD</AvatarFallback>
+                            <AvatarImage src={avatarSrc} />
+                            <AvatarFallback>{fallbackText}</AvatarFallback>
                         </Avatar>
                         <div className={nameBlock}>
                             <span className={fullNameText}>
-                                {"John Doe"}
+                                {displayName}
                             </span>
                             <span className={coverageRow}>
                                 <span className={coverageDot} />
-                                {"OSDE"}
+                                {coverage?.name}
                             </span>
                         </div>
                     </div>
@@ -127,28 +171,22 @@ function PastAppointmentComponent() {
                         <div className={reasonWrapper}>
                             <div className={reasonBar} />
                             <div className={reasonBox}>
-                                {"adasdasdasdasd".trim().length > 0 ? (
-                                    <>
-                                        <span className={reasonLabel}>
+                                <span className={reasonLabel}>
                                     {t("medical-history.component.reason")}
                                 </span>
-                                        <div className={reasonTextWrap}>
+                                <div className={reasonTextWrap}>
                                     <span className={reasonText}>
-                                        "adasdasdasdasd"
+                                        {appointment.reason.length > 0 ? appointment.reason : "-"}
                                     </span>
-                                            <div className={reasonFade} />
-                                        </div>
-                                    </>
-                                ) : (
-                                    <span className="text-(--text-light)">{t("medical-history.component.no-reason")}</span>
-                                )}
+                                    <div className={reasonFade} />
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className={bottomRow}>
                         <div className={specialtyPill}>
                             <Paperclip className={filesIcon}/>
-                            2 {t("medical-history.component.files")}
+                            {`${fileCount} ${fileCount === 1 ? t("medical-history.component.file") : t("medical-history.component.files")}`}
                         </div>
                         <Button
                             className={detailsButton}
@@ -170,20 +208,28 @@ function PastAppointmentComponent() {
                                 <ClipboardPenLine className={reportIcon}/>
                                 <h3>{t("medical-history.component.report")}</h3>
                             </div>
-                            <p>El paciente efectivamente, tiene dolor de cabeza, adjunto archivos de estudios.</p>
+                            <p className={appointment.report.length > 0 ? "" : "text-(--text-light)"}>
+                                {appointment.report.length > 0 ? appointment.report : "No report yet."}
+                            </p>
                         </Card>
-                        <div className={filesContainer}>
-                            <FileComponent />
-                            <FileComponent />
-                            <FileComponent />
-                            <FileComponent />
-                            <FileComponent />
-                        </div>
-                        {/*<NoFilesComponent />*/}
+                        {(files?.length ?? 0) > 0 ? (
+                            <div className={filesContainer}>
+                                {files!.map((f: any, idx: number) => (
+                                    <FileComponent
+                                        key={f.self ?? f.view ?? f.download ?? `${idx}`}
+                                        name={f.name ?? f.fileName ?? "file"}
+                                        uploader={f.uploader ?? f.uploadedBy ?? ""}
+                                        view={f.view ?? f.links?.view ?? f.self}
+                                        download={f.download ?? f.links?.download ?? f.self}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <NoFilesComponent />
+                        )}
                     </div>
                 </div>
             </div>
-
         </Card>
     );
 }
@@ -195,7 +241,7 @@ const fileUpperContainer =
 const fileIconContainer =
     "bg-[var(--primary-bg)] text-[var(--primary-color)] p-2 rounded-md";
 const reportFileTitle =
-    "text-md font-[500]";
+    "text-md font-[500] leading-tight mb-1";
 const uploadedByContainer =
     "flex flex-row items-center gap-1 text-[var(--text-light)] text-sm";
 const userIcon =
@@ -209,8 +255,14 @@ const downloadButton =
     "bg-[var(--primary-color)] text-white hover:bg-[var(--primary-dark)] " +
     "border border-[var(--primary-color)] hover:border-[var(--primary-dark)] cursor-pointer";
 
-function FileComponent() {
+function FileComponent({name, uploader, view, download}:{
+        name: string,
+        uploader: string,
+        view: string,
+        download: string
+}) {
     const { t } = useTranslation();
+    const { mutate: handleFile, isPending } = useAppointmentFileHandler();
 
     return (
         <Card className={fileCard}>
@@ -219,34 +271,55 @@ function FileComponent() {
                     <File/>
                 </div>
                 <div>
-                    <h3 className={reportFileTitle}>informe.pdf</h3>
+                    <h3 className={reportFileTitle}>{name}</h3>
                     <div className={uploadedByContainer}>
                         <User className={userIcon}/>
-                        <p>{t("medical-history.component.uploaded")} Patient</p>
+                        <p>{t("medical-history.component.uploaded")} {uploader}</p>
                     </div>
                 </div>
             </div>
             <div className={fileLowerContainer}>
-                <Button className={viewButton}><Eye/>{t("medical-history.component.view")}</Button>
-                <Button className={downloadButton}><Download/></Button>
+                <Button
+                    className={viewButton}
+                    disabled={isPending}
+                    onClick={() => handleFile({
+                        url: view,
+                        action: 'view',
+                        fileName: name
+                    })}
+                >
+                    <Eye/>
+                    {t("medical-history.component.view")}
+                </Button>
+                <Button
+                    className={downloadButton}
+                    disabled={isPending}
+                    onClick={() => handleFile({
+                        url: download,
+                        action: 'download',
+                        fileName: name
+                    })}
+                >
+                    <Download/>
+                </Button>
             </div>
         </Card>
     );
 }
 
-// const noFiles =
-//     "flex flex-row items-center justify-center px-4 py-10 text-[var(--gray-500)] " +
-//     " bg-[var(--gray-100)] rounded-lg gap-2 border border-dashed border-[var(--gray-400)]";
-//
-// function NoFilesComponent() {
-//     const { t } = useTranslation();
-//
-//     return (
-//         <div className={noFiles}>
-//             <Info />
-//             <p>{t("medical-history.components.no-files")}</p>
-//         </div>
-//     );
-// }
+const noFiles =
+    "flex flex-row items-center justify-center px-4 py-10 text-[var(--gray-500)] " +
+    " bg-[var(--gray-100)] rounded-lg gap-2 border border-dashed border-[var(--gray-400)] mt-4";
+
+function NoFilesComponent() {
+    const { t } = useTranslation();
+
+    return (
+        <div className={noFiles}>
+            <Info />
+            <p>{t("medical-history.component.no-files")}</p>
+        </div>
+    );
+}
 
 export default PastAppointmentComponent;

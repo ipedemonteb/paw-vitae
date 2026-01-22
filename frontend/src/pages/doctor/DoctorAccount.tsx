@@ -171,7 +171,7 @@ function DoctorAccount() {
                 toast.success(t("success"), { description: t("doctor.profile.update_success") });
                 setIsEditing(false);
             },
-            onError: (error) => {
+            onError: () => {
                 toast.error(t("error"), { description: t("doctor.profile.update_error") });
             }
         });

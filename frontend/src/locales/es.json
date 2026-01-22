@@ -227,6 +227,7 @@
       "reason": "Motivo de la Consulta:",
       "no-reason": "Sin Motivo Especificado",
       "files": "archivos",
+      "file": "archivo",
       "no-files": "No hay archivos subidos.",
       "details": "Ver Detalles",
       "report": "Reporte de la Consulta",
