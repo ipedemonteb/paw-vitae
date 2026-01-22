@@ -5,7 +5,7 @@ import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {useTranslation} from "react-i18next";
 import {
     AlertDialog, AlertDialogAction, AlertDialogCancel,
-    AlertDialogContent, AlertDialogFooter,
+    AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger
@@ -68,29 +68,31 @@ export default function OfficeCard({office, onClick}: OfficeCardProps) {
                     <Trash2 className="rounded-full  group-hover:translate-y-1.5 transition-all opacity-0 group-hover:opacity-100 bg-red-500 p-1 hover:scale-105 cursor-pointer text-white size-7 text-xl" />
                 </AlertDialogTrigger>
                 <AlertDialogContent>
-                    <AlertDialogTitle>
-                        Confirm Office Removal
-                    </AlertDialogTitle>
-                    <Separator/>
                     <AlertDialogHeader>
-                        <div className="flex flex-col gap-4">
-                            <p>
-                                Are you sure you want to remove this office? This action cannot be undone.
-                            </p>
-                            <div className="flex flex-col gap-1">
-                                <p className="text-sm text-(--text-light)" >The following office will be removed:</p>
-                                <p className="w-full rounded-md font-semibold  bg-gray-50 border py-3 px-2">
-                                    {office.name}
+                        <AlertDialogTitle>
+                            Confirm Office Removal
+                        </AlertDialogTitle>
+                        <Separator/>
+                        <AlertDialogDescription>
+                            <div className="flex flex-col gap-4">
+                                <p className="text-black text-[1rem] pt-2">
+                                    Are you sure you want to remove this office? This action cannot be undone.
                                 </p>
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-sm text-(--text-light)" >The following office will be removed:</p>
+                                    <p className="w-full rounded-md font-semibold  bg-gray-50 border py-3 px-2">
+                                        {office.name}
+                                    </p>
+                                </div>
+                                <Alert className=" border-amber-500 bg-amber-100 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50">
+                                    <AlertTriangleIcon />
+                                    <AlertTitle>Removing an office will permanently delete it.</AlertTitle>
+                                </Alert>
                             </div>
-                            <Alert className=" border-amber-500 bg-amber-100 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50">
-                                <AlertTriangleIcon />
-                                <AlertTitle>Removing an office will permanently delete it.</AlertTitle>
-                            </Alert>
-                        </div>
+                        </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel className="cursor-pointer">
+                        <AlertDialogCancel className="cursor-pointer text-(--text-light)">
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction className="cursor-pointer bg-red-500 hover:bg-red-600" >
