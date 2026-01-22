@@ -166,17 +166,14 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
                     <div className={reasonWrapper}>
                         <div className={reasonBar} />
                         <div className={reasonBox}>
-                            {appointment.reason.trim().length > 0 ? (
-                                <>
-                                    <span className={reasonLabel}>{t("appointment.card.reason")}</span>
-                                    <div className={reasonTextWrap}>
-                                        <span className={reasonText}>{appointment.reason}</span>
-                                        <div className={reasonFade} />
-                                    </div>
-                                </>
-                            ) : (
-                                <span className="text-(--text-light)">{t("medical-history.component.no-reason")}</span>
-                            )}
+                                <span className={reasonLabel}>{t("appointment.card.reason")}</span>
+                                {appointment.reason.trim().length > 0 ? (
+                                <div className={reasonTextWrap}>
+                                    <span className={reasonText}>{appointment.reason}</span>
+                                    <div className={reasonFade} />
+                                </div> ) : (
+                                    <p>-</p>
+                                )}
                         </div>
                     </div>
                 </div>
