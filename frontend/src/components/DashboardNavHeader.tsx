@@ -1,7 +1,7 @@
 import React from "react";
 
 type AppointmentHeaderProps = {
-    title: string;
+    title: string | React.ReactNode;
     children: React.ReactNode
 }
 
