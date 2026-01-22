@@ -68,8 +68,8 @@
         "past": "Sin Historial de Citas"
       },
       "text": {
-        "upcoming": "No tienes citas próximas programadas. Tus futuras citas aparecerán aquí",
-        "past": "Tus citas pasadas aparecerán aquí una vez que hayas completado algunas"
+        "upcoming": "No tienes consultas próximas programadas. Tus consultas programadas aparecerán aquí.",
+        "past": "Tus consultas pasadas aparecerán aquí una vez que hayas completado algunas."
       }
     },
     "loading": {
