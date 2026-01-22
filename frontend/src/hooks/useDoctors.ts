@@ -273,10 +273,12 @@ export function useUpdateDoctorProfile() {
     });
 }
 
-export function useUpdateOfficeMutation(url: string, form: UpdateDoctorOfficeForm) {
-    const stableKey = useMemo(() => JSON.stringify(form), [form])
+export function useUpdateOfficeMutation(url: string) {
+    const queryClient = useQueryClient()
     return useMutation({
-        mutationKey: ['doctor', 'offices', stableKey],
-        mutationFn: () => updateDoctorOffice(url, form)
+        mutationFn: (form: UpdateDoctorOfficeForm) => updateDoctorOffice(url, form),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['office']})
+        }
     })
 }

@@ -7,17 +7,25 @@ import {useTranslation} from "react-i18next";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {cn} from "@/lib/utils.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 type NeighborhoodComboboxProps = {
-    currentNeighborhood?: string
+    value?: string,
+    onChange: (val?: string) => void
 }
 
-export default function NeighborhoodCombobox({currentNeighborhood}: NeighborhoodComboboxProps) {
+export default function NeighborhoodCombobox({value, onChange}: NeighborhoodComboboxProps) {
     const [open, setOpen] = useState(false)
     const {t} = useTranslation()
     const {data: neighborhoods, isLoading: isLoadingNeighborhoods} = useNeighborhoods();
-    const {data: neighborhood} = useNeighborhood(currentNeighborhood)
-    const [value, setValue] = useState(neighborhood?.name ?? t("offices.neighborhoods.all"))
+    const {data: neighborhood, isLoading: isLoadingNeighborhood} = useNeighborhood(value)
+
+    if (isLoadingNeighborhood) {
+        return (
+            <Skeleton className="min-w-0 w-70 h-9" />
+        )
+    }
+
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -27,7 +35,7 @@ export default function NeighborhoodCombobox({currentNeighborhood}: Neighborhood
                     aria-expanded={open}
                     className="flex-1 min-w-0 hover:text-(--text-light) cursor-pointer font-normal w-70 justify-between"
                 >
-                    {value}
+                    {neighborhood?.name}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -43,29 +51,12 @@ export default function NeighborhoodCombobox({currentNeighborhood}: Neighborhood
                             <>
                                 <CommandEmpty>No Neighborhoods Found</CommandEmpty>
                                 <CommandGroup>
-                                    <CommandItem
-                                        key={t("offices.neighborhoods.all")}
-                                        value={t("offices.neighborhoods.all")}
-                                        onSelect={(currentValue) => {
-                                            setValue(currentValue)
-                                            setOpen(false)
-                                        }}
-                                        className="text-(--text-light)"
-                                    >
-                                        {t("offices.neighborhoods.all")}
-                                        <Check
-                                            className={cn(
-                                                "ml-auto",
-                                                value === t("offices.neighborhoods.all") ? "opacity-100" : "opacity-0"
-                                            )}
-                                        />
-                                    </CommandItem>
                                     {neighborhoods?.map((c) => (
                                         <CommandItem
-                                            key={c.name}
-                                            value={c.name}
+                                            key={c.self}
+                                            value={c.self}
                                             onSelect={(currentValue) => {
-                                                setValue(currentValue)
+                                                onChange(currentValue)
                                                 setOpen(false)
                                             }}
                                             className="text-(--text-light)"
@@ -74,7 +65,7 @@ export default function NeighborhoodCombobox({currentNeighborhood}: Neighborhood
                                             <Check
                                                 className={cn(
                                                     "ml-auto",
-                                                    value === c.name ? "opacity-100" : "opacity-0"
+                                                    value === c.self ? "opacity-100" : "opacity-0"
                                                 )}
                                             />
                                         </CommandItem>

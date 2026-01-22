@@ -6,9 +6,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function extractIdFromUrl(url: string): string {
+export function extractIdFromUrl(url?: string) {
+    if (!url) return undefined;
   const segments = url.replace(/\/$/, "").split("/")
-  return segments.pop() || ""
+  const n = Number(segments.pop());
+  if (Number.isNaN(n)) return undefined;
+  return n;
 }
 
 export function clampRating(rating: number) {

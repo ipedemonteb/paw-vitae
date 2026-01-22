@@ -116,11 +116,14 @@ export type DoctorOfficeQuery = {
 }
 
 export type UpdateDoctorOfficeForm = {
-    doctorOfficeForm: OfficeForm;
+    officeName?: string,
+    specialtyIds?: number[],
+    neighborhoodId?: number,
+    active: boolean,
+    removed: boolean
 }
 
-export type OfficeForm = {
-}
+
 
 export interface AvailabilitySlotForm {
     dayOfWeek: number;
