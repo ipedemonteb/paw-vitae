@@ -41,8 +41,8 @@ function SearchGridCard({doctor}: SearchCardProps) {
     const specialties = useDoctorSpecialties(doctor.specialties);
     const {url:imageUrl} = useDoctorImageUrl(doctor.self.split("/").pop());
     const doctorId = extractIdFromUrl(doctor.self)
-    const profilePath = generatePath("/profile/:id", { id: doctorId })
-    const schedulePath = generatePath("/appointment/:id", { id: doctorId })
+    const profilePath = generatePath("/profile/:id", { id: String(doctorId) })
+    const schedulePath = generatePath("/appointment/:id", { id: String(doctorId) })
     return (
         <Card className={cardContainer}>
             <div className={iconContainer}>

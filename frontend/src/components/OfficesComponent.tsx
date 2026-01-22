@@ -66,7 +66,7 @@ export default function OfficesComponent() {
             {isLoading ? (
                 <DashboardNavLoader item={t("offices.loadingText")}/>
             ) : offices && offices.length > 0 ? (
-                <div className="grid grid-cols-3">
+                <div className="flex flex-wrap gap-x-6 gap-y-3 justify-center w-fit px-2">
                     {offices.map(o => (
                         <EditOfficeDialog key={o.self} office={o}/>
                     ))}
