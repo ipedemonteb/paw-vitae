@@ -131,7 +131,7 @@ function PatientAccount() {
                 queryClient.invalidateQueries({ queryKey: ["auth", "patients", "id", auth.userId] });
                 queryClient.invalidateQueries({ queryKey: ['coverages'] });
             },
-            onError: (error) => {
+            onError: () => {
                 toast.error(t("error"), {
                     description: t("doctor.profile.update_error", "Could not update profile.")
                 });

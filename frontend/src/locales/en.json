@@ -301,6 +301,7 @@
       "reason": "Reason for Visit:",
       "no-reason": "No Reason Specified",
       "files": "files",
+      "file": "file",
       "no-files": "No files uploaded.",
       "details": "View Details",
       "report": "Visit Report",

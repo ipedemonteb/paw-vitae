@@ -48,8 +48,6 @@ export function useAppointmentFiles(id?: string | null) {
     })
 }
 
-
-
 export function useBookAppointment() {
     return useMutation<string, AxiosError<any>, { form: AppointmentForm, files: File[] }>({
         mutationFn: async ({ form, files }) => {
@@ -87,7 +85,6 @@ export function useUploadDoctorFiles() {
         }
     });
 }
-
 
 export function useAppointmentFileHandler() {
     return useMutation({
