@@ -25,7 +25,8 @@ const statusClassnameDictionary = {
 
 const cardContainer = "w-full border border-solid rounded-md flex flex-col shadow sm:flex-row";
 const leftSection =
-    "bg-gray-100 w-full max-w-none min-w-0 space-y-3 flex flex-col justify-center items-center py-6 sm:py-8 sm:h-full sm:w-1/6 sm:max-w-44 sm:min-w-36 self-stretch";
+    "bg-gray-100 w-full max-w-none min-w-0 space-y-3 flex flex-col justify-center items-center " +
+    "py-6 sm:py-8 sm:h-full sm:w-1/6 sm:max-w-44 sm:min-w-36 self-stretch rounded-t-md md:rounded-l-md md:rounded-t-none";
 const dateBlock = "text-sm flex flex-col gap-0 items-center justify-center text-center w-full";
 const weekdayText = "text-(--text-light)";
 const dayText = "text-3xl font-bold";
