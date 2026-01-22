@@ -343,7 +343,7 @@
       "select_neighborhood": "Por favor seleccione un barrio."
     }
   },
-  "Loading": "Cargando...",
+  "loading": "Cargando...",
   "save": "Guardar Cambios",
   "saving": "Guardando...",
   "success": "Éxito",

@@ -29,6 +29,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
+import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
 const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
@@ -138,7 +139,7 @@ function PatientAccount() {
         });
     };
 
-    if (isLoading) return <div className="flex justify-center mt-36"><Loader2 className="animate-spin h-8 w-8" /></div>;
+    //TODO: Handle correctly
     if (isError || !patient) return <GenericError code={404} />;
 
     const isSaving = updatePatientMutation.isPending;
@@ -154,7 +155,7 @@ function PatientAccount() {
                 )}
                 {isEditing && <div className="h-9" />}
             </DashboardNavHeader>
-
+            {isLoading ? <DashboardNavLoader /> :
             <div className={containerStyles}>
                 <Card className={cardStyles}>
                     <div className={cardHeaderStyles}>
@@ -328,8 +329,8 @@ function PatientAccount() {
                         </Button>
                     </div>
                 )}
-
             </div>
+        }
         </DashboardNavContainer>
     );
 
