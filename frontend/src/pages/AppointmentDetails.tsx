@@ -312,7 +312,8 @@ const fileComponent = "flex flex-row items-center p-4 rounded-lg gap-3";
 const fileIcon = "text-[var(--primary-color)] h-6 w-6 mx-1";
 const fileTitle = "font-[500] text-sm text-[var(--text-color)] truncate max-w-[150px] sm:max-w-xs";
 const actionsContainer = "ml-auto flex flex-row gap-2";
-const actionButton = "rounded-full p-2 h-9 w-9 flex items-center justify-center transition-colors";
+const actionButton = "rounded-full p-2 h-9 w-9 flex items-center justify-center transition-colors cursor-pointer";
+const viewButton = actionButton + " text-(--primary-color) border border-(--primary-color) hover:bg-(--primary-dark) hover:text-white hover:border-(--primary-dark)";
 
 function FileComponent({ file }: { file: AppointmentFileDTO }) {
     const { t } = useTranslation();
@@ -328,7 +329,7 @@ function FileComponent({ file }: { file: AppointmentFileDTO }) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className={actionButton + " text-[var(--primary-color)] hover:bg-[var(--primary-bg)]"}
+                        className={viewButton}
                         title={t("common.view", "Ver")}
                         disabled={isPending}
                         onClick={() => handleFile({

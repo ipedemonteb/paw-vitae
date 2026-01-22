@@ -80,8 +80,8 @@
         "past": "No Past Appointments"
       },
       "text": {
-        "upcoming": "You don't have any upcoming appointments scheduled. Your future appointments will appear here",
-        "past": "Your past appointments will appear here once you've completed some appointments"
+        "upcoming": "You don't have any upcoming appointments scheduled. Your future appointments will appear here.",
+        "past": "All your appointment history will appear here once you have completed them."
       }
     },
     "loading": {
