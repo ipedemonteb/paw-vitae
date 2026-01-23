@@ -119,8 +119,8 @@ export type UpdateDoctorOfficeForm = {
     officeName?: string,
     specialtyIds?: number[],
     neighborhoodId?: number,
-    active: boolean,
-    removed: boolean
+    active?: boolean,
+    removed?: boolean
 }
 
 
