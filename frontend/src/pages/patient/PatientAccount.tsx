@@ -38,7 +38,7 @@ const cardTitleStyles = "text-xl font-[500] text-(--text-color) flex items-cente
 const sectionStyles = "pb-6 px-6 pt-2";
 const gridStyles = "grid grid-cols-1 md:grid-cols-2 gap-6";
 const infoValueStyles = "flex flex-row items-center gap-1 text-(--text-light) font-[400]";
-const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer text-white";
+const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer text-white mt-2 md:mt-0 ";
 
 function PatientAccount() {
     const { t } = useTranslation();

@@ -95,7 +95,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                 <DashboardNavLoader/>
             ) : (appointments?.data !== undefined && appointments.data.length > 0) ? (
                 appointments.data.map(a => (
-                    <AppointmentCard key={a.self} appointment={a}/>
+                    <AppointmentCard key={a.self} appointment={a} isUpcoming={type === "upcoming"}/>
                 ))
             ) : (
                 <DashboardNavEmptyContent Icon={CalendarFoldIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>

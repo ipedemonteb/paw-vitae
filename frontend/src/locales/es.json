@@ -135,7 +135,11 @@
         "title": "Permitir acceso completo al historial médico",
         "subtitle": "Al seleccionar esta opción, se habilita el acceso completo de su médico a su historial médico."
       },
-      "book": "Reservar Turno"
+      "book": "Reservar Turno",
+      "error": {
+        "failed": "Reserva de turno fallida",
+        "try-again": "Intente nuevamente."
+      }
     },
     "confirmation": {
       "title": "¡Consulta Confirmada!",
