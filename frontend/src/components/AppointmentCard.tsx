@@ -13,9 +13,9 @@ import { useDoctor, useDoctorImageUrl } from "@/hooks/useDoctors.ts";
 
 const statusClassname =
     "h-7 font-medium border-solid border text-xs w-3/4 rounded-2xl flex items-center justify-center";
-const confirmedStatusClassname = statusClassname + " bg-green-100 border-green-400";
-const cancelledStatusClassname = statusClassname + " bg-red-100 border-red-400";
-const completedStatusClassname = statusClassname + " bg-blue-100 border-blue-400";
+const confirmedStatusClassname = statusClassname + " bg-(--success-light) border-(--success)";
+const cancelledStatusClassname = statusClassname + " bg-(--danger-light) border-(--danger)";
+const completedStatusClassname = statusClassname + " bg-(--primary-bg) border-(--primary-color)";
 
 const statusClassnameDictionary = {
     completo: completedStatusClassname,
