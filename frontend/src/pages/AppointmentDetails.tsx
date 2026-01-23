@@ -58,7 +58,7 @@ import {
 const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
 const appointmentContainer = "p-0 pb-8";
-const appointmentHeader = "flex flex-col items-center py-8 rounded-t-lg gap-3 bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
+const appointmentHeader = "flex flex-col items-center py-8 rounded-t-xl gap-3 bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
 const appointmentTitle = "font-bold text-4xl text-center text-[var(--text-color)]";
 const appointmentContent = "flex flex-col px-8 gap-4";
 const appointmentData = "grid w-full gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
@@ -172,12 +172,16 @@ function AppointmentDetails() {
                         <PatientFileCard files={patientFiles} />
 
                         {showPostVisit ? (
-                            <PostVisitComponent
-                                appointmentId={appointmentId}
-                                files={doctorFiles}
-                                report={appointment.report}
-                                isDoctor={role === "ROLE_DOCTOR"}
-                            />
+                            isDoctor && !isCompleted && (appointment.report ?? "").trim().length === 0 ? (
+                                <PostVisitLockedComponent/>
+                            ) : (
+                                <PostVisitComponent
+                                    appointmentId={appointmentId}
+                                    files={doctorFiles}
+                                    report={appointment.report}
+                                    isDoctor={role === "ROLE_DOCTOR"}
+                                />
+                            )
                         ) : null}
 
                         {showRatingBlock ? (
@@ -548,6 +552,54 @@ function PostVisitComponent({
                 {files.length === 0 ? <FileEmptyComponent /> : files.map((f) => (
                     <FileComponent key={f.id} file={f} />
                 ))}
+            </Card>
+        </div>
+    );
+}
+
+const postVisitLockedText = " text-[var(--gray-500)]";
+const postVisitLockedHover = " cursor-not-allowed bg-[var(--gray-100)]";
+const asteriskLockedIcon = "w-8 h-8 text-(--gray-500) shrink-0 mr-3";
+
+function PostVisitLockedComponent() {
+    const { t } = useTranslation();
+
+    return (
+        <div>
+            <div className={cardIconContainer}>
+                <Cross className={cardIcon + postVisitLockedText} />
+                <h1 className={cardTitle + postVisitLockedText}>
+                    {t("appointment.details.post-visit-locked")}
+                </h1>
+            </div>
+
+            <Card className={cardContent + postVisitLockedHover}>
+                <Card className={doctorCommentContainer + " bg-(--gray-100)"}>
+                    <Asterisk className={asteriskLockedIcon} />
+
+                    <div className="flex flex-col w-full gap-3 py-3">
+                        <p className={reportTitle + postVisitLockedText}>
+                            {t("appointment.details.report")}
+                        </p>
+
+                        <p className={noReport + postVisitLockedText + " -mt-2"}>
+                            {t(
+                                "appointment.details.report-locked",
+                            )}
+                        </p>
+
+                        <Textarea
+                            placeholder={t("appointment.details.write-report")}
+                            disabled
+                        />
+
+                        <div className="flex justify-end">
+                            <Button className={submitReportButton + lockedButton} disabled>
+                                {t("appointment.details.submit-report")}
+                            </Button>
+                        </div>
+                    </div>
+                </Card>
             </Card>
         </div>
     );
