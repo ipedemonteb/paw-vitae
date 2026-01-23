@@ -505,6 +505,7 @@
     }
   },
   "patient": {
+    "patient": "Paciente",
     "dashboard": {
       "upcoming": "Próximo",
       "history": "Historial",
@@ -513,6 +514,7 @@
     }
   },
   "doctor": {
+    "doctor": "Doctor",
     "dashboard": {
       "upcoming": "Próximo",
       "history": "Historial",
