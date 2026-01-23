@@ -35,7 +35,7 @@ export default function EditOfficeDialog({office}: EditOfficeModalProps) {
             name: office.name,
             neighborhood: office.neighborhood,
             active: office.status === "active",
-            specialties: [],
+            specialties: [] as string[],
         },
         mode: "onSubmit",
     })
@@ -136,7 +136,7 @@ export default function EditOfficeDialog({office}: EditOfficeModalProps) {
                                         ))}
                                     </div>
                                 ) : (
-                                    <SpecialtyToggleGroup currentSpecialties={form.watch("specialties")} specialties={specialties} />
+                                    <SpecialtyToggleGroup onValueChange={(s: string[]) => form.setValue("specialties", s)} currentSpecialties={form.watch("specialties")} specialties={specialties} />
                                 )}
                             </div>
                         </div>
