@@ -188,11 +188,12 @@ public class AppointmentServiceImplTest {
         int page = -1;
         int size = 10;
         String filter = "filter";
-        when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString())).thenReturn(List.of(APPOINTMENT));
+        String sort = "asc";
+        when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString(), anyString())).thenReturn(List.of(APPOINTMENT));
         when(appointmentDao.countAppointments(userId, isFuture, filter)).thenReturn(1);
 
         //Exercise
-        Page<Appointment> appointments = appointmentService.getAppointments(userId, isFuture, page, size, filter);
+        Page<Appointment> appointments = appointmentService.getAppointments(userId, isFuture, page, size, filter, sort);
 
         //Postconditions
         assertNotNull(appointments);
@@ -204,14 +205,15 @@ public class AppointmentServiceImplTest {
         //Preconditions
         long userId = 1L;
         boolean isFuture = true;
-        int page =4;
+        int page = 4;
         int size = 10;
         String filter = "filter";
-        when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString())).thenReturn(List.of(APPOINTMENT));
+        String sort = "asc";
+        when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString(), anyString())).thenReturn(List.of(APPOINTMENT));
         when(appointmentDao.countAppointments(userId, isFuture, filter)).thenReturn(1);
 
         //Exercise
-        Page<Appointment> appointments = appointmentService.getAppointments(userId, isFuture, page, size, filter);
+        Page<Appointment> appointments = appointmentService.getAppointments(userId, isFuture, page, size, filter, sort);
 
         //Postconditions
         assertNotNull(appointments);
