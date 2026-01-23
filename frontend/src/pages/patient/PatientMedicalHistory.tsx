@@ -10,6 +10,11 @@ import {useAuth} from "@/hooks/useAuth.ts";
 import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import {CalendarFoldIcon} from "lucide-react";
+import PaginationComponent from "@/components/PaginationComponent.tsx";
+
+const headerContainer = "flex items-center sm:justify-center gap-2 mt-2 sm:mt-0";
+const sortTitle = "flex font-normal text-sm items-center justify-center text-(--text-light)";
+const selectTrigger = "font-light text-normal cursor-pointer";
 
 function PatientMedicalHistory() {
     const { t } = useTranslation();
@@ -30,16 +35,15 @@ function PatientMedicalHistory() {
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={t("medical-history.title")}>
-                <div className="flex items-center sm:justify-center gap-2 mt-2 sm:mt-0">
-                    <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
+                <div className={headerContainer}>
+                    <span className={sortTitle}>
                         {t("medical-history.sort.title")}
                     </span>
                     <Select value={sort} onValueChange={(v) => setSort(v as "oldest" | "newest")}>
-                        <SelectTrigger className="font-light text-normal cursor-pointer">
+                        <SelectTrigger className={selectTrigger}>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            //TODO: give functionality
                             <SelectItem value="oldest">{t("medical-history.sort.old-first")}</SelectItem>
                             <SelectItem value="newest">{t("medical-history.sort.new-first")}</SelectItem>
                         </SelectContent>
@@ -50,7 +54,7 @@ function PatientMedicalHistory() {
                 <DashboardNavLoader />
             ) : completed.length > 0 ? (
                 completed.map((a) => (
-                    <PastAppointmentComponent appointmentUrl={a.self}/>
+                    <PastAppointmentComponent key={a.self} appointmentUrl={a.self} />
                 ))
             ) : (
                 <DashboardNavEmptyContent
@@ -60,10 +64,9 @@ function PatientMedicalHistory() {
                 />
             )}
 
-            {/*TODO: add pagination*/}
-            {/*{!isLoading && completed.length > 0 && appointments?.pagination && (*/}
-            {/*    <PaginationComponent pagination={appointments.pagination} searchParams={searchParams} />*/}
-            {/*)}*/}
+            {!isLoading && completed.length > 0 && appointments?.pagination && (
+                <PaginationComponent pagination={appointments.pagination} searchParams={searchParams} />
+            )}
         </DashboardNavContainer>
     );
 }
