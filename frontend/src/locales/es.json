@@ -227,6 +227,7 @@
       "reason": "Motivo de la Consulta:",
       "no-reason": "Sin Motivo Especificado",
       "files": "archivos",
+      "file": "archivo",
       "no-files": "No hay archivos subidos.",
       "details": "Ver Detalles",
       "report": "Reporte de la Consulta",
@@ -504,6 +505,7 @@
     }
   },
   "patient": {
+    "patient": "Paciente",
     "dashboard": {
       "upcoming": "Próximo",
       "history": "Historial",
@@ -512,6 +514,7 @@
     }
   },
   "doctor": {
+    "doctor": "Doctor",
     "dashboard": {
       "upcoming": "Próximo",
       "history": "Historial",

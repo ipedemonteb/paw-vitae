@@ -301,6 +301,7 @@
       "reason": "Reason for Visit:",
       "no-reason": "No Reason Specified",
       "files": "files",
+      "file": "file",
       "no-files": "No files uploaded.",
       "details": "View Details",
       "report": "Visit Report",
@@ -505,6 +506,7 @@
     }
   },
   "patient": {
+    "patient": "Patient",
     "dashboard": {
       "upcoming": "Upcoming",
       "history": "History",
@@ -513,6 +515,7 @@
     }
   },
   "doctor": {
+    "doctor": "Doctor",
     "dashboard": {
       "upcoming": "Upcoming",
       "history": "History",
