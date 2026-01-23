@@ -7,9 +7,9 @@ import {
     getAppointmentFiles,
     listAppointments,
     uploadAppointmentFile,
-    updateAppointmentReport
+    updateAppointmentReport, cancelAppointment
 } from "@/data/appointments.ts";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 export function useAppointments(query: AppointmentsQuery) {
@@ -108,6 +108,20 @@ export function useAppointmentFileHandler() {
                 link.remove();
             }
             setTimeout(() => window.URL.revokeObjectURL(tempUrl), 100);
+        },
+    });
+}
+
+export function useCancelAppointment() {
+    const qc = useQueryClient();
+
+    return useMutation<void, AxiosError<any>, { id: string; userId: string }>({
+        mutationFn: async ({ id, userId }) => {
+            await cancelAppointment(id, userId);
+        },
+        onSuccess: async () => {
+            await qc.invalidateQueries({ queryKey: ["auth", "appointments"] });
+            await qc.invalidateQueries({ queryKey: ["appointment"] });
         },
     });
 }

@@ -260,11 +260,11 @@ function Appointment() {
             onSuccess: (newId) => {
                 queryClient.invalidateQueries({ queryKey: ['auth', 'appointments'] });
                 toast.success(t("success.appointment_created", "Turno reservado exitosamente"));
-                navigate(`/appointment-confirmation/${newId}`);
+                navigate(`/appointment/${newId}/confirmation`);
             },
-            onError: (error) => {
-                toast.error(t("error.appointment_failed", "Error al reservar el turno"), {
-                    description: t("error.try_again", "Intente nuevamente.")
+            onError: () => {
+                toast.error(t("appointment.booking.error.failed"), {
+                    description: t("appointment.booking.error.try-again")
                 });
             }
         });

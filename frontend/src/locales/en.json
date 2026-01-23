@@ -147,7 +147,11 @@
         "title": "Allow full medical history access",
         "subtitle": "By selecting this option, you are allowing full access to your medical history for your doctor."
       },
-      "book": "Book Appointment"
+      "book": "Book Appointment",
+      "error": {
+        "failed": "Appointment booking failed",
+        "try-again": "Try again."
+      }
     },
     "confirmation": {
       "title": "Appointment Confirmed!",

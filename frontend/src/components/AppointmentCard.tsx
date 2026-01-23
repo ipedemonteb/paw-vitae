@@ -1,4 +1,4 @@
-import { Clock4, EyeIcon } from "lucide-react";
+import {Clock4, EyeIcon, X} from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import type { AppointmentDTO } from "@/data/appointments.ts";
 import { useTranslation } from "react-i18next";
@@ -10,6 +10,20 @@ import { useAuth } from "@/hooks/useAuth.ts";
 import {appointmentIdFromSelf, userIdFromSelf} from "@/utils/IdUtils.ts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import { useDoctor, useDoctorImageUrl } from "@/hooks/useDoctors.ts";
+import {initialsFallback} from "@/utils/userUtils.ts";
+import { useCancelAppointment } from "@/hooks/useAppointments.ts";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog.tsx";
+import {Spinner as Loader} from "@/components/ui/spinner.tsx";
+import {useState} from "react";
+import {DialogClose} from "@radix-ui/react-dialog";
 
 const statusClassname =
     "h-7 font-medium border-solid border text-xs w-3/4 rounded-2xl flex items-center justify-center";
@@ -23,10 +37,12 @@ const statusClassnameDictionary = {
     cancelado: cancelledStatusClassname,
 };
 
-const cardContainer = "w-full border border-solid rounded-md flex flex-col shadow sm:flex-row";
+const cardContainer =
+    "w-full border border-solid rounded-md overflow-hidden shadow flex flex-col sm:flex-row sm:items-stretch";
 const leftSection =
     "bg-gray-100 w-full max-w-none min-w-0 space-y-3 flex flex-col justify-center items-center " +
-    "py-6 sm:py-8 sm:h-full sm:w-1/6 sm:max-w-44 sm:min-w-36 self-stretch rounded-t-md md:rounded-l-md md:rounded-t-none";
+    "py-6 sm:py-8 sm:w-1/6 sm:max-w-44 sm:min-w-36 self-stretch " +
+    "rounded-t-md sm:rounded-t-none sm:rounded-l-md";
 const dateBlock = "text-sm flex flex-col gap-0 items-center justify-center text-center w-full";
 const weekdayText = "text-(--text-light)";
 const dayText = "text-3xl font-bold";
@@ -54,19 +70,32 @@ const reasonText = "truncate block w-full";
 const reasonFade = "pointer-events-none absolute top-0 right-0 h-full w-8 bg-linear-to-r from-transparent to-gray-50";
 
 const bottomRow =
-    "flex flex-col gap-3 items-stretch w-full sm:flex-row sm:justify-between sm:items-center";
+    "flex flex-col gap-3 items-stretch w-full sm:flex-row sm:justify-between sm:items-center mt-2";
 const specialtyPill =
     "rounded-2xl font-medium text-(--primary-color) h-min py-1.5 px-2.5 text-sm flex items-center justify-center bg-gray-100 w-fit";
 const detailsButton =
     "flex gap-2 hover:bg-(--primary-dark) cursor-pointer items-center rounded-lg text-white justify-center px-2 py-2 bg-(--primary-color)";
+const cancelButton =
+    "flex gap-2 cursor-pointer items-center rounded-lg justify-center px-2 py-2 " +
+    "border border-(--danger) text-(--danger) bg-white hover:bg-(--danger) hover:text-white";
 
 const avatarClass =
     "h-10 w-10 shrink-0 border border-solid border-blue-500 bg-blue-200";
 const avatarFallbackClass =
     "bg-(--primary-bg) text-(--primary-color) font-semibold";
 
+const dialogHeader = "font-bold text-xl text-[var(--text-color)]";
+const dialogText = "text-[var(--text-light)] text-lg font-normal";
+const dialogFooter = "mt-2";
+const dialogCancel =
+    "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] " +
+    "hover:text-white hover:bg-[var(--primary-dark)] hover:border hover:border-[var(--primary-dark)] cursor-pointer";
+const dialogConfirm =
+    "text-white bg-[var(--danger)] border border-[var(--danger)] hover:text-white hover:bg-[var(--danger-dark)] hover:border hover:border-[var(--danger-dark)] cursor-pointer";
+
 type AppointmentCardProps = {
     appointment: AppointmentDTO;
+    isUpcoming?: boolean;
 };
 
 function transformStatus(status: string) {
@@ -80,19 +109,12 @@ function transformStatus(status: string) {
     }
 }
 
-function initials(name?: string, lastName?: string) {
-    const a = (name?.trim()?.[0] ?? "").toUpperCase();
-    const b = (lastName?.trim()?.[0] ?? "").toUpperCase();
-    return (a + b) || "U";
-}
-
-export default function AppointmentCard({ appointment }: AppointmentCardProps) {
+export default function AppointmentCard({ appointment, isUpcoming = false }: AppointmentCardProps) {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const auth = useAuth();
 
     const isDoctor = auth.role === "ROLE_DOCTOR";
-
     const doctorId = userIdFromSelf(appointment.doctor);
 
     const { data: patient } = usePatient(appointment.patient);
@@ -108,24 +130,25 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
     const weekday = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(d).toUpperCase();
     const day = d.getDate();
     const month = new Intl.DateTimeFormat(locale, { month: "long" }).format(d).toUpperCase();
-    const time = new Intl.DateTimeFormat(locale, {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-    }).format(d);
+    const time = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", hour12: false }).format(d);
 
     const displayName = isDoctor
         ? `${patient?.name ?? ""} ${patient?.lastName ?? ""}`.trim()
         : `${doctor?.name ?? ""} ${doctor?.lastName ?? ""}`.trim();
 
     const fallbackText = isDoctor
-        ? initials(patient?.name, patient?.lastName)
-        : initials(doctor?.name, doctor?.lastName);
+        ? initialsFallback(patient?.name, patient?.lastName)
+        : initialsFallback(doctor?.name, doctor?.lastName);
 
     const avatarSrc = isDoctor ? undefined : (doctorImgUrl || undefined);
 
     const status = "appointment.filters." + transformStatus(appointment.status);
     const base = isDoctor ? "/doctor/dashboard" : "/patient/dashboard";
+
+    const cancelMutation = useCancelAppointment();
+    const appointmentId = appointmentIdFromSelf(appointment.self);
+
+    const [cancelOpen, setCancelOpen] = useState(false);
 
     return (
         <div className={cardContainer}>
@@ -152,13 +175,12 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
                         <AvatarImage src={avatarSrc} />
                         <AvatarFallback className={avatarFallbackClass}>{fallbackText}</AvatarFallback>
                     </Avatar>
-
                     <div className={nameBlock}>
                         <span className={fullNameText}>{displayName}</span>
                         <span className={coverageRow}>
-              <span className={coverageDot} />
+                            <span className={coverageDot} />
                             {t(coverage?.name || "")}
-            </span>
+                        </span>
                     </div>
                 </div>
 
@@ -166,29 +188,89 @@ export default function AppointmentCard({ appointment }: AppointmentCardProps) {
                     <div className={reasonWrapper}>
                         <div className={reasonBar} />
                         <div className={reasonBox}>
-                                <span className={reasonLabel}>{t("appointment.card.reason")}</span>
-                                {appointment.reason.trim().length > 0 ? (
+                            <span className={reasonLabel}>{t("appointment.card.reason")}</span>
+                            {appointment.reason.trim().length > 0 ? (
                                 <div className={reasonTextWrap}>
                                     <span className={reasonText}>{appointment.reason}</span>
                                     <div className={reasonFade} />
-                                </div> ) : (
-                                    <p>-</p>
-                                )}
+                                </div>
+                            ) : (
+                                <p>-</p>
+                            )}
                         </div>
                     </div>
                 </div>
 
                 <div className={bottomRow}>
                     <div className={specialtyPill}>{t(specialty?.name || "")}</div>
-                    <Button
-                        className={detailsButton}
-                        onClick={() =>
-                            navigate(`${base}/appointment-details/${appointmentIdFromSelf(appointment.self)}`)
-                        }
-                    >
-                        <EyeIcon />
-                        {t("appointment.card.details")}
-                    </Button>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                        {isUpcoming && appointment.cancellable && (
+                            <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" className={cancelButton}>
+                                        <X className="w-4 h-4" />
+                                        {t("appointment.card.cancel", "Cancel")}
+                                    </Button>
+                                </DialogTrigger>
+
+                                <DialogContent>
+                                    <DialogHeader className={dialogHeader}>
+                                        <DialogTitle>
+                                            {t("appointment.cancel.title", "Appointment Cancellation")}
+                                        </DialogTitle>
+
+                                        <DialogDescription className={dialogText}>
+                                            {t(
+                                                "appointment.cancel.confirm",
+                                                "Are you sure you want to cancel this appointment?"
+                                            )}
+                                        </DialogDescription>
+                                    </DialogHeader>
+
+                                    <DialogFooter className={dialogFooter}>
+                                        <DialogClose asChild>
+                                            <Button
+                                                type="button"
+                                                className={dialogCancel}
+                                                disabled={cancelMutation.isPending}
+                                            >
+                                                {t("logout.confirmation.cancel", "Cancel")}
+                                            </Button>
+                                        </DialogClose>
+                                        <Button
+                                            type="button"
+                                            className={dialogConfirm}
+                                            disabled={cancelMutation.isPending || !appointmentId}
+                                            onClick={() => {
+                                                if (!appointmentId) return;
+                                                setCancelOpen(false);
+                                                cancelMutation.mutate({
+                                                    id: appointmentId,
+                                                    userId: String(auth.userId),
+                                                });
+                                            }}
+                                        >
+                                            {cancelMutation.isPending ? (
+                                                <>
+                                                    <Loader className="w-4 h-4 mr-2" />
+                                                    {t("cancelling", "Cancelling...")}
+                                                </>
+                                            ) : (
+                                                t("appointment.cancel.action", "Cancel Appointment")
+                                            )}
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        )}
+                        <Button
+                            className={detailsButton}
+                            onClick={() => navigate(`${base}/appointment-details/${appointmentId}`)}
+                        >
+                            <EyeIcon />
+                            {t("appointment.card.details")}
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

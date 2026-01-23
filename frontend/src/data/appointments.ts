@@ -137,3 +137,11 @@ export async function updateAppointmentReport(id: string, report: string) {
         headers: { "Content-Type": ContentTypes.APPOINTMENT_REPORT }
     });
 }
+
+export async function cancelAppointment(id: string, userId: string) {
+    return await api.patch(`/appointments/${id}`, {}, {
+            params: { userId },
+            headers: { "Content-Type": ContentTypes.APPOINTMENT_CANCEL },
+        }
+    );
+}
