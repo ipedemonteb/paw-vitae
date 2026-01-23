@@ -115,7 +115,8 @@
       "submit": "Enviar",
       "submit-rating": "Enviar Calificación",
       "rating-success": "Calificación enviada exitosamente.",
-      "rating-error": "Error al enviar la calificación. Por favor, inténtalo de nuevo."
+      "rating-error": "Error al enviar la calificación. Por favor, inténtalo de nuevo.",
+      "back": "Volver a Turnos"
     },
     "booking": {
       "header": {
@@ -151,9 +152,17 @@
       "office": "Oficina",
       "info": "Se ha enviado un mail a tu casilla con todos los detalles de la consulta.",
       "dashboard": "Ir al Panel",
-      "view-details": "Ver Detalles"
+      "view-details": "Ver Detalles",
+      "created": "Cita creada exitosamente."
     },
-    "created": "Cita creada exitosamente."
+    "cancel": {
+      "cancel": "Cancelar",
+      "title": "Cancelación de Turno",
+      "subtitle": "¿Seguro que quiere cancelar su turno?",
+      "confirmation": "Cancelar Turno",
+      "back": "Volver",
+      "cancelling": "Cancelando"
+    }
   },
   "login": {
     "welcome_title": "Bienvenido de nuevo!",
