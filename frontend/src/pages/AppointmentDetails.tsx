@@ -201,64 +201,63 @@ function AppointmentDetails() {
                         <div className={appointmentButtons}>
                             <Button className={goBackButton} onClick={handleBackToAppointments} type="button">
                                 <ArrowLeft className="h-5 w-5" />
-                                <p>Back to Appointments</p>
+                                <p>{t("appointment.details.back")}</p>
                             </Button>
-                            <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
-                                <DialogTrigger asChild>
-                                    <Button className={cancelButton} type="button">
-                                        <X className="h-5 w-5" />
-                                        <p>Cancel Appointment</p>
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader className={dialogHeader}>
-                                        <DialogTitle>
-                                            {t("appointment.cancel.title", "Appointment Cancellation")}
-                                        </DialogTitle>
-                                        <DialogDescription className={dialogText}>
-                                            {t(
-                                                "appointment.cancel.confirm",
-                                                "Are you sure you want to cancel this appointment?"
-                                            )}
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <DialogFooter className={dialogFooter}>
-                                        <DialogClose asChild>
+                            {!isCancelled && !isCompleted && (
+                                <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button className={cancelButton} type="button">
+                                            <X className="h-5 w-5" />
+                                            <p>{t("appointment.cancel.cancel")}</p>
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader className={dialogHeader}>
+                                            <DialogTitle>
+                                                {t("appointment.cancel.title")}
+                                            </DialogTitle>
+                                            <DialogDescription className={dialogText}>
+                                                {t("appointment.cancel.subtitle")}
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <DialogFooter className={dialogFooter}>
+                                            <DialogClose asChild>
+                                                <Button
+                                                    type="button"
+                                                    className={dialogCancel}
+                                                    disabled={cancelMutation.isPending}
+                                                >
+                                                    {t("appointment.cancel.back")}
+                                                </Button>
+                                            </DialogClose>
                                             <Button
                                                 type="button"
-                                                className={dialogCancel}
-                                                disabled={cancelMutation.isPending}
+                                                className={dialogConfirm}
+                                                disabled={cancelMutation.isPending || !appointmentId}
+                                                onClick={() => {
+                                                    if (!appointmentId) return;
+                                                    setCancelOpen(false);
+                                                    cancelMutation.mutate(
+                                                        { id: appointmentId, userId: String(auth.userId) },
+                                                        {
+                                                            onSuccess: () => navigate(base),
+                                                        }
+                                                    );
+                                                }}
                                             >
-                                                {t("logout.confirmation.cancel", "Cancel")}
+                                                {cancelMutation.isPending ? (
+                                                    <>
+                                                        <Spinner className="w-4 h-4 mr-2" />
+                                                        {t("appointment.cancel.cancelling")}
+                                                    </>
+                                                ) : (
+                                                    t("appointment.cancel.confirmation")
+                                                )}
                                             </Button>
-                                        </DialogClose>
-                                        <Button
-                                            type="button"
-                                            className={dialogConfirm}
-                                            disabled={cancelMutation.isPending || !appointmentId}
-                                            onClick={() => {
-                                                if (!appointmentId) return;
-                                                setCancelOpen(false);
-                                                cancelMutation.mutate(
-                                                    { id: appointmentId, userId: String(auth.userId) },
-                                                    {
-                                                        onSuccess: () => navigate(base),
-                                                    }
-                                                );
-                                            }}
-                                        >
-                                            {cancelMutation.isPending ? (
-                                                <>
-                                                    <Spinner className="w-4 h-4 mr-2" />
-                                                    {t("cancelling", "Cancelling...")}
-                                                </>
-                                            ) : (
-                                                t("appointment.cancel.action", "Cancel Appointment")
-                                            )}
-                                        </Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            )}
                         </div>
                     </div>
                 </Card>

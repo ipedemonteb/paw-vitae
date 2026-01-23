@@ -209,21 +209,18 @@ export default function AppointmentCard({ appointment, isUpcoming = false }: App
                                 <DialogTrigger asChild>
                                     <Button variant="outline" className={cancelButton}>
                                         <X className="w-4 h-4" />
-                                        {t("appointment.card.cancel", "Cancel")}
+                                        {t("appointment.cancel.cancel")}
                                     </Button>
                                 </DialogTrigger>
 
                                 <DialogContent>
                                     <DialogHeader className={dialogHeader}>
                                         <DialogTitle>
-                                            {t("appointment.cancel.title", "Appointment Cancellation")}
+                                            {t("appointment.cancel.title")}
                                         </DialogTitle>
 
                                         <DialogDescription className={dialogText}>
-                                            {t(
-                                                "appointment.cancel.confirm",
-                                                "Are you sure you want to cancel this appointment?"
-                                            )}
+                                            {t("appointment.cancel.subtitle")}
                                         </DialogDescription>
                                     </DialogHeader>
 
@@ -234,7 +231,7 @@ export default function AppointmentCard({ appointment, isUpcoming = false }: App
                                                 className={dialogCancel}
                                                 disabled={cancelMutation.isPending}
                                             >
-                                                {t("logout.confirmation.cancel", "Cancel")}
+                                                {t("appointment.cancel.back")}
                                             </Button>
                                         </DialogClose>
                                         <Button
@@ -253,10 +250,10 @@ export default function AppointmentCard({ appointment, isUpcoming = false }: App
                                             {cancelMutation.isPending ? (
                                                 <>
                                                     <Loader className="w-4 h-4 mr-2" />
-                                                    {t("cancelling", "Cancelling...")}
+                                                    {t("appointment.cancel.cancelling")}
                                                 </>
                                             ) : (
-                                                t("appointment.cancel.action", "Cancel Appointment")
+                                                t("appointment.cancel.confirmation")
                                             )}
                                         </Button>
                                     </DialogFooter>
