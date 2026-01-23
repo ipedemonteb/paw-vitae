@@ -217,10 +217,10 @@ function PastAppointmentComponent({appointmentUrl} : {appointmentUrl: string}) {
                                 {files!.map((f: any, idx: number) => (
                                     <FileComponent
                                         key={f.self ?? f.view ?? f.download ?? `${idx}`}
-                                        name={f.name ?? f.fileName ?? "file"}
-                                        uploader={f.uploader ?? f.uploadedBy ?? ""}
-                                        view={f.view ?? f.links?.view ?? f.self}
-                                        download={f.download ?? f.links?.download ?? f.self}
+                                        name={f.fileName}
+                                        uploader={f.uploaderRole}
+                                        view={f.view}
+                                        download={f.download}
                                     />
                                 ))}
                             </div>
@@ -274,7 +274,7 @@ function FileComponent({name, uploader, view, download}:{
                     <h3 className={reportFileTitle}>{name}</h3>
                     <div className={uploadedByContainer}>
                         <User className={userIcon}/>
-                        <p>{t("medical-history.component.uploaded")} {uploader}</p>
+                        <p>{t("medical-history.component.uploaded")} {t(`${uploader}.${uploader}`)}</p>
                     </div>
                 </div>
             </div>
