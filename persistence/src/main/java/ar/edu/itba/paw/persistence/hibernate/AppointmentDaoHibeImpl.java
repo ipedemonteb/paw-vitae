@@ -53,14 +53,20 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     }
 
     @Override
-    public List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter) {
-        Query nativeQuery = getNativeQuery(userId, isFuture, filter, false);
+    public List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter, String sort) {
+        String direction = (sort == null || sort.trim().isEmpty())
+                ? (isFuture ? "asc" : "desc")
+                : sort.trim().toLowerCase();
+
+        Query nativeQuery = getNativeQuery(userId, isFuture, filter, false, direction);
         nativeQuery.setFirstResult((page-1) * size);
         nativeQuery.setMaxResults(size);
 
         List<?> appointmentIdsRaw = nativeQuery.getResultList();
         List<Long> appointmentIds = appointmentIdsRaw.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toList());
-        String direction = isFuture ? "asc" : "desc";
+
+        if (appointmentIds.isEmpty()) return List.of();
+
         TypedQuery<Appointment> query = em.createQuery("FROM Appointment a WHERE a.id IN (:appointmentIds) order by a.date " + direction, Appointment.class);
         query.setParameter("appointmentIds", appointmentIds);
 
@@ -98,7 +104,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
 
     @Override
     public int countAppointments(long userId, boolean isFuture, String filter) {
-        Query nativeQuery = getNativeQuery(userId, isFuture, filter, true);
+        Query nativeQuery = getNativeQuery(userId, isFuture, filter, true, "asc");
         return ((Number) nativeQuery.getSingleResult()).intValue();
     }
 
@@ -165,7 +171,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return !query.getResultList().isEmpty();
     }
 
-    private static StringBuilder getSql(boolean isFuture, String filter, boolean isCount) {
+    private static StringBuilder getSql(boolean isFuture, String filter, boolean isCount, String direction) {
         StringBuilder sql = new StringBuilder();
         if (isCount) {
             sql.append("SELECT COUNT(DISTINCT a.id) ");
@@ -206,7 +212,6 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
                     break;
             }
         }
-        String direction = isFuture ? "asc" : "desc";
         if (!isCount) {
             sql.append("ORDER BY a.date ").append(direction).append(") AS a ");
         }
@@ -214,8 +219,8 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return sql;
     }
 
-    private Query getNativeQuery(long userId, boolean isFuture, String filter, boolean isCount) {
-        StringBuilder sql = getSql(isFuture, filter, isCount);
+    private Query getNativeQuery(long userId, boolean isFuture, String filter, boolean isCount, String direction) {
+        StringBuilder sql = getSql(isFuture, filter, isCount, direction);
         Query nativeQuery = em.createNativeQuery(sql.toString());
         nativeQuery.setParameter("userId", userId);
         return nativeQuery;

@@ -64,10 +64,10 @@ function MedicalHistory() {
                           </div>
                       </Card>
                       <div className={pastAppointmentsContainer}>
-                          <PastAppointmentComponent />
-                          <PastAppointmentComponent />
-                          <PastAppointmentComponent />
-                          <PastAppointmentComponent />
+                          <PastAppointmentComponent appointmentUrl=""/>
+                          <PastAppointmentComponent appointmentUrl=""/>
+                          <PastAppointmentComponent appointmentUrl=""/>
+                          <PastAppointmentComponent appointmentUrl=""/>
                       </div>
                   </div>
               </Card>

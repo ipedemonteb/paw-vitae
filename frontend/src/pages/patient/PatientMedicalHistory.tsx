@@ -3,7 +3,6 @@ import PastAppointmentComponent from "@/components/PastAppointmentComponent.tsx"
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
-import {useState} from "react";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import {useAppointments} from "@/hooks/useAppointments.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
@@ -14,18 +13,21 @@ import PaginationComponent from "@/components/PaginationComponent.tsx";
 
 const headerContainer = "flex items-center sm:justify-center gap-2 mt-2 sm:mt-0";
 const sortTitle = "flex font-normal text-sm items-center justify-center text-(--text-light)";
-const selectTrigger = "font-light text-normal cursor-pointer";
+const selectTrigger =
+    "font-light text-normal cursor-pointer select-none " +
+    "focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0";
 
 function PatientMedicalHistory() {
     const { t } = useTranslation();
     const auth = useAuth();
     const searchParams = useAppointmentsQueryParams();
-    const [sort, setSort] = useState<"oldest" | "newest">("oldest");
+    const sort = (searchParams.sort ?? "asc") as "asc" | "desc";
 
     const { data: appointments, isLoading } = useAppointments({
         userId: auth.userId,
         collection: "history",
         filter: "completed",
+        sort: sort,
         page: searchParams.page,
         pageSize: searchParams.pageSize,
     });
@@ -39,13 +41,22 @@ function PatientMedicalHistory() {
                     <span className={sortTitle}>
                         {t("medical-history.sort.title")}
                     </span>
-                    <Select value={sort} onValueChange={(v) => setSort(v as "oldest" | "newest")}>
+                    <Select
+                        value={sort}
+                        onValueChange={(v) => {
+                            const next = v as "asc" | "desc";
+                            searchParams.setParams((p) => {
+                                p.set("sort", next);
+                                p.set("page", "1");
+                            });
+                        }}
+                    >
                         <SelectTrigger className={selectTrigger}>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="oldest">{t("medical-history.sort.old-first")}</SelectItem>
-                            <SelectItem value="newest">{t("medical-history.sort.new-first")}</SelectItem>
+                            <SelectItem value="asc">{t("medical-history.sort.old-first")}</SelectItem>
+                            <SelectItem value="desc">{t("medical-history.sort.new-first")}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>

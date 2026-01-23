@@ -21,7 +21,7 @@ public interface AppointmentDao {
 
     Optional<Appointment> getById(long appointmentId);
 
-    List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter);
+    List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter, String sort);
 
     List<Appointment> getAppointmentsByUserAndDate(long userId, LocalDate date, Integer time);
 
