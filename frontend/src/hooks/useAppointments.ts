@@ -13,7 +13,7 @@ import {keepPreviousData, useMutation, useQuery, useQueryClient} from "@tanstack
 import { AxiosError } from "axios";
 
 export function useAppointments(query: AppointmentsQuery) {
-    const { userId, doctorId, collection, filter, page, pageSize } = query ?? {};
+    const { userId, doctorId, collection, filter, sort, page, pageSize } = query ?? {};
 
     return useQuery({
         queryKey: [
@@ -23,6 +23,7 @@ export function useAppointments(query: AppointmentsQuery) {
             doctorId ?? null,
             collection ?? null,
             filter ?? null,
+            sort ?? null,
             page ?? null,
             pageSize ?? null,
         ],

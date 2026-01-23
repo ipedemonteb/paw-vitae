@@ -47,13 +47,13 @@ function usePaginatedQueryParams<T extends StringRecord>(
     };
 }
 
-
 export function useAppointmentsQueryParams() {
     return usePaginatedQueryParams<{
         userId: string;
         doctorId: string;
         collection: AppointmentCollection;
         filter: AppointmentFilter;
+        sort: "asc" | "desc";
     }>({
         page: 1,
         pageSize: APPOINTMENTS_PAGE_SIZE,
@@ -61,6 +61,7 @@ export function useAppointmentsQueryParams() {
         doctorId: "",
         collection: "upcoming",
         filter: "all",
+        sort: "asc"
     });
 }
 
