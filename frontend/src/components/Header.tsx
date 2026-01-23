@@ -7,12 +7,20 @@ import {Link, useMatch, useNavigate} from "react-router-dom";
 import {cn} from "@/lib/utils";
 import React, {useEffect, useMemo, useState} from "react";
 import {useAuth} from "@/hooks/useAuth";
-import {Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader} from "@/components/ui/dialog.tsx";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog.tsx";
+
 import {Button} from "@/components/ui/button.tsx";
 import {useTranslation} from "react-i18next";
 import {useDoctor, useDoctorImageUrl} from "@/hooks/useDoctors.ts";
 import {usePatientById} from "@/hooks/usePatients.ts";
-import {DialogDescription, DialogTitle} from "@radix-ui/react-dialog";
 
 type UserRole = "ANON" | "PATIENT" | "DOCTOR";
 
@@ -329,8 +337,8 @@ const dialogText =
 const dialogFooter =
     "mt-2";
 const dialogCancel =
-    "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] " +
-    "hover:text-white hover:bg-[var(--primary-dark)] hover:border hover:border-[var(--primary-dark)] cursor-pointer";
+    "bg-white text-(--primary-color) border border-(--primary-color) " +
+    "hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark) cursor-pointer"
 const dialogConfirm =
     "text-white bg-[var(--danger)] border border-[var(--danger)] hover:text-white hover:bg-[var(--danger-dark)] hover:border hover:border-[var(--danger-dark)] cursor-pointer";
 
@@ -393,7 +401,7 @@ function LoggedInComponent({
                     if (!next) onOpenChange(false);
                 }}
             >
-                <DialogContent>
+                <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
                     <DialogHeader className={dialogHeader}>
                         <DialogTitle>
                             {t("header.logout.title")}

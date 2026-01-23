@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import { getClaims } from "@/context/auth-store";
+import { useQueryClient } from "@tanstack/react-query";
 
 const cardContainer = "flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full md:w-1/2 rounded-xl";
 const headerSection = "text-center space-y-2 mb-8";
@@ -30,40 +30,34 @@ const registerLinkStyles = "text-[var(--primary-color)] hover:text-[var(--primar
 
 function LoginCard() {
     const { t } = useTranslation();
-    const navigate = useNavigate();
-    const location = useLocation();
-
-
     const { login } = useAuth();
-
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
-
-    const from = (location.state as { from: string } )?.from || null;
-
+    const queryClient = useQueryClient();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-
         login.mutate({ email, password }, {
-            onSuccess: () => {
-                if (from) {
-                    navigate(from, { replace: true });
-                } else {
-                    const claims = getClaims();
-                    const role = claims?.role?.toUpperCase();
+            onSuccess: async () => {
+                await queryClient.cancelQueries();
+                queryClient.clear();
 
-                    if (role === 'ROLE_DOCTOR') {
-                        navigate("/doctor/dashboard/upcoming", { replace: true });
-                    } else if (role === 'ROLE_PATIENT') {
-                        navigate("/patient/dashboard/upcoming", { replace: true });
-                    } else {
-                        navigate("/", { replace: true });
-                    }
+                const claims = getClaims();
+                const role = claims?.role?.toUpperCase();
+
+                if (role === "ROLE_DOCTOR") {
+                    window.location.replace("/doctor/dashboard");
+                    return;
                 }
+
+                if (role === "ROLE_PATIENT") {
+                    window.location.replace("/patient/dashboard");
+                    return;
+                }
+
+                window.location.replace("/");
             }
         });
     };
