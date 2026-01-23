@@ -20,10 +20,10 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogClose,
 } from "@/components/ui/dialog.tsx";
 import {Spinner as Loader} from "@/components/ui/spinner.tsx";
 import {useState} from "react";
-import {DialogClose} from "@radix-ui/react-dialog";
 
 const statusClassname =
     "h-7 font-medium border-solid border text-xs w-3/4 rounded-2xl flex items-center justify-center";
