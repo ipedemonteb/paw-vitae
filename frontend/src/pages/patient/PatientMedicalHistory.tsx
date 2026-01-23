@@ -5,11 +5,27 @@ import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {useState} from "react";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
+import {useAppointments} from "@/hooks/useAppointments.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
+import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
+import {CalendarFoldIcon} from "lucide-react";
 
 function PatientMedicalHistory() {
     const { t } = useTranslation();
+    const auth = useAuth();
+    const searchParams = useAppointmentsQueryParams();
     const [sort, setSort] = useState<"oldest" | "newest">("oldest");
-    const isLoading = false;
+
+    const { data: appointments, isLoading } = useAppointments({
+        userId: auth.userId,
+        collection: "history",
+        filter: "completed",
+        page: searchParams.page,
+        pageSize: searchParams.pageSize,
+    });
+
+    const completed = (appointments?.data ?? []).filter(a => a.status === "completo");
 
     return (
         <DashboardNavContainer>
@@ -23,6 +39,7 @@ function PatientMedicalHistory() {
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
+                            //TODO: give functionality
                             <SelectItem value="oldest">{t("medical-history.sort.old-first")}</SelectItem>
                             <SelectItem value="newest">{t("medical-history.sort.new-first")}</SelectItem>
                         </SelectContent>
@@ -30,15 +47,23 @@ function PatientMedicalHistory() {
                 </div>
             </DashboardNavHeader>
             {isLoading ? (
-                <DashboardNavLoader/>
+                <DashboardNavLoader />
+            ) : completed.length > 0 ? (
+                completed.map((a) => (
+                    <PastAppointmentComponent appointmentUrl={a.self}/>
+                ))
             ) : (
-                <div className="flex flex-col gap-6">
-                    <PastAppointmentComponent />
-                    <PastAppointmentComponent />
-                    <PastAppointmentComponent />
-                    <PastAppointmentComponent />
-                </div>
+                <DashboardNavEmptyContent
+                    Icon={CalendarFoldIcon}
+                    title={t("appointment.empty.title.past")}
+                    text={t("appointment.empty.text.past")}
+                />
             )}
+
+            {/*TODO: add pagination*/}
+            {/*{!isLoading && completed.length > 0 && appointments?.pagination && (*/}
+            {/*    <PaginationComponent pagination={appointments.pagination} searchParams={searchParams} />*/}
+            {/*)}*/}
         </DashboardNavContainer>
     );
 }
