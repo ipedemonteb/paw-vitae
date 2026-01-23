@@ -98,8 +98,6 @@ function PastAppointmentComponent({appointmentUrl} : {appointmentUrl: string}) {
     const isDoctor = auth.role === "ROLE_DOCTOR";
 
     const appointmentId = appointmentIdFromSelf(appointmentUrl);
-
-    // const {data: appointment, isLoading, isError} = useAppointment(appointmentId);
     const {data: appointment, isError} = useAppointment(appointmentId);
 
     const doctorId = userIdFromSelf(appointment?.doctor);
