@@ -15,7 +15,7 @@ import {
     Star,
     CloudUpload,
     Eye,
-    Loader2,
+    ArrowLeft, X
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -26,7 +26,7 @@ import { useTranslation } from "react-i18next";
 import {
     useAppointment,
     useAppointmentFileHandler,
-    useAppointmentFiles,
+    useAppointmentFiles, useCancelAppointment,
     useUpdateReport,
     useUploadDoctorFiles
 } from "@/hooks/useAppointments.ts";
@@ -41,10 +41,19 @@ import type {AppointmentFileDTO} from "@/data/appointments.ts";
 import React, {useEffect, useMemo, useState} from "react";
 import {useRating, useCreateRating} from "@/hooks/useRatings.ts";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import GenericError from "@/pages/GenericError.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
+import {
+    Dialog, DialogClose,
+    DialogContent,
+    DialogDescription, DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog.tsx";
 
 const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
@@ -53,6 +62,18 @@ const appointmentHeader = "flex flex-col items-center py-8 rounded-t-lg gap-3 bg
 const appointmentTitle = "font-bold text-4xl text-center text-[var(--text-color)]";
 const appointmentContent = "flex flex-col px-8 gap-4";
 const appointmentData = "grid w-full gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
+const appointmentButtons = "flex flex-col sm:flex-row gap-4 justify-center items-center mt-4";
+const goBackButton = "w-3xs bg-white text-(--primary-color) border border-(--primary-color) hover:bg-(--primary-dark) hover:border hover:border-(--primary-dark) hover:text-white cursor-pointer";
+const cancelButton = "w-3xs bg-(--danger) text-white hover:bg-(--danger-dark) hover:text-white cursor-pointer";
+const dialogHeader = "font-bold text-xl text-[var(--text-color)]";
+const dialogText = "text-[var(--text-light)] text-lg font-normal";
+const dialogFooter = "mt-2";
+const dialogCancel =
+    "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] " +
+    "hover:text-white hover:bg-[var(--primary-dark)] hover:border hover:border-[var(--primary-dark)] cursor-pointer";
+const dialogConfirm =
+    "text-white bg-[var(--danger)] border border-[var(--danger)] hover:text-white hover:bg-[var(--danger-dark)] hover:border hover:border-[var(--danger-dark)] cursor-pointer";
+
 
 function AppointmentDetails() {
     const { id } = useParams<{ id: string }>();
@@ -63,7 +84,14 @@ function AppointmentDetails() {
     const { t } = useTranslation();
     const auth = useAuth();
     const role = auth.role;
-
+    const isDoctor = role === "ROLE_DOCTOR";
+    const navigate = useNavigate();
+    const base = isDoctor ? "/doctor/dashboard" : "/patient/dashboard";
+    const handleBackToAppointments = () => {
+        navigate(base);
+    };
+    const cancelMutation = useCancelAppointment();
+    const [cancelOpen, setCancelOpen] = useState(false);
 
     const {
         data: appointment,
@@ -98,7 +126,7 @@ function AppointmentDetails() {
         return (
             <div className={appointmentBackground}>
                 <div className="flex flex-col items-center justify-center h-screen gap-4">
-                    <Loader2 className="h-12 w-12 animate-spin text-[var(--primary-color)]" />
+                    <Spinner className="h-12 w-12" />
                     <p className="text-[var(--text-light)] font-medium">{t("common.loading", "Cargando detalles...")}</p>
                 </div>
             </div>
@@ -112,7 +140,6 @@ function AppointmentDetails() {
     }
 
     const hasRating = typeof rating?.rating === "number" && !Number.isNaN(rating.rating);
-    const isDoctor = role === "ROLE_DOCTOR";
     const isCompleted = appointment.status === "completo";
     const isCancelled = appointment.status === "cancelado";
     const showPostVisit = !isCancelled;
@@ -127,7 +154,6 @@ function AppointmentDetails() {
                         <h1 className={appointmentTitle}>{t("appointment.details.title")}</h1>
                         <p>{t("appointment.details.subtitle")}</p>
                     </div>
-
                     <div className={appointmentContent}>
                         {isDoctor ? (
                             <PatientProfileCard patientId={patientId ?? ""} />
@@ -171,6 +197,69 @@ function AppointmentDetails() {
                         ) : null}
 
                         {showUpload ? <UploadComponent appointmentId={appointmentId} /> : null}
+
+                        <div className={appointmentButtons}>
+                            <Button className={goBackButton} onClick={handleBackToAppointments} type="button">
+                                <ArrowLeft className="h-5 w-5" />
+                                <p>Back to Appointments</p>
+                            </Button>
+                            <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
+                                <DialogTrigger asChild>
+                                    <Button className={cancelButton} type="button">
+                                        <X className="h-5 w-5" />
+                                        <p>Cancel Appointment</p>
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader className={dialogHeader}>
+                                        <DialogTitle>
+                                            {t("appointment.cancel.title", "Appointment Cancellation")}
+                                        </DialogTitle>
+                                        <DialogDescription className={dialogText}>
+                                            {t(
+                                                "appointment.cancel.confirm",
+                                                "Are you sure you want to cancel this appointment?"
+                                            )}
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter className={dialogFooter}>
+                                        <DialogClose asChild>
+                                            <Button
+                                                type="button"
+                                                className={dialogCancel}
+                                                disabled={cancelMutation.isPending}
+                                            >
+                                                {t("logout.confirmation.cancel", "Cancel")}
+                                            </Button>
+                                        </DialogClose>
+                                        <Button
+                                            type="button"
+                                            className={dialogConfirm}
+                                            disabled={cancelMutation.isPending || !appointmentId}
+                                            onClick={() => {
+                                                if (!appointmentId) return;
+                                                setCancelOpen(false);
+                                                cancelMutation.mutate(
+                                                    { id: appointmentId, userId: String(auth.userId) },
+                                                    {
+                                                        onSuccess: () => navigate(base),
+                                                    }
+                                                );
+                                            }}
+                                        >
+                                            {cancelMutation.isPending ? (
+                                                <>
+                                                    <Spinner className="w-4 h-4 mr-2" />
+                                                    {t("cancelling", "Cancelling...")}
+                                                </>
+                                            ) : (
+                                                t("appointment.cancel.action", "Cancel Appointment")
+                                            )}
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
                     </div>
                 </Card>
             </div>
@@ -338,7 +427,7 @@ function FileComponent({ file }: { file: AppointmentFileDTO }) {
                             fileName: file.fileName
                         })}
                     >
-                        {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Eye className="h-5 w-5" />}
+                        {isPending ? <Spinner className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </Button>
                 )}
 
@@ -354,7 +443,7 @@ function FileComponent({ file }: { file: AppointmentFileDTO }) {
                             fileName: file.fileName
                         })}
                     >
-                        {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Download className="h-5 w-5" />}
+                        {isPending ? <Spinner className="h-5 w-5" /> : <Download className="h-5 w-5" />}
                     </Button>
                 )}
             </div>
@@ -447,7 +536,7 @@ function PostVisitComponent({
                                     onClick={handleSubmit}
                                     disabled={!canSubmit || isPending}
                                 >
-                                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                    {isPending && <Spinner className="mr-2 h-4 w-4" />}
                                     {t("appointment.details.submit-report")}
                                 </Button>
                             </div>
@@ -567,7 +656,7 @@ function RateComponent({
                         onClick={handleSubmit}
                         disabled={isPending}
                     >
-                        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isPending && <Spinner className="mr-2 h-4 w-4" />}
                         {t("appointment.details.submit-rating")}
                     </Button>
                 </div>
@@ -701,7 +790,7 @@ function UploadComponent({ appointmentId }: { appointmentId: string }) {
                     onClick={handleSubmit}
                     disabled={files.length === 0 || isPending}
                 >
-                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isPending && <Spinner className="mr-2 h-4 w-4" />}
                     {t("appointment.details.submit")}
                 </Button>
             </div>
