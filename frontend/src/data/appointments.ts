@@ -8,7 +8,7 @@ export type AppointmentDTO = {
     date: string;
     status: 'completo' | 'cancelado'  | 'confirmado';
     reason: string;
-    allowFullHistory: string;
+    allowFullHistory: boolean;
     report: string;
     cancellable: boolean
 
