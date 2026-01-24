@@ -334,7 +334,8 @@
       "details": "View Details",
       "report": "Visit Report",
       "uploaded": "Uploaded By",
-      "view": "View"
+      "view": "View",
+      "no-report": "No report available."
     }
   },
   "common": {

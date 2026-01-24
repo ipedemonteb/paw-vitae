@@ -207,7 +207,7 @@ function PastAppointmentComponent({appointmentUrl} : {appointmentUrl: string}) {
                                 <h3>{t("medical-history.component.report")}</h3>
                             </div>
                             <p className={appointment.report.length > 0 ? "" : "text-(--text-light)"}>
-                                {appointment.report.length > 0 ? appointment.report : "No report yet."}
+                                {appointment.report.length > 0 ? appointment.report : t("medical-history.component.no-report")}
                             </p>
                         </Card>
                         {(files?.length ?? 0) > 0 ? (

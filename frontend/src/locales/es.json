@@ -258,7 +258,8 @@
       "details": "Ver Detalles",
       "report": "Reporte de la Consulta",
       "uploaded": "Subido por",
-      "view": "Ver"
+      "view": "Ver",
+      "no-report": "No hay reporte disponible para esta consulta."
     }
   },
   "common": {
