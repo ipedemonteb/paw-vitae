@@ -56,6 +56,10 @@ export const router = createBrowserRouter([
                 path: "medical-history",
                 element: <MedicalHistory />
             },
+            {
+                path: "change-password",
+                element: <ChangePassword/>
+            },
 
             // Rutas Restringidas
             {
@@ -97,10 +101,7 @@ export const router = createBrowserRouter([
                         path: "recover-password",
                         element: <RecoverPassword/>
                     },
-                    {
-                        path: "change-password",
-                        element: <ChangePassword/>
-                    },
+
                 ]
             },
 
