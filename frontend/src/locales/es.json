@@ -68,8 +68,8 @@
         "past": "Sin Historial de Citas"
       },
       "text": {
-        "upcoming": "No tienes citas próximas programadas. Tus futuras citas aparecerán aquí",
-        "past": "Tus citas pasadas aparecerán aquí una vez que hayas completado algunas"
+        "upcoming": "No tienes consultas próximas programadas. Tus consultas programadas aparecerán aquí.",
+        "past": "Tus consultas pasadas aparecerán aquí una vez que hayas completado algunas."
       }
     },
     "loading": {
@@ -99,10 +99,12 @@
       "reason": "Razón de la Visita (Opcional)",
       "patient-files": "Archivos del Paciente",
       "post-visit": "Información Post-Visita",
+      "post-visit-locked": "Información Post-Visita (Bloqueado)",
       "report": "Su reporte médico",
       "write-report": "Escriba su reporte médico aquí...",
       "submit-report": "Enviar",
       "no-report": "No hay reporte disponible para la visita.",
+      "report-locked": "Podrás cargar tu reporte una vez completado el turno.",
       "no-upload": "Todavía no se subieron archivos.",
       "rating": "Calificación",
       "no-rating": "No hay calificación aún.",
@@ -115,7 +117,8 @@
       "submit": "Enviar",
       "submit-rating": "Enviar Calificación",
       "rating-success": "Calificación enviada exitosamente.",
-      "rating-error": "Error al enviar la calificación. Por favor, inténtalo de nuevo."
+      "rating-error": "Error al enviar la calificación. Por favor, inténtalo de nuevo.",
+      "back": "Volver a Turnos"
     },
     "booking": {
       "header": {
@@ -135,7 +138,11 @@
         "title": "Permitir acceso completo al historial médico",
         "subtitle": "Al seleccionar esta opción, se habilita el acceso completo de su médico a su historial médico."
       },
-      "book": "Reservar Turno"
+      "book": "Reservar Turno",
+      "error": {
+        "failed": "Reserva de turno fallida",
+        "try-again": "Intente nuevamente."
+      }
     },
     "confirmation": {
       "title": "¡Consulta Confirmada!",
@@ -147,9 +154,17 @@
       "office": "Oficina",
       "info": "Se ha enviado un mail a tu casilla con todos los detalles de la consulta.",
       "dashboard": "Ir al Panel",
-      "view-details": "Ver Detalles"
+      "view-details": "Ver Detalles",
+      "created": "Cita creada exitosamente."
     },
-    "created": "Cita creada exitosamente."
+    "cancel": {
+      "cancel": "Cancelar",
+      "title": "Cancelación de Turno",
+      "subtitle": "¿Seguro que quiere cancelar su turno?",
+      "confirmation": "Cancelar Turno",
+      "back": "Volver",
+      "cancelling": "Cancelando"
+    }
   },
   "login": {
     "welcome_title": "Bienvenido de nuevo!",
@@ -227,6 +242,7 @@
       "reason": "Motivo de la Consulta:",
       "no-reason": "Sin Motivo Especificado",
       "files": "archivos",
+      "file": "archivo",
       "no-files": "No hay archivos subidos.",
       "details": "Ver Detalles",
       "report": "Reporte de la Consulta",
@@ -504,6 +520,7 @@
     }
   },
   "patient": {
+    "patient": "Paciente",
     "dashboard": {
       "upcoming": "Próximo",
       "history": "Historial",
@@ -512,6 +529,7 @@
     }
   },
   "doctor": {
+    "doctor": "Doctor",
     "dashboard": {
       "upcoming": "Próximo",
       "history": "Historial",

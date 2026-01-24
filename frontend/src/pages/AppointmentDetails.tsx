@@ -15,7 +15,7 @@ import {
     Star,
     CloudUpload,
     Eye,
-    Loader2,
+    ArrowLeft, X
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -26,7 +26,7 @@ import { useTranslation } from "react-i18next";
 import {
     useAppointment,
     useAppointmentFileHandler,
-    useAppointmentFiles,
+    useAppointmentFiles, useCancelAppointment,
     useUpdateReport,
     useUploadDoctorFiles
 } from "@/hooks/useAppointments.ts";
@@ -41,18 +41,39 @@ import type {AppointmentFileDTO} from "@/data/appointments.ts";
 import React, {useEffect, useMemo, useState} from "react";
 import {useRating, useCreateRating} from "@/hooks/useRatings.ts";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import GenericError from "@/pages/GenericError.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
+import {
+    Dialog, DialogClose,
+    DialogContent,
+    DialogDescription, DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog.tsx";
 
 const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
 const appointmentContainer = "p-0 pb-8";
-const appointmentHeader = "flex flex-col items-center py-8 rounded-t-lg gap-3 bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
+const appointmentHeader = "flex flex-col items-center py-8 rounded-t-xl gap-3 bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
 const appointmentTitle = "font-bold text-4xl text-center text-[var(--text-color)]";
 const appointmentContent = "flex flex-col px-8 gap-4";
 const appointmentData = "grid w-full gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
+const appointmentButtons = "flex flex-col sm:flex-row gap-4 justify-center items-center mt-4";
+const goBackButton = "w-3xs bg-white text-(--primary-color) border border-(--primary-color) hover:bg-(--primary-dark) hover:border hover:border-(--primary-dark) hover:text-white cursor-pointer";
+const cancelButton = "w-3xs bg-(--danger) text-white hover:bg-(--danger-dark) hover:text-white cursor-pointer";
+const dialogHeader = "font-bold text-xl text-[var(--text-color)]";
+const dialogText = "text-[var(--text-light)] text-lg font-normal";
+const dialogFooter = "mt-2";
+const dialogCancel =
+    "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] " +
+    "hover:text-white hover:bg-[var(--primary-dark)] hover:border hover:border-[var(--primary-dark)] cursor-pointer";
+const dialogConfirm =
+    "text-white bg-[var(--danger)] border border-[var(--danger)] hover:text-white hover:bg-[var(--danger-dark)] hover:border hover:border-[var(--danger-dark)] cursor-pointer";
+
 
 function AppointmentDetails() {
     const { id } = useParams<{ id: string }>();
@@ -63,7 +84,14 @@ function AppointmentDetails() {
     const { t } = useTranslation();
     const auth = useAuth();
     const role = auth.role;
-
+    const isDoctor = role === "ROLE_DOCTOR";
+    const navigate = useNavigate();
+    const base = isDoctor ? "/doctor/dashboard" : "/patient/dashboard";
+    const handleBackToAppointments = () => {
+        navigate(base);
+    };
+    const cancelMutation = useCancelAppointment();
+    const [cancelOpen, setCancelOpen] = useState(false);
 
     const {
         data: appointment,
@@ -98,7 +126,7 @@ function AppointmentDetails() {
         return (
             <div className={appointmentBackground}>
                 <div className="flex flex-col items-center justify-center h-screen gap-4">
-                    <Loader2 className="h-12 w-12 animate-spin text-[var(--primary-color)]" />
+                    <Spinner className="h-12 w-12" />
                     <p className="text-[var(--text-light)] font-medium">{t("common.loading", "Cargando detalles...")}</p>
                 </div>
             </div>
@@ -112,7 +140,6 @@ function AppointmentDetails() {
     }
 
     const hasRating = typeof rating?.rating === "number" && !Number.isNaN(rating.rating);
-    const isDoctor = role === "ROLE_DOCTOR";
     const isCompleted = appointment.status === "completo";
     const isCancelled = appointment.status === "cancelado";
     const showPostVisit = !isCancelled;
@@ -127,7 +154,6 @@ function AppointmentDetails() {
                         <h1 className={appointmentTitle}>{t("appointment.details.title")}</h1>
                         <p>{t("appointment.details.subtitle")}</p>
                     </div>
-
                     <div className={appointmentContent}>
                         {isDoctor ? (
                             <PatientProfileCard patientId={patientId ?? ""} />
@@ -146,12 +172,16 @@ function AppointmentDetails() {
                         <PatientFileCard files={patientFiles} />
 
                         {showPostVisit ? (
-                            <PostVisitComponent
-                                appointmentId={appointmentId}
-                                files={doctorFiles}
-                                report={appointment.report}
-                                isDoctor={role === "ROLE_DOCTOR"}
-                            />
+                            isDoctor && !isCompleted && (appointment.report ?? "").trim().length === 0 ? (
+                                <PostVisitLockedComponent/>
+                            ) : (
+                                <PostVisitComponent
+                                    appointmentId={appointmentId}
+                                    files={doctorFiles}
+                                    report={appointment.report}
+                                    isDoctor={role === "ROLE_DOCTOR"}
+                                />
+                            )
                         ) : null}
 
                         {showRatingBlock ? (
@@ -171,6 +201,68 @@ function AppointmentDetails() {
                         ) : null}
 
                         {showUpload ? <UploadComponent appointmentId={appointmentId} /> : null}
+
+                        <div className={appointmentButtons}>
+                            <Button className={goBackButton} onClick={handleBackToAppointments} type="button">
+                                <ArrowLeft className="h-5 w-5" />
+                                <p>{t("appointment.details.back")}</p>
+                            </Button>
+                            {!isCancelled && !isCompleted && (
+                                <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button className={cancelButton} type="button">
+                                            <X className="h-5 w-5" />
+                                            <p>{t("appointment.cancel.cancel")}</p>
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader className={dialogHeader}>
+                                            <DialogTitle>
+                                                {t("appointment.cancel.title")}
+                                            </DialogTitle>
+                                            <DialogDescription className={dialogText}>
+                                                {t("appointment.cancel.subtitle")}
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <DialogFooter className={dialogFooter}>
+                                            <DialogClose asChild>
+                                                <Button
+                                                    type="button"
+                                                    className={dialogCancel}
+                                                    disabled={cancelMutation.isPending}
+                                                >
+                                                    {t("appointment.cancel.back")}
+                                                </Button>
+                                            </DialogClose>
+                                            <Button
+                                                type="button"
+                                                className={dialogConfirm}
+                                                disabled={cancelMutation.isPending || !appointmentId}
+                                                onClick={() => {
+                                                    if (!appointmentId) return;
+                                                    setCancelOpen(false);
+                                                    cancelMutation.mutate(
+                                                        { id: appointmentId, userId: String(auth.userId) },
+                                                        {
+                                                            onSuccess: () => navigate(base),
+                                                        }
+                                                    );
+                                                }}
+                                            >
+                                                {cancelMutation.isPending ? (
+                                                    <>
+                                                        <Spinner className="w-4 h-4 mr-2" />
+                                                        {t("appointment.cancel.cancelling")}
+                                                    </>
+                                                ) : (
+                                                    t("appointment.cancel.confirmation")
+                                                )}
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            )}
+                        </div>
                     </div>
                 </Card>
             </div>
@@ -312,7 +404,8 @@ const fileComponent = "flex flex-row items-center p-4 rounded-lg gap-3";
 const fileIcon = "text-[var(--primary-color)] h-6 w-6 mx-1";
 const fileTitle = "font-[500] text-sm text-[var(--text-color)] truncate max-w-[150px] sm:max-w-xs";
 const actionsContainer = "ml-auto flex flex-row gap-2";
-const actionButton = "rounded-full p-2 h-9 w-9 flex items-center justify-center transition-colors";
+const actionButton = "rounded-full p-2 h-9 w-9 flex items-center justify-center transition-colors cursor-pointer";
+const viewButton = actionButton + " text-(--primary-color) border border-(--primary-color) hover:bg-(--primary-dark) hover:text-white hover:border-(--primary-dark)";
 
 function FileComponent({ file }: { file: AppointmentFileDTO }) {
     const { t } = useTranslation();
@@ -328,7 +421,7 @@ function FileComponent({ file }: { file: AppointmentFileDTO }) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className={actionButton + " text-[var(--primary-color)] hover:bg-[var(--primary-bg)]"}
+                        className={viewButton}
                         title={t("common.view", "Ver")}
                         disabled={isPending}
                         onClick={() => handleFile({
@@ -337,7 +430,7 @@ function FileComponent({ file }: { file: AppointmentFileDTO }) {
                             fileName: file.fileName
                         })}
                     >
-                        {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Eye className="h-5 w-5" />}
+                        {isPending ? <Spinner className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </Button>
                 )}
 
@@ -353,7 +446,7 @@ function FileComponent({ file }: { file: AppointmentFileDTO }) {
                             fileName: file.fileName
                         })}
                     >
-                        {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Download className="h-5 w-5" />}
+                        {isPending ? <Spinner className="h-5 w-5" /> : <Download className="h-5 w-5" />}
                     </Button>
                 )}
             </div>
@@ -446,7 +539,7 @@ function PostVisitComponent({
                                     onClick={handleSubmit}
                                     disabled={!canSubmit || isPending}
                                 >
-                                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                    {isPending && <Spinner className="mr-2 h-4 w-4" />}
                                     {t("appointment.details.submit-report")}
                                 </Button>
                             </div>
@@ -459,6 +552,54 @@ function PostVisitComponent({
                 {files.length === 0 ? <FileEmptyComponent /> : files.map((f) => (
                     <FileComponent key={f.id} file={f} />
                 ))}
+            </Card>
+        </div>
+    );
+}
+
+const postVisitLockedText = " text-[var(--gray-500)]";
+const postVisitLockedHover = " cursor-not-allowed bg-[var(--gray-100)]";
+const asteriskLockedIcon = "w-8 h-8 text-(--gray-500) shrink-0 mr-3";
+
+function PostVisitLockedComponent() {
+    const { t } = useTranslation();
+
+    return (
+        <div>
+            <div className={cardIconContainer}>
+                <Cross className={cardIcon + postVisitLockedText} />
+                <h1 className={cardTitle + postVisitLockedText}>
+                    {t("appointment.details.post-visit-locked")}
+                </h1>
+            </div>
+
+            <Card className={cardContent + postVisitLockedHover}>
+                <Card className={doctorCommentContainer + " bg-(--gray-100)"}>
+                    <Asterisk className={asteriskLockedIcon} />
+
+                    <div className="flex flex-col w-full gap-3 py-3">
+                        <p className={reportTitle + postVisitLockedText}>
+                            {t("appointment.details.report")}
+                        </p>
+
+                        <p className={noReport + postVisitLockedText + " -mt-2"}>
+                            {t(
+                                "appointment.details.report-locked",
+                            )}
+                        </p>
+
+                        <Textarea
+                            placeholder={t("appointment.details.write-report")}
+                            disabled
+                        />
+
+                        <div className="flex justify-end">
+                            <Button className={submitReportButton + lockedButton} disabled>
+                                {t("appointment.details.submit-report")}
+                            </Button>
+                        </div>
+                    </div>
+                </Card>
             </Card>
         </div>
     );
@@ -566,7 +707,7 @@ function RateComponent({
                         onClick={handleSubmit}
                         disabled={isPending}
                     >
-                        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isPending && <Spinner className="mr-2 h-4 w-4" />}
                         {t("appointment.details.submit-rating")}
                     </Button>
                 </div>
@@ -700,7 +841,7 @@ function UploadComponent({ appointmentId }: { appointmentId: string }) {
                     onClick={handleSubmit}
                     disabled={files.length === 0 || isPending}
                 >
-                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isPending && <Spinner className="mr-2 h-4 w-4" />}
                     {t("appointment.details.submit")}
                 </Button>
             </div>

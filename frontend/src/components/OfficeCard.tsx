@@ -1,8 +1,12 @@
 import type {OfficeDTO} from "@/data/office.ts";
-import {Building2, MapPinIcon, SquarePen, Circle, Trash2} from "lucide-react";
+import {Building2, MapPinIcon, SquarePen, Circle} from "lucide-react";
 import {useNeighborhood} from "@/hooks/useNeighborhoods.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {useTranslation} from "react-i18next";
+import RemoveOfficeAlertDialog from "@/components/RemoveOfficeAlertDialog.tsx";
+import {useUpdateOfficeMutation} from "@/hooks/useDoctors.ts";
+import {toast} from "sonner";
+import {useState} from "react";
 
 const baseStatusClassName = " rounded-xl font-normal border text-xs py-1 px-2 flex items-center justify-center gap-1 "
 const activeClassName = "bg-green-100 border-green-400 text-black text-green-600" + baseStatusClassName
@@ -30,10 +34,12 @@ type OfficeCardProps = {
 export default function OfficeCard({office, onClick}: OfficeCardProps) {
     const {data: neighborhood, isLoading: isLoadingNeighborhood} = useNeighborhood(office.neighborhood)
     const {t} = useTranslation()
+    const [open, setOpen] = useState(false);
+    const removeOfficeMutation = useUpdateOfficeMutation(office.self)
     return (
-        <div className="flex flex-col justify-center items-center w-auto gap-2">
-            <div onClick={onClick} className="relative flex transition-all overflow-hidden group rounded-2xl cursor-pointer hover:border-(--primary-color)  items-center hover:shadow hover:text-(--text-light)! border-2">
-                <div className=" group-hover:opacity-35 transition-opacity text-[1.3rem] flex justify-center-safe items-center overflow-hidden  flex-col font-semibold   rounded-2xl w-full px-8 py-7">
+        <div id="container" onMouseLeave={() => setOpen(false)} className="flex flex-col justify-center items-center w-auto">
+            <div onMouseEnter={() => setOpen(true)} onClick={onClick} className="relative peer flex transition-all overflow-hidden group hover:border-(--primary-color) hover:text-(--text-light) rounded-2xl cursor-pointer items-center hover:shadow  border-2">
+                <div className=" group-hover:opacity-35  transition-opacity text-[1.3rem] flex justify-center-safe items-center overflow-hidden  flex-col font-semibold   rounded-2xl w-full px-8 py-7">
                     <Building2 className="size-14 stroke-[1.5]"/>
                     {office.name}
                     <div className="flex text-sm items-center gap-1 pb-3 font-normal text-(--text-light)">
@@ -47,14 +53,24 @@ export default function OfficeCard({office, onClick}: OfficeCardProps) {
                         {t("offices.status."+office.status)}
                     </div>
                 </div>
-                <div className="absolute flex  justify-center transition-all opacity-0 hover:opacity-100 items-center top-0 left-0 w-full h-full bg-transparent hover:bg-[rgba(var(--primary-light-rgb),0.2)]">
+                <div className="absolute flex   justify-center transition-all opacity-0 hover:opacity-100 items-center top-0 left-0 w-full h-full bg-transparent hover:bg-[rgba(var(--primary-light-rgb),0.2)]">
                     <div className="flex flex-col  items-center justify-center gap-1 text-[1.1rem] font-bold rounded-md p-1">
                         <SquarePen className="size-10 text-(--primary-dark)" />
                         <p className="text-(--primary-dark) font-semibold text-xl ">Edit</p>
                     </div>
                 </div>
             </div>
-            {/*<Trash2 className="rounded-full bg-red-500 p-1 hover:scale-105 cursor-pointer text-white size-7 text-xl" />*/}
+            <RemoveOfficeAlertDialog setOpen={setOpen} open={open} officeName={office.name} onClick={() => removeOfficeMutation.mutate(
+                {
+                removed: true
+                }, {
+                    onSuccess: () => {
+                        toast.success("Office Removed Successfully")
+                    },
+                    onError: () => {
+                        toast.error("An Unexpected Error Occurred")
+                    }
+                })}/>
         </div>
 
     )

@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
 import ar.edu.itba.paw.webapp.dto.AppointmentDTO;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
-import ar.edu.itba.paw.webapp.form.CancelAppointmentForm;
 import ar.edu.itba.paw.webapp.form.AppointmentReportForm;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.utils.ResponseUtils;
@@ -20,7 +19,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -32,11 +30,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
 import java.net.URI;
-import java.util.Locale;
-import java.util.Set;
 
 import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildPaginationHeaders;
-import static javax.ws.rs.core.Response.Status.OK;
 
 
 @Path(UriUtils.APPOINTMENTS)
@@ -62,9 +57,10 @@ public class RestAppointmentController {
             @QueryParam("collection") @DefaultValue("upcoming") String collection,
             @QueryParam("filter") @DefaultValue("all") String filter,
             @QueryParam("page") @DefaultValue("1") @Min(1)  int page,
-            @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE) int pageSize
+            @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE) int pageSize,
+            @QueryParam("sort") @DefaultValue("asc") String sort
     ) {
-        Page<Appointment> appointmentPage = appointmentService.getAppointments(userId, "upcoming".equalsIgnoreCase(collection), page, pageSize, filter);
+        Page<Appointment> appointmentPage = appointmentService.getAppointments(userId, "upcoming".equalsIgnoreCase(collection), page, pageSize, filter, sort);
         Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointmentPage.getContent(), uriInfo)) {});
         return buildPaginationHeaders(rb, appointmentPage, uriInfo);
     }

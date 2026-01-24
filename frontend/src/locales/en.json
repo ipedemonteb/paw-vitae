@@ -80,8 +80,8 @@
         "past": "No Past Appointments"
       },
       "text": {
-        "upcoming": "You don't have any upcoming appointments scheduled. Your future appointments will appear here",
-        "past": "Your past appointments will appear here once you've completed some appointments"
+        "upcoming": "You don't have any upcoming appointments scheduled. Your future appointments will appear here.",
+        "past": "All your appointment history will appear here once you have completed them."
       }
     },
     "loading": {
@@ -111,10 +111,12 @@
       "reason": "Reason for Visit (Optional)",
       "patient-files": "Patient Files",
       "post-visit": "Post Visit Information",
+      "post-visit-locked": "Post Visit Information (Locked)",
       "report": "Your Medical Report",
       "write-report": "Write your medical report here...",
       "submit-report": "Submit",
       "no-report": "No visit report available.",
+      "report-locked": "You will be able to submit a report once the appointment is completed.",
       "no-upload": "No uploaded files.",
       "rating": "Rating",
       "no-rating": "No rating yet.",
@@ -127,7 +129,8 @@
       "submit": "Submit",
       "submit-rating": "Send Rating",
       "rating-success": "Your rating has been submitted successfully.",
-        "rating-error": "An error occurred while submitting your rating. Please try again."
+      "rating-error": "An error occurred while submitting your rating. Please try again.",
+      "back": "Back to Appointments"
     },
     "booking": {
       "header": {
@@ -147,7 +150,11 @@
         "title": "Allow full medical history access",
         "subtitle": "By selecting this option, you are allowing full access to your medical history for your doctor."
       },
-      "book": "Book Appointment"
+      "book": "Book Appointment",
+      "error": {
+        "failed": "Appointment booking failed",
+        "try-again": "Try again."
+      }
     },
     "confirmation": {
       "title": "Appointment Confirmed!",
@@ -161,6 +168,14 @@
       "dashboard": "Go to Dashboard",
       "view-details": "View Details",
       "created": "Appointment successfully created."
+    },
+    "cancel": {
+      "cancel": "Cancel",
+      "title": "Appointment Cancellation",
+      "subtitle": "Are you sure you want to cancel this appointment?",
+      "confirmation": "Cancel Appointment",
+      "back": "Go Back",
+      "cancelling": "Cancelling"
     }
   },
   "login": {
@@ -301,6 +316,7 @@
       "reason": "Reason for Visit:",
       "no-reason": "No Reason Specified",
       "files": "files",
+      "file": "file",
       "no-files": "No files uploaded.",
       "details": "View Details",
       "report": "Visit Report",
@@ -505,6 +521,7 @@
     }
   },
   "patient": {
+    "patient": "Patient",
     "dashboard": {
       "upcoming": "Upcoming",
       "history": "History",
@@ -513,6 +530,7 @@
     }
   },
   "doctor": {
+    "doctor": "Doctor",
     "dashboard": {
       "upcoming": "Upcoming",
       "history": "History",

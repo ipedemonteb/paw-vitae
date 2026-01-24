@@ -5,6 +5,7 @@ export const EditOfficeSchema = z.object({
     neighborhood: z.string().optional(),
     active: z.boolean(),
     specialties: z.array(z.string()),
+    removed: z.boolean().optional()
 });
 
 export type EditOfficeForm = z.infer<typeof EditOfficeSchema>;

@@ -68,8 +68,9 @@
     --landing-light: #dbeafe;
     --primary-bg: #eff6ff;
     --bubble-color: #FFFFFF33;
-    --success: #16a34a;        /* verde principal (oscuro para badge) */
+    --success: #16a34a;
     --success-light: #dcfce7;
+    --success-dark: #15803d;
 }
 
 body {
@@ -153,6 +154,19 @@ body {
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
 }
+
+[data-sonner-toaster] {
+    --success-bg: var(--success-light);
+    --success-text: var(--success-dark);
+    --success-border: var(--success);
+
+    --error-bg: var(--danger-light);
+    --error-text: var(--danger-dark);
+    --error-border: var(--danger);
+
+    /* --info-bg: ...; --warning-bg: ...; */
+}
+
 
 @layer base {
   * {
