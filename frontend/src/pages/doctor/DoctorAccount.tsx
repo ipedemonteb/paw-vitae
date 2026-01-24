@@ -13,7 +13,6 @@ import { useSpecialties } from "@/hooks/useSpecialties.ts";
 import { useCoverages } from "@/hooks/useCoverages.ts";
 
 import {
-    Loader2,
     User,
     Mail,
     Phone,
@@ -38,6 +37,7 @@ import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {initialsFallback} from "@/utils/userUtils.ts";
 
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
 const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
@@ -150,11 +150,11 @@ function DoctorAccount() {
     const handleSave = () => {
         if (!doctor || !auth.userId) return;
         if (selectedSpecIds.length === 0) {
-            toast.error(t("error"), { description: t("register.errors.select_specialties") });
+            toast.error(t("error.error"), { description: t("dashboard.profile.error.specialties") });
             return;
         }
         if (selectedCovIds.length === 0) {
-            toast.error(t("error"), { description: t("register.errors.select_coverage") });
+            toast.error(t("error.error"), { description: t("dashboard.profile.error.coverage") });
             return;
         }
 
@@ -176,14 +176,13 @@ function DoctorAccount() {
                 setIsEditing(false);
             },
             onError: () => {
-                toast.error(t("error"), { description: t("doctor.profile.update_error") });
+                toast.error(t("error.error"), { description: t("doctor.profile.update_error") });
             }
         });
     };
 
-
     if (isLoadingDoctor || isLoadingCurrentSpecs || isLoadingCurrentCovs || isLoadingAllSpecs || isLoadingAllCovs) {
-        return <div className="flex justify-center mt-36"><Loader2 className="animate-spin h-8 w-8" /></div>;
+        return <div className="flex justify-center mt-36"><Spinner className="animate-spin h-8 w-8" /></div>;
     }
 
     if (isError || !doctor) return <GenericError code={404} />;
@@ -206,7 +205,7 @@ function DoctorAccount() {
                         <div className={cardHeaderStyles}>
                             <h2 className={cardTitleStyles}>
                                 <User className="h-5 w-5 text-[var(--primary-color)]" />
-                                {t("dashboard.profile.title", "My Profile")}
+                                {t("dashboard.profile.title")}
                             </h2>
                         </div>
 
@@ -216,7 +215,7 @@ function DoctorAccount() {
                                     <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
                                         <AvatarImage src={previewImage || doctorImageUrl || undefined} className="object-cover" />
                                         <AvatarFallback className="text-2xl bg-(--gray-200)">
-                                            {doctor.name?.[0]}{doctor.lastName?.[0]}
+                                            {initialsFallback(doctor?.name, doctor?.lastName)}
                                         </AvatarFallback>
                                     </Avatar>
                                     {isEditing && (
@@ -238,19 +237,19 @@ function DoctorAccount() {
                                 </div>
                                 {isEditing && (
                                     <p className="text-xs text-(--gray-500) mt-2">
-                                        {t("register.chooseImage", "Click to change image")}
+                                        {t("dashboard.profile.image")}
                                     </p>
                                 )}
                             </div>
 
                             <div className={sectionStyles}>
                                 <h3 className="text-lg font-[500] mb-4 border-b pb-2">
-                                    {t("dashboard.profile.personalInfo", "Personal Information")}
+                                    {t("dashboard.profile.personalInfo")}
                                 </h3>
 
                                 <div className={gridStyles}>
                                     <div className="space-y-2">
-                                        <Label htmlFor="name">{t("register.firstName", "Name")}</Label>
+                                        <Label htmlFor="name">{t("dashboard.profile.name")}</Label>
                                         {isEditing ? (
                                             <Input
                                                 id="name"
@@ -264,7 +263,7 @@ function DoctorAccount() {
                                         )}
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="lastName">{t("register.lastName", "Last Name")}</Label>
+                                        <Label htmlFor="lastName">{t("dashboard.profile.lastname")}</Label>
                                         {isEditing ? (
                                             <Input
                                                 id="lastName"
@@ -280,7 +279,7 @@ function DoctorAccount() {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="email" className="flex items-center gap-2">
-                                            {t("dashboard.profile.email", "Email")}
+                                            {t("dashboard.profile.email")}
                                         </Label>
                                         <div className={infoValueStyles}>
                                             <Mail className="h-4 w-4" />
@@ -290,7 +289,7 @@ function DoctorAccount() {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="phone" className="flex items-center gap-2">
-                                            {t("dashboard.profile.phone", "Phone")}
+                                            {t("dashboard.profile.phone")}
                                         </Label>
                                         {isEditing ? (
                                             <Input
@@ -317,7 +316,7 @@ function DoctorAccount() {
                             <div className={cardHeaderStyles}>
                                 <h3 className={cardTitleStyles}>
                                     <Stethoscope className="h-5 w-5 text-[var(--primary-color)]" />
-                                    {t("dashboard.profile.specialties", "Specialties")}
+                                    {t("dashboard.profile.specialties")}
                                 </h3>
                             </div>
                             <CardContent className="p-6">
@@ -353,7 +352,7 @@ function DoctorAccount() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-(--gray-400) text-sm">{t("doctor.profile.no_specialties", "No specialties listed")}</p>
+                                        <p className="text-(--gray-400) text-sm">{t("doctor.profile.no-specialties")}</p>
                                     )
                                 )}
                             </CardContent>
@@ -363,7 +362,7 @@ function DoctorAccount() {
                             <div className={cardHeaderStyles}>
                                 <h3 className={cardTitleStyles}>
                                     <ShieldPlus className="h-5 w-5 text-[var(--primary-color)]" />
-                                    {t("dashboard.profile.coverages", "Coverages")}
+                                    {t("dashboard.profile.coverages")}
                                 </h3>
                             </div>
                             <CardContent className="p-6">
@@ -404,7 +403,7 @@ function DoctorAccount() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-(--gray-400) text-sm">{t("doctor.profile.no_coverages", "No coverages listed")}</p>
+                                        <p className="text-(--gray-400) text-sm">{t("dashboard.profile.no-coverages")}</p>
                                     )
                                 )}
                             </CardContent>
@@ -419,19 +418,19 @@ function DoctorAccount() {
                                 disabled={isSaving}
                             >
                                 <X className="w-4 h-4 mr-2" />
-                                {t("logout.confirmation.cancel", "Cancel")}
+                                {t("cancel")}
                             </Button>
 
                             <Button onClick={handleSave} className={actionButtonStyles + " w-3xs"} disabled={isSaving}>
                                 {isSaving ? (
                                     <>
                                         <Spinner className="w-4 h-4 mr-2" />
-                                        {t("saving", "Saving...")}
+                                        {t("saving")}
                                     </>
                                 ) : (
                                     <>
                                         <Save className="w-4 h-4 mr-2" />
-                                        {t("appointment.form.save", "Save")}
+                                        {t("save")}
                                     </>
                                 )}
                             </Button>

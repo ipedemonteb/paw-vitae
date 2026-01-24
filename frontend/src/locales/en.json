@@ -37,11 +37,15 @@
       "coverages": "Coverages",
       "coverage": "Medical Coverage",
       "no-coverage": "No coverage",
+      "no-coverages": "No coverages",
+      "no-specialties": "No specialties",
+      "image": "Click to change image",
       "error": {
         "name": "Name is required.",
         "lastname": "Last name is required.",
         "phone": "Phone is required.",
-        "coverage": "Please select a coverage."
+        "coverage": "Please select a coverage.",
+        "specialties": "Please select at least one specialty."
       }
     }
   },
@@ -372,6 +376,7 @@
   "loading": "Loading...",
   "save": "Save Changes",
   "saving": "Saving...",
+  "cancel": "Cancel",
   "success": "Success",
   "add_new": "Add New",
   "header": {
