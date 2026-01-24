@@ -37,11 +37,13 @@
       "coverages": "Obras Sociales",
       "coverage": "Obra Social",
       "no-coverage": "Sin cobertura",
+      "image": "Click para cambiar la imagen",
       "error": {
         "name": "El nombre es obligatorio.",
         "lastname": "El apellido es obligatorio.",
         "phone": "El teléfono es obligatorio.",
-        "coverage": "Por favor seleccione una cobertura."
+        "coverage": "Por favor seleccione una cobertura.",
+        "specialties": "Por favor seleccione al menos una especialidad."
       }
     }
   },
@@ -372,6 +374,7 @@
   "loading": "Cargando...",
   "save": "Guardar Cambios",
   "saving": "Guardando...",
+  "cancel": "Cancelar",
   "success": "Éxito",
   "add_new": "Agregar Nuevo",
   "header": {
