@@ -67,7 +67,9 @@ function SearchListCard({doctor}: SearchCardProps) {
                     <Phone className={dataIcon} />
                     <p>{doctor.phone}</p>
                 </div>
-                <RatingStars rating={doctor.rating} className={ratingStars} sizeClassName="h-4 w-4"/>
+               {doctor.ratingCount > 0 && (
+                    <RatingStars rating={doctor.rating} className={ratingStars} sizeClassName="h-4 w-4" />
+                )}
             </div>
             <div className={scheduleContainer}>
                 <Button asChild className={scheduleButton}>
