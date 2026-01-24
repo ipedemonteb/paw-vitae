@@ -7,7 +7,7 @@ const badgeContainer =
 const badge =
     "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] px-2 py-1 rounded-full";
 const moreBadge =
-    "bg-[var(--primary-color)] text-white border border-[var(--primary-color)] hover:border hover:border-[var(--primary-dark)] hover:bg-[var(--primary-dark)]";
+    badge + " transition-none hover:border-[var(--primary-dark)] hover:text-white hover:bg-[var(--primary-dark)]";
 const hoverContent =
     "w-auto max-w-xs p-3";
 const hoverBadges =
