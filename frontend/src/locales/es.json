@@ -28,12 +28,21 @@
     "profile": {
       "title": "Mi Perfil",
       "personalInfo": "Información Personal",
+      "name": "Nombre",
+      "lastname": "Apellido",
       "edit": "Editar",
       "email": "Correo Electrónico",
       "phone": "Teléfono",
       "specialties": "Especialidades",
       "coverages": "Obras Sociales",
-      "coverage": "Obra Social"
+      "coverage": "Obra Social",
+      "no-coverage": "Sin cobertura",
+      "error": {
+        "name": "El nombre es obligatorio.",
+        "lastname": "El apellido es obligatorio.",
+        "phone": "El teléfono es obligatorio.",
+        "coverage": "Por favor seleccione una cobertura."
+      }
     }
   },
   "files": {
@@ -257,6 +266,7 @@
     "view": "View"
   },
   "error": {
+    "error": "Error",
     "403": {
       "title": "Acceso Denegado",
       "message": "Lo sentimos, no tienes permisos para acceder a esta página. Verifica que hayas iniciado sesión con la cuenta correcta."
@@ -676,7 +686,5 @@
     "saveChanges": "Guardar Cambios",
     "success"  : "Fechas actualizadas con exito",
     "error" : "Hubo un error actualizando sus fechas no disponibles. Pruebe de nuevo mas tarde."
-
-  },
-  "Error" : "Error"
+  }
 }

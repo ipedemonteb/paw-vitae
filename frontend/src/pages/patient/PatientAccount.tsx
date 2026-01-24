@@ -94,22 +94,22 @@ function PatientAccount() {
         if (!patient) return;
 
         if (!formData.name.trim()) {
-            toast.error(t("error"), { description: t("register.errors.name_required") });
+            toast.error(t("error.error"), { description: t("dashboard.profile.error.name") });
             return;
         }
 
         if (!formData.lastName.trim()) {
-            toast.error(t("error"), { description: t("register.errors.lastname_required") });
+            toast.error(t("error.error"), { description: t("dashboard.profile.error.lastname") });
             return;
         }
 
         if (!formData.phone.trim()) {
-            toast.error(t("error"), { description: t("register.errors.phone_required") });
+            toast.error(t("error.error"), { description: t("dashboard.profile.error.phone") });
             return;
         }
 
         if (!selectedCoverageId) {
-            toast.error(t("error"), { description: t("register.errors.select_coverage", "Please select a coverage") });
+            toast.error(t("error.error"), { description: t("dashboard.profile.error.coverage") });
             return;
         }
 
@@ -125,15 +125,15 @@ function PatientAccount() {
         }, {
             onSuccess: () => {
                 toast.success(t("success"), {
-                    description: t("doctor.profile.update_success", "Profile updated successfully.")
+                    description: t("doctor.profile.update_success")
                 });
                 setIsEditing(false);
                 queryClient.invalidateQueries({ queryKey: ["auth", "patients", "id", auth.userId] });
                 queryClient.invalidateQueries({ queryKey: ['coverages'] });
             },
             onError: () => {
-                toast.error(t("error"), {
-                    description: t("doctor.profile.update_error", "Could not update profile.")
+                toast.error(t("error.error"), {
+                    description: t("doctor.profile.update_error")
                 });
             }
         });
@@ -150,7 +150,7 @@ function PatientAccount() {
                 {!isEditing && (
                     <Button onClick={() => setIsEditing(true)} className={actionButtonStyles}>
                         <Pencil className="w-4 h-4 mr-2" />
-                        {t("dashboard.profile.edit", "Edit")}
+                        {t("dashboard.profile.edit")}
                     </Button>
                 )}
                 {isEditing && <div className="h-9" />}
@@ -161,7 +161,7 @@ function PatientAccount() {
                     <div className={cardHeaderStyles}>
                         <h2 className={cardTitleStyles}>
                             <User className="h-5 w-5 text-[var(--primary-color)]" />
-                            {t("dashboard.profile.title", "My Profile")}
+                            {t("dashboard.profile.title")}
                         </h2>
                     </div>
 
@@ -177,12 +177,12 @@ function PatientAccount() {
 
                         <div className={sectionStyles}>
                             <h3 className="text-lg font-[500] mb-4 border-b pb-2">
-                                {t("dashboard.profile.personalInfo", "Personal Information")}
+                                {t("dashboard.profile.personalInfo")}
                             </h3>
 
                             <div className={gridStyles}>
                                 <div className="space-y-2">
-                                    <Label htmlFor="name">{t("register.label_name", "Name")}</Label>
+                                    <Label htmlFor="name">{t("dashboard.profile.name")}</Label>
                                     {isEditing ? (
                                         <Input
                                             id="name"
@@ -197,7 +197,7 @@ function PatientAccount() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="lastName">{t("register.label_lastname", "Last Name")}</Label>
+                                    <Label htmlFor="lastName">{t("dashboard.profile.lastname")}</Label>
                                     {isEditing ? (
                                         <Input
                                             id="lastName"
@@ -213,7 +213,7 @@ function PatientAccount() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="email" className="flex items-center gap-2">
-                                        {t("dashboard.profile.email", "Email")}
+                                        {t("dashboard.profile.email")}
                                     </Label>
                                     <div className={infoValueStyles}>
                                         <Mail className="h-4 w-4" />
@@ -223,7 +223,7 @@ function PatientAccount() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="phone" className="flex items-center gap-2">
-                                        {t("dashboard.profile.phone", "Phone")}
+                                        {t("dashboard.profile.phone")}
                                     </Label>
                                     {isEditing ? (
                                         <Input
@@ -250,7 +250,7 @@ function PatientAccount() {
                         <div className={cardHeaderStyles}>
                             <h3 className={cardTitleStyles}>
                                 <ShieldPlus className="h-5 w-5 text-[var(--primary-color)]" />
-                                {t("dashboard.profile.coverage", "Medical Coverage")}
+                                {t("dashboard.profile.coverage")}
                             </h3>
                         </div>
                         <CardContent className="p-6">
@@ -294,7 +294,7 @@ function PatientAccount() {
                   </span>
                                     ) : (
                                         <p className="text-(--gray-400) text-sm">
-                                            {t("doctor.profile.no_coverages", "No coverage listed")}
+                                            {t("dashboard.profile.no-coverage")}
                                         </p>
                                     )}
                                 </div>
@@ -311,19 +311,19 @@ function PatientAccount() {
                             disabled={isSaving}
                         >
                             <X className="w-4 h-4 mr-2" />
-                            {t("logout.confirmation.cancel", "Cancel")}
+                            {t("cancel")}
                         </Button>
 
                         <Button onClick={handleSave} className={actionButtonStyles + " w-3xs"} disabled={isSaving}>
                             {isSaving ? (
                                 <>
                                     <Spinner className="w-4 h-4 mr-2" />
-                                    {t("saving", "Saving...")}
+                                    {t("saving")}
                                 </>
                             ) : (
                                 <>
                                     <Save className="w-4 h-4 mr-2" />
-                                    {t("appointment.form.save", "Save")}
+                                    {t("save")}
                                 </>
                             )}
                         </Button>
