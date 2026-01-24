@@ -27,16 +27,18 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final DoctorService doctorService;
     private final PatientService patientService;
     private final DoctorOfficeService doctorOfficeService;
+    private final AvailabilitySlotsService availabilitySlotsService;
 
     @Autowired
     public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService,
-                                  DoctorService doctorService, PatientService patientService, DoctorOfficeService doctorOfficeService) {
+                                  DoctorService doctorService, PatientService patientService, DoctorOfficeService doctorOfficeService, AvailabilitySlotsService availabilitySlotsService) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;
         this.mailService = mailService;
         this.doctorService = doctorService;
         this.patientService = patientService;
         this.doctorOfficeService = doctorOfficeService;
+        this.availabilitySlotsService = availabilitySlotsService;
     }
 
     @Transactional(readOnly = true)
@@ -51,7 +53,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
-    @Async// Every day at 01:00 AM
+    @Async
     @Transactional
     public void revokeHistoryPermissionForOldAppointments() {
         LocalDateTime oneWeekAgo = LocalDateTime.now(ZoneId.systemDefault()).minusWeeks(1);
@@ -64,15 +66,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional
     @Override
-    public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId, boolean allowFullHistory) {
-        LOGGER.debug("Creating appointment for patientId: {}, doctorId: {}, date: {}, time: {}, reason: {}, specialtyId: {}", patientId, doctorId, date, time, reason, specialtyId);
-
+    public Appointment create(long patientId, long doctorId, Long slotId, String reason, long specialtyId, long officeId, boolean allowFullHistory) {
+        LOGGER.debug("Creating appointment for patientId: {}, doctorId: {}, reason: {}, specialtyId: {}", patientId, doctorId, reason, specialtyId);
+        AvailabilitySlots slot = availabilitySlotsService.getById(slotId).orElseThrow(NoSuchElementException::new);
+        LocalDate date = slot.getSlotDate();
+        int time = slot.getStartTime().getHour();
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
-
         DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
-
         Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(SpecialtyNotFoundException::new ),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice, allowFullHistory);
+        availabilitySlotsService.setAvailabilitySlotUnavailable(slotId);
         mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
 
         LOGGER.info("New appointment created with id: {}", appointment.getId());

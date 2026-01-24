@@ -79,6 +79,16 @@ CREATE TABLE IF NOT EXISTS Appointments (
     FOREIGN KEY (office_id) REFERENCES Doctor_Offices(id) ON DELETE RESTRICT
     );
 
+CREATE TABLE IF NOT EXISTS Doctor_Availability_Slots (
+                                                         id SERIAL PRIMARY KEY,
+                                                         doctor_id INT NOT NULL,
+                                                         slot_date DATE NOT NULL,
+                                                         start_time TIME NOT NULL,
+                                                         status VARCHAR(20) NOT NULL DEFAULT 'AVAILABLE' CHECK (status IN ('AVAILABLE','UNAVAILABLE')),
+                                                  UNIQUE (doctor_id, slot_date, start_time),
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
+    );
+
 CREATE TABLE IF NOT EXISTS Ratings (
                                        id SERIAL PRIMARY KEY,
                                        doctor_id INT NOT NULL,

@@ -16,9 +16,9 @@ import {
     useDoctorSpecialties,
     useDoctorOfficesSpecialties,
     useDoctorOfficeAvailability,
-    useDoctorUnavailability
 } from "@/hooks/useDoctors.ts";
 import { useBookAppointment } from "@/hooks/useAppointments.ts";
+import { useDoctorSlots } from "@/hooks/useSlots.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -26,13 +26,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { OfficeDTO } from "@/data/office.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
 import type { OfficeSpecialtyDTO } from "@/data/doctors.ts";
-import { buildTimeSlotsForDay, dateKey, isoDateKey } from "@/utils/dateUtils.ts";
-import { startOfDay, addDays } from "date-fns";
+import type { AvailabilitySlotDTO } from "@/data/slots.ts";
+import { startOfDay, parseISO, isSameDay } from "date-fns";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
 
-const SLOT_MINUTES = 60;
-const MAX_DAYS_IN_FUTURE = 30;
 const EMPTY_LIST: any[] = [];
 
 function buildSpecialtyToOfficesMapFromLinks(
@@ -41,7 +39,6 @@ function buildSpecialtyToOfficesMapFromLinks(
     specialtyBySelf: Map<string, SpecialtyDTO>
 ) {
     const map = new Map<string, { specialty: SpecialtyDTO; offices: OfficeDTO[] }>();
-
     offices.forEach((office, i) => {
         const links = officeSpecialtyLinks[i] ?? [];
         links.forEach((link) => {
@@ -52,7 +49,6 @@ function buildSpecialtyToOfficesMapFromLinks(
             else current.offices.push(office);
         });
     });
-
     return map;
 }
 
@@ -98,7 +94,7 @@ function Appointment() {
     const { mutate: bookAppointment, isPending: isBooking } = useBookAppointment();
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-    const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
     const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null);
     const [selectedOffice, setSelectedOffice] = useState<string | null>(null);
 
@@ -106,23 +102,16 @@ function Appointment() {
     const [allowFullHistory, setAllowFullHistory] = useState(true);
     const [files, setFiles] = useState<File[]>([]);
 
-    const {
-        data: doctor,
-        isLoading: loadingDoctor,
-        isError: errorDoctor,
-        error: doctorError
-    } = useDoctor(doctorId);
-
+    const { data: doctor, isLoading: loadingDoctor, isError: errorDoctor, error: doctorError } = useDoctor(doctorId);
     const { data: offices, isLoading: loadingOffices } = useDoctorOffices(doctor?.offices);
     const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices ?? null);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties ?? null);
     const { data: officeAvailability } = useDoctorOfficeAvailability(offices ?? null);
-    const { data: doctorUnavailability } = useDoctorUnavailability(doctor?.unavailability ?? null);
 
-    const isLoading = loadingDoctor || loadingOffices;
+    const { data: allSlots, isLoading: loadingSlots } = useDoctorSlots(doctorId);
 
+    const isLoading = loadingDoctor || loadingOffices || loadingSlots;
     const today = useMemo(() => startOfDay(new Date()), []);
-    const maxDate = useMemo(() => addDays(today, MAX_DAYS_IN_FUTURE), [today]);
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -146,123 +135,86 @@ function Appointment() {
     );
 
     useEffect(() => {
-        if (!isOfficeValid(filteredOffices, selectedOffice)) {
-            setSelectedOffice(null);
-        }
+        if (!isOfficeValid(filteredOffices, selectedOffice)) setSelectedOffice(null);
     }, [filteredOffices, selectedOffice]);
 
-    const selectedOfficeAvailability = useMemo(() => {
-        if (!selectedOffice || !offices) return EMPTY_LIST;
+
+    const availableSlots = useMemo(() => {
+        if (!allSlots) return [];
+        return allSlots.filter(s => s.status === 'AVAILABLE');
+    }, [allSlots]);
+
+    const selectedOfficeRules = useMemo(() => {
+        if (!selectedOffice || !offices) return null;
         const idx = offices.findIndex((o) => o.self === selectedOffice);
-        if (idx === -1) return EMPTY_LIST;
-        return officeAvailability?.[idx] ?? EMPTY_LIST;
+        if (idx === -1) return null;
+        return officeAvailability?.[idx] ?? [];
     }, [selectedOffice, offices, officeAvailability]);
 
-    const enabledDaysOfWeek = useMemo(() => {
-        const s = new Set<number>();
-        selectedOfficeAvailability.forEach((a: any) => {
-            const start = typeof a.startTime === "string" ? a.startTime : String(a.startTime);
-            const end = typeof a.endTime === "string" ? a.endTime : String(a.endTime);
-            const slots = buildTimeSlotsForDay([{ startTime: start, endTime: end }], SLOT_MINUTES);
-            if (slots.length > 0) s.add(a.dayOfWeek);
+    const slotsForSelectedOffice = useMemo(() => {
+        if (!selectedOfficeRules) return [];
+
+        return availableSlots.filter(slot => {
+            const slotDate = parseISO(slot.date);
+            const dayOfWeek = slotDate.getDay();
+
+            return selectedOfficeRules.some((rule: any) => {
+                if (rule.dayOfWeek !== dayOfWeek) return false;
+                return slot.startTime >= rule.startTime && slot.startTime < rule.endTime;
+            });
         });
-        return s;
-    }, [selectedOfficeAvailability]);
+    }, [availableSlots, selectedOfficeRules]);
 
-    const isUnavailableDate = useMemo(() => {
-        const ranges = (doctorUnavailability ?? []).map((u) => ({
-            from: isoDateKey(u.startDate),
-            to: isoDateKey(u.endDate),
-        }));
-        return (d: Date) => {
-            const k = dateKey(d);
-            return ranges.some((r) => k >= r.from && k <= r.to);
-        };
-    }, [doctorUnavailability]);
+    const isDateSelectable = useCallback((d: Date) => {
+        if (d < today) return false;
+        return slotsForSelectedOffice.some(slot => isSameDay(parseISO(slot.date), d));
+    }, [today, slotsForSelectedOffice]);
 
-    const isDateSelectable = useMemo(() => {
-        return (d: Date) => {
-            const dayToCheck = startOfDay(d);
-            if (dayToCheck < today) return false;
-            if (dayToCheck > maxDate) return false;
-            if (isUnavailableDate(d)) return false;
-            const dow = d.getDay();
-            return enabledDaysOfWeek.has(dow);
-        };
-    }, [enabledDaysOfWeek, isUnavailableDate, today, maxDate]);
-
-    const isDateDisabled = useCallback((d: Date) => {
-        return !isDateSelectable(d);
-    }, [isDateSelectable]);
-
-    const availableTimeOptions = useMemo(() => {
+    const slotsForDay = useMemo(() => {
         if (!selectedDate) return [];
-        if (!isDateSelectable(selectedDate)) return [];
-        const day = selectedDate.getDay();
-        const dayAvailabilities = selectedOfficeAvailability.filter(
-            (a: any) => a.dayOfWeek === day
-        );
-        return buildTimeSlotsForDay(dayAvailabilities, SLOT_MINUTES);
-    }, [selectedDate, selectedOfficeAvailability, isDateSelectable]);
+        return slotsForSelectedOffice
+            .filter(slot => isSameDay(parseISO(slot.date), selectedDate))
+            .sort((a, b) => a.startTime.localeCompare(b.startTime));
+    }, [selectedDate, slotsForSelectedOffice]);
 
-    useEffect(() => {
-        if (!selectedTime) return;
-        const stillValid = availableTimeOptions.includes(selectedTime);
-        if (!stillValid) setSelectedTime(null);
-    }, [availableTimeOptions, selectedTime]);
 
     useEffect(() => {
         setSelectedDate(undefined);
-        setSelectedTime(null);
+        setSelectedSlotId(null);
     }, [selectedOffice]);
 
     useEffect(() => {
-        if (!selectedDate) return;
-        if (!isDateSelectable(selectedDate)) {
-            setSelectedDate(undefined);
-            setSelectedTime(null);
-        }
-    }, [selectedDate, isDateSelectable]);
+        setSelectedSlotId(null);
+    }, [selectedDate]);
+
 
     const handleBook = () => {
-        if (!auth.userId) {
-            toast.error(t("error"), { description: "Debe iniciar sesión para reservar." });
-            navigate("/login");
-            return;
-        }
 
-        if (!selectedDate || !selectedTime || !selectedSpecialty || !selectedOffice) {
+
+        if (!selectedSlotId || !selectedSpecialty || !selectedOffice) {
             toast.error(t("error"), { description: t("register.errors.missing_fields", "Complete todos los campos") });
             return;
         }
 
-        const specialtyId = selectedSpecialty.split('/').pop() || "";
-        const officeId = selectedOffice.split('/').pop() || "";
-
-        const year = selectedDate.getFullYear();
-        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-        const day = String(selectedDate.getDate()).padStart(2, '0');
-        const dateStr = `${year}-${month}-${day}`;
-        const hourStr = selectedTime.split(':')[0];
-
         const appointmentForm = {
-            appointmentDate: dateStr,
-            appointmentHour: hourStr,
-            reason: reason,
-            specialtyId: specialtyId,
-            doctorId: doctorId || "",
-            officeId: officeId,
+            slotId: selectedSlotId,
             patientId: auth.userId,
+            doctorId: doctorId!,
+            specialtyId: selectedSpecialty.split("/").pop()!,
+            officeId: selectedOffice.split("/").pop()!,
+            reason: reason,
             allowFullHistory: allowFullHistory
         };
 
-        bookAppointment({ form: appointmentForm, files: files }, {
+        bookAppointment({ form: appointmentForm, files: files, doctorId: doctorId || "" }, {
             onSuccess: (newId) => {
                 queryClient.invalidateQueries({ queryKey: ['auth', 'appointments'] });
+                queryClient.invalidateQueries({ queryKey: ['doctors', doctorId, 'slots'] });
+
                 toast.success(t("success.appointment_created", "Turno reservado exitosamente"));
-                navigate(`/appointment-confirmation/${newId}`);
+                navigate(`/appointment/${newId}/confirmation`);
             },
-            onError: (error) => {
+            onError: () => {
                 toast.error(t("error.appointment_failed", "Error al reservar el turno"), {
                     description: t("error.try_again", "Intente nuevamente.")
                 });
@@ -308,17 +260,17 @@ function Appointment() {
                                 disabled={!selectedSpecialty}
                             />
                         </div>
+
                         <DateSelector
                             selectedDate={selectedDate}
                             setSelectedDate={setSelectedDate}
-                            selectedTime={selectedTime}
-                            setSelectedTime={setSelectedTime}
-                            availableTimes={availableTimeOptions}
+                            selectedSlotId={selectedSlotId}
+                            setSelectedSlotId={setSelectedSlotId}
+                            availableSlots={slotsForDay}
                             disabled={!selectedOffice}
-                            isDateDisabled={isDateDisabled}
-                            fromDate={today}
-                            toDate={maxDate}
+                            isDateDisabled={(d) => !isDateSelectable(d)}
                         />
+
                         <div className={optionalsContainer}>
                             <ReasonInput value={reason} onChange={setReason} />
                             <FilesUpload onFilesChange={setFiles} />
@@ -328,7 +280,7 @@ function Appointment() {
                             <Button
                                 className={bookButton}
                                 onClick={handleBook}
-                                disabled={isBooking || !selectedTime}
+                                disabled={isBooking || !selectedSlotId}
                             >
                                 {isBooking ? (
                                     <>
@@ -347,7 +299,95 @@ function Appointment() {
     )
 }
 
-// ... Resto de componentes (SpecialtySelector, OfficeItem, OfficeSelector, DateSelector, etc.) permanecen igual ...
+
+function DateSelector({
+                          selectedDate,
+                          setSelectedDate,
+                          selectedSlotId,
+                          setSelectedSlotId,
+                          availableSlots,
+                          disabled,
+                          isDateDisabled,
+                      }:{
+    selectedDate: Date | undefined
+    setSelectedDate: (date: Date | undefined) => void
+    selectedSlotId: number | null
+    setSelectedSlotId: React.Dispatch<React.SetStateAction<number | null>>;
+    availableSlots: AvailabilitySlotDTO[];
+    disabled?: boolean;
+    isDateDisabled?: (date: Date) => boolean;
+}) {
+    const { t } = useTranslation();
+    const locale = useMemo(() => (typeof navigator === "undefined" ? "en-US" : navigator.language || "en-US"), []);
+
+    const formattedConfirmation = useMemo(() => {
+        if (!selectedDate || !selectedSlotId) return null;
+
+        const slot = availableSlots.find(s => s.id === selectedSlotId);
+        if (!slot) return null;
+
+        const [hh, mm] = slot.startTime.split(":").map(Number);
+        const d = new Date(selectedDate);
+        d.setHours(hh, mm, 0, 0);
+
+        let datePart = new Intl.DateTimeFormat(locale, {
+            weekday: "long", year: "numeric", month: "long", day: "numeric",
+        }).format(d);
+        datePart = datePart.charAt(0).toUpperCase() + datePart.slice(1);
+
+        const timePart = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" }).format(d);
+        return `${datePart} at ${timePart}`;
+    }, [selectedDate, selectedSlotId, availableSlots, locale]);
+
+    return (
+        <Card className={dateCard}>
+            <div className={dateContainer}>
+                <div className={dateUpperContainer}>
+                    <div className={iconContainer}>
+                        <CalendarDays className={icon}/>
+                    </div>
+                    <div className={selectorContent}>
+                        <p className={selectorTitle}>{t("appointment.booking.date")}</p>
+                        <DatePicker
+                            value={selectedDate}
+                            onChange={setSelectedDate}
+                            placeholder={t("appointment.booking.select-date")}
+                            disabled={disabled}
+                            isDateDisabled={isDateDisabled}
+                            fromDate={new Date()}
+                        />
+                    </div>
+                </div>
+                {selectedDate ? (
+                    <div className={availableTimesFormat}>
+                        {availableSlots.length === 0 ? (
+                            <p className="px-5 text-sm text-[var(--text-light)]">
+                                {t("appointment.booking.no-times")}
+                            </p>
+                        ) : (
+                            availableSlots.map((slot) => {
+                                const displayTime = slot.startTime.substring(0, 5);
+                                return (
+                                    <Button
+                                        key={slot.id}
+                                        className={timeButton}
+                                        data-selected={selectedSlotId === slot.id}
+                                        onClick={() => setSelectedSlotId((prev) => (prev === slot.id ? null : slot.id))}
+                                        disabled={disabled}
+                                    >
+                                        {displayTime}
+                                    </Button>
+                                )
+                            })
+                        )}
+                    </div>
+                ) : null}
+            </div>
+            {formattedConfirmation ? <Confirmation text={formattedConfirmation} /> : null}
+        </Card>
+    );
+}
+
 
 const selectorCard = "flex flex-row items-center w-full gap-0";
 const iconContainer = "flex items-center bg-[var(--primary-bg)] rounded-full p-5 text-[var(--primary-color)] mx-5";
@@ -441,106 +481,6 @@ function SpecialtySelector({options, selectedSpecialty, setSelectedSpecialty}: {
                     </SelectContent>
                 </Select>
             </div>
-        </Card>
-    );
-}
-
-function DateSelector({
-                          selectedDate,
-                          setSelectedDate,
-                          selectedTime,
-                          setSelectedTime,
-                          availableTimes,
-                          disabled,
-                          isDateDisabled,
-                          fromDate,
-                          toDate
-                      }:{
-    selectedDate: Date | undefined
-    setSelectedDate: (date: Date | undefined) => void
-    selectedTime: string | null
-    setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
-    availableTimes: string[];
-    disabled?: boolean;
-    isDateDisabled?: (date: Date) => boolean;
-    fromDate?: Date;
-    toDate?: Date;
-}) {
-    const { t } = useTranslation();
-
-    useEffect(() => {
-        if (!selectedDate) setSelectedTime(null);
-    }, [selectedDate]);
-
-    const locale = useMemo(() => (typeof navigator === "undefined" ? "en-US" : navigator.language || "en-US"), []);
-
-    const formattedConfirmation = useMemo(() => {
-        if (!selectedDate || !selectedTime) return null;
-
-        const [hh, mm] = selectedTime.split(":").map(Number);
-        const d = new Date(selectedDate);
-        d.setHours(hh, mm, 0, 0);
-
-        let datePart = new Intl.DateTimeFormat(locale, {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        }).format(d);
-
-        datePart = datePart.charAt(0).toUpperCase() + datePart.slice(1);
-
-        const timePart = new Intl.DateTimeFormat(locale, {
-            hour: "2-digit",
-            minute: "2-digit",
-        }).format(d);
-
-        return `${datePart} at ${timePart}`;
-    }, [selectedDate, selectedTime, locale]);
-
-    return (
-        <Card className={dateCard}>
-            <div className={dateContainer}>
-                <div className={dateUpperContainer}>
-                    <div className={iconContainer}>
-                        <CalendarDays className={icon}/>
-                    </div>
-                    <div className={selectorContent}>
-                        <p className={selectorTitle}>{t("appointment.booking.date")}</p>
-                        <DatePicker
-                            value={selectedDate}
-                            onChange={setSelectedDate}
-                            placeholder={t("appointment.booking.select-date")}
-                            disabled={disabled}
-                            isDateDisabled={isDateDisabled}
-                            fromDate={fromDate }
-                            toDate={toDate}
-                        />
-                    </div>
-                </div>
-                {selectedDate ? (
-                    <div className={availableTimesFormat}>
-                        {availableTimes.length === 0 ? (
-                            <p className="px-5 text-sm text-[var(--text-light)]">
-                                {t("appointment.booking.no-times")}
-                            </p>
-                        ) : (
-                            availableTimes.map((x) => (
-                                <Button
-                                    key={x}
-                                    className={timeButton}
-                                    data-selected={selectedTime === x}
-                                    onClick={() => setSelectedTime((prev) => (prev === x ? null : x))}
-                                    disabled={disabled}
-                                >
-                                    {x}
-                                </Button>
-                            ))
-                        )}
-                    </div>
-                ) : null}
-            </div>
-            {formattedConfirmation ? <Confirmation text={formattedConfirmation} /> : null}
         </Card>
     );
 }

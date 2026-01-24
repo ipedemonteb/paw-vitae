@@ -45,15 +45,15 @@ public class RestDoctorController {
     private final DoctorCertificationService doctorCertificationService;
     private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
     private final DoctorOfficeSpecialtyService doctorOfficeSpecialtyService;
-    private final RatingService ratingService;
     private final ImageService imageService;
     private final UnavailabilitySlotsService unavailabilitySlotsService;
+    private final AvailabilitySlotsService availabilitySlotsService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, RatingService ratingService, ImageService imageService, UnavailabilitySlotsService unavailabilitySlotsService) {
+    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, AvailabilitySlotsService availabilitySlotsService, ImageService imageService, UnavailabilitySlotsService unavailabilitySlotsService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
@@ -63,9 +63,9 @@ public class RestDoctorController {
         this.doctorCertificationService = doctorCertificationService;
         this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
         this.doctorOfficeSpecialtyService = doctorOfficeSpecialtyService;
-        this.ratingService = ratingService;
         this.imageService = imageService;
         this.unavailabilitySlotsService = unavailabilitySlotsService;
+        this.availabilitySlotsService = availabilitySlotsService;
     }
 
     @GET
@@ -88,8 +88,6 @@ public class RestDoctorController {
             @QueryParam("orderBy") @DefaultValue("name") String orderBy,
             @QueryParam("direction") @DefaultValue("asc") String direction
     ) {
-        System.out.println("HERE I AM: " + weekdays.size());
-        weekdays.forEach(System.out::println);
         Page<Doctor> doctorPage = this.doctorService.getWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction, page, pageSize);
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctorPage.getContent(), uriInfo)) {}), doctorPage, uriInfo);
     }
@@ -340,4 +338,24 @@ public class RestDoctorController {
         doctorService.changePassword(id,changePasswordForm.getPassword());
         return Response.noContent().build();
     }
+    @GET
+    @Path("/{id:\\d+}/slots")
+    @Consumes(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOTS_LIST)
+    public Response getDoctorAvailabilitySlots(
+            @PathParam("id") final long id
+    ) {
+        List<AvailabilitySlots> slots = this.availabilitySlotsService.getAvailableSlots(id);
+        return Response.ok(new GenericEntity<>(AvailabilitySlotDTO.fromList(slots, uriInfo)) {}).build();
+    }
+    @GET
+    @Path("/{id:\\d+}/slots/{slotId:\\d+}")
+    @Consumes(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOT)
+    public Response getDoctorAvailabilitySlotById(
+            @PathParam("id") final long id,
+            @PathParam("slotId") final long slotId
+    ) {
+        AvailabilitySlots slot = this.availabilitySlotsService.getById(slotId).orElseThrow(DoctorOfficeNotFoundException::new);
+        return Response.ok(new GenericEntity<>(AvailabilitySlotDTO.fromSlot(slot, uriInfo)) {}).build();
+    }
+
 }
