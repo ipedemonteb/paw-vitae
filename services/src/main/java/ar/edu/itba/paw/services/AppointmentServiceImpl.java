@@ -130,12 +130,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter) {
-        LOGGER.debug("Getting appointments for userId: {}, isFuture: {}, page: {}, size: {}, filter: {}", userId, isFuture, page, size, filter);
+    public Page<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter, String sort) {
+        LOGGER.debug("Getting appointments for userId: {}, isFuture: {}, page: {}, size: {}, filter: {}, sort: {}", userId, isFuture, page, size, filter, sort);
         if (page < 1) {
             page = 1;
         }
-        List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, filter);
+        List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, filter, sort);
         appointments.forEach(a -> {
             Boolean isCancellable = LocalDateTime.now(ZoneId.systemDefault()).plusHours(2).isBefore(a.getDate());
             a.setCancellable(isCancellable);

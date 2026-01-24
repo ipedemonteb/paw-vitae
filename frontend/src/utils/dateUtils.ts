@@ -43,7 +43,9 @@ export function startOfDay(d: Date) {
     return x;
 }
 
-export function formatLongDate(date: string, locale: string): string {
+export function formatLongDate(date: string | undefined, locale: string): string {
+    if (!date) return "";
+
     const d = new Date(date);
     if (isNaN(d.getTime())) return "";
 

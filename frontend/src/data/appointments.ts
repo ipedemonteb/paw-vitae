@@ -42,7 +42,7 @@ export type AppointmentForm={
 
 export type AppointmentCollection = "upcoming" | "history";
 export type AppointmentFilter = "all" | "today" | "week" | "month" | "cancelled" | "completed";
-
+export type AppointmentSort = "asc" | "desc";
 
 export type AppointmentsQuery = {
     userId?: string;
@@ -51,6 +51,7 @@ export type AppointmentsQuery = {
     filter?: AppointmentFilter;
     page?: number;
     pageSize?: number;
+    sort?: AppointmentSort;
 }
 
 //Hello fellow coder who is reading this. Typescript erases types at runtime so if i pass "lol"
@@ -64,6 +65,11 @@ function normalizeAppointmentsQuery(query: AppointmentsQuery) {
     if (query.filter && !allowedFilters.includes(query.filter)) {
         query.filter = "all";
     }
+
+    const allowedSort: AppointmentSort[] = ["asc", "desc"];
+    if (query.sort && !allowedSort.includes(query.sort)) {
+        query.sort = undefined;
+    }
 }
 
 
@@ -75,6 +81,7 @@ export async function listAppointments(params: AppointmentsQuery): Promise<Pagin
             doctorId: params.doctorId,
             collection: params.collection,
             filter: params.filter,
+            sort: params.sort,
             page: params.page ?? 1,
             pageSize: params.pageSize
         }
@@ -135,4 +142,12 @@ export async function updateAppointmentReport(id: string, report: string) {
     return await api.patch(`/appointments/${id}`, { report }, {
         headers: { "Content-Type": ContentTypes.APPOINTMENT_REPORT }
     });
+}
+
+export async function cancelAppointment(id: string, userId: string) {
+    return await api.patch(`/appointments/${id}`, {}, {
+            params: { userId },
+            headers: { "Content-Type": ContentTypes.APPOINTMENT_CANCEL },
+        }
+    );
 }

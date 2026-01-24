@@ -35,10 +35,10 @@ const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
 const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
 const cardHeaderStyles = "flex items-center justify-between px-6 py-4 bg-white border-b";
 const cardTitleStyles = "text-xl font-[500] text-(--text-color) flex items-center gap-2";
-const sectionStyles = "p-6";
+const sectionStyles = "pb-6 px-6 pt-2";
 const gridStyles = "grid grid-cols-1 md:grid-cols-2 gap-6";
 const infoValueStyles = "flex flex-row items-center gap-1 text-(--text-light) font-[400]";
-const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer text-white";
+const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer text-white mt-2 md:mt-0 ";
 
 function PatientAccount() {
     const { t } = useTranslation();
@@ -131,7 +131,7 @@ function PatientAccount() {
                 queryClient.invalidateQueries({ queryKey: ["auth", "patients", "id", auth.userId] });
                 queryClient.invalidateQueries({ queryKey: ['coverages'] });
             },
-            onError: (error) => {
+            onError: () => {
                 toast.error(t("error"), {
                     description: t("doctor.profile.update_error", "Could not update profile.")
                 });
@@ -264,16 +264,16 @@ function PatientAccount() {
                                                 key={cId}
                                                 onClick={() => selectCoverage(cId)}
                                                 className={cn(
-                                                    "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-green-300 select-none",
+                                                    "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-(--success) select-none",
                                                     isSelected
-                                                        ? "bg-green-50 border-green-500 text-green-700 font-medium shadow-sm"
+                                                        ? "bg-(--success-light) border-(--success-dark) text-(--success-dark) font-medium shadow-sm"
                                                         : "bg-white text-gray-600 border-gray-200"
                                                 )}
                                             >
                                                 <div
                                                     className={cn(
                                                         "w-4 h-4 rounded-full border flex items-center justify-center shrink-0",
-                                                        isSelected ? "bg-green-500 border-green-500" : "border-gray-300"
+                                                        isSelected ? "bg-(--success) border-(--success)" : "border-gray-300"
                                                     )}
                                                 >
                                                     {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
@@ -288,7 +288,7 @@ function PatientAccount() {
                                     {coverage ? (
                                         <span
                                             key={coverage.name}
-                                            className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium border border-green-100"
+                                            className="bg-(--success-light) text-(--success) px-3 py-1 rounded-full text-sm font-medium border border-(--success)"
                                         >
                     {coverage.name}
                   </span>

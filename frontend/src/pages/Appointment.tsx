@@ -215,8 +215,8 @@ function Appointment() {
                 navigate(`/appointment/${newId}/confirmation`);
             },
             onError: () => {
-                toast.error(t("error.appointment_failed", "Error al reservar el turno"), {
-                    description: t("error.try_again", "Intente nuevamente.")
+                toast.error(t("appointment.booking.error.failed"), {
+                    description: t("appointment.booking.error.try-again")
                 });
             }
         });

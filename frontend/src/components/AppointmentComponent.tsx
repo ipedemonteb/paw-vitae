@@ -80,7 +80,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                             <SelectValue />
                         </SelectTrigger>
 
-                        <SelectContent>
+                        <SelectContent position="popper">
                             <SelectItem value="all">{t("appointment.filters.all")}</SelectItem>
                             {componentType.popoverData.map((a) => (
                                 <SelectItem key={a} value={a}>
@@ -95,7 +95,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                 <DashboardNavLoader/>
             ) : (appointments?.data !== undefined && appointments.data.length > 0) ? (
                 appointments.data.map(a => (
-                    <AppointmentCard key={a.self} appointment={a}/>
+                    <AppointmentCard key={a.self} appointment={a} isUpcoming={type === "upcoming"}/>
                 ))
             ) : (
                 <DashboardNavEmptyContent Icon={CalendarFoldIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>

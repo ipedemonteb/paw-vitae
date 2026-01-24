@@ -21,7 +21,7 @@ public interface AppointmentService {
 
     Optional<Appointment> getById(long appointmentId);
 
-    Page<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter);
+    Page<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter, String sort);
 
     List<Appointment> getAppointmentByUserAndDate(long userId, LocalDate date, Integer time);
 

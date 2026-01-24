@@ -27,7 +27,6 @@ export default function EditOfficeDialog({office}: EditOfficeModalProps) {
     const {data: specialties, isLoading: isLoadingSpecialties} = useSpecialties()
     const {data: currentSpecialties, isLoading: isLoadingCurrentSpecialties} = useSpecialtiesByUrl(officeSpecialties?.map(s => s.specialty))
     const [open, setOpen] = useState(false)
-    // const [removed, setRemoved] = useState(false)
 
     const form = useForm<EditOfficeForm>({
         resolver: zodResolver(EditOfficeSchema),
@@ -35,7 +34,7 @@ export default function EditOfficeDialog({office}: EditOfficeModalProps) {
             name: office.name,
             neighborhood: office.neighborhood,
             active: office.status === "active",
-            specialties: [],
+            specialties: [] as string[],
         },
         mode: "onSubmit",
     })
@@ -132,11 +131,11 @@ export default function EditOfficeDialog({office}: EditOfficeModalProps) {
                                 {(isLoading || isLoadingCurrentSpecialties || isLoadingSpecialties) ? (
                                     <div className="w-full flex flex-wrap gap-y-1 gap-x-0.5 ">
                                         {Array.from({length: 15}).map((_, i) => (
-                                            <Skeleton key={i} className="w-26 h-7 rounded-full"/>
+                                            <Skeleton key={i} className="w-28 h-8 rounded-full"/>
                                         ))}
                                     </div>
                                 ) : (
-                                    <SpecialtyToggleGroup currentSpecialties={form.watch("specialties")} specialties={specialties} />
+                                    <SpecialtyToggleGroup onValueChange={(s: string[]) => form.setValue("specialties", s)} currentSpecialties={form.watch("specialties")} specialties={specialties} />
                                 )}
                             </div>
                         </div>

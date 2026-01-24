@@ -7,13 +7,13 @@ import {
     getAppointmentFiles,
     listAppointments,
     uploadAppointmentFile,
-    updateAppointmentReport
+    updateAppointmentReport, cancelAppointment
 } from "@/data/appointments.ts";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 export function useAppointments(query: AppointmentsQuery) {
-    const { userId, doctorId, collection, filter, page, pageSize } = query ?? {};
+    const { userId, doctorId, collection, filter, sort, page, pageSize } = query ?? {};
 
     return useQuery({
         queryKey: [
@@ -23,6 +23,7 @@ export function useAppointments(query: AppointmentsQuery) {
             doctorId ?? null,
             collection ?? null,
             filter ?? null,
+            sort ?? null,
             page ?? null,
             pageSize ?? null,
         ],
@@ -47,8 +48,6 @@ export function useAppointmentFiles(id?: string | null) {
         enabled: !!id,
     })
 }
-
-
 
 export function useBookAppointment() {
     return useMutation<string, AxiosError<any>, { form: AppointmentForm, files: File[] }>({
@@ -88,7 +87,6 @@ export function useUploadDoctorFiles() {
     });
 }
 
-
 export function useAppointmentFileHandler() {
     return useMutation({
         mutationFn: async ({ url, action, fileName }: { url: string, action: 'view' | 'download', fileName: string }) => {
@@ -111,6 +109,20 @@ export function useAppointmentFileHandler() {
                 link.remove();
             }
             setTimeout(() => window.URL.revokeObjectURL(tempUrl), 100);
+        },
+    });
+}
+
+export function useCancelAppointment() {
+    const qc = useQueryClient();
+
+    return useMutation<void, AxiosError<any>, { id: string; userId: string }>({
+        mutationFn: async ({ id, userId }) => {
+            await cancelAppointment(id, userId);
+        },
+        onSuccess: async () => {
+            await qc.invalidateQueries({ queryKey: ["auth", "appointments"] });
+            await qc.invalidateQueries({ queryKey: ["appointment"] });
         },
     });
 }
