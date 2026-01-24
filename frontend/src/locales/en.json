@@ -614,7 +614,15 @@
       "empty": "No Coverages Found",
       "search": "Search for coverages"
     },
-    "sort": "Sort By",
+    "sort": {
+      "title": "Sort By",
+      "name_asc": "Name (A-Z)",
+        "name_desc": "Name (Z-A)",
+      "lastname_asc": "Last Name (A-Z)",
+        "lastname_desc": "Last Name (Z-A)",
+        "rating_desc": "Rating (High to Low)",
+        "rating_asc": "Rating (Low to High)"
+    },
     "availability": "Availability",
     "week": {
       "monday": "Monday",

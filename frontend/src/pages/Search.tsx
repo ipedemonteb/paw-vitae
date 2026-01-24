@@ -1,7 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import { Input } from "@/components/ui/input";
 import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2 } from "lucide-react";
-import { SpecialtyCombobox } from "@/components/SpecialtyCombobox.tsx";
 import { CoverageCombobox } from "@/components/CoverageCombobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { ButtonGroup } from "@/components/ui/button-group.tsx";
@@ -20,7 +19,7 @@ import {useDebounce} from "use-debounce";
 import SearchResultsCard from "@/components/SearchResultCard.tsx";
 import {SearchSpecialtyCombobox} from "@/components/SearchSpecialtyCombobox.tsx";
 import SearchEmpty from "@/components/SearchEmpty.tsx";
-
+import {SortSelector} from "@/components/SortSelector.tsx";
 const container =
     "px-[24px] mx-auto max-w-6xl w-full";
 
@@ -222,9 +221,10 @@ function FilterSection({searchParams}: SectionProps) {
                 <div className={filterGroup}>
                     <div className={filterLabel}>
                         <ChevronsUpDown className={iconSize} />
-                        <p>{t("search.sort")}</p>
+                        <p>{t("search.sort.title")}</p>
                     </div>
-                    <SpecialtyCombobox
+                    <SortSelector
+                        searchParams={searchParams}
                         className={filterCombo}
                     />
                 </div>

@@ -590,7 +590,7 @@
     "title": "Médicos Especialistas",
     "subtitle": "Médicos de la especialidad: {{ specialty }}",
     "search": "Buscar Doctores",
-    "schedule" : "Calendario",
+    "schedule" : "Agendar Turno",
     "view_profile" : "Ver perfil",
     "specialty": {
       "title": "Especialidad",
@@ -605,7 +605,15 @@
       "all": "Todas las Coberturas"
     },
 
-    "sort": "Ordenar Por",
+    "sort": {
+      "title": "Ordenar Por",
+      "name_asc": "Nombre (A-Z)",
+      "name_desc": "Nombre (Z-A)",
+      "lastname_asc": "Apellido (A-Z)",
+      "lastname_desc": "Apellido (Z-A)",
+      "rating_desc": "Calificación (Mayor a Menor)",
+      "rating_asc": "Calificación (Menor a Mayor)"
+    },
     "availability": "Disponibilidad",
     "week": {
       "monday": "Lunes",
