@@ -80,7 +80,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                             <SelectValue />
                         </SelectTrigger>
 
-                        <SelectContent>
+                        <SelectContent position="popper">
                             <SelectItem value="all">{t("appointment.filters.all")}</SelectItem>
                             {componentType.popoverData.map((a) => (
                                 <SelectItem key={a} value={a}>
