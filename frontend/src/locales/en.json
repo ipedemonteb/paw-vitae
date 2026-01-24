@@ -28,12 +28,21 @@
     "profile": {
       "title": "My Profile",
       "personalInfo": "Personal Information",
+      "name": "Name",
+      "lastname": "Last Name",
       "edit": "Edit",
       "email": "Email",
       "phone": "Phone",
       "specialties": "Specialties",
       "coverages": "Coverages",
-      "coverage": "Medical Coverage"
+      "coverage": "Medical Coverage",
+      "no-coverage": "No coverage",
+      "error": {
+        "name": "Name is required.",
+        "lastname": "Last name is required.",
+        "phone": "Phone is required.",
+        "coverage": "Please select a coverage."
+      }
     }
   },
   "files": {
@@ -331,6 +340,7 @@
     "view": "View"
   },
   "error": {
+    "error": "Error",
     "403": {
       "title": "Access Denied",
       "message": "We are sorry, you do not have permission to access this page. Please verify that you are logged in with the correct account."
@@ -683,6 +693,5 @@
     "saveChanges": "Save Changes",
     "success"  : "Dates correctly updated",
     "error" : "There was an error updating your unavailability dates. Please try again later"
-  },
-  "Error" : "Error"
+  }
 }
