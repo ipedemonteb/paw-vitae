@@ -54,9 +54,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
 
     @Override
     public List<Appointment> getAppointments(long userId, boolean isFuture, int page, int size, String filter, String sort) {
-        String direction = (sort == null || sort.trim().isEmpty())
-                ? (isFuture ? "asc" : "desc")
-                : sort.trim().toLowerCase();
+        String direction = normalizeDirection(sort);
 
         Query nativeQuery = getNativeQuery(userId, isFuture, filter, false, direction);
         nativeQuery.setFirstResult((page-1) * size);
@@ -224,6 +222,12 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         Query nativeQuery = em.createNativeQuery(sql.toString());
         nativeQuery.setParameter("userId", userId);
         return nativeQuery;
+    }
+
+    private static String normalizeDirection(String sort) {
+        if (sort == null) return "asc";
+        String s = sort.trim().toLowerCase();
+        return ("desc".equals(s)) ? "desc" : "asc";
     }
 
     @Override
