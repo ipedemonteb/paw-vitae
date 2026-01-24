@@ -75,8 +75,7 @@ public class RestAppointmentController {
         Appointment appointment = appointmentService.create(
                 form.getPatientId(),
                 form.getDoctorId(),
-                form.getAppointmentDate(),
-                form.getAppointmentHour(),
+                form.getSlotId(),
                 form.getReason(),
                 form.getSpecialtyId(),
                 form.getOfficeId(),

@@ -13,6 +13,10 @@ public final class CustomMediaType {
     // Para /doctors/{id}/biography
     public static final String APPLICATION_DOCTOR_PROFILE = "application/vnd.vitae.doctor-profile.v1+json";
 
+    public  static final String APPLICATION_AVAILABILITY_SLOTS_LIST = "application/vnd.vitae.availability-slots-list.v1+json";
+    public static final String APPLICATION_AVAILABILITY_SLOT= "application/vnd.vitae.availability-slot.v1+json";
+
+
     // Para /doctors/{id}/experiences
     public static final String APPLICATION_DOCTOR_EXPERIENCE_LIST = "application/vnd.vitae.doctor-experience-list.v1+json";
 

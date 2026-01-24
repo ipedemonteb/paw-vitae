@@ -1,15 +1,8 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.webapp.validation.AppointmentExistence;
-import ar.edu.itba.paw.webapp.validation.AppointmentValidDate;
-import ar.edu.itba.paw.webapp.validation.AppointmentValidSpecialtyForDoctor;
-import ar.edu.itba.paw.webapp.validation.OfficeAcceptsSpecialty;
-import ar.edu.itba.paw.webapp.validation.OfficeAvailableAtDayAndTime;
-import ar.edu.itba.paw.webapp.validation.OfficeOwnedByDoctor;
-import ar.edu.itba.paw.webapp.validation.Specialty;
+import ar.edu.itba.paw.webapp.validation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -18,22 +11,15 @@ import java.time.LocalDate;
 
 @OfficeOwnedByDoctor(message = "office.invalid")
 @OfficeAcceptsSpecialty(officeId = "officeId", specialtyId = "specialtyId")
-@OfficeAvailableAtDayAndTime(officeId = "officeId", date = "appointmentDate", appointmentHour = "appointmentHour")
-@AppointmentExistence(userId = "doctorId", date = "appointmentDate", startTime = "appointmentHour")
-@AppointmentExistence(userId = "patientId", date = "appointmentDate", startTime = "appointmentHour")
-@AppointmentValidDate(date = "appointmentDate", startTime = "appointmentHour")
+@OfficeAvailableAtDayAndTime(officeId = "officeId", slotId="slotId")
+@AppointmentExistence(userId = "patientId", slotId="slotId")
+@AppointmentValidDate(slotId="slotId")
 @AppointmentValidSpecialtyForDoctor(doctorId = "doctorId", specialtyId = "specialtyId")
 public class AppointmentForm {
 
-    @NotNull(message = "appointment.date.notnull")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate appointmentDate;
-
-    @NotNull(message = "appointment.hour.notnull")
-    @Min(value = 8, message = "$appointment.hour.invalid")
-    @Max(value = 20, message = "$appointment.hour.invalid")
-    private Integer appointmentHour;
-
+    @SlotAvailable(message = "appointment.slot.unavailable")
+    @NotNull
+    private Long slotId;
     @Size(max = 255)
     private String reason;
 
@@ -52,20 +38,13 @@ public class AppointmentForm {
 
     private boolean allowFullHistory = true;
 
-    public LocalDate getAppointmentDate() {
-        return appointmentDate;
+
+    public Long getSlotId() {
+        return slotId;
     }
 
-    public void setAppointmentDate(LocalDate appointmentDate) {
-        this.appointmentDate = appointmentDate;
-    }
-
-    public Integer getAppointmentHour() {
-        return appointmentHour;
-    }
-
-    public void setAppointmentHour(Integer appointmentHour) {
-        this.appointmentHour = appointmentHour;
+    public void setSlotId(Long slotId) {
+        this.slotId = slotId;
     }
 
     public String getReason() {

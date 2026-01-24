@@ -19,9 +19,8 @@ public @interface AppointmentExistence {
 
     String userId();
 
-    String date();
 
-    String startTime();
+    String slotId();
 }
 
 

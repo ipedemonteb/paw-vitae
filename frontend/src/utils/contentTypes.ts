@@ -34,6 +34,8 @@ export const ContentTypes = {
     IMAGE_PNG: "image/png",
     IMAGE_JPEG: "image/jpeg",
     IMAGE_JPG: "image/image/jpg",
+    APPLICATION_AVAILABILITY_SLOTS_LIST : "application/vnd.vitae.availability-slots-list.v1+json",
+    APPLICATION_AVAILABILITY_SLOT: "application/vnd.vitae.availability-slot.v1+json"
 
 } as const;
 

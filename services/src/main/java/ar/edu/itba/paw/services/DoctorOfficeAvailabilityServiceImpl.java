@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorOfficeAvailabilityDao;
+import ar.edu.itba.paw.interfaceServices.AvailabilitySlotsService;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeAvailabilityService;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
 import ar.edu.itba.paw.models.*;
@@ -25,14 +26,15 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
 
     private final DoctorOfficeAvailabilityDao doctorOfficeAvailabilityDao;
     private final DoctorOfficeService doctorOfficeService;
-
+    private final AvailabilitySlotsService availabilitySlotsService;
     private static final Logger LOGGER = LoggerFactory.getLogger(DoctorOfficeAvailabilityServiceImpl.class);
 
     @Autowired
     public DoctorOfficeAvailabilityServiceImpl(DoctorOfficeAvailabilityDao doctorOfficeAvailabilityDao,
-                                               @Lazy DoctorOfficeService doctorOfficeService) {
+                                               @Lazy DoctorOfficeService doctorOfficeService,@Lazy AvailabilitySlotsService availabilitySlotsService) {
         this.doctorOfficeAvailabilityDao = doctorOfficeAvailabilityDao;
         this.doctorOfficeService = doctorOfficeService;
+        this.availabilitySlotsService = availabilitySlotsService;
     }
 
     @Transactional
@@ -83,7 +85,6 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
         for (DoctorOffice office : offices) {
             if (office.isActive() && !incomingOfficeIds.contains(office.getId())) {
                 office.setActive(false);
-//                throw new BussinesRuleException("exception.business.officeAvailabilitySlot.active"); // you muist provide slots for all active offices
             }
         }
         Map<Long,DoctorOfficeAvailability> existingById =
@@ -117,6 +118,7 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
             }
             office.replaceAvailability(newSlots);
         }
+        availabilitySlotsService.reloadAvailability(doctorId);
     }
 
     @Transactional(readOnly = true)

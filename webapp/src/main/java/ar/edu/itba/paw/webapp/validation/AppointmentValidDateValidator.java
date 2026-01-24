@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.webapp.validation;
 
+import ar.edu.itba.paw.interfaceServices.AvailabilitySlotsService;
+import ar.edu.itba.paw.models.AvailabilitySlots;
 import ar.edu.itba.paw.webapp.validation.AppointmentValidDate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -12,39 +15,43 @@ import java.time.ZoneId;
 
 public class AppointmentValidDateValidator implements ConstraintValidator<AppointmentValidDate, Object> {
 
-    private String dateFieldName;
-    private String timeFieldName;
+    private String slotIdFieldName;
+    private final AvailabilitySlotsService availabilitySlotsService;
+
+    @Autowired
+    public AppointmentValidDateValidator(AvailabilitySlotsService availabilitySlotsService) {
+        this.availabilitySlotsService = availabilitySlotsService;
+    }
 
     @Override
     public void initialize(AppointmentValidDate constraintAnnotation) {
-        this.dateFieldName = constraintAnnotation.date();
-        this.timeFieldName = constraintAnnotation.startTime();
+        this.slotIdFieldName = constraintAnnotation.slotId();
     }
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         try {
-            Field dateField = value.getClass().getDeclaredField(dateFieldName);
-            Field timeField = value.getClass().getDeclaredField(timeFieldName);
+            Field slotIdField = value.getClass().getDeclaredField(slotIdFieldName);
 
-            dateField.setAccessible(true);
-            timeField.setAccessible(true);
+            slotIdField.setAccessible(true);
 
-            LocalDate date = (LocalDate) dateField.get(value);
-            Integer hour = (Integer) timeField.get(value);
+            Long slotId = (Long) slotIdField.get(value);
 
-            if (date == null || hour == null) {
+            if (slotId == null) {
                 return true;
             }
-
-            LocalDateTime appointmentDateTime = LocalDateTime.of(date, LocalTime.of(hour, 0));
+            AvailabilitySlots slot = availabilitySlotsService.getById(slotId).orElse(null);
+            if (slot == null) {
+                return true;
+            }
+            LocalDateTime appointmentDateTime = LocalDateTime.of(slot.getSlotDate(), LocalTime.of(slot.getStartTime().getHour(), 0));
             LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 
 
             if (!appointmentDateTime.isAfter(now)) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("appointment.date.invalid")
-                        .addPropertyNode(dateFieldName)
+                        .addPropertyNode(slotIdFieldName)
                         .addConstraintViolation();
                 return false;
             }

@@ -17,7 +17,7 @@ public @interface OfficeAvailableAtDayAndTime {
 
     String officeId();
 
-    String date();
 
-    String appointmentHour();
+
+    String slotId();
 }
