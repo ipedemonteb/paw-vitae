@@ -15,7 +15,8 @@ import {
     Star,
     CloudUpload,
     Eye,
-    ArrowLeft, X
+    ArrowLeft, X,
+    ClipboardClock, ArrowRight
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -169,38 +170,42 @@ function AppointmentDetails() {
                         </div>
 
                         <VisitCard reason={appointment.reason} />
-                        <PatientFileCard files={patientFiles} />
 
-                        {showPostVisit ? (
-                            isDoctor && !isCompleted && (appointment.report ?? "").trim().length === 0 ? (
-                                <PostVisitLockedComponent/>
-                            ) : (
-                                <PostVisitComponent
-                                    appointmentId={appointmentId}
-                                    files={doctorFiles}
-                                    report={appointment.report}
-                                    isDoctor={role === "ROLE_DOCTOR"}
-                                />
-                            )
-                        ) : null}
+                        <div className="flex flex-col gap-6">
+                            <PatientFileCard files={patientFiles} />
+                            <MedicalHistoryCard canAccessMedicalHistory={appointment.allowFullHistory}/>
 
-                        {showRatingBlock ? (
-                            hasRating ? (
-                                <RatingComponent rating={rating?.rating} comment={rating?.comment} />
-                            ) : isDoctor ? (
-                                <RatingComponent rating={undefined} comment={undefined} />
-                            ) : isCompleted ? (
-                                <RateComponent
-                                    rating={newRating}
-                                    setRating={setNewRating}
-                                    appointmentId={appointmentId}
-                                />
-                            ) : (
-                                <LockedRateComponent rating={undefined} setRating={undefined} />
-                            )
-                        ) : null}
+                            {showPostVisit ? (
+                                isDoctor && !isCompleted && (appointment.report ?? "").trim().length === 0 ? (
+                                    <PostVisitLockedComponent/>
+                                ) : (
+                                    <PostVisitComponent
+                                        appointmentId={appointmentId}
+                                        files={doctorFiles}
+                                        report={appointment.report}
+                                        isDoctor={role === "ROLE_DOCTOR"}
+                                    />
+                                )
+                            ) : null}
 
-                        {showUpload ? <UploadComponent appointmentId={appointmentId} /> : null}
+                            {showRatingBlock ? (
+                                hasRating ? (
+                                    <RatingComponent rating={rating?.rating} comment={rating?.comment} />
+                                ) : isDoctor ? (
+                                    <RatingComponent rating={undefined} comment={undefined} />
+                                ) : isCompleted ? (
+                                    <RateComponent
+                                        rating={newRating}
+                                        setRating={setNewRating}
+                                        appointmentId={appointmentId}
+                                    />
+                                ) : (
+                                    <LockedRateComponent rating={undefined} setRating={undefined} />
+                                )
+                            ) : null}
+
+                            {showUpload ? <UploadComponent appointmentId={appointmentId} /> : null}
+                        </div>
 
                         <div className={appointmentButtons}>
                             <Button className={goBackButton} onClick={handleBackToAppointments} type="button">
@@ -463,6 +468,46 @@ function FileEmptyComponent() {
         <div className={emptyFileContainer}>
             <Info />
             <p>{t("appointment.details.no-upload")}</p>
+        </div>
+    );
+}
+
+const medicalHistoryContainer = "px-6";
+const medicalHistoryUpper = "flex flex-row items-center gap-2 font-[400] text-(--warning-dark)";
+const medicalHistoryLower = "w-full flex flex-row justify-center";
+const medicalHistoryButton = "w-3xs cursor-pointer bg-(--primary-color) hover:bg-[var(--primary-dark)] text-white";
+const noMedicalHistoryContainer = "flex flex-row items-center gap-2 border border-dashed rounded-xl p-4 bg-(--gray-100) border-(--gray-400)";
+const infoIcon = "h-8 w-8 text-[var(--text-light)]";
+const noMedicalHistoryText = "text-[var(--text-light)] leading-normal";
+
+function MedicalHistoryCard({canAccessMedicalHistory = false}:{canAccessMedicalHistory?: boolean | undefined}) {
+    const { t } = useTranslation();
+
+    return (
+        <div>
+            <div className={cardIconContainer}>
+                <ClipboardClock className={cardIcon}/>
+                <h1 className={cardTitle}>{t("appointment.details.medical-history")}</h1>
+            </div>
+            {canAccessMedicalHistory ? (
+                <Card className={medicalHistoryContainer}>
+                    <div className={medicalHistoryUpper}>
+                        <Info/>
+                        <h3>{t("appointment.details.access")}</h3>
+                    </div>
+                    <div className={medicalHistoryLower}>
+                        <Button className={medicalHistoryButton}>
+                            {t("appointment.details.access-button")}
+                            <ArrowRight />
+                        </Button>
+                    </div>
+                </Card>
+            ) :
+            <div className={noMedicalHistoryContainer}>
+                <Info className={infoIcon}/>
+                <p className={noMedicalHistoryText}>{t("appointment.details.no-access")}</p>
+            </div>
+            }
         </div>
     );
 }

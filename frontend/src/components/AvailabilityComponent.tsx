@@ -15,6 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { type AvailabilityFormValues, formSchema, DB_DAY_TO_FORM, FORM_DAY_TO_DB, extractIdFromUrl } from "../lib/availability-schema.ts";
 import { AvailabilityItem } from "./AvailabilityItem";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 export default function AvailabilityComponent() {
     const { t } = useTranslation();
@@ -156,8 +157,8 @@ export default function AvailabilityComponent() {
         return (
             <DashboardNavContainer>
                 <DashboardNavHeader title={t("availability.headerTitle")} children={undefined}/>
-                <div className="flex flex-col items-center justify-center h-[50vh] text-gray-400">
-                    <Loader2 className="h-10 w-10 animate-spin mb-4" />
+                <div className="flex flex-col items-center justify-center h-[50vh] text-(--gray-500)">
+                    <Spinner className="h-10 w-10 mb-4" />
                     <p>{t("Loading")}</p>
                 </div>
             </DashboardNavContainer>
