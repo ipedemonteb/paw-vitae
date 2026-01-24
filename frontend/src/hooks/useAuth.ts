@@ -35,8 +35,8 @@ export function useLogin() {
 export function useChangePasswordMutation() {
     const {logout} = useAuth()
     return useMutation({
-        mutationFn: async ({email, password, repeatPassword}: {email: string, password: string, repeatPassword: string}) => {
-            const {jwt, refresh} = await login(email, password)
+        mutationFn: async ({email, password, repeatPassword,token}: {email: string, password: string, repeatPassword: string,token:string}) => {
+            const {jwt, refresh} = await login(email, token)
 
             setAuth(jwt, refresh)
 
