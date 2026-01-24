@@ -21,7 +21,7 @@ function PatientMedicalHistory() {
     const { t } = useTranslation();
     const auth = useAuth();
     const searchParams = useAppointmentsQueryParams();
-    const sort = (searchParams.sort ?? "asc") as "asc" | "desc";
+    const sort: "asc" | "desc" = searchParams.sort === "desc" ? "desc" : "asc";
 
     const { data: appointments, isLoading } = useAppointments({
         userId: auth.userId,
