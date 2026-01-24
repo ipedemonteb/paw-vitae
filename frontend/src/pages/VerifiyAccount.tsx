@@ -55,7 +55,7 @@ export default function VerifyAccount() {
 
         hasAttemptedVerify.current = true;
 
-        login.mutate({email, password: token}, {
+        login.mutate({email, password: token,rememberMe:false}, {
             onSuccess: () => {
                 setStatus('success')
             },

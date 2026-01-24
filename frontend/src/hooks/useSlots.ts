@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getDoctorSlots, type AvailabilitySlotDTO } from "@/data/slots";
+import { getDoctorSlots} from "@/data/slots";
 
 export function useDoctorSlots(doctorId: string | null | undefined) {
     return useQuery({

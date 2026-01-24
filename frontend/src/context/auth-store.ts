@@ -49,37 +49,63 @@ function validateJWTClaims(claims: JWTClaims) {
 }
 
 
-export function setAuth(token?: string, refresh?: string) {
+export function setAuth(token?: string, refresh?: string, rememberMe?: boolean) {
     let claims: JWTClaims | null = null;
     if (token) {
         try {
-            claims = jwtDecode(token)
+            claims = jwtDecode(token);
         } catch (e) {
-            throw new Error("Ivalid JWT Format")
+            throw new Error("Invalid JWT Format");
         }
-        validateJWTClaims(claims!)
+        validateJWTClaims(claims!);
     }
 
     state.claims = claims;
-
     state.accessToken = token;
     state.refreshToken = refresh;
 
-    if (token) localStorage.setItem(TOKEN_KEY, token);
-    if (refresh) localStorage.setItem(REFRESH_KEY, refresh);
+    if (token && refresh) {
+        if (rememberMe) {
+            localStorage.setItem(TOKEN_KEY, token);
+            localStorage.setItem(REFRESH_KEY, refresh);
+            sessionStorage.removeItem(TOKEN_KEY);
+            sessionStorage.removeItem(REFRESH_KEY);
+        } else {
+            sessionStorage.setItem(TOKEN_KEY, token);
+            sessionStorage.setItem(REFRESH_KEY, refresh);
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(REFRESH_KEY);
+        }
+    }
 
     emit();
 }
 
 export function clearAuth() {
     state = { accessToken: undefined, refreshToken: undefined, claims: null };
+    // Borramos DE AMBOS para asegurar logout completo
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(REFRESH_KEY);
     emit();
 }
 
 export function initAuthFromStorage() {
-    const accessToken = localStorage.getItem(TOKEN_KEY) ?? undefined;
-    const refreshToken = localStorage.getItem(REFRESH_KEY) ?? undefined;
-    setAuth(accessToken, refreshToken);
+    const localToken = localStorage.getItem(TOKEN_KEY);
+    const sessionToken = sessionStorage.getItem(TOKEN_KEY);
+
+    const accessToken = localToken ?? sessionToken ?? undefined;
+
+    const localRefresh = localStorage.getItem(REFRESH_KEY);
+    const sessionRefresh = sessionStorage.getItem(REFRESH_KEY);
+
+    const refreshToken = localRefresh ?? sessionRefresh ?? undefined;
+
+    const isRemembered = !!localToken;
+
+    if (accessToken) {
+        setAuth(accessToken, refreshToken, isRemembered);
+    }
+
 }

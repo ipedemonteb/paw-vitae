@@ -15,12 +15,18 @@ export function useAuth () {
 
 export function useLogin() {
     const queryClient = useQueryClient();
-    return useMutation<{jwt: any, refresh: any}, AxiosError<unknown, any>, {email: string, password: string}, unknown>({
-        mutationFn: ({ email, password }: {email: string, password: string}) =>
-            login(email, password),
 
-        onSuccess: (data) => {
-            setAuth(data.jwt, data.refresh);
+    return useMutation<
+        { jwt: any; refresh: any },
+        AxiosError<unknown, any>,
+        { email: string; password: string; rememberMe: boolean },
+        unknown
+    >({
+        mutationFn: ({ email, password, rememberMe }) =>
+            login(email, password, rememberMe),
+
+        onSuccess: (data, variables) => {
+            setAuth(data.jwt, data.refresh, variables.rememberMe);
             queryClient.invalidateQueries({ queryKey: ["auth"] });
         }
     });
