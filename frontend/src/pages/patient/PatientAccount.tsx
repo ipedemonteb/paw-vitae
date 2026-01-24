@@ -8,7 +8,6 @@ import {
 import { useCoverage, useCoverages } from "@/hooks/useCoverages.ts";
 
 import {
-    Loader2,
     User,
     Mail,
     Phone,
@@ -30,6 +29,7 @@ import { cn } from "@/lib/utils";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
 const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
@@ -166,9 +166,9 @@ function PatientAccount() {
                     </div>
 
                     <CardContent className="p-0 flex flex-col gap-2">
-                        <div className="flex flex-col items-center justify-center py-8 bg-gray-50 border-b">
+                        <div className="flex flex-col items-center justify-center py-8 bg-(--gray-100) border-b">
                             <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
-                                <AvatarFallback className="text-3xl bg-gray-200 text-gray-500">
+                                <AvatarFallback className="text-3xl bg-(--gray-200) text-(--gray-500)">
                                     {patient.name?.[0]}
                                     {patient.lastName?.[0]}
                                 </AvatarFallback>
@@ -267,13 +267,13 @@ function PatientAccount() {
                                                     "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-(--success) select-none",
                                                     isSelected
                                                         ? "bg-(--success-light) border-(--success-dark) text-(--success-dark) font-medium shadow-sm"
-                                                        : "bg-white text-gray-600 border-gray-200"
+                                                        : "bg-white text-(--gray-600) border-(--gray-200)"
                                                 )}
                                             >
                                                 <div
                                                     className={cn(
                                                         "w-4 h-4 rounded-full border flex items-center justify-center shrink-0",
-                                                        isSelected ? "bg-(--success) border-(--success)" : "border-gray-300"
+                                                        isSelected ? "bg-(--success) border-(--success)" : "border-(--gray-300)"
                                                     )}
                                                 >
                                                     {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
@@ -288,12 +288,12 @@ function PatientAccount() {
                                     {coverage ? (
                                         <span
                                             key={coverage.name}
-                                            className="bg-(--success-light) text-(--success) px-3 py-1 rounded-full text-sm font-medium border border-(--success)"
+                                            className="bg-(--success-light) text-(--success-dark) px-3 py-1 rounded-full text-sm font-medium border border-(--success-dark)"
                                         >
                     {coverage.name}
                   </span>
                                     ) : (
-                                        <p className="text-gray-400 text-sm">
+                                        <p className="text-(--gray-400) text-sm">
                                             {t("doctor.profile.no_coverages", "No coverage listed")}
                                         </p>
                                     )}
@@ -317,7 +317,7 @@ function PatientAccount() {
                         <Button onClick={handleSave} className={actionButtonStyles + " w-3xs"} disabled={isSaving}>
                             {isSaving ? (
                                 <>
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    <Spinner className="w-4 h-4 mr-2" />
                                     {t("saving", "Saving...")}
                                 </>
                             ) : (

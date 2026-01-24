@@ -34,15 +34,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx"
 import GenericError from "@/pages/GenericError.tsx";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
+import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
+import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
-const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full pb-10";
-const cardStyles = "p-0 overflow-hidden shadow-md";
+const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
+const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
 const cardHeaderStyles = "flex items-center justify-between px-6 py-4 bg-white border-b";
-const cardTitleStyles = "text-xl font-semibold text-gray-800 flex items-center gap-2";
-const sectionStyles = "p-6";
+const cardTitleStyles = "text-xl font-[500] text-(--text-color) flex items-center gap-2";
+const sectionStyles = "pb-6 px-6 pt-2";
 const gridStyles = "grid grid-cols-1 md:grid-cols-2 gap-6";
-const infoValueStyles = "text-base font-medium text-gray-900";
-const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white";
+const infoValueStyles = "flex flex-row items-center gap-1 text-(--text-light) font-[400]";
+const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer text-white mt-2 md:mt-0 ";
 
 function DoctorAccount() {
     const { t } = useTranslation();
@@ -186,126 +190,242 @@ function DoctorAccount() {
     const isSaving = updateDoctorMutation.isPending || updateImageMutation.isPending;
 
     return (
-        <div className={containerStyles}>
-            <Card className={cardStyles}>
-                <div className={cardHeaderStyles}>
-                    <h2 className={cardTitleStyles}>
-                        <User className="h-5 w-5 text-[var(--primary-color)]" />
-                        {t("dashboard.profile.title", "My Profile")}
-                    </h2>
-                    {!isEditing && (
-                        <Button onClick={() => setIsEditing(true)} className={actionButtonStyles}>
-                            <Pencil className="w-4 h-4 mr-2" />
-                            {t("dashboard.profile.edit", "Edit")}
-                        </Button>
-                    )}
-                </div>
+        <DashboardNavContainer>
+            <DashboardNavHeader title={t("patient.dashboard.account")}>
+                {!isEditing && (
+                    <Button onClick={() => setIsEditing(true)} className={actionButtonStyles}>
+                        <Pencil className="w-4 h-4 mr-2" />
+                        {t("dashboard.profile.edit", "Edit")}
+                    </Button>
+                )}
+                {isEditing && <div className="h-9" />}
+            </DashboardNavHeader>
+            {isLoadingDoctor ? <DashboardNavLoader /> :
+                <div className={containerStyles}>
+                    <Card className={cardStyles}>
+                        <div className={cardHeaderStyles}>
+                            <h2 className={cardTitleStyles}>
+                                <User className="h-5 w-5 text-[var(--primary-color)]" />
+                                {t("dashboard.profile.title", "My Profile")}
+                            </h2>
+                        </div>
 
-                <CardContent className="p-0">
-                    <div className="flex flex-col items-center justify-center py-8 bg-gray-50 border-b">
-                        <div className="relative group">
-                            <Avatar className="h-32 w-32 border-4 border-white shadow-lg cursor-pointer">
-                                <AvatarImage src={previewImage || doctorImageUrl || undefined} className="object-cover" />
-                                <AvatarFallback className="text-2xl bg-gray-200">
-                                    {doctor.name?.[0]}{doctor.lastName?.[0]}
-                                </AvatarFallback>
-                            </Avatar>
-
-                            {isEditing && (
-                                <div
-                                    className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                                    onClick={() => fileInputRef.current?.click()}
-                                >
-                                    <Upload className="text-white h-8 w-8" />
+                        <CardContent className="p-0 flex flex-col gap-2">
+                            <div className="flex flex-col items-center justify-center py-8 bg-(--gray-100) border-b">
+                                <div className="relative group">
+                                    <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
+                                        <AvatarImage src={previewImage || doctorImageUrl || undefined} className="object-cover" />
+                                        <AvatarFallback className="text-2xl bg-(--gray-200)">
+                                            {doctor.name?.[0]}{doctor.lastName?.[0]}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    {isEditing && (
+                                        <div
+                                            className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                            onClick={() => fileInputRef.current?.click()}
+                                        >
+                                            <Upload className="text-white h-8 w-8" />
+                                        </div>
+                                    )}
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                        accept="image/jpeg,image/png,image/jpg"
+                                        onChange={handleFileChange}
+                                        disabled={!isEditing || isSaving}
+                                    />
                                 </div>
-                            )}
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                className="hidden"
-                                accept="image/jpeg,image/png,image/jpg"
-                                onChange={handleFileChange}
-                                disabled={!isEditing || isSaving}
-                            />
-                        </div>
-                        {isEditing && (
-                            <p className="text-xs text-gray-500 mt-2">
-                                {t("register.chooseImage", "Click to change image")}
-                            </p>
-                        )}
+                                {isEditing && (
+                                    <p className="text-xs text-(--gray-500) mt-2">
+                                        {t("register.chooseImage", "Click to change image")}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className={sectionStyles}>
+                                <h3 className="text-lg font-[500] mb-4 border-b pb-2">
+                                    {t("dashboard.profile.personalInfo", "Personal Information")}
+                                </h3>
+
+                                <div className={gridStyles}>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="name">{t("register.firstName", "Name")}</Label>
+                                        {isEditing ? (
+                                            <Input
+                                                id="name"
+                                                name="name"
+                                                value={formData.name}
+                                                onChange={handleInputChange}
+                                                disabled={isSaving}
+                                            />
+                                        ) : (
+                                            <div className={infoValueStyles}>{doctor.name}</div>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="lastName">{t("register.lastName", "Last Name")}</Label>
+                                        {isEditing ? (
+                                            <Input
+                                                id="lastName"
+                                                name="lastName"
+                                                value={formData.lastName}
+                                                onChange={handleInputChange}
+                                                disabled={isSaving}
+                                            />
+                                        ) : (
+                                            <div className={infoValueStyles}>{doctor.lastName}</div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="email" className="flex items-center gap-2">
+                                            {t("dashboard.profile.email", "Email")}
+                                        </Label>
+                                        <div className={infoValueStyles}>
+                                            <Mail className="h-4 w-4" />
+                                            {doctor.email}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="phone" className="flex items-center gap-2">
+                                            {t("dashboard.profile.phone", "Phone")}
+                                        </Label>
+                                        {isEditing ? (
+                                            <Input
+                                                id="phone"
+                                                name="phone"
+                                                value={formData.phone}
+                                                onChange={handleInputChange}
+                                                disabled={isSaving}
+                                            />
+                                        ) : (
+                                            <div className={infoValueStyles}>
+                                                <Phone className="h-4 w-4" />
+                                                {doctor.phone}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <div className={gridStyles}>
+                        <Card className={cardStyles}>
+                            <div className={cardHeaderStyles}>
+                                <h3 className={cardTitleStyles}>
+                                    <Stethoscope className="h-5 w-5 text-[var(--primary-color)]" />
+                                    {t("dashboard.profile.specialties", "Specialties")}
+                                </h3>
+                            </div>
+                            <CardContent className="p-6">
+                                {isEditing ? (
+                                    <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
+                                        {allSpecialtiesList?.map((s) => {
+                                            const sId = Number(s.self.split('/').pop());
+                                            const isSelected = selectedSpecIds.includes(sId);
+                                            return (
+                                                <div
+                                                    key={sId}
+                                                    onClick={() => toggleSpecialty(sId)}
+                                                    className={cn(
+                                                        "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all select-none hover:border-(--primary-color)",
+                                                        isSelected ? "bg-(--primary-bg) border-(--primary-color) text-(--primary-color) font-medium shadow-sm" : "bg-white text-(--gray-600) border-(--gray-200)"
+                                                    )}
+                                                >
+                                                    <div className={cn("w-4 h-4 rounded border flex items-center justify-center shrink-0", isSelected ? "bg-(--primary-color) border-(--primary-color)" : "border-(--gray-300)")}>
+                                                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                                                    </div>
+                                                    <span className="truncate">{t(s.name)}</span>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                ) : (
+                                    currentSpecialties && currentSpecialties.length > 0 ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {currentSpecialties.map((s, idx) => (
+                                                <span key={idx} className="bg-(--primary-bg) text-(--primary-color) px-3 py-1 rounded-full text-sm font-medium border border-(--primary-color)">
+                                                {t(s.name)}
+                                            </span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-(--gray-400) text-sm">{t("doctor.profile.no_specialties", "No specialties listed")}</p>
+                                    )
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        <Card className={cardStyles}>
+                            <div className={cardHeaderStyles}>
+                                <h3 className={cardTitleStyles}>
+                                    <ShieldPlus className="h-5 w-5 text-[var(--primary-color)]" />
+                                    {t("dashboard.profile.coverages", "Coverages")}
+                                </h3>
+                            </div>
+                            <CardContent className="p-6">
+                                {isEditing ? (
+                                    <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
+                                        {allCoveragesList?.map((c) => {
+                                            const cId = Number(c.self.split('/').pop());
+                                            const isSelected = selectedCovIds.includes(cId);
+                                            return (
+                                                <div
+                                                    key={cId}
+                                                    onClick={() => toggleCoverage(cId)}
+                                                    className={cn(
+                                                        "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-(--success) select-none",
+                                                        isSelected
+                                                            ? "bg-(--success-light) border-(--success-dark) text-(--success-dark) font-medium shadow-sm"
+                                                            : "bg-white text-(--gray-600) border-(--gray-200)"
+                                                    )}
+                                                >
+                                                    <div className={cn(
+                                                        "w-4 h-4 rounded-full border flex items-center justify-center shrink-0",
+                                                        isSelected ? "bg-(--success) border-(--success)" : "border-(--gray-300)"
+                                                    )}>
+                                                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                                                    </div>
+                                                    <span className="truncate">{c.name}</span>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                ) : (
+                                    currentCoverages && currentCoverages.length > 0 ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {currentCoverages.map((c, idx) => (
+                                                <span key={idx} className="bg-(--success-light) text-(--success-dark) px-3 py-1 rounded-full text-sm font-medium border border-(--success-dark)">
+                                                {c.name}
+                                            </span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-(--gray-400) text-sm">{t("doctor.profile.no_coverages", "No coverages listed")}</p>
+                                    )
+                                )}
+                            </CardContent>
+                        </Card>
                     </div>
-
-                    <div className={sectionStyles}>
-                        <h3 className="text-lg font-semibold mb-4 border-b pb-2">
-                            {t("dashboard.profile.personalInfo", "Personal Information")}
-                        </h3>
-
-                        <div className={gridStyles}>
-                            <div className="space-y-2">
-                                <Label htmlFor="name">{t("register.firstName", "Name")}</Label>
-                                {isEditing ? (
-                                    <Input
-                                        id="name"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        disabled={isSaving}
-                                    />
-                                ) : (
-                                    <div className={infoValueStyles}>{doctor.name}</div>
-                                )}
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="lastName">{t("register.lastName", "Last Name")}</Label>
-                                {isEditing ? (
-                                    <Input
-                                        id="lastName"
-                                        name="lastName"
-                                        value={formData.lastName}
-                                        onChange={handleInputChange}
-                                        disabled={isSaving}
-                                    />
-                                ) : (
-                                    <div className={infoValueStyles}>{doctor.lastName}</div>
-                                )}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="email" className="flex items-center gap-2">
-                                    <Mail className="h-4 w-4" /> {t("dashboard.profile.email", "Email")}
-                                </Label>
-                                <div className={`${infoValueStyles} text-gray-600`}>{doctor.email}</div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="phone" className="flex items-center gap-2">
-                                    <Phone className="h-4 w-4" /> {t("dashboard.profile.phone", "Phone")}
-                                </Label>
-                                {isEditing ? (
-                                    <Input
-                                        id="phone"
-                                        name="phone"
-                                        value={formData.phone}
-                                        onChange={handleInputChange}
-                                        disabled={isSaving}
-                                    />
-                                ) : (
-                                    <div className={infoValueStyles}>{doctor.phone}</div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
                     {isEditing && (
-                        <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
-                            <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
+                        <div className="flex justify-center gap-3 mt-4 flex-col sm:flex-row items-center">
+                            <Button
+                                variant="outline"
+                                className="w-3xs cursor-pointer border border-(--danger) text-(--danger) hover:text-white hover:bg-(--danger)"
+                                onClick={handleCancel}
+                                disabled={isSaving}
+                            >
                                 <X className="w-4 h-4 mr-2" />
-                                {t("logout.cancel", "Cancel")}
+                                {t("logout.confirmation.cancel", "Cancel")}
                             </Button>
-                            <Button onClick={handleSave} className={actionButtonStyles} disabled={isSaving}>
+
+                            <Button onClick={handleSave} className={actionButtonStyles + " w-3xs"} disabled={isSaving}>
                                 {isSaving ? (
                                     <>
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                        <Spinner className="w-4 h-4 mr-2" />
                                         {t("saving", "Saving...")}
                                     </>
                                 ) : (
@@ -317,103 +437,9 @@ function DoctorAccount() {
                             </Button>
                         </div>
                     )}
-                </CardContent>
-            </Card>
-
-            <div className={gridStyles}>
-                <Card className={cardStyles}>
-                    <div className={cardHeaderStyles}>
-                        <h3 className={cardTitleStyles}>
-                            <Stethoscope className="h-5 w-5 text-[var(--primary-color)]" />
-                            {t("dashboard.profile.specialties", "Specialties")}
-                        </h3>
-                    </div>
-                    <CardContent className="p-6">
-                        {isEditing ? (
-                            <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
-                                {allSpecialtiesList?.map((s) => {
-                                    const sId = Number(s.self.split('/').pop());
-                                    const isSelected = selectedSpecIds.includes(sId);
-                                    return (
-                                        <div
-                                            key={sId}
-                                            onClick={() => toggleSpecialty(sId)}
-                                            className={cn(
-                                                "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-blue-300 select-none",
-                                                isSelected ? "bg-blue-50 border-blue-500 text-blue-700 font-medium shadow-sm" : "bg-white text-gray-600 border-gray-200"
-                                            )}
-                                        >
-                                            <div className={cn("w-4 h-4 rounded border flex items-center justify-center shrink-0", isSelected ? "bg-blue-500 border-blue-500" : "border-gray-300")}>
-                                                {isSelected && <Check className="w-3 h-3 text-white" />}
-                                            </div>
-                                            <span className="truncate">{t(s.name)}</span>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        ) : (
-                            currentSpecialties && currentSpecialties.length > 0 ? (
-                                <div className="flex flex-wrap gap-2">
-                                    {currentSpecialties.map((s, idx) => (
-                                        <span key={idx} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium border border-blue-100">
-                                            {t(s.name)}
-                                        </span>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="text-gray-400 text-sm">{t("doctor.profile.no_specialties", "No specialties listed")}</p>
-                            )
-                        )}
-                    </CardContent>
-                </Card>
-
-                <Card className={cardStyles}>
-                    <div className={cardHeaderStyles}>
-                        <h3 className={cardTitleStyles}>
-                            <ShieldPlus className="h-5 w-5 text-[var(--primary-color)]" />
-                            {t("dashboard.profile.coverages", "Coverages")}
-                        </h3>
-                    </div>
-                    <CardContent className="p-6">
-                        {isEditing ? (
-                            <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
-                                {allCoveragesList?.map((c) => {
-                                    const cId = Number(c.self.split('/').pop());
-                                    const isSelected = selectedCovIds.includes(cId);
-                                    return (
-                                        <div
-                                            key={cId}
-                                            onClick={() => toggleCoverage(cId)}
-                                            className={cn(
-                                                "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-green-300 select-none",
-                                                isSelected ? "bg-green-50 border-green-500 text-green-700 font-medium shadow-sm" : "bg-white text-gray-600 border-gray-200"
-                                            )}
-                                        >
-                                            <div className={cn("w-4 h-4 rounded border flex items-center justify-center shrink-0", isSelected ? "bg-green-500 border-green-500" : "border-gray-300")}>
-                                                {isSelected && <Check className="w-3 h-3 text-white" />}
-                                            </div>
-                                            <span className="truncate">{c.name}</span>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        ) : (
-                            currentCoverages && currentCoverages.length > 0 ? (
-                                <div className="flex flex-wrap gap-2">
-                                    {currentCoverages.map((c, idx) => (
-                                        <span key={idx} className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium border border-green-100">
-                                            {c.name}
-                                        </span>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="text-gray-400 text-sm">{t("doctor.profile.no_coverages", "No coverages listed")}</p>
-                            )
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-        </div>
+                </div>
+            }
+        </DashboardNavContainer>
     );
 }
 
