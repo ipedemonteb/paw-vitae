@@ -3,10 +3,13 @@ import {t} from "i18next";
 import {ContentTypes} from "@/utils/contentTypes.ts";
 import type {ChangePasswordForm} from "@/data/patients.ts";
 
-export async function login(email: string, password: string) {
+export async function login(email: string, password: string, rememberMe?: boolean) {
     const credentials = btoa(email + ":" + password);
     const res = await api.head("/", {
-        headers: { Authorization: `Basic ${credentials}` }
+        headers: {
+            Authorization: `Basic ${credentials}`,
+            "X-Remember-Me": String(!!rememberMe)
+        }
     });
 
     const jwt = res.headers[NEW_JWT_HEADER];

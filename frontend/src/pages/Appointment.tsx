@@ -31,7 +31,6 @@ import { startOfDay, parseISO, isSameDay } from "date-fns";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
 
-const EMPTY_LIST: any[] = [];
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -189,7 +188,11 @@ function Appointment() {
 
 
     const handleBook = () => {
-
+        if (!auth.userId) { // Check de seguridad existente
+            toast.error(t("error"), { description: "Debe iniciar sesión para reservar." });
+            navigate("/login");
+            return;
+        }
 
         if (!selectedSlotId || !selectedSpecialty || !selectedOffice) {
             toast.error(t("error"), { description: t("register.errors.missing_fields", "Complete todos los campos") });
@@ -198,7 +201,7 @@ function Appointment() {
 
         const appointmentForm = {
             slotId: selectedSlotId,
-            patientId: auth.userId,
+            patientId: auth.userId!,
             doctorId: doctorId!,
             specialtyId: selectedSpecialty.split("/").pop()!,
             officeId: selectedOffice.split("/").pop()!,
@@ -206,7 +209,7 @@ function Appointment() {
             allowFullHistory: allowFullHistory
         };
 
-        bookAppointment({ form: appointmentForm, files: files, doctorId: doctorId || "" }, {
+        bookAppointment({ form: appointmentForm, files: files}, {
             onSuccess: (newId) => {
                 queryClient.invalidateQueries({ queryKey: ['auth', 'appointments'] });
                 queryClient.invalidateQueries({ queryKey: ['doctors', doctorId, 'slots'] });

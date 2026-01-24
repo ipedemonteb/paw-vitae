@@ -17,7 +17,12 @@ interface AuthContextType {
     email?: string;
     role?: string;
 
-    login:  UseMutationResult<{jwt: any, refresh: any}, AxiosError<unknown, any>, {email: string, password: string}, unknown>
+    login: UseMutationResult<
+        {jwt: any, refresh: any},
+        AxiosError<unknown, any>,
+        {email: string, password: string, rememberMe: boolean},
+        unknown
+    >;
 
     logout: () => void;
 }

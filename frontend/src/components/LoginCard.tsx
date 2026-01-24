@@ -35,11 +35,11 @@ function LoginCard() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const queryClient = useQueryClient();
-
+    const [rememberMe, setRememberMe] = useState(false);
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        login.mutate({ email, password }, {
+        login.mutate({ email, password,rememberMe:rememberMe }, {
             onSuccess: async () => {
                 await queryClient.cancelQueries();
                 queryClient.clear();
@@ -108,7 +108,7 @@ function LoginCard() {
 
                 <div className={optionsRow}>
                     <label className={checkboxLabel}>
-                        <input type="checkbox" className={checkboxStyles} />
+                        <input type="checkbox" className={checkboxStyles}  onClick={() => setRememberMe(!rememberMe)} />
                         <span>{t('login.remember_me')}</span>
                     </label>
                     <Link to="/recover-password" className={forgotLinkStyles}>
