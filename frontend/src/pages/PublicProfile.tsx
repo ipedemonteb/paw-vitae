@@ -70,6 +70,8 @@ import { Label } from "@/components/ui/label.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import {DatePicker} from "@/components/ui/date-picker.tsx";
+import {isoToLocalDate, localDateToIso} from "@/utils/dateUtils.ts";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
@@ -124,7 +126,7 @@ const cardTitleText = "text-lg font-[500] min-w-0";
 const profileContent = "flex flex-col gap-0 items-center sm:flex-row pt-6";
 const aboutTitle = "text-lg font-[500]";
 const aboutText = "text-[var(--text-color)] text-md";
-const saveButtonStyle = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white sm:ml-auto";
+const saveButtonStyle = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white sm:ml-auto cursor-pointer";
 
 function EmptySection({ icon: Icon, text }: { icon: React.ElementType, text: string }) {
     return (
@@ -630,96 +632,109 @@ function EditProfileDialog({
     );
 }
 
+const editDialogContent = "sm:max-w-[600px] max-h-[85vh] overflow-y-auto p-8 gap-2";
+const editDialogInnerContainer = "flex flex-col gap-4 py-4";
+const editItemDeleteButton = "absolute top-2 right-2 h-8 w-8 text-(--danger) hover:text-white hover:bg-(--danger) cursor-pointer";
+const editItemCard = "relative border bg-muted/20 gap-0";
+const editItemCardContent = "grid gap-5 p-4 pt-10 sm:pt-4";
+const editItemCardRow = "grid sm:grid-cols-2 gap-6";
+const editItemCardInput = "space-y-2";
+const editDialogSaveButton = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white cursor-pointer";
+const editDialogCancelButton = "bg-white text-(--primary-color) border border-(--primary-color) hover:bg-(--primary-dark) hover:text-white hover:border-(--primary-dark) cursor-pointer"
+
 function EditExperienceDialog({
                                   experiencesUrl,
                                   initialData,
-                                  trigger
+                                  trigger,
                               }: {
-    experiencesUrl: string,
-    initialData: ExperienceDTO[],
+    experiencesUrl: string
+    initialData: ExperienceDTO[]
     trigger: React.ReactNode
 }) {
-    const { t } = useTranslation();
-    const [open, setOpen] = useState(false);
-    const [items, setItems] = useState<ExperienceForm[]>([]);
-    const queryClient = useQueryClient();
-    const mutation = usePutDoctorExperience(experiencesUrl);
+    const { t } = useTranslation()
+    const [open, setOpen] = useState(false)
+    const [items, setItems] = useState<ExperienceForm[]>([])
+    const queryClient = useQueryClient()
+    const mutation = usePutDoctorExperience(experiencesUrl)
 
     useEffect(() => {
         if (open) {
-            setItems(initialData.map(e => ({
-                positionTitle: e.positionTitle,
-                organizationName: e.organizationName,
-                startDate: e.startDate.toString(),
-                endDate: e.endDate?.toString()
-            })));
+            setItems(
+                initialData.map((e) => ({
+                    positionTitle: e.positionTitle,
+                    organizationName: e.organizationName,
+                    startDate: e.startDate?.toString() ?? "",
+                    endDate: e.endDate?.toString() ?? "",
+                }))
+            )
         }
-    }, [open, initialData]);
+    }, [open, initialData])
 
     const updateItem = (index: number, field: keyof ExperienceForm, value: string) => {
-        const newItems = [...items];
-        // @ts-ignore
-        newItems[index][field] = value;
-        setItems(newItems);
-    };
+        const newItems = [...items]
+        newItems[index][field] = value
+        setItems(newItems)
+    }
 
     const removeItem = (index: number) => {
-        setItems(items.filter((_, i) => i !== index));
-    };
+        setItems(items.filter((_, i) => i !== index))
+    }
 
     const handleSave = () => {
-        const payload = items.map(item => ({
+        const payload = items.map((item) => ({
             ...item,
-            endDate: item.endDate === "" ? undefined : item.endDate
-        }));
+            endDate: item.endDate === "" ? undefined : item.endDate,
+        }))
 
         mutation.mutate(payload, {
             onSuccess: () => {
-                setOpen(false);
-                queryClient.invalidateQueries({ queryKey: ['doctor', 'experiences', experiencesUrl] });
-                toast.success(t("success", "Success"), {
-                    description: t("doctor.profile.update_success", "Experience updated successfully.")
-                });
+                setOpen(false)
+                queryClient.invalidateQueries({ queryKey: ["doctor", "experiences", experiencesUrl] })
+                toast.success(t("success"), {
+                    description: t("doctor.profile.update_success"),
+                })
             },
             onError: () => {
-                toast.error(t("error", "Error"), {
-                    description: t("doctor.profile.update_error", "Error updating experience.")
-                });
-            }
-        });
-    };
+                toast.error(t("error"), {
+                    description: t("doctor.profile.update_error"),
+                })
+            },
+        })
+    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
+            <DialogContent className={editDialogContent}>
                 <DialogHeader>
-                    <DialogTitle>{t("doctor.profile.edit_experience", "Edit Experience")}</DialogTitle>
+                    <DialogTitle>{t("doctor.profile.edit_experience")}</DialogTitle>
                 </DialogHeader>
 
-                <div className="flex flex-col gap-4 py-4">
+                <div className={editDialogInnerContainer}>
                     {items.map((item, idx) => (
-                        <Card key={idx} className="relative border bg-muted/20">
+                        <Card key={idx} className={editItemCard}>
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="absolute top-2 right-2 h-8 w-8 text-destructive hover:bg-destructive/10"
+                                className={editItemDeleteButton}
                                 onClick={() => removeItem(idx)}
                             >
                                 <Trash2 className="w-4 h-4" />
                             </Button>
-                            <CardContent className="grid gap-3 p-4 pt-10 sm:pt-4">
-                                <div className="grid sm:grid-cols-2 gap-3">
-                                    <div className="space-y-1">
-                                        <Label>{t("doctor.profile.position","Position")}</Label>
+
+                            <CardContent className={editItemCardContent}>
+                                <div className={editItemCardRow}>
+                                    <div className={editItemCardInput}>
+                                        <Label>{t("doctor.profile.position", "Position")}</Label>
                                         <Input
                                             className={input}
                                             value={item.positionTitle}
                                             onChange={(e) => updateItem(idx, "positionTitle", e.target.value)}
                                         />
                                     </div>
-                                    <div className="space-y-1">
-                                        <Label>{t("doctor.profile.organization","Organization")}</Label>
+
+                                    <div className={editItemCardInput}>
+                                        <Label>{t("doctor.profile.organization", "Organization")}</Label>
                                         <Input
                                             className={input}
                                             value={item.organizationName}
@@ -727,41 +742,61 @@ function EditExperienceDialog({
                                         />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="space-y-1">
+
+                                <div className={editItemCardRow}>
+                                    <div className={editItemCardInput}>
                                         <Label>{t("doctor.profile.startDate", "Start date")}</Label>
-                                        <Input
-                                            className={input}                                            type="date"
-                                            value={item.startDate}
-                                            onChange={(e) => updateItem(idx, "startDate", e.target.value)}
+                                        <DatePicker
+                                            value={isoToLocalDate(item.startDate)}
+                                            onChange={(d) => updateItem(idx, "startDate", localDateToIso(d))}
+                                            placeholder={t("doctor.profile.startDate_placeholder", "Select a date")}
                                         />
                                     </div>
-                                    <div className="space-y-1">
+
+                                    <div className={editItemCardInput}>
                                         <Label>{t("doctor.profile.endDate", "End date")}</Label>
-                                        <Input
-                                            className={input}
-                                            type="date"
-                                            value={item.endDate || ""}
-                                            onChange={(e) => updateItem(idx, "endDate", e.target.value)}
+                                        <DatePicker
+                                            value={isoToLocalDate(item.endDate || "")}
+                                            onChange={(d) => updateItem(idx, "endDate", localDateToIso(d))}
+                                            placeholder={t("doctor.profile.endDate_placeholder", "Select a date")}
+                                            disabled={!item.startDate}
+                                            fromDate={isoToLocalDate(item.startDate)}
                                         />
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
                     ))}
-                    <Button variant="outline" onClick={() => setItems([...items, { positionTitle: "", organizationName: "", startDate: "" }])} className="w-full border-dashed">
-                        <Plus className="w-4 h-4 mr-2" /> {t("add_new", "Add Experience")}
+                    <Button
+                        variant="outline"
+                        onClick={() =>
+                            setItems([
+                                ...items,
+                                { positionTitle: "", organizationName: "", startDate: "", endDate: "" },
+                            ])
+                        }
+                        className="w-full border-dashed border-(--gray-400) cursor-pointer"
+                    >
+                        <Plus className="w-4 h-4" /> {t("add_new")}
                     </Button>
                 </div>
 
                 <DialogFooter>
-                    <Button className={saveButtonStyle} onClick={handleSave} disabled={mutation.isPending}>
-                        {mutation.isPending ? t("saving", "Saving...") : t("save", "Save Changes")}
+                    <Button
+                        className={editDialogCancelButton}
+                        type="button"
+                        onClick={() => setOpen(false)}
+                        disabled={mutation.isPending}
+                    >
+                        {t("cancel")}
+                    </Button>
+                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending}>
+                        {mutation.isPending ? t("saving") : t("save")}
                     </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-    );
+    )
 }
 
 function EditCertificatesDialog({
