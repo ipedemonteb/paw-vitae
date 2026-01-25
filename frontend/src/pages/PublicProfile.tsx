@@ -426,9 +426,7 @@ function ExperienceItem({ position, organization, period, description, isLast }:
 
 
 const certificatesContent = "flex flex-col gap-2 px-6";
-const certificatesScrollWrap = "relative";
-const certificatesScrollArea = "h-68 py-6";
-const certificatesFadeBottom = "pointer-events-none absolute bottom-0 left-0 right-0 h-10 z-10 bg-linear-to-b from-transparent to-white";
+const certificatesScrollWrap = "py-6";
 
 function CertificatesCard({ certifications, isOwner, updateUrl }: {
     certifications: CertificationDTO[];
@@ -456,23 +454,18 @@ function CertificatesCard({ certifications, isOwner, updateUrl }: {
             </div>
             <div className={certificatesScrollWrap}>
                 {certifications.length > 0 ? (
-                    <>
-                        <ScrollArea className={certificatesScrollArea}>
-                            <div className={certificatesContent}>
-                                {certifications.map((cert, idx) => (
-                                    <CertificateComponent
-                                        key={idx}
-                                        certificate={cert.certificateName}
-                                        issuer={cert.issuingEntity}
-                                        date={cert.issueDate}
-                                    />
-                                ))}
-                            </div>
-                        </ScrollArea>
-                        <div className={certificatesFadeBottom} />
-                    </>
+                    <div className={certificatesContent}>
+                        {certifications.map((cert, idx) => (
+                            <CertificateComponent
+                                key={idx}
+                                certificate={cert.certificateName}
+                                issuer={cert.issuingEntity}
+                                date={cert.issueDate}
+                            />
+                        ))}
+                    </div>
                 ) : (
-                    <div className="h-68 flex items-center justify-center">
+                    <div className="py-6 flex items-center justify-center">
                         <EmptySection icon={FileBadge} text={t("doctor.profile.no_certificates")} />
                     </div>
                 )}
