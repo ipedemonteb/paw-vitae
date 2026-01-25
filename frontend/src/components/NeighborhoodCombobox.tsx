@@ -11,7 +11,7 @@ import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 type NeighborhoodComboboxProps = {
     value?: string,
-    onChange: (val?: string) => void
+    onChange: (val: string) => void
 }
 
 export default function NeighborhoodCombobox({value, onChange}: NeighborhoodComboboxProps) {
@@ -33,9 +33,9 @@ export default function NeighborhoodCombobox({value, onChange}: NeighborhoodComb
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="flex-1 min-w-0 hover:text-(--text-light) cursor-pointer font-normal w-70 justify-between"
+                    className={"flex-1 min-w-0 hover:text-(--text-light) cursor-pointer font-normal w-70 justify-between"}
                 >
-                    {neighborhood?.name}
+                    <p className={neighborhood?.name ? "" : "opacity-70"}>{neighborhood?.name ?? t("neighborhoodCombobox.placeholder")}</p>
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -49,7 +49,7 @@ export default function NeighborhoodCombobox({value, onChange}: NeighborhoodComb
                             </div>
                         ) : (
                             <>
-                                <CommandEmpty>No Neighborhoods Found</CommandEmpty>
+                                <CommandEmpty>{t("neighborhoodCombobox.empty")}</CommandEmpty>
                                 <CommandGroup>
                                     {neighborhoods?.map((c) => (
                                         <CommandItem

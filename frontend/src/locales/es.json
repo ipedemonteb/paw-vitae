@@ -667,7 +667,36 @@
     "neighborhoods": {
       "all": "Todos los Barrios",
       "placeholder": "Buscar barrios..."
+    },
+    "dialog": {
+      "edit": {
+        "title": "Editar Oficina",
+        "confirm": "Guardar Cambios",
+        "button": "Editar",
+        "toast": {
+          "success": "Oficina actualizada con éxito",
+          "error": "Ha ocurrido un error"
+        }
+      },
+      "add": {
+        "title": "Agregar Oficina",
+        "confirm": "Agregar Oficina",
+        "toast": {
+          "success": "Oficina agregada con éxito",
+          "error": "Ha ocurrido un error"
+        }
+      },
+      "placeholderName": "Oficina Doctor",
+      "nameLabel": "Nombre de Oficina",
+      "neighborhoodLabel": "Barrio",
+      "activeLabel": "Activa",
+      "specialtiesLabel": "Especialidades",
+      "cancel": "Cancel"
     }
+  },
+  "neighborhoodCombobox": {
+    "placeholder": "Seleccione un Barrio...",
+    "empty": "No se han encontrado barrios"
   },
   "availability": {
     "headerTitle": "Disponibilidad",

@@ -115,14 +115,16 @@ export type DoctorOfficeQuery = {
     status: string
 }
 
-export type UpdateDoctorOfficeForm = {
-    officeName?: string,
-    specialtyIds?: number[],
-    neighborhoodId?: number,
+export type CreateDoctorOfficeForm = {
+    officeName: string,
+    specialtyIds: number[],
+    neighborhoodId: number,
+}
+
+export type UpdateDoctorOfficeForm = Partial<CreateDoctorOfficeForm> & {
     active?: boolean,
     removed?: boolean
 }
-
 
 
 export interface AvailabilitySlotForm {
@@ -414,6 +416,13 @@ export async function updateDoctorProfileComplete(params: {
 
 export async function updateDoctorOffice(url: string, form: UpdateDoctorOfficeForm) {
     const res = await api.patch(url, form, {
+        headers: {"Content-Type": ContentTypes.OFFICE}
+    })
+    return res.data;
+}
+
+export async function createDoctorOffice(url: string, form: CreateDoctorOfficeForm) {
+    const res = await api.post(url, form, {
         headers: {"Content-Type": ContentTypes.OFFICE}
     })
     return res.data;

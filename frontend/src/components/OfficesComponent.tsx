@@ -12,6 +12,7 @@ import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import EditOfficeDialog from "@/components/EditOfficeDialog.tsx";
 import {HoverCard, HoverCardContent, HoverCardTrigger} from "@/components/ui/hover-card.tsx";
+import AddOfficeDialog from "@/components/AddOfficeDialog.tsx";
 
 const officeStatusEnum = ['all', 'active', 'inactive']
 
@@ -79,10 +80,13 @@ export default function OfficesComponent() {
             {isLoading ? (
                 <DashboardNavLoader/>
             ) : offices && offices.length > 0 ? (
-                <div className="flex flex-wrap gap-x-6 gap-y-3 justify-center w-fit px-2">
-                    {offices.map(o => (
-                        <EditOfficeDialog key={o.self} office={o}/>
-                    ))}
+                <div className="w-full relative h-full">
+                    <div className="flex relative flex-wrap gap-x-6 gap-y-3 justify-center w-fit px-2 pt-10">
+                        {offices.map(o => (
+                            <EditOfficeDialog key={o.self} office={o}/>
+                        ))}
+                    </div>
+                    <AddOfficeDialog/>
                 </div>
             ) : (
                 <DashboardNavEmptyContent title={t("offices.empty.title")} text={officeStatus === "all" ? t("offices.empty.textAll") : t("offices.empty.text")} Icon={Building} />
