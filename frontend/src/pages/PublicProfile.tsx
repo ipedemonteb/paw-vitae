@@ -126,7 +126,6 @@ const cardTitleText = "text-lg font-[500] min-w-0";
 const profileContent = "flex flex-col gap-0 items-center sm:flex-row pt-6";
 const aboutTitle = "text-lg font-[500]";
 const aboutText = "text-[var(--text-color)] text-md";
-const saveButtonStyle = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white sm:ml-auto cursor-pointer";
 
 function EmptySection({ icon: Icon, text }: { icon: React.ElementType, text: string }) {
     return (
@@ -650,6 +649,7 @@ const editItemCard = "relative border bg-muted/20 gap-0";
 const editItemCardContent = "grid gap-5 p-4 pt-10 sm:pt-4";
 const editItemCardRow = "grid sm:grid-cols-2 gap-6";
 const editItemCardInput = "space-y-2";
+const editDialogAddNew = "w-full border-dashed border-(--gray-400) cursor-pointer";
 
 function EditExperienceDialog({
                                   experiencesUrl,
@@ -743,7 +743,7 @@ function EditExperienceDialog({
                                     </div>
 
                                     <div className={editItemCardInput}>
-                                        <Label>{t("doctor.profile.organization", "Organization")}</Label>
+                                        <Label>{t("doctor.profile.organization")}</Label>
                                         <Input
                                             className={input}
                                             value={item.organizationName}
@@ -754,20 +754,20 @@ function EditExperienceDialog({
 
                                 <div className={editItemCardRow}>
                                     <div className={editItemCardInput}>
-                                        <Label>{t("doctor.profile.startDate", "Start date")}</Label>
+                                        <Label>{t("doctor.profile.startDate")}</Label>
                                         <DatePicker
                                             value={isoToLocalDate(item.startDate)}
                                             onChange={(d) => updateItem(idx, "startDate", localDateToIso(d))}
-                                            placeholder={t("doctor.profile.startDate_placeholder", "Select a date")}
+                                            placeholder={t("doctor.profile.startDate_placeholder")}
                                         />
                                     </div>
 
                                     <div className={editItemCardInput}>
-                                        <Label>{t("doctor.profile.endDate", "End date")}</Label>
+                                        <Label>{t("doctor.profile.endDate")}</Label>
                                         <DatePicker
                                             value={isoToLocalDate(item.endDate || "")}
                                             onChange={(d) => updateItem(idx, "endDate", localDateToIso(d))}
-                                            placeholder={t("doctor.profile.endDate_placeholder", "Select a date")}
+                                            placeholder={t("doctor.profile.endDate_placeholder")}
                                             disabled={!item.startDate}
                                             fromDate={isoToLocalDate(item.startDate)}
                                         />
@@ -784,7 +784,7 @@ function EditExperienceDialog({
                                 { positionTitle: "", organizationName: "", startDate: "", endDate: "" },
                             ])
                         }
-                        className="w-full border-dashed border-(--gray-400) cursor-pointer"
+                        className={editDialogAddNew}
                     >
                         <Plus className="w-4 h-4" /> {t("add_new")}
                     </Button>
@@ -835,7 +835,6 @@ function EditCertificatesDialog({
 
     const updateItem = (index: number, field: keyof CertificateForm, value: string) => {
         const newItems = [...items];
-        // @ts-ignore
         newItems[index][field] = value;
         setItems(newItems);
     };
@@ -845,13 +844,13 @@ function EditCertificatesDialog({
             onSuccess: () => {
                 setOpen(false);
                 queryClient.invalidateQueries({ queryKey: ['doctor', 'certifications', certsUrl] });
-                toast.success(t("success", "Success"), {
-                    description: t("doctor.profile.update_success", "Certificates updated successfully.")
+                toast.success(t("success"), {
+                    description: t("doctor.profile.update_success")
                 });
             },
             onError: () => {
                 toast.error(t("error", "Error"), {
-                    description: t("doctor.profile.update_error", "Error updating certificates.")
+                    description: t("doctor.profile.update_error")
                 });
             }
         });
@@ -860,48 +859,60 @@ function EditCertificatesDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
+            <DialogContent className={editDialogContent}>
                 <DialogHeader>
-                    <DialogTitle>{t("doctor.profile.edit_certificates", "Edit Certificates")}</DialogTitle>
+                    <DialogTitle>{t("doctor.profile.edit_certificates")}</DialogTitle>
                 </DialogHeader>
 
-                <div className="flex flex-col gap-4 py-4">
+                <div className={editDialogInnerContainer}>
                     {items.map((item, idx) => (
-                        <Card key={idx} className="relative border bg-muted/20">
+                        <Card key={idx} className={editItemCard}>
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="absolute top-2 right-2 h-8 w-8 text-destructive hover:bg-destructive/10"
+                                className={editItemDeleteButton}
                                 onClick={() => setItems(items.filter((_, i) => i !== idx))}
                             >
                                 <Trash2 className="w-4 h-4" />
                             </Button>
-                            <CardContent className="grid gap-3 p-4 pt-10 sm:pt-4">
-                                <div className="space-y-1">
-                                    <Label>{t("doctor.profile.certificateName","Certificate name")}</Label>
+                            <CardContent className={editItemCardContent}>
+                                <div className={editItemCardInput}>
+                                    <Label>{t("doctor.profile.certificateName")}</Label>
                                     <Input value={item.certificateName} onChange={(e) => updateItem(idx, "certificateName", e.target.value)} />
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="space-y-1">
-                                        <Label>{t("doctor.profile.issuingEntity", "Issuing entity")}</Label>
+                                <div className={editItemCardRow}>
+                                    <div className={editItemCardInput}>
+                                        <Label>{t("doctor.profile.issuingEntity")}</Label>
                                         <Input value={item.issuingEntity} onChange={(e) => updateItem(idx, "issuingEntity", e.target.value)} />
                                     </div>
-                                    <div className="space-y-1">
-                                        <Label>{t("doctor.profile.issueDate", "Issue date")}</Label>
-                                        <Input type="date" value={item.issueDate} onChange={(e) => updateItem(idx, "issueDate", e.target.value)} />
+                                    <div className={editItemCardInput}>
+                                        <Label>{t("doctor.profile.issueDate")}</Label>
+                                        <DatePicker
+                                            value={isoToLocalDate(item.issueDate)}
+                                            onChange={(d) => updateItem(idx, "issueDate", localDateToIso(d))}
+                                            placeholder={t("doctor.profile.issueDate_placeholder", "Select a date")}
+                                        />
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
                     ))}
-                    <Button variant="outline" onClick={() => setItems([...items, { certificateName: "", issuingEntity: "", issueDate: "" }])} className="w-full border-dashed">
-                        <Plus className="w-4 h-4 mr-2" /> {t("add_new", "Add Certificate")}
+                    <Button variant="outline" onClick={() => setItems([...items, { certificateName: "", issuingEntity: "", issueDate: "" }])} className={editDialogAddNew}>
+                        <Plus className="w-4 h-4" /> {t("add_new")}
                     </Button>
                 </div>
 
                 <DialogFooter>
-                    <Button className={saveButtonStyle} onClick={handleSave} disabled={mutation.isPending}>
-                        {mutation.isPending ? t("saving", "Saving...") : t("save", "Save Changes")}
+                    <Button
+                        className={editDialogCancelButton}
+                        type="button"
+                        onClick={() => setOpen(false)}
+                        disabled={mutation.isPending}
+                    >
+                        {t("cancel")}
+                    </Button>
+                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending}>
+                        {mutation.isPending ? t("saving") : t("save")}
                     </Button>
                 </DialogFooter>
             </DialogContent>
