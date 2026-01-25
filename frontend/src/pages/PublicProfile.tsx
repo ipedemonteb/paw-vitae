@@ -19,7 +19,6 @@ import BadgeComponent from "@/components/BadgeComponent.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
 import { RatingCard } from "@/components/Rating.tsx";
-import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -751,7 +750,6 @@ function EditExperienceDialog({
                                         <DatePicker
                                             value={isoToLocalDate(item.startDate)}
                                             onChange={(d) => updateItem(idx, "startDate", localDateToIso(d))}
-                                            placeholder={t("doctor.profile.startDate_placeholder")}
                                         />
                                     </div>
 
@@ -760,7 +758,6 @@ function EditExperienceDialog({
                                         <DatePicker
                                             value={isoToLocalDate(item.endDate || "")}
                                             onChange={(d) => updateItem(idx, "endDate", localDateToIso(d))}
-                                            placeholder={t("doctor.profile.endDate_placeholder")}
                                             disabled={!item.startDate}
                                             fromDate={isoToLocalDate(item.startDate)}
                                         />
@@ -883,7 +880,6 @@ function EditCertificatesDialog({
                                         <DatePicker
                                             value={isoToLocalDate(item.issueDate)}
                                             onChange={(d) => updateItem(idx, "issueDate", localDateToIso(d))}
-                                            placeholder={t("doctor.profile.issueDate_placeholder", "Select a date")}
                                         />
                                     </div>
                                 </div>

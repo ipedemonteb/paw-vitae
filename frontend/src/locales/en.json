@@ -711,5 +711,8 @@
     "saveChanges": "Save Changes",
     "success"  : "Dates correctly updated",
     "error" : "There was an error updating your unavailability dates. Please try again later"
+  },
+  "date-picker": {
+    "placeholder": "Select a Date"
   }
 }
