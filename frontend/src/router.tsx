@@ -51,11 +51,6 @@ export const router = createBrowserRouter([
                 path: "profile/:id",
                 element: <PublicProfile />
             },
-            // TODO: CHANGE
-            {
-                path: "medical-history",
-                element: <MedicalHistory />
-            },
             {
                 path: "change-password",
                 element: <ChangePassword/>
@@ -192,8 +187,13 @@ export const router = createBrowserRouter([
                             {
                                 path: "account",
                                 element: <DoctorAccount/>
-                            }
+                            },
+
                         ]
+                    },
+                    {
+                        path: "medical-history/:patientId",
+                        element: <MedicalHistory />
                     },
                     {
                         path: "doctor/dashboard/appointment-details/:id",
