@@ -558,6 +558,11 @@ function RatingsCard({ ratings }: { ratings: RatingsDTO[] }) {
     );
 }
 
+const editDialogContent = "sm:max-w-[600px] max-h-[85vh] overflow-y-auto p-8 gap-2";
+const editDialogInnerContainer = "flex flex-col gap-4 py-4";
+const editDialogRowLabel = "grid gap-2";
+const editDialogSaveButton = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white cursor-pointer";
+const editDialogCancelButton = "bg-white text-(--primary-color) border border-(--primary-color) hover:bg-(--primary-dark) hover:text-white hover:border-(--primary-dark) cursor-pointer";
 
 function EditProfileDialog({
                                doctorUrl,
@@ -583,12 +588,12 @@ function EditProfileDialog({
                 setOpen(false);
                 queryClient.invalidateQueries({ queryKey: ['doctor', 'bio', doctorUrl] });
                 toast.success(t("success", "Success"), {
-                    description: t("doctor.profile.update_success", "Profile updated successfully.")
+                    description: t("doctor.profile.update_success")
                 });
             },
             onError: () => {
                 toast.error(t("error", "Error"), {
-                    description: t("doctor.profile.update_error", "Error updating profile. Please try again.")
+                    description: t("doctor.profile.update_error")
                 });
             }
         });
@@ -597,14 +602,14 @@ function EditProfileDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className={editDialogContent}>
                 <DialogHeader>
-                    <DialogTitle>{t("doctor.profile.edit_profile", "Edit Profile")}</DialogTitle>
-                    <DialogDescription>{t("doctor.profile.edit_desc", "Update your public biography and description.")}</DialogDescription>
+                    <DialogTitle>{t("doctor.profile.edit_profile")}</DialogTitle>
+                    <DialogDescription>{t("doctor.profile.edit_desc")}</DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="description">{t("doctor.profile.card.description", "Short Description")}</Label>
+                <div className={editDialogInnerContainer}>
+                    <div className={editDialogRowLabel}>
+                        <Label htmlFor="description">{t("doctor.profile.card.description")}</Label>
                         <Input
                             id="description"
                             className={input}
@@ -612,8 +617,8 @@ function EditProfileDialog({
                             onChange={(e) => setDesc(e.target.value)}
                         />
                     </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="bio">{t("doctor.profile.card.about", "Biography")}</Label>
+                    <div className={editDialogRowLabel}>
+                        <Label htmlFor="bio">{t("doctor.profile.card.about")}</Label>
                         <Textarea
                             id="bio"
                             className="min-h-[150px]"
@@ -623,8 +628,16 @@ function EditProfileDialog({
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button className={saveButtonStyle} onClick={handleSave} disabled={mutation.isPending}>
-                        {mutation.isPending ? t("saving", "Saving...") : t("save", "Save Changes")}
+                    <Button
+                        className={editDialogCancelButton}
+                        type="button"
+                        onClick={() => setOpen(false)}
+                        disabled={mutation.isPending}
+                    >
+                        {t("cancel")}
+                    </Button>
+                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending}>
+                        {mutation.isPending ? t("saving") : t("save")}
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -632,15 +645,11 @@ function EditProfileDialog({
     );
 }
 
-const editDialogContent = "sm:max-w-[600px] max-h-[85vh] overflow-y-auto p-8 gap-2";
-const editDialogInnerContainer = "flex flex-col gap-4 py-4";
 const editItemDeleteButton = "absolute top-2 right-2 h-8 w-8 text-(--danger) hover:text-white hover:bg-(--danger) cursor-pointer";
 const editItemCard = "relative border bg-muted/20 gap-0";
 const editItemCardContent = "grid gap-5 p-4 pt-10 sm:pt-4";
 const editItemCardRow = "grid sm:grid-cols-2 gap-6";
 const editItemCardInput = "space-y-2";
-const editDialogSaveButton = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white cursor-pointer";
-const editDialogCancelButton = "bg-white text-(--primary-color) border border-(--primary-color) hover:bg-(--primary-dark) hover:text-white hover:border-(--primary-dark) cursor-pointer"
 
 function EditExperienceDialog({
                                   experiencesUrl,
