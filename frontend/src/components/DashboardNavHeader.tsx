@@ -7,7 +7,7 @@ type AppointmentHeaderProps = {
 
 export default function DashboardNavHeader({title, children}: AppointmentHeaderProps) {
     return (
-        <div className="flex flex-col sm:flex-row mb-2 relative font-semibold text-xl w-full border-b items-center py-3 sm:justify-between">
+        <div className="flex flex-col sm:flex-row relative font-semibold text-xl w-full border-b items-center py-3 sm:justify-between">
             <span>
                 {title}
             </span>

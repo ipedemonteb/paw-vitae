@@ -56,7 +56,7 @@ export default function OfficeCard({office, onClick}: OfficeCardProps) {
                 <div className="absolute flex   justify-center transition-all opacity-0 hover:opacity-100 items-center top-0 left-0 w-full h-full bg-transparent hover:bg-[rgba(var(--primary-light-rgb),0.2)]">
                     <div className="flex flex-col  items-center justify-center gap-1 text-[1.1rem] font-bold rounded-md p-1">
                         <SquarePen className="size-10 text-(--primary-dark)" />
-                        <p className="text-(--primary-dark) font-semibold text-xl ">Edit</p>
+                        <p className="text-(--primary-dark) font-semibold text-xl ">{t("offices.dialog.edit.button")}</p>
                     </div>
                 </div>
             </div>

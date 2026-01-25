@@ -23,12 +23,13 @@ import {
     putDoctorImage,
     updateDoctorProfileComplete, type UpdateDoctorOfficeForm, updateDoctorOffice,
     type DoctorAvailabilityFormDTO, putDoctorOfficeAvailability,
-    type DoctorUnavailabilityFormDTO, putDoctorUnavailability
+    type DoctorUnavailabilityFormDTO, putDoctorUnavailability, createDoctorOffice, type CreateDoctorOfficeForm
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
 import type {AxiosError} from "axios";
 import type {OfficeDTO} from "@/data/office.ts";
+import {buildDoctorOfficesUrl} from "@/utils/IdUtils.ts";
 
 export function useDoctors(query: DoctorsQuery) {
     const stableQueryKey = useMemo(() => JSON.stringify(query ?? {}), [query]);
@@ -94,7 +95,7 @@ export function useDoctorSpecialties(url?: string | null) {
 
 export function useDoctorOfficeSpecialties(url?: string) {
     return useQuery({
-        queryKey: ['doctor', 'office', 'specialties', url],
+        queryKey: ['doctor', 'offices', 'specialties', url],
         queryFn: () => getDoctorOfficeSpecialties(url!),
         enabled: !!url
     })
@@ -143,7 +144,7 @@ export function useDoctorOffices(url?: string, query?: DoctorOfficeQuery) {
 
 export function useDoctorOffice(url?: string | null) {
     return useQuery({
-        queryKey: ['doctor', 'office', url],
+        queryKey: ['doctor', 'offices', url],
         queryFn: () => getDoctorOffice(url!),
         enabled: !!url,
     })
@@ -152,7 +153,7 @@ export function useDoctorOffice(url?: string | null) {
 export function useDoctorOfficesSpecialties(offices?: OfficeDTO[] | null) {
     const queries = useQueries({
         queries: (offices ?? []).map((office) => ({
-            queryKey: ['doctor', 'office', 'specialties', office.officeSpecialties ?? []],
+            queryKey: ['doctor', 'offices', 'specialties', office.officeSpecialties ?? []],
             queryFn: () => getDoctorOfficeSpecialties(office.officeSpecialties),
             enabled: !!office.officeSpecialties,
         })),
@@ -169,7 +170,7 @@ export function useDoctorOfficesSpecialties(offices?: OfficeDTO[] | null) {
 export function useDoctorOfficeAvailability(offices?: OfficeDTO[] | null) {
     const queries = useQueries({
         queries: (offices ?? []).map((office) => ({
-            queryKey: ['doctor', 'office', 'availability', office.officeAvailability ?? []],
+            queryKey: ['doctor', 'offices', 'availability', office.officeAvailability ?? []],
             queryFn: () => getDoctorOfficeAvailability(office.officeAvailability),
             enabled: !!office.officeAvailability,
         })),
@@ -234,7 +235,7 @@ export function usePutDoctorOfficeAvailability(url: string) {
     return useMutation<any, AxiosError<any>, DoctorAvailabilityFormDTO>({
         mutationFn: (data: DoctorAvailabilityFormDTO) => putDoctorOfficeAvailability(url, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['doctor', 'office', 'availability'] });
+            queryClient.invalidateQueries({ queryKey: ['doctor', 'offices', 'availability'] });
         }
     });
 }
@@ -278,7 +279,18 @@ export function useUpdateOfficeMutation(url: string) {
     return useMutation({
         mutationFn: (form: UpdateDoctorOfficeForm) => updateDoctorOffice(url, form),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['office']})
+            queryClient.invalidateQueries({queryKey: ['offices']})
+        }
+    })
+}
+
+export function useCreateDoctorOfficeMutation(id: string) {
+    const queryClient = useQueryClient()
+    const url = buildDoctorOfficesUrl(id);
+    return useMutation({
+        mutationFn: (form: CreateDoctorOfficeForm) => createDoctorOffice(url, form),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['doctor', 'offices', url]})
         }
     })
 }

@@ -669,7 +669,36 @@
     "neighborhoods": {
       "all": "All Neighborhoods",
       "placeholder": "Search neighborhoods..."
+    },
+    "dialog": {
+      "edit": {
+        "title": "Edit Office",
+        "confirm": "Save Changes",
+        "button": "Edit",
+        "toast": {
+          "success": "Office updated successfully",
+          "error": "An unexpected error occurred"
+        }
+      },
+      "add": {
+        "title": "Add Office",
+        "confirm": "Add Office",
+        "toast": {
+          "success": "Office added successfully",
+          "error": "An unexpected error occurred"
+        }
+      },
+      "placeholderName": "Example Office",
+      "nameLabel": "Office Name",
+      "neighborhoodLabel": "Neighborhood",
+      "activeLabel": "Active",
+      "specialtiesLabel": "Specialties",
+      "cancel": "Cancel"
     }
+  },
+  "neighborhoodCombobox": {
+    "placeholder": "Select a Neighborhood...",
+    "empty": "No Neighborhoods Found"
   },
   "availability" : {
     "headerTitle": "Availability",
