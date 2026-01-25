@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {useTranslation} from "react-i18next";
 
 function getBrowserLocale() {
     if (typeof navigator === "undefined") return "en-US"
@@ -39,6 +40,7 @@ export function DatePicker({
     fromDate?: Date
     toDate?: Date
 }) {
+    const { t } = useTranslation();
     const [open, setOpen] = React.useState(false)
     const [month, setMonth] = React.useState<Date | undefined>(value ?? new Date())
 
@@ -77,7 +79,7 @@ export function DatePicker({
                             value ? "text-[var(--text-color)]" : "text-[var(--text-light)]"
                         )}
                     >
-                        {value ? label : placeholder}
+                        {value ? label : t("date-picker.placeholder")}
                     </span>
                     <CalendarIcon className="h-4 w-4 text-[var(--text-light)]" />
                 </Button>

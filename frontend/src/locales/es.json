@@ -567,7 +567,7 @@
       "certificates": "Certificados",
       "ratings": "Calificaciones",
       "edit_profile": "Editar Perfil",
-      "edit_desc": "Actual  iza tu biografía y descripción pública.",
+      "edit_desc": "Actualiza tu biografía y descripción pública.",
       "edit_experience": "Editar Experiencia",
       "edit_certificates": "Editar Certificados",
       "update_success": "Perfil actualizado exitosamente.",
@@ -709,5 +709,8 @@
     "saveChanges": "Guardar Cambios",
     "success"  : "Fechas actualizadas con exito",
     "error" : "Hubo un error actualizando sus fechas no disponibles. Pruebe de nuevo mas tarde."
+  },
+  "date-picker": {
+    "placeholder": "Seleccione una fecha"
   }
 }
