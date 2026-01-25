@@ -578,8 +578,8 @@
       "certificateName": "Certificate Name",
       "issuingEntity": "Issuing Entity",
       "issueDate": "Issue Date",
-      "endDate": "End date",
-      "startDate": "Start date",
+      "endDate": "End Date",
+      "startDate": "Start Date",
       "position": "Position",
       "organization": "Organization",
       "card": {
