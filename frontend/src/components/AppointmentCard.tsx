@@ -37,8 +37,6 @@ const statusClassnameDictionary = {
     cancelado: cancelledStatusClassname,
 };
 
-const cardContainer =
-    "w-full border border-solid rounded-md overflow-hidden shadow flex flex-col sm:flex-row sm:items-stretch";
 const leftSection =
     "bg-gray-100 w-full max-w-none min-w-0 space-y-3 flex flex-col justify-center items-center " +
     "py-6 sm:py-8 sm:w-1/6 sm:max-w-44 sm:min-w-36 self-stretch " +
@@ -96,6 +94,8 @@ const dialogConfirm =
 type AppointmentCardProps = {
     appointment: AppointmentDTO;
     isUpcoming?: boolean;
+    mounted: boolean;
+    animationDelay: number
 };
 
 function transformStatus(status: string) {
@@ -109,10 +109,14 @@ function transformStatus(status: string) {
     }
 }
 
-export default function AppointmentCard({ appointment, isUpcoming = false }: AppointmentCardProps) {
+export default function AppointmentCard({ appointment, isUpcoming = false, mounted, animationDelay }: AppointmentCardProps) {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const auth = useAuth();
+
+    const cardContainer =
+        `w-full border border-solid rounded-md overflow-hidden shadow flex flex-col sm:flex-row sm:items-stretch transition-all ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`;
+
 
     const isDoctor = auth.role === "ROLE_DOCTOR";
     const doctorId = userIdFromSelf(appointment.doctor);
@@ -151,7 +155,7 @@ export default function AppointmentCard({ appointment, isUpcoming = false }: App
     const [cancelOpen, setCancelOpen] = useState(false);
 
     return (
-        <div className={cardContainer}>
+        <div style={{ transitionDelay: `${animationDelay * 80}ms` }} className={cardContainer}>
             <div className={leftSection}>
                 <div className={dateBlock}>
                     <span className={weekdayText}>{weekday}</span>
