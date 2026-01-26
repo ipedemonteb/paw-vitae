@@ -25,6 +25,12 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
     const {data: officeSpecialties, isLoading} = useDoctorOfficeSpecialties(office.officeSpecialties)
     const {data: currentSpecialties, isLoading: isLoadingCurrentSpecialties} = useSpecialtiesByUrl(officeSpecialties?.map(s => s.specialty))
     const [open, setOpen] = useState(false)
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => {
+        setMounted(false);
+        const id = requestAnimationFrame(() => setMounted(true));
+        return () => cancelAnimationFrame(id);
+    }, []);
     const {t} = useTranslation()
 
     const form = useForm<EditOfficeForm>({
@@ -91,7 +97,7 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
             setOpen(open)
         }}>
             <DialogTrigger asChild >
-                <OfficeCard animateInDelay={animateInDelay} office={office}/>
+                <OfficeCard mounted={mounted} animateInDelay={animateInDelay} office={office}/>
             </DialogTrigger>
             <OfficeDialogComponent confirm={t("offices.dialog.edit.confirm")} title={t("offices.dialog.edit.title")} onSubmit={onSubmit} form={form} isLoading={isLoading || isLoadingCurrentSpecialties}/>
         </Dialog>
