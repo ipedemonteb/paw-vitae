@@ -1,256 +1,414 @@
+import { useMemo, useState } from "react";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button.tsx";
-import { Form } from "../components/ui/form.tsx";
-import {CalendarClock, Plus, Loader2, AlertCircle, RefreshCw, AlertTriangle} from "lucide-react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {
+    CalendarClock,
+    Plus,
+    AlertTriangle,
+    Trash2,
+    Pencil,
+    X,
+    Save,
+} from "lucide-react";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
-import { useDoctorOfficeAvailability, useDoctorOffices, usePutDoctorOfficeAvailability } from "@/hooks/useDoctors.ts";
-import { useAuth } from "@/hooks/useAuth.ts";
-import { useEffect, useState } from "react";
-import { type DoctorAvailabilityFormDTO } from "@/data/doctors.ts";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { type AvailabilityFormValues, formSchema, DB_DAY_TO_FORM, FORM_DAY_TO_DB, extractIdFromUrl } from "../lib/availability-schema.ts";
-import { AvailabilityItem } from "./AvailabilityItem";
-import {Spinner} from "@/components/ui/spinner.tsx";
+import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
+import { Card } from "@/components/ui/card.tsx";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
+
+const ghostFilter =
+    "h-0 sm:h-9";
+const editButton =
+    "mt-2 sm:mt-0 bg-transparent text-(--primary-color) hover:bg-(--primary-bg) cursor-pointer";
+const availabilityContainer =
+    "flex flex-col";
+const warningContainer =
+    "flex items-start gap-3 mb-6 rounded-lg bg-(--primary-bg) p-4 border border-(--primary-color) animate-in fade-in slide-in-from-top-2";
+const warningIcon =
+    "h-5 w-5 text-(--primary-dark)";
+const warningRightContent =
+    "flex flex-col flex-1 leading-tight";
+const warningTitle =
+    "text-sm font-medium text-(--primary-dark)";
+const warningText =
+    "mt-1 text-sm text-(--primary-dark)";
+const addAvailabilityButton =
+    "w-full max-w-3xs text-white bg-(--primary-color) hover:bg-(--primary-dark) cursor-pointer";
+const availabilityContentContainer =
+    "flex flex-col gap-6";
+const availabilityEmptyContentContainer =
+    "flex flex-col items-center gap-6";
+const availabilityItems =
+    "flex flex-col items-center gap-4";
+const newAvailabilityItem =
+    "w-3xs flex flex-row justify-center items-center gap-2 p-4 bg-(--gray-100) text-(--gray-600) border border-(--gray-400) border-dashed rounded-xl hover:bg-(--gray-200) hover:border-(--gray-500) cursor-pointer";
+const availabilityButtonsContainer =
+    "flex justify-end gap-2";
+const cancelButton =
+    "cursor-pointer border border-(--primary-color) text-(--primary-color) hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark)";
+const saveButton =
+    "bg-(--primary-color) text-white hover:bg-(--primary-dark) cursor-pointer";
+
+type AvailabilitySlot = {
+    id: number;
+    office: string;
+    day: string;
+    start: string;
+    end: string;
+};
+
+const initialOffices: AvailabilitySlot[] = [
+    { id: 1, office: "Office 1", day: "Tuesday", start: "10:00", end: "11:00" },
+    { id: 2, office: "Office 2", day: "Wednesday", start: "12:00", end: "13:00" },
+    { id: 3, office: "Office 1", day: "Tuesday", start: "13:00", end: "18:00" },
+];
+
+const officeOptions = ["Office 1", "Office 2", "Office 3"];
+const dayOptions = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+];
+const timeOptions = [
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+];
+
+function toMinutes(hhmm: string) {
+    const [h, m] = hhmm.split(":").map((x) => Number(x));
+    if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
+    return h * 60 + m;
+}
+
+function computeOverlapIds(slots: AvailabilitySlot[]) {
+    const overlap = new Set<number>();
+
+    for (let i = 0; i < slots.length; i++) {
+        for (let j = i + 1; j < slots.length; j++) {
+            const a = slots[i];
+            const b = slots[j];
+
+            if (!a.office || !a.day || !a.start || !a.end) continue;
+            if (!b.office || !b.day || !b.start || !b.end) continue;
+
+            if (a.office !== b.office) continue;
+            if (a.day !== b.day) continue;
+
+            const aStart = toMinutes(a.start);
+            const aEnd = toMinutes(a.end);
+            const bStart = toMinutes(b.start);
+            const bEnd = toMinutes(b.end);
+
+            if (aStart === null || aEnd === null || bStart === null || bEnd === null)
+                continue;
+
+            const overlaps = aStart < bEnd && bStart < aEnd;
+
+            if (overlaps) {
+                overlap.add(a.id);
+                overlap.add(b.id);
+            }
+        }
+    }
+
+    return overlap;
+}
 
 export default function AvailabilityComponent() {
     const { t } = useTranslation();
-    const auth = useAuth();
-    const [isDataReady, setIsDataReady] = useState(false);
-    const queryClient = useQueryClient();
 
-    const {
-        data: offices,
-        isLoading: loadingOffices,
-        isError: isErrorOffices,
-        error: errorOffices
-    } = useDoctorOffices(`/doctors/${auth.userId}/offices`);
+    const isLoading = false;
+    const [isEditing, setIsEditing] = useState(false);
+    const [isSaving] = useState(false);
 
-    const {
-        data: availabilityRaw,
-        isLoading: loadingAvailability,
-        isError: isErrorAvailability
-    } = useDoctorOfficeAvailability(offices);
+    const initialSnapshot = useMemo<AvailabilitySlot[]>(
+        () => initialOffices.map((s) => ({ ...s })),
+        []
+    );
 
-    const { mutateAsync: updateAvailability, isPending: isSaving } = usePutDoctorOfficeAvailability(`/doctors/${auth.userId}/availability`);
+    const [slots, setSlots] = useState<AvailabilitySlot[]>(initialSnapshot);
+    const isAvailability = slots.length > 0;
 
-    const isLoading = loadingOffices || loadingAvailability;
-    const isError = isErrorOffices || isErrorAvailability;
+    const overlapIds = useMemo(() => computeOverlapIds(slots), [slots]);
 
-    const dataSignature = JSON.stringify({ offices, availabilityRaw });
+    const handleEdit = () => {
+        setIsEditing(true);
+    };
 
-    const form = useForm<AvailabilityFormValues>({
-        resolver: zodResolver(formSchema),
-        defaultValues: { schedules: [] },
-    });
+    const handleCancel = () => {
+        setSlots(initialSnapshot.map((s) => ({ ...s })));
+        setIsEditing(false);
+    };
 
-    const { fields, append, remove } = useFieldArray({
-        control: form.control,
-        name: "schedules",
-    });
+    const handleSave = () => {};
 
-    useEffect(() => {
-        if (!isLoading && !isError && offices && availabilityRaw) {
-            let databaseSchedules = availabilityRaw.flatMap((officeSlots, index) => {
-                const currentOffice = offices[index];
-                if (!currentOffice) return [];
+    const handleAdd = () => {
+        const newId = Date.now();
+        setSlots((prev) => [
+            ...prev,
+            { id: newId, office: "", day: "", start: "", end: "" },
+        ]);
+    };
 
-                const officeIdReal = extractIdFromUrl(currentOffice.self);
+    const handleDelete = (id: number) => {
+        setSlots((prev) => prev.filter((s) => s.id !== id));
+    };
 
-                return officeSlots.map(slot => ({
-                    officeId: officeIdReal,
-                    dayOfWeek: DB_DAY_TO_FORM[slot.dayOfWeek],
-                    startTime: slot.startTime.slice(0, 5),
-                    endTime: slot.endTime.slice(0, 5)
-                }));
-            });
-
-            databaseSchedules.sort((a, b) => {
-                const officeDiff = Number(a.officeId) - Number(b.officeId);
-                if (officeDiff !== 0) return officeDiff;
-
-                const dayValA = FORM_DAY_TO_DB[a.dayOfWeek];
-                const dayValB = FORM_DAY_TO_DB[b.dayOfWeek];
-
-                const sortDayA = dayValA === 0 ? 7 : dayValA;
-                const sortDayB = dayValB === 0 ? 7 : dayValB;
-
-                if (sortDayA !== sortDayB) return sortDayA - sortDayB;
-
-                return a.startTime.localeCompare(b.startTime);
-            });
-
-            if (!form.formState.isDirty) {
-                const currentValues = JSON.stringify(form.getValues().schedules);
-                const newValues = JSON.stringify(databaseSchedules);
-                if (currentValues !== newValues) {
-                    form.reset({ schedules: databaseSchedules });
-                }
-            }
-            setIsDataReady(true);
-        }
-    }, [isLoading, isError, dataSignature, offices, availabilityRaw, form]);
-
-    async function onSubmit(data: AvailabilityFormValues) {
-        if (!offices) return;
-
-        try {
-            const payload: DoctorAvailabilityFormDTO = {
-                doctorOfficeAvailabilities: data.schedules.map(slot => ({
-                    officeId: Number(slot.officeId),
-                    dayOfWeek: FORM_DAY_TO_DB[slot.dayOfWeek],
-                    startTime: `${slot.startTime}:00`,
-                    endTime: `${slot.endTime}:00`
-                }))
-            };
-
-            await updateAvailability(payload);
-
-            form.reset(data);
-
-            toast.success(t("success", "Success"), {
-                description: t("doctor.profile.update_success", "Availability updated successfully.")
-            });
-
-        } catch (error) {
-            console.error("Error guardando", error);
-            toast.error(t("Error", "Error"), {
-                description: t("doctor.profile.update_error", "Failed to update availability.")
-            });
-        }
-    }
-
-    if (isError) {
-        return (
-            <DashboardNavContainer>
-                <DashboardNavHeader title={t("availability.headerTitle")}  />
-                <div className="flex flex-col items-center justify-center h-[50vh] text-center p-6">
-                    <div className="bg-red-50 p-4 rounded-full mb-4">
-                        <AlertCircle className="h-10 w-10 text-red-500" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {t("common.error_loading", "Error loading availability")}
-                    </h3>
-                    <p className="text-gray-500 max-w-sm mb-6">
-                        {errorOffices?.message || t("common.error_generic_message", "There was a problem loading your office data. Please check your connection and try again.")}
-                    </p>
-                    <Button
-                        variant="outline"
-                        onClick={() => {
-                            setIsDataReady(false);
-                            queryClient.invalidateQueries({ queryKey: ['doctor'] });
-                        }}
-                    >
-                        <RefreshCw className="mr-2 h-4 w-4" />
-                        {t("common.retry", "Retry")}
-                    </Button>
-                </div>
-            </DashboardNavContainer>
+    const handleUpdate = (id: number, patch: Partial<AvailabilitySlot>) => {
+        setSlots((prev) =>
+            prev.map((s) => (s.id === id ? { ...s, ...patch } : s))
         );
-    }
-
-    if (isLoading || !isDataReady) {
-        return (
-            <DashboardNavContainer>
-                <DashboardNavHeader title={t("availability.headerTitle")} />
-                <div className="flex flex-col items-center justify-center h-[50vh] text-(--gray-500)">
-                    <Spinner className="h-10 w-10 mb-4" />
-                    <p>{t("Loading")}</p>
-                </div>
-            </DashboardNavContainer>
-        );
-    }
+    };
 
     return (
         <DashboardNavContainer>
-            <DashboardNavHeader title={t("availability.headerTitle")} />
-            <div className="w-full max-w-5xl mx-auto">
-                <div className="mb-6 rounded-lg bg-amber-50 p-4 border border-amber-200 shadow-sm animate-in fade-in slide-in-from-top-2">
-                    <div className="flex items-start gap-3">
-                        <div className="shrink-0">
-                            <AlertTriangle className="h-5 w-5 text-amber-600" aria-hidden="true" />
-                        </div>
-                        <div className="flex-1 md:flex md:justify-between">
-                            <div>
-                                <h3 className="text-sm font-medium text-amber-800">
-                                    {t("availability.warning_title")}
-                                </h3>
-                                <div className="mt-1 text-sm text-amber-700">
-                                    <p>
-                                        {t("availability.warning_text")}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {fields.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center p-8 animate-in fade-in-50">
-                        <DashboardNavEmptyContent
-                            title={t("availability.emptyContent")}
-                            text={t("availability.emptyContentText")}
-                            Icon={CalendarClock}
-                        />
-                        <Button
-                            size="lg"
-                            className="mt-6 w-full max-w-sm shadow-md text-white bg-(--primary-color) hover:bg-(--primary-dark)"
-                            onClick={() => {
-                                const firstOfficeId = offices && offices.length > 0 ? extractIdFromUrl(offices[0].self) : "";
-                                append({ officeId: firstOfficeId, dayOfWeek: "MONDAY", startTime: "09:00", endTime: "17:00" });
-                            }}
-                        >
-                            <Plus className="mr-2 h-5 w-5" />
-                            {t("availability.addSchedule")}
-                        </Button>
-                    </div>
+            <DashboardNavHeader title={t("availability.headerTitle")}>
+                {!isEditing ? (
+                    <Button className={editButton} onClick={handleEdit}>
+                        <Pencil className="h-5 w-5" />
+                        Edit
+                    </Button>
                 ) : (
-                    <div className="p-6">
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                <div className="space-y-4">
-                                    {fields.map((field, index) => (
-                                        <AvailabilityItem
-                                            key={field.id}
-                                            index={index}
-                                            remove={remove}
-                                            offices={offices}
-                                            control={form.control}
-                                        />
-                                    ))}
-                                </div>
-
-                                <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t items-center justify-between">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        className="border-dashed text-gray-500 hover:text-primary hover:border-primary"
-                                        onClick={() => {
-                                            const firstOfficeId = offices && offices.length > 0 ? extractIdFromUrl(offices[0].self) : "";
-                                            append({ officeId: firstOfficeId, dayOfWeek: "MONDAY", startTime: "09:00", endTime: "17:00" });
-                                        }}
-                                    >
-                                        <Plus className="mr-2 h-4 w-4" />
-                                        {t("availability.addSchedule")}
-                                    </Button>
-
-                                    <Button
-                                        type="submit"
-                                        disabled={isSaving}
-                                        className="bg-(--primary-color) hover:bg-(--primary-dark) text-white font-medium shadow-sm px-8"
-                                    >
-                                        {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        {t("availability.save")}
-                                    </Button>
-                                </div>
-                            </form>
-                        </Form>
-                    </div>
+                    <div className={ghostFilter} />
                 )}
-            </div>
+            </DashboardNavHeader>
+
+            {isLoading ? (
+                <DashboardNavLoader />
+            ) : (
+                <div className={availabilityContainer}>
+                    <div className={warningContainer}>
+                        <AlertTriangle className={warningIcon} aria-hidden="true" />
+                        <div className={warningRightContent}>
+                            <h3 className={warningTitle}>{t("availability.warning_title")}</h3>
+                            <p className={warningText}>{t("availability.warning_text")}</p>
+                        </div>
+                    </div>
+
+                    {!isAvailability ? (
+                        <div className={availabilityEmptyContentContainer}>
+                            <DashboardNavEmptyContent
+                                title={t("availability.emptyContent")}
+                                text={t("availability.emptyContentText")}
+                                Icon={CalendarClock}
+                            />
+                            {isEditing ? (
+                                <Button className={addAvailabilityButton} onClick={handleAdd}>
+                                    <Plus className="h-5 w-5" />
+                                    {t("availability.addSchedule")}
+                                </Button>
+                            ) : null}
+                        </div>
+                    ) : (
+                        <div className={availabilityContentContainer}>
+                            <div className={availabilityItems}>
+                                {slots.map((slot) => (
+                                    <AvailabilityItem
+                                        key={slot.id}
+                                        slot={slot}
+                                        isEditing={isEditing}
+                                        hasOverlap={overlapIds.has(slot.id)}
+                                        onDelete={() => handleDelete(slot.id)}
+                                        onChange={(patch) => handleUpdate(slot.id, patch)}
+                                    />
+                                ))}
+
+                                {isEditing ? (
+                                    <Button className={newAvailabilityItem} onClick={handleAdd}>
+                                        <Plus className="h-5 w-5" />
+                                        <p>Add Availability</p>
+                                    </Button>
+                                ) : null}
+                            </div>
+
+                            {isEditing ? (
+                                <div className={availabilityButtonsContainer}>
+                                    <Button
+                                        variant="outline"
+                                        className={cancelButton}
+                                        onClick={handleCancel}
+                                    >
+                                        <X className="w-4 h-4" />
+                                        {t("cancel")}
+                                    </Button>
+                                    <Button
+                                        className={saveButton}
+                                        disabled={isSaving}
+                                        onClick={handleSave}
+                                    >
+                                        {isSaving ? (
+                                            <>
+                                                <Spinner className="w-4 h-4 mr-2" />
+                                                {t("saving")}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Save className="w-4 h-4" />
+                                                {t("save")}
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            ) : <div/>}
+                        </div>
+                    )}
+                </div>
+            )}
         </DashboardNavContainer>
+    );
+}
+
+const availabilityItemCard =
+    "w-full p-6";
+const availabilityItemOverlap =
+    "bg-(--danger-lighter) border border-(--danger)";
+const slotsContainer =
+    "flex flex-col md:items-center gap-4 md:flex-row md:flex-nowrap";
+const fieldBlock =
+    "flex flex-col gap-2 min-w-0 md:w-56 md:flex-1";
+const fieldLabel =
+    "text-sm font-medium text-(--text-color)";
+const selectFixed =
+    "w-full";
+const deleteItemButton =
+    "text-(--danger) hover:text-white hover:bg-(--danger-dark) rounded-full cursor-pointer";
+const overlapText =
+    "text-sm text-(--danger) font-medium";
+
+function AvailabilityItem({
+                              slot,
+                              isEditing,
+                              hasOverlap,
+                              onDelete,
+                              onChange,
+                          }: {
+    slot: AvailabilitySlot;
+    isEditing: boolean;
+    hasOverlap: boolean;
+    onDelete: () => void;
+    onChange: (patch: Partial<AvailabilitySlot>) => void;
+}) {
+    return (
+        <Card
+            className={`${availabilityItemCard} ${
+                hasOverlap ? availabilityItemOverlap : ""
+            }`}
+        >
+            <div className={slotsContainer}>
+                <div className={fieldBlock}>
+                    <h3 className={fieldLabel}>Office</h3>
+                    <Select
+                        value={slot.office || undefined}
+                        onValueChange={(v) => onChange({ office: v })}
+                        disabled={!isEditing}
+                    >
+                        <SelectTrigger className={selectFixed}>
+                            <SelectValue placeholder="Select Office" />
+                        </SelectTrigger>
+                        <SelectContent position="popper">
+                            {officeOptions.map((o) => (
+                                <SelectItem key={o} value={o}>
+                                    {o}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className={fieldBlock}>
+                    <h3 className={fieldLabel}>Day of Week</h3>
+                    <Select
+                        value={slot.day || undefined}
+                        onValueChange={(v) => onChange({ day: v })}
+                        disabled={!isEditing}
+                    >
+                        <SelectTrigger className={selectFixed}>
+                            <SelectValue placeholder="Select Day" />
+                        </SelectTrigger>
+                        <SelectContent position="popper">
+                            {dayOptions.map((d) => (
+                                <SelectItem key={d} value={d}>
+                                    {d}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className={fieldBlock}>
+                    <h3 className={fieldLabel}>Start Time</h3>
+                    <Select
+                        value={slot.start || undefined}
+                        onValueChange={(v) => onChange({ start: v })}
+                        disabled={!isEditing}
+                    >
+                        <SelectTrigger className={selectFixed}>
+                            <SelectValue placeholder="Select Time" />
+                        </SelectTrigger>
+                        <SelectContent position="popper">
+                            {timeOptions.map((t) => (
+                                <SelectItem key={t} value={t}>
+                                    {t}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className={fieldBlock}>
+                    <h3 className={fieldLabel}>End Time</h3>
+                    <Select
+                        value={slot.end || undefined}
+                        onValueChange={(v) => onChange({ end: v })}
+                        disabled={!isEditing}
+                    >
+                        <SelectTrigger className={selectFixed}>
+                            <SelectValue placeholder="Select Time" />
+                        </SelectTrigger>
+                        <SelectContent position="popper">
+                            {timeOptions.map((t) => (
+                                <SelectItem key={t} value={t}>
+                                    {t}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {isEditing ? (
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        className={deleteItemButton}
+                        onClick={onDelete}
+                    >
+                        <Trash2 className="h-5 w-5" />
+                    </Button>
+                ) : null}
+            </div>
+
+            {hasOverlap ? (
+                <p className={overlapText}>This time slot overlaps with an existing slot</p>
+            ) : null}
+        </Card>
     );
 }
