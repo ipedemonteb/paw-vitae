@@ -2,12 +2,12 @@ import React from "react";
 
 type AppointmentHeaderProps = {
     title: string | React.ReactNode;
-    children: React.ReactNode
+    children?: React.ReactNode
 }
 
 export default function DashboardNavHeader({title, children}: AppointmentHeaderProps) {
     return (
-        <div className="flex flex-col sm:flex-row relative font-semibold text-xl w-full border-b items-center py-3 sm:justify-between">
+        <div className="flex flex-col sm:flex-row relative font-semibold text-xl w-full border-b items-center py-3 sm:justify-between min-h-15">
             <span>
                 {title}
             </span>

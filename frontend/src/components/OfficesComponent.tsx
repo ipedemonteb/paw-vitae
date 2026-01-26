@@ -69,18 +69,16 @@ export default function OfficesComponent() {
                             ))}
                         </SelectContent>
                     </Select>
+                    <AddOfficeDialog/>
                 </div>
             </DashboardNavHeader>
             {isLoading ? (
                 <DashboardNavLoader/>
             ) : offices && offices.length > 0 ? (
-                <div className="w-full relative h-full">
-                    <div className="flex relative flex-wrap gap-x-6 gap-y-3 justify-center w-fit px-2 pt-10">
-                        {offices.map(o => (
-                            <EditOfficeDialog key={o.self} office={o}/>
-                        ))}
-                    </div>
-                    <AddOfficeDialog/>
+                <div className="flex relative flex-wrap gap-x-6 gap-y-3 justify-center w-fit px-2 pt-6">
+                    {offices.map((o, i) => (
+                        <EditOfficeDialog key={o.self} office={o} animateInDelay={i}/>
+                    ))}
                 </div>
             ) : (
                 <DashboardNavEmptyContent title={t("offices.empty.title")} text={officeStatus === "all" ? t("offices.empty.textAll") : t("offices.empty.text")} Icon={Building} />

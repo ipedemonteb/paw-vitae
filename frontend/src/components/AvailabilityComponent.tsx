@@ -127,7 +127,7 @@ export default function AvailabilityComponent() {
     if (isError) {
         return (
             <DashboardNavContainer>
-                <DashboardNavHeader title={t("availability.headerTitle")} children={undefined} />
+                <DashboardNavHeader title={t("availability.headerTitle")}  />
                 <div className="flex flex-col items-center justify-center h-[50vh] text-center p-6">
                     <div className="bg-red-50 p-4 rounded-full mb-4">
                         <AlertCircle className="h-10 w-10 text-red-500" />
@@ -156,7 +156,7 @@ export default function AvailabilityComponent() {
     if (isLoading || !isDataReady) {
         return (
             <DashboardNavContainer>
-                <DashboardNavHeader title={t("availability.headerTitle")} children={undefined}/>
+                <DashboardNavHeader title={t("availability.headerTitle")} />
                 <div className="flex flex-col items-center justify-center h-[50vh] text-(--gray-500)">
                     <Spinner className="h-10 w-10 mb-4" />
                     <p>{t("Loading")}</p>
@@ -167,7 +167,7 @@ export default function AvailabilityComponent() {
 
     return (
         <DashboardNavContainer>
-            <DashboardNavHeader title={t("availability.headerTitle")} children={undefined}/>
+            <DashboardNavHeader title={t("availability.headerTitle")} />
             <div className="w-full max-w-5xl mx-auto">
                 <div className="mb-6 rounded-lg bg-amber-50 p-4 border border-amber-200 shadow-sm animate-in fade-in slide-in-from-top-2">
                     <div className="flex items-start gap-3">
