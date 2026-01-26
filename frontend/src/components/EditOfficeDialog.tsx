@@ -17,10 +17,11 @@ import OfficeDialogComponent from "@/components/OfficeDialogContent.tsx";
 import {useTranslation} from "react-i18next";
 
 export type OfficeDialogProps = {
-    office: OfficeDTO
+    office: OfficeDTO,
+    animateInDelay: number
 }
 
-export default function EditOfficeDialog({office}: OfficeDialogProps) {
+export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogProps) {
     const {data: officeSpecialties, isLoading} = useDoctorOfficeSpecialties(office.officeSpecialties)
     const {data: currentSpecialties, isLoading: isLoadingCurrentSpecialties} = useSpecialtiesByUrl(officeSpecialties?.map(s => s.specialty))
     const [open, setOpen] = useState(false)
@@ -90,7 +91,7 @@ export default function EditOfficeDialog({office}: OfficeDialogProps) {
             setOpen(open)
         }}>
             <DialogTrigger asChild >
-                <OfficeCard office={office}/>
+                <OfficeCard animateInDelay={animateInDelay} office={office}/>
             </DialogTrigger>
             <OfficeDialogComponent confirm={t("offices.dialog.edit.confirm")} title={t("offices.dialog.edit.title")} onSubmit={onSubmit} form={form} isLoading={isLoading || isLoadingCurrentSpecialties}/>
         </Dialog>

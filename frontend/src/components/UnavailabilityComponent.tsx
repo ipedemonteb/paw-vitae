@@ -144,7 +144,9 @@ export default function UnavailabilityComponent() {
     if (isError) {
         return (
             <DashboardNavContainer>
-                <DashboardNavHeader title={t("unavailability.headerTitle")} children={undefined} />
+                <DashboardNavHeader title={t("unavailability.headerTitle")}>
+
+                </DashboardNavHeader>
                 <div className="flex flex-col items-center justify-center h-[50vh] text-center p-6">
                     <div className="bg-red-50 p-4 rounded-full mb-4">
                         <AlertCircle className="h-10 w-10 text-red-500" />
@@ -173,7 +175,7 @@ export default function UnavailabilityComponent() {
     if (isLoading) {
         return (
             <DashboardNavContainer>
-                <DashboardNavHeader title={t("unavailability.headerTitle")} children={undefined} />
+                <DashboardNavHeader title={t("unavailability.headerTitle")}  />
                 <div className="flex flex-col items-center justify-center h-[50vh] text-gray-400">
                     <Loader2 className="h-10 w-10 animate-spin mb-4" />
                     <p>{t("Loading")}</p>
@@ -185,7 +187,7 @@ export default function UnavailabilityComponent() {
     return (
         <DashboardNavContainer>
             <div style={scrollbarFix} className="w-full">
-                <DashboardNavHeader title={t("unavailability.headerTitle")} children={undefined} />
+                <DashboardNavHeader title={t("unavailability.headerTitle")}  />
                 <div className="p-6 max-w-6xl mx-auto flex flex-col gap-6 animate-in fade-in-50">
 
                     <CalendarGrid
