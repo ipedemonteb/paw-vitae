@@ -76,7 +76,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                         value={filterValue}
                         onValueChange={(val) => setFilter(val)}
                     >
-                        <SelectTrigger className="bg-white text-black hover:bg-gray-100 font-light text-sm border rounded-md cursor-pointer">
+                        <SelectTrigger className="bg-white text-black hover:bg-(--gray-100) font-light text-sm border rounded-md cursor-pointer">
                             <SelectValue />
                         </SelectTrigger>
 
