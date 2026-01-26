@@ -31,6 +31,7 @@ import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 
+const ghostFilter = "h-0 sm:h-9";
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
 const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
 const cardHeaderStyles = "flex items-center justify-between px-6 py-4 bg-white border-b";
@@ -153,7 +154,7 @@ function PatientAccount() {
                         {t("dashboard.profile.edit")}
                     </Button>
                 )}
-                {isEditing && <div className="h-9" />}
+                {isEditing && <div className={ghostFilter} />}
             </DashboardNavHeader>
             {isLoading ? <DashboardNavLoader /> :
             <div className={containerStyles}>

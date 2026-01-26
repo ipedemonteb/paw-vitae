@@ -354,7 +354,6 @@ function DateSelector({
                         <DatePicker
                             value={selectedDate}
                             onChange={setSelectedDate}
-                            placeholder={t("appointment.booking.select-date")}
                             disabled={disabled}
                             isDateDisabled={isDateDisabled}
                             fromDate={new Date()}
