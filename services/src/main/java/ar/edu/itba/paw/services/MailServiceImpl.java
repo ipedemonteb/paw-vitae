@@ -69,7 +69,7 @@ public class MailServiceImpl implements MailService {
         templateModel.put("reason", (appointment.getReason() != null && !appointment.getReason().isEmpty()) ? appointment.getReason() : "-");
         templateModel.put("linkUrlPatient", BASE_URL + "/patient/dashboard/appointment-details/" + appointment.getId());
         templateModel.put("linkUrlDoctor", BASE_URL + "/doctor/dashboard/appointment-details/" + appointment.getId());
-        templateModel.put("cancelLinkUrlPatient", BASE_URL + "/search");
+        templateModel.put("cancelLinkUrlPatient", BASE_URL + "/patient/dashboard/upcoming");
         templateModel.put("cancelLinkUrlDoctor", BASE_URL + "/doctor/dashboard/upcoming");
 
         patientContext.setVariables(templateModel);
