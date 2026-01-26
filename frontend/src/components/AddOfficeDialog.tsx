@@ -58,7 +58,7 @@ export default function AddOfficeDialog() {
             setOpen(open)
         }}>
             <DialogTrigger asChild className="cursor-pointer">
-                <Button className="bg-(--primary-color) hover:bg-(--primary-dark)">
+                <Button className="text-(--primary-color) hover:bg-(--primary-bg) bg-transparent">
                     <Plus/>
                     {t("offices.dialog.add.title")}
                 </Button>
