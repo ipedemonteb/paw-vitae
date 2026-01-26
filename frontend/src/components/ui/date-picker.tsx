@@ -26,7 +26,6 @@ function formatDate(date: Date | undefined, locale: string) {
 export function DatePicker({
                                value,
                                onChange,
-                               placeholder = "Select a Date",
                                disabled = false,
                                isDateDisabled,
                                fromDate,
