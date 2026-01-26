@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import { useTranslation } from "react-i18next";
@@ -24,23 +24,34 @@ import {
 } from "@/components/ui/select.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 
-const ghostFilter = "h-0 sm:h-9";
+const ghostFilter =
+    "h-0 sm:h-9";
 const editButton =
     "mt-2 sm:mt-0 bg-transparent text-(--primary-color) hover:bg-(--primary-bg) cursor-pointer";
-const availabilityContainer = "flex flex-col";
+const availabilityContainer =
+    "flex flex-col";
 const warningContainer =
     "flex items-start gap-3 mb-6 rounded-lg bg-(--primary-bg) p-4 border border-(--primary-color) animate-in fade-in slide-in-from-top-2";
-const warningIcon = "h-5 w-5 text-(--primary-dark)";
-const warningRightContent = "flex flex-col flex-1 leading-tight";
-const warningTitle = "text-sm font-medium text-(--primary-dark)";
-const warningText = "mt-1 text-sm text-(--primary-dark)";
+const warningIcon =
+    "h-5 w-5 text-(--primary-dark)";
+const warningRightContent =
+    "flex flex-col flex-1 leading-tight";
+const warningTitle =
+    "text-sm font-medium text-(--primary-dark)";
+const warningText =
+    "mt-1 text-sm text-(--primary-dark)";
 const addAvailabilityButton =
     "w-full max-w-3xs text-white bg-(--primary-color) hover:bg-(--primary-dark) cursor-pointer";
-const availabilityContentContainer = "flex flex-col gap-6";
-const availabilityItems = "flex flex-col items-center gap-4";
+const availabilityContentContainer =
+    "flex flex-col gap-6";
+const availabilityEmptyContentContainer =
+    "flex flex-col items-center gap-6";
+const availabilityItems =
+    "flex flex-col items-center gap-4";
 const newAvailabilityItem =
     "w-3xs flex flex-row justify-center items-center gap-2 p-4 bg-(--gray-100) text-(--gray-600) border border-(--gray-400) border-dashed rounded-xl hover:bg-(--gray-200) hover:border-(--gray-500) cursor-pointer";
-const availabilityButtonsContainer = "flex justify-end gap-2";
+const availabilityButtonsContainer =
+    "flex justify-end gap-2";
 const cancelButton =
     "cursor-pointer border border-(--primary-color) text-(--primary-color) hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark)";
 const saveButton =
@@ -82,6 +93,46 @@ const timeOptions = [
     "18:00",
 ];
 
+function toMinutes(hhmm: string) {
+    const [h, m] = hhmm.split(":").map((x) => Number(x));
+    if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
+    return h * 60 + m;
+}
+
+function computeOverlapIds(slots: AvailabilitySlot[]) {
+    const overlap = new Set<number>();
+
+    for (let i = 0; i < slots.length; i++) {
+        for (let j = i + 1; j < slots.length; j++) {
+            const a = slots[i];
+            const b = slots[j];
+
+            if (!a.office || !a.day || !a.start || !a.end) continue;
+            if (!b.office || !b.day || !b.start || !b.end) continue;
+
+            if (a.office !== b.office) continue;
+            if (a.day !== b.day) continue;
+
+            const aStart = toMinutes(a.start);
+            const aEnd = toMinutes(a.end);
+            const bStart = toMinutes(b.start);
+            const bEnd = toMinutes(b.end);
+
+            if (aStart === null || aEnd === null || bStart === null || bEnd === null)
+                continue;
+
+            const overlaps = aStart < bEnd && bStart < aEnd;
+
+            if (overlaps) {
+                overlap.add(a.id);
+                overlap.add(b.id);
+            }
+        }
+    }
+
+    return overlap;
+}
+
 export default function AvailabilityComponent() {
     const { t } = useTranslation();
 
@@ -96,6 +147,8 @@ export default function AvailabilityComponent() {
 
     const [slots, setSlots] = useState<AvailabilitySlot[]>(initialSnapshot);
     const isAvailability = slots.length > 0;
+
+    const overlapIds = useMemo(() => computeOverlapIds(slots), [slots]);
 
     const handleEdit = () => {
         setIsEditing(true);
@@ -152,7 +205,7 @@ export default function AvailabilityComponent() {
                     </div>
 
                     {!isAvailability ? (
-                        <div className={availabilityContentContainer}>
+                        <div className={availabilityEmptyContentContainer}>
                             <DashboardNavEmptyContent
                                 title={t("availability.emptyContent")}
                                 text={t("availability.emptyContentText")}
@@ -173,6 +226,7 @@ export default function AvailabilityComponent() {
                                         key={slot.id}
                                         slot={slot}
                                         isEditing={isEditing}
+                                        hasOverlap={overlapIds.has(slot.id)}
                                         onDelete={() => handleDelete(slot.id)}
                                         onChange={(patch) => handleUpdate(slot.id, patch)}
                                     />
@@ -214,7 +268,7 @@ export default function AvailabilityComponent() {
                                         )}
                                     </Button>
                                 </div>
-                            ) : null}
+                            ) : <div/>}
                         </div>
                     )}
                 </div>
@@ -223,27 +277,42 @@ export default function AvailabilityComponent() {
     );
 }
 
-const availabilityItemCard = "w-full p-6";
-const slotsContainer = "flex flex-col md:items-center gap-4 md:flex-row md:flex-nowrap";
-const fieldBlock = "flex flex-col gap-2 min-w-0 md:w-56 md:flex-1";
-const fieldLabel = "text-sm font-medium text-[var(--text-color)]";
-const selectFixed = "w-full";
+const availabilityItemCard =
+    "w-full p-6";
+const availabilityItemOverlap =
+    "bg-(--danger-lighter) border border-(--danger)";
+const slotsContainer =
+    "flex flex-col md:items-center gap-4 md:flex-row md:flex-nowrap";
+const fieldBlock =
+    "flex flex-col gap-2 min-w-0 md:w-56 md:flex-1";
+const fieldLabel =
+    "text-sm font-medium text-(--text-color)";
+const selectFixed =
+    "w-full";
 const deleteItemButton =
     "text-(--danger) hover:text-white hover:bg-(--danger-dark) rounded-full cursor-pointer";
+const overlapText =
+    "text-sm text-(--danger) font-medium";
 
 function AvailabilityItem({
                               slot,
                               isEditing,
+                              hasOverlap,
                               onDelete,
                               onChange,
                           }: {
     slot: AvailabilitySlot;
     isEditing: boolean;
+    hasOverlap: boolean;
     onDelete: () => void;
     onChange: (patch: Partial<AvailabilitySlot>) => void;
 }) {
     return (
-        <Card className={availabilityItemCard}>
+        <Card
+            className={`${availabilityItemCard} ${
+                hasOverlap ? availabilityItemOverlap : ""
+            }`}
+        >
             <div className={slotsContainer}>
                 <div className={fieldBlock}>
                     <h3 className={fieldLabel}>Office</h3>
@@ -326,11 +395,20 @@ function AvailabilityItem({
                 </div>
 
                 {isEditing ? (
-                    <Button variant="ghost" className={deleteItemButton} onClick={onDelete}>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        className={deleteItemButton}
+                        onClick={onDelete}
+                    >
                         <Trash2 className="h-5 w-5" />
                     </Button>
                 ) : null}
             </div>
+
+            {hasOverlap ? (
+                <p className={overlapText}>This time slot overlaps with an existing slot</p>
+            ) : null}
         </Card>
     );
 }
