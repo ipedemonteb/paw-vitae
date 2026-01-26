@@ -686,6 +686,14 @@
           "error": "Ha ocurrido un error"
         }
       },
+      "remove": {
+        "title": "Confirmar Eliminación de Oficina",
+        "button": "Eliminar",
+        "description": "Esta seguro de que desea eliminar esta oficina? Esta acción no se puede deshacer.",
+        "officeConfirmationLabel": "La siguiente oficina sera eliminada:",
+        "alert": "Eliminar una oficina es una acción permanente",
+        "confirm": "Eliminar Oficina"
+      },
       "placeholderName": "Oficina Doctor",
       "nameLabel": "Nombre de Oficina",
       "neighborhoodLabel": "Barrio",

@@ -688,6 +688,14 @@
           "error": "An unexpected error occurred"
         }
       },
+      "remove": {
+        "title": "Confirm Office Removal",
+        "button": "Remove",
+        "description": "Are you sure you want to remove this office? This action cannot be undone.",
+        "officeConfirmationLabel": "The following office will be removed:",
+        "alert": "Removing an office will permanently delete it.",
+        "confirm": "Delete Office"
+      },
       "placeholderName": "Example Office",
       "nameLabel": "Office Name",
       "neighborhoodLabel": "Neighborhood",
