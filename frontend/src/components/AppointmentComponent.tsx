@@ -11,6 +11,7 @@ import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx"
 import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
+import {useEffect, useState} from "react";
 
 const typeDictionary = {
     history: {
@@ -40,6 +41,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
     const {t} = useTranslation();
     const componentType = typeDictionary[type]
     const auth = useAuth()
+    const [mounted, setMounted] = useState(false);
 
     const transformFilter = (filterValue: string) => {
         if (!componentType.popoverData.includes(filterValue)) return "appointment.filters.all"
@@ -48,6 +50,12 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
 
     const searchParams = useAppointmentsQueryParams();
     const filterValue = searchParams.filter;
+
+    useEffect(() => {
+        setMounted(false);
+        const id = requestAnimationFrame(() => setMounted(true));
+        return () => cancelAnimationFrame(id);
+    }, [type]);
 
     const setFilter = (newFilter: string) => {
         searchParams.setParams((p) => {
@@ -94,8 +102,8 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
             {(isLoading) ? (
                 <DashboardNavLoader/>
             ) : (appointments?.data !== undefined && appointments.data.length > 0) ? (
-                appointments.data.map(a => (
-                    <AppointmentCard key={a.self} appointment={a} isUpcoming={type === "upcoming"}/>
+                appointments.data.map((a, i) => (
+                    <AppointmentCard animationDelay={i} mounted={mounted} key={a.self} appointment={a} isUpcoming={type === "upcoming"}/>
                 ))
             ) : (
                 <DashboardNavEmptyContent Icon={CalendarFoldIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>
