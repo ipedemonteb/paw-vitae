@@ -727,6 +727,7 @@
       "time": "Select Time"
     },
     "overlap": "This time slot overlaps with an existing slot.",
+    "errorEndBeforeStart": "End time must be after start time.",
     "emptyContent" : "No availability set up",
     "emptyContentText" : "Your availability will appear here once you have added one.",
     "errorTimeOrder": "Starting time must be before end time",

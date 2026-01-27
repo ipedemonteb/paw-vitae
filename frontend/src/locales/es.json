@@ -725,6 +725,7 @@
       "time": "Seleccionar Hora"
     },
     "overlap": "Este horario se superpone con otro existente.",
+    "errorEndBeforeStart": "El horario final debe ser posterior al horario inicial.",
     "emptyContent": "No hay disponibilidad configurada",
     "emptyContentText": "Tus horarios de atención aparecerán aquí una vez que agregues uno.",
     "errorTimeOrder": "La hora de fin debe ser posterior al inicio",
