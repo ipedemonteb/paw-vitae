@@ -71,6 +71,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
         page: searchParams.page,
         pageSize: searchParams.pageSize,
         filter: searchParams.filter,
+        sort: type === "history" ? "desc" : "asc",
     });
 
     return (
