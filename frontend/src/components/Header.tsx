@@ -301,13 +301,13 @@ function NotLoggedInComponent({
                     <ChevronDown className="h-4 w-4 ml-1" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuItem className={dropDownItem}>
+                    <DropdownMenuItem onClick={() => onOpenChange(false)} className={dropDownItem}>
                         <Link to="/register?type=patient" className={dropDownItem}>
                             <User className="text-inherit" />
                             {t("header.register_patient")}
                         </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className={dropDownItem}>
+                    <DropdownMenuItem onClick={() => onOpenChange(false)} className={dropDownItem}>
                         <Link to="/register?type=doctor" className={dropDownItem}>
                             <BriefcaseMedical className="text-inherit" />
                             {t("header.register_doctor")}
