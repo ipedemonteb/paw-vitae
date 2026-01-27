@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import { useTranslation } from "react-i18next";
@@ -23,56 +23,41 @@ import {
     SelectValue,
 } from "@/components/ui/select.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
-import {timeToMinutes} from "@/utils/dateUtils.ts";
+import {dayOptions, normalizeDay, normalizeTime, timeOptions, timeToMinutes} from "@/utils/dateUtils.ts";
+import { useAuth } from "@/hooks/useAuth.ts";
+import { useDoctor, useDoctorOfficeAvailability, useDoctorOffices } from "@/hooks/useDoctors.ts";
+import type { OfficeDTO } from "@/data/office.ts";
+import type { AvailabilityDTO } from "@/data/doctors.ts";
+import { officeIdFromSelf } from "@/utils/IdUtils.ts";
 
 type AvailabilitySlot = {
-    id: number;
-    office: string;
+    id: string;
+    officeId: string;
     day: string;
     start: string;
     end: string;
 };
 
-const initialOffices: AvailabilitySlot[] = [
-    { id: 1, office: "Office 1", day: "Tuesday", start: "10:00", end: "11:00" },
-    { id: 2, office: "Office 2", day: "Wednesday", start: "12:00", end: "13:00" },
-    { id: 3, office: "Office 1", day: "Tuesday", start: "13:00", end: "18:00" },
-];
-
-const officeOptions = ["Office 1", "Office 2", "Office 3"];
-const dayOptions = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-];
-const timeOptions = [
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-];
+function pickSlotFields(slot: any) {
+    const day = slot?.day ?? slot?.dayOfWeek ?? slot?.weekday ?? slot?.weekDay;
+    const start = slot?.start ?? slot?.startTime ?? slot?.start_time;
+    const end = slot?.end ?? slot?.endTime ?? slot?.end_time;
+    const officeUrl = slot?.office ?? slot?.officeSelf ?? slot?.office_url;
+    return { day, start, end, officeUrl };
+}
 
 function computeOverlapIds(slots: AvailabilitySlot[]) {
-    const overlap = new Set<number>();
+    const overlap = new Set<string>();
 
     for (let i = 0; i < slots.length; i++) {
         for (let j = i + 1; j < slots.length; j++) {
             const a = slots[i];
             const b = slots[j];
 
-            if (!a.office || !a.day || !a.start || !a.end) continue;
-            if (!b.office || !b.day || !b.start || !b.end) continue;
+            if (!a.officeId || !a.day || !a.start || !a.end) continue;
+            if (!b.officeId || !b.day || !b.start || !b.end) continue;
 
-            if (a.office !== b.office) continue;
+            if (a.officeId !== b.officeId) continue;
             if (a.day !== b.day) continue;
 
             const aStart = timeToMinutes(a.start);
@@ -80,11 +65,9 @@ function computeOverlapIds(slots: AvailabilitySlot[]) {
             const bStart = timeToMinutes(b.start);
             const bEnd = timeToMinutes(b.end);
 
-            if (aStart === null || aEnd === null || bStart === null || bEnd === null)
-                continue;
+            if (aStart === null || aEnd === null || bStart === null || bEnd === null) continue;
 
             const overlaps = aStart < bEnd && bStart < aEnd;
-
             if (overlaps) {
                 overlap.add(a.id);
                 overlap.add(b.id);
@@ -95,83 +78,154 @@ function computeOverlapIds(slots: AvailabilitySlot[]) {
     return overlap;
 }
 
-const ghostFilter =
-    "h-0 sm:h-9";
+function buildOfficeIndex(offices?: OfficeDTO[] | null) {
+    const byId = new Map<string, OfficeDTO>();
+    if (!offices) return byId;
+
+    for (const office of offices) {
+        const id = officeIdFromSelf(office.self);
+        if (id === null) continue;
+        byId.set(id, office);
+    }
+    return byId;
+}
+
+function buildSlotsFromApi(
+    offices?: OfficeDTO[] | null,
+    officesAvailability?: AvailabilityDTO[][] | null
+): AvailabilitySlot[] {
+    if (!offices || !officesAvailability) return [];
+
+    const officeById = buildOfficeIndex(offices);
+
+    const result: AvailabilitySlot[] = [];
+
+    for (const list of officesAvailability) {
+        for (const raw of list as any[]) {
+            const { day, start, end, officeUrl } = pickSlotFields(raw);
+
+            const officeId = officeIdFromSelf(officeUrl);
+            if (officeId === null) continue;
+            if (!officeById.has(officeId)) continue;
+
+            const normDay = normalizeDay(day);
+            const normStart = normalizeTime(start);
+            const normEnd = normalizeTime(end);
+
+            const id = `${officeId}|${normDay}|${normStart}|${normEnd}`;
+
+            result.push({
+                id,
+                officeId,
+                day: normDay,
+                start: normStart,
+                end: normEnd,
+            });
+        }
+    }
+
+    return result;
+}
+
+const ghostFilter = "h-0 sm:h-9";
 const editButton =
     "mt-2 sm:mt-0 bg-transparent text-(--primary-color) hover:bg-(--primary-bg) cursor-pointer";
-const availabilityContainer =
-    "flex flex-col";
+const availabilityContainer = "flex flex-col";
 const warningContainer =
     "flex items-start gap-3 mb-6 rounded-lg bg-(--primary-bg) p-4 border border-(--primary-color) animate-in fade-in slide-in-from-top-2";
-const warningIcon =
-    "h-5 w-5 text-(--primary-dark)";
-const warningRightContent =
-    "flex flex-col flex-1 leading-tight";
-const warningTitle =
-    "text-sm font-medium text-(--primary-dark)";
-const warningText =
-    "mt-1 text-sm text-(--primary-dark)";
+const warningIcon = "h-5 w-5 text-(--primary-dark)";
+const warningRightContent = "flex flex-col flex-1 leading-tight";
+const warningTitle = "text-sm font-medium text-(--primary-dark)";
+const warningText = "mt-1 text-sm text-(--primary-dark)";
 const addAvailabilityButton =
     "w-full max-w-3xs text-white bg-(--primary-color) hover:bg-(--primary-dark) cursor-pointer";
-const availabilityContentContainer =
-    "flex flex-col gap-6";
-const availabilityEmptyContentContainer =
-    "flex flex-col items-center gap-6";
-const availabilityItems =
-    "flex flex-col items-center gap-4";
+const availabilityContentContainer = "flex flex-col gap-6";
+const availabilityEmptyContentContainer = "flex flex-col items-center gap-6";
+const availabilityItems = "flex flex-col items-center gap-4";
 const newAvailabilityItem =
     "mt-2 w-3xs flex flex-row justify-center items-center gap-2 p-4 bg-(--gray-100) text-(--gray-600) border border-(--gray-400) border-dashed rounded-xl hover:bg-(--gray-200) hover:border-(--gray-500) cursor-pointer";
-const availabilityButtonsContainer =
-    "flex justify-center md:justify-end gap-2";
+const availabilityButtonsContainer = "flex justify-center md:justify-end gap-2";
 const cancelButton =
     "cursor-pointer border border-(--primary-color) text-(--primary-color) hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark)";
-const saveButton =
-    "bg-(--primary-color) text-white hover:bg-(--primary-dark) cursor-pointer";
+const saveButton = "bg-(--primary-color) text-white hover:bg-(--primary-dark) cursor-pointer";
 
 export default function AvailabilityComponent() {
     const { t } = useTranslation();
+    const auth = useAuth();
 
-    const isLoading = false;
+    const doctorQuery = useDoctor(auth.userId);
+    const officesQuery = useDoctorOffices(doctorQuery.data?.offices);
+    const availabilityQuery = useDoctorOfficeAvailability(officesQuery.data);
+
+    const isLoading = doctorQuery.isLoading || officesQuery.isLoading || availabilityQuery.isLoading;
+
+    const officeOptions = useMemo(() => {
+        const offices = officesQuery.data ?? [];
+        return offices
+            .map((o) => {
+                const id = officeIdFromSelf(o.self);
+                if (id === null) return null;
+                return { id, name: o.name };
+            })
+            .filter(Boolean) as Array<{ id: string; name: string }>;
+    }, [officesQuery.data]);
+
+    const slotsFromApi = useMemo(
+        () => buildSlotsFromApi(officesQuery.data, availabilityQuery.data),
+        [officesQuery.data, availabilityQuery.data]
+    );
+
+    console.log(slotsFromApi);
+
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving] = useState(false);
 
-    const initialSnapshot = useMemo<AvailabilitySlot[]>(
-        () => initialOffices.map((s) => ({ ...s })),
-        []
+    const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
+    const [snapshot, setSnapshot] = useState<AvailabilitySlot[]>([]);
+
+    const syncKey = useMemo(
+        () => slotsFromApi.map((s) => s.id).join("||"),
+        [slotsFromApi]
     );
 
-    const [slots, setSlots] = useState<AvailabilitySlot[]>(initialSnapshot);
-    const isAvailability = slots.length > 0;
+    useEffect(() => {
+        if (isEditing) return;
 
+        const next = slotsFromApi.map((s) => ({ ...s }));
+
+        setSlots(next);
+        setSnapshot(next);
+    }, [syncKey, isEditing]);
+
+    const isAvailability = slots.length > 0;
     const overlapIds = useMemo(() => computeOverlapIds(slots), [slots]);
 
-    const handleEdit = () => {
-        setIsEditing(true);
-    };
+    const handleEdit = () => setIsEditing(true);
 
     const handleCancel = () => {
-        setSlots(initialSnapshot.map((s) => ({ ...s })));
+        setSlots(snapshot.map((s) => ({ ...s })));
         setIsEditing(false);
     };
 
-    const handleSave = () => {};
+    //TODO FINISH
+    const handleSave = () => {
+        setIsEditing(false);
+    };
 
     const handleAdd = () => {
-        const newId = Date.now();
+        const newId = `new-${Date.now()}`;
         setSlots((prev) => [
             ...prev,
-            { id: newId, office: "", day: "", start: "", end: "" },
+            { id: newId, officeId: "", day: "", start: "", end: "" },
         ]);
     };
 
-    const handleDelete = (id: number) => {
+    const handleDelete = (id: string) => {
         setSlots((prev) => prev.filter((s) => s.id !== id));
     };
 
-    const handleUpdate = (id: number, patch: Partial<AvailabilitySlot>) => {
-        setSlots((prev) =>
-            prev.map((s) => (s.id === id ? { ...s, ...patch } : s))
-        );
+    const handleUpdate = (id: string, patch: Partial<AvailabilitySlot>) => {
+        setSlots((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
     };
 
     return (
@@ -224,6 +278,7 @@ export default function AvailabilityComponent() {
                                         hasOverlap={overlapIds.has(slot.id)}
                                         onDelete={() => handleDelete(slot.id)}
                                         onChange={(patch) => handleUpdate(slot.id, patch)}
+                                        officeOptions={officeOptions}
                                     />
                                 ))}
 
@@ -237,19 +292,11 @@ export default function AvailabilityComponent() {
 
                             {isEditing ? (
                                 <div className={availabilityButtonsContainer}>
-                                    <Button
-                                        variant="outline"
-                                        className={cancelButton}
-                                        onClick={handleCancel}
-                                    >
+                                    <Button variant="outline" className={cancelButton} onClick={handleCancel}>
                                         <X className="w-4 h-4" />
                                         {t("cancel")}
                                     </Button>
-                                    <Button
-                                        className={saveButton}
-                                        disabled={isSaving}
-                                        onClick={handleSave}
-                                    >
+                                    <Button className={saveButton} disabled={isSaving} onClick={handleSave}>
                                         {isSaving ? (
                                             <>
                                                 <Spinner className="w-4 h-4 mr-2" />
@@ -263,7 +310,9 @@ export default function AvailabilityComponent() {
                                         )}
                                     </Button>
                                 </div>
-                            ) : <div/>}
+                            ) : (
+                                <div />
+                            )}
                         </div>
                     )}
                 </div>
@@ -272,22 +321,15 @@ export default function AvailabilityComponent() {
     );
 }
 
-const availabilityItemCard =
-    "w-full p-6";
-const availabilityItemOverlap =
-    "bg-(--danger-lighter) border border-(--danger)";
-const slotsContainer =
-    "flex flex-col md:items-center gap-4 md:flex-row md:flex-nowrap";
-const fieldBlock =
-    "flex flex-col gap-2 min-w-0 md:w-56 md:flex-1";
-const fieldLabel =
-    "text-sm font-medium text-(--text-color)";
-const selectFixed =
-    "w-full";
+const availabilityItemCard = "w-full p-6";
+const availabilityItemOverlap = "bg-(--danger-lighter) border border-(--danger)";
+const slotsContainer = "flex flex-col md:items-center gap-4 md:flex-row md:flex-nowrap";
+const fieldBlock = "flex flex-col gap-2 min-w-0 md:w-56 md:flex-1";
+const fieldLabel = "text-sm font-medium text-(--text-color)";
+const selectFixed = "w-full";
 const deleteItemButton =
     "text-(--danger) hover:text-white hover:bg-(--danger-dark) rounded-full cursor-pointer";
-const overlapText =
-    "text-sm text-(--danger) font-medium";
+const overlapText = "text-sm text-(--danger) font-medium";
 
 function AvailabilityItem({
                               slot,
@@ -295,27 +337,24 @@ function AvailabilityItem({
                               hasOverlap,
                               onDelete,
                               onChange,
-                          }: {
+                              officeOptions,}: {
     slot: AvailabilitySlot;
     isEditing: boolean;
     hasOverlap: boolean;
     onDelete: () => void;
     onChange: (patch: Partial<AvailabilitySlot>) => void;
+    officeOptions: Array<{ id: string; name: string }>;
 }) {
     const { t } = useTranslation();
 
     return (
-        <Card
-            className={`${availabilityItemCard} ${
-                hasOverlap ? availabilityItemOverlap : ""
-            }`}
-        >
+        <Card className={`${availabilityItemCard} ${hasOverlap ? availabilityItemOverlap : ""}`}>
             <div className={slotsContainer}>
                 <div className={fieldBlock}>
                     <h3 className={fieldLabel}>{t("availability.office")}</h3>
                     <Select
-                        value={slot.office || undefined}
-                        onValueChange={(v) => onChange({ office: v })}
+                        value={slot.officeId || undefined}
+                        onValueChange={(v) => onChange({ officeId: v })}
                         disabled={!isEditing}
                     >
                         <SelectTrigger className={selectFixed}>
@@ -323,8 +362,8 @@ function AvailabilityItem({
                         </SelectTrigger>
                         <SelectContent position="popper">
                             {officeOptions.map((o) => (
-                                <SelectItem key={o} value={o}>
-                                    {o}
+                                <SelectItem key={o.id} value={o.id}>
+                                    {o.name}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -339,7 +378,7 @@ function AvailabilityItem({
                         disabled={!isEditing}
                     >
                         <SelectTrigger className={selectFixed}>
-                            <SelectValue placeholder={t("availability.select.day")}/>
+                            <SelectValue placeholder={t("availability.select.day")} />
                         </SelectTrigger>
                         <SelectContent position="popper">
                             {dayOptions.map((d) => (
@@ -359,12 +398,12 @@ function AvailabilityItem({
                         disabled={!isEditing}
                     >
                         <SelectTrigger className={selectFixed}>
-                            <SelectValue placeholder={t("availability.select.time")}/>
+                            <SelectValue placeholder={t("availability.select.time")} />
                         </SelectTrigger>
                         <SelectContent position="popper">
-                            {timeOptions.map((t) => (
-                                <SelectItem key={t} value={t}>
-                                    {t}
+                            {timeOptions.map((tt) => (
+                                <SelectItem key={tt} value={tt}>
+                                    {tt}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -379,12 +418,12 @@ function AvailabilityItem({
                         disabled={!isEditing}
                     >
                         <SelectTrigger className={selectFixed}>
-                            <SelectValue placeholder={t("availability.select.time")}/>
+                            <SelectValue placeholder={t("availability.select.time")} />
                         </SelectTrigger>
                         <SelectContent position="popper">
-                            {timeOptions.map((t) => (
-                                <SelectItem key={t} value={t}>
-                                    {t}
+                            {timeOptions.map((tt) => (
+                                <SelectItem key={tt} value={tt}>
+                                    {tt}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -392,20 +431,13 @@ function AvailabilityItem({
                 </div>
 
                 {isEditing ? (
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        className={deleteItemButton}
-                        onClick={onDelete}
-                    >
+                    <Button type="button" variant="ghost" className={deleteItemButton} onClick={onDelete}>
                         <Trash2 className="h-5 w-5" />
                     </Button>
                 ) : null}
             </div>
 
-            {hasOverlap ? (
-                <p className={overlapText}>{t("availability.overlap")}</p>
-            ) : null}
+            {hasOverlap ? <p className={overlapText}>{t("availability.overlap")}</p> : null}
         </Card>
     );
 }

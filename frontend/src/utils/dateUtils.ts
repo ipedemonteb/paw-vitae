@@ -83,3 +83,48 @@ export function localDateToIso(date?: Date): string {
     const d = String(date.getDate()).padStart(2, "0")
     return `${y}-${m}-${d}`
 }
+
+export const timeOptions = [
+    "08:00",
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+    "19:00",
+    "20:00",
+];
+
+export function normalizeTime(value: unknown): string {
+    if (typeof value !== "string") return "";
+    if (value.length >= 5) return value.slice(0, 5);
+    return value;
+}
+
+export const dayOptions = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+];
+
+export function normalizeDay(value: unknown): string {
+    const n =
+        typeof value === "number"
+            ? value
+            : typeof value === "string"
+                ? Number(value.trim())
+                : NaN;
+    if (!Number.isFinite(n)) return "";
+    const idx = Math.trunc(n); // 0..6
+    if (idx < 0 || idx >= dayOptions.length) return "";
+    return dayOptions[idx];
+}
