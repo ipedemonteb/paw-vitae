@@ -9,11 +9,11 @@ import {toast} from "sonner";
 import {useState} from "react";
 
 const baseStatusClassName = " rounded-xl font-normal border text-xs py-1 px-2 flex items-center justify-center gap-1 "
-const activeClassName = "bg-green-100 border-green-400 text-black text-green-600" + baseStatusClassName
+const activeClassName = "bg-(--success-light) border-(--success) text-(--success)" + baseStatusClassName
 const inactiveClassName = "bg-gray-100 border-gray-300 text-(--text-light) " + baseStatusClassName
 
 const fillClassName = " size-3"
-const activeFillClassName = "fill-green-500 text-green-500 animate-pulse" + fillClassName
+const activeFillClassName = "fill-(--success) text-(--success) opacity-80 animate-pulse" + fillClassName
 const inactiveFillClassName = "fill-gray-300 text-gray-300" + fillClassName
 
 const statusDictionary = {
