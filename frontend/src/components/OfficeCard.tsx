@@ -1,10 +1,10 @@
-import type {OfficeDTO} from "@/data/office.ts";
+import type {OfficeDTO} from "@/data/offices.ts";
 import {Building2, MapPinIcon, SquarePen, Circle} from "lucide-react";
 import {useNeighborhood} from "@/hooks/useNeighborhoods.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {useTranslation} from "react-i18next";
 import RemoveOfficeAlertDialog from "@/components/RemoveOfficeAlertDialog.tsx";
-import {useUpdateOfficeMutation} from "@/hooks/useDoctors.ts";
+import {useUpdateOfficeMutation} from "@/hooks/useOffices.ts";
 import {toast} from "sonner";
 import {useState} from "react";
 

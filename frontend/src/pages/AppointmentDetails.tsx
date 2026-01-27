@@ -33,7 +33,7 @@ import {
 } from "@/hooks/useAppointments.ts";
 import { formatLongDate, formatTimeHM } from "@/utils/dateUtils.ts";
 import {useSpecialty} from "@/hooks/useSpecialties.ts";
-import {useDoctorOffice} from "@/hooks/useDoctors.ts";
+import {useDoctorOffice} from "@/hooks/useOffices.ts";
 import {useNeighborhood} from "@/hooks/useNeighborhoods.ts";
 import {userIdFromSelf} from "@/utils/IdUtils.ts";
 import {useAuth} from "@/hooks/useAuth.ts";

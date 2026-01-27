@@ -1,6 +1,6 @@
 import OfficeCard from "@/components/OfficeCard.tsx";
-import type {OfficeDTO} from "@/data/office.ts";
-import {useDoctorOfficeSpecialties, useUpdateOfficeMutation} from "@/hooks/useDoctors.ts";
+import type {OfficeDTO} from "@/data/offices.ts";
+import {useDoctorOfficeSpecialties, useUpdateOfficeMutation} from "@/hooks/useOffices.ts";
 import {useSpecialtiesByUrl} from "@/hooks/useSpecialties.ts";
 import {
     Dialog,

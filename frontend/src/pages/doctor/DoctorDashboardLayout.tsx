@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils";
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
 import { useTranslation } from "react-i18next";
 import React, {useState} from "react";
-import { useDoctor, useDoctorOffices } from "@/hooks/useDoctors.ts";
+import { useDoctor } from "@/hooks/useDoctors.ts";
+import { useDoctorOffices } from "@/hooks/useOffices.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import {
     Dialog,

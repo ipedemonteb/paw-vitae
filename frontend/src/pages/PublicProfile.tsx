@@ -23,7 +23,6 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
     useDoctorImageUrl,
-    useDoctorOffices,
     usePutDoctorCertificates,
     usePutDoctorExperience,
     usePutDoctorProfile
@@ -44,7 +43,7 @@ import type {
     CertificateForm
 } from "@/data/doctors.ts";
 import type { CoverageDTO } from "@/data/coverages.ts";
-import type { OfficeDTO } from "@/data/office.ts";
+import type { OfficeDTO } from "@/data/offices.ts";
 import GenericError from "@/pages/GenericError.tsx";
 import { useRatings } from "@/hooks/useRatings.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
@@ -71,6 +70,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {DatePicker} from "@/components/ui/date-picker.tsx";
 import {isoToLocalDate, localDateToIso} from "@/utils/dateUtils.ts";
+import {useDoctorOffices} from "@/hooks/useOffices.ts";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";

@@ -13,7 +13,7 @@ import {specialtyIdFromSelf} from "@/utils/IdUtils.ts";
 import {extractIdFromUrl} from "@/lib/utils.ts";
 import OfficeDialogComponent from "@/components/OfficeDialogContent.tsx";
 import {useTranslation} from "react-i18next";
-import {useCreateDoctorOfficeMutation} from "@/hooks/useDoctors.ts";
+import {useCreateDoctorOfficeMutation} from "@/hooks/useOffices.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 
 export default function AddOfficeDialog() {

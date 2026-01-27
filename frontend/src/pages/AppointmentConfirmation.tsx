@@ -1,7 +1,8 @@
 import { Card } from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {Check, Mail, Phone, Calendar, Clock, Stethoscope, Hospital, Info} from "lucide-react";
-import {useDoctor, useDoctorImageUrl, useDoctorOffice} from "@/hooks/useDoctors.ts";
+import {useDoctor, useDoctorImageUrl} from "@/hooks/useDoctors.ts";
+import {useDoctorOffice} from "@/hooks/useOffices.ts";
 import {initialsFallback} from "@/utils/userUtils.ts";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
 import {useAppointment} from "@/hooks/useAppointments.ts";
