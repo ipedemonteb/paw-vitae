@@ -6,7 +6,7 @@ import { Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {type Control, useFormContext } from "react-hook-form";
 import {type AvailabilityFormValues, DAYS, TIMES, extractIdFromUrl } from "../lib/availability-schema.ts";
-import type {OfficeDTO} from "@/data/office.ts";
+import type {OfficeDTO} from "@/data/offices.ts";
 
 interface Props {
     index: number;

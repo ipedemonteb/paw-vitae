@@ -4,7 +4,7 @@ import {useTranslation} from "react-i18next";
 import { Building, Info} from "lucide-react";
 import {useState} from "react";
 import {useSearchParams} from "react-router-dom";
-import {useDoctorOffices} from "@/hooks/useDoctors.ts";
+import {useDoctorOffices} from "@/hooks/useOffices.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";

@@ -4,7 +4,6 @@ import type {PaginationData} from "@/lib/types.ts";
 import {parseLinkHeader} from "@/lib/utils.ts";
 import type {CoverageDTO} from "@/data/coverages.ts";
 import type {SpecialtyDTO} from "@/data/specialties.ts";
-import type {OfficeDTO} from "@/data/office.ts";
 import {DOCTORS_PAGE_SIZE} from "@/lib/constants.ts";
 import qs from 'qs';
 
@@ -12,17 +11,20 @@ export type ChangePasswordForm = {
     password: string;
     repeatPassword: string;
 }
+
 export type CertificateForm = {
     certificateName: string;
     issuingEntity: string;
     issueDate: string;
 }
+
 export type ExperienceForm = {
     positionTitle: string;
     organizationName: string;
     startDate: string;
     endDate?: string;
 }
+
 export type DoctorDTO = {
     name: string;
     lastName: string;
@@ -65,6 +67,7 @@ export interface DoctorRegisterData {
     selectedSpecialties: string[];
     selectedCoverages: string[];
 }
+
 export interface DoctorUpdateForm{
     name?: string;
     lastName?: string;
@@ -72,6 +75,7 @@ export interface DoctorUpdateForm{
     specialties?: string[];
     coverages?: string[];
 }
+
 export interface ExperienceDTO {
     positionTitle: string;
     organizationName: string;
@@ -93,26 +97,10 @@ export interface DoctorProfileDTO {
     doctor: string;
 }
 
-export interface OfficeSpecialtyDTO {
-    specialty: string;
-    office: string;
-}
-
-export interface AvailabilityDTO {
-    dayOfWeek: number;
-    startTime: string;
-    endTime: string;
-    office: string;
-}
-
 export interface UnavailabilityDTO {
     startDate: string;
     endDate: string;
     doctor: string;
-}
-
-export type DoctorOfficeQuery = {
-    status: string
 }
 
 export type CreateDoctorOfficeForm = {
@@ -121,19 +109,10 @@ export type CreateDoctorOfficeForm = {
     neighborhoodId: number,
 }
 
-export type UpdateDoctorOfficeForm = Partial<CreateDoctorOfficeForm> & {
-    active?: boolean,
-    removed?: boolean
-}
-
-
 export interface AvailabilitySlotForm {
     dayOfWeek: number;
     startTime: string; // Formato "HH:mm:00"
     endTime: string;   // Formato "HH:mm:00"
-}
-export interface DoctorAvailabilityFormDTO {
-    doctorOfficeAvailabilities: AvailabilitySlotForm[];
 }
 
 export interface UnavailabilityForm {
@@ -250,7 +229,6 @@ export async function  registerDoctor (data: DoctorRegisterData){
     });
 }
 
-
 export async function fetchCountDoctors(): Promise<number> {
     const res = await api.head('/doctors')
     const header = res.headers['x-total-count'] ?? res.headers['X-Total-Count'];
@@ -264,61 +242,33 @@ export async function getDoctorSpecialties(specialtyUrl: string) {
     } );
     return res.data;
 }
+
 export async function getDoctorCoverages(coverageUrl: string) {
     const res = await api.get<CoverageDTO[]>(coverageUrl,{
         headers: {"accept": ContentTypes.COVERAGE_LIST,}
     } );
     return res.data;
 }
+
 export async function getDoctorExperiences(experiencesUrl: string) {
     const res = await api.get<ExperienceDTO[]>(experiencesUrl,{
         headers: {"accept": ContentTypes.DOCTOR_EXPERIENCE_LIST,}
     } );
     return res.data;
 }
+
 export async function getDoctorCertifications(certificationsUrl: string) {
     const res = await api.get<CertificationDTO[]>(certificationsUrl,{
         headers: {"accept": ContentTypes.DOCTOR_CERTIFICATION_LIST,}
     } );
     return res.data;
 }
+
 export async function getDoctorBiography(profileUrl: string) {
     const res = await api.get<DoctorProfileDTO>(profileUrl,{
         headers: {"accept": ContentTypes.DOCTOR_PROFILE,}
     } );
     return res.data;
-}
-export async function getDoctorOffices(officesUrl: string, query?: DoctorOfficeQuery) {
-    const res = await api.get<OfficeDTO[]>(officesUrl,{
-        headers: {
-            Accept: ContentTypes.OFFICE_LIST
-        },
-        params: {
-            status: query?.status
-        }
-    } );
-    return res.data;
-}
-
-export async function getDoctorOffice(url: string) {
-    const res = await api.get<OfficeDTO>(url, {
-        headers: {"accept": ContentTypes.OFFICE,}
-    });
-    return res.data;
-}
-
-export async function getDoctorOfficeSpecialties(url: string) {
-    const res = await api.get<OfficeSpecialtyDTO[]>(url, {
-        headers: {"accept": ContentTypes.OFFICE_SPECIALTY_LIST,}
-    } );
-    return res.data;
-}
-
-export async function getDoctorOfficeAvailability(url: string) {
-    const res = await api.get<AvailabilityDTO[]>(url, {
-        headers: {"accept": ContentTypes.AVAILABILITY_LIST,}
-    });
-    return res.data
 }
 
 export async function getDoctorUnavailability(url: string) {
@@ -382,16 +332,6 @@ export async function putDoctorImage(doctorImageUrl: string, image: File) {
     return res.data;
 }
 
-
-export async function putDoctorOfficeAvailability(url: string, data: DoctorAvailabilityFormDTO) {
-    const res = await api.put(url, data, {
-        headers: {
-            "content-type": ContentTypes.AVAILABILITY_LIST
-        }
-    });
-    return res.data;
-}
-
 export async function putDoctorUnavailability(url: string, data:DoctorUnavailabilityFormDTO){
     const res = await api.put(url, data, {
         headers: {
@@ -412,18 +352,4 @@ export async function updateDoctorProfileComplete(params: {
     }
 
     return updateDoctor(params.doctorUrl, params.data);
-}
-
-export async function updateDoctorOffice(url: string, form: UpdateDoctorOfficeForm) {
-    const res = await api.patch(url, form, {
-        headers: {"Content-Type": ContentTypes.OFFICE}
-    })
-    return res.data;
-}
-
-export async function createDoctorOffice(url: string, form: CreateDoctorOfficeForm) {
-    const res = await api.post(url, form, {
-        headers: {"Content-Type": ContentTypes.OFFICE}
-    })
-    return res.data;
 }

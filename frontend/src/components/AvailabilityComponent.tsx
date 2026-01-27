@@ -25,9 +25,10 @@ import {
 import { Spinner } from "@/components/ui/spinner.tsx";
 import {dayOptions, normalizeDay, normalizeTime, timeOptions, timeToMinutes} from "@/utils/dateUtils.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
-import { useDoctor, useDoctorOfficeAvailability, useDoctorOffices } from "@/hooks/useDoctors.ts";
-import type { OfficeDTO } from "@/data/office.ts";
-import type { AvailabilityDTO } from "@/data/doctors.ts";
+import { useDoctor } from "@/hooks/useDoctors.ts";
+import { useDoctorOfficeAvailability, useDoctorOffices } from "@/hooks/useOffices.ts";
+import type { OfficeDTO } from "@/data/offices.ts";
+import type { AvailabilityDTO } from "@/data/offices.ts"
 import { officeIdFromSelf } from "@/utils/IdUtils.ts";
 
 type AvailabilitySlot = {
@@ -127,27 +128,38 @@ function buildSlotsFromApi(
     return result;
 }
 
-const ghostFilter = "h-0 sm:h-9";
+const ghostFilter =
+    "h-0 sm:h-9";
 const editButton =
     "mt-2 sm:mt-0 bg-transparent text-(--primary-color) hover:bg-(--primary-bg) cursor-pointer";
-const availabilityContainer = "flex flex-col";
+const availabilityContainer =
+    "flex flex-col";
 const warningContainer =
     "flex items-start gap-3 mb-6 rounded-lg bg-(--primary-bg) p-4 border border-(--primary-color) animate-in fade-in slide-in-from-top-2";
-const warningIcon = "h-5 w-5 text-(--primary-dark)";
-const warningRightContent = "flex flex-col flex-1 leading-tight";
-const warningTitle = "text-sm font-medium text-(--primary-dark)";
-const warningText = "mt-1 text-sm text-(--primary-dark)";
+const warningIcon =
+    "h-5 w-5 text-(--primary-dark)";
+const warningRightContent =
+    "flex flex-col flex-1 leading-tight";
+const warningTitle =
+    "text-sm font-medium text-(--primary-dark)";
+const warningText =
+    "mt-1 text-sm text-(--primary-dark)";
 const addAvailabilityButton =
     "w-full max-w-3xs text-white bg-(--primary-color) hover:bg-(--primary-dark) cursor-pointer";
-const availabilityContentContainer = "flex flex-col gap-6";
-const availabilityEmptyContentContainer = "flex flex-col items-center gap-6";
-const availabilityItems = "flex flex-col items-center gap-4";
+const availabilityContentContainer =
+    "flex flex-col gap-6";
+const availabilityEmptyContentContainer =
+    "flex flex-col items-center gap-6";
+const availabilityItems =
+    "flex flex-col items-center gap-4";
 const newAvailabilityItem =
     "mt-2 w-3xs flex flex-row justify-center items-center gap-2 p-4 bg-(--gray-100) text-(--gray-600) border border-(--gray-400) border-dashed rounded-xl hover:bg-(--gray-200) hover:border-(--gray-500) cursor-pointer";
-const availabilityButtonsContainer = "flex justify-center md:justify-end gap-2";
+const availabilityButtonsContainer =
+    "flex justify-center md:justify-end gap-2";
 const cancelButton =
     "cursor-pointer border border-(--primary-color) text-(--primary-color) hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark)";
-const saveButton = "bg-(--primary-color) text-white hover:bg-(--primary-dark) cursor-pointer";
+const saveButton =
+    "bg-(--primary-color) text-white hover:bg-(--primary-dark) cursor-pointer";
 
 export default function AvailabilityComponent() {
     const { t } = useTranslation();
@@ -174,8 +186,6 @@ export default function AvailabilityComponent() {
         () => buildSlotsFromApi(officesQuery.data, availabilityQuery.data),
         [officesQuery.data, availabilityQuery.data]
     );
-
-    console.log(slotsFromApi);
 
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving] = useState(false);
@@ -321,15 +331,22 @@ export default function AvailabilityComponent() {
     );
 }
 
-const availabilityItemCard = "w-full p-6";
-const availabilityItemOverlap = "bg-(--danger-lighter) border border-(--danger)";
-const slotsContainer = "flex flex-col md:items-center gap-4 md:flex-row md:flex-nowrap";
-const fieldBlock = "flex flex-col gap-2 min-w-0 md:w-56 md:flex-1";
-const fieldLabel = "text-sm font-medium text-(--text-color)";
-const selectFixed = "w-full";
+const availabilityItemCard =
+    "w-full p-6";
+const availabilityItemOverlap =
+    "bg-(--danger-lighter) border border-(--danger)";
+const slotsContainer =
+    "flex flex-col md:items-center gap-4 md:flex-row md:flex-nowrap";
+const fieldBlock =
+    "flex flex-col gap-2 min-w-0 md:w-56 md:flex-1";
+const fieldLabel =
+    "text-sm font-medium text-(--text-color)";
+const selectFixed =
+    "w-full";
 const deleteItemButton =
     "text-(--danger) hover:text-white hover:bg-(--danger-dark) rounded-full cursor-pointer";
-const overlapText = "text-sm text-(--danger) font-medium";
+const overlapText =
+    "text-sm text-(--danger) font-medium";
 
 function AvailabilityItem({
                               slot,

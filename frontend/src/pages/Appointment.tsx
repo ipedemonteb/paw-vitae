@@ -12,24 +12,22 @@ import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { useTranslation } from "react-i18next";
 import {
     useDoctor,
-    useDoctorOffices,
     useDoctorSpecialties,
-    useDoctorOfficesSpecialties,
-    useDoctorOfficeAvailability,
 } from "@/hooks/useDoctors.ts";
+
 import { useBookAppointment } from "@/hooks/useAppointments.ts";
 import { useDoctorSlots } from "@/hooks/useSlots.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import type { OfficeDTO } from "@/data/office.ts";
+import type {OfficeDTO, OfficeSpecialtyDTO} from "@/data/offices.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
-import type { OfficeSpecialtyDTO } from "@/data/doctors.ts";
 import type { AvailabilitySlotDTO } from "@/data/slots.ts";
 import { startOfDay, parseISO, isSameDay } from "date-fns";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
+import {useDoctorOfficeAvailability, useDoctorOffices, useDoctorOfficesSpecialties} from "@/hooks/useOffices.ts";
 
 
 function buildSpecialtyToOfficesMapFromLinks(
