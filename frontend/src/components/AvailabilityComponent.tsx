@@ -23,39 +23,7 @@ import {
     SelectValue,
 } from "@/components/ui/select.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
-
-const ghostFilter =
-    "h-0 sm:h-9";
-const editButton =
-    "mt-2 sm:mt-0 bg-transparent text-(--primary-color) hover:bg-(--primary-bg) cursor-pointer";
-const availabilityContainer =
-    "flex flex-col";
-const warningContainer =
-    "flex items-start gap-3 mb-6 rounded-lg bg-(--primary-bg) p-4 border border-(--primary-color) animate-in fade-in slide-in-from-top-2";
-const warningIcon =
-    "h-5 w-5 text-(--primary-dark)";
-const warningRightContent =
-    "flex flex-col flex-1 leading-tight";
-const warningTitle =
-    "text-sm font-medium text-(--primary-dark)";
-const warningText =
-    "mt-1 text-sm text-(--primary-dark)";
-const addAvailabilityButton =
-    "w-full max-w-3xs text-white bg-(--primary-color) hover:bg-(--primary-dark) cursor-pointer";
-const availabilityContentContainer =
-    "flex flex-col gap-6";
-const availabilityEmptyContentContainer =
-    "flex flex-col items-center gap-6";
-const availabilityItems =
-    "flex flex-col items-center gap-4";
-const newAvailabilityItem =
-    "w-3xs flex flex-row justify-center items-center gap-2 p-4 bg-(--gray-100) text-(--gray-600) border border-(--gray-400) border-dashed rounded-xl hover:bg-(--gray-200) hover:border-(--gray-500) cursor-pointer";
-const availabilityButtonsContainer =
-    "flex justify-end gap-2";
-const cancelButton =
-    "cursor-pointer border border-(--primary-color) text-(--primary-color) hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark)";
-const saveButton =
-    "bg-(--primary-color) text-white hover:bg-(--primary-dark) cursor-pointer";
+import {timeToMinutes} from "@/utils/dateUtils.ts";
 
 type AvailabilitySlot = {
     id: number;
@@ -93,12 +61,6 @@ const timeOptions = [
     "18:00",
 ];
 
-function toMinutes(hhmm: string) {
-    const [h, m] = hhmm.split(":").map((x) => Number(x));
-    if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
-    return h * 60 + m;
-}
-
 function computeOverlapIds(slots: AvailabilitySlot[]) {
     const overlap = new Set<number>();
 
@@ -113,10 +75,10 @@ function computeOverlapIds(slots: AvailabilitySlot[]) {
             if (a.office !== b.office) continue;
             if (a.day !== b.day) continue;
 
-            const aStart = toMinutes(a.start);
-            const aEnd = toMinutes(a.end);
-            const bStart = toMinutes(b.start);
-            const bEnd = toMinutes(b.end);
+            const aStart = timeToMinutes(a.start);
+            const aEnd = timeToMinutes(a.end);
+            const bStart = timeToMinutes(b.start);
+            const bEnd = timeToMinutes(b.end);
 
             if (aStart === null || aEnd === null || bStart === null || bEnd === null)
                 continue;
@@ -132,6 +94,39 @@ function computeOverlapIds(slots: AvailabilitySlot[]) {
 
     return overlap;
 }
+
+const ghostFilter =
+    "h-0 sm:h-9";
+const editButton =
+    "mt-2 sm:mt-0 bg-transparent text-(--primary-color) hover:bg-(--primary-bg) cursor-pointer";
+const availabilityContainer =
+    "flex flex-col";
+const warningContainer =
+    "flex items-start gap-3 mb-6 rounded-lg bg-(--primary-bg) p-4 border border-(--primary-color) animate-in fade-in slide-in-from-top-2";
+const warningIcon =
+    "h-5 w-5 text-(--primary-dark)";
+const warningRightContent =
+    "flex flex-col flex-1 leading-tight";
+const warningTitle =
+    "text-sm font-medium text-(--primary-dark)";
+const warningText =
+    "mt-1 text-sm text-(--primary-dark)";
+const addAvailabilityButton =
+    "w-full max-w-3xs text-white bg-(--primary-color) hover:bg-(--primary-dark) cursor-pointer";
+const availabilityContentContainer =
+    "flex flex-col gap-6";
+const availabilityEmptyContentContainer =
+    "flex flex-col items-center gap-6";
+const availabilityItems =
+    "flex flex-col items-center gap-4";
+const newAvailabilityItem =
+    "mt-2 w-3xs flex flex-row justify-center items-center gap-2 p-4 bg-(--gray-100) text-(--gray-600) border border-(--gray-400) border-dashed rounded-xl hover:bg-(--gray-200) hover:border-(--gray-500) cursor-pointer";
+const availabilityButtonsContainer =
+    "flex justify-center md:justify-end gap-2";
+const cancelButton =
+    "cursor-pointer border border-(--primary-color) text-(--primary-color) hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark)";
+const saveButton =
+    "bg-(--primary-color) text-white hover:bg-(--primary-dark) cursor-pointer";
 
 export default function AvailabilityComponent() {
     const { t } = useTranslation();
@@ -185,7 +180,7 @@ export default function AvailabilityComponent() {
                 {!isEditing ? (
                     <Button className={editButton} onClick={handleEdit}>
                         <Pencil className="h-5 w-5" />
-                        Edit
+                        {t("edit")}
                     </Button>
                 ) : (
                     <div className={ghostFilter} />
@@ -235,7 +230,7 @@ export default function AvailabilityComponent() {
                                 {isEditing ? (
                                     <Button className={newAvailabilityItem} onClick={handleAdd}>
                                         <Plus className="h-5 w-5" />
-                                        <p>Add Availability</p>
+                                        <p>{t("availability.addSchedule")}</p>
                                     </Button>
                                 ) : null}
                             </div>
@@ -307,6 +302,8 @@ function AvailabilityItem({
     onDelete: () => void;
     onChange: (patch: Partial<AvailabilitySlot>) => void;
 }) {
+    const { t } = useTranslation();
+
     return (
         <Card
             className={`${availabilityItemCard} ${
@@ -315,14 +312,14 @@ function AvailabilityItem({
         >
             <div className={slotsContainer}>
                 <div className={fieldBlock}>
-                    <h3 className={fieldLabel}>Office</h3>
+                    <h3 className={fieldLabel}>{t("availability.office")}</h3>
                     <Select
                         value={slot.office || undefined}
                         onValueChange={(v) => onChange({ office: v })}
                         disabled={!isEditing}
                     >
                         <SelectTrigger className={selectFixed}>
-                            <SelectValue placeholder="Select Office" />
+                            <SelectValue placeholder={t("availability.select.office")} />
                         </SelectTrigger>
                         <SelectContent position="popper">
                             {officeOptions.map((o) => (
@@ -335,14 +332,14 @@ function AvailabilityItem({
                 </div>
 
                 <div className={fieldBlock}>
-                    <h3 className={fieldLabel}>Day of Week</h3>
+                    <h3 className={fieldLabel}>{t("availability.dayOfWeek")}</h3>
                     <Select
                         value={slot.day || undefined}
                         onValueChange={(v) => onChange({ day: v })}
                         disabled={!isEditing}
                     >
                         <SelectTrigger className={selectFixed}>
-                            <SelectValue placeholder="Select Day" />
+                            <SelectValue placeholder={t("availability.select.day")}/>
                         </SelectTrigger>
                         <SelectContent position="popper">
                             {dayOptions.map((d) => (
@@ -355,14 +352,14 @@ function AvailabilityItem({
                 </div>
 
                 <div className={fieldBlock}>
-                    <h3 className={fieldLabel}>Start Time</h3>
+                    <h3 className={fieldLabel}>{t("availability.startTime")}</h3>
                     <Select
                         value={slot.start || undefined}
                         onValueChange={(v) => onChange({ start: v })}
                         disabled={!isEditing}
                     >
                         <SelectTrigger className={selectFixed}>
-                            <SelectValue placeholder="Select Time" />
+                            <SelectValue placeholder={t("availability.select.time")}/>
                         </SelectTrigger>
                         <SelectContent position="popper">
                             {timeOptions.map((t) => (
@@ -375,14 +372,14 @@ function AvailabilityItem({
                 </div>
 
                 <div className={fieldBlock}>
-                    <h3 className={fieldLabel}>End Time</h3>
+                    <h3 className={fieldLabel}>{t("availability.endTime")}</h3>
                     <Select
                         value={slot.end || undefined}
                         onValueChange={(v) => onChange({ end: v })}
                         disabled={!isEditing}
                     >
                         <SelectTrigger className={selectFixed}>
-                            <SelectValue placeholder="Select Time" />
+                            <SelectValue placeholder={t("availability.select.time")}/>
                         </SelectTrigger>
                         <SelectContent position="popper">
                             {timeOptions.map((t) => (
@@ -407,7 +404,7 @@ function AvailabilityItem({
             </div>
 
             {hasOverlap ? (
-                <p className={overlapText}>This time slot overlaps with an existing slot</p>
+                <p className={overlapText}>{t("availability.overlap")}</p>
             ) : null}
         </Card>
     );

@@ -384,6 +384,7 @@
   "cancel": "Cancel",
   "success": "Success",
   "add_new": "Add New",
+  "edit": "Edit",
   "header": {
     "home": "Home",
     "search": "Find Doctors",
@@ -715,8 +716,13 @@
     "dayOfWeek" : "Day",
     "startTime" : "Start Time",
     "endTime" : "End Time",
-    "save" : "Save changes",
-    "addSchedule" : "Add availability",
+    "addSchedule" : "Add Availability",
+    "select": {
+      "office": "Select Office",
+      "day": "Select Day",
+      "time": "Select Time"
+    },
+    "overlap": "This time slot overlaps with an existing slot.",
     "emptyContent" : "No availability set up",
     "emptyContentText" : "Your availability will appear here once you have added one.",
     "errorTimeOrder": "Starting time must be before end time",
