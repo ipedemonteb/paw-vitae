@@ -651,6 +651,10 @@
   },
   "offices": {
     "headerTitle": "Offices",
+    "header": {
+      "title": "Offices",
+      "info": "Hover over an office to start managing it"
+    },
     "filter": {
       "message": "Status",
       "all": "All",
