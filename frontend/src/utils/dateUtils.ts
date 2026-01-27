@@ -73,26 +73,19 @@ export function normalizeTime(value: unknown): string {
 }
 
 export const dayOptions = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+    "SUNDAY",
 ];
 
-export function normalizeDay(value: unknown): string {
-    const n =
-        typeof value === "number"
-            ? value
-            : typeof value === "string"
-                ? Number(value.trim())
-                : NaN;
-    if (!Number.isFinite(n)) return "";
-    const idx = Math.trunc(n); // 0..6
-    if (idx < 0 || idx >= dayOptions.length) return "";
-    return dayOptions[idx];
+export const DB_DAY_ORDER: Array<0 | 1 | 2 | 3 | 4 | 5 | 6> = [1, 2, 3, 4, 5, 6, 0];
+
+export function labelFromDbDay(dbDay: number) {
+    return dbDay === 0 ? dayOptions[6] : dayOptions[dbDay - 1];
 }
 
 export function normalizeDayIndex(value: unknown): number | null {
