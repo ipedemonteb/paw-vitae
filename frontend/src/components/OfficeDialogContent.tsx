@@ -54,7 +54,7 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                     {form.watch("active") && (
                         <div className="w-full flex flex-col gap-1 ">
                             <Label htmlFor="active" className="text-[1rem] text-(--text-light)">{t("offices.dialog.activeLabel")}</Label>
-                            <Switch  defaultChecked={form.watch("active")} id="active" className="data-[state=checked]:bg-green-400 data-[state=checked]: transition-all " />
+                            <Switch  defaultChecked={form.watch("active")} id="active" className="data-[state=checked]:bg-(--success) data-[state=checked]: transition-all " />
                         </div>
                     )}
                     <div className="w-full flex flex-col gap-1.5">

@@ -19,7 +19,7 @@ type RemoveOfficeAlertDialogProps = {
 }
 
 export default function RemoveOfficeAlertDialog({officeName, onClick, open, setOpen}: RemoveOfficeAlertDialogProps) {
-    const baseClass = " bg-red-500 rounded-full cursor-pointer transition-all delay-75  gap-1 p-2 flex items-center justify-center  text-white text-xs "
+    const baseClass = " bg-(--danger) hover:bg-(--danger-dark) rounded-full cursor-pointer transition-all delay-75  gap-1 p-2 flex items-center justify-center  text-white text-xs "
     const openClass = baseClass + "scale-100 opacity-100 translate-y-1.5"
     const closeClass = baseClass + "scale-0 opacity-0 -translate-y-4"
     const {t} = useTranslation()
@@ -60,7 +60,7 @@ export default function RemoveOfficeAlertDialog({officeName, onClick, open, setO
                     <AlertDialogCancel className="cursor-pointer text-(--text-light)">
                         {t("offices.dialog.cancel")}
                     </AlertDialogCancel>
-                    <AlertDialogAction onClick={onClick} className="cursor-pointer bg-red-500 hover:bg-red-600" >
+                    <AlertDialogAction onClick={onClick} className="cursor-pointer bg-(--danger) hover:bg-(--danger-dark)" >
                         {t("offices.dialog.remove.confirm")}
                     </AlertDialogAction>
                 </AlertDialogFooter>
