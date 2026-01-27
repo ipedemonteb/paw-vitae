@@ -23,18 +23,27 @@ import {
     SelectValue,
 } from "@/components/ui/select.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
-import {dayOptions, normalizeDay, normalizeTime, timeOptions, timeToMinutes} from "@/utils/dateUtils.ts";
+import {
+    dayOptions, ensureSeconds,
+    normalizeDayIndex,
+    normalizeTime,
+    timeOptions,
+    timeToMinutes
+} from "@/utils/dateUtils.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { useDoctor } from "@/hooks/useDoctors.ts";
-import { useDoctorOfficeAvailability, useDoctorOffices } from "@/hooks/useOffices.ts";
-import type { OfficeDTO } from "@/data/offices.ts";
+import {
+    useDoctorOfficeAvailability,
+    useDoctorOffices, usePutDoctorAvailabilityMutation,
+} from "@/hooks/useOffices.ts";
+import {type DoctorAvailabilityFormDTO, type OfficeDTO} from "@/data/offices.ts";
 import type { AvailabilityDTO } from "@/data/offices.ts"
 import { officeIdFromSelf } from "@/utils/IdUtils.ts";
 
 type AvailabilitySlot = {
     id: string;
     officeId: string;
-    day: string;
+    day: number | null;
     start: string;
     end: string;
 };
@@ -55,8 +64,8 @@ function computeOverlapIds(slots: AvailabilitySlot[]) {
             const a = slots[i];
             const b = slots[j];
 
-            if (!a.officeId || !a.day || !a.start || !a.end) continue;
-            if (!b.officeId || !b.day || !b.start || !b.end) continue;
+            if (!a.officeId || a.day === null || !a.start || !a.end) continue;
+            if (!b.officeId || b.day === null || !b.start || !b.end) continue;
 
             if (a.officeId !== b.officeId) continue;
             if (a.day !== b.day) continue;
@@ -109,7 +118,8 @@ function buildSlotsFromApi(
             if (officeId === null) continue;
             if (!officeById.has(officeId)) continue;
 
-            const normDay = normalizeDay(day);
+            const normDay = normalizeDayIndex(day);
+            if (normDay === null) continue;
             const normStart = normalizeTime(start);
             const normEnd = normalizeTime(end);
 
@@ -188,7 +198,7 @@ export default function AvailabilityComponent() {
     );
 
     const [isEditing, setIsEditing] = useState(false);
-    const [isSaving] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
     const [snapshot, setSnapshot] = useState<AvailabilitySlot[]>([]);
@@ -217,16 +227,57 @@ export default function AvailabilityComponent() {
         setIsEditing(false);
     };
 
-    //TODO FINISH
-    const handleSave = () => {
-        setIsEditing(false);
+    const putAvailability = usePutDoctorAvailabilityMutation(auth.userId);
+
+    const handleSave = async () => {
+        if (isSaving) return;
+        if (!auth.userId) return;
+        if (overlapIds.size > 0) return;
+        for (const s of slots) {
+            if (!s.officeId || s.day === null || !s.start || !s.end) return;
+
+            const startMin = timeToMinutes(s.start);
+            const endMin = timeToMinutes(s.end);
+
+            if (startMin >= endMin) return;
+        }
+
+        const form: DoctorAvailabilityFormDTO = {
+            doctorOfficeAvailabilities: slots.map((s) => {
+                const officeIdNum = Number(s.officeId);
+
+                if (!Number.isFinite(officeIdNum)) {
+                    throw new Error();
+                }
+                if (s.day === null) {
+                    throw new Error();
+                }
+
+                return {
+                    officeId: officeIdNum,
+                    dayOfWeek: s.day,
+                    startTime: ensureSeconds(s.start),
+                    endTime: ensureSeconds(s.end),
+                };
+            }),
+        };
+        
+        try {
+            setIsSaving(true);
+            await putAvailability.mutateAsync(form);
+
+            setIsEditing(false);
+            setSnapshot(slots.map((x) => ({ ...x })));
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleAdd = () => {
         const newId = `new-${Date.now()}`;
         setSlots((prev) => [
             ...prev,
-            { id: newId, officeId: "", day: "", start: "", end: "" },
+            { id: newId, officeId: "", day: null, start: "", end: "" },
         ]);
     };
 
@@ -363,6 +414,10 @@ function AvailabilityItem({
     officeOptions: Array<{ id: string; name: string }>;
 }) {
     const { t } = useTranslation();
+    const dbDayLabels = useMemo(
+        () => [dayOptions[6], ...dayOptions.slice(0, 6)],
+        []
+    );
 
     return (
         <Card className={`${availabilityItemCard} ${hasOverlap ? availabilityItemOverlap : ""}`}>
@@ -390,21 +445,23 @@ function AvailabilityItem({
                 <div className={fieldBlock}>
                     <h3 className={fieldLabel}>{t("availability.dayOfWeek")}</h3>
                     <Select
-                        value={slot.day || undefined}
-                        onValueChange={(v) => onChange({ day: v })}
+                        value={slot.day === null ? undefined : String(slot.day)}   // DB value 0..6
+                        onValueChange={(v) => onChange({ day: Number(v) })}        // guarda DB value
                         disabled={!isEditing}
                     >
                         <SelectTrigger className={selectFixed}>
                             <SelectValue placeholder={t("availability.select.day")} />
                         </SelectTrigger>
+
                         <SelectContent position="popper">
-                            {dayOptions.map((d) => (
-                                <SelectItem key={d} value={d}>
-                                    {d}
+                            {dbDayLabels.map((label, dbDay) => (
+                                <SelectItem key={dbDay} value={String(dbDay)}>
+                                    {label}
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
+
                 </div>
 
                 <div className={fieldBlock}>

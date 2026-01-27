@@ -1,19 +1,16 @@
 import {keepPreviousData, useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
 import {
-    type AvailabilityDTO, createDoctorOffice,
-    type DoctorAvailabilityFormDTO,
+    type AvailabilityDTO, createDoctorOffice, type DoctorAvailabilityFormDTO,
     type DoctorOfficeQuery,
     getDoctorOffice,
     getDoctorOfficeAvailability,
     getDoctorOffices,
     getDoctorOfficeSpecialties,
     type OfficeDTO,
-    type OfficeSpecialtyDTO,
-    putDoctorOfficeAvailability,
+    type OfficeSpecialtyDTO, putDoctorAvailability,
     updateDoctorOffice,
     type UpdateDoctorOfficeForm
 } from "@/data/offices.ts";
-import type {AxiosError} from "axios";
 import {buildDoctorOfficesUrl} from "@/utils/IdUtils.ts";
 import type {CreateDoctorOfficeForm} from "@/data/doctors.ts";
 
@@ -76,14 +73,18 @@ export function useDoctorOfficeAvailability(offices?: OfficeDTO[] | null) {
     return { data, isLoading, isError };
 }
 
-export function usePutDoctorOfficeAvailability(url: string) {
+export function usePutDoctorAvailabilityMutation(doctorId: string | undefined) {
     const queryClient = useQueryClient();
 
-    return useMutation<any, AxiosError<any>, DoctorAvailabilityFormDTO>({
-        mutationFn: (data: DoctorAvailabilityFormDTO) => putDoctorOfficeAvailability(url, data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['doctor', 'offices', 'availability'] });
-        }
+    return useMutation({
+        mutationFn: (form: DoctorAvailabilityFormDTO) =>
+            putDoctorAvailability(doctorId, form),
+
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ["doctor", "offices", "availability"],
+            });
+        },
     });
 }
 

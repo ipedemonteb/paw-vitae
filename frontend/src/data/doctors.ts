@@ -109,12 +109,6 @@ export type CreateDoctorOfficeForm = {
     neighborhoodId: number,
 }
 
-export interface AvailabilitySlotForm {
-    dayOfWeek: number;
-    startTime: string; // Formato "HH:mm:00"
-    endTime: string;   // Formato "HH:mm:00"
-}
-
 export interface UnavailabilityForm {
     endDate: string;
     startDate: string;
