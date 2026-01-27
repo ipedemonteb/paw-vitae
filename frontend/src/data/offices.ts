@@ -1,6 +1,6 @@
 import {api} from "@/data/Api.ts";
 import {ContentTypes} from "@/utils/contentTypes.ts";
-import type {AvailabilitySlotForm, CreateDoctorOfficeForm} from "@/data/doctors.ts";
+import type {CreateDoctorOfficeForm} from "@/data/doctors.ts";
 
 export interface OfficeDTO {
     name: string;
@@ -28,8 +28,15 @@ export interface AvailabilityDTO {
     office: string;
 }
 
+export interface DoctorOfficeAvailabilityUpsertForm {
+    officeId: number;
+    dayOfWeek: number;
+    startTime: string;         // "HH:mm:00"
+    endTime: string;           // "HH:mm:00"
+}
+
 export interface DoctorAvailabilityFormDTO {
-    doctorOfficeAvailabilities: AvailabilitySlotForm[];
+    doctorOfficeAvailabilities: DoctorOfficeAvailabilityUpsertForm[];
 }
 
 export type UpdateDoctorOfficeForm = Partial<CreateDoctorOfficeForm> & {
@@ -84,11 +91,10 @@ export async function createDoctorOffice(url: string, form: CreateDoctorOfficeFo
     return res.data;
 }
 
-export async function putDoctorOfficeAvailability(url: string, data: DoctorAvailabilityFormDTO) {
-    const res = await api.put(url, data, {
+export async function putDoctorAvailability(doctorId: string | undefined, data: DoctorAvailabilityFormDTO): Promise<void> {
+    await api.put(`/doctors/${doctorId}/availability`, data, {
         headers: {
-            "content-type": ContentTypes.AVAILABILITY_LIST
-        }
+            "Content-Type": ContentTypes.AVAILABILITY_LIST,
+        },
     });
-    return res.data;
 }
