@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import {
-    dayOptions, ensureSeconds,
+    DB_DAY_ORDER, ensureSeconds, labelFromDbDay,
     normalizeDayIndex,
     normalizeTime,
     timeOptions,
@@ -413,11 +413,6 @@ function AvailabilityItem({
     officeOptions: Array<{ id: string; name: string }>;
 }) {
     const { t } = useTranslation();
-    const dbDayLabels = useMemo(
-        () => [dayOptions[6], ...dayOptions.slice(0, 6)],
-        []
-    );
-
     return (
         <Card className={`${availabilityItemCard} ${hasOverlap ? availabilityItemOverlap : ""}`}>
             <div className={slotsContainer}>
@@ -444,8 +439,8 @@ function AvailabilityItem({
                 <div className={fieldBlock}>
                     <h3 className={fieldLabel}>{t("availability.dayOfWeek")}</h3>
                     <Select
-                        value={slot.day === null ? "" : String(slot.day)}   // DB value 0..6
-                        onValueChange={(v) => onChange({ day: Number(v) })}        // guarda DB value
+                        value={slot.day === null ? "" : String(slot.day)}
+                        onValueChange={(v) => onChange({ day: Number(v) })}
                         disabled={!isEditing}
                     >
                         <SelectTrigger className={selectFixed}>
@@ -453,9 +448,9 @@ function AvailabilityItem({
                         </SelectTrigger>
 
                         <SelectContent position="popper">
-                            {dbDayLabels.map((label, dbDay) => (
+                            {DB_DAY_ORDER.map((dbDay) => (
                                 <SelectItem key={dbDay} value={String(dbDay)}>
-                                    {label}
+                                    {t(`days.${labelFromDbDay(dbDay)}`)}
                                 </SelectItem>
                             ))}
                         </SelectContent>
