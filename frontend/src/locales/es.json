@@ -731,7 +731,7 @@
     "errorOverlap": "Horario superpuesto con otro intervalo",
     "success"  : "Horarios actualizados con éxito",
     "error" : "Hubo un error actualizando sus horarios. Pruebe de nuevo mas tarde.",
-    "warning_title": "Advertencia de Status de Consultorio",
+    "warning_title": "Advertencia del Estado de Consultorio",
     "warning_text" : "Si un consultorio no tiene horarios, automáticamente esta se volverá inactiva. Para reactivarla, edite la oficina en la sección de consultorios y agregue un horario para este."
   },
   "days": {

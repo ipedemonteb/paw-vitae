@@ -18,6 +18,11 @@ export function appointmentIdFromSelf(self: string): string | null {
     return m ? String(m[1]) : null;
 }
 
+export function officeIdFromSelf(self: string): string | null {
+    const m = self.match(/(\d+)(?!.*\d)/);
+    return m ? String(m[1]) : null;
+}
+
 export function buildDoctorOfficesUrl(id: string) {
     return `/doctors/${id}/offices`
 }
