@@ -220,6 +220,26 @@ export default function AvailabilityComponent() {
     const isAvailability = slots.length > 0;
     const overlapIds = useMemo(() => computeOverlapIds(slots), [slots]);
 
+    const hasTimeOrderError = useMemo(() => {
+        for (const s of slots) {
+            if (!s.start || !s.end) continue;
+            if (timeToMinutes(s.end) <= timeToMinutes(s.start)) return true;
+        }
+        return false;
+    }, [slots]);
+
+    const hasIncompleteSlot = useMemo(() => {
+        for (const s of slots) {
+            if (!s.officeId) return true;
+            if (s.day === null) return true;
+            if (!s.start) return true;
+            if (!s.end) return true;
+        }
+        return false;
+    }, [slots]);
+
+    const canSave = isEditing && !isSaving && !hasIncompleteSlot && overlapIds.size === 0 && !hasTimeOrderError;
+
     const handleEdit = () => setIsEditing(true);
 
     const handleCancel = () => {
@@ -357,7 +377,7 @@ export default function AvailabilityComponent() {
                                     <X className="w-4 h-4" />
                                     {t("cancel")}
                                 </Button>
-                                <Button className={saveButton} disabled={isSaving} onClick={handleSave}>
+                                <Button className={saveButton} disabled={!canSave} onClick={handleSave}>
                                     {isSaving ? (
                                         <>
                                             <Spinner className="w-4 h-4 mr-2" />
@@ -397,6 +417,10 @@ const deleteItemButton =
     "text-(--danger) hover:text-white hover:bg-(--danger-dark) rounded-full cursor-pointer";
 const overlapText =
     "text-sm text-(--danger) font-medium";
+const invalidSelectTrigger =
+    "border-(--danger) focus:ring-(--danger) focus:ring-2 focus:ring-offset-0";
+const invalidText =
+    "text-sm text-(--danger) font-medium mt-2";
 
 function AvailabilityItem({
                               slot,
@@ -404,7 +428,8 @@ function AvailabilityItem({
                               hasOverlap,
                               onDelete,
                               onChange,
-                              officeOptions,}: {
+                              officeOptions,
+                          }: {
     slot: AvailabilitySlot;
     isEditing: boolean;
     hasOverlap: boolean;
@@ -413,8 +438,19 @@ function AvailabilityItem({
     officeOptions: Array<{ id: string; name: string }>;
 }) {
     const { t } = useTranslation();
+
+    const hasStart = !!slot.start;
+    const hasEnd = !!slot.end;
+
+    const isTimeOrderInvalid = useMemo(() => {
+        if (!hasStart || !hasEnd) return false; // si falta alguno, no hay error
+        return timeToMinutes(slot.end) <= timeToMinutes(slot.start);
+    }, [hasStart, hasEnd, slot.start, slot.end]);
+
+    const showTimeError = isEditing && isTimeOrderInvalid;
+
     return (
-        <Card className={`${availabilityItemCard} ${hasOverlap ? availabilityItemOverlap : ""}`}>
+        <Card className={`${availabilityItemCard} ${hasOverlap ? availabilityItemOverlap : ""} ${showTimeError ? availabilityItemOverlap : ""}`}>
             <div className={slotsContainer}>
                 <div className={fieldBlock}>
                     <h3 className={fieldLabel}>{t("availability.office")}</h3>
@@ -446,7 +482,6 @@ function AvailabilityItem({
                         <SelectTrigger className={selectFixed}>
                             <SelectValue placeholder={t("availability.select.day")} />
                         </SelectTrigger>
-
                         <SelectContent position="popper">
                             {DB_DAY_ORDER.map((dbDay) => (
                                 <SelectItem key={dbDay} value={String(dbDay)}>
@@ -455,7 +490,6 @@ function AvailabilityItem({
                             ))}
                         </SelectContent>
                     </Select>
-
                 </div>
 
                 <div className={fieldBlock}>
@@ -465,7 +499,7 @@ function AvailabilityItem({
                         onValueChange={(v) => onChange({ start: v })}
                         disabled={!isEditing}
                     >
-                        <SelectTrigger className={selectFixed}>
+                        <SelectTrigger className={`${selectFixed} ${showTimeError ? invalidSelectTrigger : ""}`}>
                             <SelectValue placeholder={t("availability.select.time")} />
                         </SelectTrigger>
                         <SelectContent position="popper">
@@ -485,7 +519,7 @@ function AvailabilityItem({
                         onValueChange={(v) => onChange({ end: v })}
                         disabled={!isEditing}
                     >
-                        <SelectTrigger className={selectFixed}>
+                        <SelectTrigger className={`${selectFixed} ${showTimeError ? invalidSelectTrigger : ""}`}>
                             <SelectValue placeholder={t("availability.select.time")} />
                         </SelectTrigger>
                         <SelectContent position="popper">
@@ -506,6 +540,11 @@ function AvailabilityItem({
             </div>
 
             {hasOverlap ? <p className={overlapText}>{t("availability.overlap")}</p> : null}
+
+            {showTimeError ? (
+                <p className={invalidText}>{t("availability.errorEndBeforeStart")}</p>
+            ) : null}
         </Card>
     );
 }
+
