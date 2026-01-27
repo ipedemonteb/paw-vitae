@@ -59,28 +59,28 @@ function pickSlotFields(slot: any) {
 function computeOverlapIds(slots: AvailabilitySlot[]) {
     const overlap = new Set<string>();
 
-    for (let i = 0; i < slots.length; i++) {
-        for (let j = i + 1; j < slots.length; j++) {
-            const a = slots[i];
-            const b = slots[j];
+    const groups = new Map<string, AvailabilitySlot[]>();
+    for (const s of slots) {
+        if (!s.officeId || s.day === null || !s.start || !s.end) continue;
+        const key = `${s.officeId}|${s.day}`;
+        const arr = groups.get(key) ?? [];
+        arr.push(s);
+        groups.set(key, arr);
+    }
 
-            if (!a.officeId || a.day === null || !a.start || !a.end) continue;
-            if (!b.officeId || b.day === null || !b.start || !b.end) continue;
+    for (const arr of groups.values()) {
+        arr.sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
 
-            if (a.officeId !== b.officeId) continue;
-            if (a.day !== b.day) continue;
+        for (let i = 0; i < arr.length - 1; i++) {
+            const cur = arr[i];
+            const next = arr[i + 1];
 
-            const aStart = timeToMinutes(a.start);
-            const aEnd = timeToMinutes(a.end);
-            const bStart = timeToMinutes(b.start);
-            const bEnd = timeToMinutes(b.end);
+            const curEnd = timeToMinutes(cur.end);
+            const nextStart = timeToMinutes(next.start);
 
-            if (aStart === null || aEnd === null || bStart === null || bEnd === null) continue;
-
-            const overlaps = aStart < bEnd && bStart < aEnd;
-            if (overlaps) {
-                overlap.add(a.id);
-                overlap.add(b.id);
+            if (nextStart < curEnd) {
+                overlap.add(cur.id);
+                overlap.add(next.id);
             }
         }
     }
@@ -313,69 +313,68 @@ export default function AvailabilityComponent() {
                             <p className={warningText}>{t("availability.warning_text")}</p>
                         </div>
                     </div>
-
-                    {!isAvailability ? (
-                        <div className={availabilityEmptyContentContainer}>
-                            <DashboardNavEmptyContent
-                                title={t("availability.emptyContent")}
-                                text={t("availability.emptyContentText")}
-                                Icon={CalendarClock}
-                            />
-                            {isEditing ? (
-                                <Button className={addAvailabilityButton} onClick={handleAdd}>
-                                    <Plus className="h-5 w-5" />
-                                    {t("availability.addSchedule")}
-                                </Button>
-                            ) : null}
-                        </div>
-                    ) : (
-                        <div className={availabilityContentContainer}>
-                            <div className={availabilityItems}>
-                                {slots.map((slot) => (
-                                    <AvailabilityItem
-                                        key={slot.id}
-                                        slot={slot}
-                                        isEditing={isEditing}
-                                        hasOverlap={overlapIds.has(slot.id)}
-                                        onDelete={() => handleDelete(slot.id)}
-                                        onChange={(patch) => handleUpdate(slot.id, patch)}
-                                        officeOptions={officeOptions}
-                                    />
-                                ))}
-
+                    <div className={availabilityContentContainer}>
+                        {!isAvailability ? (
+                            <div className={availabilityEmptyContentContainer}>
+                                <DashboardNavEmptyContent
+                                    title={t("availability.emptyContent")}
+                                    text={t("availability.emptyContentText")}
+                                    Icon={CalendarClock}
+                                />
                                 {isEditing ? (
-                                    <Button className={newAvailabilityItem} onClick={handleAdd}>
+                                    <Button className={addAvailabilityButton} onClick={handleAdd}>
                                         <Plus className="h-5 w-5" />
-                                        <p>{t("availability.addSchedule")}</p>
+                                        {t("availability.addSchedule")}
                                     </Button>
                                 ) : null}
                             </div>
+                        ) : (
+                        <div className={availabilityItems}>
+                            {slots.map((slot) => (
+                                <AvailabilityItem
+                                    key={slot.id}
+                                    slot={slot}
+                                    isEditing={isEditing}
+                                    hasOverlap={overlapIds.has(slot.id)}
+                                    onDelete={() => handleDelete(slot.id)}
+                                    onChange={(patch) => handleUpdate(slot.id, patch)}
+                                    officeOptions={officeOptions}
+                                />
+                            ))}
 
                             {isEditing ? (
-                                <div className={availabilityButtonsContainer}>
-                                    <Button variant="outline" className={cancelButton} onClick={handleCancel}>
-                                        <X className="w-4 h-4" />
-                                        {t("cancel")}
-                                    </Button>
-                                    <Button className={saveButton} disabled={isSaving} onClick={handleSave}>
-                                        {isSaving ? (
-                                            <>
-                                                <Spinner className="w-4 h-4 mr-2" />
-                                                {t("saving")}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Save className="w-4 h-4" />
-                                                {t("save")}
-                                            </>
-                                        )}
-                                    </Button>
-                                </div>
-                            ) : (
-                                <div />
-                            )}
+                                <Button className={newAvailabilityItem} onClick={handleAdd}>
+                                    <Plus className="h-5 w-5" />
+                                    <p>{t("availability.addSchedule")}</p>
+                                </Button>
+                            ) : null}
                         </div>
-                    )}
+                        )}
+
+                        {isEditing ? (
+                            <div className={availabilityButtonsContainer}>
+                                <Button variant="outline" className={cancelButton} onClick={handleCancel}>
+                                    <X className="w-4 h-4" />
+                                    {t("cancel")}
+                                </Button>
+                                <Button className={saveButton} disabled={isSaving} onClick={handleSave}>
+                                    {isSaving ? (
+                                        <>
+                                            <Spinner className="w-4 h-4 mr-2" />
+                                            {t("saving")}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Save className="w-4 h-4" />
+                                            {t("save")}
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        ) : (
+                            <div />
+                        )}
+                    </div>
                 </div>
             )}
         </DashboardNavContainer>
@@ -425,7 +424,7 @@ function AvailabilityItem({
                 <div className={fieldBlock}>
                     <h3 className={fieldLabel}>{t("availability.office")}</h3>
                     <Select
-                        value={slot.officeId || undefined}
+                        value={slot.officeId || ""}
                         onValueChange={(v) => onChange({ officeId: v })}
                         disabled={!isEditing}
                     >
@@ -445,7 +444,7 @@ function AvailabilityItem({
                 <div className={fieldBlock}>
                     <h3 className={fieldLabel}>{t("availability.dayOfWeek")}</h3>
                     <Select
-                        value={slot.day === null ? undefined : String(slot.day)}   // DB value 0..6
+                        value={slot.day === null ? "" : String(slot.day)}   // DB value 0..6
                         onValueChange={(v) => onChange({ day: Number(v) })}        // guarda DB value
                         disabled={!isEditing}
                     >
@@ -467,7 +466,7 @@ function AvailabilityItem({
                 <div className={fieldBlock}>
                     <h3 className={fieldLabel}>{t("availability.startTime")}</h3>
                     <Select
-                        value={slot.start || undefined}
+                        value={slot.start || ""}
                         onValueChange={(v) => onChange({ start: v })}
                         disabled={!isEditing}
                     >
@@ -487,7 +486,7 @@ function AvailabilityItem({
                 <div className={fieldBlock}>
                     <h3 className={fieldLabel}>{t("availability.endTime")}</h3>
                     <Select
-                        value={slot.end || undefined}
+                        value={slot.end || ""}
                         onValueChange={(v) => onChange({ end: v })}
                         disabled={!isEditing}
                     >

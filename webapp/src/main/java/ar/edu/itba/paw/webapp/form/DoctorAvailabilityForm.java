@@ -13,7 +13,6 @@ import java.util.List;
 //@OfficeOwnedByDoctor(message = "{office.invalid}")
 //@ActiveOfficeSlots
 public class DoctorAvailabilityForm {
-    @NotEmpty
     @NotNull
     @ValidOfficeTimeSlot(message = "office.invalid.timeSlot")
     @OfficeAvailabilitySlotIntersection(message = "office.availabilitySlot.intersection")
