@@ -30,13 +30,13 @@ export default function OfficesComponent() {
         <DashboardNavContainer>
             <DashboardNavHeader title={
                 <div className="flex gap-2 items-center justify-center">
-                    {t("offices.headerTitle")}
+                    {t("offices.header.title")}
                     <HoverCard openDelay={10} closeDelay={40}>
                         <HoverCardTrigger asChild>
                             <Info className="size-4 text-(--text-light)" />
                         </HoverCardTrigger>
                         <HoverCardContent side="top" className="bg-gray-50 text-(--text-light) max-w-40 flex justify-center items-center w-fit text-sm">
-                            Hover over an office to start managing it
+                            {t("offices.header.info")}
                         </HoverCardContent>
                     </HoverCard>
                 </div>

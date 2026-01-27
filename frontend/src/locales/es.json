@@ -648,7 +648,10 @@
     }
   },
   "offices": {
-    "headerTitle": "Oficinas",
+    "header": {
+      "title": "Oficinas",
+      "info": "Pase el cursor sobre una oficina para comenzar a gestionarla"
+    },
     "filter": {
       "message": "Estado",
       "all": "Todas",
