@@ -1,13 +1,13 @@
 import AvailabilityComponent from "@/components/AvailabilityComponent.tsx";
-import UnavailabilityComponent from "@/components/UnavailabilityComponent.tsx";
+import Unavailability from "@/components/Unavailability.tsx";
 
 function DoctorAvailability() {
-  return (
-      <div className="space-y-8">
-        <AvailabilityComponent/>
-        <UnavailabilityComponent/>
-      </div>
-  )
+    return (
+        <div className="space-y-8">
+            <AvailabilityComponent/>
+            <Unavailability/>
+        </div>
+    )
 }
 
 export default DoctorAvailability;

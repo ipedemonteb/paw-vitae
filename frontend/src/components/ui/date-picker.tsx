@@ -30,6 +30,7 @@ export function DatePicker({
                                isDateDisabled,
                                fromDate,
                                toDate,
+                               className,
                            }: {
     value?: Date
     onChange?: (date: Date | undefined) => void
@@ -38,6 +39,7 @@ export function DatePicker({
     isDateDisabled?: (date: Date) => boolean
     fromDate?: Date
     toDate?: Date
+    className?: string
 }) {
     const { t } = useTranslation();
     const [open, setOpen] = React.useState(false)
@@ -69,7 +71,8 @@ export function DatePicker({
                     disabled={disabled}
                     className={cn(
                         "w-full justify-between bg-background",
-                        disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                        disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
+                        className
                     )}
                 >
                     <span
@@ -106,7 +109,6 @@ export function DatePicker({
                             to.setHours(23, 59, 59, 999)
                             if (date > to) return true
                         }
-
                         return false
                     }}
                     onSelect={(d) => {
