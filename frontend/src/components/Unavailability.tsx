@@ -140,10 +140,10 @@ export default function Unavailability() {
 
     return (
       <DashboardNavContainer>
-          <DashboardNavHeader title={"Unavailability"}>
+          <DashboardNavHeader title={t("unavailability.title")}>
               <Button className={editButton} onClick={() => setAddOpen(true)}>
                   <Plus className="h-5 w-5" />
-                  Add New
+                  {t("unavailability.add")}
               </Button>
           </DashboardNavHeader>
 
@@ -160,16 +160,16 @@ export default function Unavailability() {
               <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
                   <DialogHeader className={dialogHeader}>
                       <DialogTitle>
-                          Add Unavailability
+                          {t("unavailability.dialog.title")}
                       </DialogTitle>
                       <DialogDescription className={dialogText}>
-                          Select the date range for your unavailability.
+                          {t("unavailability.dialog.description")}
                       </DialogDescription>
                   </DialogHeader>
                   <div className={dialogContent}>
                       <div className={dateFieldsGrid}>
                           <div className={dateField}>
-                              <p className={dateFieldLabel}>Start Date</p>
+                              <p className={dateFieldLabel}>{t("unavailability.dialog.start")}</p>
                               <DatePicker
                                   value={startDate}
                                   onChange={(d) => setStartDate(d)}
@@ -178,7 +178,7 @@ export default function Unavailability() {
                           </div>
 
                           <div className={dateField}>
-                              <p className={dateFieldLabel}>End Date</p>
+                              <p className={dateFieldLabel}>{t("unavailability.dialog.end")}</p>
                               {/*TODO check this feature of allowing from today*/}
                               <DatePicker
                                   value={endDate}
@@ -192,8 +192,8 @@ export default function Unavailability() {
                       {showError && (
                           <p className={dialogErrorText}>
                               {dialogError === "range"
-                                  ? "End date can’t be earlier than start date."
-                                  : "This unavailability overlaps with an existing one."}
+                                  ? t("unavailability.dialog.range-error")
+                                  : t("unavailability.dialog.overlap-error")}
                           </p>
                       )}
                   </div>
@@ -201,7 +201,7 @@ export default function Unavailability() {
                   <DialogFooter className={dialogFooter}>
                       <DialogClose asChild>
                           <Button type="button" className={dialogCancel}>
-                              Cancel
+                              {t("cancel")}
                           </Button>
                       </DialogClose>
 
@@ -211,7 +211,7 @@ export default function Unavailability() {
                           onClick={onConfirmAdd}
                           disabled={!startDate || !endDate || showError}
                       >
-                          Add Unavailability
+                          {t("unavailability.add-unavailability")}
                       </Button>
                   </DialogFooter>
               </DialogContent>
@@ -224,8 +224,8 @@ export default function Unavailability() {
                   {!isUnavailability ? (
                       <div className={unavailabilityEmptyContentContainer}>
                           <DashboardNavEmptyContent
-                              title={"No unavailability set up"}
-                              text={"Your unavailability will appear here once you have added one."}
+                              title={t("unavailability.empty-title")}
+                              text={t("unavailability.empty-subtitle")}
                               Icon={CalendarClock}
                           />
                       </div>
@@ -295,7 +295,7 @@ function UnavailabilityItem({
         <Card className={unavailabilityItemCard}>
             <div className={unavailabilityItemContent}>
                 <h3 className={unavailabilityItemTitle}>
-                    {isSingleDate ? "Single Day" : "Date Range"}
+                    {isSingleDate ? t("unavailability.single") : t("unavailability.range")}
                 </h3>
 
                 {isSingleDate ? (
@@ -321,19 +321,19 @@ function UnavailabilityItem({
             <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                 <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
                     <DialogHeader className={dialogHeader}>
-                        <DialogTitle>Delete Unavailability</DialogTitle>
+                        <DialogTitle>{t("unavailability.item-dialog.title")}</DialogTitle>
                         <DialogDescription className={dialogText}>
-                            Are you sure you want to delete this date? This action can’t be undone.
+                            {t("unavailability.item-dialog.subtitle")}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className={dialogFooter}>
                         <DialogClose asChild>
                             <Button type="button" className={dialogCancel}>
-                                Cancel
+                                {t("cancel")}
                             </Button>
                         </DialogClose>
                         <Button type="button" className={dialogDelete} onClick={onConfirmDelete}>
-                            Delete
+                            {t("delete")}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

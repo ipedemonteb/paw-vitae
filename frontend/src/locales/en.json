@@ -384,6 +384,7 @@
   "cancel": "Cancel",
   "success": "Success",
   "add_new": "Add New",
+  "delete": "Delete",
   "edit": "Edit",
   "header": {
     "home": "Home",
@@ -747,18 +748,25 @@
     "SUNDAY" : "Sunday"
   },
   "unavailability" : {
-    "headerTitle" : "Unavailability",
-    "startEndOrSingle": "Start/End or Single Day",
-    "inRange": "In Range",
-    "pastDates": "Past Dates",
-    "selectedDates": "Selected Dates",
-    "items": "items",
-    "noDatesSelected": "No dates selected",
-    "singleDay": "Single Day",
-    "range": "Range",
-    "saveChanges": "Save Changes",
-    "success"  : "Dates correctly updated",
-    "error" : "There was an error updating your unavailability dates. Please try again later"
+    "title" : "Unavailability",
+    "add": "Add New",
+    "dialog": {
+      "title": "Add Unavailability",
+      "description": "Select the date range for your unavailability.",
+      "start": "Start Date",
+      "end": "End Date",
+      "range-error": "End date can’t be earlier than start date.",
+      "overlap-error": "This unavailability overlaps with an existing one."
+    },
+    "add-unavailability": "Add Unavailability",
+    "empty-title": "No unavailability set up",
+    "empty-subtitle": "Your unavailability will appear here once you have added one.",
+    "single": "Single Date",
+    "range": "Date Range",
+    "item-dialog": {
+      "title": "Delete Unavailability",
+      "subtitle": "Are you sure you want to delete this date? This action can’t be undone."
+    }
   },
   "date-picker": {
     "placeholder": "Select a Date"
