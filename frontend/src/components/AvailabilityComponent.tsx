@@ -163,7 +163,7 @@ const availabilityEmptyContentContainer =
 const availabilityItems =
     "flex flex-col items-center gap-4";
 const newAvailabilityItem =
-    "mt-2 w-3xs flex flex-row justify-center items-center gap-2 p-4 bg-(--gray-100) text-(--gray-600) border border-(--gray-400) border-dashed rounded-xl hover:bg-(--gray-200) hover:border-(--gray-500) cursor-pointer";
+    "mt-2 w-3xs flex flex-row justify-center items-center gap-2 p-4 bg-transparent text-(--primary-color) border border-(--primary-color) border-dashed rounded-xl hover:bg-(--primary-bg) cursor-pointer";
 const availabilityButtonsContainer =
     "flex justify-center md:justify-end gap-2";
 const cancelButton =
