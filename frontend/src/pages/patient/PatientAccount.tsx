@@ -39,6 +39,7 @@ const cardTitleStyles = "text-xl font-[500] text-(--text-color) flex items-cente
 const sectionStyles = "pb-6 px-6 pt-2";
 const gridStyles = "grid grid-cols-1 md:grid-cols-2 gap-6";
 const infoValueStyles = "flex flex-row items-center gap-1 text-(--text-light) font-[400]";
+const editButtonStyles = "mt-2 sm:mt-0 bg-transparent text-(--primary-color) hover:bg-(--primary-bg) cursor-pointer"
 const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer text-white mt-2 md:mt-0 ";
 
 function PatientAccount() {
@@ -149,7 +150,7 @@ function PatientAccount() {
         <DashboardNavContainer>
             <DashboardNavHeader title={t("patient.dashboard.account")}>
                 {!isEditing && (
-                    <Button onClick={() => setIsEditing(true)} className={actionButtonStyles}>
+                    <Button onClick={() => setIsEditing(true)} className={editButtonStyles}>
                         <Pencil className="w-4 h-4 mr-2" />
                         {t("dashboard.profile.edit")}
                     </Button>
