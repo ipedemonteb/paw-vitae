@@ -10,8 +10,8 @@ import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {useEffect, useState} from "react";
+import DashboardNavSelect from "@/components/DashboardNavSelect.tsx";
 
 const typeDictionary = {
     history: {
@@ -81,23 +81,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                     <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
                         {t(componentType.filterMessage)}:
                     </span>
-                    <Select
-                        value={filterValue}
-                        onValueChange={(val) => setFilter(val)}
-                    >
-                        <SelectTrigger className="bg-white text-black hover:bg-(--gray-100) font-light text-sm border rounded-md cursor-pointer">
-                            <SelectValue />
-                        </SelectTrigger>
-
-                        <SelectContent position="popper">
-                            <SelectItem value="all">{t("appointment.filters.all")}</SelectItem>
-                            {componentType.popoverData.map((a) => (
-                                <SelectItem key={a} value={a}>
-                                    {t(transformFilter(a))}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <DashboardNavSelect all={t("appointment.filters.all")} value={filterValue} onValueChange={(val) => setFilter(val)} content={componentType.popoverData} display={(s:string) => t(transformFilter(s))}/>
                 </div>
             </DashboardNavHeader>
             {(isLoading) ? (

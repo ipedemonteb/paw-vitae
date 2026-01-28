@@ -2,7 +2,6 @@ import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import {useTranslation} from "react-i18next";
 import { Building, Info} from "lucide-react";
-import {useState} from "react";
 import {useSearchParams} from "react-router-dom";
 import {useDoctorOffices} from "@/hooks/useOffices.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
@@ -11,7 +10,7 @@ import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx"
 import EditOfficeDialog from "@/components/EditOfficeDialog.tsx";
 import {HoverCard, HoverCardContent, HoverCardTrigger} from "@/components/ui/hover-card.tsx";
 import AddOfficeDialog from "@/components/AddOfficeDialog.tsx";
-import {SelectTrigger, Select, SelectContent, SelectValue, SelectItem} from "@/components/ui/select.tsx";
+import DashboardNavSelect from "@/components/DashboardNavSelect.tsx";
 
 const officeStatusEnum = ['all', 'active', 'inactive']
 
@@ -21,7 +20,6 @@ function sanitizeQueryParam(q: string | null) {
 
 export default function OfficesComponent() {
     const {t} = useTranslation()
-    const [open, setOpen] = useState(false)
     const [sp, setSp] = useSearchParams();
     const officeStatus = sanitizeQueryParam(sp.get("status")) ?? "all"
     const auth = useAuth()
@@ -45,30 +43,13 @@ export default function OfficesComponent() {
                     <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
                         {t("offices.filter.message")}
                     </span>
-                    <Select
-                        value={officeStatus}
-                        onValueChange={(val) => {
-                            setSp((p) => {
-                                if (val === "all") p.delete("status")
-                                else p.set("status", val)
-                                return p;
-                            })
-                            setOpen(false)
-                        }}
-                        open={open}
-                        onOpenChange={setOpen}
-                    >
-                        <SelectTrigger className="bg-white text-black hover:bg-gray-100 font-light text-sm border rounded-md cursor-pointer">
-                            <SelectValue/>
-                        </SelectTrigger>
-                        <SelectContent position="popper" className="min-w-fit max-w-28 p-0">
-                            {officeStatusEnum.map(o => (
-                                <SelectItem key={o} value={o}>
-                                    {t("offices.filter." + o)}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <DashboardNavSelect value={officeStatus} onValueChange={(val) => {
+                        setSp((p) => {
+                            if (val === "all") p.delete("status")
+                            else p.set("status", val)
+                            return p;
+                        })
+                    }} content={officeStatusEnum} display={(s: string) => t("offices.filter." + s)}/>
                     <AddOfficeDialog/>
                 </div>
             </DashboardNavHeader>
