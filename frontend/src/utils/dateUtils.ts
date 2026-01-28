@@ -6,8 +6,8 @@ export function timeToMinutes(t: string): number {
 export function formatLongDate(date: string | undefined, locale: string): string {
     if (!date) return "";
 
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return "";
+    const d = isoToLocalDate(date);
+    if (!d || isNaN(d.getTime())) return "";
 
     return new Intl.DateTimeFormat(locale, {
         day: "2-digit",

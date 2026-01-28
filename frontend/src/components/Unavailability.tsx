@@ -1,6 +1,6 @@
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {CalendarClock, Plus, X} from "lucide-react";
+import {ArrowRight, CalendarClock, Plus, X} from "lucide-react";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import {useTranslation} from "react-i18next";
@@ -16,6 +16,32 @@ import {
     DialogTitle
 } from "@/components/ui/dialog.tsx";
 import {DatePicker} from "@/components/ui/date-picker.tsx";
+import {formatLongDate, localDateToIso} from "@/utils/dateUtils.ts";
+
+type UnavailabilityRange = {
+    startDate: string; // LocalDate ISO: YYYY-MM-DD
+    endDate: string;   // LocalDate ISO: YYYY-MM-DD
+};
+
+const getUiLocale = (lang?: string) => (lang?.startsWith("es") ? "es-AR" : "en-US");
+
+const normalizeRange = (startIso: string, endIso: string): UnavailabilityRange => {
+    return startIso <= endIso
+        ? { startDate: startIso, endDate: endIso }
+        : { startDate: endIso, endDate: startIso };
+};
+
+const rangeKey = (r: UnavailabilityRange) => `${r.startDate}_${r.endDate}`;
+
+type UnavailabilityError = "range" | "overlap" | null;
+
+const rangesOverlap = (a: UnavailabilityRange, b: UnavailabilityRange) => {
+    return a.startDate <= b.endDate && b.startDate <= a.endDate;
+};
+
+const hasOverlap = (candidate: UnavailabilityRange, existing: UnavailabilityRange[]) => {
+    return existing.some((r) => rangesOverlap(candidate, r));
+};
 
 const editButton =
     "mt-2 sm:mt-0 bg-transparent text-(--primary-color) hover:bg-(--primary-bg) cursor-pointer";
@@ -51,21 +77,66 @@ const dialogConfirm =
     "hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark) cursor-pointer";
 
 export default function Unavailability() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = getUiLocale(i18n.language);
+
+    const [unavailabilities, setUnavailabilities] = useState<UnavailabilityRange[]>([
+        { startDate: "2026-01-30", endDate: "2026-01-30" },
+        { startDate: "2026-01-30", endDate: "2026-02-05" },
+    ]);
 
     const [addOpen, setAddOpen] = useState(false);
 
     const [startDate, setStartDate] = useState<Date | undefined>(undefined);
     const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
+
     const onConfirmAdd = () => {
+        if (!startDate || !endDate) return;
+
+        const startIso = localDateToIso(startDate);
+        const endIso = localDateToIso(endDate);
+        const normalized = normalizeRange(startIso, endIso);
+
+        if (endIso < startIso) return;
+        if (hasOverlap(normalized, unavailabilities)) return;
+
+        setUnavailabilities((prev) => {
+            const exists = prev.some(
+                (r) => r.startDate === normalized.startDate && r.endDate === normalized.endDate
+            );
+            if (exists) return prev;
+            return [normalized, ...prev];
+        });
+
         setAddOpen(false);
+        setStartDate(undefined);
+        setEndDate(undefined);
     };
 
     const isLoading = false;
-    const isUnavailability = true;
+    const isUnavailability = unavailabilities.length > 0;
 
-    const isRangeInvalid = !!startDate && !!endDate && endDate < startDate;
+    const isRangeInvalid =
+        !!startDate &&
+        !!endDate &&
+        localDateToIso(endDate) < localDateToIso(startDate);
+
+    const candidateRange =
+        startDate && endDate
+            ? normalizeRange(localDateToIso(startDate), localDateToIso(endDate))
+            : null;
+
+    const isOverlapInvalid =
+        !!candidateRange && hasOverlap(candidateRange, unavailabilities);
+
+    const dialogError: UnavailabilityError =
+        isRangeInvalid ? "range" : isOverlapInvalid ? "overlap" : null;
+
+    const showError = dialogError !== null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     return (
       <DashboardNavContainer>
@@ -102,23 +173,27 @@ export default function Unavailability() {
                               <DatePicker
                                   value={startDate}
                                   onChange={(d) => setStartDate(d)}
-                                  className={isRangeInvalid ? datePickerError : undefined}
+                                  className={showError ? datePickerError : undefined}
                               />
                           </div>
 
                           <div className={dateField}>
                               <p className={dateFieldLabel}>End Date</p>
+                              {/*TODO check this feature of allowing from today*/}
                               <DatePicker
                                   value={endDate}
                                   onChange={(d) => setEndDate(d)}
-                                  className={isRangeInvalid ? datePickerError : undefined}
+                                  className={showError ? datePickerError : undefined}
+                                  fromDate={today}
                               />
                           </div>
                       </div>
 
-                      {isRangeInvalid && (
+                      {showError && (
                           <p className={dialogErrorText}>
-                              End date can’t be earlier than start date.
+                              {dialogError === "range"
+                                  ? "End date can’t be earlier than start date."
+                                  : "This unavailability overlaps with an existing one."}
                           </p>
                       )}
                   </div>
@@ -134,7 +209,7 @@ export default function Unavailability() {
                           type="button"
                           className={dialogConfirm}
                           onClick={onConfirmAdd}
-                          disabled={!startDate || !endDate || isRangeInvalid}
+                          disabled={!startDate || !endDate || showError}
                       >
                           Add Unavailability
                       </Button>
@@ -156,12 +231,20 @@ export default function Unavailability() {
                       </div>
                   ) : (
                       <div className={unavailabilityContentContainer}>
-                          <UnavailabilityItem />
-                          <UnavailabilityItem />
-                          <UnavailabilityItem />
-                          <UnavailabilityItem />
-                          <UnavailabilityItem />
-                          <UnavailabilityItem />
+                          {unavailabilities.map((r) => (
+                              <UnavailabilityItem
+                                  key={rangeKey(r)}
+                                  range={r}
+                                  locale={locale}
+                                  onDelete={() => {
+                                      setUnavailabilities((prev) =>
+                                          prev.filter(
+                                              (x) => !(x.startDate === r.startDate && x.endDate === r.endDate)
+                                          )
+                                      );
+                                  }}
+                              />
+                          ))}
                       </div>
                   )}
                   <div />
@@ -172,59 +255,83 @@ export default function Unavailability() {
 }
 
 const unavailabilityItemCard =
-    "w-[200px] p-0 flex flex-row gap-0 items-start relative";
+    "w-full sm:w-[240px] p-0 flex flex-row gap-0 items-start relative";
 const unavailabilityItemContent =
     "flex flex-col py-2 px-3 pr-10";
 const unavailabilityItemTitle =
     "text-sm font-medium";
 const unavailabilityItemDate =
     "text-sm text-(--text-light)";
+const unavailabilityItemDateRange =
+    "flex flex-row items-center text-(--text-light) gap-1";
 const unavailabilityItemDeleteButton =
     "cursor-pointer hover:bg-transparent hover:text-(--danger) transition-none h-6 w-6 p-0 absolute top-2 right-2";
 const dialogDelete =
     "text-white bg-[var(--danger)] border border-[var(--danger)] hover:text-white hover:bg-[var(--danger-dark)] hover:border hover:border-[var(--danger-dark)] cursor-pointer";
 
-function UnavailabilityItem() {
-    const isSingleDate = true;
+function UnavailabilityItem({
+                                range,
+                                locale,
+                                onDelete,
+                            }: {
+    range: { startDate: string; endDate: string };
+    locale: string;
+    onDelete: () => void;
+}) {
+    const { t } = useTranslation();
+    const isSingleDate = range.startDate === range.endDate;
 
     const [deleteOpen, setDeleteOpen] = useState(false);
 
+    const startLabel = formatLongDate(range.startDate, locale);
+    const endLabel = formatLongDate(range.endDate, locale);
+
     const onConfirmDelete = () => {
         setDeleteOpen(false);
+        onDelete();
     };
 
     return (
         <Card className={unavailabilityItemCard}>
             <div className={unavailabilityItemContent}>
-                <h3 className={unavailabilityItemTitle}>Single Day</h3>
-                <p className={unavailabilityItemDate}>January 30th, 2026</p>
+                <h3 className={unavailabilityItemTitle}>
+                    {isSingleDate ? "Single Day" : "Date Range"}
+                </h3>
+
+                {isSingleDate ? (
+                    <p className={unavailabilityItemDate}>{startLabel}</p>
+                ) : (
+                    <div className={unavailabilityItemDateRange}>
+                        <p className={unavailabilityItemDate}>{startLabel}</p>
+                        <ArrowRight className="w-4 h-4" />
+                        <p className={unavailabilityItemDate}>{endLabel}</p>
+                    </div>
+                )}
             </div>
-            <Button type="button" variant="ghost" className={unavailabilityItemDeleteButton} onClick={() => setDeleteOpen(true)}>
+
+            <Button
+                type="button"
+                variant="ghost"
+                className={unavailabilityItemDeleteButton}
+                onClick={() => setDeleteOpen(true)}
+            >
                 <X className="w-4 h-4" />
             </Button>
 
-            <Dialog
-                open={deleteOpen}
-                onOpenChange={setDeleteOpen}
-            >
+            <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                 <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
                     <DialogHeader className={dialogHeader}>
-                        <DialogTitle>
-                            Delete Unavailability
-                        </DialogTitle>
-
+                        <DialogTitle>Delete Unavailability</DialogTitle>
                         <DialogDescription className={dialogText}>
                             Are you sure you want to delete this date? This action can’t be undone.
                         </DialogDescription>
                     </DialogHeader>
-
                     <DialogFooter className={dialogFooter}>
                         <DialogClose asChild>
                             <Button type="button" className={dialogCancel}>
                                 Cancel
                             </Button>
                         </DialogClose>
-
                         <Button type="button" className={dialogDelete} onClick={onConfirmDelete}>
                             Delete
                         </Button>
