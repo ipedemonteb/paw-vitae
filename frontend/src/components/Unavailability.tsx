@@ -4,7 +4,7 @@ import {ArrowRight, CalendarClock, Plus, X} from "lucide-react";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import {useTranslation} from "react-i18next";
-import {useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import {
@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/dialog.tsx";
 import {DatePicker} from "@/components/ui/date-picker.tsx";
 import {formatLongDate, localDateToIso} from "@/utils/dateUtils.ts";
+import {useDoctor, useDoctorUnavailability, usePutDoctorUnavailability} from "@/hooks/useDoctors.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 type UnavailabilityRange = {
     startDate: string; // LocalDate ISO: YYYY-MM-DD
@@ -80,42 +83,34 @@ export default function Unavailability() {
     const { t, i18n } = useTranslation();
     const locale = getUiLocale(i18n.language);
 
-    const [unavailabilities, setUnavailabilities] = useState<UnavailabilityRange[]>([
-        { startDate: "2026-01-30", endDate: "2026-01-30" },
-        { startDate: "2026-01-30", endDate: "2026-02-05" },
-    ]);
+    const auth = useAuth();
 
+    const shouldFetchDoctor = auth.isAuthenticated && auth.role === "ROLE_DOCTOR" && !!auth.userId;
+    const { data: doctor, isLoading: doctorLoading } = useDoctor(auth.userId, { enabled: shouldFetchDoctor });
+
+    const unavailabilityUrl = doctor?.unavailability ?? null;
+
+    const {
+        data: unavailabilityDto,
+        isLoading: unavailabilityLoading,
+    } = useDoctorUnavailability(unavailabilityUrl);
+
+    const putUnavailability = usePutDoctorUnavailability(unavailabilityUrl ?? "");
+
+    const [unavailabilities, setUnavailabilities] = useState<UnavailabilityRange[]>([]);
     const [addOpen, setAddOpen] = useState(false);
-
     const [startDate, setStartDate] = useState<Date | undefined>(undefined);
     const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
-
-    const onConfirmAdd = () => {
-        if (!startDate || !endDate) return;
-
-        const startIso = localDateToIso(startDate);
-        const endIso = localDateToIso(endDate);
-        const normalized = normalizeRange(startIso, endIso);
-
-        if (endIso < startIso) return;
-        if (hasOverlap(normalized, unavailabilities)) return;
-
-        setUnavailabilities((prev) => {
-            const exists = prev.some(
-                (r) => r.startDate === normalized.startDate && r.endDate === normalized.endDate
-            );
-            if (exists) return prev;
-            return [normalized, ...prev];
-        });
-
-        setAddOpen(false);
-        setStartDate(undefined);
-        setEndDate(undefined);
-    };
-
-    const isLoading = false;
-    const isUnavailability = unavailabilities.length > 0;
+    useEffect(() => {
+        if (!unavailabilityDto) return;
+        setUnavailabilities(
+            unavailabilityDto.map((u) => ({
+                startDate: u.startDate,
+                endDate: u.endDate,
+            }))
+        );
+    }, [unavailabilityDto]);
 
     const isRangeInvalid =
         !!startDate &&
@@ -135,8 +130,79 @@ export default function Unavailability() {
 
     const showError = dialogError !== null;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = useMemo(() => {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }, []);
+
+    const isLoading = doctorLoading || unavailabilityLoading;
+    const pending = putUnavailability.isPending;
+    const [pendingAction, setPendingAction] = useState<"add" | "delete" | null>(null);
+    const isUnavailability = unavailabilities.length > 0;
+
+    const buildPayload = (ranges: UnavailabilityRange[]) => ({
+        unavailabilitySlots: ranges.map((r) => ({
+            startDate: r.startDate,
+            endDate: r.endDate,
+        })),
+    });
+
+    const onConfirmAdd = () => {
+        if (!startDate || !endDate) return;
+        if (!unavailabilityUrl) return;
+
+        setPendingAction("add");
+
+        const startIso = localDateToIso(startDate);
+        const endIso = localDateToIso(endDate);
+        const normalized = normalizeRange(startIso, endIso);
+
+        if (endIso < startIso) return;
+        if (hasOverlap(normalized, unavailabilities)) return;
+
+        const next = (() => {
+            const exists = unavailabilities.some(
+                (r) => r.startDate === normalized.startDate && r.endDate === normalized.endDate
+            );
+            if (exists) return unavailabilities;
+            return [normalized, ...unavailabilities];
+        })();
+        const prevSnapshot = unavailabilities;
+        setUnavailabilities(next);
+        setAddOpen(false);
+        setStartDate(undefined);
+        setEndDate(undefined);
+
+        putUnavailability.mutate(buildPayload(next), {
+            onSuccess: () => setPendingAction(null),
+            onError: () => {
+                setUnavailabilities(prevSnapshot);
+                setPendingAction(null);
+            },
+        });
+    };
+
+    const onDeleteRange = (range: UnavailabilityRange) => {
+        if (!unavailabilityUrl) return;
+
+        setPendingAction("delete");
+
+        const prevSnapshot = unavailabilities;
+        const next = unavailabilities.filter(
+            (x) => !(x.startDate === range.startDate && x.endDate === range.endDate)
+        );
+
+        setUnavailabilities(next);
+
+        putUnavailability.mutate(buildPayload(next), {
+            onSuccess: () => setPendingAction(null),
+            onError: () => {
+                setUnavailabilities(prevSnapshot);
+                setPendingAction(null);
+            },
+        });
+    };
 
     return (
       <DashboardNavContainer>
@@ -209,15 +275,23 @@ export default function Unavailability() {
                           type="button"
                           className={dialogConfirm}
                           onClick={onConfirmAdd}
-                          disabled={!startDate || !endDate || showError}
+                          disabled={!startDate || !endDate || showError || !unavailabilityUrl || pending}
                       >
-                          {t("unavailability.add-unavailability")}
+                          {pending && pendingAction === "add" ? (
+                              <>
+                                  <Spinner className="w-4 h-4 mr-2" />
+                                  {t("saving")}
+                              </>
+                          ) : (
+                              t("unavailability.add-unavailability")
+                          )}
                       </Button>
                   </DialogFooter>
               </DialogContent>
           </Dialog>
 
           {isLoading ? (
+              // TODO: CHANGE HEIGHT
               <DashboardNavLoader />
           ) : (
               <div className={unavailabilityContainer}>
@@ -236,13 +310,9 @@ export default function Unavailability() {
                                   key={rangeKey(r)}
                                   range={r}
                                   locale={locale}
-                                  onDelete={() => {
-                                      setUnavailabilities((prev) =>
-                                          prev.filter(
-                                              (x) => !(x.startDate === r.startDate && x.endDate === r.endDate)
-                                          )
-                                      );
-                                  }}
+                                  pending={pending}
+                                  pendingAction={pendingAction}
+                                  onDelete={() => onDeleteRange(r)}
                               />
                           ))}
                       </div>
@@ -273,10 +343,14 @@ function UnavailabilityItem({
                                 range,
                                 locale,
                                 onDelete,
+                                pending,
+                                pendingAction,
                             }: {
     range: { startDate: string; endDate: string };
     locale: string;
     onDelete: () => void;
+    pending: boolean;
+    pendingAction: "add" | "delete" | null;
 }) {
     const { t } = useTranslation();
     const isSingleDate = range.startDate === range.endDate;
@@ -332,8 +406,20 @@ function UnavailabilityItem({
                                 {t("cancel")}
                             </Button>
                         </DialogClose>
-                        <Button type="button" className={dialogDelete} onClick={onConfirmDelete}>
-                            {t("delete")}
+                        <Button
+                            type="button"
+                            className={dialogDelete}
+                            onClick={onConfirmDelete}
+                            disabled={pending}
+                        >
+                            {pending && pendingAction === "delete" ? (
+                                <>
+                                    <Spinner className="w-4 h-4 mr-2" />
+                                    {t("deleting")}
+                                </>
+                            ) : (
+                                t("delete")
+                            )}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
