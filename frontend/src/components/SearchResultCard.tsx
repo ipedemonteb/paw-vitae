@@ -1,14 +1,18 @@
 import type {DoctorDTO} from "@/data/doctors.ts";
 import {ArrowRightIcon, User} from 'lucide-react'
 import {useState} from "react";
+import {generatePath, Link} from "react-router-dom";
+import {extractIdFromUrl} from "@/lib/utils.ts";
 
 type SearchResultsCardProps = {
     doctor: DoctorDTO
 }
 export default function SearchResultsCard({doctor}: SearchResultsCardProps) {
     const [image, setImage] = useState(true)
+    const doctorId = extractIdFromUrl(doctor.self)
+    const profilePath = generatePath("/profile/:id", { id: String(doctorId) })
     return (
-        <div className="w-full cursor-pointer relative hover:border hover:border-(--primary-color) h-20 flex items-center justify-between px-4  rounded-md">
+        <Link to={profilePath} className="w-full cursor-pointer relative hover:border hover:border-(--primary-color) h-20 flex items-center justify-between px-4  rounded-md">
             <div className="flex gap-4 h-full items-center justify-baseline">
                 {image ? (
                     <img className="w-12 h-12 rounded-full" onError={() => setImage(false)}  onLoad={() => setImage(true)} src={doctor.image} alt="jeje"/>
@@ -21,6 +25,6 @@ export default function SearchResultsCard({doctor}: SearchResultsCardProps) {
             </div>
             <ArrowRightIcon size={20} className="text-(--text-light)"/>
             <div className="absolute top-0 left-0 w-full h-full hover:bg-(--primary-light) hover:opacity-10" />
-        </div>
+        </Link>
     )
 }
