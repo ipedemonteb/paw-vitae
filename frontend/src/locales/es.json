@@ -382,6 +382,7 @@
   "cancel": "Cancelar",
   "success": "Éxito",
   "add_new": "Agregar Nuevo",
+  "delete": "Eliminar",
   "edit": "Editar",
   "header": {
     "home": "Inicio",
@@ -745,18 +746,25 @@
     "SUNDAY": "Domingo"
   },
   "unavailability" : {
-    "headerTitle" : "No disponibilidad",
-    "startEndOrSingle": "Inicio/Fin o Día único",
-    "inRange": "En Rango",
-    "pastDates": "Fechas Pasadas",
-    "selectedDates": "Fechas Seleccionadas",
-    "items": "items",
-    "noDatesSelected": "No hay fechas seleccionadas",
-    "singleDay": "Día único",
-    "range": "Rango",
-    "saveChanges": "Guardar Cambios",
-    "success"  : "Fechas actualizadas con exito",
-    "error" : "Hubo un error actualizando sus fechas no disponibles. Pruebe de nuevo mas tarde."
+    "title" : "Ausencias",
+    "add": "Agregar",
+    "dialog": {
+      "title": "Agregar Ausencia",
+      "description": "Seleccione el rango de fechas de la ausencia.",
+      "start": "Inicio",
+      "end": "Fin",
+      "range-error": "El fin no puede ser anterior al inicio.",
+      "overlap-error": "Esta ausencia se superpone con otra ya existente."
+    },
+    "add-unavailability": "Agregar Ausencia",
+    "empty-title": "Sin ausencias configuradas",
+    "empty-subtitle": "Sus ausencias aparecerán aquí una vez agregadas.",
+    "single": "Fecha",
+    "range": "Período",
+    "item-dialog": {
+      "title": "Eliminar Ausencia",
+      "subtitle": "¿Está seguro que desea eliminar esta ausencia? Esta acción no puede ser revertida."
+    }
   },
   "date-picker": {
     "placeholder": "Seleccione una fecha"
