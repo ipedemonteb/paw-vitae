@@ -141,7 +141,7 @@ public class AppointmentDaoTest {
         ));
 
         //Exercise
-        List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, status);
+        List<Appointment> appointments = appointmentDao.getAppointments(userId, isFuture, page, size, status, "");
 
         //Postconditions
         assertFalse(appointments.isEmpty());
@@ -361,58 +361,26 @@ public class AppointmentDaoTest {
         assertTrue(hasAppointments);
     }
 
-//  DEPRECATED METHODS
+    @Test
+    public void testHasAppointmentWithPatientDoesNotExist() {
+        //Preconditions
+        long patientId = 1000L;
 
-//    @Rollback
-//    @Test
-//    public void testCancelAppointment() {
-//        //Preconditions
-//        long appointmentId = 1L;
-//
-//        //Exercise
-//        appointmentDao.cancelAppointment(appointmentId);
-//        em.flush();
-//
-//        //Postconditions
-//        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, APPOINTMENT_TABLE, "id = " + appointmentId + " AND status = 'cancelado'"));
-//    }
-//
-//    @Test
-//    public void testCompleteAppointment() {
-//        //Preconditions
-//        JdbcTestUtils.deleteFromTables(jdbcTemplate, APPOINTMENT_TABLE);
-//        insertAppointment.execute(Map.of(
-//                "doctor_id", DOC_ID,
-//                "patient_id", PAT_ID,
-//                "specialty_id", 1L,
-//                "date", LocalDateTime.now().minusDays(2),
-//                "status", "confirmado"
-//        ));
-//        insertAppointment.execute(Map.of(
-//                "doctor_id", DOC_ID,
-//                "patient_id", PAT_ID,
-//                "specialty_id", 1L,
-//                "date", LocalDateTime.now().minusDays(2),
-//                "status", "confirmado"
-//        ));
-//
-//        //Exercise
-//        appointmentDao.completeAppointments();
-//
-//        //Postconditions
-//        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, APPOINTMENT_TABLE, "status = 'completo'"));
-//    }
-//
-//    @Test
-//    public void testUpdateReport() {
-//        //Preconditions
-//        long appointmentId = 1L;
-//        String newReport = "New report";
-//
-//        //Exercise
-//        appointmentDao.updateReport(appointmentId, newReport);
-//
-//        //Postconditions
-//        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, APPOINTMENT_TABLE, "id = " + appointmentId + " AND report = '" + newReport + "'"));
-//    }
+        //Exercise
+        boolean hasAppointment = appointmentDao.hasAppointmentWithPatient(patientId, DOC_ID);
+
+        //Postconditions
+        assertFalse(hasAppointment);
+    }
+
+    @Test
+    public void testHasAppointmentWithPatientExists() {
+        //Preconditions
+
+        //Exercise
+        boolean hasAppointment = appointmentDao.hasAppointmentWithPatient(PAT_ID, DOC_ID);
+
+        //Postconditions
+        assertTrue(hasAppointment);
+    }
 }
