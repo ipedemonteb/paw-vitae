@@ -56,6 +56,7 @@ public class AvailabilitySlotsDaoHibeImpl implements AvailabilitySlotsDao {
         query.setParameter("time", time);
         return query.getSingleResult() > 0;
     }
+
     @Override
     public int deleteUnbookedSlots(long doctorId, LocalDate fromDate) {
         return em.createQuery("DELETE FROM AvailabilitySlots s " +
@@ -66,6 +67,4 @@ public class AvailabilitySlotsDaoHibeImpl implements AvailabilitySlotsDao {
                 .setParameter("fromDate", fromDate)
                 .executeUpdate();
     }
-
-
 }
