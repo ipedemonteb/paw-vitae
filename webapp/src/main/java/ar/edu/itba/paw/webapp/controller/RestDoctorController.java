@@ -141,14 +141,20 @@ public class RestDoctorController {
         DoctorOffice office = this.doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
         return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(office, uriInfo)) {}).build();
     }
-
     @GET
-    @Path("/{id:\\d+}/offices/{officeId:\\d+}/availability")
+    @Path("/{id:\\d+}/availability")
     @Produces(value = CustomMediaType.APPLICATION_AVAILABILITY_LIST)
-    public Response getDoctorOfficeAvailability(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
-        List<DoctorOfficeAvailability> availabilities = this.doctorOfficeAvailabilityService.getByOfficeId(officeId);
+    public Response getDoctorOfficeAvailability(@PathParam("id") final long id, @QueryParam("officeId") final Long officeId) {
+        List<DoctorOfficeAvailability> availabilities = this.doctorOfficeAvailabilityService.getWithFilters(id,officeId);
         return Response.ok(new GenericEntity<>(AvailabilityDTO.fromDoctorOfficeAvailability(availabilities, uriInfo)) {}).build();
     }
+//    @GET
+//    @Path("/{id:\\d+}/offices/{officeId:\\d+}/availability")
+//    @Produces(value = CustomMediaType.APPLICATION_AVAILABILITY_LIST)
+//    public Response getDoctorOfficeAvailability(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
+//        List<DoctorOfficeAvailability> availabilities = this.doctorOfficeAvailabilityService.getByOfficeId(officeId);
+//        return Response.ok(new GenericEntity<>(AvailabilityDTO.fromDoctorOfficeAvailability(availabilities, uriInfo)) {}).build();
+//    }
 
     @GET
     @Path("/{id:\\d+}/offices/{officeId:\\d+}/specialties")

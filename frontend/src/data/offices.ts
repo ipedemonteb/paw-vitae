@@ -70,11 +70,13 @@ export async function getDoctorOfficeSpecialties(url: string) {
     return res.data;
 }
 
-export async function getDoctorOfficeAvailability(url: string) {
-    const res = await api.get<AvailabilityDTO[]>(url, {
-        headers: {"accept": ContentTypes.AVAILABILITY_LIST,}
+export async function getDoctorAvailability(doctorId: string, officeId?: string) {
+    const params = officeId ? { officeId } : {};
+    const res = await api.get<AvailabilityDTO[]>(`/doctors/${doctorId}/availability`, {
+        headers: { "accept": ContentTypes.AVAILABILITY_LIST },
+        params: params
     });
-    return res.data
+    return res.data;
 }
 
 export async function updateDoctorOffice(url: string, form: UpdateDoctorOfficeForm) {

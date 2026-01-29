@@ -11,7 +11,6 @@ public class AvailabilityDTO {
     private int dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
-
     private URI office;
 
     public static AvailabilityDTO fromDoctorOfficeAvailability(DoctorOfficeAvailability availability, UriInfo uriInfo) {
