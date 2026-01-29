@@ -1,9 +1,8 @@
 import {keepPreviousData, useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
 import {
-    type AvailabilityDTO, createDoctorOffice, type DoctorAvailabilityFormDTO,
-    type DoctorOfficeQuery,
+    createDoctorOffice, type DoctorAvailabilityFormDTO,
+    type DoctorOfficeQuery, getDoctorAvailability,
     getDoctorOffice,
-    getDoctorOfficeAvailability,
     getDoctorOffices,
     getDoctorOfficeSpecialties,
     type OfficeDTO,
@@ -56,21 +55,12 @@ export function useDoctorOfficesSpecialties(offices?: OfficeDTO[] | null) {
     return { data, isLoading, isError };
 }
 
-export function useDoctorOfficeAvailability(offices?: OfficeDTO[] | null) {
-    const queries = useQueries({
-        queries: (offices ?? []).map((office) => ({
-            queryKey: ['doctor', 'offices', 'availability', office.officeAvailability ?? []],
-            queryFn: () => getDoctorOfficeAvailability(office.officeAvailability),
-            enabled: !!office.officeAvailability,
-        })),
+export function useDoctorAvailability(doctorId?: string, officeId?: string) {
+    return useQuery({
+        queryKey: ['doctor', doctorId, 'availability', officeId ?? 'all'],
+        queryFn: () => getDoctorAvailability(doctorId!, officeId),
+        enabled: !!doctorId,
     });
-
-    const isLoading = queries.some((q) => q.isLoading);
-    const isError = queries.some((q) => q.isError);
-
-    const data = queries.map((q) => (q.data ?? []) as AvailabilityDTO[]);
-
-    return { data, isLoading, isError };
 }
 
 export function usePutDoctorAvailabilityMutation(doctorId: string | undefined) {
@@ -82,7 +72,7 @@ export function usePutDoctorAvailabilityMutation(doctorId: string | undefined) {
 
         onSuccess: async () => {
             await queryClient.invalidateQueries({
-                queryKey: ["doctor", "offices", "availability"],
+                queryKey: ["doctor", doctorId, "availability"],
             });
         },
     });
