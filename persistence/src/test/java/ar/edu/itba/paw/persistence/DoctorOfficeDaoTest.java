@@ -197,7 +197,6 @@ public class DoctorOfficeDaoTest {
         }
     }
 
-    //@TODO: CHEQUEAR SI ESTA BIEN
     @Rollback
     @Test
     public void testUpdate() {
