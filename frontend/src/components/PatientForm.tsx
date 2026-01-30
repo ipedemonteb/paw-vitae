@@ -11,7 +11,7 @@ import { useNeighborhoods } from "@/hooks/useNeighborhoods"
 import { FormInput } from "@/components/ui/FormInput"
 import { PasswordInput } from "@/components/ui/passwordInput"
 import { PasswordStrengthMeter } from "@/components/ui/PasswordStrengthMeter"
-import {useRegisterPatient} from "@/hooks/usePatients.ts";
+import {useRegisterPatientMutation} from "@/hooks/usePatients.ts";
 
 interface PatientFormProps {
     onSuccess: (email: string) => void;
@@ -20,7 +20,7 @@ interface PatientFormProps {
 export function PatientForm({ onSuccess }: PatientFormProps) {
     const { t } = useTranslation()
 
-    const {mutate: registerPatient, isPending: isSubmitting} = useRegisterPatient()
+    const {mutate: registerPatient, isPending: isSubmitting} = useRegisterPatientMutation()
 
     const {data: coverages, isLoading: isLoadingCoverages} = useCoverages()
     const {data: neighborhoods, isLoading: isLoadingNeighborhoods} = useNeighborhoods()

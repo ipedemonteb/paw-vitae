@@ -24,7 +24,7 @@ export function usePatientById(id?: string) {
     });
 }
 
-export function useRegisterPatient(){
+export function useRegisterPatientMutation(){
     return useMutation<any, AxiosError<any>, PatientRegisterData>({
         mutationFn: (data: PatientRegisterData) => registerPatient(data)
     });
@@ -39,7 +39,7 @@ export function usePatientsCount() {
         retry: 1
     });
 }
-export function useUpdatePatient(url:string){
+export function useUpdatePatientMutation(url:string){
     return useMutation<any, AxiosError<any>, PatientUpdateData>({
         mutationFn:(data :PatientUpdateData) =>  updatePatient(url,data)
     });

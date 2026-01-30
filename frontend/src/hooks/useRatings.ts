@@ -2,7 +2,7 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {createRating, getAllRatings, getDoctorRatings, getRating,type RatingForm} from "@/data/ratings.ts";
 import type {AxiosError} from "axios";
 
-export function useRatings(url?: string | null) {
+export function useRatings(url?: string) {
     return useQuery({
         queryKey: ['doctor', 'ratings', url],
         queryFn: () => getDoctorRatings(url!),
@@ -17,7 +17,7 @@ export function useAllRatings(){
     });
 }
 
-export function useRating(id?: string | null) {
+export function useRating(id?: string) {
     return useQuery({
         queryKey: ['rating', id],
         queryFn: () => getRating(id!),

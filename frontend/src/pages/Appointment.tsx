@@ -99,7 +99,7 @@ function Appointment() {
 
     const { data: doctor, isLoading: loadingDoctor, isError: errorDoctor, error: doctorError } = useDoctor(doctorId);
     const { data: offices, isLoading: loadingOffices } = useDoctorOffices(doctor?.offices);
-    const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices ?? null);
+    const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
     const { data: allAvailability } = useDoctorAvailability(doctorId);
 

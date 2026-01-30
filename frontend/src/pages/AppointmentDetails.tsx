@@ -101,11 +101,11 @@ function AppointmentDetails() {
         error: appointmentError,
     } = useAppointment(appointmentId);
 
-    const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment?.specialty ?? null);
-    const { data: office, isLoading: loadingOffice } = useDoctorOffice(appointment?.doctorOffice ?? null);
-    const { data: neighborhood } = useNeighborhood(office?.neighborhood ?? null);
+    const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment?.specialty);
+    const { data: office, isLoading: loadingOffice } = useDoctorOffice(appointment?.doctorOffice);
+    const { data: neighborhood } = useNeighborhood(office?.neighborhood);
     const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointmentId);
-    const { data: rating } = useRating(appointment?.rating ?? null);
+    const { data: rating } = useRating(appointment?.rating);
 
     const isLoading = loadingAppointment || loadingSpecialty || loadingOffice || loadingFiles;
     const isError = errorAppointment;

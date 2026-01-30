@@ -22,7 +22,7 @@ export function useDoctorOffices(url?: string, query?: DoctorOfficeQuery) {
     });
 }
 
-export function useDoctorOffice(url?: string | null) {
+export function useDoctorOffice(url?: string) {
     return useQuery({
         queryKey: ['doctor', 'offices', url],
         queryFn: () => getDoctorOffice(url!),
@@ -38,7 +38,7 @@ export function useDoctorOfficeSpecialties(url?: string) {
     })
 }
 
-export function useDoctorOfficesSpecialties(offices?: OfficeDTO[] | null) {
+export function useDoctorOfficesSpecialties(offices?: OfficeDTO[]) {
     const queries = useQueries({
         queries: (offices ?? []).map((office) => ({
             queryKey: ['doctor', 'offices', 'specialties', office.officeSpecialties ?? []],
@@ -63,7 +63,7 @@ export function useDoctorAvailability(doctorId?: string, officeId?: string) {
     });
 }
 
-export function usePutDoctorAvailabilityMutation(doctorId: string | undefined) {
+export function useUpdateDoctorAvailabilityMutation(doctorId?: string) {
     const queryClient = useQueryClient();
 
     return useMutation({
