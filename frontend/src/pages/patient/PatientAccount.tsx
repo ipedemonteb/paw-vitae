@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth.ts";
 import {
     usePatientById,
-    useUpdatePatient
+    useUpdatePatientMutation
 } from "@/hooks/usePatients.ts";
 import { useCoverage, useCoverages } from "@/hooks/useCoverages.ts";
 
@@ -53,7 +53,7 @@ function PatientAccount() {
 
     const { data: coverage } = useCoverage(patient?.coverages);
 
-    const updatePatientMutation = useUpdatePatient(patient?.self || "");
+    const updatePatientMutation = useUpdatePatientMutation(patient?.self || "");
 
     const [formData, setFormData] = useState({
         name: "",

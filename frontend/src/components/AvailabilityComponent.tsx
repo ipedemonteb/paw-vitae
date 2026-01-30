@@ -34,7 +34,7 @@ import { useAuth } from "@/hooks/useAuth.ts";
 import { useDoctor } from "@/hooks/useDoctors.ts";
 import {
     useDoctorAvailability,
-    useDoctorOffices, usePutDoctorAvailabilityMutation,
+    useDoctorOffices, useUpdateDoctorAvailabilityMutation,
 } from "@/hooks/useOffices.ts";
 import {type DoctorAvailabilityFormDTO, type OfficeDTO} from "@/data/offices.ts";
 import type { AvailabilityDTO } from "@/data/offices.ts"
@@ -243,7 +243,7 @@ export default function AvailabilityComponent() {
         setIsEditing(false);
     };
 
-    const putAvailability = usePutDoctorAvailabilityMutation(auth.userId);
+    const putAvailability = useUpdateDoctorAvailabilityMutation(auth.userId);
 
     const handleSave = async () => {
         if (isSaving) return;

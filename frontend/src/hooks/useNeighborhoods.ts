@@ -8,7 +8,7 @@ export function useNeighborhoods() {
         queryFn: listNeighborhoods
     })
 }
-export function useNeighborhood(url?: string | null) {
+export function useNeighborhood(url?: string) {
     return useQuery({
         queryKey: ['neighborhood', url],
         queryFn: () => getNeighborhood(url!),
