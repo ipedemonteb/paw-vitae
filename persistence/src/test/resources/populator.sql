@@ -59,7 +59,7 @@ VALUES (1, 1),
 INSERT INTO Doctor_Unavailability (doctor_id, start_date, end_date)
 VALUES (2, DATEADD('DAY', 60, CURRENT_TIMESTAMP), DATEADD('DAY', 65, CURRENT_TIMESTAMP)),
        (4, DATEADD('DAY', 10, CURRENT_TIMESTAMP), DATEADD('DAY', 15, CURRENT_TIMESTAMP)),
-       (4, '2026-02-01', '2026-02-05');
+       (4, '2026-04-01', '2026-04-05');
 
 INSERT INTO Appointments (id, doctor_id, patient_id, specialty_id, date, status, reason, office_id, allow_full_history)
 VALUES (1, 2, 1, 1, '2025-04-29 10:00:00', 'confirmado', 'Consulta general', 1, true),

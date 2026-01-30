@@ -257,31 +257,4 @@ public class PatientDaoTest {
         //Postconditions
         assertEquals(2, count);
     }
-
-//    DEPRECATED METHODS
-//
-//    @Test
-//    public void testUpdatePatient() {
-//        //Preconditions
-//        long patientId = 1L;
-//        long newCoverageId = 2L;
-//
-//        //Exercise
-//        patientDao.updatePatient(patientId, newCoverageId);
-//
-//        //Postconditions
-//        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, PATIENT_TABLE, "patient_id = " + patientId + " AND coverage_id = " + newCoverageId));
-//    }
-//
-//    @Test
-//    public void testChangeLanguage() {
-//        //Preconditions
-//        String newLanguage = "es";
-//
-//        //Exercise
-//        patientDao.changeLanguage(TEST_ID, newLanguage);
-//
-//        //Postconditions
-//        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = " + TEST_ID + "AND language = '" + newLanguage + "'"));
-//    }
 }

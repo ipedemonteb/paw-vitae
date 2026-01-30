@@ -186,13 +186,13 @@ public class UnavailabilitySlotDaoTest {
         long doctorId = 4L;
 
         //Exercise
-        List<UnavailabilitySlot> slots = unavailabilitySlotDao.getUnavailabilityByDoctorIdAndMonthAndYear(doctorId, 1, 2026);
+        List<UnavailabilitySlot> slots = unavailabilitySlotDao.getUnavailabilityByDoctorIdAndMonthAndYear(doctorId, 4, 2026);
 
         //Postconditions
         assertFalse(slots.isEmpty());
         assertEquals(1, slots.size());
         assertEquals(doctorId, slots.getFirst().getDoctor().getId());
-        assertEquals(LocalDate.of(2026, 1, 1), slots.getFirst().getStartDate());
-        assertEquals(LocalDate.of(2026, 1, 5), slots.getFirst().getEndDate());
+        assertEquals(LocalDate.of(2026, 4, 1), slots.getFirst().getStartDate());
+        assertEquals(LocalDate.of(2026, 4, 5), slots.getFirst().getEndDate());
     }
 }
