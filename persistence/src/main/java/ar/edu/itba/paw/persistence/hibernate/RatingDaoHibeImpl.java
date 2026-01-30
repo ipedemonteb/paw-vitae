@@ -16,7 +16,6 @@ public class RatingDaoHibeImpl implements RatingDao {
     @PersistenceContext
     private EntityManager em;
 
-
     @Override
     public Rating create(long rating, Doctor doctor, Patient patient, Appointment appointment, String comment) {
         Rating ratingObj = new Rating(rating, doctor, patient, appointment, comment);
@@ -89,6 +88,7 @@ public class RatingDaoHibeImpl implements RatingDao {
         return query.getResultList();
     }
 
+    @Override
     public Page<Rating> getAllRatings(int page, int pageSize) {
 
         String jpql = "SELECT r FROM Rating AS r ORDER BY r.rating DESC, r.id DESC";

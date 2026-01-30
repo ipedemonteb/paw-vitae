@@ -56,16 +56,22 @@ public class UserDaoHibeImpl implements UserDao {
 
     @Override
     public LocalDateTime tokenExpirationDate(String token) {
-        return (LocalDateTime) em.createQuery("SELECT u.tokenExpiration FROM User u WHERE u.verificationToken = :token OR u.resetPasswordToken = :token")
+        return em.createQuery("SELECT u.tokenExpiration FROM User u WHERE u.verificationToken = :token OR u.resetPasswordToken = :token", LocalDateTime.class)
                 .setParameter("token", token)
-                .getSingleResult();
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public String getLanguageById(long id) {
-        return (String) em.createQuery("SELECT u.language FROM User u WHERE u.id = :id")
+        return em.createQuery("SELECT u.language FROM User u WHERE u.id = :id", String.class)
                 .setParameter("id", id)
-                .getSingleResult();
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
