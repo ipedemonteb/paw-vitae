@@ -33,7 +33,7 @@ import {
 import { useAuth } from "@/hooks/useAuth.ts";
 import { useDoctor } from "@/hooks/useDoctors.ts";
 import {
-    useDoctorOfficeAvailability,
+    useDoctorAvailability,
     useDoctorOffices, usePutDoctorAvailabilityMutation,
 } from "@/hooks/useOffices.ts";
 import {type DoctorAvailabilityFormDTO, type OfficeDTO} from "@/data/offices.ts";
@@ -102,37 +102,33 @@ function buildOfficeIndex(offices?: OfficeDTO[] | null) {
 
 function buildSlotsFromApi(
     offices?: OfficeDTO[] | null,
-    officesAvailability?: AvailabilityDTO[][] | null
+    allAvailability?: AvailabilityDTO[] | null
 ): AvailabilitySlot[] {
-    if (!offices || !officesAvailability) return [];
+    if (!offices || !allAvailability) return [];
 
     const officeById = buildOfficeIndex(offices);
-
     const result: AvailabilitySlot[] = [];
+    for (const raw of allAvailability) {
+        const { day, start, end, officeUrl } = pickSlotFields(raw);
 
-    for (const list of officesAvailability) {
-        for (const raw of list as any[]) {
-            const { day, start, end, officeUrl } = pickSlotFields(raw);
+        const officeId = officeIdFromSelf(officeUrl);
+        if (officeId === null) continue;
+        if (!officeById.has(officeId)) continue;
 
-            const officeId = officeIdFromSelf(officeUrl);
-            if (officeId === null) continue;
-            if (!officeById.has(officeId)) continue;
+        const normDay = normalizeDayIndex(day);
+        if (normDay === null) continue;
+        const normStart = normalizeTime(start);
+        const normEnd = normalizeTime(end);
 
-            const normDay = normalizeDayIndex(day);
-            if (normDay === null) continue;
-            const normStart = normalizeTime(start);
-            const normEnd = normalizeTime(end);
+        const id = `${officeId}|${normDay}|${normStart}|${normEnd}`;
 
-            const id = `${officeId}|${normDay}|${normStart}|${normEnd}`;
-
-            result.push({
-                id,
-                officeId,
-                day: normDay,
-                start: normStart,
-                end: normEnd,
-            });
-        }
+        result.push({
+            id,
+            officeId,
+            day: normDay,
+            start: normStart,
+            end: normEnd,
+        });
     }
 
     return result;
@@ -177,7 +173,7 @@ export default function AvailabilityComponent() {
 
     const doctorQuery = useDoctor(auth.userId);
     const officesQuery = useDoctorOffices(doctorQuery.data?.offices);
-    const availabilityQuery = useDoctorOfficeAvailability(officesQuery.data);
+    const availabilityQuery = useDoctorAvailability(auth.userId);
 
     const isLoading = doctorQuery.isLoading || officesQuery.isLoading || availabilityQuery.isLoading;
 

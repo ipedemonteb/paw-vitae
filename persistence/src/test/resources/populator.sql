@@ -56,22 +56,10 @@ VALUES (1, 1),
        (2, 2),
        (2, 1);
 
--- INSERT INTO Doctor_Availability (doctor_id, day_of_week, start_time, end_time)
--- VALUES (2, 0, '09:00:00', '12:00:00'),
---        (4, 0, '09:00:00', '12:00:00'),
---        (4, 1, '09:00:00', '12:00:00'),
---        (4, 2, '09:00:00', '12:00:00'),
---        (4, 3, '09:00:00', '12:00:00'),
---        (4, 4, '09:00:00', '12:00:00'),
---        (4, 5, '09:00:00', '12:00:00'),
---        (4, 6, '09:00:00', '12:00:00'),
---        (5, 0, '09:00:00', '12:00:00'),
---        (5, 1, '09:00:00', '12:00:00');
-
 INSERT INTO Doctor_Unavailability (doctor_id, start_date, end_date)
 VALUES (2, DATEADD('DAY', 60, CURRENT_TIMESTAMP), DATEADD('DAY', 65, CURRENT_TIMESTAMP)),
        (4, DATEADD('DAY', 10, CURRENT_TIMESTAMP), DATEADD('DAY', 15, CURRENT_TIMESTAMP)),
-       (4, '2026-01-01', '2026-01-05');
+       (4, '2026-04-01', '2026-04-05');
 
 INSERT INTO Appointments (id, doctor_id, patient_id, specialty_id, date, status, reason, office_id, allow_full_history)
 VALUES (1, 2, 1, 1, '2025-04-29 10:00:00', 'confirmado', 'Consulta general', 1, true),
@@ -118,6 +106,17 @@ VALUES (1, 1, 0, '09:00:00', '12:00:00'),
        --(3, 2, 0, '09:00:00', '12:00:00'),
        --(4, 2, 1, '09:00:00', '12:00:00');
 
+INSERT INTO doctor_availability_slots (id, doctor_id, slot_date, start_time, status)
+VALUES (1, 2, '2026-03-02', '09:00:00', 'AVAILABLE'),
+       (2, 2, '2026-03-02', '10:00:00', 'AVAILABLE'),
+       (3, 2, '2026-03-02', '11:00:00', 'AVAILABLE'),
+       (4, 2, '2026-03-03', '09:00:00', 'AVAILABLE'),
+       (5, 2, '2026-03-03', '10:00:00', 'AVAILABLE'),
+       (6, 2, '2026-03-03', '11:00:00', 'AVAILABLE'),
+       (7, 4, '2026-03-03', '09:00:00', 'UNAVAILABLE'),
+       (8, 4, '2026-03-03', '10:00:00', 'UNAVAILABLE'),
+       (9, 4, '2026-03-03', '11:00:00', 'UNAVAILABLE');
+
 ALTER SEQUENCE users_id_seq RESTART WITH 6;
 ALTER SEQUENCE coverages_id_seq RESTART WITH 3;
 ALTER SEQUENCE specialties_id_seq RESTART WITH 5;
@@ -130,3 +129,4 @@ ALTER SEQUENCE doctor_offices_id_seq RESTART WITH 4;
 ALTER SEQUENCE doctor_experience_id_seq RESTART WITH 3;
 ALTER SEQUENCE doctor_certification_id_seq RESTART WITH 3;
 ALTER SEQUENCE doctor_office_availability_slots_id_seq RESTART WITH 4;
+ALTER SEQUENCE doctor_availability_slots_id_seq RESTART WITH 10;

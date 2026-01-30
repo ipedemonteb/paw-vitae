@@ -305,17 +305,17 @@ public class DoctorDaoTest {
         assertEquals(TEST_PHONE, maybeDoctor.get().getPhone());
         assertEquals(TEST_LANGUAGE, maybeDoctor.get().getLanguage());
     }
-//
-//    @Test
-//    public void testCountAll() {
-//        //Preconditions
-//
-//        //Exercise
-//        int count = doctorDao.countAll();
-//
-//        //Postconditions
-//        assertEquals(3, count);
-//    }
+
+    @Test
+    public void testCountAll() {
+        //Preconditions
+
+        //Exercise
+        long count = doctorDao.countAll();
+
+        //Postconditions
+        assertEquals(3, count);
+    }
 
     @Test
     public void testSearchEmpty() {
@@ -344,47 +344,5 @@ public class DoctorDaoTest {
         assertEquals(1, doctors.size());
         assertEquals(TEST_ID, doctors.getFirst().getId());
     }
-
-//    DEPRECATED METHODS
-//    @Rollback
-//    @Test
-//    public void testUpdateDoctorRating() {
-//        //Preconditions
-//        long newRating = 5L;
-//        double finalRating = (TEST_RATING * TEST_RATING_COUNT + newRating) / (TEST_RATING_COUNT + 1);
-//
-//        //Exercise
-//        doctorDao.UpdateDoctorRating(TEST_ID, newRating);
-//        em.flush();
-//
-//        //Postconditions
-//        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_TABLE, "doctor_id = " + TEST_ID + " AND rating = " + finalRating));
-//    }
-//
-//    @Test
-//    public void testUpdateDoctor() {
-//        //Preconditions
-//        List<Long> newSpecialties = List.of(1L, 2L);
-//        List<Long> newCoverages = List.of(1L, 2L);
-//
-//        //Exercise
-//        doctorDao.updateDoctor(TEST_ID, newSpecialties, newCoverages);
-//
-//        //Postconditions
-//        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCSPEC_TABLE, "doctor_id = " + TEST_ID));
-//        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCCOV_TABLE, "doctor_id = " + TEST_ID));
-//    }
-//
-//    @Test
-//    public void testUpdateImage() {
-//        //Preconditions
-//        long newImageId = 1L;
-//
-//        //Exercise
-//        doctorDao.updateImage(TEST_ID, newImageId);
-//
-//        //Postconditions
-//        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_TABLE, "doctor_id = " + TEST_ID + " AND image_id = " + newImageId));
-//    }
 }
 
