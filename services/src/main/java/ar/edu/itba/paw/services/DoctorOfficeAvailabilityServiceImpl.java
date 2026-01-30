@@ -5,7 +5,6 @@ import ar.edu.itba.paw.interfaceServices.AvailabilitySlotsService;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeAvailabilityService;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exception.BussinesRuleException;
 import ar.edu.itba.paw.models.exception.ResourceOwnershipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.*;
 
 @Service
 public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabilityService {
@@ -151,6 +147,16 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
     public List<DoctorOfficeAvailability> getByDoctorId(long doctorId) {
         LOGGER.debug("Retrieving availability slots for doctor with id: {}", doctorId);
         return doctorOfficeAvailabilityDao.getByDoctorId(doctorId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorOfficeAvailability> getWithFilters(long doctorId, Long officeId) {
+        if (officeId != null) {
+            return doctorOfficeAvailabilityDao.getByOfficeId(officeId);
+        } else {
+            return getByDoctorId(doctorId);
+        }
     }
 
     @Transactional(readOnly = true)

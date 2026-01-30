@@ -14,6 +14,7 @@ import {
     useDoctor,
     useDoctorSpecialties,
 } from "@/hooks/useDoctors.ts";
+import {useDoctorAvailability, useDoctorOffices, useDoctorOfficesSpecialties} from "@/hooks/useOffices.ts";
 
 import { useBookAppointment } from "@/hooks/useAppointments.ts";
 import { useDoctorSlots } from "@/hooks/useSlots.ts";
@@ -21,14 +22,12 @@ import { useAuth } from "@/hooks/useAuth.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import type {OfficeDTO, OfficeSpecialtyDTO} from "@/data/offices.ts";
+import type { OfficeDTO, OfficeSpecialtyDTO } from "@/data/offices.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
 import type { AvailabilitySlotDTO } from "@/data/slots.ts";
 import { startOfDay, parseISO, isSameDay } from "date-fns";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
-import {useDoctorOfficeAvailability, useDoctorOffices, useDoctorOfficesSpecialties} from "@/hooks/useOffices.ts";
-
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -63,7 +62,6 @@ function isOfficeValid(offices: OfficeDTO[], selectedOffice: string | null) {
     if (!selectedOffice) return true;
     return offices.some((o) => o.self === selectedOffice);
 }
-
 const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
 const appointmentContainer = "p-0 pb-8";
@@ -103,7 +101,7 @@ function Appointment() {
     const { data: offices, isLoading: loadingOffices } = useDoctorOffices(doctor?.offices);
     const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices ?? null);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
-    const { data: officeAvailability } = useDoctorOfficeAvailability(offices ?? null);
+    const { data: allAvailability } = useDoctorAvailability(doctorId);
 
     const { data: allSlots, isLoading: loadingSlots } = useDoctorSlots(doctorId);
 
@@ -135,18 +133,15 @@ function Appointment() {
         if (!isOfficeValid(filteredOffices, selectedOffice)) setSelectedOffice(null);
     }, [filteredOffices, selectedOffice]);
 
-
     const availableSlots = useMemo(() => {
         if (!allSlots) return [];
         return allSlots.filter(s => s.status === 'AVAILABLE');
     }, [allSlots]);
 
     const selectedOfficeRules = useMemo(() => {
-        if (!selectedOffice || !offices) return null;
-        const idx = offices.findIndex((o) => o.self === selectedOffice);
-        if (idx === -1) return null;
-        return officeAvailability?.[idx] ?? [];
-    }, [selectedOffice, offices, officeAvailability]);
+        if (!selectedOffice || !allAvailability) return [];
+        return allAvailability.filter(rule => rule.office === selectedOffice);
+    }, [selectedOffice, allAvailability]);
 
     const slotsForSelectedOffice = useMemo(() => {
         if (!selectedOfficeRules) return [];
@@ -155,7 +150,7 @@ function Appointment() {
             const slotDate = parseISO(slot.date);
             const dayOfWeek = slotDate.getDay();
 
-            return selectedOfficeRules.some((rule: any) => {
+            return selectedOfficeRules.some((rule) => {
                 if (rule.dayOfWeek !== dayOfWeek) return false;
                 return slot.startTime >= rule.startTime && slot.startTime < rule.endTime;
             });
@@ -186,7 +181,7 @@ function Appointment() {
 
 
     const handleBook = () => {
-        if (!auth.userId) { // Check de seguridad existente
+        if (!auth.userId) {
             toast.error(t("error"), { description: "Debe iniciar sesión para reservar." });
             navigate("/login");
             return;
@@ -300,7 +295,6 @@ function Appointment() {
     )
 }
 
-
 function DateSelector({
                           selectedDate,
                           setSelectedDate,
@@ -387,7 +381,6 @@ function DateSelector({
         </Card>
     );
 }
-
 
 const selectorCard = "flex flex-row items-center w-full gap-0";
 const iconContainer = "flex items-center bg-[var(--primary-bg)] rounded-full p-5 text-[var(--primary-color)] mx-5";

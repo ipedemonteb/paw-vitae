@@ -146,5 +146,4 @@ public class SpecialtyDaoTest {
         assertFalse(specialties.isEmpty());
         assertEquals(1L, specialties.getFirst().getId());
     }
-
 }

@@ -130,7 +130,7 @@ public class RatingDaoTest {
     }
 
     @Test
-    public void testGetRatingByDoctorIdDoesNotExist() {
+    public void testGetRatingsByDoctorIdDoesNotExist() {
         //Preconditions
 
         //Exercise
@@ -141,7 +141,7 @@ public class RatingDaoTest {
     }
 
     @Test
-    public void testGetRatingByDoctorIdExists() {
+    public void testGetRatingsByDoctorIdExists() {
         //Preconditions
         long doctorId = 2L;
 
@@ -149,17 +149,17 @@ public class RatingDaoTest {
         Page<Rating> maybeRatings = ratingDao.getRatingsByDoctorId(doctorId,1, 5);
 
         //Postconditions
-
-        //TODO: fix
-//        assertFalse(maybeRatings.isEmpty());
-//        assertEquals(1, maybeRatings.size());
-//        Rating result = maybeRatings.getFirst();
-//        assertEquals(RAT_ID, result.getId());
-//        assertEquals(doctorId, result.getDoctor().getId());
-//        assertEquals(PAT_ID, result.getPatient().getId());
-//        assertEquals(APP_ID, result.getAppointment().getId());
-//        assertEquals(RATING, result.getRating());
-//        assertEquals(COMMENT, result.getComment());
+        assertNotNull(maybeRatings);
+        List<Rating> content = maybeRatings.getContent();
+        assertFalse(content.isEmpty());
+        assertEquals(1, content.size());
+        Rating result = content.getFirst();
+        assertEquals(RAT_ID, result.getId());
+        assertEquals(doctorId, result.getDoctor().getId());
+        assertEquals(PAT_ID, result.getPatient().getId());
+        assertEquals(APP_ID, result.getAppointment().getId());
+        assertEquals(RATING, result.getRating());
+        assertEquals(COMMENT, result.getComment());
     }
 
     @Test
@@ -234,5 +234,20 @@ public class RatingDaoTest {
         for (int i = 0; i < results.size() - 1; i++) {
             assertTrue(results.get(i).getRating() >= results.get(i + 1).getRating());
         }
+    }
+
+    @Test
+    public void testGetAllRatings() {
+        //Preconditions
+
+        //Exercise
+        Page<Rating> firstResults = ratingDao.getAllRatings(1, 5);
+        Page<Rating> secondResults = ratingDao.getAllRatings(2, 5);
+
+        //Postconditions
+        assertFalse(firstResults.getContent().isEmpty());
+        assertEquals(5, firstResults.getContent().size());
+        assertFalse(secondResults.getContent().isEmpty());
+        assertEquals(4, secondResults.getContent().size());
     }
 }

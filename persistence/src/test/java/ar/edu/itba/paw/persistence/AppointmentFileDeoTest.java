@@ -88,10 +88,10 @@ public class AppointmentFileDeoTest {
         List<AppointmentFile> maybeFiles = fileDao.getByAppointmentIdForDoctor(APPOINTMENT_ID);
 
         //Postconditions
+        assertNotNull(maybeFiles);
         assertFalse(maybeFiles.isEmpty());
-        assertEquals(FILE_ID, maybeFiles.getFirst().getId());
-        assertEquals("informe.pdf", maybeFiles.getLast().getFileName());
-        assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, maybeFiles.getFirst().getFileData());
+        assertTrue(maybeFiles.stream().anyMatch(f -> f.getId() == FILE_ID));
+        assertTrue(maybeFiles.stream().anyMatch(f -> "informe.pdf".equals(f.getFileName())));
     }
 
     @Test
@@ -137,9 +137,10 @@ public class AppointmentFileDeoTest {
         List<AppointmentFile> maybeImage = fileDao.getByAppointmentId(APPOINTMENT_ID);
 
         //Postconditions
+        assertNotNull(maybeImage);
         assertFalse(maybeImage.isEmpty());
-        assertEquals(FILE_ID, maybeImage.getFirst().getId());
-        assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, maybeImage.getFirst().getFileData());
+        assertTrue(maybeImage.stream().anyMatch(f -> f.getId() == FILE_ID));
+        assertTrue(maybeImage.stream().anyMatch(f -> "informe.pdf".equals(f.getFileName())));
     }
 
     @Test

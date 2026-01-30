@@ -84,6 +84,7 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
                 .setParameter("name", officeName.trim().toLowerCase())
                 .getResultList();
     }
+
     @Override
     public void remove(long id) {
         DoctorOffice office = em.find(DoctorOffice.class, id);
