@@ -110,8 +110,8 @@ function AppointmentDetails() {
     const isLoading = loadingAppointment || loadingSpecialty || loadingOffice || loadingFiles;
     const isError = errorAppointment;
 
-    const patientId = userIdFromSelf(appointment?.patient ?? "");
-    const doctorId = userIdFromSelf(appointment?.doctor ?? "");
+    const patientId = userIdFromSelf(appointment?.patient);
+    const doctorId = userIdFromSelf(appointment?.doctor);
 
     const { patientFiles, doctorFiles } = useMemo(() => {
         const all = files ?? [];

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog.tsx";
 import {DatePicker} from "@/components/ui/date-picker.tsx";
 import {formatLongDate, localDateToIso} from "@/utils/dateUtils.ts";
-import {useDoctor, useDoctorUnavailability, usePutDoctorUnavailability} from "@/hooks/useDoctors.ts";
+import {useDoctor, useDoctorUnavailability, useUpdateDoctorUnavailabilityMutation} from "@/hooks/useDoctors.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 
@@ -85,17 +85,16 @@ export default function UnavailabilityComponent() {
 
     const auth = useAuth();
 
-    const shouldFetchDoctor = auth.isAuthenticated && auth.role === "ROLE_DOCTOR" && !!auth.userId;
-    const { data: doctor, isLoading: doctorLoading } = useDoctor(auth.userId, { enabled: shouldFetchDoctor });
+    const { data: doctor, isLoading: doctorLoading } = useDoctor(auth.userId);
 
-    const unavailabilityUrl = doctor?.unavailability ?? null;
+    const unavailabilityUrl = doctor?.unavailability;
 
     const {
         data: unavailabilityDto,
         isLoading: unavailabilityLoading,
     } = useDoctorUnavailability(unavailabilityUrl);
 
-    const putUnavailability = usePutDoctorUnavailability(unavailabilityUrl ?? "");
+    const putUnavailability = useUpdateDoctorUnavailabilityMutation(unavailabilityUrl ?? "");
 
     const [unavailabilities, setUnavailabilities] = useState<UnavailabilityRange[]>([]);
     const [addOpen, setAddOpen] = useState(false);

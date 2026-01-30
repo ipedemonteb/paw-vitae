@@ -16,14 +16,11 @@ export function usePatient(url?: string) {
     })
 }
 
-export function usePatientById(
-    id?: string,
-    opts?: { enabled?: boolean }
-) {
+export function usePatientById(id?: string) {
     return useQuery({
         queryKey: ["auth", "patients", "id", id],
         queryFn: () => getPatientById(id!),
-        enabled: (opts?.enabled ?? true) && !!id,
+        enabled: !!id,
     });
 }
 

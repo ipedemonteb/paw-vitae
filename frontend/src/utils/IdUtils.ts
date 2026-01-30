@@ -7,10 +7,10 @@ export function coverageIdFromSelf(self: string): number | null {
     return m ? Number(m[1]) : null;
 }
 
-export function userIdFromSelf(self: string | undefined): string | null {
-    if (!self) return null;
+export function userIdFromSelf(self: string | undefined): string | undefined {
+    if (!self) return undefined;
     const m = self.match(/\/(\d+)\/?$/);
-    return m ? String(m[1]) : null;
+    return m ? String(m[1]) : undefined;
 }
 
 export function appointmentIdFromSelf(self: string): string | null {
