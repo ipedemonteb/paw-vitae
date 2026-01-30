@@ -17,7 +17,6 @@ import {
     putDoctorProfile, type CertificateForm,
     getDoctorUnavailability,
     type DoctorUpdateForm,
-    updateDoctor,
     putDoctorImage,
     updateDoctorProfileComplete,
     type DoctorUnavailabilityFormDTO, putDoctorUnavailability,
@@ -29,32 +28,32 @@ import type {AxiosError} from "axios";
 export function useDoctors(query: DoctorsQuery) {
     const stableQueryKey = useMemo(() => JSON.stringify(query ?? {}), [query]);
     return useQuery({
-        queryKey: ['auth', 'doctors', stableQueryKey],
+        queryKey: ['auth', 'doctors', 'list', stableQueryKey],
         queryFn: () => listDoctors(query),
         placeholderData: keepPreviousData
     })
 }
 
-export function useDoctor(userId?: string | null, options?: { enabled?: boolean }) {
+export function useDoctor(userId?: string) {
     return useQuery({
-        queryKey: ['auth', 'doctor', userId],
+        queryKey: ['auth', 'doctors', userId],
         queryFn: () => getDoctor(userId!),
-        enabled: !!userId && (options?.enabled ?? true),
+        enabled: !!userId
     });
 }
 
 const isNumericId = (id?: string) => !!id && /^\d+$/.test(id);
 
-export function useDoctorImageUrl(id?: string | null, options?: { enabled?: boolean }) {
+export function useDoctorImageUrl(id?: string) {
     const enabled = useMemo(
-        () => isNumericId(id ?? undefined) && (options?.enabled ?? true),
-        [id, options?.enabled]
+        () => isNumericId(id),
+        [id]
     );
 
     const query = useQuery({
-        queryKey: ["auth", "doctor", id, "image"],
+        queryKey: ["auth", "doctors", id, "image"],
         queryFn: () => getDoctorImage(id!),
-        enabled,
+        enabled: enabled,
         staleTime: 5 * 60_000,
     });
 
@@ -80,49 +79,49 @@ export function useRegisterDoctorMutation() {
     });
 }
 
-export function useDoctorSpecialties(url?: string | null) {
+export function useDoctorSpecialties(url?: string) {
     return useQuery({
-        queryKey: ['doctor', 'specialties', url],
+        queryKey: ['doctors', 'specialties', url],
         queryFn: () => getDoctorSpecialties(url!),
         enabled: !!url,
     });
 }
 
-export function useDoctorCoverages(url?: string | null) {
+export function useDoctorCoverages(url?: string) {
     return useQuery({
-        queryKey: ['doctor', 'coverages', url],
+        queryKey: ['doctors', 'coverages', url],
         queryFn: () => getDoctorCoverages(url!),
         enabled: !!url,
     });
 }
 
-export function useDoctorExperience(url?: string | null) {
+export function useDoctorExperience(url?: string) {
     return useQuery({
-        queryKey: ['doctor', 'experiences', url],
+        queryKey: ['doctors', 'experiences', url],
         queryFn: () => getDoctorExperiences(url!),
         enabled: !!url,
     });
 }
 
-export function useDoctorCertifications(url?: string | null) {
+export function useDoctorCertifications(url?: string) {
     return useQuery({
-        queryKey: ['doctor', 'certifications', url],
+        queryKey: ['doctors', 'certifications', url],
         queryFn: () => getDoctorCertifications(url!),
         enabled: !!url,
     });
 }
 
-export function useDoctorBiography(url?: string | null) {
+export function useDoctorBiography(url?: string) {
     return useQuery({
-        queryKey: ['doctor', 'bio', url],
+        queryKey: ['doctors', 'bio', url],
         queryFn: () => getDoctorBiography(url!),
         enabled: !!url,
     });
 }
 
-export function useDoctorUnavailability(url?: string | null) {
+export function useDoctorUnavailability(url?: string) {
     return useQuery({
-        queryKey: ['doctor', 'unavailability', url],
+        queryKey: ['doctors', 'unavailability', url],
         queryFn: () => getDoctorUnavailability(url!),
         enabled: !!url,
     });
@@ -137,34 +136,29 @@ export function useDoctorsCount() {
     });
 }
 
-export function  usePutDoctorExperience(url: string ) {
+export function  useUpdateDoctorExperienceMutation(url: string ) {
     return useMutation<any, AxiosError<any>, ExperienceForm[]>({
         mutationFn: (data: ExperienceForm[]) => putDoctorExperiences(url,data)
     });
 }
-export function  usePutDoctorProfile(url: string ) {
+export function  useUpdateDoctorProfileMutation(url: string ) {
     return useMutation<any, AxiosError<any>, {biography: string, description: string}>({
         mutationFn: (data :{biography: string, description: string}) => putDoctorProfile(url,data.biography, data.description)
     });
 }
-export function usePutDoctorCertificates(url: string ) {
+export function useUpdateDoctorCertificatesMutation(url: string ) {
     return useMutation<any, AxiosError<any>, CertificateForm[]>({
         mutationFn: (data: CertificateForm[]) => putDoctorCertificates(url,data)
     });
 }
 
-export function useUpdateDoctor(url:string){
-    return useMutation<any,AxiosError<any>,DoctorUpdateForm>({
-        mutationFn: (data: DoctorUpdateForm) => updateDoctor(url,data)
-    });
-}
-export function usePutDoctorImage(url:string){
+export function useUpdateDoctorImageMutation(url:string){
     return useMutation<any,AxiosError<any>,File>({
         mutationFn: (data: File) => putDoctorImage(url,data)
         });
 }
 
-export function usePutDoctorUnavailability(url:string){
+export function useUpdateDoctorUnavailabilityMutation(url:string){
     const queryClient = useQueryClient();
 
     return useMutation<any, AxiosError<any>, DoctorUnavailabilityFormDTO>({
@@ -175,7 +169,7 @@ export function usePutDoctorUnavailability(url:string){
     });
 }
 
-export function useUpdateDoctorProfile() {
+export function useUpdateDoctorMutation() {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -188,10 +182,10 @@ export function useUpdateDoctorProfile() {
         }) => updateDoctorProfileComplete(params),
 
         onSuccess: (_, variables) => {
-            queryClient.invalidateQueries({ queryKey: ['auth', 'doctor', variables.doctorId] });
-            queryClient.invalidateQueries({ queryKey: ['doctor', 'image', variables.doctorId] });
-            queryClient.invalidateQueries({ queryKey: ['doctor', 'specialties'] });
-            queryClient.invalidateQueries({ queryKey: ['doctor', 'coverages'] });
+            queryClient.invalidateQueries({ queryKey: ['auth', 'doctors', variables.doctorId] });
+            queryClient.invalidateQueries({ queryKey: ['doctors', 'image', variables.doctorId] });
+            queryClient.invalidateQueries({ queryKey: ['doctors', 'specialties'] });
+            queryClient.invalidateQueries({ queryKey: ['doctors', 'coverages'] });
         }
 
     });

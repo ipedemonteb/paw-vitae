@@ -29,7 +29,7 @@ function DoctorProfileCard( { doctorId } : { doctorId: string | undefined} ) {
 
     const { url: getDoctorImgUrl } = useDoctorImageUrl(doctorId);
     const { data: doctor } = useDoctor(doctorId);
-    const { data: specialties } = useDoctorSpecialties(doctor?.specialties ?? null);
+    const { data: specialties } = useDoctorSpecialties(doctor?.specialties);
 
     const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
     const specialtiesList: string[] = (specialties ?? []).map((s) => s.name);

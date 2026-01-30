@@ -23,9 +23,9 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
     useDoctorImageUrl,
-    usePutDoctorCertificates,
-    usePutDoctorExperience,
-    usePutDoctorProfile
+    useUpdateDoctorCertificatesMutation,
+    useUpdateDoctorExperienceMutation,
+    useUpdateDoctorProfileMutation
 } from "@/hooks/useDoctors.ts";
 import {
     useDoctor,
@@ -571,7 +571,7 @@ function EditProfileDialog({
     const [bio, setBio] = useState(initialBio);
     const [desc, setDesc] = useState(initialDescription);
     const queryClient = useQueryClient();
-    const mutation = usePutDoctorProfile(doctorUrl);
+    const mutation = useUpdateDoctorProfileMutation(doctorUrl);
 
     const handleSave = () => {
         mutation.mutate({ biography: bio, description: desc }, {
@@ -656,7 +656,7 @@ function EditExperienceDialog({
     const [open, setOpen] = useState(false)
     const [items, setItems] = useState<ExperienceForm[]>([])
     const queryClient = useQueryClient()
-    const mutation = usePutDoctorExperience(experiencesUrl)
+    const mutation = useUpdateDoctorExperienceMutation(experiencesUrl)
 
     useEffect(() => {
         if (open) {
@@ -811,7 +811,7 @@ function EditCertificatesDialog({
     const [open, setOpen] = useState(false);
     const [items, setItems] = useState<CertificateForm[]>([]);
     const queryClient = useQueryClient();
-    const mutation = usePutDoctorCertificates(certsUrl);
+    const mutation = useUpdateDoctorCertificatesMutation(certsUrl);
 
     useEffect(() => {
         if (open) {

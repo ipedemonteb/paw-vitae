@@ -6,8 +6,8 @@ import {
     useDoctorCoverages,
     useDoctorImageUrl,
     useDoctorSpecialties,
-    usePutDoctorImage,
-    useUpdateDoctor, useUpdateDoctorProfile
+    useUpdateDoctorImageMutation,
+    useUpdateDoctorMutation
 } from "@/hooks/useDoctors.ts";
 import { useSpecialties } from "@/hooks/useSpecialties.ts";
 import { useCoverages } from "@/hooks/useCoverages.ts";
@@ -80,9 +80,8 @@ function DoctorAccount() {
         isLoading: isLoadingAllCovs
     } = useCoverages();
 
-    const updateProfileMutation = useUpdateDoctorProfile();
-    const updateDoctorMutation = useUpdateDoctor(doctor?.self || "");
-    const updateImageMutation = usePutDoctorImage(doctor?.image || "");
+    const updateProfileMutation = useUpdateDoctorMutation();
+    const updateImageMutation = useUpdateDoctorImageMutation(doctor?.image || "");
 
     const [formData, setFormData] = useState({
         name: "",
@@ -187,7 +186,7 @@ function DoctorAccount() {
     }
 
     if (isError || !doctor) return <GenericError code={404} />;
-    const isSaving = updateDoctorMutation.isPending || updateImageMutation.isPending;
+    const isSaving = updateImageMutation.isPending || updateProfileMutation.isPending;
 
     return (
         <DashboardNavContainer>
