@@ -19,7 +19,7 @@ public class ValidNewOfficeValidator {
             if (doctorOfficeForms == null ) {
                 return true;
             }
-            boolean flag =  !doctorOfficeForms.getRemoved() || doctorOfficeForms.getId() != null;
+            boolean flag =  !doctorOfficeForms.getRemoved();
             if (!flag) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("offices.new.invalid")
