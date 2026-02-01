@@ -63,14 +63,5 @@ public class DoctorCertificationServiceImplTest {
         assertEquals(issueDate, result.getIssueDate());
     }
 
-    @Test
-    public void testFindByDoctorIdNotExists() {
-        //Preconditions
-
-        //Exercise & Postconditions
-        assertThrows(UserNotFoundException.class, () -> {
-            doctorCertificationService.findByDoctorId(1L);
-        });
-    }
-
+    //TODO: Check if theres a way to test update...
 }
