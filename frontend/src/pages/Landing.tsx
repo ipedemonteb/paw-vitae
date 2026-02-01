@@ -6,12 +6,14 @@ import { Card } from "@/components/ui/card.tsx";
 import { RatingCard } from "@/components/Rating.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useDoctorsCount} from "@/hooks/useDoctors.ts";
+import {useDoctors, useDoctorsCount} from "@/hooks/useDoctors.ts";
 import {usePatientsCount} from "@/hooks/usePatients.ts";
 import {useAllRatings} from "@/hooks/useRatings.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
+import SearchResultsCard from "@/components/SearchResultCard.tsx";
+import {useDebounce} from "use-debounce";
 
 // TODO: internacionalizacion
 
@@ -47,11 +49,11 @@ const heroTitle =
 const heroSubtitle =
     "text-lg font-medium text-[var(--text-light)] mb-8";
 const heroSearch =
-    "mb-10 w-full bg-transparent";
+    "mb-10 w-full bg-transparent overflow-visible";
 const searchBar =
-    "flex items-stretch overflow-hidden rounded-md border border-gray-200 bg-white shadow-md";
+    "flex items-stretch overflow-visible rounded-md border border-gray-200 bg-white shadow-md relative";
 const heroInput =
-    "flex-1 h-12 border-0 rounded-none px-4 text-[var(--text-light)] shadow-none focus-visible:ring-0 hover:bg-[var(--gray-100)]";
+    "flex-1 h-12 border-0 rounded-none px-4 text-[var(--text-light)] max-w-85 shadow-none focus-visible:ring-0 hover:bg-[var(--gray-100)]";
 const heroCombo =
     "h-12 border-0 min-w-58 rounded-none px-4 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
 const heroButton =
@@ -72,6 +74,7 @@ function HeroSection() {
 
     const navigate = useNavigate();
     const [keyword, setKeyword] = useState("");
+    const [focus, setFocus] = useState(false)
     const [specialtySelf, setSpecialtySelf] = useState<string | null>(null);
     const [specialtyId, setSpecialtyId] = useState<number | null>(null);
 
@@ -84,6 +87,16 @@ function HeroSection() {
         navigate(qs ? `/search?${qs}` : "/search");
     };
 
+    const [open, setOpen] = useState(false)
+    const [debounced] = useDebounce(keyword, 500)
+    const {data: searchResults, isLoading} = useDoctors({
+        keyword: debounced,
+        pageSize: 5
+    })
+
+    useEffect(() => {
+        setOpen(keyword.length > 0 && !isLoading && focus);
+    }, [keyword, focus]);
 
 
     return (
@@ -96,13 +109,14 @@ function HeroSection() {
                     {t("landing.hero.subtitle")}
                 </p>
                 {(!isAuthenticated || !isDoctor) && (
-                    <div className="flex items-center px-3">
+                    <div className="flex items-center">
                         <div className={heroSearch}>
                             <div className={searchBar}>
-
                                 <Input
                                     placeholder={t("landing.hero.search_placeholder")}
                                     className={heroInput}
+                                    onFocus={() => setFocus(true)}
+                                    onBlur={() => setFocus(false)}
                                     type="search"
                                     value={keyword}
                                     onChange={(e) => setKeyword(e.target.value)}
@@ -122,6 +136,22 @@ function HeroSection() {
                                     <Search className="h-5 w-5"/>
                                     {t("landing.hero.search")}
                                 </Button>
+                                <div className={`${
+                                    open
+                                        ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
+                                        : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
+                                } absolute max-w-85 z-50 max-h-56 scrollbar overscroll-contain overflow-scroll border flex flex-col top-12 rounded-md bg-white w-full  transition-all duration-200 ease-out origin-top transform motion-reduce:transition-none`}>
+                                    {!isLoading && searchResults && searchResults.data.length > 0 && (
+                                        searchResults.data.map((d) => (
+                                            <SearchResultsCard doctor={d} key={d.self}/>
+                                        ))
+                                    )}
+                                    {!isLoading && searchResults && searchResults.data.length === 0 && (
+                                        <div className="h-20 w-full bg-gray-100 flex items-center justify-center gap-1">
+                                            <span className="text-(--text-light) text-sm">{t("search.searchbar.empty")}</span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

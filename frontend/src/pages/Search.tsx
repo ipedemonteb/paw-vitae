@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import { Input } from "@/components/ui/input";
 import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2 } from "lucide-react";
 import { CoverageCombobox } from "@/components/CoverageCombobox.tsx";
@@ -71,10 +71,9 @@ function HeroSection({searchParams}: SectionProps) {
 
     const [open, setOpen] = useState(false)
     const [keyword, setKeyword] = useState(searchParams.keyword)
+    const [focus, setFocus] = useState(false)
     const [debounced] = useDebounce(keyword, 500)
     const specialty = "All Specialties"
-
-    const dropdownRef = useRef<HTMLDivElement | null>(null);
 
     const {data: searchResults, isLoading} = useDoctors({
         keyword: debounced,
@@ -87,33 +86,14 @@ function HeroSection({searchParams}: SectionProps) {
     }, [searchParams.keyword]);
 
     useEffect(() => {
-        setOpen(keyword.length > 0 && !isLoading);
-    }, [keyword]);
-
-    useEffect(() => {
-        if (!open) return;
-
-        function handleClickOutside(e: MouseEvent) {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(e.target as Node)
-            ) {
-                setOpen(false);
-            }
-        }
-
-        document.addEventListener("mousedown", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [open]);
+        setOpen(keyword.length > 0 && !isLoading && focus);
+    }, [keyword, focus]);
 
     return (
         <div className={heroContainer}>
             <h1 className={heroTitle}>{t("search.title")}</h1>
             <p className={heroSubtitle}>{t("search.subtitle", { specialty: specialty })}</p>
-            <div className={searchWrapper} ref={dropdownRef}>
+            <div className={searchWrapper}>
                 <SearchIcon className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                 <form
                     onSubmit={(e) => {
@@ -126,7 +106,7 @@ function HeroSection({searchParams}: SectionProps) {
                         setOpen(false)
                     }}
                 >
-                    <Input type="search" value={keyword} onChange={(e) => (setKeyword(e.currentTarget.value))} placeholder={t("search.search")} className={searchHero} />
+                    <Input onBlur={() => setFocus(false)} onFocus={() => setFocus(true)} type="search" value={keyword} onChange={(e) => (setKeyword(e.currentTarget.value))} placeholder={t("search.search")} className={searchHero} />
                 </form>
                 <div className={`${
                     open
