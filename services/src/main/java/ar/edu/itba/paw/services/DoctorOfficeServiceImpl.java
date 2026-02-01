@@ -43,7 +43,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
     @Transactional
     @Override
-    public DoctorOffice create(Doctor doctor,DoctorOfficeForm form) {
+    public DoctorOffice create(Doctor doctor, DoctorOfficeForm form) {
         if (Boolean.TRUE.equals(form.getActive())) {
             //TODO: CHECK
             throw new BussinesRuleException("exception.business.cannotCreateAndActivateOffice");
@@ -131,6 +131,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         if (form.getActive() != null && !office.isActive() && Boolean.TRUE.equals(form.getActive())) {
             validateMaxOffices(doctorId);
         }
+
         if(form.getActive() != null && form.getActive() && !office.isActive()){
             validateActiveAvailability(form, doctorId,officeId);
             office.setActive(form.getActive());
@@ -222,7 +223,6 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         return false;
     }
 
-
     private void validateMaxOffices(long doctorId) {
         long activeCount = doctorOfficeDao.getByDoctorId(doctorId).size();
         if (activeCount >= MAX_OFFICES) {
@@ -244,6 +244,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
                 }
         }
     }
+
     @Transactional
     @Override
     public void delete(long officeId, long doctorId) {
