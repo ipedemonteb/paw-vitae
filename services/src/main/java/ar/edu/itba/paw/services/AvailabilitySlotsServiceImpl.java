@@ -32,11 +32,9 @@ public class AvailabilitySlotsServiceImpl implements AvailabilitySlotsService {
     private final static int BATCH_SIZE = 50;
 
     private final AvailabilitySlotsDao availabilitySlotsDao;
-
-
     private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
-
     private final DoctorService doctorService;
+
     @Autowired
     public AvailabilitySlotsServiceImpl(AvailabilitySlotsDao availabilitySlotsDao,
                                         DoctorOfficeAvailabilityService doctorOfficeAvailabilityService,
@@ -58,14 +56,12 @@ public class AvailabilitySlotsServiceImpl implements AvailabilitySlotsService {
         return availabilitySlotsDao.getByDoctorIdInDateRange(doctorId, start, end);
     }
 
-
     @Override
     @Async
     @Transactional
     @Scheduled(cron = "0 * * * * ?") //TODO: change everyday at 00:00
     public void generateDailySlots() {
         LOGGER.info("Iniciando generación diaria de slots (Ventana +{} días)", WINDOW_DAYS);
-
         LocalDate targetDate = LocalDate.now().plusDays(WINDOW_DAYS);
         int page = 1;
         int currentPage = 1;
@@ -105,7 +101,6 @@ public class AvailabilitySlotsServiceImpl implements AvailabilitySlotsService {
 
         LOGGER.info("Finalizada generación diaria de slots.");
     }
-
 
     @Transactional
     public void generateSlotsForSingleDaySafely(Doctor doctor, LocalDate date) {
