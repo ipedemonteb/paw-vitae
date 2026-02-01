@@ -61,14 +61,20 @@ public class AppointmentFileServiceImplTest {
 
     @Test
     public void testCreateAppointmentWithNullFile() {
+        //Preconditions
+
+        //Exercise & Postconditions
         assertThrows(IllegalArgumentException.class,
                 () -> appointmentFileService.create(null, UPLOADER, APPOINTMENT_ID));
     }
 
     @Test
     public void testCreateAppointmentWithEmptyFile() {
+        //Preconditions
         MultipartFile emptyFile = mock(MultipartFile.class);
         when(emptyFile.isEmpty()).thenReturn(true);
+
+        //Exercise & Postconditions
         assertThrows(IllegalArgumentException.class,
                 () -> appointmentFileService.create(emptyFile, UPLOADER, APPOINTMENT_ID));
     }
@@ -79,12 +85,14 @@ public class AppointmentFileServiceImplTest {
         MultipartFile file = mock(MultipartFile.class);
         when(file.isEmpty()).thenReturn(false);
 
+        //Exercise & Postconditions
         assertThrows(AppointmentNotFoundException.class,
                 () -> appointmentFileService.create(file, UPLOADER, APPOINTMENT_ID));
     }
 
     @Test
     public void testCreateAppointment() throws IOException {
+        //Preconditions
         MultipartFile file = mock(MultipartFile.class);
         when(file.isEmpty()).thenReturn(false);
         when(file.getOriginalFilename()).thenReturn("test.pdf");
@@ -92,8 +100,10 @@ public class AppointmentFileServiceImplTest {
         when(appointmentService.getById(anyLong())).thenReturn(Optional.of(APPOINTMENT));
         when(appointmentFileDao.create(anyString(), any(), anyString(), any())).thenReturn(APPOINTMENT_FILE);
 
+        //Exercise
         AppointmentFile created = appointmentFileService.create(file, UPLOADER, APPOINTMENT_ID);
 
+        //Postconditions
         assertNotNull(created);
         assertEquals(APPOINTMENT_FILE, created);
     }
@@ -112,13 +122,13 @@ public class AppointmentFileServiceImplTest {
     @Test
     public void testGetAuthorizedFileNonMatchingAppointmentId() {
         //Preconditions
-        AppointmentFile appointmentFileOtheId = new AppointmentFile(
+        AppointmentFile appointmentFileOtherId = new AppointmentFile(
                 "testFile",
                 new byte[]{1, 2, 3},
                 "doctor",
                 APPOINTMENT
         );
-        when(appointmentFileDao.getById(FILE_ID)).thenReturn(Optional.of(appointmentFileOtheId));
+        when(appointmentFileDao.getById(FILE_ID)).thenReturn(Optional.of(appointmentFileOtherId));
 
         //Exercise
         Optional<AppointmentFile> file = appointmentFileService.getAuthorizedFile(FILE_ID, APPOINTMENT_ID, USERNAME);

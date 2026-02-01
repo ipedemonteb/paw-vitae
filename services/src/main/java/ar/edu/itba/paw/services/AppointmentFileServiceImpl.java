@@ -69,7 +69,6 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         return appointmentFileDao.getByAppointmentId(appointment_id);
     }
 
-
     @Transactional(readOnly = true)
     public Optional<AppointmentFile> getAuthorizedFile(long fileId, long appointmentId, String username) {
         LOGGER.debug("Getting authorized file {} for appointment {} and user {}", fileId, appointmentId, username);
