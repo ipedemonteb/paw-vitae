@@ -131,7 +131,7 @@ public class AccessHandler {
         String patient = request.getParameter("userId");
         String doctor = request.getParameter("doctorId");
 
-        if (patient == null) {
+        if (patient == null || doctor == null) {
             return false;
         }
 

@@ -33,7 +33,7 @@ public class DoctorDTO {
         dto.lastName = doctor.getLastName();
         dto.email = doctor.getEmail();
         dto.phone = doctor.getPhone();
-        dto.rating = doctor.getRating();
+        dto.rating = doctor.getRating() == null ? 0.0 : doctor.getRating();
         dto.ratingCount = doctor.getRatingCount();
 
         String doctorId = String.valueOf(doctor.getId());

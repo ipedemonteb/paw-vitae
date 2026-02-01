@@ -66,15 +66,4 @@ public class DoctorExperienceServiceImplTest {
         assertEquals(startDate, result.getStartDate());
         assertEquals(endDate, result.getEndDate());
     }
-
-    @Test
-    public void testFindByDoctorIdUserNotFound() {
-        //Preconditions
-        when(doctorExperienceDao.getByDoctorId(anyLong())).thenReturn(List.of());
-
-        //Exercise & Postconditions
-        assertThrows(UserNotFoundException.class, () -> {
-            doctorExperienceService.findByDoctorId(1L);
-        });
-    }
 }

@@ -32,8 +32,6 @@ public class Doctor extends User {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DoctorOffice> doctorOffices = new ArrayList<>();
 
-
-
     @Column(name = "rating")
     private Double rating = 1.0;
 
@@ -56,7 +54,6 @@ public class Doctor extends User {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<DoctorCertification> certifications = new ArrayList<>();
 
-
     public Doctor() {
     }
 
@@ -66,7 +63,6 @@ public class Doctor extends User {
         this.rating = rating;
         this.ratingCount = ratingCount;
     }
-
 
     public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified, List<Specialty> specialtyList, List<Coverage> coverageList) {
         super(name, lastName, email, password, phone, language, verified);
@@ -80,7 +76,6 @@ public class Doctor extends User {
         public static class Public {}
         public static class Private extends Public {}
     }
-
 
     public List<Specialty> getSpecialtyList() {
         return specialtyList;
