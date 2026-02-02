@@ -10,15 +10,17 @@ import {Separator} from "@/components/ui/separator";
 import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
 import type {Dispatch, SetStateAction} from "react";
 import {useTranslation} from "react-i18next";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 type RemoveOfficeAlertDialogProps = {
     officeName: string,
     onClick: () => void,
     open: boolean,
-    setOpen: Dispatch<SetStateAction<boolean>>
+    setOpen: Dispatch<SetStateAction<boolean>>,
+    mutationPending: boolean
 }
 
-export default function RemoveOfficeAlertDialog({officeName, onClick, open, setOpen}: RemoveOfficeAlertDialogProps) {
+export default function RemoveOfficeAlertDialog({officeName, onClick, open, setOpen, mutationPending}: RemoveOfficeAlertDialogProps) {
     const baseClass = " bg-(--danger) hover:bg-(--danger-dark) rounded-full cursor-pointer transition-all delay-75  gap-1 p-2 flex items-center justify-center  text-white text-xs "
     const openClass = baseClass + "scale-100 opacity-100 translate-y-1.5"
     const closeClass = baseClass + "scale-0 opacity-0 -translate-y-4"
@@ -57,11 +59,13 @@ export default function RemoveOfficeAlertDialog({officeName, onClick, open, setO
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel className="cursor-pointer text-(--text-light)">
+                    <AlertDialogCancel disabled={mutationPending} className="cursor-pointer text-(--text-light)">
                         {t("offices.dialog.cancel")}
                     </AlertDialogCancel>
-                    <AlertDialogAction onClick={onClick} className="cursor-pointer bg-(--danger) hover:bg-(--danger-dark)" >
-                        {t("offices.dialog.remove.confirm")}
+                    <AlertDialogAction disabled={mutationPending} onClick={onClick} className="cursor-pointer bg-(--danger) hover:bg-(--danger-dark)" >
+                        {mutationPending ? (
+                            <Spinner/>
+                        ) : t("offices.dialog.remove.confirm")}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

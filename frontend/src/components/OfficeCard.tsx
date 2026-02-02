@@ -64,7 +64,7 @@ export default function OfficeCard({office, onClick, animateInDelay, mounted}: O
                     </div>
                 </div>
             </div>
-            <RemoveOfficeAlertDialog setOpen={setOpen} open={open} officeName={office.name} onClick={() => removeOfficeMutation.mutate(undefined, {
+            <RemoveOfficeAlertDialog mutationPending={removeOfficeMutation.isPending} setOpen={setOpen} open={open} officeName={office.name} onClick={() => removeOfficeMutation.mutate(undefined, {
                 onSuccess: () => {
                     toast.success(t("offices.dialog.remove.toast.success"))
                 },
