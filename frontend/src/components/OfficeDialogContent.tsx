@@ -15,20 +15,17 @@ import {useDoctorAvailability} from "@/hooks/useOffices.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {officeIdFromSelf} from "@/utils/IdUtils.ts";
 
+type OfficeFormValues = {
+    name: string
+    neighborhood: string
+    specialties: string[]
+    active?: boolean
+}
+
 type OfficeDialogComponentProps = {
     onSubmit: () => void,
     title: string,
-    form:  UseFormReturn<{
-        name: string
-        neighborhood: string
-        active: boolean
-        specialties: string[]
-    }, any, {
-        name: string
-        neighborhood: string
-        active: boolean
-        specialties: string[]
-    }>,
+    form:  UseFormReturn<OfficeFormValues>,
     isLoading?: boolean,
     confirm: string,
     officeId?: string
