@@ -6,7 +6,7 @@ import {Switch} from "@/components/ui/switch.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import SpecialtyToggleGroup from "@/components/SpecialtyToggleGroup.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import type {UseFormReturn} from "react-hook-form";
+import type {DeepRequired, FieldErrorsImpl, GlobalError, UseFormReturn} from "react-hook-form";
 import {useSpecialties} from "@/hooks/useSpecialties.ts";
 import {useTranslation} from "react-i18next";
 import {AlertTriangle} from "lucide-react";
@@ -14,24 +14,20 @@ import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
 import {useDoctorAvailability} from "@/hooks/useOffices.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {officeIdFromSelf} from "@/utils/IdUtils.ts";
+import type {CreateOfficeForm, EditOfficeForm} from "@/lib/office-schema.ts";
 
-type OfficeFormValues = {
-    name: string
-    neighborhood: string
-    specialties: string[]
-    active?: boolean
-}
 
 type OfficeDialogComponentProps = {
     onSubmit: () => void,
     title: string,
-    form:  UseFormReturn<OfficeFormValues>,
+    form:  UseFormReturn<any>,
+    errors:  Partial<FieldErrorsImpl<DeepRequired<EditOfficeForm | CreateOfficeForm>>> & {root?: Record<string, GlobalError> & GlobalError},
     isLoading?: boolean,
     confirm: string,
     officeId?: string
 }
 
-export default function OfficeDialogComponent({onSubmit, title, form, isLoading = false, confirm, officeId}: OfficeDialogComponentProps) {
+export default function OfficeDialogComponent({onSubmit, title, form, isLoading = false, confirm, officeId, errors}: OfficeDialogComponentProps) {
     const {data: specialties, isLoading: isLoadingSpecialties} = useSpecialties()
     const {t} = useTranslation()
     const auth = useAuth()
@@ -59,8 +55,8 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                                 className={` w-70 placeholder:opacity-70 selection:bg-blue-300 selection:text-black" type="text ${form.formState.errors.name ? "border-(--danger)" : ""}`}
                                 {...form.register("name")}
                             />
-                            {form.formState.errors.name && (
-                                <p className="text-(--danger) text-sm">{form.formState.errors.name.message}</p>
+                            {errors.name && (
+                                <p className="text-(--danger) text-sm">{errors.name.message}</p>
                             )}
                         </div>
                         <div className="flex flex-col gap-1.5 text-(--text-light) text-[1rem]">
@@ -94,7 +90,7 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                                 ))}
                             </div>
                         ) : (
-                            <SpecialtyToggleGroup error={form.formState.errors.specialties} onValueChange={(s: string[]) => form.setValue("specialties", s)} currentSpecialties={form.watch("specialties")} specialties={specialties} />
+                            <SpecialtyToggleGroup error={errors.specialties} onValueChange={(s: string[]) => form.setValue("specialties", s)} currentSpecialties={form.watch("specialties")} specialties={specialties} />
                         )}
                     </div>
                 </div>
