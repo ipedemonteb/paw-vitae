@@ -13,6 +13,7 @@ function usePaginatedQueryParams<T extends StringRecord>(
     defaults: PaginationParams & T
 ): PaginationParams & T & {
     setParams: (updater: (p: URLSearchParams) => void) => void;
+    clearParams: () => void
 } {
     const [sp, setSp] = useSearchParams();
 
@@ -35,6 +36,33 @@ function usePaginatedQueryParams<T extends StringRecord>(
         return acc;
     }, {} as T);
 
+    const clearParams = () => {
+        const next = new URLSearchParams();
+
+        next.set("page", String(defaults.page));
+        next.set("pageSize", String(defaults.pageSize));
+
+        Object.keys(defaults).forEach((key) => {
+            if (key === "page" || key === "pageSize") return;
+            const def = defaults[key as keyof T];
+            if (Array.isArray(def)) {
+                if ((def as string[]).length > 0) {
+                    (def as string[]).forEach((v) => next.append(key, v));
+                } else {
+                    next.delete(key);
+                }
+            } else {
+                if (def !== "") {
+                    next.set(key, String(def));
+                } else {
+                    next.delete(key);
+                }
+            }
+        });
+
+        setSp(next);
+    };
+
     return {
         page,
         pageSize,
@@ -44,6 +72,7 @@ function usePaginatedQueryParams<T extends StringRecord>(
             updater(next);
             setSp(next);
         },
+        clearParams
     };
 }
 

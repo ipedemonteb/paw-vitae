@@ -640,7 +640,7 @@
       "saturday": "Saturday",
       "sunday": "Sunday"
     },
-    "filters": "Apply Filters",
+    "filters": "Clear Filters",
     "found": "{{ doctorsFound }} doctors found",
     "searchbar": {
       "empty": "No Results Found"

@@ -12,7 +12,7 @@ import {extractIdFromUrl} from "@/lib/utils.ts";
 import {useTranslation} from "react-i18next";
 
 const cardContainer =
-    "p-0 gap-0";
+    "p-0 gap-0 h-full flex flex-col justify-between ";
 const iconContainer =
     "flex items-center justify-center px-8 pt-8 mb-4";
 const icon =
@@ -37,7 +37,6 @@ const viewProfileButton =
 function SearchGridCard({doctor}: SearchCardProps) {
     const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
     const {t} = useTranslation();
-    const rating = doctor.rating;
     const specialties = useDoctorSpecialties(doctor.specialties);
     const {url:imageUrl} = useDoctorImageUrl(doctor.self.split("/").pop());
     const doctorId = extractIdFromUrl(doctor.self)
@@ -62,7 +61,9 @@ function SearchGridCard({doctor}: SearchCardProps) {
                     <Phone className={dataIcon} />
                     <p>{doctor.phone}</p>
                 </div>
-                <RatingStars rating={rating} className={ratingStars} sizeClassName="h-4 w-4"/>
+                {doctor.ratingCount > 0 && (
+                    <RatingStars rating={doctor.rating} className={ratingStars} sizeClassName="h-4 w-4" />
+                )}
             </div>
             <div className={scheduleContainer}>
                 <Button asChild className={scheduleButton}>
