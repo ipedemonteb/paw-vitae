@@ -80,14 +80,19 @@ export async function getDoctorAvailability(doctorId: string, officeId?: string)
 }
 
 export async function updateDoctorOffice(url: string, form: UpdateDoctorOfficeForm) {
-    const res = await api.patch(url, form, {
+    const res = await api.patch(url, { doctorOfficeForm: form }, {
         headers: {"Content-Type": ContentTypes.OFFICE}
     })
     return res.data;
 }
 
+export async function deleteDoctorOffice(url: string) {
+    const res = await api.delete(url)
+    return res.data;
+}
+
 export async function createDoctorOffice(url: string, form: CreateDoctorOfficeForm) {
-    const res = await api.post(url, form, {
+    const res = await api.post(url, { doctorOfficeForm: form }, {
         headers: {"Content-Type": ContentTypes.OFFICE}
     })
     return res.data;

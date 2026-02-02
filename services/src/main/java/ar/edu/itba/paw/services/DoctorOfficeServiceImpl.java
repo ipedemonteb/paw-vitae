@@ -128,12 +128,12 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             throw new ResourceOwnershipException();
         }
 
-        if (form.getActive() != null && !office.isActive() && Boolean.TRUE.equals(form.getActive())) {
+        if (form.getActive() != null && !office.isActive() && form.getActive()) {
             validateMaxOffices(doctorId);
-        }
-
-        if(form.getActive() != null && form.getActive() && !office.isActive()){
             validateActiveAvailability(form, doctorId,officeId);
+            office.setActive(form.getActive());
+        }
+        if (form.getActive() != null && !form.getActive() && office.isActive()) {
             office.setActive(form.getActive());
         }
         if (form.getOfficeName() != null) {

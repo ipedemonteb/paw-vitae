@@ -5,7 +5,6 @@ export const EditOfficeSchema = z.object({
     neighborhood: z.string(),
     active: z.boolean(),
     specialties: z.array(z.string()),
-    removed: z.boolean().optional()
 });
 
 export const CreateOfficeSchema = z.object({
