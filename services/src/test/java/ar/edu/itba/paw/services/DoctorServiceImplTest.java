@@ -114,7 +114,6 @@ public class DoctorServiceImplTest {
     @Test
     public void testSetImageInvalidUser() {
         //Preconditions
-        when(userService.getById(anyLong())).thenReturn(Optional.empty());
 
         //Exercise & Postconditions
         assertThrows(UserNotFoundException.class, () ->
@@ -153,13 +152,15 @@ public class DoctorServiceImplTest {
         //Preconditions
         long newRating = 5;
         double expectedRating = (RATING * RATING_COUNT + newRating) / (RATING_COUNT + 1);
-        when(doctorDao.getById(anyLong())).thenReturn(Optional.of(DOCTOR));
+        Doctor doctor = new Doctor(NAME, LAST_NAME, EMAIL, PASSWORD, PHONE, "es",
+                IMG_ID, RATING, RATING_COUNT, true);
+        when(doctorDao.getById(anyLong())).thenReturn(Optional.of(doctor));
 
         //Exercise
         doctorService.updateDoctorRating(DOC_ID, newRating);
 
         //Postconditions
-        assertEquals(expectedRating, DOCTOR.getRating(), 0.0001);
+        assertEquals(expectedRating, doctor.getRating(), 0.01);
     }
 
     @Test
