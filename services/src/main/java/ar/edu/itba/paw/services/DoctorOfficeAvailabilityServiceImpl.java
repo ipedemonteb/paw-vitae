@@ -164,7 +164,7 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
     public boolean isAvailableAtDayAndTime(long officeId, LocalDate date, Integer hour) {
         LOGGER.debug("Checking availability for office with id: {}, date: {}, startTime: {}", officeId, date, hour);
         List<DoctorOfficeAvailability> slots = doctorOfficeAvailabilityDao.getActiveByOfficeId(officeId);
-        return slots.stream().anyMatch(slot -> slot.getDayOfWeek() == (date.getDayOfWeek().getValue() -1) &&
+        return slots.stream().anyMatch(slot -> slot.getDayOfWeek() == (date.getDayOfWeek().getValue()) &&
                slot.getStartTime().getHour() <= hour &&
                slot.getEndTime().getHour() > hour);
     }
