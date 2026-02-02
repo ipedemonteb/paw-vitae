@@ -57,7 +57,7 @@ const heroInput =
 const heroCombo =
     "h-12 border-0 min-w-58 rounded-none px-4 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
 const heroButton =
-    "h-12 rounded-none px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)] cursor-pointer";
+    "h-12 rounded-l-none rounded-r-sm  px-8 bg-[var(--primary-color)] text-[var(--white)] hover:bg-[var(--primary-dark)] cursor-pointer";
 const heroSpace =
     "flex-1 flex justify-end relative";
 
