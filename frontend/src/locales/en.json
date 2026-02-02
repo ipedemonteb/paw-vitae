@@ -684,7 +684,8 @@
         "toast": {
           "success": "Office updated successfully",
           "error": "An unexpected error occurred"
-        }
+        },
+        "activeWarning": "To activate this office you must add availability slots for it"
       },
       "add": {
         "title": "Add Office",

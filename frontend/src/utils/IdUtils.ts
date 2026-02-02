@@ -18,9 +18,9 @@ export function appointmentIdFromSelf(self: string): string | null {
     return m ? String(m[1]) : null;
 }
 
-export function officeIdFromSelf(self: string): string | null {
+export function officeIdFromSelf(self: string): string | undefined {
     const m = self.match(/(\d+)(?!.*\d)/);
-    return m ? String(m[1]) : null;
+    return m ? String(m[1]) : undefined;
 }
 
 export function buildDoctorOfficesUrl(id: string) {

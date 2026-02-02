@@ -57,7 +57,7 @@ export default function OfficesComponent() {
                 <DashboardNavLoader/>
             ) : offices && offices.length > 0 ? (
                 <div className="flex relative flex-wrap gap-x-6 gap-y-3 justify-center w-fit px-2 pt-6">
-                    {offices.map((o, i) => (
+                    {offices.sort((o1, o2) => o1.name.localeCompare(o2.name)).map((o, i) => (
                         <EditOfficeDialog key={o.self} office={o} animateInDelay={i}/>
                     ))}
                 </div>
