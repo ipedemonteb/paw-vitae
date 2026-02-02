@@ -29,10 +29,6 @@ export default function AddOfficeDialog() {
     const createOfficeMutation = useCreateDoctorOfficeMutation(auth.userId!)
 
     const onSubmit = form.handleSubmit((values) => {
-        const parsed = CreateOfficeSchema.safeParse(values);
-        if (!parsed.success) {
-            return;
-        }
         const specialties = values.specialties.map(s => specialtyIdFromSelf(s)).filter(s => s !== null)
         const neighborhood = extractIdFromUrl(values.neighborhood)!
         createOfficeMutation.mutate({

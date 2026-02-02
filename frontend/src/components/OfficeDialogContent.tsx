@@ -65,6 +65,7 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                         <div className="flex flex-col gap-1.5 text-(--text-light) text-[1rem]">
                             <Label className="pl-1 text-[1rem]">{t("offices.dialog.neighborhoodLabel")}</Label>
                             <NeighborhoodCombobox
+                                error={errors.neighborhood}
                                 mutationPending={mutationPending}
                                 value={form.watch("neighborhood")}
                                 onChange={(val) => form.setValue("neighborhood", val, { shouldDirty: true })}

@@ -68,10 +68,6 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
     ])
 
     const onSubmit = form.handleSubmit((values) => {
-        const parsed = EditOfficeSchema.safeParse(values);
-        if (!parsed.success) {
-            return;
-        }
         const specialties = values.specialties.map(s => specialtyIdFromSelf(s)).filter(s => s !== null)
         const neighborhood = extractIdFromUrl(values.neighborhood)
         updateOfficeMutation.mutate({
