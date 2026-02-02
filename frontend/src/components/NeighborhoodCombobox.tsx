@@ -11,10 +11,11 @@ import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 type NeighborhoodComboboxProps = {
     value?: string,
-    onChange: (val: string) => void
+    onChange: (val: string) => void,
+    mutationPending: boolean
 }
 
-export default function NeighborhoodCombobox({value, onChange}: NeighborhoodComboboxProps) {
+export default function NeighborhoodCombobox({value, onChange, mutationPending}: NeighborhoodComboboxProps) {
     const [open, setOpen] = useState(false)
     const {t} = useTranslation()
     const {data: neighborhoods, isLoading: isLoadingNeighborhoods} = useNeighborhoods();
@@ -31,6 +32,7 @@ export default function NeighborhoodCombobox({value, onChange}: NeighborhoodComb
             <PopoverTrigger asChild>
                 <Button
                     variant="outline"
+                    disabled={mutationPending}
                     role="combobox"
                     aria-expanded={open}
                     className={"flex-1 min-w-0 hover:text-(--text-light) cursor-pointer font-normal w-70 justify-between"}

@@ -63,7 +63,7 @@ export default function AddOfficeDialog() {
                     {t("offices.dialog.add.title")}
                 </Button>
             </DialogTrigger>
-            <OfficeDialogComponent errors={form.formState.errors} confirm={t("offices.dialog.add.confirm")} title={t("offices.dialog.add.title")} onSubmit={onSubmit} form={form}/>
+            <OfficeDialogComponent mutationPending={createOfficeMutation.isPending} errors={form.formState.errors} confirm={t("offices.dialog.add.confirm")} title={t("offices.dialog.add.title")} onSubmit={onSubmit} form={form}/>
         </Dialog>
     )
 }
