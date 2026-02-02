@@ -681,7 +681,8 @@
         "toast": {
           "success": "Oficina actualizada con éxito",
           "error": "Ha ocurrido un error"
-        }
+        },
+        "activeWarning": "Para activar esta oficina, debe agregarle horarios de disponibilidad"
       },
       "add": {
         "title": "Agregar Oficina",

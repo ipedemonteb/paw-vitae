@@ -94,7 +94,7 @@ function buildOfficeIndex(offices?: OfficeDTO[] | null) {
 
     for (const office of offices) {
         const id = officeIdFromSelf(office.self);
-        if (id === null) continue;
+        if (!id) continue;
         byId.set(id, office);
     }
     return byId;
@@ -112,7 +112,7 @@ function buildSlotsFromApi(
         const { day, start, end, officeUrl } = pickSlotFields(raw);
 
         const officeId = officeIdFromSelf(officeUrl);
-        if (officeId === null) continue;
+        if (!officeId) continue;
         if (!officeById.has(officeId)) continue;
 
         const normDay = normalizeDayIndex(day);
@@ -182,7 +182,7 @@ export default function AvailabilityComponent() {
         return offices
             .map((o) => {
                 const id = officeIdFromSelf(o.self);
-                if (id === null) return null;
+                if (!id) return null;
                 return { id, name: o.name };
             })
             .filter(Boolean) as Array<{ id: string; name: string }>;

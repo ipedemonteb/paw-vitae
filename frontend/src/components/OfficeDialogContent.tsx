@@ -9,18 +9,38 @@ import {Button} from "@/components/ui/button.tsx";
 import type {UseFormReturn} from "react-hook-form";
 import {useSpecialties} from "@/hooks/useSpecialties.ts";
 import {useTranslation} from "react-i18next";
+import {AlertTriangle} from "lucide-react";
+import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
+import {useDoctorAvailability} from "@/hooks/useOffices.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {officeIdFromSelf} from "@/utils/IdUtils.ts";
 
 type OfficeDialogComponentProps = {
     onSubmit: () => void,
     title: string,
-    form: UseFormReturn<any, any, any>,
+    form:  UseFormReturn<{
+        name: string
+        neighborhood: string
+        active: boolean
+        specialties: string[]
+    }, any, {
+        name: string
+        neighborhood: string
+        active: boolean
+        specialties: string[]
+    }>,
     isLoading?: boolean,
-    confirm: string
+    confirm: string,
+    officeId?: string
 }
 
-export default function OfficeDialogComponent({onSubmit, title, form, isLoading = false, confirm}: OfficeDialogComponentProps) {
+export default function OfficeDialogComponent({onSubmit, title, form, isLoading = false, confirm, officeId}: OfficeDialogComponentProps) {
     const {data: specialties, isLoading: isLoadingSpecialties} = useSpecialties()
     const {t} = useTranslation()
+    const auth = useAuth()
+    const id = officeId ? auth.userId : undefined
+    const {data: availability} = useDoctorAvailability(id, officeId)
+    const hasAvailability = !(availability?.filter(a => officeIdFromSelf(a.office) === officeId).length === 0);
     return (
         <DialogContent className="max-w-155! p-5 overflow-x-auto">
             <form onSubmit={(event) => {
@@ -39,9 +59,12 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                             <Input
                                 id="name"
                                 placeholder={t("offices.dialog.placeholderName")}
-                                className="  w-70 placeholder:opacity-70 selection:bg-blue-300 selection:text-black" type="text"
+                                className={` w-70 placeholder:opacity-70 selection:bg-blue-300 selection:text-black" type="text ${form.formState.errors.name ? "border-(--danger)" : ""}`}
                                 {...form.register("name")}
                             />
+                            {form.formState.errors.name && (
+                                <p className="text-(--danger) text-sm">{form.formState.errors.name.message}</p>
+                            )}
                         </div>
                         <div className="flex flex-col gap-1.5 text-(--text-light) text-[1rem]">
                             <Label className="pl-1 text-[1rem]">{t("offices.dialog.neighborhoodLabel")}</Label>
@@ -52,9 +75,17 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                         </div>
                     </div>
                     {form.watch("active") !== undefined && (
-                        <div className="w-full flex flex-col gap-1 ">
-                            <Label htmlFor="active" className="text-[1rem] text-(--text-light)">{t("offices.dialog.activeLabel")}</Label>
-                            <Switch onCheckedChange={(checked) => form.setValue("active", checked)}  defaultChecked={form.watch("active")} id="active" className="data-[state=checked]:bg-(--success) data-[state=checked]: transition-all " />
+                        <div className="flex w-full items-center justify-baseline gap-6">
+                            <div className=" flex flex-col gap-1 ">
+                                <Label htmlFor="active" className="text-[1rem] text-(--text-light)">{t("offices.dialog.activeLabel")}</Label>
+                                <Switch disabled={!hasAvailability} onCheckedChange={(checked) => form.setValue("active", checked)}  defaultChecked={form.watch("active")} id="active" className="data-[state=checked]:bg-(--success) data-[state=checked]: transition-all " />
+                            </div>
+                            {!hasAvailability && (
+                                <Alert className="w-fit bg-[rgba(var(--primary-light-rgb),0.15)] text-(--primary-color) border border-(--primary-color)">
+                                    <AlertTriangle />
+                                    <AlertTitle>{t("offices.dialog.edit.activeWarning")}</AlertTitle>
+                                </Alert>
+                            )}
                         </div>
                     )}
                     <div className="w-full flex flex-col gap-1.5">
@@ -66,7 +97,7 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                                 ))}
                             </div>
                         ) : (
-                            <SpecialtyToggleGroup onValueChange={(s: string[]) => form.setValue("specialties", s)} currentSpecialties={form.watch("specialties")} specialties={specialties} />
+                            <SpecialtyToggleGroup error={form.formState.errors.specialties} onValueChange={(s: string[]) => form.setValue("specialties", s)} currentSpecialties={form.watch("specialties")} specialties={specialties} />
                         )}
                     </div>
                 </div>

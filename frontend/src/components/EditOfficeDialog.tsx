@@ -10,7 +10,7 @@ import {useForm} from "react-hook-form";
 import {type EditOfficeForm, EditOfficeSchema} from "@/lib/office-schema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect, useState} from "react";
-import {specialtyIdFromSelf} from "@/utils/IdUtils.ts";
+import {officeIdFromSelf, specialtyIdFromSelf} from "@/utils/IdUtils.ts";
 import {extractIdFromUrl} from "@/lib/utils.ts";
 import {toast} from "sonner";
 import OfficeDialogComponent from "@/components/OfficeDialogContent.tsx";
@@ -99,7 +99,7 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
             <DialogTrigger asChild >
                 <OfficeCard mounted={mounted} animateInDelay={animateInDelay} office={office}/>
             </DialogTrigger>
-            <OfficeDialogComponent confirm={t("offices.dialog.edit.confirm")} title={t("offices.dialog.edit.title")} onSubmit={onSubmit} form={form} isLoading={isLoading || isLoadingCurrentSpecialties}/>
+            <OfficeDialogComponent officeId={officeIdFromSelf(office.self)} confirm={t("offices.dialog.edit.confirm")} title={t("offices.dialog.edit.title")} onSubmit={onSubmit} form={form} isLoading={isLoading || isLoadingCurrentSpecialties}/>
         </Dialog>
     )
 }
