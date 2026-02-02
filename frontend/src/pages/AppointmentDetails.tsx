@@ -173,7 +173,8 @@ function AppointmentDetails() {
 
                         <div className="flex flex-col gap-6">
                             <PatientFileCard files={patientFiles} />
-                            <MedicalHistoryCard canAccessMedicalHistory={appointment.allowFullHistory}/>
+                            <MedicalHistoryCard isDoctor={isDoctor} canAccessMedicalHistory={appointment.allowFullHistory}/>
+
 
                             {showPostVisit ? (
                                 isDoctor && !isCompleted && (appointment.report ?? "").trim().length === 0 ? (
@@ -480,7 +481,7 @@ const noMedicalHistoryContainer = "flex flex-row items-center gap-2 border borde
 const infoIcon = "h-8 w-8 text-[var(--text-light)]";
 const noMedicalHistoryText = "text-[var(--text-light)] leading-normal";
 
-function MedicalHistoryCard({canAccessMedicalHistory = false}:{canAccessMedicalHistory?: boolean | undefined}) {
+function MedicalHistoryCard({canAccessMedicalHistory = false, isDoctor}:{canAccessMedicalHistory?: boolean, isDoctor?: boolean}) {
     const { t } = useTranslation();
 
     return (
@@ -493,14 +494,16 @@ function MedicalHistoryCard({canAccessMedicalHistory = false}:{canAccessMedicalH
                 <Card className={medicalHistoryContainer}>
                     <div className={medicalHistoryUpper}>
                         <Info/>
-                        <h3>{t("appointment.details.access")}</h3>
+                        <h3>{isDoctor ? t("appointment.details.access.doctor") : t("appointment.details.access.patient")}</h3>
                     </div>
-                    <div className={medicalHistoryLower}>
-                        <Button className={medicalHistoryButton}>
-                            {t("appointment.details.access-button")}
-                            <ArrowRight />
-                        </Button>
-                    </div>
+                    {isDoctor && (
+                        <div className={medicalHistoryLower}>
+                            <Button className={medicalHistoryButton}>
+                                {t("appointment.details.access-button")}
+                                <ArrowRight />
+                            </Button>
+                        </div>
+                    )}
                 </Card>
             ) :
             <div className={noMedicalHistoryContainer}>
