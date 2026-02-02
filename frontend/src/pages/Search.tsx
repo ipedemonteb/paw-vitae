@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import { Input } from "@/components/ui/input";
-import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, Funnel, List, Grid2X2 } from "lucide-react";
+import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, List, Grid2X2, Eraser } from "lucide-react";
 import { CoverageCombobox } from "@/components/CoverageCombobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { ButtonGroup } from "@/components/ui/button-group.tsx";
@@ -58,12 +58,12 @@ const heroTitle =
 const heroSubtitle =
     "text-lg text-[var(--text-light)] mb-6 font-[300]";
 const searchWrapper =
-    "relative w-full max-w-2xl mx-auto z-50 rounded-3xl";
+    "relative w-full max-w-2xl mx-auto  rounded-3xl";
 const searchHero =
     "w-full bg-white rounded-full pr-6 pl-12 py-5 text-slate-900 placeholder:text-slate-400";
 
 type SectionProps =  {
-    searchParams: PaginationParams & {setParams: (updater: (p: URLSearchParams) => void) => void} & DoctorQueryParams
+    searchParams: PaginationParams & {setParams: (updater: (p: URLSearchParams) => void) => void, clearParams: () => void} & DoctorQueryParams
 }
 
 function HeroSection({searchParams}: SectionProps) {
@@ -230,8 +230,8 @@ function FilterSection({searchParams}: SectionProps) {
                             </Button>
                         ))}
                     </div>
-                    <Button className={applyButton}>
-                        <Funnel className="" />
+                    <Button onClick={searchParams.clearParams} className={applyButton}>
+                        <Eraser/>
                         {t("search.filters")}
                     </Button>
                 </div>
