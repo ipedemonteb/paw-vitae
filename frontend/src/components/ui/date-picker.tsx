@@ -94,8 +94,8 @@ export function DatePicker({
                     captionLayout="dropdown"
                     month={month}
                     onMonthChange={setMonth}
-                    fromDate={fromDate}
-                    toDate={toDate}
+                    startMonth={fromDate || new Date()}
+                    endMonth={toDate || new Date(new Date().getFullYear() + 50, 11)}
                     disabled={(date) => {
                         if (disabled) return true
                         if (isDateDisabled && isDateDisabled(date)) return true

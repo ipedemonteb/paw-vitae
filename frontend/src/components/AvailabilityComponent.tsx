@@ -59,10 +59,15 @@ function pickSlotFields(slot: any) {
 function computeOverlapIds(slots: AvailabilitySlot[]) {
     const overlap = new Set<string>();
 
+
     const groups = new Map<string, AvailabilitySlot[]>();
+
     for (const s of slots) {
-        if (!s.officeId || s.day === null || !s.start || !s.end) continue;
-        const key = `${s.officeId}|${s.day}`;
+
+        if (s.day === null || !s.start || !s.end) continue;
+
+        const key = `${s.day}`;
+
         const arr = groups.get(key) ?? [];
         arr.push(s);
         groups.set(key, arr);
@@ -71,23 +76,29 @@ function computeOverlapIds(slots: AvailabilitySlot[]) {
     for (const arr of groups.values()) {
         arr.sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
 
-        for (let i = 0; i < arr.length - 1; i++) {
-            const cur = arr[i];
-            const next = arr[i + 1];
 
-            const curEnd = timeToMinutes(cur.end);
-            const nextStart = timeToMinutes(next.start);
+        for (let i = 0; i < arr.length; i++) {
+            const current = arr[i];
+            const currentEnd = timeToMinutes(current.end);
 
-            if (nextStart < curEnd) {
-                overlap.add(cur.id);
+            for (let j = i + 1; j < arr.length; j++) {
+                const next = arr[j];
+                const nextStart = timeToMinutes(next.start);
+
+
+                if (nextStart >= currentEnd) {
+                    break;
+                }
+
+                overlap.add(current.id);
                 overlap.add(next.id);
+
             }
         }
     }
 
     return overlap;
 }
-
 function buildOfficeIndex(offices?: OfficeDTO[] | null) {
     const byId = new Map<string, OfficeDTO>();
     if (!offices) return byId;
@@ -277,7 +288,7 @@ export default function AvailabilityComponent() {
                 };
             }),
         };
-        
+
         try {
             setIsSaving(true);
             await putAvailability.mutateAsync(form);
@@ -345,26 +356,26 @@ export default function AvailabilityComponent() {
                                 ) : null}
                             </div>
                         ) : (
-                        <div className={availabilityItems}>
-                            {slots.map((slot) => (
-                                <AvailabilityItem
-                                    key={slot.id}
-                                    slot={slot}
-                                    isEditing={isEditing}
-                                    hasOverlap={overlapIds.has(slot.id)}
-                                    onDelete={() => handleDelete(slot.id)}
-                                    onChange={(patch) => handleUpdate(slot.id, patch)}
-                                    officeOptions={officeOptions}
-                                />
-                            ))}
+                            <div className={availabilityItems}>
+                                {slots.map((slot) => (
+                                    <AvailabilityItem
+                                        key={slot.id}
+                                        slot={slot}
+                                        isEditing={isEditing}
+                                        hasOverlap={overlapIds.has(slot.id)}
+                                        onDelete={() => handleDelete(slot.id)}
+                                        onChange={(patch) => handleUpdate(slot.id, patch)}
+                                        officeOptions={officeOptions}
+                                    />
+                                ))}
 
-                            {isEditing ? (
-                                <Button className={newAvailabilityItem} onClick={handleAdd}>
-                                    <Plus className="h-5 w-5" />
-                                    <p>{t("availability.addSchedule")}</p>
-                                </Button>
-                            ) : null}
-                        </div>
+                                {isEditing ? (
+                                    <Button className={newAvailabilityItem} onClick={handleAdd}>
+                                        <Plus className="h-5 w-5" />
+                                        <p>{t("availability.addSchedule")}</p>
+                                    </Button>
+                                ) : null}
+                            </div>
                         )}
 
                         {isEditing ? (
