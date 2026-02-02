@@ -47,7 +47,7 @@ public class RatingServiceImpl implements RatingService {
         Doctor doctor = doctorService.getById(appointment.getDoctor().getId()).orElseThrow(UserNotFoundException::new);
         Rating rating_aux = ratingDao.create(rating, doctor, patient, appointment, comment);
         LOGGER.debug("Creating rating with rating: {}, doctorId: {}, patientId: {}, appointmentId: {}, comment: {}", rating, doctor.getId(), patient.getId(), appointmentId, comment);
-        doctorService.UpdateDoctorRating(doctor.getId(), rating_aux.getRating());
+        doctorService.updateDoctorRating(doctor.getId(), rating_aux.getRating());
         mailService.sendRatingMail(doctor, patient, appointment, rating_aux.getRating(), comment);
         LOGGER.info("Rating created with id: {} for doctor with id {} by patient with id {}", rating_aux.getId(), doctor.getId(), patient.getId());
         return rating_aux;
