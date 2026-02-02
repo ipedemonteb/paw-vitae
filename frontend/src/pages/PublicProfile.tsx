@@ -750,6 +750,8 @@ function EditExperienceDialog({
                                         <DatePicker
                                             value={isoToLocalDate(item.startDate)}
                                             onChange={(d) => updateItem(idx, "startDate", localDateToIso(d))}
+                                            fromDate={new Date(1920, 0, 1)}
+                                            toDate={new Date()}
                                         />
                                     </div>
 
@@ -759,7 +761,9 @@ function EditExperienceDialog({
                                             value={isoToLocalDate(item.endDate || "")}
                                             onChange={(d) => updateItem(idx, "endDate", localDateToIso(d))}
                                             disabled={!item.startDate}
-                                            fromDate={isoToLocalDate(item.startDate)}
+                                            // fromDate={isoToLocalDate(item.startDate)}
+                                            fromDate={new Date(1920, 0, 1)}
+                                            toDate={new Date()}
                                         />
                                     </div>
                                 </div>
@@ -829,6 +833,9 @@ function EditCertificatesDialog({
         setItems(newItems);
     };
 
+    const eightyYearsAgo = new Date();
+    eightyYearsAgo.setFullYear(eightyYearsAgo.getFullYear() - 80);
+
     const handleSave = () => {
         mutation.mutate(items, {
             onSuccess: () => {
@@ -880,6 +887,8 @@ function EditCertificatesDialog({
                                         <DatePicker
                                             value={isoToLocalDate(item.issueDate)}
                                             onChange={(d) => updateItem(idx, "issueDate", localDateToIso(d))}
+                                            fromDate={eightyYearsAgo}
+                                            toDate={new Date()}
                                         />
                                     </div>
                                 </div>
