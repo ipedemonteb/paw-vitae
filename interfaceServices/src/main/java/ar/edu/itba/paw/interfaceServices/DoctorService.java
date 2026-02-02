@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.interfaceServices;
 
 import ar.edu.itba.paw.models.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Locale;
@@ -21,7 +20,7 @@ public interface DoctorService {
 
      void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages);
 
-    void UpdateDoctorRating(long id, long rating);
+    void updateDoctorRating(long id, long rating);
 
     void setImage(long doctorId, long imageId);
 

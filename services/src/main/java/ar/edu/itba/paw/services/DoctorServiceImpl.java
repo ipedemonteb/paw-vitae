@@ -107,17 +107,13 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages) {
         LOGGER.debug("Updating doctor with id {}, name: {}, lastName: {}, phone: {}, specialties: {}, coverages: {}", doctor.getId(), name, lastName, phone, specialties, coverages);
-
-            doctor.setName(name);
-            doctor.setLastName(lastName);
-            doctor.setPhone(phone);
-
-            List<Specialty> newSpecialties = specialtyService.getByIds(specialties);
-            doctor.setSpecialtyList(newSpecialties);
-
-            List<Coverage> newCoverages = coverageService.findByIds(coverages);
-            doctor.setCoverageList(newCoverages);
-
+        doctor.setName(name);
+        doctor.setLastName(lastName);
+        doctor.setPhone(phone);
+        List<Specialty> newSpecialties = specialtyService.getByIds(specialties);
+        doctor.setSpecialtyList(newSpecialties);
+        List<Coverage> newCoverages = coverageService.findByIds(coverages);
+        doctor.setCoverageList(newCoverages);
         LOGGER.info("Doctor updated successfully: id={}", doctor.getId());
     }
 
@@ -149,7 +145,6 @@ public class DoctorServiceImpl implements DoctorService {
         return imageService.findById(doctorOpt.get().getImageId());
     }
 
-
     @Transactional(readOnly = true)
     @Override
     public Page<Doctor> getWithFilters(long specialtyId, long coverageId, List<Integer> weekdays, String keyword, String orderBy, String direction, int page, int pageSize) {
@@ -163,10 +158,10 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void UpdateDoctorRating(long id, long rating) {
+    public void updateDoctorRating(long id, long rating) {
         LOGGER.debug("Updating doctor rating with id {}, rating {}", id, rating);
 
-        Doctor doctor = doctorDao.getById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found with id: " + id));
+        Doctor doctor = doctorDao.getById(id).orElseThrow(UserNotFoundException::new);
         Double currentRating = doctor.getRating();
         int ratingCount = doctor.getRatingCount() + 1;
         doctor.setRatingCount(ratingCount);
@@ -200,6 +195,7 @@ public class DoctorServiceImpl implements DoctorService {
     public void setResetPasswordToken(String email) {
         userService.setResetPasswordToken(email);
     }
+
     @Override
     public void changePassword(long userId,String password) {
         userService.changePassword(userId,password);
