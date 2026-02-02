@@ -25,7 +25,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { OfficeDTO, OfficeSpecialtyDTO } from "@/data/offices.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
 import type { AvailabilitySlotDTO } from "@/data/slots.ts";
-import { startOfDay, parseISO, isSameDay } from "date-fns";
+import { startOfDay, parseISO, isSameDay, addMonths } from "date-fns";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
 
@@ -164,9 +164,15 @@ function Appointment() {
 
     const slotsForDay = useMemo(() => {
         if (!selectedDate) return [];
-        return slotsForSelectedOffice
+        let slots = slotsForSelectedOffice
             .filter(slot => isSameDay(parseISO(slot.date), selectedDate))
             .sort((a, b) => a.startTime.localeCompare(b.startTime));
+        if (isSameDay(selectedDate, new Date())) {
+            const now = new Date();
+            const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            slots = slots.filter(slot => slot.startTime > currentTime);
+        }
+        return slots;
     }, [selectedDate, slotsForSelectedOffice]);
 
 
@@ -349,6 +355,7 @@ function DateSelector({
                             disabled={disabled}
                             isDateDisabled={isDateDisabled}
                             fromDate={new Date()}
+                            toDate={addMonths(new Date(), 1)}
                         />
                     </div>
                 </div>
