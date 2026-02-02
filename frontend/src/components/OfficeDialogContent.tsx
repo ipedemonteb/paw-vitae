@@ -7,7 +7,6 @@ import {Skeleton} from "@/components/ui/skeleton.tsx";
 import SpecialtyToggleGroup from "@/components/SpecialtyToggleGroup.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import type {DeepRequired, FieldErrorsImpl, GlobalError, UseFormReturn} from "react-hook-form";
-import {useSpecialties} from "@/hooks/useSpecialties.ts";
 import {useTranslation} from "react-i18next";
 import {AlertTriangle} from "lucide-react";
 import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
@@ -16,6 +15,7 @@ import {useAuth} from "@/hooks/useAuth.ts";
 import {officeIdFromSelf} from "@/utils/IdUtils.ts";
 import type {CreateOfficeForm, EditOfficeForm} from "@/lib/office-schema.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {useDoctor, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
 
 
 type OfficeDialogComponentProps = {
@@ -30,9 +30,12 @@ type OfficeDialogComponentProps = {
 }
 
 export default function OfficeDialogComponent({onSubmit, title, form, isLoading = false, confirm, officeId, errors, mutationPending}: OfficeDialogComponentProps) {
-    const {data: specialties, isLoading: isLoadingSpecialties} = useSpecialties()
     const {t} = useTranslation()
     const auth = useAuth()
+
+    const {data: doctor} = useDoctor(auth.userId)
+    const {data: specialties, isLoading: isLoadingSpecialties} = useDoctorSpecialties(doctor?.specialties)
+
     const id = officeId ? auth.userId : undefined
     const {data: availability} = useDoctorAvailability(id, officeId)
     const hasAvailability = !(availability?.filter(a => officeIdFromSelf(a.office) === officeId).length === 0);
