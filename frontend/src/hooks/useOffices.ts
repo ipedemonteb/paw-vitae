@@ -1,6 +1,6 @@
 import {keepPreviousData, useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
 import {
-    createDoctorOffice, type DoctorAvailabilityFormDTO,
+    createDoctorOffice, deleteDoctorOffice, type DoctorAvailabilityFormDTO,
     type DoctorOfficeQuery, getDoctorAvailability,
     getDoctorOffice,
     getDoctorOffices,
@@ -15,7 +15,7 @@ import type {CreateDoctorOfficeForm} from "@/data/doctors.ts";
 
 export function useDoctorOffices(url?: string, query?: DoctorOfficeQuery) {
     return useQuery({
-        queryKey: ['doctor', 'offices', url, query?.status],
+        queryKey: ['doctors', 'offices', url, query?.status],
         queryFn: () => getDoctorOffices(url!, query),
         enabled: !!url,
         placeholderData: keepPreviousData
@@ -24,7 +24,7 @@ export function useDoctorOffices(url?: string, query?: DoctorOfficeQuery) {
 
 export function useDoctorOffice(url?: string) {
     return useQuery({
-        queryKey: ['doctor', 'offices', url],
+        queryKey: ['doctors', 'offices', url],
         queryFn: () => getDoctorOffice(url!),
         enabled: !!url,
     })
@@ -32,7 +32,7 @@ export function useDoctorOffice(url?: string) {
 
 export function useDoctorOfficeSpecialties(url?: string) {
     return useQuery({
-        queryKey: ['doctor', 'offices', 'specialties', url],
+        queryKey: ['doctors', 'offices', 'specialties', url],
         queryFn: () => getDoctorOfficeSpecialties(url!),
         enabled: !!url
     })
@@ -41,7 +41,7 @@ export function useDoctorOfficeSpecialties(url?: string) {
 export function useDoctorOfficesSpecialties(offices?: OfficeDTO[]) {
     const queries = useQueries({
         queries: (offices ?? []).map((office) => ({
-            queryKey: ['doctor', 'offices', 'specialties', office.officeSpecialties ?? []],
+            queryKey: ['doctors', 'offices', 'specialties', office.officeSpecialties ?? []],
             queryFn: () => getDoctorOfficeSpecialties(office.officeSpecialties),
             enabled: !!office.officeSpecialties,
         })),
@@ -57,7 +57,7 @@ export function useDoctorOfficesSpecialties(offices?: OfficeDTO[]) {
 
 export function useDoctorAvailability(doctorId?: string, officeId?: string) {
     return useQuery({
-        queryKey: ['doctor', doctorId, 'availability', officeId ?? 'all'],
+        queryKey: ['doctors', doctorId, 'availability', officeId ?? 'all'],
         queryFn: () => getDoctorAvailability(doctorId!, officeId),
         enabled: !!doctorId,
     });
@@ -72,7 +72,7 @@ export function useUpdateDoctorAvailabilityMutation(doctorId?: string) {
 
         onSuccess: async () => {
             await queryClient.invalidateQueries({
-                queryKey: ["doctor", doctorId, "availability"],
+                queryKey: ["doctors", doctorId, "availability"],
             });
         },
     });
@@ -83,7 +83,17 @@ export function useUpdateOfficeMutation(url: string) {
     return useMutation({
         mutationFn: (form: UpdateDoctorOfficeForm) => updateDoctorOffice(url, form),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['offices']})
+            queryClient.invalidateQueries({queryKey: ['doctors', 'offices']})
+        }
+    })
+}
+
+export function useDeleteOfficeMutation(url: string) {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: () => deleteDoctorOffice(url),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['doctors', 'offices']})
         }
     })
 }
@@ -94,7 +104,7 @@ export function useCreateDoctorOfficeMutation(id: string) {
     return useMutation({
         mutationFn: (form: CreateDoctorOfficeForm) => createDoctorOffice(url, form),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['doctor', 'offices', url]})
+            queryClient.invalidateQueries({queryKey: ['doctors', 'offices', url]})
         }
     })
 }

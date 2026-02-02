@@ -80,10 +80,10 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
             removed: false
         }, {
             onSuccess: () => {
-                toast.success(t("offices.edit.toast.success"))
+                toast.success(t("offices.dialog.edit.toast.success"))
             },
             onError: () => {
-                toast.error(t("offices.edit.toast.error"))
+                toast.error(t("offices.dialog.edit.toast.error"))
             },
             onSettled: () => {
                 setOpen(false)

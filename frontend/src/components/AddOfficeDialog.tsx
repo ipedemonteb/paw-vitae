@@ -41,10 +41,10 @@ export default function AddOfficeDialog() {
             neighborhoodId: neighborhood
         }, {
             onSuccess: () => {
-                toast.success(t("offices.add.toast.success"))
+                toast.success(t("offices.dialog.add.toast.success"))
             },
             onError: () => {
-                toast.error(t("offices.add.toast.error"))
+                toast.error(t("offices.dialog.add.toast.error"))
             },
             onSettled: () => {
                 setOpen(false)

@@ -697,7 +697,11 @@
         "description": "Esta seguro de que desea eliminar esta oficina? Esta acción no se puede deshacer.",
         "officeConfirmationLabel": "La siguiente oficina sera eliminada:",
         "alert": "Eliminar una oficina es una acción permanente",
-        "confirm": "Eliminar Oficina"
+        "confirm": "Eliminar Oficina",
+        "toast": {
+          "success": "Oficina eliminada con éxito",
+          "error": "Ha ocurrido un error"
+        }
       },
       "placeholderName": "Oficina Doctor",
       "nameLabel": "Nombre de Oficina",
