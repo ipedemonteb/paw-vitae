@@ -15,6 +15,7 @@ import {useDoctorAvailability} from "@/hooks/useOffices.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {officeIdFromSelf} from "@/utils/IdUtils.ts";
 import type {CreateOfficeForm, EditOfficeForm} from "@/lib/office-schema.ts";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 
 type OfficeDialogComponentProps = {
@@ -24,10 +25,11 @@ type OfficeDialogComponentProps = {
     errors:  Partial<FieldErrorsImpl<DeepRequired<EditOfficeForm | CreateOfficeForm>>> & {root?: Record<string, GlobalError> & GlobalError},
     isLoading?: boolean,
     confirm: string,
-    officeId?: string
+    officeId?: string,
+    mutationPending: boolean
 }
 
-export default function OfficeDialogComponent({onSubmit, title, form, isLoading = false, confirm, officeId, errors}: OfficeDialogComponentProps) {
+export default function OfficeDialogComponent({onSubmit, title, form, isLoading = false, confirm, officeId, errors, mutationPending}: OfficeDialogComponentProps) {
     const {data: specialties, isLoading: isLoadingSpecialties} = useSpecialties()
     const {t} = useTranslation()
     const auth = useAuth()
@@ -50,6 +52,7 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                         <div className="flex flex-col gap-1.5 text-(--text-light)  ">
                             <Label htmlFor="name" className="pl-1 text-[1rem]">{t("offices.dialog.nameLabel")}</Label>
                             <Input
+                                disabled={mutationPending}
                                 id="name"
                                 placeholder={t("offices.dialog.placeholderName")}
                                 className={` w-70 placeholder:opacity-70 selection:bg-blue-300 selection:text-black" type="text ${form.formState.errors.name ? "border-(--danger)" : ""}`}
@@ -62,6 +65,7 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                         <div className="flex flex-col gap-1.5 text-(--text-light) text-[1rem]">
                             <Label className="pl-1 text-[1rem]">{t("offices.dialog.neighborhoodLabel")}</Label>
                             <NeighborhoodCombobox
+                                mutationPending={mutationPending}
                                 value={form.watch("neighborhood")}
                                 onChange={(val) => form.setValue("neighborhood", val, { shouldDirty: true })}
                             />
@@ -71,7 +75,7 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                         <div className="flex w-full items-center justify-baseline gap-6">
                             <div className=" flex flex-col gap-1 ">
                                 <Label htmlFor="active" className="text-[1rem] text-(--text-light)">{t("offices.dialog.activeLabel")}</Label>
-                                <Switch disabled={!hasAvailability} onCheckedChange={(checked) => form.setValue("active", checked)}  defaultChecked={form.watch("active")} id="active" className="data-[state=checked]:bg-(--success) data-[state=checked]: transition-all " />
+                                <Switch disabled={!hasAvailability || mutationPending} onCheckedChange={(checked) => form.setValue("active", checked)}  defaultChecked={form.watch("active")} id="active" className="data-[state=checked]:bg-(--success) data-[state=checked]: transition-all " />
                             </div>
                             {!hasAvailability && (
                                 <Alert className="w-fit bg-[rgba(var(--primary-light-rgb),0.15)] text-(--primary-color) border border-(--primary-color)">
@@ -90,16 +94,18 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                                 ))}
                             </div>
                         ) : (
-                            <SpecialtyToggleGroup error={errors.specialties} onValueChange={(s: string[]) => form.setValue("specialties", s)} currentSpecialties={form.watch("specialties")} specialties={specialties} />
+                            <SpecialtyToggleGroup mutationPending={mutationPending} error={errors.specialties} onValueChange={(s: string[]) => form.setValue("specialties", s)} currentSpecialties={form.watch("specialties")} specialties={specialties} />
                         )}
                     </div>
                 </div>
                 <DialogFooter className="pt-4">
-                    <DialogClose className="  hover:bg-gray-100 rounded-md py-1 px-3 text-sm bg-white text-(--text-light) border cursor-pointer">
+                    <DialogClose disabled={mutationPending} className="  hover:bg-gray-100 rounded-md py-1 px-3 text-sm bg-white text-(--text-light) border cursor-pointer">
                         {t("offices.dialog.cancel")}
                     </DialogClose>
-                    <Button type="submit" className="border-none hover:bg-(--primary-dark)  bg-(--primary-color) text-white cursor-pointer">
-                        {confirm}
+                    <Button disabled={mutationPending} type="submit" className="border-none hover:bg-(--primary-dark)  bg-(--primary-color) text-white cursor-pointer">
+                        {mutationPending ? (
+                            <Spinner/>
+                        ) : confirm}
                     </Button>
                 </DialogFooter>
             </form>

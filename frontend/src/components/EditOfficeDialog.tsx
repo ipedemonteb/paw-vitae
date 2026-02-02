@@ -101,7 +101,7 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
             <DialogTrigger asChild >
                 <OfficeCard mounted={mounted} animateInDelay={animateInDelay} office={office}/>
             </DialogTrigger>
-            <OfficeDialogComponent errors={form.formState.errors} officeId={officeIdFromSelf(office.self)} confirm={t("offices.dialog.edit.confirm")} title={t("offices.dialog.edit.title")} onSubmit={onSubmit} form={form} isLoading={isLoading || isLoadingCurrentSpecialties}/>
+            <OfficeDialogComponent mutationPending={updateOfficeMutation.isPending} errors={form.formState.errors} officeId={officeIdFromSelf(office.self)} confirm={t("offices.dialog.edit.confirm")} title={t("offices.dialog.edit.title")} onSubmit={onSubmit} form={form} isLoading={isLoading || isLoadingCurrentSpecialties}/>
         </Dialog>
     )
 }
