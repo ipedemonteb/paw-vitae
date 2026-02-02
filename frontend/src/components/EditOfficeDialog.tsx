@@ -44,6 +44,8 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
         mode: "onSubmit",
     })
 
+    form.formState.errors
+
     const updateOfficeMutation = useUpdateOfficeMutation(office.self)
 
 
@@ -99,7 +101,7 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
             <DialogTrigger asChild >
                 <OfficeCard mounted={mounted} animateInDelay={animateInDelay} office={office}/>
             </DialogTrigger>
-            <OfficeDialogComponent officeId={officeIdFromSelf(office.self)} confirm={t("offices.dialog.edit.confirm")} title={t("offices.dialog.edit.title")} onSubmit={onSubmit} form={form} isLoading={isLoading || isLoadingCurrentSpecialties}/>
+            <OfficeDialogComponent errors={form.formState.errors} officeId={officeIdFromSelf(office.self)} confirm={t("offices.dialog.edit.confirm")} title={t("offices.dialog.edit.title")} onSubmit={onSubmit} form={form} isLoading={isLoading || isLoadingCurrentSpecialties}/>
         </Dialog>
     )
 }
