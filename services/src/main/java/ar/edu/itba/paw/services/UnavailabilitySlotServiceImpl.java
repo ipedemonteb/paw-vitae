@@ -108,6 +108,7 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
         }
         return slots;
     }
+
     @Transactional
     @Override
     public List<UnavailabilitySlotForm> transformToUnavailabilitySlotForms(List<UnavailabilitySlot> unavailabilitySlots) {

@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
         Optional<Patient> patient = patientDao.getByVerificationToken(token);
         return patient.isPresent() ? patient : doctorDao.getByVerificationToken(token);
     }
+
     @Transactional
     @Override
     public void setVerificationToken(String email) {
@@ -138,7 +139,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void changePassword(long userId,String password) {
+    public void changePassword(long userId, String password) {
         User user = getById(userId).orElseThrow(UserNotFoundException::new);
         String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
