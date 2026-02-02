@@ -137,25 +137,41 @@ export function useDoctorsCount() {
 }
 
 export function  useUpdateDoctorExperienceMutation(url: string ) {
+    const queryClient = useQueryClient()
     return useMutation<any, AxiosError<any>, ExperienceForm[]>({
-        mutationFn: (data: ExperienceForm[]) => putDoctorExperiences(url,data)
+        mutationFn: (data: ExperienceForm[]) => putDoctorExperiences(url,data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['doctors', 'experiences']})
+        }
     });
 }
 export function  useUpdateDoctorProfileMutation(url: string ) {
+    const queryClient = useQueryClient()
     return useMutation<any, AxiosError<any>, {biography: string, description: string}>({
-        mutationFn: (data :{biography: string, description: string}) => putDoctorProfile(url,data.biography, data.description)
+        mutationFn: (data :{biography: string, description: string}) => putDoctorProfile(url,data.biography, data.description),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['doctors', 'bio']})
+        }
     });
 }
 export function useUpdateDoctorCertificatesMutation(url: string ) {
+    const queryClient = useQueryClient()
     return useMutation<any, AxiosError<any>, CertificateForm[]>({
-        mutationFn: (data: CertificateForm[]) => putDoctorCertificates(url,data)
+        mutationFn: (data: CertificateForm[]) => putDoctorCertificates(url,data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['doctors', 'certifications']})
+        }
     });
 }
 
 export function useUpdateDoctorImageMutation(url:string){
+    const queryClient = useQueryClient()
     return useMutation<any,AxiosError<any>,File>({
-        mutationFn: (data: File) => putDoctorImage(url,data)
-        });
+        mutationFn: (data: File) => putDoctorImage(url,data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ["auth", "doctors", "image"]})
+        }
+    });
 }
 
 export function useUpdateDoctorUnavailabilityMutation(url:string){
