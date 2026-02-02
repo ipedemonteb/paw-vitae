@@ -28,12 +28,22 @@ export function formatTimeHM(date: string, locale: string): string {
 }
 
 export function isoToLocalDate(iso?: string): Date | undefined {
-    if (!iso) return undefined
-    const s = iso.trim()
-    if (!s) return undefined
-    const [y, m, d] = s.split("-").map(Number)
-    if (!y || !m || !d) return undefined
-    return new Date(y, m - 1, d)
+    if (!iso) return undefined;
+    const s = iso.trim();
+    if (!s) return undefined;
+
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+    if (m) {
+        const y = Number(m[1]);
+        const mo = Number(m[2]);
+        const d = Number(m[3]);
+        if (!Number.isFinite(y) || !Number.isFinite(mo) || !Number.isFinite(d)) return undefined;
+        return new Date(y, mo - 1, d);
+    }
+
+    const parsed = new Date(s);
+    if (isNaN(parsed.getTime())) return undefined;
+    return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
 }
 
 export function localDateToIso(date?: Date): string {
