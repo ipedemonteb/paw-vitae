@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const CreateOfficeSchema = z.object({
     name: z.string().min(1, "Office name is required"),
-    neighborhood: z.string(),
+    neighborhood: z.string("Nieghborhood is required"),
     specialties: z.array(z.string()).min(1, "At least one specialty is required"),
 });
 
