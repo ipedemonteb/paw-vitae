@@ -38,7 +38,7 @@ public class RatingServiceImpl implements RatingService {
 
     @Transactional
     @Override
-    public Rating create(long rating,String email, long appointmentId, String comment) {
+    public Rating create(long rating, String email, long appointmentId, String comment) {
         Patient patient = patientService.getByEmail(email).orElseThrow(UserNotFoundException::new);
         Appointment appointment = appointmentService.getById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
         if (patient.getId() != appointment.getPatient().getId()){
@@ -51,7 +51,6 @@ public class RatingServiceImpl implements RatingService {
         mailService.sendRatingMail(doctor, patient, appointment, rating_aux.getRating(), comment);
         LOGGER.info("Rating created with id: {} for doctor with id {} by patient with id {}", rating_aux.getId(), doctor.getId(), patient.getId());
         return rating_aux;
-
     }
 
     @Transactional(readOnly = true)
