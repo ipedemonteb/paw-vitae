@@ -18,7 +18,7 @@ public class DoctorOfficeSpecialty {
     private DoctorOffice office;
 
     @MapsId("specialtyId")
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "specialty_id", nullable = false)
     private Specialty specialty;
 
