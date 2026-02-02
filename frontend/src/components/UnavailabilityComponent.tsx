@@ -100,6 +100,8 @@ export default function UnavailabilityComponent() {
     const [addOpen, setAddOpen] = useState(false);
     const [startDate, setStartDate] = useState<Date | undefined>(undefined);
     const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+    const futureDate = new Date();
+    futureDate.setFullYear(futureDate.getFullYear() + 10);
 
     useEffect(() => {
         if (!unavailabilityDto) return;
@@ -239,17 +241,19 @@ export default function UnavailabilityComponent() {
                                   value={startDate}
                                   onChange={(d) => setStartDate(d)}
                                   className={showError ? datePickerError : undefined}
+                                  fromDate={today}
+                                  toDate={futureDate}
                               />
                           </div>
 
                           <div className={dateField}>
                               <p className={dateFieldLabel}>{t("unavailability.dialog.end")}</p>
-                              {/*TODO check this feature of allowing from today*/}
                               <DatePicker
                                   value={endDate}
                                   onChange={(d) => setEndDate(d)}
                                   className={showError ? datePickerError : undefined}
                                   fromDate={today}
+                                  toDate={futureDate}
                               />
                           </div>
                       </div>
