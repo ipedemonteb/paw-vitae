@@ -43,13 +43,13 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendAppointmentStatusEmail(String subject, Appointment appointment) {
+    public void sendAppointmentStatusEmail(String subject, MailDTO appointment) {
 
-        Doctor doctor = appointment.getDoctor();
-        Patient patient = appointment.getPatient();
+        //Doctor doctor = appointment.getDoctor();
+        //Patient patient = appointment.getPatient();
 
-        Locale patientLocale = Locale.forLanguageTag(patient.getLanguage());
-        Locale doctorLocale = Locale.forLanguageTag(doctor.getLanguage());
+        Locale patientLocale = Locale.forLanguageTag(appointment.getPatientLanguage());
+        Locale doctorLocale = Locale.forLanguageTag(appointment.getDoctorLanguage());
 
         Context patientContext = new Context(patientLocale);
         Context doctorContext = new Context(doctorLocale);
@@ -58,14 +58,14 @@ public class MailServiceImpl implements MailService {
         String patientSubject = messageSource.getMessage(subject, null, patientLocale);
 
         Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("doctorName", doctor.getName() + " " + doctor.getLastName());
-        templateModel.put("patientName", patient.getName() + " " + patient.getLastName());
+        templateModel.put("doctorName", appointment.getDoctorName());
+        templateModel.put("patientName", appointment.getPatientName());
         LocalDateTime date = appointment.getDate();
         templateModel.put("appointmentDate", date.toLocalDate().toString());
         templateModel.put("appointmentTime", date.getHour());
         templateModel.put("appointmentId", appointment.getId());
-        templateModel.put("appointmentOffice", appointment.getDoctorOffice().getOfficeName());
-        templateModel.put("appointmentOfficeNeighborhood", appointment.getDoctorOffice().getNeighborhood().getName());
+        templateModel.put("appointmentOffice", appointment.getOfficeName());
+        templateModel.put("appointmentOfficeNeighborhood", appointment.getOfficeNeighborhood());
         templateModel.put("reason", (appointment.getReason() != null && !appointment.getReason().isEmpty()) ? appointment.getReason() : "-");
         templateModel.put("linkUrlPatient", BASE_URL + "/patient/dashboard/appointment-details/" + appointment.getId());
         templateModel.put("linkUrlDoctor", BASE_URL + "/doctor/dashboard/appointment-details/" + appointment.getId());
@@ -91,8 +91,8 @@ public class MailServiceImpl implements MailService {
             MimeMessageHelper doctorHelper = new MimeMessageHelper(doctorMessage, true, "UTF-8");
             MimeMessageHelper patientHelper = new MimeMessageHelper(patientMessage, true, "UTF-8");
 
-            doctorHelper.setTo(doctor.getEmail());
-            patientHelper.setTo(patient.getEmail());
+            doctorHelper.setTo(appointment.getDoctorEmail());
+            patientHelper.setTo(appointment.getPatientEmail());
 
             doctorHelper.setSubject(doctorSubject + " #" + appointment.getId());
             patientHelper.setSubject(patientSubject + " #" + appointment.getId());
@@ -104,8 +104,8 @@ public class MailServiceImpl implements MailService {
             patientHelper.setFrom(from_mail);
             mailSender.send(doctorMessage);
             mailSender.send(patientMessage);
-            LOGGER.info("Email sent to doctor: {}", doctor.getEmail());
-            LOGGER.info("Email sent to patient: {}", patient.getEmail());
+            LOGGER.info("Email sent to doctor: {}", appointment.getDoctorEmail());
+            LOGGER.info("Email sent to patient: {}", appointment.getPatientEmail());
         } catch (MessagingException e) {
             LOGGER.error("Error creating email message", e);
         }

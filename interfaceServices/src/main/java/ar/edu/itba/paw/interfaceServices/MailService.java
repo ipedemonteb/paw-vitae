@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MailService {
 
-    void sendAppointmentStatusEmail(String subject, Appointment appointment);
+    void sendAppointmentStatusEmail(String subject, MailDTO dto);
 
     void sendReminderEmail(Appointment appointment);
 

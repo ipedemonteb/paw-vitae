@@ -76,7 +76,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
         Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(SpecialtyNotFoundException::new ),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice, allowFullHistory);
         availabilitySlotsService.setAvailabilitySlotUnavailable(slotId);
-        mailService.sendAppointmentStatusEmail("email.newAppointment", appointment);
+        MailDTO dto = new MailDTO(appointment);
+        mailService.sendAppointmentStatusEmail("email.newAppointment", dto);
 
         LOGGER.info("New appointment created with id: {}", appointment.getId());
 
@@ -111,7 +112,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         appointment.setStatus(AppointmentStatus.CANCELADO.getValue());
-        mailService.sendAppointmentStatusEmail("email.cancelledAppointment", appointment);
+        MailDTO dto = new MailDTO(appointment);
+        mailService.sendAppointmentStatusEmail("email.cancelledAppointment", dto);
         LOGGER.info("Appointment cancelled: {}", appointmentId);
         return true;
     }
