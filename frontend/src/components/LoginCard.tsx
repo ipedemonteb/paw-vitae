@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
-import {Link} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import { getClaims } from "@/context/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -29,6 +29,7 @@ const linksContainer = "flex flex-col gap-1 text-sm font-medium";
 const registerLinkStyles = "text-[var(--primary-color)] hover:text-[var(--primary-dark)] hover:underline";
 
 function LoginCard() {
+
     const { t } = useTranslation();
     const { login } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
@@ -36,10 +37,13 @@ function LoginCard() {
     const [password, setPassword] = useState("");
     const queryClient = useQueryClient();
     const [rememberMe, setRememberMe] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const from = location.state?.from?.pathname;
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        login.mutate({ email, password,rememberMe:rememberMe }, {
+        login.mutate({ email, password, rememberMe: rememberMe }, {
             onSuccess: async () => {
                 await queryClient.cancelQueries();
                 queryClient.clear();
@@ -47,17 +51,22 @@ function LoginCard() {
                 const claims = getClaims();
                 const role = claims?.role?.toUpperCase();
 
+                if (from) {
+                    navigate(from, { replace: true });
+                    return;
+                }
+
                 if (role === "ROLE_DOCTOR") {
-                    window.location.replace("/doctor/dashboard");
+                    navigate("/doctor/dashboard", { replace: true });
                     return;
                 }
 
                 if (role === "ROLE_PATIENT") {
-                    window.location.replace("/patient/dashboard");
+                    navigate("/patient/dashboard", { replace: true });
                     return;
                 }
 
-                window.location.replace("/");
+                navigate("/", { replace: true });
             }
         });
     };

@@ -3,7 +3,7 @@ import {NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuLi
 import {Sheet, SheetClose, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {BriefcaseMedical, ChartPie, ChevronDown, LogIn, LogOut, Menu, User} from "lucide-react";
-import {Link, useMatch, useNavigate} from "react-router-dom";
+import {Link, useMatch} from "react-router-dom";
 import {cn} from "@/lib/utils";
 import React, {useEffect, useMemo, useState} from "react";
 import {useAuth} from "@/hooks/useAuth";
@@ -345,14 +345,15 @@ function LoggedInComponent({
 
     const { t } = useTranslation();
     const auth = useAuth();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [logoutOpen, setLogoutOpen] = useState(false);
 
     const logout = () => {
         auth.logout();
         onOpenChange(false);
         setLogoutOpen(false);
-        navigate("/", {replace : true});
+        window.location.href="/login";
+        // navigate("/login", { replace: true, state: { from: null } });
     };
 
     return (
@@ -507,11 +508,11 @@ function SheetLoggedInComponent({ userRole, displayName, avatarFallbackText, doc
 }) {
     const { t } = useTranslation();
     const auth = useAuth();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const logout = () => {
         auth.logout();
-        navigate("/");
+        window.location.href="/login";
     };
 
     if (userRole === "ANON") return null;
