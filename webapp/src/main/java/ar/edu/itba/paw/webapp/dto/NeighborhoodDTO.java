@@ -14,7 +14,7 @@ public class NeighborhoodDTO {
         NeighborhoodDTO res = new NeighborhoodDTO();
 
         res.name = neighborhood.getName();
-        res.self = uriInfo.getBaseUriBuilder().path("neighborhoods").path(String.valueOf(neighborhood.getId())).build();
+        res.self = uriInfo.getBaseUriBuilder().path("api").path("neighborhoods").path(String.valueOf(neighborhood.getId())).build();
 
         return res;
     }

@@ -14,8 +14,8 @@ public class OfficeSpecialtyDTO {
     public static OfficeSpecialtyDTO fromDoctorOfficeSpecialty(DoctorOfficeSpecialty specialty, UriInfo uriInfo) {
         OfficeSpecialtyDTO dto = new OfficeSpecialtyDTO();
 
-        dto.specialty = uriInfo.getBaseUriBuilder().path("specialties").path(String.valueOf(specialty.getSpecialty().getId())).build();
-        dto.office = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(specialty.getOffice().getDoctor().getId())).path("offices").path(String.valueOf(specialty.getOffice().getId())).build();
+        dto.specialty = uriInfo.getBaseUriBuilder().path("api").path("specialties").path(String.valueOf(specialty.getSpecialty().getId())).build();
+        dto.office = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(String.valueOf(specialty.getOffice().getDoctor().getId())).path("offices").path(String.valueOf(specialty.getOffice().getId())).build();
 
         return dto;
     }

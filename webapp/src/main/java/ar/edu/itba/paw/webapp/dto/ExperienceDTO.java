@@ -23,7 +23,7 @@ public class ExperienceDTO {
         dto.startDate = experience.getStartDate();
         dto.endDate = experience.getEndDate();
 
-        dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(experience.getDoctor().getId())).build();
+        dto.doctor = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(String.valueOf(experience.getDoctor().getId())).build();
 
         return dto;
     }
