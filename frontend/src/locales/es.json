@@ -267,7 +267,8 @@
       "uploaded": "Subido por",
       "view": "Ver",
       "no-report": "No hay reporte disponible para esta consulta."
-    }
+    },
+    "back" : "Volver a los detalles del turno"
   },
   "common": {
     "go_back": "Volver atrás",
