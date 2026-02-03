@@ -30,7 +30,8 @@ export type AppointmentFileDTO = {
 }
 
 export type AppointmentForm={
-    slotId: number;
+    appointmentHour: number;
+    appointmentDate: string;
     reason: string;
     specialtyId: string;
     doctorId: string;

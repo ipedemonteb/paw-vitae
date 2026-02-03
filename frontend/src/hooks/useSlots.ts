@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getDoctorSlots} from "@/data/slots";
+import { getOccupiedSlots } from "@/data/slots";
 
-export function useDoctorSlots(doctorId?: string) {
+export function useOccupiedSlots(doctorId?: string, from?: string, to?: string) {
     return useQuery({
-        queryKey: ['doctors', doctorId, 'slots'],
-        queryFn: () => getDoctorSlots(doctorId!),
-        enabled: !!doctorId && !isNaN(Number(doctorId)),
+        queryKey: ['doctors', doctorId, 'slots', 'occupied', from, to],
+        queryFn: () => getOccupiedSlots(doctorId!, from!, to!),
+        enabled: !!doctorId && !isNaN(Number(doctorId)) && !!from && !!to,
     });
 }

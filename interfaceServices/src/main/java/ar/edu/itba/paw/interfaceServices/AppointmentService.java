@@ -11,9 +11,9 @@ import java.util.Optional;
 
 public interface AppointmentService {
 
-    Appointment create(long patientId, long doctorId, Long slotId, String reason, long specialtyId, long officeId, boolean allowFullHistory);
+     Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId, boolean allowFullHistory);
 
-    void sendDailyReminders();
+     void sendDailyReminders();
 
     void completeAppointments();
 

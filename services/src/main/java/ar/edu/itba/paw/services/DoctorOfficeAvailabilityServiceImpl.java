@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorOfficeAvailabilityDao;
-import ar.edu.itba.paw.interfaceServices.AvailabilitySlotsService;
+import ar.edu.itba.paw.interfaceServices.OccupiedSlotsService;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeAvailabilityService;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeService;
 import ar.edu.itba.paw.models.*;
@@ -22,15 +22,15 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
 
     private final DoctorOfficeAvailabilityDao doctorOfficeAvailabilityDao;
     private final DoctorOfficeService doctorOfficeService;
-    private final AvailabilitySlotsService availabilitySlotsService;
+    private final OccupiedSlotsService occupiedSlotsService;
     private static final Logger LOGGER = LoggerFactory.getLogger(DoctorOfficeAvailabilityServiceImpl.class);
 
     @Autowired
     public DoctorOfficeAvailabilityServiceImpl(DoctorOfficeAvailabilityDao doctorOfficeAvailabilityDao,
-                                               @Lazy DoctorOfficeService doctorOfficeService,@Lazy AvailabilitySlotsService availabilitySlotsService) {
+                                               @Lazy DoctorOfficeService doctorOfficeService,@Lazy OccupiedSlotsService occupiedSlotsService) {
         this.doctorOfficeAvailabilityDao = doctorOfficeAvailabilityDao;
         this.doctorOfficeService = doctorOfficeService;
-        this.availabilitySlotsService = availabilitySlotsService;
+        this.occupiedSlotsService = occupiedSlotsService;
     }
 
     @Transactional
@@ -114,7 +114,6 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
             }
             office.replaceAvailability(newSlots);
         }
-        availabilitySlotsService.reloadAvailability(doctorId);
     }
 
     @Transactional(readOnly = true)
