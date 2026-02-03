@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card.tsx";
 import { RatingCard } from "@/components/Rating.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
 import { Link, useNavigate } from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useDoctors, useDoctorsCount} from "@/hooks/useDoctors.ts";
 import {usePatientsCount} from "@/hooks/usePatients.ts";
@@ -94,9 +94,11 @@ function HeroSection() {
         pageSize: 5
     })
 
+    const divRef = useRef<HTMLDivElement | null>(null);
+
     useEffect(() => {
         setOpen(keyword.length > 0 && !isLoading && focus);
-    }, [keyword, focus]);
+    }, [keyword, focus, isLoading]);
 
 
     return (
@@ -116,7 +118,11 @@ function HeroSection() {
                                     placeholder={t("landing.hero.search_placeholder")}
                                     className={heroInput}
                                     onFocus={() => setFocus(true)}
-                                    onBlur={() => setFocus(false)}
+                                    onBlur={(e) => {
+                                        const related = e.relatedTarget;
+                                        if (divRef.current && related && divRef.current.contains(related)) return;
+                                        setFocus(false);
+                                    }}
                                     type="search"
                                     value={keyword}
                                     onChange={(e) => setKeyword(e.target.value)}
@@ -136,7 +142,7 @@ function HeroSection() {
                                     <Search className="h-5 w-5"/>
                                     {t("landing.hero.search")}
                                 </Button>
-                                <div className={`${
+                                <div ref={divRef} onMouseDown={(e) => e.preventDefault()} className={`${
                                     open
                                         ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
                                         : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
