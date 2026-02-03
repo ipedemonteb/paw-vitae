@@ -42,7 +42,7 @@ import type {AppointmentFileDTO} from "@/data/appointments.ts";
 import React, {useEffect, useMemo, useState} from "react";
 import {useRating, useCreateRating} from "@/hooks/useRatings.ts";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import { useParams, useNavigate } from "react-router-dom";
+import {useParams, useNavigate, Link} from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import GenericError from "@/pages/GenericError.tsx";
@@ -173,7 +173,7 @@ function AppointmentDetails() {
 
                         <div className="flex flex-col gap-6">
                             <PatientFileCard files={patientFiles} />
-                            <MedicalHistoryCard isDoctor={isDoctor} canAccessMedicalHistory={appointment.allowFullHistory}/>
+                            <MedicalHistoryCard isDoctor={isDoctor} canAccessMedicalHistory={appointment.allowFullHistory} patientId={patientId}/>
 
 
                             {showPostVisit ? (
@@ -481,7 +481,7 @@ const noMedicalHistoryContainer = "flex flex-row items-center gap-2 border borde
 const infoIcon = "h-8 w-8 text-[var(--text-light)]";
 const noMedicalHistoryText = "text-[var(--text-light)] leading-normal";
 
-function MedicalHistoryCard({canAccessMedicalHistory = false, isDoctor}:{canAccessMedicalHistory?: boolean, isDoctor?: boolean}) {
+function MedicalHistoryCard({canAccessMedicalHistory = false, isDoctor, patientId}:{canAccessMedicalHistory?: boolean, isDoctor?: boolean, patientId?: string}) {
     const { t } = useTranslation();
 
     return (
@@ -498,9 +498,11 @@ function MedicalHistoryCard({canAccessMedicalHistory = false, isDoctor}:{canAcce
                     </div>
                     {isDoctor && (
                         <div className={medicalHistoryLower}>
-                            <Button className={medicalHistoryButton}>
-                                {t("appointment.details.access-button")}
-                                <ArrowRight />
+                            <Button className={medicalHistoryButton} asChild>
+                                <Link to={`/medical-history/${patientId}`}>
+                                    {t("appointment.details.access-button")}
+                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                </Link>
                             </Button>
                         </div>
                     )}

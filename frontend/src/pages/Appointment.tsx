@@ -14,18 +14,29 @@ import {
     useDoctor,
     useDoctorSpecialties,
 } from "@/hooks/useDoctors.ts";
-import {useDoctorAvailability, useDoctorOffices, useDoctorOfficesSpecialties} from "@/hooks/useOffices.ts";
+import {
+    useDoctorAvailability,
+    useDoctorOffices,
+    useDoctorOfficesSpecialties
+} from "@/hooks/useOffices.ts";
 
 import { useBookAppointmentMutation } from "@/hooks/useAppointments.ts";
-import { useDoctorSlots } from "@/hooks/useSlots.ts";
+import { useOccupiedSlots } from "@/hooks/useSlots.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import type { OfficeDTO, OfficeSpecialtyDTO } from "@/data/offices.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
-import type { AvailabilitySlotDTO } from "@/data/slots.ts";
-import { startOfDay, parseISO, isSameDay, addMonths } from "date-fns";
+import {
+    startOfDay,
+    parseISO,
+    isSameDay,
+    addDays,
+    format,
+    isBefore,
+    addMinutes
+} from "date-fns";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
 
@@ -62,6 +73,7 @@ function isOfficeValid(offices: OfficeDTO[], selectedOffice: string | null) {
     if (!selectedOffice) return true;
     return offices.some((o) => o.self === selectedOffice);
 }
+
 const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
 const appointmentContainer = "p-0 pb-8";
@@ -89,7 +101,7 @@ function Appointment() {
     const { mutate: bookAppointment, isPending: isBooking } = useBookAppointmentMutation();
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-    const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
+    const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null);
     const [selectedOffice, setSelectedOffice] = useState<string | null>(null);
 
@@ -97,16 +109,21 @@ function Appointment() {
     const [allowFullHistory, setAllowFullHistory] = useState(true);
     const [files, setFiles] = useState<File[]>([]);
 
+    const today = useMemo(() => startOfDay(new Date()), []);
+    const maxDate = useMemo(() => addDays(today, 30), [today]);
+    const fromStr = useMemo(() => format(today, 'yyyy-MM-dd'), [today]);
+    const toStr = useMemo(() => format(maxDate, 'yyyy-MM-dd'), [maxDate]);
+
     const { data: doctor, isLoading: loadingDoctor, isError: errorDoctor, error: doctorError } = useDoctor(doctorId);
     const { data: offices, isLoading: loadingOffices } = useDoctorOffices(doctor?.offices, { status: "active" });
     const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
+
     const { data: allAvailability } = useDoctorAvailability(doctorId);
 
-    const { data: allSlots, isLoading: loadingSlots } = useDoctorSlots(doctorId);
+    const { data: occupiedSlots, isLoading: loadingSlots } = useOccupiedSlots(doctorId, fromStr, toStr);
 
     const isLoading = loadingDoctor || loadingOffices || loadingSlots;
-    const today = useMemo(() => startOfDay(new Date()), []);
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -133,56 +150,76 @@ function Appointment() {
         if (!isOfficeValid(filteredOffices, selectedOffice)) setSelectedOffice(null);
     }, [filteredOffices, selectedOffice]);
 
-    const availableSlots = useMemo(() => {
-        if (!allSlots) return [];
-        return allSlots.filter(s => s.status === 'AVAILABLE');
-    }, [allSlots]);
-
-    const selectedOfficeRules = useMemo(() => {
-        if (!selectedOffice || !allAvailability) return [];
-        return allAvailability.filter(rule => rule.office === selectedOffice);
-    }, [selectedOffice, allAvailability]);
 
     const slotsForSelectedOffice = useMemo(() => {
-        if (!selectedOfficeRules) return [];
+        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots) return [];
 
-        return availableSlots.filter(slot => {
-            const slotDate = parseISO(slot.date);
-            const dayOfWeek = slotDate.getDay();
+        const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
-            return selectedOfficeRules.some((rule) => {
-                if (rule.dayOfWeek !== dayOfWeek) return false;
-                return slot.startTime >= rule.startTime && slot.startTime < rule.endTime;
-            });
+        const dayOfWeek = selectedDate.getDay();
+        const dailyRules = allAvailability.filter(r =>
+            r.office === selectedOffice && r.dayOfWeek === dayOfWeek
+        );
+
+        const generatedSlots: { startTime: string }[] = [];
+
+        dailyRules.forEach(rule => {
+            let current = parseISO(`${dateStr}T${rule.startTime}`);
+            const end = parseISO(`${dateStr}T${rule.endTime}`);
+
+            while (isBefore(current, end)) {
+                const currentTimeShort = format(current, 'HH:mm');
+                const currentTimeFull = format(current, 'HH:mm:00');
+
+
+                const isOccupied = occupiedSlots.some(occ => {
+                    const occTimeShort = occ.startTime.substring(0, 5);
+                    return occ.date === dateStr && occTimeShort === currentTimeShort;
+                });
+
+                if (!isOccupied) {
+                    generatedSlots.push({ startTime: currentTimeFull });
+                }
+
+
+                current = addMinutes(current, 60);
+            }
         });
-    }, [availableSlots, selectedOfficeRules]);
 
-    const isDateSelectable = useCallback((d: Date) => {
-        if (d < today) return false;
-        return slotsForSelectedOffice.some(slot => isSameDay(parseISO(slot.date), d));
-    }, [today, slotsForSelectedOffice]);
+        return generatedSlots.sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+    }, [selectedOffice, allAvailability, selectedDate, occupiedSlots]);
+
 
     const slotsForDay = useMemo(() => {
         if (!selectedDate) return [];
-        let slots = slotsForSelectedOffice
-            .filter(slot => isSameDay(parseISO(slot.date), selectedDate))
-            .sort((a, b) => a.startTime.localeCompare(b.startTime));
+        let slots = slotsForSelectedOffice;
+
         if (isSameDay(selectedDate, new Date())) {
             const now = new Date();
-            const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            const currentTime = format(now, 'HH:mm:00');
             slots = slots.filter(slot => slot.startTime > currentTime);
         }
         return slots;
     }, [selectedDate, slotsForSelectedOffice]);
 
 
+    const isDateSelectable = useCallback((d: Date) => {
+        if (d < startOfDay(new Date()) || d > maxDate) return false;
+
+        if (!selectedOffice || !allAvailability) return false;
+        const dayOfWeek = d.getDay();
+        return allAvailability.some(r => r.office === selectedOffice && r.dayOfWeek === dayOfWeek);
+    }, [maxDate, selectedOffice, allAvailability]);
+
+
     useEffect(() => {
         setSelectedDate(undefined);
-        setSelectedSlotId(null);
+        setSelectedTime(null);
     }, [selectedOffice]);
 
     useEffect(() => {
-        setSelectedSlotId(null);
+        setSelectedTime(null);
     }, [selectedDate]);
 
 
@@ -193,13 +230,16 @@ function Appointment() {
             return;
         }
 
-        if (!selectedSlotId || !selectedSpecialty || !selectedOffice) {
+        if (!selectedTime || !selectedSpecialty || !selectedOffice || !selectedDate) {
             toast.error(t("error"), { description: t("register.errors.missing_fields", "Complete todos los campos") });
             return;
         }
 
+        const [hours] = selectedTime.split(":").map(Number);
+
         const appointmentForm = {
-            slotId: selectedSlotId,
+            appointmentDate: format(selectedDate, 'yyyy-MM-dd'),
+            appointmentHour: hours,
             patientId: auth.userId!,
             doctorId: doctorId!,
             specialtyId: selectedSpecialty.split("/").pop()!,
@@ -216,10 +256,16 @@ function Appointment() {
                 toast.success(t("success.appointment_created", "Turno reservado exitosamente"));
                 navigate(`/appointment/${newId}/confirmation`);
             },
-            onError: () => {
-                toast.error(t("appointment.booking.error.failed"), {
-                    description: t("appointment.booking.error.try-again")
-                });
+            onError: (err) => {
+                if (err.response?.status === 409) {
+                    toast.error(t("error.slot_taken", "El turno acaba de ser ocupado. Por favor elija otro horario."));
+                    queryClient.invalidateQueries({ queryKey: ['doctors', doctorId, 'slots'] });
+                    setSelectedTime(null);
+                } else {
+                    toast.error(t("appointment.booking.error.failed"), {
+                        description: t("appointment.booking.error.try-again")
+                    });
+                }
             }
         });
     };
@@ -266,11 +312,12 @@ function Appointment() {
                         <DateSelector
                             selectedDate={selectedDate}
                             setSelectedDate={setSelectedDate}
-                            selectedSlotId={selectedSlotId}
-                            setSelectedSlotId={setSelectedSlotId}
+                            selectedTime={selectedTime}
+                            setSelectedTime={setSelectedTime}
                             availableSlots={slotsForDay}
                             disabled={!selectedOffice}
                             isDateDisabled={(d) => !isDateSelectable(d)}
+                            maxDate={maxDate}
                         />
 
                         <div className={optionalsContainer}>
@@ -282,7 +329,7 @@ function Appointment() {
                             <Button
                                 className={bookButton}
                                 onClick={handleBook}
-                                disabled={isBooking || !selectedSlotId}
+                                disabled={isBooking || !selectedTime}
                             >
                                 {isBooking ? (
                                     <>
@@ -304,30 +351,29 @@ function Appointment() {
 function DateSelector({
                           selectedDate,
                           setSelectedDate,
-                          selectedSlotId,
-                          setSelectedSlotId,
+                          selectedTime,
+                          setSelectedTime,
                           availableSlots,
                           disabled,
                           isDateDisabled,
+                          maxDate
                       }:{
     selectedDate: Date | undefined
     setSelectedDate: (date: Date | undefined) => void
-    selectedSlotId: number | null
-    setSelectedSlotId: React.Dispatch<React.SetStateAction<number | null>>;
-    availableSlots: AvailabilitySlotDTO[];
+    selectedTime: string | null
+    setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
+    availableSlots: { startTime: string }[];
     disabled?: boolean;
     isDateDisabled?: (date: Date) => boolean;
+    maxDate: Date;
 }) {
     const { t } = useTranslation();
     const locale = useMemo(() => (typeof navigator === "undefined" ? "en-US" : navigator.language || "en-US"), []);
 
     const formattedConfirmation = useMemo(() => {
-        if (!selectedDate || !selectedSlotId) return null;
+        if (!selectedDate || !selectedTime) return null;
 
-        const slot = availableSlots.find(s => s.id === selectedSlotId);
-        if (!slot) return null;
-
-        const [hh, mm] = slot.startTime.split(":").map(Number);
+        const [hh, mm] = selectedTime.split(":").map(Number);
         const d = new Date(selectedDate);
         d.setHours(hh, mm, 0, 0);
 
@@ -338,7 +384,7 @@ function DateSelector({
 
         const timePart = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" }).format(d);
         return `${datePart} at ${timePart}`;
-    }, [selectedDate, selectedSlotId, availableSlots, locale]);
+    }, [selectedDate, selectedTime, locale]);
 
     return (
         <Card className={dateCard}>
@@ -355,7 +401,7 @@ function DateSelector({
                             disabled={disabled}
                             isDateDisabled={isDateDisabled}
                             fromDate={new Date()}
-                            toDate={addMonths(new Date(), 1)}
+                            toDate={maxDate}
                         />
                     </div>
                 </div>
@@ -370,10 +416,10 @@ function DateSelector({
                                 const displayTime = slot.startTime.substring(0, 5);
                                 return (
                                     <Button
-                                        key={slot.id}
+                                        key={slot.startTime}
                                         className={timeButton}
-                                        data-selected={selectedSlotId === slot.id}
-                                        onClick={() => setSelectedSlotId((prev) => (prev === slot.id ? null : slot.id))}
+                                        data-selected={selectedTime === slot.startTime}
+                                        onClick={() => setSelectedTime((prev) => (prev === slot.startTime ? null : slot.startTime))}
                                         disabled={disabled}
                                     >
                                         {displayTime}

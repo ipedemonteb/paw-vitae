@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfacePersistence.AvailabilitySlotsDao;
-import ar.edu.itba.paw.models.AvailabilitySlots;
+import ar.edu.itba.paw.interfacePersistence.OccupiedSlotsDao;
+import ar.edu.itba.paw.models.OccupiedSlots;
 import ar.edu.itba.paw.models.Doctor;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,10 +37,10 @@ public class AvailabilitySlotDaoTest {
     private static final long SLOT_ID = 1L;
     private static final LocalDate SLOT_DATE = LocalDate.of(2026, 3, 2);
     private static final LocalTime SLOT_START_TIME = LocalTime.of(9, 0);
-    private static final AvailabilitySlots.SlotStatus SLOT_STATUS = AvailabilitySlots.SlotStatus.AVAILABLE;
+    private static final OccupiedSlots.SlotStatus SLOT_STATUS = OccupiedSlots.SlotStatus.AVAILABLE;
 
     @Autowired
-    private AvailabilitySlotsDao availabilitySlotsDao;
+    private OccupiedSlotsDao occupiedSlotsDao;
     private JdbcTemplate jdbcTemplate;
 
     @PersistenceContext
@@ -67,15 +67,15 @@ public class AvailabilitySlotDaoTest {
         LocalTime slotStartTime = LocalTime.of(startTimeHour, startTimeMinute);
         String status = "AVAILABLE";
         Doctor mangedDoctor = em.find(Doctor.class, DOC_ID);
-        AvailabilitySlots slot = new AvailabilitySlots(
+        OccupiedSlots slot = new OccupiedSlots(
                 mangedDoctor,
                 slotDate,
                 slotStartTime,
-                AvailabilitySlots.SlotStatus.valueOf(status)
+                OccupiedSlots.SlotStatus.valueOf(status)
         );
 
         //Exercise
-        AvailabilitySlots createdSlot = availabilitySlotsDao.create(slot);
+        OccupiedSlots createdSlot = occupiedSlotsDao.create(slot);
         em.flush();
 
         //Postconditions
@@ -94,7 +94,7 @@ public class AvailabilitySlotDaoTest {
         long slotId = 1000L;
 
         //Exercise
-        Optional<AvailabilitySlots> maybeSlot = availabilitySlotsDao.getById(slotId);
+        Optional<OccupiedSlots> maybeSlot = occupiedSlotsDao.getById(slotId);
 
         //Postconditions
         assertFalse(maybeSlot.isPresent());
@@ -105,7 +105,7 @@ public class AvailabilitySlotDaoTest {
         //Preconditions
 
         //Exercise
-        Optional<AvailabilitySlots> maybeSlot = availabilitySlotsDao.getById(SLOT_ID);
+        Optional<OccupiedSlots> maybeSlot = occupiedSlotsDao.getById(SLOT_ID);
 
         //Postconditions
         assertTrue(maybeSlot.isPresent());
@@ -121,7 +121,7 @@ public class AvailabilitySlotDaoTest {
         LocalDate endDate = LocalDate.of(2027, 3, 10);
 
         //Exercise
-        List<AvailabilitySlots> slots = availabilitySlotsDao.getByDoctorIdInDateRange(DOC_ID, startDate, endDate);
+        List<OccupiedSlots> slots = occupiedSlotsDao.getByDoctorIdInDateRange(DOC_ID, startDate, endDate);
 
         //Postconditions
         assertTrue(slots.isEmpty());
@@ -134,7 +134,7 @@ public class AvailabilitySlotDaoTest {
         LocalDate endDate = LocalDate.of(2026, 3, 10);
 
         //Exercise
-        List<AvailabilitySlots> slots = availabilitySlotsDao.getByDoctorIdInDateRange(DOC_ID, startDate, endDate);
+        List<OccupiedSlots> slots = occupiedSlotsDao.getByDoctorIdInDateRange(DOC_ID, startDate, endDate);
 
         //Postconditions
         assertFalse(slots.isEmpty());
@@ -147,7 +147,7 @@ public class AvailabilitySlotDaoTest {
         LocalDate slotDate = LocalDate.of(2027,1,1);
 
         //Exercise
-        boolean exists = availabilitySlotsDao.exists(DOC_ID, slotDate, SLOT_START_TIME);
+        boolean exists = occupiedSlotsDao.exists(DOC_ID, slotDate, SLOT_START_TIME);
 
         //Postconditions
         assertFalse(exists);
@@ -158,7 +158,7 @@ public class AvailabilitySlotDaoTest {
         //Preconditions
 
         //Exercise
-        boolean exists = availabilitySlotsDao.exists(DOC_ID, SLOT_DATE, SLOT_START_TIME);
+        boolean exists = occupiedSlotsDao.exists(DOC_ID, SLOT_DATE, SLOT_START_TIME);
 
         //Postconditions
         assertTrue(exists);
@@ -171,7 +171,7 @@ public class AvailabilitySlotDaoTest {
         LocalDate fromDate = LocalDate.of(2026, 3, 3);
 
         //Exercise
-        int modified = availabilitySlotsDao.deleteUnbookedSlots(DOC_ID, fromDate);
+        int modified = occupiedSlotsDao.deleteUnbookedSlots(DOC_ID, fromDate);
 
         //Postconditions
         assertEquals(3, modified);

@@ -45,7 +45,7 @@ public class AppointmentServiceImplTest {
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
             new Coverage(1L, "Coverage A"), NEIGHBORHOOD, true);
     private static final DoctorOffice DOCTOR_OFFICE = new DoctorOffice(DOCTOR, NEIGHBORHOOD, List.of(SPECIALTY), "Office A");
-    private static final AvailabilitySlots SLOT = new AvailabilitySlots(DOCTOR, DATE.toLocalDate(), LocalTime.of(10, 0), AvailabilitySlots.SlotStatus.AVAILABLE);
+    private static final OccupiedSlots SLOT = new OccupiedSlots(DOCTOR, DATE.toLocalDate(), LocalTime.of(10, 0), OccupiedSlots.SlotStatus.AVAILABLE);
     private static final Appointment APPOINTMENT = new Appointment(
             DATE,
             STATUS,
@@ -82,7 +82,7 @@ public class AppointmentServiceImplTest {
     @Mock
     private MailService mailService;
     @Mock
-    private AvailabilitySlotsService availabilitySlotsService;
+    private OccupiedSlotsService occupiedSlotsService;
 
     @InjectMocks
     private AppointmentServiceImpl appointmentService;
@@ -90,7 +90,7 @@ public class AppointmentServiceImplTest {
     @Test
     public void testCreateNonExistentSlot() {
         //Preconditions
-        when(availabilitySlotsService.getById(SLOT_ID)).thenReturn(Optional.empty());
+        when(occupiedSlotsService.getById(SLOT_ID)).thenReturn(Optional.empty());
 
         //Exercise & Postconditions
         assertThrows(NoSuchElementException.class, () -> {
@@ -136,7 +136,7 @@ public class AppointmentServiceImplTest {
         when(doctorService.getById(anyLong())).thenReturn(Optional.of(DOCTOR));
         when(patientService.getById(anyLong())).thenReturn(Optional.of(PATIENT));
         when(doctorOfficeService.getById(anyLong())).thenReturn(Optional.of(DOCTOR_OFFICE));
-        when(availabilitySlotsService.getById(SLOT_ID)).thenReturn(Optional.of(SLOT));
+        when(occupiedSlotsService.getById(SLOT_ID)).thenReturn(Optional.of(SLOT));
 
         //Exercise
         Appointment appointment = appointmentService.create(0L, 0L, SLOT_ID, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);

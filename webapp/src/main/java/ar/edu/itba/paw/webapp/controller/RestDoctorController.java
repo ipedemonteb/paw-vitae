@@ -26,6 +26,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
+import java.time.LocalDate;
 import java.util.List;
 
 import static ar.edu.itba.paw.webapp.utils.ResponseUtils.*;
@@ -47,13 +48,13 @@ public class RestDoctorController {
     private final DoctorOfficeSpecialtyService doctorOfficeSpecialtyService;
     private final ImageService imageService;
     private final UnavailabilitySlotsService unavailabilitySlotsService;
-    private final AvailabilitySlotsService availabilitySlotsService;
+    private final OccupiedSlotsService occupiedSlotsService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, AvailabilitySlotsService availabilitySlotsService, ImageService imageService, UnavailabilitySlotsService unavailabilitySlotsService) {
+    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, OccupiedSlotsService occupiedSlotsService, ImageService imageService, UnavailabilitySlotsService unavailabilitySlotsService) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
@@ -65,7 +66,7 @@ public class RestDoctorController {
         this.doctorOfficeSpecialtyService = doctorOfficeSpecialtyService;
         this.imageService = imageService;
         this.unavailabilitySlotsService = unavailabilitySlotsService;
-        this.availabilitySlotsService = availabilitySlotsService;
+        this.occupiedSlotsService = occupiedSlotsService;
     }
 
     @GET
@@ -348,10 +349,12 @@ public class RestDoctorController {
     @Path("/{id:\\d+}/slots")
     @Consumes(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOTS_LIST)
     public Response getDoctorAvailabilitySlots(
-            @PathParam("id") final long id
+            @PathParam("id") final long id,
+            @NotNull @QueryParam("from") String from,
+            @NotNull @QueryParam("to") String to
     ) {
-        List<AvailabilitySlots> slots = this.availabilitySlotsService.getAvailableSlots(id);
-        return Response.ok(new GenericEntity<>(AvailabilitySlotDTO.fromList(slots, uriInfo)) {}).build();
+        List<OccupiedSlots> slots = this.occupiedSlotsService.getByDoctorIdInDateRange(id, LocalDate.parse(from), LocalDate.parse(to));
+        return Response.ok(new GenericEntity<>(OccupiedSlotDTO.fromList(slots, uriInfo)) {}).build();
     }
     @GET
     @Path("/{id:\\d+}/slots/{slotId:\\d+}")
@@ -360,8 +363,8 @@ public class RestDoctorController {
             @PathParam("id") final long id,
             @PathParam("slotId") final long slotId
     ) {
-        AvailabilitySlots slot = this.availabilitySlotsService.getById(slotId).orElseThrow(DoctorOfficeNotFoundException::new);
-        return Response.ok(new GenericEntity<>(AvailabilitySlotDTO.fromSlot(slot, uriInfo)) {}).build();
+        OccupiedSlots slot = this.occupiedSlotsService.getById(slotId).orElseThrow(DoctorOfficeNotFoundException::new);
+        return Response.ok(new GenericEntity<>(OccupiedSlotDTO.fromSlot(slot, uriInfo)) {}).build();
     }
 
 }
