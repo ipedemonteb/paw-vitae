@@ -81,7 +81,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
   </filter>
   <filter-mapping>
     <filter-name>jersey</filter-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/api/*</url-pattern>
   </filter-mapping>
 
   <filter>
