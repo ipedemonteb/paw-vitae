@@ -1,19 +1,22 @@
 import { api } from "@/data/Api";
-import {ContentTypes} from "@/utils/contentTypes.ts";
+import { ContentTypes } from "@/utils/contentTypes.ts";
 
-export interface AvailabilitySlotDTO {
+export interface OccupiedSlotDTO {
     id: number;
     date: string;
     startTime: string;
-    status: 'AVAILABLE' | 'UNAVAILABLE'
 }
 
-export async function getDoctorSlots(doctorId: string) {
-    const res = await api.get<AvailabilitySlotDTO[]>(`/doctors/${doctorId}/slots`, {
+export async function getOccupiedSlots(doctorId: string, from: string, to: string) {
+    const res = await api.get<OccupiedSlotDTO[]>(`/doctors/${doctorId}/slots`, {
         headers: {
             "Accept": ContentTypes.APPLICATION_AVAILABILITY_SLOTS_LIST
+        },
+        params: {
+            from,
+            to
         }
-    } );
+    });
 
     return res.data;
 }

@@ -19,6 +19,8 @@ public @interface AppointmentValidDate {
 
     Class<? extends Payload>[] payload() default {};
 
+    String date();
 
-    String slotId();
+    String startTime();
+
 }

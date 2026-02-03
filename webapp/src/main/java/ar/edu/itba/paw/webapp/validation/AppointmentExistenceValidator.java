@@ -1,10 +1,8 @@
 package ar.edu.itba.paw.webapp.validation;
 
 import ar.edu.itba.paw.interfaceServices.AppointmentService;
-import ar.edu.itba.paw.interfaceServices.AvailabilitySlotsService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentStatus;
-import ar.edu.itba.paw.models.AvailabilitySlots;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
@@ -15,42 +13,42 @@ import java.util.List;
 public class AppointmentExistenceValidator implements ConstraintValidator<AppointmentExistence, Object> {
 
     private String userIdFieldName;
-    private final AvailabilitySlotsService availabilitySlotsService;
+    private String dateFieldName;
+    private String startTimeFieldName;
     private final AppointmentService as;
-    private String slotIdFieldName;
 
     @Autowired
-    public AppointmentExistenceValidator(AppointmentService as, AvailabilitySlotsService availabilitySlotsService) {
+    public AppointmentExistenceValidator(AppointmentService as) {
         this.as = as;
-        this.availabilitySlotsService = availabilitySlotsService;
     }
 
     @Override
     public void initialize(AppointmentExistence constraintAnnotation) {
         this.userIdFieldName = constraintAnnotation.userId();
-        this.slotIdFieldName = constraintAnnotation.slotId();
+        this.dateFieldName = constraintAnnotation.date();
+        this.startTimeFieldName = constraintAnnotation.startTime();
     }
 
     @Override
     public boolean isValid(Object value, javax.validation.ConstraintValidatorContext context) {
         try {
             Field userIdField = value.getClass().getDeclaredField(userIdFieldName);
-            Field slotIdField = value.getClass().getDeclaredField(slotIdFieldName);
+            Field dateField = value.getClass().getDeclaredField(dateFieldName);
+            Field startTimeField = value.getClass().getDeclaredField(startTimeFieldName);
 
             userIdField.setAccessible(true);
-            slotIdField.setAccessible(true);
+            dateField.setAccessible(true);
+            startTimeField.setAccessible(true);
 
             long userId = (long) userIdField.get(value);
-            Long slotId = (Long) slotIdField.get(value);
+            LocalDate date = (LocalDate) dateField.get(value);
+            Integer startTime = (Integer) startTimeField.get(value);
 
-            if (slotId == null) {
+            if (date == null || startTime == null) {
                 return true;
             }
-            AvailabilitySlots slot = availabilitySlotsService.getById(slotId).orElse(null);
-            if (slot == null) {
-                return true;
-            }
-            List<Appointment> appointments = as.getAppointmentByUserAndDate(userId, slot.getSlotDate(), slot.getStartTime().getHour());
+
+            List<Appointment> appointments = as.getAppointmentByUserAndDate(userId, date, startTime);
 
 
             if (appointments.isEmpty()) {
@@ -61,7 +59,7 @@ public class AppointmentExistenceValidator implements ConstraintValidator<Appoin
             if (!isValid) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("appointment.date.existence")
-                        .addPropertyNode(slotIdFieldName)
+                        .addPropertyNode(dateFieldName)
                         .addConstraintViolation();
             }
 

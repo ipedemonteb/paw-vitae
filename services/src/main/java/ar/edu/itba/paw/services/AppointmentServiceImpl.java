@@ -27,18 +27,18 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final DoctorService doctorService;
     private final PatientService patientService;
     private final DoctorOfficeService doctorOfficeService;
-    private final AvailabilitySlotsService availabilitySlotsService;
+    private final OccupiedSlotsService occupiedSlotsService;
 
     @Autowired
     public AppointmentServiceImpl(AppointmentDao appointmentDao, SpecialtyService specialtyService, MailService mailService,
-                                  DoctorService doctorService, PatientService patientService, DoctorOfficeService doctorOfficeService, AvailabilitySlotsService availabilitySlotsService) {
+                                  DoctorService doctorService, PatientService patientService, DoctorOfficeService doctorOfficeService, OccupiedSlotsService occupiedSlotsService) {
         this.appointmentDao = appointmentDao;
         this.specialtyService = specialtyService;
         this.mailService = mailService;
         this.doctorService = doctorService;
         this.patientService = patientService;
         this.doctorOfficeService = doctorOfficeService;
-        this.availabilitySlotsService = availabilitySlotsService;
+        this.occupiedSlotsService = occupiedSlotsService;
     }
 
     @Transactional(readOnly = true)
@@ -66,19 +66,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional
     @Override
-    public Appointment create(long patientId, long doctorId, Long slotId, String reason, long specialtyId, long officeId, boolean allowFullHistory) {
+    public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId, boolean allowFullHistory) {
         LOGGER.debug("Creating appointment for patientId: {}, doctorId: {}, reason: {}, specialtyId: {}", patientId, doctorId, reason, specialtyId);
-        AvailabilitySlots slot = availabilitySlotsService.getById(slotId).orElseThrow(NoSuchElementException::new);
-        LocalDate date = slot.getSlotDate();
-        int time = slot.getStartTime().getHour();
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
         Optional<Specialty> specialty = specialtyService.getById(specialtyId);
         DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
         Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(SpecialtyNotFoundException::new ),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice, allowFullHistory);
-        availabilitySlotsService.setAvailabilitySlotUnavailable(slotId);
+        occupiedSlotsService.create(doctorId, date, localDateTime.toLocalTime());
         MailDTO dto = new MailDTO(appointment);
         mailService.sendAppointmentStatusEmail("email.newAppointment", dto);
-
         LOGGER.info("New appointment created with id: {}", appointment.getId());
 
         return appointment;
@@ -115,6 +111,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         MailDTO dto = new MailDTO(appointment);
         mailService.sendAppointmentStatusEmail("email.cancelledAppointment", dto);
         LOGGER.info("Appointment cancelled: {}", appointmentId);
+        occupiedSlotsService.delete(appointment.getDoctor().getId(), appointment.getDate().toLocalDate(), appointment.getDate().toLocalTime());
         return true;
     }
 
