@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfacePersistence.AvailabilitySlotsDao;
+import ar.edu.itba.paw.interfacePersistence.OccupiedSlotsDao;
 import ar.edu.itba.paw.interfaceServices.DoctorOfficeAvailabilityService;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import org.junit.Test;
@@ -16,17 +16,17 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AvailabilitySlotsServiceImplTest {
+public class OccupiedSlotsServiceImplTest {
 
     @Mock
-    private AvailabilitySlotsDao availabilitySlotsDao;
+    private OccupiedSlotsDao occupiedSlotsDao;
     @Mock
     private DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
     @Mock
     private DoctorService doctorService;
 
     @InjectMocks
-    private AvailabilitySlotsServiceImpl availabilitySlotsService;
+    private OccupiedSlotsServiceImpl availabilitySlotsService;
 
     @Test
     public void testReloadAvailabilityNoDoctor() {

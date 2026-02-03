@@ -343,7 +343,8 @@
       "uploaded": "Uploaded By",
       "view": "View",
       "no-report": "No report available."
-    }
+    },
+    "back" : "Back to appointment details"
   },
   "common": {
     "go_back": "Go Back",
