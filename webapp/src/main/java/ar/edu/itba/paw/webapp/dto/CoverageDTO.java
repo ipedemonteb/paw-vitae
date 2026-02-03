@@ -14,7 +14,7 @@ public class CoverageDTO {
     public static CoverageDTO fromCoverage(Coverage coverage, UriInfo uriInfo) {
         CoverageDTO res = new CoverageDTO();
         res.name = coverage.getName();
-        res.self = uriInfo.getBaseUriBuilder().path("coverages").path(String.valueOf(coverage.getId())).build();
+        res.self = uriInfo.getBaseUriBuilder().path("api").path("coverages").path(String.valueOf(coverage.getId())).build();
         return res;
     }
 

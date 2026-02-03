@@ -21,13 +21,13 @@ public class AvailabilitySlotDTO {
         dto.startTime = slot.getStartTime().toString();
         dto.status = slot.getStatus().name();
         if (uriInfo != null) {
-            dto.self = uriInfo.getBaseUriBuilder()
+            dto.self = uriInfo.getBaseUriBuilder().path("api")
                     .path("doctors")
                     .path(String.valueOf(slot.getDoctor().getId()))
                     .path("slots")
                     .path(String.valueOf(slot.getId()))
                     .build();
-            dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(slot.getDoctor().getId())).build();
+            dto.doctor = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(String.valueOf(slot.getDoctor().getId())).build();
         }
         return dto;
     }

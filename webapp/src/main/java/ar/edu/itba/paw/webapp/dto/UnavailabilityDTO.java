@@ -19,7 +19,7 @@ public class UnavailabilityDTO {
         dto.startDate = slot.getStartDate();
         dto.endDate = slot.getEndDate();
 
-        dto.doctor = uriInfo.getBaseUriBuilder()
+        dto.doctor = uriInfo.getBaseUriBuilder().path("api")
                 .path("doctors")
                 .path(String.valueOf(slot.getDoctor().getId()))
                 .build();

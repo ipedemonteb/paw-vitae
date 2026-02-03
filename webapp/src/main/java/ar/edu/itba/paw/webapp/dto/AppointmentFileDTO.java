@@ -24,14 +24,14 @@ public class AppointmentFileDTO {
         String appointmentId = String.valueOf(file.getAppointment().getId());
         String fileId = String.valueOf(file.getId());
 
-        dto.download = uriInfo.getBaseUriBuilder()
+        dto.download = uriInfo.getBaseUriBuilder().path("api")
                 .path("appointments")
                 .path(appointmentId)
                 .path("files")
                 .path(fileId)
                 .build();
 
-        dto.view = uriInfo.getBaseUriBuilder()
+        dto.view = uriInfo.getBaseUriBuilder().path("api")
                 .path("appointments")
                 .path(appointmentId)
                 .path("files")

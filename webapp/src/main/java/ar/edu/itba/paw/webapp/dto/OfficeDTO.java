@@ -26,11 +26,11 @@ public class OfficeDTO {
         String doctorId = String.valueOf(office.getDoctor().getId());
         String officeId = String.valueOf(office.getId());
         String neighborhoodId = String.valueOf(office.getNeighborhood().getId());
-        dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).build();
-        dto.neighborhood = uriInfo.getBaseUriBuilder().path("neighborhoods").path(neighborhoodId).build();
-        dto.officeAvailability = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("offices").path(officeId).path("availability").build();
-        dto.officeSpecialties = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("offices").path(officeId).path("specialties").build();
-        dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("offices").path(officeId).build();
+        dto.doctor = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).build();
+        dto.neighborhood = uriInfo.getBaseUriBuilder().path("api").path("neighborhoods").path(neighborhoodId).build();
+        dto.officeAvailability = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("offices").path(officeId).path("availability").build();
+        dto.officeSpecialties = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("offices").path(officeId).path("specialties").build();
+        dto.self = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("offices").path(officeId).build();
 
         return dto;
     }
