@@ -23,10 +23,10 @@ public class RatingDTO {
         res.comment = rating.getComment();
 
 
-        res.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(rating.getDoctor().getId())).build();
-        res.patient = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(rating.getPatient().getId())).build();
-        res.appointment = uriInfo.getBaseUriBuilder().path("appointments").path(String.valueOf(rating.getAppointment().getId())).build();
-        res.self = uriInfo.getBaseUriBuilder().path("ratings").path(String.valueOf(rating.getId())).build();
+        res.doctor = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(String.valueOf(rating.getDoctor().getId())).build();
+        res.patient = uriInfo.getBaseUriBuilder().path("api").path("patients").path(String.valueOf(rating.getPatient().getId())).build();
+        res.appointment = uriInfo.getBaseUriBuilder().path("api").path("appointments").path(String.valueOf(rating.getAppointment().getId())).build();
+        res.self = uriInfo.getBaseUriBuilder().path("api").path("ratings").path(String.valueOf(rating.getId())).build();
 
         return res;
     }

@@ -15,7 +15,7 @@ public class SpecialtyDTO {
     public static SpecialtyDTO fromSpecialty(Specialty specialty, UriInfo uriInfo) {
         SpecialtyDTO res = new SpecialtyDTO();
         res.name = specialty.getKey();
-        res.self = uriInfo.getBaseUriBuilder().path("specialties").path(String.valueOf(specialty.getId())).build();
+        res.self = uriInfo.getBaseUriBuilder().path("api").path("specialties").path(String.valueOf(specialty.getId())).build();
         return res;
     }
 

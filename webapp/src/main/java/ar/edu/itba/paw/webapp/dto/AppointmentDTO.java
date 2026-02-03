@@ -39,19 +39,19 @@ public class AppointmentDTO {
         dto.report = appointment.getReport();
         dto.cancellable = appointment.getCancellable();
 
-        dto.self = uriInfo.getBaseUriBuilder().path("appointments").path(String.valueOf(appointment.getId())).build();
-        dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(appointment.getDoctor().getId())).build();
-        dto.patient = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(appointment.getPatient().getId())).build();
-        dto.specialty = uriInfo.getBaseUriBuilder().path("specialties").path(String.valueOf(appointment.getSpecialty().getId())).build();
-        dto.doctorOffice = uriInfo.getBaseUriBuilder()
+        dto.self = uriInfo.getBaseUriBuilder().path("api").path("appointments").path(String.valueOf(appointment.getId())).build();
+        dto.doctor = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(String.valueOf(appointment.getDoctor().getId())).build();
+        dto.patient = uriInfo.getBaseUriBuilder().path("api").path("patients").path(String.valueOf(appointment.getPatient().getId())).build();
+        dto.specialty = uriInfo.getBaseUriBuilder().path("api").path("specialties").path(String.valueOf(appointment.getSpecialty().getId())).build();
+        dto.doctorOffice = uriInfo.getBaseUriBuilder().path("api")
                 .path("doctors")
                 .path(String.valueOf(appointment.getDoctor().getId()))
                 .path("offices")
                 .path(String.valueOf(appointment.getDoctorOffice().getId()))
                 .build();
-        dto.appointmentFiles = uriInfo.getBaseUriBuilder().path("appointments").path(String.valueOf(appointment.getId())).path("files").build();
+        dto.appointmentFiles = uriInfo.getBaseUriBuilder().path("api").path("appointments").path(String.valueOf(appointment.getId())).path("files").build();
         if (appointment.getRating() != null) {
-            dto.rating = uriInfo.getBaseUriBuilder()
+            dto.rating = uriInfo.getBaseUriBuilder().path("api")
                     .path("ratings")
                     .path(String.valueOf(appointment.getRating().getId()))
                     .build();
