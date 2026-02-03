@@ -26,10 +26,10 @@ import { UploadFiles } from "@/components/UploadFiles.tsx"
 import { useTranslation } from "react-i18next";
 import {
     useAppointment,
-    useAppointmentFileHandler,
-    useAppointmentFiles, useCancelAppointment,
-    useUpdateReport,
-    useUploadDoctorFiles
+    useAppointmentFileHandlerMutation,
+    useAppointmentFiles, useCancelAppointmentMutation,
+    useUpdateReportMutation,
+    useUploadDoctorFilesMutation
 } from "@/hooks/useAppointments.ts";
 import { formatLongDate, formatTimeHM } from "@/utils/dateUtils.ts";
 import {useSpecialty} from "@/hooks/useSpecialties.ts";
@@ -91,7 +91,7 @@ function AppointmentDetails() {
     const handleBackToAppointments = () => {
         navigate(base);
     };
-    const cancelMutation = useCancelAppointment();
+    const cancelMutation = useCancelAppointmentMutation();
     const [cancelOpen, setCancelOpen] = useState(false);
 
     const {
@@ -104,7 +104,7 @@ function AppointmentDetails() {
     const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment?.specialty);
     const { data: office, isLoading: loadingOffice } = useDoctorOffice(appointment?.doctorOffice);
     const { data: neighborhood } = useNeighborhood(office?.neighborhood);
-    const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointmentId);
+    const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointment?.appointmentFiles);
     const { data: rating } = useRating(appointment?.rating);
 
     const isLoading = loadingAppointment || loadingSpecialty || loadingOffice || loadingFiles;
@@ -415,7 +415,7 @@ const viewButton = actionButton + " text-(--primary-color) border border-(--prim
 
 function FileComponent({ file }: { file: AppointmentFileDTO }) {
     const { t } = useTranslation();
-    const { mutate: handleFile, isPending } = useAppointmentFileHandler();
+    const { mutate: handleFile, isPending } = useAppointmentFileHandlerMutation();
 
     return (
         <Card className={fileComponent}>
@@ -535,7 +535,7 @@ function PostVisitComponent({
 }) {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
-    const { mutate: updateReport, isPending } = useUpdateReport();
+    const { mutate: updateReport, isPending } = useUpdateReportMutation();
 
     const hasReport = (report ?? "").trim().length > 0;
     const [draft, setDraft] = useState<string>(report ?? "");
@@ -857,7 +857,7 @@ function UploadComponent({ appointmentId }: { appointmentId: string }) {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
     const [files, setFiles] = useState<File[]>([]);
-    const { mutate: uploadFiles, isPending } = useUploadDoctorFiles();
+    const { mutate: uploadFiles, isPending } = useUploadDoctorFilesMutation();
 
     const handleSubmit = () => {
         if (files.length === 0) return;

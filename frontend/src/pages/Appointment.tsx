@@ -16,7 +16,7 @@ import {
 } from "@/hooks/useDoctors.ts";
 import {useDoctorAvailability, useDoctorOffices, useDoctorOfficesSpecialties} from "@/hooks/useOffices.ts";
 
-import { useBookAppointment } from "@/hooks/useAppointments.ts";
+import { useBookAppointmentMutation } from "@/hooks/useAppointments.ts";
 import { useDoctorSlots } from "@/hooks/useSlots.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { useNavigate, useParams } from "react-router-dom";
@@ -86,7 +86,7 @@ function Appointment() {
     const auth = useAuth();
     const queryClient = useQueryClient();
 
-    const { mutate: bookAppointment, isPending: isBooking } = useBookAppointment();
+    const { mutate: bookAppointment, isPending: isBooking } = useBookAppointmentMutation();
 
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);

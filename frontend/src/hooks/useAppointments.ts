@@ -11,21 +11,16 @@ import {
 } from "@/data/appointments.ts";
 import {keepPreviousData, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import {useMemo} from "react";
 
 export function useAppointments(query: AppointmentsQuery) {
-    const { userId, doctorId, collection, filter, sort, page, pageSize } = query ?? {};
-
+    const stableQueryKey = useMemo(() => JSON.stringify(query ?? {}), [query]);
     return useQuery({
         queryKey: [
             "auth",
             "appointments",
-            userId ?? null,
-            doctorId ?? null,
-            collection ?? null,
-            filter ?? null,
-            sort ?? null,
-            page ?? null,
-            pageSize ?? null,
+            "list",
+            stableQueryKey
         ],
         queryFn: () => listAppointments(query),
         enabled: !!query.userId,
@@ -33,23 +28,24 @@ export function useAppointments(query: AppointmentsQuery) {
     })
 }
 
-export function useAppointment(id?: string | null) {
+export function useAppointment(id?: string) {
     return useQuery({
-        queryKey: ['appointment', id],
+        queryKey: ['auth', 'appointments', id],
         queryFn: () => getAppointment(id!),
         enabled: !!id,
     });
 }
 
-export function useAppointmentFiles(id?: string | null) {
+export function useAppointmentFiles(url?: string) {
     return useQuery({
-        queryKey: ['appointment', id, 'files'],
-        queryFn: () => getAppointmentFiles(id!),
-        enabled: !!id,
+        queryKey: ['auth', 'appointments', url, 'files'],
+        queryFn: () => getAppointmentFiles(url!),
+        enabled: !!url,
     })
 }
 
-export function useBookAppointment() {
+export function useBookAppointmentMutation() {
+    const queryClient = useQueryClient()
     return useMutation<string, AxiosError<any>, { form: AppointmentForm, files: File[] }>({
         mutationFn: async ({ form, files }) => {
             const res = await createAppointment(form);
@@ -65,29 +61,41 @@ export function useBookAppointment() {
             }
 
             return newId;
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({queryKey: ['appointments', 'list']})
         }
     });
 }
 
-export function useUpdateReport() {
+export function useUpdateReportMutation() {
+    const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: async ({ id, report }: { id: string, report: string }) => {
-            return await updateAppointmentReport(id, report);
+        mutationFn: ({ id, report }: { id: string, report: string }) => updateAppointmentReport(id, report),
+        onSuccess: async (_, variables) => {
+            await queryClient.invalidateQueries({
+                queryKey: ['auth', 'appointments', variables.id],
+                exact: true
+            })
         }
     });
 }
 
-export function useUploadDoctorFiles() {
+export function useUploadDoctorFilesMutation() {
+    const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async ({ id, files }: { id: string, files: File[] }) => {
             for (const file of files) {
                 await uploadAppointmentFile(id, file, 'doctor');
             }
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({queryKey: ['appointments','files']})
         }
     });
 }
 
-export function useAppointmentFileHandler() {
+export function useAppointmentFileHandlerMutation() {
     return useMutation({
         mutationFn: async ({ url, action, fileName }: { url: string, action: 'view' | 'download', fileName: string }) => {
             const { data, contentType } = await fetchFileBlob(url);
@@ -113,16 +121,16 @@ export function useAppointmentFileHandler() {
     });
 }
 
-export function useCancelAppointment() {
-    const qc = useQueryClient();
+export function useCancelAppointmentMutation() {
+    const queryClient = useQueryClient();
 
     return useMutation<void, AxiosError<any>, { id: string; userId: string }>({
-        mutationFn: async ({ id, userId }) => {
-            await cancelAppointment(id, userId);
-        },
-        onSuccess: async () => {
-            await qc.invalidateQueries({ queryKey: ["auth", "appointments"] });
-            await qc.invalidateQueries({ queryKey: ["appointment"] });
+        mutationFn: ({ id, userId }) => cancelAppointment(id, userId),
+        onSuccess: async (_, variables) => {
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ['appointments', 'list'] }),
+                queryClient.invalidateQueries({ queryKey: ['auth', 'appointments', variables.id], exact: true })
+            ])
         },
     });
 }
