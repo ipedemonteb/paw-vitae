@@ -11,7 +11,7 @@ import {appointmentIdFromSelf, userIdFromSelf} from "@/utils/IdUtils.ts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import { useDoctor, useDoctorImageUrl } from "@/hooks/useDoctors.ts";
 import {initialsFallback} from "@/utils/userUtils.ts";
-import { useCancelAppointment } from "@/hooks/useAppointments.ts";
+import { useCancelAppointmentMutation } from "@/hooks/useAppointments.ts";
 import {
     Dialog,
     DialogContent,
@@ -149,7 +149,7 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
     const status = "appointment.filters." + transformStatus(appointment.status);
     const base = isDoctor ? "/doctor/dashboard" : "/patient/dashboard";
 
-    const cancelMutation = useCancelAppointment();
+    const cancelMutation = useCancelAppointmentMutation();
     const appointmentId = appointmentIdFromSelf(appointment.self);
 
     const [cancelOpen, setCancelOpen] = useState(false);

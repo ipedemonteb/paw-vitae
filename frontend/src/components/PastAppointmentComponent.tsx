@@ -5,14 +5,15 @@ import {Badge} from "@/components/ui/badge.tsx";
 import {useTranslation} from "react-i18next";
 import {useState} from "react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
-import {useAppointment, useAppointmentFileHandler, useAppointmentFiles} from "@/hooks/useAppointments.ts";
-import {appointmentIdFromSelf, userIdFromSelf} from "@/utils/IdUtils.ts";
+import {useAppointmentFileHandlerMutation, useAppointmentFiles} from "@/hooks/useAppointments.ts";
+import {userIdFromSelf} from "@/utils/IdUtils.ts";
 import {useDoctor, useDoctorImageUrl} from "@/hooks/useDoctors.ts";
 import {initialsFallback} from "@/utils/userUtils.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {usePatient} from "@/hooks/usePatients.ts";
 import {useSpecialty} from "@/hooks/useSpecialties.ts";
 import {useCoverage} from "@/hooks/useCoverages.ts";
+import type {AppointmentDTO} from "@/data/appointments.ts";
 
 const appointmentContainer =
     "p-0 border border-solid shadow gap-0";
@@ -91,27 +92,23 @@ const detailsInner =
 const upperBorderWhenOpen =
     "border-b border-[var(--gray-300)]";
 
-function PastAppointmentComponent({appointmentUrl} : {appointmentUrl: string}) {
+function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO}) {
     const { t, i18n } = useTranslation();
     const locale = i18n?.language || "en-US";
     const auth = useAuth();
     const isDoctor = auth.role === "ROLE_DOCTOR";
 
-    const appointmentId = appointmentIdFromSelf(appointmentUrl);
-    const {data: appointment, isError} = useAppointment(appointmentId);
-
     const doctorId = userIdFromSelf(appointment?.doctor);
 
-    const { data: patient } = usePatient(appointment?.patient);
+    const { data: patient } = usePatient(appointment.patient);
     const { data: doctor } = useDoctor(doctorId);
     const { url: doctorImgUrl } = useDoctorImageUrl(doctorId);
-    const { data: specialty } = useSpecialty(appointment?.specialty);
+    const { data: specialty } = useSpecialty(appointment.specialty);
     const { data: coverage } = useCoverage(patient?.coverages);
-    const { data: files } = useAppointmentFiles(appointmentId);
+    const { data: files } = useAppointmentFiles(appointment.appointmentFiles);
 
     const [open, setOpen] = useState(false);
 
-    if (isError || !appointment) return (<div></div>);
 
     const dateObj = new Date(appointment.date);
     const isValidDate = !Number.isNaN(dateObj.getTime());
@@ -260,7 +257,7 @@ function FileComponent({name, uploader, view, download}:{
         download: string
 }) {
     const { t } = useTranslation();
-    const { mutate: handleFile, isPending } = useAppointmentFileHandler();
+    const { mutate: handleFile, isPending } = useAppointmentFileHandlerMutation();
 
     return (
         <Card className={fileCard}>

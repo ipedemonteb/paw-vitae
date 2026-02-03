@@ -26,7 +26,7 @@ export default function AddOfficeDialog() {
     })
 
     const auth = useAuth()
-    const createOfficeMutation = useCreateDoctorOfficeMutation(auth.userId!)
+    const createOfficeMutation = useCreateDoctorOfficeMutation(auth.userId)
 
     const onSubmit = form.handleSubmit((values) => {
         const specialties = values.specialties.map(s => specialtyIdFromSelf(s)).filter(s => s !== null)

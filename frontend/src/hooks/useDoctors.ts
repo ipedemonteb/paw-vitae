@@ -129,7 +129,7 @@ export function useDoctorUnavailability(url?: string) {
 
 export function useDoctorsCount() {
     return useQuery<number>({
-        queryKey: ['counts', 'doctors'],
+        queryKey: ['doctors', 'counts'],
         queryFn: () => fetchCountDoctors(),
         staleTime: 1000 * 60,
         retry: 1
@@ -140,8 +140,8 @@ export function  useUpdateDoctorExperienceMutation(url: string ) {
     const queryClient = useQueryClient()
     return useMutation<any, AxiosError<any>, ExperienceForm[]>({
         mutationFn: (data: ExperienceForm[]) => putDoctorExperiences(url,data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['doctors', 'experiences']})
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({queryKey: ['doctors', 'experiences']})
         }
     });
 }
@@ -149,8 +149,8 @@ export function  useUpdateDoctorProfileMutation(url: string ) {
     const queryClient = useQueryClient()
     return useMutation<any, AxiosError<any>, {biography: string, description: string}>({
         mutationFn: (data :{biography: string, description: string}) => putDoctorProfile(url,data.biography, data.description),
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['doctors', 'bio']})
+        onSuccess: async () => {
+           await queryClient.invalidateQueries({queryKey: ['doctors', 'bio']})
         }
     });
 }
@@ -158,8 +158,8 @@ export function useUpdateDoctorCertificatesMutation(url: string ) {
     const queryClient = useQueryClient()
     return useMutation<any, AxiosError<any>, CertificateForm[]>({
         mutationFn: (data: CertificateForm[]) => putDoctorCertificates(url,data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['doctors', 'certifications']})
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({queryKey: ['doctors', 'certifications']})
         }
     });
 }
@@ -168,8 +168,8 @@ export function useUpdateDoctorImageMutation(url:string){
     const queryClient = useQueryClient()
     return useMutation<any,AxiosError<any>,File>({
         mutationFn: (data: File) => putDoctorImage(url,data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["auth", "doctors", "image"]})
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({queryKey: ["doctors", "image"]})
         }
     });
 }
@@ -179,8 +179,8 @@ export function useUpdateDoctorUnavailabilityMutation(url:string){
 
     return useMutation<any, AxiosError<any>, DoctorUnavailabilityFormDTO>({
         mutationFn: (data: DoctorUnavailabilityFormDTO) => putDoctorUnavailability(url, data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['doctor', 'unavailability'] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['doctors', 'unavailability'] });
         }
     });
 }
@@ -197,11 +197,13 @@ export function useUpdateDoctorMutation() {
             doctorId: string;
         }) => updateDoctorProfileComplete(params),
 
-        onSuccess: (_, variables) => {
-            queryClient.invalidateQueries({ queryKey: ['auth', 'doctors', variables.doctorId] });
-            queryClient.invalidateQueries({ queryKey: ['doctors', 'image', variables.doctorId] });
-            queryClient.invalidateQueries({ queryKey: ['doctors', 'specialties'] });
-            queryClient.invalidateQueries({ queryKey: ['doctors', 'coverages'] });
+        onSuccess: async (_, variables) => {
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ['auth', 'doctors', variables.doctorId], exact: true }),
+                queryClient.invalidateQueries({ queryKey: ['doctors', 'image'] }),
+                queryClient.invalidateQueries({ queryKey: ['doctors', 'specialties'] }),
+                queryClient.invalidateQueries({ queryKey: ['doctors', 'coverages'] })
+            ])
         }
 
     });

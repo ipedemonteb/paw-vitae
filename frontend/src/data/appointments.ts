@@ -108,8 +108,8 @@ export async function getAppointment(id: string) {
     return res.data;
 }
 
-export async function getAppointmentFiles(id: string) {
-    const res = await api.get<AppointmentFileDTO[]>(`/appointments/${id}/files`, {
+export async function getAppointmentFiles(url: string) {
+    const res = await api.get<AppointmentFileDTO[]>(url, {
         headers: {"accept": ContentTypes.APPOINTMENT_FILE_LIST}
     })
     return res.data;
@@ -145,7 +145,7 @@ export async function updateAppointmentReport(id: string, report: string) {
 }
 
 export async function cancelAppointment(id: string, userId: string) {
-    return await api.patch(`/appointments/${id}`, {}, {
+    await api.patch(`/appointments/${id}`, {}, {
             params: { userId },
             headers: { "Content-Type": ContentTypes.APPOINTMENT_CANCEL },
         }
