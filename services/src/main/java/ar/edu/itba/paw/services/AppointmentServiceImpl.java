@@ -107,7 +107,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         Appointment appointment = appt.get();
-        if (!appointment.getCancellable()) {
+        if (!appointment.getCancellable() || appointment.getStatus().equals(AppointmentStatus.CANCELADO.getValue())) {
             throw new CancellableException();
         }
 
