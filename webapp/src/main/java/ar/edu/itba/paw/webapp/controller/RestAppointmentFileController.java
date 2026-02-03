@@ -7,6 +7,7 @@ import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.AppointmentFileDTO;
 import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.FileUtils;
+import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ import java.net.URI;
 import java.util.List;
 
 
-@Path("/appointments/{appointmentId}/files")
+@Path(UriUtils.APPOINTMENT_FILES)
 @Component
 public class RestAppointmentFileController {
 
