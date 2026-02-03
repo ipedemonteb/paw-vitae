@@ -116,7 +116,7 @@ public class RestAppointmentFileController {
 
     private URI buildLocation(long appointmentId, AppointmentFile createdFile) {
         long fileId = createdFile.getId();
-        return uriInfo.getBaseUriBuilder()
+        return uriInfo.getBaseUriBuilder().path("api")
                 .path("appointments")
                 .path(String.valueOf(appointmentId))
                 .path("files")

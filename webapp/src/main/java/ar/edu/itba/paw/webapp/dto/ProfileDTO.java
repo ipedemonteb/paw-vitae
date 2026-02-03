@@ -18,7 +18,7 @@ public class ProfileDTO {
         dto.bio = profile.getBio();
         dto.description = profile.getDescription();
 
-        dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(profile.getDoctorId())).build();
+        dto.doctor = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(String.valueOf(profile.getDoctorId())).build();
 
         return dto;
     }

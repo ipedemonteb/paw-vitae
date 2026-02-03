@@ -20,7 +20,7 @@ public class AvailabilityDTO {
         dto.startTime = availability.getStartTime();
         dto.endTime = availability.getEndTime();
 
-        dto.office = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(availability.getOffice().getDoctor().getId())).path("offices").path(String.valueOf(availability.getOffice().getId())).build();
+        dto.office = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(String.valueOf(availability.getOffice().getDoctor().getId())).path("offices").path(String.valueOf(availability.getOffice().getId())).build();
 
         return dto;
     }

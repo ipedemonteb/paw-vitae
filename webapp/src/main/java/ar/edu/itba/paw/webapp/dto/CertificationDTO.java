@@ -23,7 +23,7 @@ public class CertificationDTO {
 
         String doctorId = String.valueOf(certification.getDoctor().getId());
 
-        dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).build();
+        dto.doctor = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).build();
 
         return dto;
     }

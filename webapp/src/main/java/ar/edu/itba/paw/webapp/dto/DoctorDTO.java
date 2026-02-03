@@ -38,17 +38,17 @@ public class DoctorDTO {
 
         String doctorId = String.valueOf(doctor.getId());
 
-        dto.specialties = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("specialties").build();
-        dto.coverages = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("coverages").build();
-        dto.offices = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("offices").build();
-        dto.profile = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("biography").build();
-        dto.experiences = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("experiences").build();
-        dto.certifications = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("certifications").build();
-        dto.ratings = uriInfo.getBaseUriBuilder().path("ratings").queryParam("doctorId",doctorId).build();
-        dto.appointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("doctorId", doctorId).build();
-        dto.unavailability = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("unavailability").build();
-        dto.image = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).path("image").build();
-        dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(doctorId).build();
+        dto.specialties = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("specialties").build();
+        dto.coverages = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("coverages").build();
+        dto.offices = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("offices").build();
+        dto.profile = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("biography").build();
+        dto.experiences = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("experiences").build();
+        dto.certifications = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("certifications").build();
+        dto.ratings = uriInfo.getBaseUriBuilder().path("api").path("ratings").queryParam("doctorId",doctorId).build();
+        dto.appointments = uriInfo.getBaseUriBuilder().path("api").path("appointments").queryParam("doctorId", doctorId).build();
+        dto.unavailability = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("unavailability").build();
+        dto.image = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("image").build();
+        dto.self = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).build();
 
         return dto;
     }
