@@ -51,7 +51,7 @@ public class HomeDTO implements Serializable {
 
     public static HomeDTO fromUriInfo(final UriInfo uriInfo) {
         final HomeDTO dto = new HomeDTO();
-        final String baseUri = uriInfo.getBaseUri().toString();
+        final String baseUri = uriInfo.getBaseUri().toString() + "api/";
         dto.usersUrl = baseUri + "users";
         dto.doctorsUrl = baseUri + "doctors{?specialty,coverage,weekdays,keyword,orderBy,direction,page}";
 

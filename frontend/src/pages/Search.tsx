@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import { Input } from "@/components/ui/input";
 import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, List, Grid2X2, Eraser } from "lucide-react";
 import { CoverageCombobox } from "@/components/CoverageCombobox.tsx";
@@ -80,6 +80,8 @@ function HeroSection({searchParams}: SectionProps) {
         pageSize: 5
     })
 
+    const divRef = useRef<HTMLDivElement | null>(null);
+
     useEffect(() => {
         const current = searchParams.keyword;
         if (current !== keyword) setKeyword(current);
@@ -87,7 +89,7 @@ function HeroSection({searchParams}: SectionProps) {
 
     useEffect(() => {
         setOpen(keyword.length > 0 && !isLoading && focus);
-    }, [keyword, focus]);
+    }, [keyword, focus, isLoading]);
 
     return (
         <div className={heroContainer}>
@@ -106,9 +108,13 @@ function HeroSection({searchParams}: SectionProps) {
                         setOpen(false)
                     }}
                 >
-                    <Input onBlur={() => setFocus(false)} onFocus={() => setFocus(true)} type="search" value={keyword} onChange={(e) => (setKeyword(e.currentTarget.value))} placeholder={t("search.search")} className={searchHero} />
+                    <Input onBlur={(e) => {
+                        const related = e.relatedTarget;
+                        if (divRef.current && related && divRef.current.contains(related)) return;
+                        setFocus(false);
+                    }} onFocus={() => setFocus(true)} type="search" value={keyword} onChange={(e) => (setKeyword(e.currentTarget.value))} placeholder={t("search.search")} className={searchHero} />
                 </form>
-                <div className={`${
+                <div onMouseDown={(e) => e.preventDefault()} className={`${
                     open
                         ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
                         : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
