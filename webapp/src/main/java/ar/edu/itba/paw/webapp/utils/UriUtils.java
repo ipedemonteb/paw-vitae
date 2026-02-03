@@ -5,7 +5,7 @@ public final class UriUtils {
     private UriUtils() {
         throw new AssertionError();
     }
-    public final static String API_BASE_URL = "/";
+    public final static String API_BASE_URL = "/api/";
     public final static String DOCTORS = API_BASE_URL + "doctors";
     public final static String PATIENTS = API_BASE_URL + "patients";
     public final static String APPOINTMENTS = API_BASE_URL + "appointments";
