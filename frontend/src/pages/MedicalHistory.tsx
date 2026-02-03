@@ -1,13 +1,14 @@
 import { Card } from "@/components/ui/card.tsx";
 import PatientProfileCard from "@/components/PatientProfileCard.tsx";
-import { Info, ChevronsUpDown } from "lucide-react";
+import {Info, ChevronsUpDown, ArrowLeft} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import PastAppointmentComponent from "@/components/PastAppointmentComponent.tsx";
 import { useAppointmentsQueryParams } from "@/hooks/useQueryParams.ts";
 import { useAppointments } from "@/hooks/useAppointments.ts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
+import { Button } from "@/components/ui/button.tsx";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { Spinner } from "@/components/ui/spinner.tsx";
 
@@ -27,13 +28,20 @@ const sortText = "text-md mr-2";
 const pastAppointmentsContainer = "flex flex-col gap-4";
 const selectTrigger = "font-light text-normal text-(--text-color) cursor-pointer select-none focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0";
 const noAppointments = "flex flex-row items-center justify-center px-4 py-10 text-[var(--gray-500)] bg-[var(--gray-100)] rounded-lg gap-2 border border-dashed border-[var(--gray-400)]";
+const goBackButton = "w-3xs bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-dark)] hover:border hover:border-[var(--primary-dark)] hover:text-white cursor-pointer";
+
 
 function MedicalHistory() {
     const { t } = useTranslation();
     const { patientId } = useParams<{ patientId: string }>();
     const searchParams = useAppointmentsQueryParams();
     const sort: "asc" | "desc" = searchParams.sort === "desc" ? "desc" : "asc";
+    const navigate = useNavigate();
     const auth = useAuth();
+
+    const handleBackToAppointments = () => {
+        navigate(-1);
+    };
 
     const { data: appointments, isLoading, isError } = useAppointments({
         userId: patientId,
@@ -120,7 +128,18 @@ function MedicalHistory() {
                         <div className={pastAppointmentsContainer}>
                             {renderListContent()}
                         </div>
+                        <div className="flex justify-center w-full mt-6">
+                            <Button
+                                className={goBackButton}
+                                onClick={handleBackToAppointments}
+                                type="button"
+                            >
+                                <ArrowLeft className="h-5 w-5 mr-2" />
+                                <p>{t("medical-history.back")}</p>
+                            </Button>
+                        </div>
                     </div>
+
                 </Card>
             </div>
         </div>
