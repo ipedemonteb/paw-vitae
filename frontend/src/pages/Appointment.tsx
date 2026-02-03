@@ -151,7 +151,6 @@ function Appointment() {
     }, [filteredOffices, selectedOffice]);
 
 
-    // CORRECCIÓN PRINCIPAL AQUÍ
     const slotsForSelectedOffice = useMemo(() => {
         if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots) return [];
 
@@ -165,19 +164,16 @@ function Appointment() {
         const generatedSlots: { startTime: string }[] = [];
 
         dailyRules.forEach(rule => {
-            // Asumimos formato backend HH:mm:00 o HH:mm
             let current = parseISO(`${dateStr}T${rule.startTime}`);
             const end = parseISO(`${dateStr}T${rule.endTime}`);
 
             while (isBefore(current, end)) {
-                // Generamos HH:mm para comparar (ignorar segundos)
                 const currentTimeShort = format(current, 'HH:mm');
-                // Guardamos HH:mm:00 para consistencia en el estado y envío
                 const currentTimeFull = format(current, 'HH:mm:00');
 
-                // Lógica de filtrado robusta: comparamos solo los primeros 5 caracteres (HH:mm)
+
                 const isOccupied = occupiedSlots.some(occ => {
-                    const occTimeShort = occ.startTime.substring(0, 5); // "10:00:00" -> "10:00"
+                    const occTimeShort = occ.startTime.substring(0, 5);
                     return occ.date === dateStr && occTimeShort === currentTimeShort;
                 });
 
@@ -185,8 +181,7 @@ function Appointment() {
                     generatedSlots.push({ startTime: currentTimeFull });
                 }
 
-                // IMPORTANTE: Asegúrate de que el intervalo (60 o 30) coincida con tu negocio.
-                // Lo dejo en 60 porque así estaba en tu archivo, pero suele ser 30.
+
                 current = addMinutes(current, 60);
             }
         });
@@ -240,12 +235,11 @@ function Appointment() {
             return;
         }
 
-        // Parseamos la hora seleccionada (que está en HH:mm:00)
-        const [hours, minutes] = selectedTime.split(":").map(Number);
+        const [hours] = selectedTime.split(":").map(Number);
 
         const appointmentForm = {
             appointmentDate: format(selectedDate, 'yyyy-MM-dd'),
-            appointmentHour: hours, // Enviamos solo la hora según tu DTO
+            appointmentHour: hours,
             patientId: auth.userId!,
             doctorId: doctorId!,
             specialtyId: selectedSpecialty.split("/").pop()!,
