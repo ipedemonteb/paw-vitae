@@ -348,10 +348,9 @@ function LoggedInComponent({
     const [logoutOpen, setLogoutOpen] = useState(false);
 
     const logout = () => {
-        auth.logout();
         onOpenChange(false);
         setLogoutOpen(false);
-        window.location.href = "/"
+        auth.logout();
     };
 
     return (
@@ -508,7 +507,6 @@ function SheetLoggedInComponent({ userRole, displayName, avatarFallbackText, doc
     const auth = useAuth();
     const logout = () => {
         auth.logout();
-        window.location.href = "/"
     };
 
     if (userRole === "ANON") return null;
