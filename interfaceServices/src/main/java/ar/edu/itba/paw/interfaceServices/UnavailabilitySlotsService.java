@@ -13,7 +13,7 @@ public interface UnavailabilitySlotsService {
 
     void updateDoctorUnavailability(Doctor doctor, List<UnavailabilitySlotForm> unavailabilitySlots);
 
-    List<UnavailabilitySlot> getUnavailabilityByDoctorId(long doctorId);
+    Page<UnavailabilitySlot> getUnavailabilityByDoctorId(long doctorId,String from, String to,int page,int pageSize);
 
     List<UnavailabilitySlot> create(List<UnavailabilitySlot> slots);
 
