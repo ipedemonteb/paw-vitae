@@ -6,7 +6,6 @@ import {
     useDoctorCoverages,
     useDoctorImageUrl,
     useDoctorSpecialties,
-    useUpdateDoctorImageMutation,
     useUpdateDoctorMutation
 } from "@/hooks/useDoctors.ts";
 import { useSpecialties } from "@/hooks/useSpecialties.ts";
@@ -81,7 +80,6 @@ function DoctorAccount() {
     } = useCoverages();
 
     const updateProfileMutation = useUpdateDoctorMutation();
-    const updateImageMutation = useUpdateDoctorImageMutation(doctor?.image || "");
 
     const [formData, setFormData] = useState({
         name: "",
@@ -186,7 +184,7 @@ function DoctorAccount() {
     }
 
     if (isError || !doctor) return <GenericError code={404} />;
-    const isSaving = updateImageMutation.isPending || updateProfileMutation.isPending;
+    const isSaving = updateProfileMutation.isPending;
 
     return (
         <DashboardNavContainer>

@@ -4,7 +4,7 @@ import {useQuery} from "@tanstack/react-query";
 
 export function useNeighborhoods() {
     return useQuery({
-        queryKey: ["neighborhoods"],
+        queryKey: ['neighborhoods'],
         queryFn: listNeighborhoods
     })
 }

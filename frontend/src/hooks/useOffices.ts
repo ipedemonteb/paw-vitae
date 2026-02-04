@@ -24,7 +24,7 @@ export function useDoctorOffices(url?: string, query?: DoctorOfficeQuery) {
 
 export function useDoctorOffice(url?: string) {
     return useQuery({
-        queryKey: ['doctors', 'offices', url],
+        queryKey: ['auth', 'doctors', 'offices', url],
         queryFn: () => getDoctorOffice(url!),
         enabled: !!url,
     })
@@ -82,7 +82,7 @@ export function useUpdateOfficeMutation(url: string) {
         mutationFn: (form: UpdateDoctorOfficeForm) => updateDoctorOffice(url, form),
         onSuccess: async () => {
            await Promise.all([
-               queryClient.invalidateQueries({queryKey: ['doctors', 'offices', url]}),
+               queryClient.invalidateQueries({queryKey: ['auth', 'doctors', 'offices', url]}),
                queryClient.invalidateQueries({queryKey: ['doctors', 'offices', 'list']}),
                queryClient.invalidateQueries({queryKey: ['doctors', 'offices', 'specialties']})
            ])

@@ -1,4 +1,4 @@
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {
     fetchCountsPatient,
     getPatient,
@@ -18,7 +18,7 @@ export function usePatient(url?: string) {
 
 export function usePatientById(id?: string) {
     return useQuery({
-        queryKey: ["auth", "patients", "id", id],
+        queryKey: ['auth', 'patients', 'id', id],
         queryFn: () => getPatientById(id!),
         enabled: !!id,
     });
@@ -40,7 +40,11 @@ export function usePatientsCount() {
     });
 }
 export function useUpdatePatientMutation(url:string){
+    const queryClient = useQueryClient()
     return useMutation<any, AxiosError<any>, PatientUpdateData>({
-        mutationFn:(data :PatientUpdateData) =>  updatePatient(url,data)
+        mutationFn:(data :PatientUpdateData) =>  updatePatient(url,data),
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({queryKey: ['auth', 'patients']})
+        }
     });
 }
