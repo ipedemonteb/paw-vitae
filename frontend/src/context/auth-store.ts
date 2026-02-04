@@ -83,7 +83,6 @@ export function setAuth(token?: string, refresh?: string, rememberMe?: boolean) 
 
 export function clearAuth() {
     state = { accessToken: undefined, refreshToken: undefined, claims: null };
-    // Borramos DE AMBOS para asegurar logout completo
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_KEY);
     sessionStorage.removeItem(TOKEN_KEY);

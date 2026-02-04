@@ -117,7 +117,6 @@ const contactData = "flex flex-row items-center gap-1";
 const contactIcon = "w-4 h-4";
 const ratingContent = "flex flex-row items-center gap-2 font-bold";
 const ratingText = "font-medium text-sm text-[var(--text-light)]";
-const editButton = "mt-4 w-26 h-10 sm:mt-0 sm:mx-6 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] sm:ml-auto cursor-pointer";
 const card = "p-0 gap-0";
 const cardTitle = "flex flex-wrap items-center gap-1 px-6 py-2 bg-[var(--primary-bg)] text-[var(--primary-dark)] rounded-t-xl";
 const aboutContent = "px-7 pt-4 pb-6";
@@ -153,8 +152,23 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
     return (
         <Card className={card}>
             <div className={cardTitle}>
-                <Stethoscope className={titleIcon}></Stethoscope>
-                <h1 className={cardTitleText}>{t("doctor.profile.doctor")}</h1>
+                <div className="flex justify-center items-center gap-1">
+                    <Stethoscope className={titleIcon}></Stethoscope>
+                    <h1 className={cardTitleText}>{t("doctor.profile.doctor")}</h1>
+                </div>
+                {isOwner && (
+                    <EditProfileDialog
+                        doctorUrl={doctor.profile}
+                        initialBio={profile?.bio || ""}
+                        initialDescription={profile?.description || ""}
+                        trigger={
+                            <Button className={editComponentButton}>
+                                <SquarePen className="w-4 h-4 mr-2" />
+                                {t("doctor.profile.card.edit")}
+                            </Button>
+                        }
+                    />
+                )}
             </div>
             <div className={profileContent}>
                 <Avatar className={avatarContainer}>
@@ -182,19 +196,6 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
                     ) : null}
                     <BadgeComponent specialties={specialtyNames} maxBadges={maxBadges} />
                 </div>
-                {isOwner && (
-                    <EditProfileDialog
-                        doctorUrl={doctor.profile}
-                        initialBio={profile?.bio || ""}
-                        initialDescription={profile?.description || ""}
-                        trigger={
-                            <Button className={editButton}>
-                                <SquarePen className="w-4 h-4 mr-2" />
-                                {t("doctor.profile.card.edit")}
-                            </Button>
-                        }
-                    />
-                )}
             </div>
             <div className={aboutContent}>
                 <h1 className={aboutTitle}>{t("doctor.profile.card.description")}</h1>
@@ -339,7 +340,7 @@ function OfficeComponent({ officeTitle, neighborhoodUrl }: {
 
 const experienceContent = "pr-6 py-6";
 const timelineContainer = "relative pl-10 before:content-[''] before:absolute before:top-3 before:bottom-3 before:left-14 before:w-[2px] before:-translate-x-1/2 before:bg-[var(--gray-300)]";
-const editComponentButton = "ml-auto shrink-0 w-26 h-10 bg-transparent text-[var(--primary-dark)] hover:border hover:border-[var(--primary-dark)] hover:bg-transparent cursor-pointer";
+const editComponentButton = "ml-auto shrink-0 w-26 h-10 bg-transparent text-[var(--primary-dark)]   hover:bg-[rgba(var(--primary-light-rgb),0.2)] hover:border hover:border-[rgba(var(--primary-light-rgb),0.4)] transition-all cursor-pointer";
 
 function ExperienceCard({ experiences, isOwner, updateUrl }: {
     experiences: ExperienceDTO[];
