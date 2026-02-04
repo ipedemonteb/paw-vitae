@@ -160,7 +160,7 @@ function Appointment() {
 
 
     const slotsForSelectedOffice = useMemo(() => {
-        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots || !unavailableRanges) return [];
+        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots) return [];
 
         const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
@@ -184,14 +184,7 @@ function Appointment() {
                     return occ.date === dateStr && occTimeShort === currentTimeShort;
                 });
 
-                const isOnLeave = unavailableRanges.some(range => {
-                    return isWithinInterval(selectedDate, {
-                        start: startOfDay(parseISO(range.startDate)),
-                        end: endOfDay(parseISO(range.endDate))
-                    });
-                });
-
-                if (!isOccupied && !isOnLeave) {
+                if (!isOccupied) {
                     generatedSlots.push({ startTime: currentTimeFull });
                 }
 
@@ -201,7 +194,7 @@ function Appointment() {
 
         return generatedSlots.sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-    }, [selectedOffice, allAvailability, selectedDate, occupiedSlots, unavailableRanges]);
+    }, [selectedOffice, allAvailability, selectedDate, occupiedSlots]);
 
 
     const slotsForDay = useMemo(() => {
@@ -220,10 +213,18 @@ function Appointment() {
     const isDateSelectable = useCallback((d: Date) => {
         if (d < startOfDay(new Date()) || d > maxDate) return false;
 
-        if (!selectedOffice || !allAvailability) return false;
+        if (!selectedOffice || !allAvailability || !unavailableRanges) return false;
         const dayOfWeek = d.getDay();
-        return allAvailability.some(r => r.office === selectedOffice && r.dayOfWeek === dayOfWeek);
-    }, [maxDate, selectedOffice, allAvailability]);
+
+        const isOnLeave = unavailableRanges.some(range => {
+            return isWithinInterval(d, {
+                start: startOfDay(parseISO(range.startDate)),
+                end: endOfDay(parseISO(range.endDate))
+            })
+        })
+
+        return allAvailability.some(r => r.office === selectedOffice && r.dayOfWeek === dayOfWeek && !isOnLeave);
+    }, [maxDate, selectedOffice, allAvailability, unavailableRanges]);
 
 
     useEffect(() => {

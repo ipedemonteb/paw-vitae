@@ -40,7 +40,7 @@ function Search() {
     })
 
     return (
-        <div className="bg-(--background-light) pt-22">
+        <div className="bg-(--background-light) min-h-screen pb-10 pt-22">
             <div className={container}>
                 <HeroSection searchParams={doctorsQuery} />
                 <FilterSection searchParams={doctorsQuery} />
