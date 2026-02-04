@@ -37,18 +37,18 @@ public class OccupiedSlotsServiceImpl implements OccupiedSlotsService {
         this.doctorService = doctorService;
         this.occupiedSlotsDao = occupiedSlotsDao;
     }
-
+    @Transactional
     @Override
     public OccupiedSlots create(long doctorId,LocalDate slotDate,LocalTime startTime) {
         Doctor doctor= doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new);
         return occupiedSlotsDao.create(doctor, slotDate, startTime);
     }
-
+    @Transactional(readOnly = true)
     @Override
     public Optional<OccupiedSlots> getById(long occupiedSlotId) {
         return occupiedSlotsDao.getById(occupiedSlotId);
     }
-
+    @Transactional(readOnly = true)
     @Override
     public List<OccupiedSlots> getByDoctorIdInDateRange(long doctorId, LocalDate startDate, LocalDate endDate) {
         if (startDate.isAfter(endDate) || startDate.datesUntil(endDate.plusDays(1)).count() > 31) {
@@ -56,7 +56,7 @@ public class OccupiedSlotsServiceImpl implements OccupiedSlotsService {
         }
         return occupiedSlotsDao.getByDoctorIdInDateRange(doctorId, startDate, endDate);
     }
-
+    @Transactional
     @Override
     public void delete(long doctorId, LocalDate slotDate, LocalTime startTime) {
         Optional<OccupiedSlots> occupiedSlotOpt = occupiedSlotsDao.getByDoctorIdInDateRange(doctorId, slotDate, slotDate)
