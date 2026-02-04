@@ -43,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = useLogin()
 
     const logout = useCallback(() => {
+        window.location.href = "/"
         clearAuth();
         queryClient.removeQueries({ queryKey: ['auth'], exact: false });
     }, [queryClient]);
