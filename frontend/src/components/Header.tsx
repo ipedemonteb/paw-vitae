@@ -156,9 +156,9 @@ function Header() {
     return (
         <div className={header}>
             <div className={headerContainer}>
-                <a href="/" className={logo}>
+                <Link to="/" className={logo}>
                     <h1 className="block text-5xl font-bold no-underline">Vitae</h1>
-                </a>
+                </Link>
 
                 <NavigationMenu className={cn(nav, navDesktop)}>
                     <NavigationMenuList className={navList}>
@@ -345,15 +345,13 @@ function LoggedInComponent({
 
     const { t } = useTranslation();
     const auth = useAuth();
-    // const navigate = useNavigate();
     const [logoutOpen, setLogoutOpen] = useState(false);
 
     const logout = () => {
         auth.logout();
         onOpenChange(false);
         setLogoutOpen(false);
-        window.location.href="/login";
-        // navigate("/login", { replace: true, state: { from: null } });
+        window.location.href = "/"
     };
 
     return (
@@ -508,11 +506,9 @@ function SheetLoggedInComponent({ userRole, displayName, avatarFallbackText, doc
 }) {
     const { t } = useTranslation();
     const auth = useAuth();
-    // const navigate = useNavigate();
-
     const logout = () => {
         auth.logout();
-        window.location.href="/login";
+        window.location.href = "/"
     };
 
     if (userRole === "ANON") return null;

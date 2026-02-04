@@ -75,18 +75,12 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                             />
                         </div>
                     </div>
-                    {form.watch("active") !== undefined && (
+                    {form.watch("active") !== undefined  && (
                         <div className="flex w-full items-center justify-baseline gap-6">
                             <div className=" flex flex-col gap-1 ">
                                 <Label htmlFor="active" className="text-[1rem] text-(--text-light)">{t("offices.dialog.activeLabel")}</Label>
                                 <Switch disabled={!hasAvailability || mutationPending} onCheckedChange={(checked) => form.setValue("active", checked)}  defaultChecked={form.watch("active")} id="active" className="data-[state=checked]:bg-(--success) data-[state=checked]: transition-all " />
                             </div>
-                            {!hasAvailability && (
-                                <Alert className="w-fit bg-[rgba(var(--primary-light-rgb),0.15)] text-(--primary-color) border border-(--primary-color)">
-                                    <AlertTriangle />
-                                    <AlertTitle>{t("offices.dialog.edit.activeWarning")}</AlertTitle>
-                                </Alert>
-                            )}
                         </div>
                     )}
                     <div className="w-full flex flex-col gap-1.5">
@@ -101,6 +95,12 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                             <SpecialtyToggleGroup mutationPending={mutationPending} error={errors.specialties} onValueChange={(s: string[]) => form.setValue("specialties", s)} currentSpecialties={form.watch("specialties")} specialties={specialties} />
                         )}
                     </div>
+                    {!hasAvailability && (
+                        <Alert className="w-full mt-4 mb-2 bg-[rgba(var(--primary-light-rgb),0.15)] text-(--primary-color) border border-(--primary-color)">
+                            <AlertTriangle />
+                            <AlertTitle>{t("offices.dialog.edit.activeWarning")}</AlertTitle>
+                        </Alert>
+                    )}
                 </div>
                 <DialogFooter className="pt-4">
                     <DialogClose disabled={mutationPending} className="  hover:bg-gray-100 rounded-md py-1 px-3 text-sm bg-white text-(--text-light) border cursor-pointer">

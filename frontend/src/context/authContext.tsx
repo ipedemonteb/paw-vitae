@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const logout = useCallback(() => {
         clearAuth();
-        queryClient.removeQueries({ queryKey: ["auth"], exact: false });
+        queryClient.removeQueries({ queryKey: ['auth'], exact: false });
     }, [queryClient]);
 
     const value = useMemo(

@@ -25,9 +25,9 @@ export function useLogin() {
         mutationFn: ({ email, password, rememberMe }) =>
             login(email, password, rememberMe),
 
-        onSuccess: (data, variables) => {
+        onSuccess: async (data, variables) => {
             setAuth(data.jwt, data.refresh, variables.rememberMe);
-            queryClient.invalidateQueries({ queryKey: ["auth"] });
+            await queryClient.invalidateQueries({ queryKey: ["auth"] });
         }
     });
 }
