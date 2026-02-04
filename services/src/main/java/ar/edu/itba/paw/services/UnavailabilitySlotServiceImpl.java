@@ -2,10 +2,8 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.UnavailabilitySlotsDao;
 import ar.edu.itba.paw.interfaceServices.UnavailabilitySlotsService;
-import ar.edu.itba.paw.models.Doctor;
-import ar.edu.itba.paw.models.JsonUtils;
-import ar.edu.itba.paw.models.UnavailabilitySlot;
-import ar.edu.itba.paw.models.UnavailabilitySlotForm;
+import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exception.BussinesRuleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,24 +69,36 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
 
     @Transactional(readOnly = true)
     @Override
-    public List<UnavailabilitySlot> getUnavailabilityByDoctorId(long doctorId) {
+    public Page<UnavailabilitySlot> getUnavailabilityByDoctorId(long doctorId, String from, String to, int page, int pageSize) {
         LOGGER.debug("Getting unavailability slots for doctor {}", doctorId);
-        return unavailabilitySlotsDao.getUnavailabilityByDoctorId(doctorId);
+        if(from != null && to != null){
+            LocalDate fromDate = LocalDate.parse(from);
+            LocalDate toDate = LocalDate.parse(to);
+            if (fromDate.isAfter(toDate) || fromDate.datesUntil(toDate.plusDays(1)).count() > 31) {
+                throw new BussinesRuleException("exception.occupiedSlots.invalidDateRange");
+            }
+            List<UnavailabilitySlot> list = unavailabilitySlotsDao.getUnavailabilityByDoctorIdInDateRange(doctorId, fromDate, toDate);
+            return new Page<>(list, 1, list.size(), list.size());
+        }
+        List<UnavailabilitySlot> pagedSlots = unavailabilitySlotsDao.getUnavailabilityByDoctorIdPaginated(doctorId, page, pageSize);
+        int totalSlots = unavailabilitySlotsDao.countUnavailabilityByDoctorId(doctorId);
+        return new Page<>(pagedSlots, page, pageSize, totalSlots);
     }
 
     @Transactional
     @Override
     public List<UnavailabilitySlotForm> getDoctorUnavailabilitySlots(Doctor doctor) {
-        List<UnavailabilitySlot> slots = getUnavailabilityByDoctorId(doctor.getId());
-        List<UnavailabilitySlotForm> unavailabilitySlots = new ArrayList<>();       //TODO CORREGIR
-        for (UnavailabilitySlot slot : slots) {
-            UnavailabilitySlotForm form = new UnavailabilitySlotForm(slot.getStartDate(), slot.getEndDate());
-            unavailabilitySlots.add(form);
-        }
-        return unavailabilitySlots.stream()
-                .sorted(Comparator.comparing(UnavailabilitySlotForm::getStartDate)
-                        .thenComparing(UnavailabilitySlotForm::getEndDate))
-                .toList();
+//        List<UnavailabilitySlot> slots = getUnavailabilityByDoctorId(doctor.getId());
+//        List<UnavailabilitySlotForm> unavailabilitySlots = new ArrayList<>();       //TODO CORREGIR
+//        for (UnavailabilitySlot slot : slots) {
+//            UnavailabilitySlotForm form = new UnavailabilitySlotForm(slot.getStartDate(), slot.getEndDate());
+//            unavailabilitySlots.add(form);
+//        }
+//        return unavailabilitySlots.stream()
+//                .sorted(Comparator.comparing(UnavailabilitySlotForm::getStartDate)
+//                        .thenComparing(UnavailabilitySlotForm::getEndDate))
+//                .toList();
+        return new ArrayList<>();
 
     }
     @Transactional(readOnly = true)
