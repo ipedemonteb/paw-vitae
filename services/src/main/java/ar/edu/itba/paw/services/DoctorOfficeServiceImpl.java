@@ -51,10 +51,11 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         validateMaxOffices(doctor.getId());
         Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
                 .orElseThrow(NeighborhoodNotFoundException::new);
+        List<Specialty> permitted = specialtyService.getByDoctorId(doctor.getId());
         List<Specialty> specs = form.getSpecialtyIds().stream()
                 .map(sid -> specialtyService.getById(sid).orElseThrow(SpecialtyNotFoundException::new))
                 .toList();
-
+        specs.forEach(c -> {if (!permitted.contains(c)) {throw new SpecialtyNotOwnedException();}});
         DoctorOffice office = form.toEntity(doctor, nb, specs);
         return doctorOfficeDao.create(office);
     }
@@ -148,6 +149,8 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             List<Specialty> specs = form.getSpecialtyIds().stream()
                     .map(sid -> specialtyService.getById(sid).orElseThrow(SpecialtyNotFoundException::new))
                     .collect(Collectors.toList());
+            List<Specialty> permitted = specialtyService.getByDoctorId(doctorId);
+            specs.forEach(c -> {if (!permitted.contains(c)) {throw new SpecialtyNotOwnedException();}});
             office.setSpecialties(specs);
         }
         return doctorOfficeDao.update(office);
