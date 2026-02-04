@@ -57,7 +57,7 @@ export function useDoctorOfficesSpecialties(offices?: OfficeDTO[]) {
 
 export function useDoctorAvailability(doctorId?: string, officeId?: string) {
     return useQuery({
-        queryKey: ['doctors', 'offices', doctorId, 'availability', officeId ?? 'all'],
+        queryKey: ['doctors', 'offices', 'availability', doctorId, officeId ?? 'all'],
         queryFn: () => getDoctorAvailability(doctorId!, officeId),
         enabled: !!doctorId,
     });
@@ -70,7 +70,7 @@ export function useUpdateDoctorAvailabilityMutation(doctorId?: string) {
         mutationFn: (form: DoctorAvailabilityFormDTO) => putDoctorAvailability(doctorId, form),
         onSuccess: async () => {
             await queryClient.invalidateQueries({
-                queryKey: ["doctors", 'offices', "availability"],
+                queryKey: ['doctors', 'offices', 'availability'],
             });
         },
     });
@@ -95,7 +95,10 @@ export function useDeleteOfficeMutation(url: string) {
     return useMutation({
         mutationFn: () => deleteDoctorOffice(url),
         onSuccess: async () => {
-            await queryClient.invalidateQueries({queryKey: ['doctors', 'offices', 'list']})
+            await Promise.all([
+                queryClient.invalidateQueries({queryKey: ['doctors', 'offices', 'list']}),
+                queryClient.invalidateQueries({queryKey: ['doctors', 'offices', 'availability']}),
+            ])
         }
     })
 }
