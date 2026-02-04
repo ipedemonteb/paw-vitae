@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { useTranslation } from "react-i18next";
 import {
     useDoctor,
-    useDoctorSpecialties,
+    useDoctorSpecialties, useDoctorUnavailability,
 } from "@/hooks/useDoctors.ts";
 import {
     useDoctorAvailability,
@@ -122,8 +122,9 @@ function Appointment() {
     const { data: allAvailability } = useDoctorAvailability(doctorId);
 
     const { data: occupiedSlots, isLoading: loadingSlots } = useOccupiedSlots(doctorId, fromStr, toStr);
+    const { data: unavailability, isLoading: isLoadingUnavailability} = useDoctorUnavailability(doctor?.unavailability)
 
-    const isLoading = loadingDoctor || loadingOffices || loadingSlots;
+    const isLoading = loadingDoctor || loadingOffices || loadingSlots || isLoadingUnavailability;
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -152,7 +153,7 @@ function Appointment() {
 
 
     const slotsForSelectedOffice = useMemo(() => {
-        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots) return [];
+        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots || !unavailability) return [];
 
         const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
@@ -175,7 +176,7 @@ function Appointment() {
                 const isOccupied = occupiedSlots.some(occ => {
                     const occTimeShort = occ.startTime.substring(0, 5);
                     return occ.date === dateStr && occTimeShort === currentTimeShort;
-                });
+                }) ;
 
                 if (!isOccupied) {
                     generatedSlots.push({ startTime: currentTimeFull });
@@ -188,7 +189,7 @@ function Appointment() {
 
         return generatedSlots.sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-    }, [selectedOffice, allAvailability, selectedDate, occupiedSlots]);
+    }, [selectedOffice, allAvailability, selectedDate, occupiedSlots, unavailability]);
 
 
     const slotsForDay = useMemo(() => {
