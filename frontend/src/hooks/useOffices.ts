@@ -10,7 +10,7 @@ import {
     updateDoctorOffice,
     type UpdateDoctorOfficeForm
 } from "@/data/offices.ts";
-import {buildDoctorOfficesUrl, officeIdFromSelf} from "@/utils/IdUtils.ts";
+import {buildDoctorOfficesUrl} from "@/utils/IdUtils.ts";
 import type {CreateDoctorOfficeForm} from "@/data/doctors.ts";
 
 export function useDoctorOffices(url?: string, query?: DoctorOfficeQuery) {
@@ -81,7 +81,11 @@ export function useUpdateOfficeMutation(url: string) {
     return useMutation({
         mutationFn: (form: UpdateDoctorOfficeForm) => updateDoctorOffice(url, form),
         onSuccess: async () => {
-            await queryClient.invalidateQueries({queryKey: ['doctors', 'offices', officeIdFromSelf(url)]})
+           await Promise.all([
+               queryClient.invalidateQueries({queryKey: ['doctors', 'offices', url]}),
+               queryClient.invalidateQueries({queryKey: ['doctors', 'offices', 'list']}),
+               queryClient.invalidateQueries({queryKey: ['doctors', 'offices', 'specialties']})
+           ])
         }
     })
 }
