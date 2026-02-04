@@ -44,8 +44,6 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
         mode: "onSubmit",
     })
 
-    form.formState.errors
-
     const updateOfficeMutation = useUpdateOfficeMutation(office.self)
 
 
