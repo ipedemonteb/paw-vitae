@@ -62,8 +62,9 @@ export function useBookAppointmentMutation() {
 
             return newId;
         },
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({queryKey: ['appointments', 'list']})
+        onSuccess: async (_, { form }) => {
+            await queryClient.invalidateQueries({ queryKey: ['appointments', 'list'] });
+            await queryClient.invalidateQueries({ queryKey: ['doctors', form.doctorId, 'slots'] });
         }
     });
 }

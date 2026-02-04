@@ -12,6 +12,10 @@ public interface UnavailabilitySlotsDao {
     void updateDoctorUnavailability(long doctorId, List<UnavailabilitySlot> unavailabilitySlots);
 
     List<UnavailabilitySlot> getUnavailabilityByDoctorId(long doctorId);
+    List<UnavailabilitySlot> getUnavailabilityByDoctorIdPaginated(long doctorId, int page, int pageSize);
+
+    int countUnavailabilityByDoctorId(long doctorId);
+    List<UnavailabilitySlot> getUnavailabilityByDoctorIdInDateRange(long doctorId, LocalDate from, LocalDate to);
 
     boolean isUnavailableAtDate(long doctorId, LocalDate date);
 

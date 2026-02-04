@@ -113,15 +113,19 @@ public class RestDoctorController {
     @Produces(value = CustomMediaType.APPLICATION_COVERAGE_LIST)
     public Response getDoctorCoverages(@PathParam("id") final long id) {
         List<Coverage> coverages = this.coverageService.findByDoctorId(id);
-        return Response.ok(new GenericEntity<List<CoverageDTO>>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
+        return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
     }
 
     @GET
     @Path("/{id:\\d+}/unavailability")
     @Produces(value = CustomMediaType.APPLICATION_UNAVAILABILITY_LIST)
-    public Response getDoctorUnavailability(@PathParam("id") final long id) {
-        List<UnavailabilitySlot> unavailability = this.unavailabilitySlotsService.getUnavailabilityByDoctorId(id);
-        return Response.ok(new GenericEntity<List<UnavailabilityDTO>>(UnavailabilityDTO.fromUnavailabilitySlot(unavailability, uriInfo)) {}).build();
+    public Response getDoctorUnavailability(@PathParam("id") final long id,
+                                            @QueryParam("from") String from,
+                                            @QueryParam("to") String to,
+                                            @QueryParam("page") @DefaultValue("1") @Min(1) int page,
+                                            @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE) int pageSize){
+        Page<UnavailabilitySlot> unavailabilitySlotPage = this.unavailabilitySlotsService.getUnavailabilityByDoctorId(id, from, to, page, pageSize);
+        return buildPaginationHeaders(Response.ok(new GenericEntity<>(UnavailabilityDTO.fromUnavailabilitySlot(unavailabilitySlotPage.getContent(), uriInfo)) {}), unavailabilitySlotPage, uriInfo);
     }
 
     @GET

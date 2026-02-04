@@ -4,7 +4,7 @@ import {ArrowRight, CalendarClock, Plus, X} from "lucide-react";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import {useTranslation} from "react-i18next";
-import {useEffect, useMemo, useState} from "react";
+import { useMemo, useState, useCallback} from "react";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import {
@@ -20,10 +20,12 @@ import {formatLongDate, localDateToIso} from "@/utils/dateUtils.ts";
 import {useDoctor, useDoctorUnavailability, useUpdateDoctorUnavailabilityMutation} from "@/hooks/useDoctors.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {useSearchParams} from "react-router-dom";
+import PaginationComponent from "@/components/PaginationComponent.tsx";
 
 type UnavailabilityRange = {
-    startDate: string; // LocalDate ISO: YYYY-MM-DD
-    endDate: string;   // LocalDate ISO: YYYY-MM-DD
+    startDate: string;
+    endDate: string;
 };
 
 const getUiLocale = (lang?: string) => (lang?.startsWith("es") ? "es-AR" : "en-US");
@@ -82,36 +84,46 @@ const dialogConfirm =
 export default function UnavailabilityComponent() {
     const { t, i18n } = useTranslation();
     const locale = getUiLocale(i18n.language);
-
     const auth = useAuth();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const handleSetParams = useCallback((updater: (params: URLSearchParams) => void) => {
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            updater(next);
+            return next;
+        });
+    }, [setSearchParams]);
+
+    const page = Number(searchParams.get("page") ?? "1");
+    const pageSize = 10;
 
     const { data: doctor, isLoading: doctorLoading } = useDoctor(auth.userId);
 
     const unavailabilityUrl = doctor?.unavailability;
 
     const {
-        data: unavailabilityDto,
+        data: unavailabilityPage,
         isLoading: unavailabilityLoading,
-    } = useDoctorUnavailability(unavailabilityUrl);
+    } = useDoctorUnavailability(unavailabilityUrl, {
+        page: page,
+        pageSize: pageSize
+    });
+
+    const unavailabilities = useMemo(() => {
+        return (unavailabilityPage?.data || []).map(u => ({
+            startDate: u.startDate,
+            endDate: u.endDate
+        }));
+    }, [unavailabilityPage]);
 
     const putUnavailability = useUpdateDoctorUnavailabilityMutation(unavailabilityUrl ?? "");
 
-    const [unavailabilities, setUnavailabilities] = useState<UnavailabilityRange[]>([]);
     const [addOpen, setAddOpen] = useState(false);
     const [startDate, setStartDate] = useState<Date | undefined>(undefined);
     const [endDate, setEndDate] = useState<Date | undefined>(undefined);
     const futureDate = new Date();
     futureDate.setFullYear(futureDate.getFullYear() + 10);
-
-    useEffect(() => {
-        if (!unavailabilityDto) return;
-        setUnavailabilities(
-            unavailabilityDto.map((u) => ({
-                startDate: u.startDate,
-                endDate: u.endDate,
-            }))
-        );
-    }, [unavailabilityDto]);
 
     const isRangeInvalid =
         !!startDate &&
@@ -162,25 +174,15 @@ export default function UnavailabilityComponent() {
         if (endIso < startIso) return;
         if (hasOverlap(normalized, unavailabilities)) return;
 
-        const next = (() => {
-            const exists = unavailabilities.some(
-                (r) => r.startDate === normalized.startDate && r.endDate === normalized.endDate
-            );
-            if (exists) return unavailabilities;
-            return [normalized, ...unavailabilities];
-        })();
-        const prevSnapshot = unavailabilities;
-        setUnavailabilities(next);
+        const next = [normalized, ...unavailabilities];
+
         setAddOpen(false);
         setStartDate(undefined);
         setEndDate(undefined);
 
         putUnavailability.mutate(buildPayload(next), {
             onSuccess: () => setPendingAction(null),
-            onError: () => {
-                setUnavailabilities(prevSnapshot);
-                setPendingAction(null);
-            },
+            onError: () => setPendingAction(null),
         });
     };
 
@@ -189,141 +191,139 @@ export default function UnavailabilityComponent() {
 
         setPendingAction("delete");
 
-        const prevSnapshot = unavailabilities;
         const next = unavailabilities.filter(
             (x) => !(x.startDate === range.startDate && x.endDate === range.endDate)
         );
 
-        setUnavailabilities(next);
-
         putUnavailability.mutate(buildPayload(next), {
             onSuccess: () => setPendingAction(null),
-            onError: () => {
-                setUnavailabilities(prevSnapshot);
-                setPendingAction(null);
-            },
+            onError: () => setPendingAction(null),
         });
     };
 
     return (
-      <DashboardNavContainer>
-          <DashboardNavHeader title={t("unavailability.title")}>
-              <Button className={editButton} onClick={() => setAddOpen(true)}>
-                  <Plus className="h-5 w-5" />
-                  {t("unavailability.add")}
-              </Button>
-          </DashboardNavHeader>
+        <DashboardNavContainer>
+            <DashboardNavHeader title={t("unavailability.title")}>
+                <Button className={editButton} onClick={() => setAddOpen(true)}>
+                    <Plus className="h-5 w-5" />
+                    {t("unavailability.add")}
+                </Button>
+            </DashboardNavHeader>
 
-          <Dialog
-              open={addOpen}
-              onOpenChange={(next) => {
-                  setAddOpen(next);
-                  if (!next) {
-                      setStartDate(undefined);
-                      setEndDate(undefined);
-                  }
-              }}
-          >
-              <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
-                  <DialogHeader className={dialogHeader}>
-                      <DialogTitle>
-                          {t("unavailability.dialog.title")}
-                      </DialogTitle>
-                      <DialogDescription className={dialogText}>
-                          {t("unavailability.dialog.description")}
-                      </DialogDescription>
-                  </DialogHeader>
-                  <div className={dialogContent}>
-                      <div className={dateFieldsGrid}>
-                          <div className={dateField}>
-                              <p className={dateFieldLabel}>{t("unavailability.dialog.start")}</p>
-                              <DatePicker
-                                  value={startDate}
-                                  onChange={(d) => setStartDate(d)}
-                                  className={showError ? datePickerError : undefined}
-                                  fromDate={today}
-                                  toDate={futureDate}
-                              />
-                          </div>
+            <Dialog
+                open={addOpen}
+                onOpenChange={(next) => {
+                    setAddOpen(next);
+                    if (!next) {
+                        setStartDate(undefined);
+                        setEndDate(undefined);
+                    }
+                }}
+            >
+                <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+                    <DialogHeader className={dialogHeader}>
+                        <DialogTitle>
+                            {t("unavailability.dialog.title")}
+                        </DialogTitle>
+                        <DialogDescription className={dialogText}>
+                            {t("unavailability.dialog.description")}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className={dialogContent}>
+                        <div className={dateFieldsGrid}>
+                            <div className={dateField}>
+                                <p className={dateFieldLabel}>{t("unavailability.dialog.start")}</p>
+                                <DatePicker
+                                    value={startDate}
+                                    onChange={(d) => setStartDate(d)}
+                                    className={showError ? datePickerError : undefined}
+                                    fromDate={today}
+                                    toDate={futureDate}
+                                />
+                            </div>
 
-                          <div className={dateField}>
-                              <p className={dateFieldLabel}>{t("unavailability.dialog.end")}</p>
-                              <DatePicker
-                                  value={endDate}
-                                  onChange={(d) => setEndDate(d)}
-                                  className={showError ? datePickerError : undefined}
-                                  fromDate={today}
-                                  toDate={futureDate}
-                              />
-                          </div>
-                      </div>
+                            <div className={dateField}>
+                                <p className={dateFieldLabel}>{t("unavailability.dialog.end")}</p>
+                                <DatePicker
+                                    value={endDate}
+                                    onChange={(d) => setEndDate(d)}
+                                    className={showError ? datePickerError : undefined}
+                                    fromDate={today}
+                                    toDate={futureDate}
+                                />
+                            </div>
+                        </div>
 
-                      {showError && (
-                          <p className={dialogErrorText}>
-                              {dialogError === "range"
-                                  ? t("unavailability.dialog.range-error")
-                                  : t("unavailability.dialog.overlap-error")}
-                          </p>
-                      )}
-                  </div>
+                        {showError && (
+                            <p className={dialogErrorText}>
+                                {dialogError === "range"
+                                    ? t("unavailability.dialog.range-error")
+                                    : t("unavailability.dialog.overlap-error")}
+                            </p>
+                        )}
+                    </div>
 
-                  <DialogFooter className={dialogFooter}>
-                      <DialogClose asChild>
-                          <Button type="button" className={dialogCancel}>
-                              {t("cancel")}
-                          </Button>
-                      </DialogClose>
+                    <DialogFooter className={dialogFooter}>
+                        <DialogClose asChild>
+                            <Button type="button" className={dialogCancel}>
+                                {t("cancel")}
+                            </Button>
+                        </DialogClose>
 
-                      <Button
-                          type="button"
-                          className={dialogConfirm}
-                          onClick={onConfirmAdd}
-                          disabled={!startDate || !endDate || showError || !unavailabilityUrl || pending}
-                      >
-                          {pending && pendingAction === "add" ? (
-                              <>
-                                  <Spinner className="w-4 h-4 mr-2" />
-                                  {t("saving")}
-                              </>
-                          ) : (
-                              t("unavailability.add-unavailability")
-                          )}
-                      </Button>
-                  </DialogFooter>
-              </DialogContent>
-          </Dialog>
+                        <Button
+                            type="button"
+                            className={dialogConfirm}
+                            onClick={onConfirmAdd}
+                            disabled={!startDate || !endDate || showError || !unavailabilityUrl || pending}
+                        >
+                            {pending && pendingAction === "add" ? (
+                                <>
+                                    <Spinner className="w-4 h-4 mr-2" />
+                                    {t("saving")}
+                                </>
+                            ) : (
+                                t("unavailability.add-unavailability")
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
-          {isLoading ? (
-              // TODO: CHANGE HEIGHT
-              <DashboardNavLoader className="h-24" />
-          ) : (
-              <div className={unavailabilityContainer}>
-                  {!isUnavailability ? (
-                      <div className={unavailabilityEmptyContentContainer}>
-                          <DashboardNavEmptyContent
-                              title={t("unavailability.empty-title")}
-                              text={t("unavailability.empty-subtitle")}
-                              Icon={CalendarClock}
-                          />
-                      </div>
-                  ) : (
-                      <div className={unavailabilityContentContainer}>
-                          {unavailabilities.map((r) => (
-                              <UnavailabilityItem
-                                  key={rangeKey(r)}
-                                  range={r}
-                                  locale={locale}
-                                  pending={pending}
-                                  pendingAction={pendingAction}
-                                  onDelete={() => onDeleteRange(r)}
-                              />
-                          ))}
-                      </div>
-                  )}
-                  <div />
-              </div>
-          )}
-      </DashboardNavContainer>
+            {isLoading ? (
+                <DashboardNavLoader className="h-24" />
+            ) : (
+                <div className={unavailabilityContainer}>
+                    {!isUnavailability ? (
+                        <div className={unavailabilityEmptyContentContainer}>
+                            <DashboardNavEmptyContent
+                                title={t("unavailability.empty-title")}
+                                text={t("unavailability.empty-subtitle")}
+                                Icon={CalendarClock}
+                            />
+                        </div>
+                    ) : (
+                        <div className={unavailabilityContentContainer}>
+                            {unavailabilities.map((r) => (
+                                <UnavailabilityItem
+                                    key={rangeKey(r)}
+                                    range={r}
+                                    locale={locale}
+                                    pending={pending}
+                                    pendingAction={pendingAction}
+                                    onDelete={() => onDeleteRange(r)}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {/* 4. Pasar handleSetParams en lugar de setSearchParams directo */}
+                    <PaginationComponent
+                        pagination={unavailabilityPage?.pagination}
+                        searchParams={{ page, pageSize, setParams: handleSetParams }}
+                    />
+                </div>
+            )}
+        </DashboardNavContainer>
     );
 }
 
