@@ -121,9 +121,7 @@ function Appointment() {
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
 
     const { data: allAvailability } = useDoctorAvailability(doctorId);
-
     const { data: occupiedSlots, isLoading: loadingSlots } = useOccupiedSlots(doctorId, fromStr, toStr);
-
     const { data: unavailabilityPage, isLoading: loadingUnavailability } = useDoctorUnavailability(doctor?.unavailability, {
         from: fromStr,
         to: toStr
@@ -188,7 +186,7 @@ function Appointment() {
                     generatedSlots.push({ startTime: currentTimeFull });
                 }
 
-                current = addMinutes(current, 30);
+                current = addMinutes(current, 60);
             }
         });
 
@@ -213,7 +211,7 @@ function Appointment() {
     const isDateSelectable = useCallback((d: Date) => {
         if (d < startOfDay(new Date()) || d > maxDate) return false;
 
-        if (!selectedOffice || !allAvailability || !unavailableRanges) return false;
+        if (!selectedOffice || !allAvailability || !unavailableRanges || !occupiedSlots) return false;
         const dayOfWeek = d.getDay();
 
         const isOnLeave = unavailableRanges.some(range => {
@@ -223,7 +221,18 @@ function Appointment() {
             })
         })
 
-        return allAvailability.some(r => r.office === selectedOffice && r.dayOfWeek === dayOfWeek && !isOnLeave);
+        const dateStr = format(d, 'yyyy-MM-dd')
+
+        const isFullyBooked = occupiedSlots
+            .filter(o => startOfDay(parseISO(o.date)).getTime() === startOfDay(d).getTime())
+            .length === allAvailability.filter(a => a.dayOfWeek === d.getDay() && a.office === selectedOffice).reduce((sum, rule) => {
+            const start = parseISO(`${dateStr}T${rule.startTime}`);
+            const end = parseISO(`${dateStr}T${rule.endTime}`);
+            const slots = end.getHours() - start.getHours();
+            return sum + slots;
+        }, 0)
+
+        return allAvailability.some(r => r.office === selectedOffice && r.dayOfWeek === dayOfWeek && !isOnLeave && !isFullyBooked);
     }, [maxDate, selectedOffice, allAvailability, unavailableRanges]);
 
 
