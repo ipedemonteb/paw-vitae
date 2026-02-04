@@ -102,7 +102,12 @@ export interface UnavailabilityDTO {
     endDate: string;
     doctor: string;
 }
-
+export type UnavailabilityQuery = {
+    from?: string;
+    to?: string;
+    page?: number;
+    pageSize?: number;
+}
 export type CreateDoctorOfficeForm = {
     officeName: string,
     specialtyIds: number[],
@@ -265,11 +270,27 @@ export async function getDoctorBiography(profileUrl: string) {
     return res.data;
 }
 
-export async function getDoctorUnavailability(url: string) {
+export async function getDoctorUnavailability(url: string, query?: UnavailabilityQuery): Promise<PaginationData<UnavailabilityDTO[]>> {
     const res = await api.get<UnavailabilityDTO[]>(url, {
-        headers: {"accept": ContentTypes.UNAVAILABILITY_LIST, }
+        headers: {"accept": ContentTypes.UNAVAILABILITY_LIST, },
+        params: query,
+        paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat' })
     });
-    return res.data
+
+    const total = Number(res.headers["x-total-count"]);
+    const links = parseLinkHeader(res.headers["link"]);
+
+    return {
+        data: res.data,
+        pagination: {
+            next: links.next,
+            prev: links.prev,
+            first: links.first,
+            last: links.last,
+            self: links.self,
+            total: Number.isNaN(total) ? 0 : total
+        }
+    };
 }
 
 export async function putDoctorCertificates(certificationsUrl: string, certificatesList: CertificateForm[]) {

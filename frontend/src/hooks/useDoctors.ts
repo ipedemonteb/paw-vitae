@@ -19,7 +19,7 @@ import {
     type DoctorUpdateForm,
     putDoctorImage,
     updateDoctorProfileComplete,
-    type DoctorUnavailabilityFormDTO, putDoctorUnavailability,
+    type DoctorUnavailabilityFormDTO, putDoctorUnavailability, type UnavailabilityQuery,
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
@@ -119,11 +119,12 @@ export function useDoctorBiography(url?: string) {
     });
 }
 
-export function useDoctorUnavailability(url?: string) {
+export function useDoctorUnavailability(url?: string, query?: UnavailabilityQuery) {
     return useQuery({
-        queryKey: ['doctors', 'unavailability', url],
-        queryFn: () => getDoctorUnavailability(url!),
+        queryKey: ['doctors', 'unavailability', url, query?.from, query?.to, query?.page],
+        queryFn: () => getDoctorUnavailability(url!, query),
         enabled: !!url,
+        placeholderData: keepPreviousData
     });
 }
 

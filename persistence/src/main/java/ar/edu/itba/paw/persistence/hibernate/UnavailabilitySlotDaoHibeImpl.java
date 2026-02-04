@@ -85,4 +85,34 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
                 .setParameter("now", now)
                 .getResultList();
     }
+    @Override
+    public List<UnavailabilitySlot> getUnavailabilityByDoctorIdInDateRange(long doctorId, LocalDate from, LocalDate to) {
+        return em.createQuery("""
+            FROM UnavailabilitySlot u 
+            WHERE u.doctor.id = :doctorId 
+              AND u.id.startDate <= :to 
+              AND u.id.endDate >= :from
+            ORDER BY u.id.startDate ASC
+            """, UnavailabilitySlot.class)
+                .setParameter("doctorId", doctorId)
+                .setParameter("from", from)
+                .setParameter("to", to)
+                .getResultList();
+    }
+    @Override
+    public List<UnavailabilitySlot> getUnavailabilityByDoctorIdPaginated(long doctorId, int page, int pageSize) {
+        return em.createQuery("FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId ORDER BY u.id.startDate DESC", UnavailabilitySlot.class)
+                .setParameter("doctorId", doctorId)
+                .setFirstResult((page - 1) * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    @Override
+    public int countUnavailabilityByDoctorId(long doctorId) {
+        return em.createQuery("SELECT COUNT(u) FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId", Long.class)
+                .setParameter("doctorId", doctorId)
+                .getSingleResult()
+                .intValue();
+    }
 }

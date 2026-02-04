@@ -12,7 +12,8 @@ import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { useTranslation } from "react-i18next";
 import {
     useDoctor,
-    useDoctorSpecialties, useDoctorUnavailability,
+    useDoctorSpecialties,
+    useDoctorUnavailability
 } from "@/hooks/useDoctors.ts";
 import {
     useDoctorAvailability,
@@ -25,7 +26,6 @@ import { useOccupiedSlots } from "@/hooks/useSlots.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
 import type { OfficeDTO, OfficeSpecialtyDTO } from "@/data/offices.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
 import {
@@ -35,7 +35,9 @@ import {
     addDays,
     format,
     isBefore,
-    addMinutes
+    addMinutes,
+    isWithinInterval,
+    endOfDay
 } from "date-fns";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
@@ -96,7 +98,6 @@ function Appointment() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const auth = useAuth();
-    const queryClient = useQueryClient();
 
     const { mutate: bookAppointment, isPending: isBooking } = useBookAppointmentMutation();
 
@@ -122,9 +123,15 @@ function Appointment() {
     const { data: allAvailability } = useDoctorAvailability(doctorId);
 
     const { data: occupiedSlots, isLoading: loadingSlots } = useOccupiedSlots(doctorId, fromStr, toStr);
-    const { data: unavailability, isLoading: isLoadingUnavailability} = useDoctorUnavailability(doctor?.unavailability)
 
-    const isLoading = loadingDoctor || loadingOffices || loadingSlots || isLoadingUnavailability;
+    const { data: unavailabilityPage, isLoading: loadingUnavailability } = useDoctorUnavailability(doctor?.unavailability, {
+        from: fromStr,
+        to: toStr
+    });
+
+    const unavailableRanges = unavailabilityPage?.data || [];
+
+    const isLoading = loadingDoctor || loadingOffices || loadingSlots || loadingUnavailability;
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -153,7 +160,7 @@ function Appointment() {
 
 
     const slotsForSelectedOffice = useMemo(() => {
-        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots || !unavailability) return [];
+        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots || !unavailableRanges) return [];
 
         const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
@@ -172,24 +179,29 @@ function Appointment() {
                 const currentTimeShort = format(current, 'HH:mm');
                 const currentTimeFull = format(current, 'HH:mm:00');
 
-
                 const isOccupied = occupiedSlots.some(occ => {
                     const occTimeShort = occ.startTime.substring(0, 5);
                     return occ.date === dateStr && occTimeShort === currentTimeShort;
-                }) ;
+                });
 
-                if (!isOccupied) {
+                const isOnLeave = unavailableRanges.some(range => {
+                    return isWithinInterval(selectedDate, {
+                        start: startOfDay(parseISO(range.startDate)),
+                        end: endOfDay(parseISO(range.endDate))
+                    });
+                });
+
+                if (!isOccupied && !isOnLeave) {
                     generatedSlots.push({ startTime: currentTimeFull });
                 }
 
-
-                current = addMinutes(current, 60);
+                current = addMinutes(current, 30);
             }
         });
 
         return generatedSlots.sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-    }, [selectedOffice, allAvailability, selectedDate, occupiedSlots, unavailability]);
+    }, [selectedOffice, allAvailability, selectedDate, occupiedSlots, unavailableRanges]);
 
 
     const slotsForDay = useMemo(() => {
@@ -251,16 +263,12 @@ function Appointment() {
 
         bookAppointment({ form: appointmentForm, files: files}, {
             onSuccess: (newId) => {
-                queryClient.invalidateQueries({ queryKey: ['auth', 'appointments'] });
-                queryClient.invalidateQueries({ queryKey: ['doctors', doctorId, 'slots'] });
-
                 toast.success(t("success.appointment_created", "Turno reservado exitosamente"));
                 navigate(`/appointment/${newId}/confirmation`);
             },
             onError: (err) => {
                 if (err.response?.status === 409) {
                     toast.error(t("error.slot_taken", "El turno acaba de ser ocupado. Por favor elija otro horario."));
-                    queryClient.invalidateQueries({ queryKey: ['doctors', doctorId, 'slots'] });
                     setSelectedTime(null);
                 } else {
                     toast.error(t("appointment.booking.error.failed"), {
