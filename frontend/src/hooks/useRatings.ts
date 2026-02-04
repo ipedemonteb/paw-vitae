@@ -1,10 +1,10 @@
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {createRating, getAllRatings, getDoctorRatings, getRating,type RatingForm} from "@/data/ratings.ts";
 import type {AxiosError} from "axios";
 
 export function useRatings(url?: string) {
     return useQuery({
-        queryKey: ['doctor', 'ratings', url],
+        queryKey: ['doctors', 'ratings', url],
         queryFn: () => getDoctorRatings(url!),
         enabled: !!url,
     });
@@ -17,15 +17,22 @@ export function useAllRatings(){
     });
 }
 
-export function useRating(id?: string) {
+export function useRating(url?: string) {
     return useQuery({
-        queryKey: ['rating', id],
-        queryFn: () => getRating(id!),
-        enabled: !!id,
+        queryKey: ['ratings', url],
+        queryFn: () => getRating(url!),
+        enabled: !!url,
     });
 }
 export function useCreateRating(){
+    const queryClient = useQueryClient()
     return useMutation<any,AxiosError<any>,RatingForm>({
-        mutationFn: async (ratingData:RatingForm) => createRating(ratingData)
+        mutationFn: async (ratingData:RatingForm) => createRating(ratingData),
+        onSuccess: async () => {
+            await Promise.all([
+                queryClient.invalidateQueries({queryKey: ['doctors', 'ratings']}),
+                queryClient.invalidateQueries({queryKey: ['ratings']}),
+            ])
+        }
     })
 }

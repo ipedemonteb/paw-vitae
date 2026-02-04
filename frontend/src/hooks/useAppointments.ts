@@ -16,12 +16,7 @@ import {useMemo} from "react";
 export function useAppointments(query: AppointmentsQuery) {
     const stableQueryKey = useMemo(() => JSON.stringify(query ?? {}), [query]);
     return useQuery({
-        queryKey: [
-            "auth",
-            "appointments",
-            "list",
-            stableQueryKey
-        ],
+        queryKey: ['auth', 'appointments', 'list', stableQueryKey],
         queryFn: () => listAppointments(query),
         enabled: !!query.userId,
         placeholderData: keepPreviousData
@@ -38,7 +33,7 @@ export function useAppointment(id?: string) {
 
 export function useAppointmentFiles(url?: string) {
     return useQuery({
-        queryKey: ['auth', 'appointments', url, 'files'],
+        queryKey: ['auth', 'appointments', 'files', url],
         queryFn: () => getAppointmentFiles(url!),
         enabled: !!url,
     })
@@ -63,7 +58,7 @@ export function useBookAppointmentMutation() {
             return newId;
         },
         onSuccess: async (_, { form }) => {
-            await queryClient.invalidateQueries({ queryKey: ['appointments', 'list'] });
+            await queryClient.invalidateQueries({ queryKey: ['auth', 'appointments', 'list'] });
             await queryClient.invalidateQueries({ queryKey: ['doctors', form.doctorId, 'slots'] });
         }
     });
@@ -91,7 +86,7 @@ export function useUploadDoctorFilesMutation() {
             }
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({queryKey: ['appointments','files']})
+            await queryClient.invalidateQueries({queryKey: ['auth', 'appointments','files']})
         }
     });
 }
@@ -129,7 +124,7 @@ export function useCancelAppointmentMutation() {
         mutationFn: ({ id, userId }) => cancelAppointment(id, userId),
         onSuccess: async (_, variables) => {
             await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ['appointments', 'list'] }),
+                queryClient.invalidateQueries({ queryKey: ['auth', 'appointments', 'list'] }),
                 queryClient.invalidateQueries({ queryKey: ['auth', 'appointments', variables.id], exact: true })
             ])
         },

@@ -3,7 +3,7 @@ import {useQuery} from "@tanstack/react-query";
 
 export function useCoverages() {
     return useQuery({
-        queryKey: ["coverages"],
+        queryKey: ['coverages'],
         queryFn: listCoverages
     })
 }

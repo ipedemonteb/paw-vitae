@@ -51,7 +51,7 @@ export function useDoctorImageUrl(id?: string) {
     );
 
     const query = useQuery({
-        queryKey: ["auth", "doctors", id, "image"],
+        queryKey: ['auth', 'doctors', 'image', id],
         queryFn: () => getDoctorImage(id!),
         enabled: enabled,
         staleTime: 5 * 60_000,
@@ -170,7 +170,7 @@ export function useUpdateDoctorImageMutation(url:string){
     return useMutation<any,AxiosError<any>,File>({
         mutationFn: (data: File) => putDoctorImage(url,data),
         onSuccess: async () => {
-            await queryClient.invalidateQueries({queryKey: ["doctors", "image"]})
+            await queryClient.invalidateQueries({queryKey: ['auth', 'doctors', 'image']})
         }
     });
 }
@@ -201,7 +201,8 @@ export function useUpdateDoctorMutation() {
         onSuccess: async (_, variables) => {
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ['auth', 'doctors', variables.doctorId], exact: true }),
-                queryClient.invalidateQueries({ queryKey: ['doctors', 'image'] }),
+                queryClient.invalidateQueries({ queryKey: ['auth', 'doctors', 'image'] }),
+                queryClient.invalidateQueries({ queryKey: ['auth', 'doctors', 'list'] }),
                 queryClient.invalidateQueries({ queryKey: ['doctors', 'specialties'] }),
                 queryClient.invalidateQueries({ queryKey: ['doctors', 'coverages'] })
             ])
