@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -260,6 +259,19 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             office.setRemoved(LocalDateTime.now(ZoneId.systemDefault()));
         } else {
             doctorOfficeDao.remove(officeId);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void updateSpecialties(Doctor doctor, List<Specialty> specialties) {
+        List<DoctorOffice> offices = doctorOfficeDao.getByDoctorId(doctor.getId());
+        for (DoctorOffice office : offices) {
+            List<Specialty> updatedSpecialties = office.getSpecialties().stream()
+                    .filter(specialties::contains)
+                    .collect(Collectors.toList());
+            office.setSpecialties(updatedSpecialties);
+            doctorOfficeDao.update(office);
         }
     }
 }
