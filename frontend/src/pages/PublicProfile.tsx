@@ -66,7 +66,6 @@ import {
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {DatePicker} from "@/components/ui/date-picker.tsx";
 import {isoToLocalDate, localDateToIso} from "@/utils/dateUtils.ts";
@@ -571,14 +570,12 @@ function EditProfileDialog({
     const [open, setOpen] = useState(false);
     const [bio, setBio] = useState(initialBio);
     const [desc, setDesc] = useState(initialDescription);
-    const queryClient = useQueryClient();
     const mutation = useUpdateDoctorProfileMutation(doctorUrl);
 
     const handleSave = () => {
         mutation.mutate({ biography: bio, description: desc }, {
             onSuccess: () => {
                 setOpen(false);
-                queryClient.invalidateQueries({ queryKey: ['doctor', 'bio', doctorUrl] });
                 toast.success(t("success", "Success"), {
                     description: t("doctor.profile.update_success")
                 });
@@ -656,7 +653,6 @@ function EditExperienceDialog({
     const { t } = useTranslation()
     const [open, setOpen] = useState(false)
     const [items, setItems] = useState<ExperienceForm[]>([])
-    const queryClient = useQueryClient()
     const mutation = useUpdateDoctorExperienceMutation(experiencesUrl)
 
     useEffect(() => {
@@ -691,7 +687,6 @@ function EditExperienceDialog({
         mutation.mutate(payload, {
             onSuccess: () => {
                 setOpen(false)
-                queryClient.invalidateQueries({ queryKey: ["doctor", "experiences", experiencesUrl] })
                 toast.success(t("success"), {
                     description: t("doctor.profile.update_success"),
                 })
@@ -815,7 +810,6 @@ function EditCertificatesDialog({
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [items, setItems] = useState<CertificateForm[]>([]);
-    const queryClient = useQueryClient();
     const mutation = useUpdateDoctorCertificatesMutation(certsUrl);
 
     useEffect(() => {
@@ -841,7 +835,6 @@ function EditCertificatesDialog({
         mutation.mutate(items, {
             onSuccess: () => {
                 setOpen(false);
-                queryClient.invalidateQueries({ queryKey: ['doctor', 'certifications', certsUrl] });
                 toast.success(t("success"), {
                     description: t("doctor.profile.update_success")
                 });

@@ -5,7 +5,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import { getClaims } from "@/context/auth-store";
-import { useQueryClient } from "@tanstack/react-query";
 
 const cardContainer = "flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full md:w-1/2 rounded-xl";
 const headerSection = "text-center space-y-2 mb-8";
@@ -35,7 +34,6 @@ function LoginCard() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const queryClient = useQueryClient();
     const [rememberMe, setRememberMe] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
@@ -44,9 +42,7 @@ function LoginCard() {
         e.preventDefault();
 
         login.mutate({ email, password, rememberMe: rememberMe }, {
-            onSuccess: async () => {
-                await queryClient.cancelQueries();
-                queryClient.clear();
+            onSuccess: () => {
 
                 const claims = getClaims();
                 const role = claims?.role?.toUpperCase();
