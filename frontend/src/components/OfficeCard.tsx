@@ -42,10 +42,10 @@ export default function OfficeCard({office, onClick, animateInDelay, mounted}: O
 
     return (
         <div id="container" style={{ transitionDelay: `${animateInDelay * 100}ms` }} onMouseLeave={() => setOpen(false)} className={`flex flex-col justify-center items-center transition-all w-auto ${mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'}`}>
-            <div onMouseEnter={() => setOpen(true)} onClick={onClick} className="relative peer flex transition-all overflow-hidden group hover:border-(--primary-color) hover:text-(--text-light) rounded-2xl min-w-56 cursor-pointer items-center hover:shadow  border-2">
-                <div className=" group-hover:opacity-35  transition-opacity text-[1.3rem] flex justify-center-safe items-center overflow-hidden  flex-col font-semibold   rounded-2xl w-full px-8 py-7">
+            <div onMouseEnter={() => setOpen(true)} onClick={onClick} className="relative max-w-20 max-h-54 peer flex transition-all overflow-hidden group hover:border-(--primary-color) hover:text-(--text-light) rounded-2xl min-w-56 cursor-pointer items-center hover:shadow  border-2">
+                <div className=" text-ellipsis group-hover:opacity-35  transition-opacity text-[1.3rem] flex justify-center-safe items-center overflow-hidden  flex-col font-semibold   rounded-2xl w-full px-8 py-7">
                     <Building2 className="size-14 stroke-[1.5]"/>
-                    {office.name}
+                    <p className="w-full text-center min-w-0 text-ellipsis text-nowrap overflow-clip">{office.name}</p>
                     <div className="flex text-sm items-center gap-1 pb-3 font-normal text-(--text-light)">
                         <MapPinIcon className="size-4  text-(--primary-color)" />
                         {(neighborhood?.name && !isLoadingNeighborhood) ? neighborhood.name : (

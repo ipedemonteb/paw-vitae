@@ -41,6 +41,7 @@ import {
 } from "date-fns";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
+import {daysBetweenUtc} from "@/utils/dateUtils.ts";
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -92,15 +93,6 @@ const timeButton = "bg-white text-[var(--primary-color)] border border-[var(--pr
 const optionalsContainer = "flex flex-col gap-8 mt-4";
 const bookContainer = "flex flex-col items-center w-full";
 const bookButton = "mt-6 py-4 w-xs bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
-
-export function daysBetweenUtc(a: Date, b?: Date): number {
-    if (!b) return 1;
-    const utcA = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-    const utcB = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
-    const msPerDay = 24 * 60 * 60 * 1000;
-    return Math.round((utcB - utcA) / msPerDay);
-}
-
 
 function Appointment() {
     const { id: doctorId } = useParams<{ id: string }>();
