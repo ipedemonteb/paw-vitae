@@ -26,7 +26,7 @@ public class MailServiceImpl implements MailService {
     @Value("${mail.username}")
     private String from_mail;
 
-    @Value("${app.base-url}/api")
+    @Value("${app.base-url}")
     private String BASE_URL;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
