@@ -378,8 +378,8 @@ const input="hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-5
 
 const careerItem = "relative pb-4";
 const careerDot = "absolute left-4 top-[6px] -translate-x-1/2 w-6 h-6 rounded-full bg-white border-2 border-[var(--gray-300)] grid place-items-center after:content-[''] after:block after:w-2.5 after:h-2.5 after:rounded-full after:bg-[var(--primary-color)]";
-const careerPosition = "text-base font-[600] text-[var(--text-color)] leading-tight";
-const careerOrganization = "text-sm font-[500] text-[var(--primary-color)]";
+const careerPosition = "text-nowrap overflow-clip text-ellipsis text-base font-[600] text-[var(--text-color)] leading-tight";
+const careerOrganization = "wrap-break-word overflow-clip text-sm font-[500] text-[var(--primary-color)]";
 const careerPeriod = "flex items-center gap-1 text-sm text-[var(--text-light)]";
 const careerDescription = "text-sm text-[var(--text-color)] leading-6";
 
@@ -456,12 +456,12 @@ function CertificatesCard({ certifications, isOwner, updateUrl }: {
     );
 }
 
-const certificateContainer = "flex flex-row items-center border border-[var(--gray-300)] rounded-lg py-3";
+const certificateContainer = " overflow-clip flex flex-row items-center border border-[var(--gray-300)] rounded-lg py-3";
 const badgeContainer = "px-4";
-const certificateData = "flex flex-col gap-0";
+const certificateData = "flex flex-col gap-0 overflow-hidden";
 const badgeIcon = "h-10 w-10 bg-[var(--primary-color)] text-white rounded-full p-2";
-const certificateTitle = "text-base font-[500]";
-const certificateIssuer = "text-sm text-[var(--text-light)]";
+const certificateTitle = "text-nowrap w-full overflow-clip text-ellipsis text-base font-medium";
+const certificateIssuer = "text-nowrap overflow-clip text-ellipsis text-sm text-[var(--text-light)]";
 const certificateDate = "flex flex-row items-center gap-1 text-[var(--text-light)]";
 const calendarIcon = "w-4 h-4";
 const dateText = "text-sm mt-1";
