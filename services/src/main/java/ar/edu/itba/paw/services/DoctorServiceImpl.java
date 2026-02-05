@@ -113,6 +113,7 @@ public class DoctorServiceImpl implements DoctorService {
         List<Specialty> newSpecialties = specialtyService.getByIds(specialties);
         doctor.setSpecialtyList(newSpecialties);
         List<Coverage> newCoverages = coverageService.findByIds(coverages);
+        doctorOfficeService.updateSpecialties(doctor, newSpecialties);
         doctor.setCoverageList(newCoverages);
         LOGGER.info("Doctor updated successfully: id={}", doctor.getId());
     }

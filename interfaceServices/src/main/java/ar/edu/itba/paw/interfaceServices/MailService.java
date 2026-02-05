@@ -17,7 +17,7 @@ public interface MailService {
 
     void sendRatingMail(Doctor doctor, Patient patient, Appointment appointment, long rating, String ratingMessage);
 
-    void sendFileUploadMail(Doctor doctor, Patient patient, Appointment appointment, List<AppointmentFile> uploadedFiles);
+    void sendFileUploadMail(MailDTO appointment, List<AppointmentFile> uploadedFiles);
 
     void sendReportAddedMail(Doctor doctor, Patient patient, Appointment appointment, String report);
 
