@@ -121,7 +121,7 @@ function Appointment() {
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
 
     const { data: allAvailability } = useDoctorAvailability(doctorId);
-    const { data: occupiedSlots, isLoading: loadingSlots } = useOccupiedSlots(doctorId, fromStr, toStr);
+    const { data: occupiedSlots, isLoading: loadingSlots } = useOccupiedSlots(fromStr, toStr, doctorId);
     const { data: unavailabilityPage, isLoading: loadingUnavailability } = useDoctorUnavailability(doctor?.unavailability, {
         from: fromStr,
         to: toStr
