@@ -75,7 +75,7 @@ function MedicalHistory() {
         return (
             <>
                 {completed.map((a) => (
-                    <PastAppointmentComponent key={a.self} appointmentUrl={a.self} />
+                    <PastAppointmentComponent key={a.self} appointment={a} />
                 ))}
                 {appointments?.pagination && (
                     <PaginationComponent pagination={appointments.pagination} searchParams={searchParams} />

@@ -65,7 +65,7 @@ function PatientMedicalHistory() {
                 <DashboardNavLoader />
             ) : completed.length > 0 ? (
                 completed.map((a) => (
-                    <PastAppointmentComponent key={a.self} appointmentUrl={a.self} />
+                    <PastAppointmentComponent key={a.self} appointment={a} />
                 ))
             ) : (
                 <DashboardNavEmptyContent
