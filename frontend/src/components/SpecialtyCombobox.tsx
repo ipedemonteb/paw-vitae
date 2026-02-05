@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { specialtyIdFromSelf } from "@/utils/IdUtils.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 type Props = {
     className?: string;
@@ -40,7 +41,7 @@ export function SpecialtyCombobox({
 
     const selectedSelf = value !== undefined ? value : internal;
 
-    const { data: specialties, isLoading } = useSpecialties();
+    const { data: specialties, isLoading, isError, refetch, isRefetching } = useSpecialties();
     const { t } = useTranslation();
 
     const triggerClass = cn("w-[200px] justify-between", buttonClassName, className);
@@ -58,6 +59,8 @@ export function SpecialtyCombobox({
         setOpen(false);
     };
 
+    const loading = useDelayedBoolean(isLoading || isRefetching, 500)
+
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -67,13 +70,18 @@ export function SpecialtyCombobox({
                 </Button>
             </PopoverTrigger>
 
-            <PopoverContent className={cn("w-[200px] p-0", contentClassName)}>
+            <PopoverContent className={cn("w-56 p-0", contentClassName)}>
                 <Command>
                     <CommandInput placeholder={t("combobox.specialty.search")} className="h-9" />
                     <CommandList>
-                        {isLoading ? (
-                            <div className="py-3 flex items-center justify-center space-x-1">
+                        {loading ? (
+                            <div className="py-3 h-20 flex items-center justify-center space-x-1">
                                 <Spinner className="text-(--text-light) size-5" />
+                            </div>
+                        ) : isError ? (
+                            <div className="py-3 h-20 flex flex-col items-center justify-center gap-2">
+                                <p className="text-(--text-light) text-sm">Unable to load specialties</p>
+                                <Button className="cursor-pointer text-xs bg-transparen hover:bg-(--gray-100) text-black border px-2 py-1" onClick={() => refetch()}>Retry</Button>
                             </div>
                         ) : (
                             <>

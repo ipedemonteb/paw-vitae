@@ -21,6 +21,7 @@ import {Button} from "@/components/ui/button.tsx";
 import {useTranslation} from "react-i18next";
 import {useDoctorImageUrl} from "@/hooks/useDoctors.ts";
 import {useUser} from "@/hooks/useUser.ts";
+import OfflineBanner from "@/components/OfflineBanner.tsx";
 
 type UserRole = "ANON" | "PATIENT" | "DOCTOR";
 
@@ -67,7 +68,7 @@ function SheetNavLink({
 }
 
 const header =
-    "fixed top-0 left-0 w-full shadow-[var(--shadow-md)] py-8 leading-[1.6] bg-white z-50";
+    " bg-white relative h-full py-8 shadow-(--shadow-md) z-20 ";
 const headerContainer = "flex items-center justify-between w-full max-w-6xl px-5 mx-auto";
 const logo =
     "flex items-center text-[var(--primary-color)] transition-transform duration-300 ease-[ease] hover:scale-105";
@@ -154,48 +155,51 @@ function Header() {
     }, []);
 
     return (
-        <div className={header}>
-            <div className={headerContainer}>
-                <Link to="/" className={logo}>
-                    <h1 className="block text-5xl font-bold no-underline">Vitae</h1>
-                </Link>
+        <div className="fixed top-0 left-0 w-full leading-[1.6] z-50">
+            <div className={header}>
+                <div className={headerContainer}>
+                    <Link to="/" className={logo}>
+                        <h1 className="block text-5xl font-bold no-underline">Vitae</h1>
+                    </Link>
 
-                <NavigationMenu className={cn(nav, navDesktop)}>
-                    <NavigationMenuList className={navList}>
-                        {navItems.map((item) => (
-                            <NavigationMenuItem key={item.to}>
-                                <HeaderNavLink to={item.to} end={item.end}>
-                                    {item.label}
-                                </HeaderNavLink>
-                            </NavigationMenuItem>
-                        ))}
-                    </NavigationMenuList>
-                </NavigationMenu>
+                    <NavigationMenu className={cn(nav, navDesktop)}>
+                        <NavigationMenuList className={navList}>
+                            {navItems.map((item) => (
+                                <NavigationMenuItem key={item.to}>
+                                    <HeaderNavLink to={item.to} end={item.end}>
+                                        {item.label}
+                                    </HeaderNavLink>
+                                </NavigationMenuItem>
+                            ))}
+                        </NavigationMenuList>
+                    </NavigationMenu>
 
-                {isLoggedIn ? (
-                    <LoggedInComponent
+                    {isLoggedIn ? (
+                        <LoggedInComponent
+                            userRole={userRole}
+                            open={dropdownOpen}
+                            onOpenChange={setDropdownOpen}
+                            displayName={displayName}
+                            avatarFallbackText={avatarFallbackText}
+                            doctorImgUrl={doctorImgUrl}
+                        />
+                    ) : (
+                        <NotLoggedInComponent open={dropdownOpen} onOpenChange={setDropdownOpen} />
+                    )}
+
+                    <SheetComponent
+                        open={sheetOpen}
+                        onOpenChange={setSheetOpen}
+                        isLoggedIn={isLoggedIn}
                         userRole={userRole}
-                        open={dropdownOpen}
-                        onOpenChange={setDropdownOpen}
+                        navItems={navItems}
                         displayName={displayName}
                         avatarFallbackText={avatarFallbackText}
                         doctorImgUrl={doctorImgUrl}
                     />
-                ) : (
-                    <NotLoggedInComponent open={dropdownOpen} onOpenChange={setDropdownOpen} />
-                )}
-
-                <SheetComponent
-                    open={sheetOpen}
-                    onOpenChange={setSheetOpen}
-                    isLoggedIn={isLoggedIn}
-                    userRole={userRole}
-                    navItems={navItems}
-                    displayName={displayName}
-                    avatarFallbackText={avatarFallbackText}
-                    doctorImgUrl={doctorImgUrl}
-                />
+                </div>
             </div>
+            <OfflineBanner/>
         </div>
     );
 }
