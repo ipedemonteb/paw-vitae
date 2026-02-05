@@ -43,7 +43,6 @@ import React, {useEffect, useMemo, useState} from "react";
 import {useRating, useCreateRating} from "@/hooks/useRatings.ts";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {useParams, useNavigate, Link} from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import GenericError from "@/pages/GenericError.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
@@ -536,7 +535,6 @@ function PostVisitComponent({
     isDoctor: boolean;
 }) {
     const { t } = useTranslation();
-    const queryClient = useQueryClient();
     const { mutate: updateReport, isPending } = useUpdateReportMutation();
 
     const hasReport = (report ?? "").trim().length > 0;
@@ -554,7 +552,6 @@ function PostVisitComponent({
         updateReport({ id: appointmentId, report: draft }, {
             onSuccess: () => {
                 toast.success(t("success.report_saved", "Reporte médico guardado"));
-                queryClient.invalidateQueries({ queryKey: ['appointment', appointmentId] });
             },
             onError: () => {
                 toast.error(t("error.report_failed", "Error al guardar el reporte"));
@@ -702,7 +699,6 @@ function RateComponent({
     appointmentId: string;
 }) {
     const { t } = useTranslation();
-    const queryClient = useQueryClient();
     const [comment, setComment] = useState("");
     const { mutate: submitRating, isPending } = useCreateRating();
 
@@ -719,8 +715,6 @@ function RateComponent({
         }, {
             onSuccess: () => {
                 toast.success(t("appointment.created", "Calificación enviada"));
-
-                queryClient.invalidateQueries({ queryKey: ['appointment', appointmentId] });
             },
             onError: () => {
                 toast.error(t("error.rating_failed", "Error al enviar la calificación"));
@@ -857,7 +851,6 @@ const submitButton = "mt-6 w-3xs bg-[var(--primary-color)] text-white hover:bg-[
 
 function UploadComponent({ appointmentId }: { appointmentId: string }) {
     const { t } = useTranslation();
-    const queryClient = useQueryClient();
     const [files, setFiles] = useState<File[]>([]);
     const { mutate: uploadFiles, isPending } = useUploadDoctorFilesMutation();
 
@@ -868,7 +861,6 @@ function UploadComponent({ appointmentId }: { appointmentId: string }) {
             onSuccess: () => {
                 toast.success(t("success.files_uploaded", "Archivos subidos correctamente"));
                 setFiles([]);
-                queryClient.invalidateQueries({ queryKey: ['appointment', appointmentId, 'files'] });
             },
             onError: () => {
                 toast.error(t("error.upload_failed", "Error al subir los archivos"));

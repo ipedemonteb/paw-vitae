@@ -24,7 +24,6 @@ import { Label } from "@/components/ui/label.tsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
 import GenericError from "@/pages/GenericError.tsx";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
@@ -45,7 +44,6 @@ const actionButtonStyles = "bg-[var(--primary-color)] hover:bg-[var(--primary-da
 function PatientAccount() {
     const { t } = useTranslation();
     const auth = useAuth();
-    const queryClient = useQueryClient();
     const [isEditing, setIsEditing] = useState(false);
 
     const { data: patient, isLoading, isError } = usePatientById(auth.userId);
@@ -130,8 +128,6 @@ function PatientAccount() {
                     description: t("doctor.profile.update_success")
                 });
                 setIsEditing(false);
-                queryClient.invalidateQueries({ queryKey: ["auth", "patients", "id", auth.userId] });
-                queryClient.invalidateQueries({ queryKey: ['coverages'] });
             },
             onError: () => {
                 toast.error(t("error.error"), {
