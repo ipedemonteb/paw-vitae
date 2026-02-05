@@ -21,7 +21,7 @@ import {
     useDoctorOfficesSpecialties
 } from "@/hooks/useOffices.ts";
 
-import { useBookAppointmentMutation } from "@/hooks/useAppointments.ts";
+import {useAppointments, useBookAppointmentMutation} from "@/hooks/useAppointments.ts";
 import { useOccupiedSlots } from "@/hooks/useSlots.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { useNavigate, useParams } from "react-router-dom";
@@ -93,11 +93,22 @@ const optionalsContainer = "flex flex-col gap-8 mt-4";
 const bookContainer = "flex flex-col items-center w-full";
 const bookButton = "mt-6 py-4 w-xs bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
+export function daysBetweenUtc(a: Date, b?: Date): number {
+    if (!b) return 1;
+    const utcA = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+    const utcB = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+    const msPerDay = 24 * 60 * 60 * 1000;
+    return Math.round((utcB - utcA) / msPerDay);
+}
+
+
 function Appointment() {
     const { id: doctorId } = useParams<{ id: string }>();
     const { t } = useTranslation();
     const navigate = useNavigate();
     const auth = useAuth();
+
+    const patientId = auth.userId
 
     const { mutate: bookAppointment, isPending: isBooking } = useBookAppointmentMutation();
 
@@ -119,6 +130,10 @@ function Appointment() {
     const { data: offices, isLoading: loadingOffices } = useDoctorOffices(doctor?.offices, { status: "active" });
     const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices);
     const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
+
+    const resolvePage = Math.floor((daysBetweenUtc(today, selectedDate) / 10) + 1)
+
+    const {data: appointments} = useAppointments({userId: patientId, collection: "upcoming", pageSize: 15, page: resolvePage})
 
     const { data: allAvailability } = useDoctorAvailability(doctorId);
     const { data: occupiedSlots, isLoading: loadingSlots } = useOccupiedSlots(fromStr, toStr, doctorId);
@@ -158,7 +173,7 @@ function Appointment() {
 
 
     const slotsForSelectedOffice = useMemo(() => {
-        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots) return [];
+        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots || !appointments) return [];
 
         const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
@@ -182,7 +197,14 @@ function Appointment() {
                     return occ.date === dateStr && occTimeShort === currentTimeShort;
                 });
 
-                if (!isOccupied) {
+                const priorCommitment = appointments.data.some(a => {
+                    const aDateObj = parseISO(a.date);
+                    const aDateStr = format(aDateObj, 'yyyy-MM-dd');
+                    const aTimeShort = format(aDateObj, 'HH:mm');
+                    return aDateStr === dateStr && aTimeShort === currentTimeShort;
+                });
+
+                if (!isOccupied && !priorCommitment) {
                     generatedSlots.push({ startTime: currentTimeFull });
                 }
 
@@ -192,7 +214,7 @@ function Appointment() {
 
         return generatedSlots.sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-    }, [selectedOffice, allAvailability, selectedDate, occupiedSlots]);
+    }, [selectedOffice, allAvailability, selectedDate, occupiedSlots, appointments]);
 
 
     const slotsForDay = useMemo(() => {
@@ -247,7 +269,7 @@ function Appointment() {
 
 
     const handleBook = () => {
-        if (!auth.userId) {
+        if (!patientId) {
             toast.error(t("error"), { description: "Debe iniciar sesión para reservar." });
             navigate("/login");
             return;
@@ -263,7 +285,7 @@ function Appointment() {
         const appointmentForm = {
             appointmentDate: format(selectedDate, 'yyyy-MM-dd'),
             appointmentHour: hours,
-            patientId: auth.userId!,
+            patientId: patientId!,
             doctorId: doctorId!,
             specialtyId: selectedSpecialty.split("/").pop()!,
             officeId: selectedOffice.split("/").pop()!,
@@ -293,8 +315,8 @@ function Appointment() {
         return (
             <div className={appointmentBackground}>
                 <div className="flex flex-col items-center justify-center h-screen gap-4">
-                    <Loader2 className="h-12 w-12 animate-spin text-[var(--primary-color)]" />
-                    <p className="text-[var(--text-light)] font-medium">{t("common.loading", "Cargando...")}</p>
+                    <Loader2 className="h-12 w-12 animate-spin text-(--primary-color)" />
+                    <p className="text-(--text-light) font-medium">{t("common.loading", "Cargando...")}</p>
                 </div>
             </div>
         );
