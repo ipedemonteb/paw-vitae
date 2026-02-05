@@ -26,7 +26,7 @@ public class MailServiceImpl implements MailService {
     @Value("${mail.username}")
     private String from_mail;
 
-    @Value("${app.base-url}/api")
+    @Value("${app.base-url}")
     private String BASE_URL;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
@@ -245,21 +245,19 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendFileUploadMail(Doctor doctor, Patient patient, Appointment appointment, List<AppointmentFile> uploadedFiles) {
-        Locale userLocale = Locale.forLanguageTag(patient.getLanguage());
+    public void sendFileUploadMail(MailDTO appointment, List<AppointmentFile> uploadedFiles) {
+        Locale userLocale = Locale.forLanguageTag(appointment.getPatientLanguage());
         Context context = new Context(userLocale);
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         context.setVariable("appointmentDate", appointment.getDate().format(dateFormatter));
         context.setVariable("appointmentTime", appointment.getDate().format(timeFormatter));
-        context.setVariable("appointmentOffice", appointment.getDoctorOffice().getOfficeName());
-        context.setVariable("appointmentOfficeNeighborhood", appointment.getDoctorOffice().getNeighborhood().getName());
+        context.setVariable("appointmentOffice", appointment.getOfficeName());
+        context.setVariable("appointmentOfficeNeighborhood", appointment.getOfficeNeighborhood());
 
-        context.setVariable("doctorName", doctor.getName() + " " + doctor.getLastName());
-        context.setVariable("patientName", patient.getName() + " " + patient.getLastName());
-        context.setVariable("doctor", doctor);
-        context.setVariable("patient", patient);
+        context.setVariable("doctorName", appointment.getDoctorName());
+        context.setVariable("patientName", appointment.getPatientName());
         context.setVariable("appointment", appointment);
         context.setVariable("linkUrl", BASE_URL + "/patient/dashboard/appointment-details/" + appointment.getId());
 
@@ -268,7 +266,7 @@ public class MailServiceImpl implements MailService {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setTo(patient.getEmail());
+            helper.setTo(appointment.getPatientEmail());
             helper.setSubject(messageSource.getMessage("patient.file.upload.title", null, userLocale));
             helper.setText(htmlContent, true);
             helper.setFrom(from_mail);
@@ -279,9 +277,9 @@ public class MailServiceImpl implements MailService {
                 }
             }
             mailSender.send(message);
-            LOGGER.info("File uploaded notification email sent to: {}", patient.getEmail());
+            LOGGER.info("File uploaded notification email sent to: {}", appointment.getPatientEmail());
         } catch (MessagingException e) {
-            LOGGER.error("Error sending file uploaded notification email to {}", patient.getEmail(), e);
+            LOGGER.error("Error sending file uploaded notification email to {}", appointment.getPatientEmail(), e);
         }
     }
     @Async
