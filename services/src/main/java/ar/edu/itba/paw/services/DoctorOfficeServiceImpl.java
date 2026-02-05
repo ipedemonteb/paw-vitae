@@ -47,6 +47,10 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
             //TODO: CHECK
             throw new BussinesRuleException("exception.business.cannotCreateAndActivateOffice");
         }
+        List<DoctorOffice> offices = this.getAllByDoctorId(doctor.getId());
+        if (offices.stream().anyMatch(o -> o.getOfficeName().equalsIgnoreCase(form.getOfficeName()) && o.getNeighborhood().getId() == form.getNeighborhoodId())) {
+            throw new BussinesRuleException("exception.business.pleasefixme"); //TODO: make proper code/message backend monkey
+        }
         validateMaxOffices(doctor.getId());
         Neighborhood nb = neighborhoodService.getById(form.getNeighborhoodId())
                 .orElseThrow(NeighborhoodNotFoundException::new);

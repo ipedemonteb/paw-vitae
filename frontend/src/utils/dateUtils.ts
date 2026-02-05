@@ -112,3 +112,11 @@ export function normalizeDayIndex(value: unknown): number | null {
 
     return idx;
 }
+
+export function daysBetweenUtc(a: Date, b?: Date): number {
+    if (!b) return 1;
+    const utcA = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+    const utcB = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+    const msPerDay = 24 * 60 * 60 * 1000;
+    return Math.round((utcB - utcA) / msPerDay);
+}

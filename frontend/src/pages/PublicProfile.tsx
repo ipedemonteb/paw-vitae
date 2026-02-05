@@ -11,7 +11,7 @@ import {
     Calendar,
     Hospital,
     MapPin,
-    BriefcaseBusiness, Trash2, Plus, Loader2
+    BriefcaseBusiness, Trash2, Plus, Loader2, HeartPlus
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
@@ -48,9 +48,6 @@ import GenericError from "@/pages/GenericError.tsx";
 import { useRatings } from "@/hooks/useRatings.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
 import type { RatingsDTO } from "@/data/ratings.ts";
-import osdeLogo from "@/assets/osdeLogo.png";
-import medifeLogo from "@/assets/medifeLogo.png";
-import galenoLogo from "@/assets/galenoLogo.png";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import React, { useEffect, useState } from "react";
@@ -121,12 +118,12 @@ const cardTitle = "flex flex-wrap items-center gap-1 px-6 py-2 bg-[var(--primary
 const aboutContent = "px-7 pt-4 pb-6";
 const cardTitleText = "text-lg font-[500] min-w-0";
 const profileContent = "flex flex-col gap-0 items-center sm:flex-row pt-6";
-const aboutTitle = "text-lg font-[500]";
-const aboutText = "text-[var(--text-color)] text-md";
+const aboutTitle = " text-lg font-[500]";
+const aboutText = " wrap-break-word flex-wrap text-[var(--text-color)] text-md";
 
 function EmptySection({ icon: Icon, text }: { icon: React.ElementType, text: string }) {
     return (
-        <div className="flex flex-col items-center justify-center w-full py-8 text-[var(--text-light)] opacity-60">
+        <div className="flex flex-col items-center justify-center w-full py-8 text-(--text-light) opacity-60">
             <Icon className="w-10 h-10 mb-3 stroke-1" />
             <p className="text-sm font-medium text-center">{text}</p>
         </div>
@@ -179,7 +176,7 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
                     <div className={dataContainer}>
                         <div className={contactData}>
                             <Mail className={contactIcon} />
-                            <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">{doctor.email}</p>
+                            <p className="max-w-37.5 truncate sm:max-w-75 sm:truncate">{doctor.email}</p>
                         </div>
                         <div className={contactData}>
                             <Phone className={contactIcon} />
@@ -225,16 +222,6 @@ const cardContent = "flex flex-col items-center gap-3 px-6 py-6 sm:flex-row sm:f
 
 function CoverageCard({ coverages }: { coverages: CoverageDTO[] }) {
     const { t } = useTranslation();
-    const coverageImages: Record<string, string> = {
-        "osde": osdeLogo,
-        "medife": medifeLogo,
-        "galeno": galenoLogo,
-    };
-
-    const getLogo = (name: string) => {
-        return coverageImages[name] || "";
-    };
-
     return (
         <Card className={card}>
             <div className={cardTitle}>
@@ -246,7 +233,6 @@ function CoverageCard({ coverages }: { coverages: CoverageDTO[] }) {
                     coverages.map((cov) => (
                         <CoverageComponent
                             key={cov.name}
-                            coverageImage={getLogo(cov.name.toLowerCase())}
                             coverageName={cov.name}
                         />
                     ))
@@ -258,19 +244,16 @@ function CoverageCard({ coverages }: { coverages: CoverageDTO[] }) {
     )
 }
 
-const componentContainer = "flex w-full max-w-3xs flex-col px-10 py-4 items-center border border-[var(--gray-300)] rounded-lg";
-const coverageAvatar = "w-16 h-16 mb-2 object-contain";
+const componentContainer = "flex justify-center w-full max-w-44 min-w-44 max-h-36 min-h-36 flex-col px-10 py-4 items-center border border-[var(--gray-300)] rounded-lg";
 
-function CoverageComponent({ coverageImage, coverageName }: {
-    coverageImage: string;
+function CoverageComponent({ coverageName }: {
     coverageName: string;
 }) {
     return (
         <div className={componentContainer}>
-            <Avatar className={coverageAvatar}>
-                <AvatarImage src={coverageImage} />
-                <AvatarFallback>{coverageName.substring(0, 2)}</AvatarFallback>
-            </Avatar>
+            <div className="bg-(--primary-color) rounded-full p-2 flex items-center justify-center gap-1 text-white mb-2">
+                <HeartPlus className="text-white w-5 h-5" />
+            </div>
             <h3>{coverageName}</h3>
         </div>
     );
@@ -302,11 +285,11 @@ function OfficesCard({ offices }: { offices: OfficeDTO[] }) {
     );
 }
 
-const officeContainer = "flex w-full max-w-[200px] flex-col px-10 py-4 items-center border border-[var(--gray-300)] rounded-lg";
+const officeContainer = "flex overflow-hidden w-full max-w-44 min-w-44 max-h-36 min-h-36 flex-col px-6 py-6 items-center border border-(--gray-300) rounded-lg";
 const iconContainer = "bg-[var(--primary-color)] rounded-full p-2 flex items-center justify-center gap-1 text-white mb-2";
 const locationIcon = "h-6 w-6 text-white";
 const locationContainer = "flex items-center gap-1 text-[var(--text-light)] text-sm";
-const locationTitle = "text-base font-[500]";
+const locationTitle = "text-center overflow-clip w-full text-ellipsis text-nowrap font-medium";
 const mapPinIcon = "h-4 w-4";
 
 function OfficeComponent({ officeTitle, neighborhoodUrl }: {
@@ -322,13 +305,13 @@ function OfficeComponent({ officeTitle, neighborhoodUrl }: {
             <h3 className={locationTitle}>{officeTitle}</h3>
 
             <div className={locationContainer}>
-                <div className="text-xs font-semibold text-[var(--primary-color)] mt-1">
+                <div className="text-xs font-semibold text-(--primary-color) mt-1">
                     {isLoading ? (
                         <span className="animate-pulse">...</span>
                     ) : (
                         <div className="flex items-center gap-1">
                             <MapPin className={mapPinIcon} />
-                            <span>{neighborhood?.name || ""}</span>
+                            <span className="text-nowrap">{neighborhood?.name || ""}</span>
                         </div>
                     )}
                 </div>
@@ -610,7 +593,7 @@ function EditProfileDialog({
                         <Label htmlFor="bio">{t("doctor.profile.card.about")}</Label>
                         <Textarea
                             id="bio"
-                            className="min-h-[150px]"
+                            className="min-h-37.5"
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
                         />
