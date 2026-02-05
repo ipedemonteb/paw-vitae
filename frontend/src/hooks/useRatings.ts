@@ -28,10 +28,11 @@ export function useCreateRating(){
     const queryClient = useQueryClient()
     return useMutation<any,AxiosError<any>,RatingForm>({
         mutationFn: async (ratingData:RatingForm) => createRating(ratingData),
-        onSuccess: async () => {
+        onSuccess: async (_, variables) => {
             await Promise.all([
                 queryClient.invalidateQueries({queryKey: ['doctors', 'ratings']}),
                 queryClient.invalidateQueries({queryKey: ['ratings']}),
+                queryClient.invalidateQueries({queryKey: ['auth', 'appointments', variables.appointmentId]}),
             ])
         }
     })
