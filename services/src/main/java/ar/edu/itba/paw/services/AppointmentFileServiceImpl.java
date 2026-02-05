@@ -45,9 +45,8 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         try {
             AppointmentFile createdFile = appointmentFileDao.create(file.getOriginalFilename(), file.getBytes(), uploader_role, appointment);
             if ("doctor".equals(uploader_role)) {
-                Doctor doctor = appointment.getDoctor();
-                Patient patient = appointment.getPatient();
-                mailService.sendFileUploadMail(doctor, patient, appointment, List.of(createdFile));
+                MailDTO dto = new MailDTO(appointment);
+                mailService.sendFileUploadMail(dto, List.of(createdFile));
             }
             LOGGER.info("Appointment file created successfully for appointment with id {}", appointment_id);
             return createdFile;
