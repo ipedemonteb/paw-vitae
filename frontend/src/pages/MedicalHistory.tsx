@@ -10,7 +10,9 @@ import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";
 import { useAuth } from "@/hooks/useAuth.ts";
-import { Spinner } from "@/components/ui/spinner.tsx";
+import {usePatientById} from "@/hooks/usePatients.ts";
+import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 const historyBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
@@ -53,9 +55,16 @@ function MedicalHistory() {
         doctorId: auth.userId
     });
 
+    const { data: patient, isLoading: isLoadingPatient} = usePatientById(patientId);
+
     const completed = (appointments?.data ?? []).filter(a => a.status === "completo");
 
+    if (isLoading || isLoadingPatient) return (
+        <LoadingFullPageComponent/>
+    )
+
     const renderListContent = () => {
+
         if (isLoading) {
             return <AppointmentsSectionLoader />;
         }
@@ -63,7 +72,7 @@ function MedicalHistory() {
         if (isError) {
             return (
                 <div className={noAppointments}>
-                    <p className="text-red-500">{t("error.generic", "Error al cargar el historial.")}</p>
+        <p className="text-red-500">{t("error.generic", "Error al cargar el historial.")}</p>
                 </div>
             );
         }
@@ -94,7 +103,7 @@ function MedicalHistory() {
                     </div>
 
                     <div className={historyContent}>
-                        <PatientProfileCard patientId={patientId ?? ""} />
+                        <PatientProfileCard patient={patient} />
 
                         <Card className={historyAppointmentsCard}>
                             <div className={historyUpperContainer}>
@@ -157,13 +166,11 @@ function NoPastAppointmentComponent() {
 }
 
 function AppointmentsSectionLoader() {
-    const { t } = useTranslation();
     return (
-        <div className="w-full py-16 flex flex-col items-center justify-center bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
-            <Spinner className="h-8 w-8 text-[var(--primary-color)] mb-3" />
-            <p className="text-[var(--text-light)] text-sm animate-pulse">
-                {t("common.loading", "Cargando historial...")}
-            </p>
+        <div className="w-ful flex flex-col gap-2">
+            {Array.from({length: 5}).map((_, i) => (
+                <Skeleton key={i} className="h-52 w-full"/>
+            ))}
         </div>
     );
 }

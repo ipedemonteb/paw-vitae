@@ -311,7 +311,7 @@ function ResultSection({paginationData, isLoading, isRefetching, isError, refetc
                 <ResultList data={paginationData?.data}/>
             ) : isLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                    {Array.from({length: 9}).map((_, i) => (
+                    {Array.from({length: 5}).map((_, i) => (
                         <Skeleton key={i} className="h-92 w-88 p-0 gap-0"/>
                     ))}
                 </div>

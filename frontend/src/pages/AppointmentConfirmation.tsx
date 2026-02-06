@@ -10,9 +10,13 @@ import {useSpecialty} from "@/hooks/useSpecialties.ts";
 import {useNeighborhood} from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
 import {formatLongDate} from "@/utils/dateUtils.ts";
-import {Loader2} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import {Link, useParams} from "react-router-dom";
+import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
+import type {DoctorDTO} from "@/data/doctors.ts";
+import {userIdFromSelf} from "@/utils/IdUtils.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 const confirmationBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -85,10 +89,17 @@ function AppointmentConfirmation() {
         data:neighborhood,
         isLoading: isLoadingNeighborhood,
         isError: isErrorNeighborhood
-    } =useNeighborhood(office?.neighborhood);
+    } = useNeighborhood(office?.neighborhood);
 
-    if (isLoading || isLoadingSpecialty || isLoadingOffice || isLoadingNeighborhood) {
-        return <div className="flex justify-center mt-36"><Loader2 className="animate-spin h-8 w-8" /></div>;
+    const doctorId = appointment?.doctor.split('/').pop() || "";
+
+    const {
+        data: doctor,
+        isLoading: isLoadingDoctor
+    } = useDoctor(doctorId)
+
+    if (isLoading || isLoadingSpecialty || isLoadingOffice || isLoadingNeighborhood || isLoadingDoctor) {
+        return <LoadingFullPageComponent/>
     }
 
     if (isError || !appointment || isErrorSpecialty || isErrorOffice || isErrorNeighborhood) {
@@ -98,8 +109,6 @@ function AppointmentConfirmation() {
     const formattedDate = appointment.date
         ? formatLongDate(new Date(appointment.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),locale)
         : "";
-
-    const doctorId = appointment.doctor.split('/').pop() || "";
 
     return (
         <div className={confirmationBackground}>
@@ -113,7 +122,7 @@ function AppointmentConfirmation() {
                         <p className={confirmationSubtitle}>{t("appointment.confirmation.subtitle")}</p>
                     </div>
                     <div className={confirmationContent}>
-                        <DoctorConfirmationCard doctorId={doctorId} />
+                        <DoctorConfirmationCard doctor={doctor} />
                         <Card className={detailsCard}>
                             <h3 className={detailsTitle}>{t("appointment.confirmation.details")}</h3>
                             <div className={rowDetails + " mb-2"}>
@@ -195,19 +204,24 @@ const contactData =
 const contactIcon =
     "w-4 h-4";
 
-function DoctorConfirmationCard( { doctorId } : { doctorId: string | undefined} ) {
+function DoctorConfirmationCard( { doctor } : { doctor: DoctorDTO | undefined} ) {
 
-    const { url: getDoctorImgUrl } = useDoctorImageUrl(doctorId);
-    const { data: doctor } = useDoctor(doctorId);
+    const { url: getDoctorImgUrl, isLoading: isLoadingImgUrl } = useDoctorImageUrl(userIdFromSelf(doctor?.self));
 
     const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
 
     return (
         <Card className={profileCard}>
-            <Avatar className={avatarContainer}>
-                <AvatarImage src={getDoctorImgUrl || undefined} />
-                <AvatarFallback>{avatarFallbackText}</AvatarFallback>
-            </Avatar>
+            {isLoadingImgUrl ?
+                <Skeleton className={`${avatarContainer} flex justify-center items-center`}>
+                    <Spinner className="h-6 w-6 text-(--gray-300)"/>
+                </Skeleton>
+                : (
+                    <Avatar className={avatarContainer}>
+                        <AvatarImage src={getDoctorImgUrl || undefined} />
+                        <AvatarFallback>{avatarFallbackText}</AvatarFallback>
+                    </Avatar>
+                )}
             <div className={userDataContainer}>
                 <h1 className={userName}>{doctor?.name + " " + doctor?.lastName}</h1>
                 <div className={dataContainer}>
