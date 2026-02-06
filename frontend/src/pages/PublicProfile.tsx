@@ -19,7 +19,7 @@ import BadgeComponent from "@/components/BadgeComponent.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
 import { RatingCard } from "@/components/Rating.tsx";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
     useDoctorImageUrl,
@@ -67,6 +67,7 @@ import { toast } from "sonner";
 import {DatePicker} from "@/components/ui/date-picker.tsx";
 import {isoToLocalDate, localDateToIso} from "@/utils/dateUtils.ts";
 import {useDoctorOffices} from "@/hooks/useOffices.ts";
+import {userIdFromSelf} from "@/utils/IdUtils.ts";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
@@ -105,8 +106,8 @@ function PublicProfile() {
 }
 
 const titleIcon = "w-5 h-5";
-const avatarContainer = "flex items-center w-20 h-20 mx-6 mb-2 border border-[var(--primary-light)] border-4 rounded-full sm:mb-0";
-const userDataContainer = "flex flex-col items-center sm:items-start";
+const avatarContainer = "flex items-center w-20 h-20 mx-6 mb-2 border border-[var(--primary-light)] border-4 rounded-full md:mb-0";
+const userDataContainer = "flex flex-col items-center md:items-start";
 const userName = "text-[var(--text-color)] text-xl font-[700] mb-1";
 const dataContainer = "flex flex-row gap-5 text-sm text-[var(--text-light)]";
 const contactData = "flex flex-row items-center gap-1";
@@ -115,9 +116,10 @@ const ratingContent = "flex flex-row items-center gap-2 font-bold";
 const ratingText = "font-medium text-sm text-[var(--text-light)]";
 const card = "p-0 gap-0";
 const cardTitle = "flex flex-wrap items-center gap-1 px-6 py-2 bg-[var(--primary-bg)] text-[var(--primary-dark)] rounded-t-xl";
+const scheduleButton = "bg-(--primary-color) hover:bg-(--primary-dark) text-white cursor-pointer mt-4 md:mt-0 md:ml-auto mr-6";
 const aboutContent = "px-7 pt-4 pb-6";
 const cardTitleText = "text-lg font-[500] min-w-0";
-const profileContent = "flex flex-col gap-0 items-center sm:flex-row pt-6";
+const profileContent = "flex flex-col gap-0 items-center md:flex-row pt-6";
 const aboutTitle = " text-lg font-[500]";
 const aboutText = " wrap-break-word flex-wrap text-[var(--text-color)] text-md";
 
@@ -145,6 +147,8 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
     const { t } = useTranslation();
     const { url: getDoctorImgUrl } = useDoctorImageUrl(String(doctor.self.split('/').pop()));
     const specialtyNames = specialties.map(s => t(s.name));
+    const navigate = useNavigate();
+    const doctorId = userIdFromSelf(doctor.self);
     return (
         <Card className={card}>
             <div className={cardTitle}>
@@ -176,7 +180,7 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
                     <div className={dataContainer}>
                         <div className={contactData}>
                             <Mail className={contactIcon} />
-                            <p className="max-w-37.5 truncate sm:max-w-75 sm:truncate">{doctor.email}</p>
+                            <p className="max-w-37.5 truncate md:max-w-75 md:truncate">{doctor.email}</p>
                         </div>
                         <div className={contactData}>
                             <Phone className={contactIcon} />
@@ -192,6 +196,12 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
                     ) : null}
                     <BadgeComponent specialties={specialtyNames} maxBadges={maxBadges} />
                 </div>
+                {!isOwner && (
+                    <Button className={scheduleButton} onClick={() => navigate(`/appointment/${doctorId}`)}>
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {t("doctor.profile.schedule")}
+                    </Button>
+                )}
             </div>
             <div className={aboutContent}>
                 <h1 className={aboutTitle}>{t("doctor.profile.card.description")}</h1>
@@ -322,7 +332,7 @@ function OfficeComponent({ officeTitle, neighborhoodUrl }: {
 
 const experienceContent = "pr-6 py-6";
 const timelineContainer = "relative pl-10 before:content-[''] before:absolute before:top-3 before:bottom-3 before:left-14 before:w-[2px] before:-translate-x-1/2 before:bg-[var(--gray-300)]";
-const editComponentButton = "ml-auto shrink-0 w-26 h-10 bg-transparent text-[var(--primary-dark)]   hover:bg-[rgba(var(--primary-light-rgb),0.2)] hover:border hover:border-[rgba(var(--primary-light-rgb),0.4)] transition-all cursor-pointer";
+const editComponentButton = "ml-auto shrink-0 w-26 h-10 bg-transparent text-[var(--primary-dark)] hover:bg-transparent hover:border hover:border-(--primar-dark) cursor-pointer transition-none";
 
 function ExperienceCard({ experiences, isOwner, updateUrl }: {
     experiences: ExperienceDTO[];
