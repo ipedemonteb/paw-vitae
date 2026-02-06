@@ -328,7 +328,7 @@ function Appointment() {
                         <p>{t("appointment.booking.header.subtitle")}</p>
                     </div>
                     <div className={appointmentContent}>
-                        <DoctorProfileCard doctorId={doctorId}/>
+                        <DoctorProfileCard doctor={doctor}/>
                         <div className={selectorsContainer}>
                             <SpecialtySelector
                                 options={specialtyOptions}

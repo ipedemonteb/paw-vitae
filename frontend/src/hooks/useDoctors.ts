@@ -44,7 +44,7 @@ export function useDoctor(userId?: string) {
 
 const isNumericId = (id?: string) => !!id && /^\d+$/.test(id);
 
-export function useDoctorImageUrl(id?: string) {
+export function useDoctorImageUrl(id?: string | undefined) {
     const enabled = useMemo(
         () => isNumericId(id),
         [id]

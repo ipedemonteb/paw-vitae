@@ -54,6 +54,7 @@ import {
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog.tsx";
+import {useDoctor} from "@/hooks/useDoctors.ts";
 
 const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
@@ -99,18 +100,17 @@ function AppointmentDetails() {
         isError: errorAppointment,
         error: appointmentError,
     } = useAppointment(appointmentId);
-
+    const patientId = userIdFromSelf(appointment?.patient);
+    const doctorId = userIdFromSelf(appointment?.doctor);
+    const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
     const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment?.specialty);
     const { data: office, isLoading: loadingOffice } = useDoctorOffice(appointment?.doctorOffice);
     const { data: neighborhood } = useNeighborhood(office?.neighborhood);
     const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointment?.appointmentFiles);
     const { data: rating } = useRating(appointment?.rating);
 
-    const isLoading = loadingAppointment || loadingSpecialty || loadingOffice || loadingFiles;
+    const isLoading = loadingAppointment || loadingSpecialty || loadingOffice || loadingFiles || loadingDoctor;
     const isError = errorAppointment;
-
-    const patientId = userIdFromSelf(appointment?.patient);
-    const doctorId = userIdFromSelf(appointment?.doctor);
 
     const { patientFiles, doctorFiles } = useMemo(() => {
         const all = files ?? [];
@@ -132,7 +132,6 @@ function AppointmentDetails() {
             </div>
         );
     }
-
 
     if (isError || !appointment) {
         const status = appointmentError ? (appointmentError as any).response?.status : 404;
@@ -158,7 +157,7 @@ function AppointmentDetails() {
                         {isDoctor ? (
                             <PatientProfileCard patientId={patientId ?? ""} />
                         ) : (
-                            <DoctorProfileCard doctorId={doctorId ?? ""} />
+                            <DoctorProfileCard doctor={doctor} />
                         )}
 
                         <div className={appointmentData}>
