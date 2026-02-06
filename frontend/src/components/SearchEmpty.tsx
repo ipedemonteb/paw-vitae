@@ -1,8 +1,16 @@
-import {SearchX} from "lucide-react";
+import {CircleAlert, SearchX} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import {useEffect, useState} from "react";
+import {Button} from "@/components/ui/button.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
-export default function SearchEmpty() {
+type SearchEmptyProps = {
+    error: boolean
+    isRefetching?: boolean
+    refetch?: () => void
+}
+
+export default function SearchEmpty({error, isRefetching, refetch}: SearchEmptyProps) {
     const {t} = useTranslation()
     const [mounted, setMounted] = useState(false);
 
@@ -17,12 +25,21 @@ export default function SearchEmpty() {
     const from = "opacity-0 translate-y-2";
     const to = "opacity-100 translate-y-0";
 
+    //TODO internacionalizar
+
     return (
         <div className={`${base} ${transition} ${mounted ? to : from}`}>
-            <SearchX className="text-(--text-light) size-10"/>
+            {error ? (
+                <CircleAlert className="text-(--text-light) size-10"/>
+                ) : (
+                <SearchX className="text-(--text-light) size-10"/>
+            )}
             <div className="flex flex-col justify-center items-center gap-0.5">
-                <p className="text-xl">{t("search.empty.title")}</p>
-                <p className="text-sm">{t("search.empty.message")}</p>
+                <p className="text-xl">{error ? "Unable to load doctors" : t("search.empty.title")}</p>
+                <p className="text-sm">{error? "Check your network connection or click the button below to retry" : t("search.empty.message")}</p>
+                {error && (
+                    isRefetching ? <Spinner className="size-6 text-(--text-light) my-2.5"/> : <Button disabled={isRefetching} className="mt-2 cursor-pointer text-white font-semibold bg-(--gray-400) hover:bg-(--gray-500)" onClick={() => refetch && refetch()}>Retry</Button>
+                )}
             </div>
         </div>
     )

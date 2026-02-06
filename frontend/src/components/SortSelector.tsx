@@ -34,7 +34,7 @@ export function SortSelector({ searchParams, className }: { searchParams: SortSe
 
     return (
         <Select value={currentSort} onValueChange={handleValueChange}>
-            <SelectTrigger className={cn("w-full justify-between", className)}>
+            <SelectTrigger className={cn("w-full justify-between bg-white", className)}>
                 <SelectValue placeholder={t("search.sort.title")} />
             </SelectTrigger>
             <SelectContent>
