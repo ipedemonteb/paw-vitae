@@ -37,6 +37,8 @@
       "coverages": "Obras Sociales",
       "coverage": "Obra Social",
       "no-coverage": "Sin cobertura",
+      "no-coverages": "Sin coberturas",
+      "no-specialties": "Sin especialidades",
       "image": "Click para cambiar la imagen",
       "error": {
         "name": "El nombre es obligatorio.",
@@ -58,6 +60,18 @@
       "type": "Tipo de archivo inválido. Solamente se permiten archivos PDF.",
       "size": "Algunos archivos son demasiado grandes. Máximo {{maxSize}}."
     }
+  },
+  "recover": {
+    "title": "Recuperar contraseña",
+    "subtitle": "Ingresá tu correo electrónico y te enviaremos un token de recuperación",
+    "placeholder_email": "Correo electrónico",
+    "button_send": "Enviar",
+    "back_to_login": "Volver al inicio de sesión",
+    "error_required": "El correo electrónico es obligatorio",
+    "error_invalid": "Por favor ingrese un formato de correo válido",
+    "error_generic": "Ocurrió un error al procesar la solicitud. Inténtalo de nuevo.",
+    "success_title": "¡Revisa tu correo!",
+    "success_message": "Hemos enviado un enlace de restablecimiento a {{email}}."
   },
   "appointment": {
     "history": "Historial de Citas",
@@ -212,18 +226,6 @@
     "aria_email": "Correo electrónico",
     "aria_password": "Contraseña"
   },
-  "recover": {
-    "title": "Recuperar contraseña",
-    "subtitle": "Ingresá tu correo electrónico y te enviaremos un token de recuperación",
-    "placeholder_email": "Correo electrónico",
-    "button_send": "Enviar",
-    "back_to_login": "Volver al inicio de sesión",
-    "error_required": "El correo electrónico es obligatorio",
-    "error_invalid": "Por favor ingrese un formato de correo válido",
-    "error_generic": "Ocurrió un error al procesar la solicitud. Inténtalo de nuevo.",
-    "success_title": "¡Revisa tu correo!",
-    "success_message": "Hemos enviado un enlace de restablecimiento a {{email}}."
-  },
   "change_password": {
     "title": "Cambiar Contraseña",
     "subtitle": "Por favor ingresa una contraseña nueva y segura",
@@ -246,67 +248,6 @@
     "error_generic": "Ocurrió un error al cambiar la contraseña. Inténtalo de nuevo.",
     "error_token_expired": "El token ha expirado o es inválido."
   },
-  "medical-history": {
-    "title": "Historial Médico",
-    "subtitle": "Visualiza los archivos médicos del paciente y registros de consultas",
-    "past": "Consultas Pasadas",
-    "sort": {
-      "title": "Ordenar Por",
-      "old-first": "Más Antiguo",
-      "new-first": "Más Reciente"
-    },
-    "no-appointments": "No tiene consultas anteriores.",
-    "component": {
-      "reason": "Motivo de la Consulta:",
-      "no-reason": "Sin Motivo Especificado",
-      "files": "archivos",
-      "file": "archivo",
-      "no-files": "No hay archivos subidos.",
-      "details": "Ver Detalles",
-      "report": "Reporte de la Consulta",
-      "uploaded": "Subido por",
-      "view": "Ver",
-      "no-report": "No hay reporte disponible para esta consulta."
-    },
-    "back" : "Volver a los detalles del turno"
-  },
-  "common": {
-    "go_back": "Volver atrás",
-    "return_home": "Ir al Inicio",
-    "download": "Download",
-    "view": "View"
-  },
-  "error": {
-    "error": "Error",
-    "403": {
-      "title": "Acceso Denegado",
-      "message": "Lo sentimos, no tienes permisos para acceder a esta página. Verifica que hayas iniciado sesión con la cuenta correcta."
-    },
-    "404": {
-      "title": "Página no encontrada",
-      "message": "La página que buscas no existe, ha sido movida o el enlace es incorrecto. Por favor verifica la URL."
-    },
-    "500": {
-      "title": "Error del Servidor",
-      "message": "Ocurrió un problema inesperado de nuestro lado. Nuestro equipo técnico ha sido notificado. Por favor intenta nuevamente más tarde."
-    },
-    "default": {
-      "title": "Ocurrió un error",
-      "message": "Ha ocurrido un error inesperado. Por favor intenta nuevamente."
-    },
-    "try-again": "Intentar de nuevo"
-  },
-  "verify": {
-    "loading_title": "Verificando cuenta...",
-    "loading_message": "Por favor espere mientras validamos su información.",
-    "success_title": "¡Cuenta Verificada!",
-    "success_message": "Tu cuenta ha sido confirmada exitosamente. Ya puedes acceder a todos nuestros servicios.",
-    "error_title": "Enlace inválido o expirado",
-    "error_message": "No pudimos verificar tu cuenta. El enlace puede haber expirado o ya fue utilizado. Si expiro te enviaremos un nuevo correo de verificación.",
-    "go_home": "Ir al Inicio",
-    "back_to_login": "Volver al inicio de sesión"
-  },
-
   "register": {
     "title_register" : "Registrarse",
     "subtitle_register" : "Crea tu cuenta para acceder a nuestros servicios de salud.",
@@ -323,8 +264,7 @@
     "section_security": "Seguridad",
     "section_coverage": "Cobertura",
     "label_name": "Nombre",
-    "lastName": "Apellido",
-    "name": "Nombre",
+    "chooseImage": "Click para seleccionar imagen",
     "label_lastname": "Apellido",
     "label_email": "Correo electrónico",
     "label_phone": "Teléfono",
@@ -359,7 +299,6 @@
     "loader_coverages": "Cargando obras sociales...",
     "loader_neighborhoods": "Cargando barrios...",
     "no_neighborhoods": "No se encontraron barrios",
-    "chooseImage": "Click para seleccionar imagen",
     "errors": {
       "passwords_mismatch": "Las contraseñas no coinciden",
       "password_requirements": "La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.",
@@ -379,6 +318,66 @@
       "terms_required" : "Debe aceptar los terminos y condiciones para continuar",
       "select_neighborhood": "Por favor seleccione un barrio."
     }
+  },
+  "medical-history": {
+    "title": "Historial Médico",
+    "subtitle": "Visualiza los archivos médicos del paciente y registros de consultas",
+    "past": "Consultas Pasadas",
+    "sort": {
+      "title": "Ordenar Por",
+      "old-first": "Más Antiguo",
+      "new-first": "Más Reciente"
+    },
+    "no-appointments": "No tiene consultas anteriores.",
+    "component": {
+      "reason": "Motivo de la Consulta:",
+      "no-reason": "Sin Motivo Especificado",
+      "files": "archivos",
+      "file": "archivo",
+      "no-files": "No hay archivos subidos.",
+      "details": "Ver Detalles",
+      "report": "Reporte de la Consulta",
+      "uploaded": "Subido por",
+      "view": "Ver",
+      "no-report": "No hay reporte disponible para esta consulta."
+    },
+    "back" : "Volver a los detalles del turno"
+  },
+  "common": {
+    "go_back": "Volver atrás",
+    "return_home": "Ir al Inicio",
+    "download": "Descargar",
+    "view": "Ver"
+  },
+  "error": {
+    "error": "Error",
+    "403": {
+      "title": "Acceso Denegado",
+      "message": "Lo sentimos, no tienes permisos para acceder a esta página. Verifica que hayas iniciado sesión con la cuenta correcta."
+    },
+    "404": {
+      "title": "Página no encontrada",
+      "message": "La página que buscas no existe, ha sido movida o el enlace es incorrecto. Por favor verifica la URL."
+    },
+    "500": {
+      "title": "Error del Servidor",
+      "message": "Ocurrió un problema inesperado de nuestro lado. Nuestro equipo técnico ha sido notificado. Por favor intenta nuevamente más tarde."
+    },
+    "default": {
+      "title": "Ocurrió un error",
+      "message": "Ha ocurrido un error inesperado. Por favor intenta nuevamente."
+    },
+    "try-again": "Intentar de nuevo"
+  },
+  "verify": {
+    "loading_title": "Verificando cuenta...",
+    "loading_message": "Por favor espere mientras validamos su información.",
+    "success_title": "¡Cuenta Verificada!",
+    "success_message": "Tu cuenta ha sido confirmada exitosamente. Ya puedes acceder a todos nuestros servicios.",
+    "error_title": "Enlace inválido o expirado",
+    "error_message": "No pudimos verificar tu cuenta. El enlace puede haber expirado o ya fue utilizado. Si expiro te enviaremos un nuevo correo de verificación.",
+    "go_home": "Ir al Inicio",
+    "back_to_login": "Volver al inicio de sesión"
   },
   "loading": "Cargando...",
   "save": "Guardar Cambios",
@@ -595,15 +594,13 @@
       "no_ratings": "Este doctor aún no tiene calificaciones.",
       "no_certificates": "Este doctor aún no ha subido certificados.",
       "no_experiences": "Este doctor aún no ha agregado experiencias.",
+      "no_specialties": "Este doctor aún no ha agregado especialidades.",
       "present": "Presente",
       "no_offices": "Este doctor aún no ha agregado consultorios.",
       "no_coverages": "Este doctor aún no ha agregado coberturas.",
       "no_bio_available": "Este doctor aún no ha agregado una biografía.",
       "no_description_available": "Este doctor aún no ha agregado una descripción."
     }
-  },
-  "appointment_confirmation": {
-    "dashboard": "Volver al Panel"
   },
   "search": {
     "title": "Médicos Especialistas",
@@ -621,9 +618,10 @@
     "coverage": {
       "title": "Cobertura",
       "select": "Seleccionar cobertura...",
-      "all": "Todas las Coberturas"
+      "all": "Todas las Coberturas",
+      "empty": "No se encontraron coberturas",
+      "search": "Buscar coberturas"
     },
-
     "sort": {
       "title": "Ordenar Por",
       "name_asc": "Nombre (A-Z)",
@@ -654,6 +652,7 @@
     }
   },
   "offices": {
+    "headerTitle": "Oficinas",
     "header": {
       "title": "Oficinas",
       "info": "Pase el cursor sobre una oficina para comenzar a gestionarla"
@@ -728,7 +727,6 @@
     "dayOfWeek": "Día de la Semana",
     "startTime": "Inicio",
     "endTime": "Finalización",
-    "save": "Guardar cambios",
     "addSchedule": "Agregar Disponibilidad",
     "select": {
       "office": "Seleccionar Oficina",
