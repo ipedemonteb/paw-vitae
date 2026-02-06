@@ -22,6 +22,7 @@ import {useAuth} from "@/hooks/useAuth.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useSearchParams} from "react-router-dom";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
+import {toast} from "sonner";
 
 type UnavailabilityRange = {
     startDate: string;
@@ -181,8 +182,14 @@ export default function UnavailabilityComponent() {
         setEndDate(undefined);
 
         putUnavailability.mutate(buildPayload(next), {
-            onSuccess: () => setPendingAction(null),
-            onError: () => setPendingAction(null),
+            onSuccess: () => {
+                toast.success(t("unavailability.toast_saved"));
+                setPendingAction(null);
+            },
+            onError: () => {
+                toast.error(t("unavailability.toast_error"));
+                setPendingAction(null);
+            }
         });
     };
 
@@ -196,8 +203,14 @@ export default function UnavailabilityComponent() {
         );
 
         putUnavailability.mutate(buildPayload(next), {
-            onSuccess: () => setPendingAction(null),
-            onError: () => setPendingAction(null),
+            onSuccess: () => {
+                toast.success(t("unavailability.toast_deleted"));
+                setPendingAction(null);
+                },
+            onError: () => {
+                toast.error(t("unavailability.toast_deleted_error"));
+                setPendingAction(null);
+            }
         });
     };
 

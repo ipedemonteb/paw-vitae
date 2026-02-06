@@ -195,7 +195,9 @@
       "subtitle": "Are you sure you want to cancel this appointment?",
       "confirmation": "Cancel Appointment",
       "back": "Go Back",
-      "cancelling": "Cancelling"
+      "cancelling": "Cancelling",
+        "success": "Appointment cancelled successfully.",
+        "error": "An error occurred while cancelling the appointment. Please try again."
     }
   },
   "login": {
@@ -728,6 +730,8 @@
     "selectPlaceholder" : "select...",
     "office" : "Office",
     "dayOfWeek" : "Day",
+    "toast_saved": "Availability saved successfully",
+    "toast_error": "An error occurred while saving availability. Please try again.",
     "startTime" : "Start Time",
     "endTime" : "End Time",
     "addSchedule" : "Add Availability",
@@ -759,6 +763,10 @@
   "unavailability" : {
     "title" : "Unavailability",
     "add": "Add New",
+    "toast_saved": "Unavailability saved successfully",
+    "toast_error": "An error occurred while saving unavailability. Please try again.",
+    "toast_deleted": "Unavailability deleted successfully",
+    "toast_deleted_error": "An error occurred while deleting unavailability. Please try again.",
     "dialog": {
       "title": "Add Unavailability",
       "description": "Select the date range for your unavailability.",
