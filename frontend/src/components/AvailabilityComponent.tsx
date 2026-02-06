@@ -39,6 +39,7 @@ import {
 import {type DoctorAvailabilityFormDTO, type OfficeDTO} from "@/data/offices.ts";
 import type { AvailabilityDTO } from "@/data/offices.ts"
 import { officeIdFromSelf } from "@/utils/IdUtils.ts";
+import {toast} from "sonner";
 
 type AvailabilitySlot = {
     id: string;
@@ -292,10 +293,12 @@ export default function AvailabilityComponent() {
         try {
             setIsSaving(true);
             await putAvailability.mutateAsync(form);
-
+            toast.success(t("availability.toast_saved"));
             setIsEditing(false);
             setSnapshot(slots.map((x) => ({ ...x })));
-        } finally {
+        } catch {
+            toast.error(t("availability.toast_error"));
+        }finally {
             setIsSaving(false);
         }
     };

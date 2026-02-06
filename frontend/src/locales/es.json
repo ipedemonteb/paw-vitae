@@ -195,7 +195,9 @@
       "subtitle": "¿Seguro que quiere cancelar su turno?",
       "confirmation": "Cancelar Turno",
       "back": "Volver",
-      "cancelling": "Cancelando"
+      "cancelling": "Cancelando",
+        "success": "Turno cancelado exitosamente.",
+        "error": "Error al cancelar el turno. Por favor, inténtalo de nuevo."
     }
   },
   "login": {
@@ -722,6 +724,8 @@
   },
   "availability": {
     "headerTitle": "Disponibilidad",
+    "toast_saved": "Disponibilidad guardada con éxito",
+    "toast_error": "Error al guardar la disponibilidad. Por favor, inténtelo de nuevo.",
     "selectPlaceholder": "Seleccionar...",
     "office": "Oficina",
     "dayOfWeek": "Día de la Semana",
@@ -756,6 +760,10 @@
   "unavailability" : {
     "title" : "Ausencias",
     "add": "Agregar",
+    "toast_saved": "Ausencia agregada con éxito",
+    "toast_error": "Error al agregar la ausencia. Por favor, inténtelo de nuevo.",
+    "toast_deleted": "Ausencia eliminada con éxito",
+    "toast_deleted_error": "Error al eliminar la ausencia. Por favor, inténtelo de nuevo.",
     "dialog": {
       "title": "Agregar Ausencia",
       "description": "Seleccione el rango de fechas de la ausencia.",
