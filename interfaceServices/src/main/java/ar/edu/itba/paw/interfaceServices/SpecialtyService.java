@@ -16,8 +16,6 @@ public interface SpecialtyService {
 
     List<Specialty> getAll();
 
-    /* DEPRECATED METHODS */
-    Optional<Specialty> getByName(String name);
 
 
 }

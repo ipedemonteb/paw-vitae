@@ -31,7 +31,6 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
         return unavailabilitySlotsDao.isUnavailableAtDate(doctorId, date);
     }
 
-
     @Transactional
     @Override
     public UnavailabilitySlot create(UnavailabilitySlot slot) {
@@ -87,29 +86,6 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
 
     @Transactional
     @Override
-    public List<UnavailabilitySlotForm> getDoctorUnavailabilitySlots(Doctor doctor) {
-//        List<UnavailabilitySlot> slots = getUnavailabilityByDoctorId(doctor.getId());
-//        List<UnavailabilitySlotForm> unavailabilitySlots = new ArrayList<>();       //TODO CORREGIR
-//        for (UnavailabilitySlot slot : slots) {
-//            UnavailabilitySlotForm form = new UnavailabilitySlotForm(slot.getStartDate(), slot.getEndDate());
-//            unavailabilitySlots.add(form);
-//        }
-//        return unavailabilitySlots.stream()
-//                .sorted(Comparator.comparing(UnavailabilitySlotForm::getStartDate)
-//                        .thenComparing(UnavailabilitySlotForm::getEndDate))
-//                .toList();
-        return new ArrayList<>();
-
-    }
-    @Transactional(readOnly = true)
-    @Override
-    public List<UnavailabilitySlot> getUnavailabilityByDoctorIdCurrentAndNextMonth(long doctorId) {
-        LOGGER.debug("Getting unavailability slots for doctor {} in current and next month", doctorId);
-        return unavailabilitySlotsDao.getUnavailabilityByDoctorIdCurrentAndNextMonth(doctorId);
-    }
-
-    @Transactional
-    @Override
     public List<UnavailabilitySlot> transformToUnavailabilitySlots(Doctor doctor, List<UnavailabilitySlotForm> unavailabilitySlots) {
         List<UnavailabilitySlot> slots = new ArrayList<>();
         for (UnavailabilitySlotForm slot : unavailabilitySlots) {
@@ -117,34 +93,5 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
             slots.add(unavailabilitySlot);
         }
         return slots;
-    }
-
-    @Transactional
-    @Override
-    public List<UnavailabilitySlotForm> transformToUnavailabilitySlotForms(List<UnavailabilitySlot> unavailabilitySlots) {
-        List<UnavailabilitySlotForm> slots = new ArrayList<>();
-        for (UnavailabilitySlot slot : unavailabilitySlots) {
-            UnavailabilitySlotForm unavailabilitySlot = UnavailabilitySlotForm.fromEntity(slot);
-            slots.add(unavailabilitySlot);
-        }
-        return slots;
-    }
-    @Transactional(readOnly = true)
-    @Override
-    public String getUnavailabilityByDoctorIdAndMonthAndYear(long doctorId, int month, int year) {
-        if (month < 1 || month > 12) {
-            month = LocalDate.now().getMonthValue();
-        }
-        if (year < 1) {
-            year = LocalDate.now().getYear();
-        }
-        LOGGER.debug("Getting unavailability slots for doctor {} in month {} and year {}", doctorId, month, year);
-        List<UnavailabilitySlotForm> unavailabilitySlotForms = transformToUnavailabilitySlotForms(unavailabilitySlotsDao.getUnavailabilityByDoctorIdAndMonthAndYear(doctorId, month, year));
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("unavailabilitySlots", unavailabilitySlotForms);
-        response.put("month", month);
-        response.put("year", year);
-        return JsonUtils.toJson(response);
     }
 }

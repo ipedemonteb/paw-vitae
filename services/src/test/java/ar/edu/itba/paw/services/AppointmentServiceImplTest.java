@@ -35,7 +35,7 @@ public class AppointmentServiceImplTest {
     private static final String STATUS = "Confirmado";
     private static final String REPORT = "Report";
     private static final LocalDateTime DATE = LocalDateTime.now(ZoneId.systemDefault()).plusDays(1);
-    private static final long SLOT_ID = 1L;
+    private static final long HOUR = 10;
     private static final boolean ALLOW = true;
 
     private static final Specialty SPECIALTY = new Specialty(1L, "Cardiology");
@@ -45,7 +45,7 @@ public class AppointmentServiceImplTest {
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
             new Coverage(1L, "Coverage A"), NEIGHBORHOOD, true);
     private static final DoctorOffice DOCTOR_OFFICE = new DoctorOffice(DOCTOR, NEIGHBORHOOD, List.of(SPECIALTY), "Office A");
-    private static final OccupiedSlots SLOT = new OccupiedSlots(DOCTOR, DATE.toLocalDate(), LocalTime.of(10, 0), OccupiedSlots.SlotStatus.AVAILABLE);
+    private static final OccupiedSlots SLOT = new OccupiedSlots(DOCTOR, DATE.toLocalDate(), LocalTime.of(10, 0));
     private static final Appointment APPOINTMENT = new Appointment(
             DATE,
             STATUS,

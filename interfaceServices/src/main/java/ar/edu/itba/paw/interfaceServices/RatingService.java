@@ -16,13 +16,7 @@ public interface RatingService {
 
      Optional<Rating> getRatingByAppointmentId(long appointmentId);
 
-     Page<Rating> getRatingsByDoctorId(long doctorId, int page, int pageSize);
-
-     List<Rating> getRatingsByPatientId(long patientId);
-
      Map<Rating, Patient> getFiveTopRatings();
 
-    List<Rating> getFiveTopRatingsByDoctorId(long doctorId);
-
-    Page<Rating> getAllRatings(int page, int pageSize,Long doctorId);
+     Page<Rating> getAllRatings(int page, int pageSize,Long doctorId);
 }

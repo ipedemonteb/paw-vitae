@@ -22,15 +22,13 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
 
     private final DoctorOfficeAvailabilityDao doctorOfficeAvailabilityDao;
     private final DoctorOfficeService doctorOfficeService;
-    private final OccupiedSlotsService occupiedSlotsService;
     private static final Logger LOGGER = LoggerFactory.getLogger(DoctorOfficeAvailabilityServiceImpl.class);
 
     @Autowired
     public DoctorOfficeAvailabilityServiceImpl(DoctorOfficeAvailabilityDao doctorOfficeAvailabilityDao,
-                                               @Lazy DoctorOfficeService doctorOfficeService,@Lazy OccupiedSlotsService occupiedSlotsService) {
+                                               @Lazy DoctorOfficeService doctorOfficeService) {
         this.doctorOfficeAvailabilityDao = doctorOfficeAvailabilityDao;
         this.doctorOfficeService = doctorOfficeService;
-        this.occupiedSlotsService = occupiedSlotsService;
     }
 
     @Transactional
@@ -42,12 +40,7 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
         return toReturn;
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<DoctorOfficeAvailability> getByOfficeId(long officeId) {
-        LOGGER.debug("Retrieving availability slots for office with id: {}", officeId);
-        return doctorOfficeAvailabilityDao.getByOfficeId(officeId);
-    }
+
 
     @Transactional
     @Override

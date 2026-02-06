@@ -17,10 +17,7 @@ public interface CoverageService {
 
     Coverage create(String name);
 
-
     List<Coverage> getAll();
 
-    /* DEPRECATED METHODS */
-    Optional<Coverage> findByName(String name);
 
 }

@@ -100,11 +100,6 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void setResetPasswordToken(String email) {
-        userService.setResetPasswordToken(email);
-    }
-
-    @Override
     public void changePassword(long userId,String password) {
         userService.changePassword(userId,password);
     }

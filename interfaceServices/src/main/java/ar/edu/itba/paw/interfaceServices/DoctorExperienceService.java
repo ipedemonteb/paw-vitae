@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface DoctorExperienceService {
 
-    public DoctorExperience create(long doctorId, String title, String orgName, LocalDate startDate, LocalDate endDate);
+     DoctorExperience create(long doctorId, String title, String orgName, LocalDate startDate, LocalDate endDate);
 
-    public List<DoctorExperience> findByDoctorId(long doctorId);
+     List<DoctorExperience> findByDoctorId(long doctorId);
 
-    public void update(Doctor doctor, List<ExperienceForm> experiences);
+     void update(Doctor doctor, List<ExperienceForm> experiences);
 }

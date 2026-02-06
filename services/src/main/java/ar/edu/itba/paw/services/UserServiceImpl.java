@@ -148,15 +148,6 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Password changed for user id={}", userId);
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<Long> getImageId(User user) {
-        if (user == null || user instanceof Patient) {
-            return Optional.empty();
-        }
-        LOGGER.debug("Getting image id for user id={}", user.getId());
-        return Optional.of(((Doctor) user).getImageId());
-    }
 
     @Transactional
     @Override

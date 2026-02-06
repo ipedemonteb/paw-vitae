@@ -15,8 +15,6 @@ public interface DoctorOfficeAvailabilityService {
 
     void update(List<DoctorOfficeAvailabilityForm> slots, Long doctorId);
 
-    List<DoctorOfficeAvailability> getByOfficeId(long officeId);
-
     List<DoctorOfficeAvailability> getWithFilters(long doctorId, Long officeId);
 
     boolean isAvailableAtDayAndTime(long officeId, LocalDate date, Integer hour);

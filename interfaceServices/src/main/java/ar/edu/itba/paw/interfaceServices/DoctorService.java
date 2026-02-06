@@ -12,10 +12,6 @@ public interface DoctorService {
 
     Optional<Doctor> getById(final long id);
 
-    Optional<Doctor> getByIdWithAvailableOffices(final long id);
-
-    Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize);
-
     Optional<Doctor> getByEmail(String email);
 
      void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages);
@@ -31,6 +27,6 @@ public interface DoctorService {
     long getAllDoctorsDisplayCount();
 
     String search(String keyword, int results);
-    void setResetPasswordToken(String email);
+
     void changePassword(long userId,String password);
 }
