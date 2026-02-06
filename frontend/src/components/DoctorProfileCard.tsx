@@ -3,8 +3,12 @@ import { Mail, Phone } from "lucide-react";
 import { RatingStars } from "@/components/RatingStars.tsx";
 import BadgeComponent from "@/components/BadgeComponent.tsx";
 import { Card } from "@/components/ui/card.tsx";
-import {useDoctor, useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
+import {useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
 import {initialsFallback} from "@/utils/userUtils.ts";
+import type {DoctorDTO} from "@/data/doctors.ts";
+import {userIdFromSelf} from "@/utils/IdUtils.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 const profileCard =
     "flex flex-col gap-0 items-center sm:flex-row";
@@ -25,11 +29,10 @@ const ratingContent =
 const ratingText =
     "font-medium text-[var(--text-light)]";
 
-function DoctorProfileCard( { doctorId } : { doctorId: string | undefined} ) {
+function DoctorProfileCard( { doctor } : { doctor: DoctorDTO | undefined} ) {
 
-    const { url: getDoctorImgUrl } = useDoctorImageUrl(doctorId);
-    const { data: doctor } = useDoctor(doctorId);
-    const { data: specialties } = useDoctorSpecialties(doctor?.specialties);
+    const { url: getDoctorImgUrl, isLoading: isLoadingImage } = useDoctorImageUrl(userIdFromSelf(doctor?.self));
+    const { data: specialties, isLoading: isLoadingSpecialties } = useDoctorSpecialties(doctor?.specialties);
 
     const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
     const specialtiesList: string[] = (specialties ?? []).map((s) => s.name);
@@ -38,10 +41,16 @@ function DoctorProfileCard( { doctorId } : { doctorId: string | undefined} ) {
 
     return (
         <Card className={profileCard}>
-            <Avatar className={avatarContainer}>
-                <AvatarImage src={getDoctorImgUrl || undefined} />
-                <AvatarFallback>{avatarFallbackText}</AvatarFallback>
-            </Avatar>
+            {isLoadingImage ?
+                <Skeleton className={`${avatarContainer} flex justify-center items-center`}>
+                    <Spinner className="h-6 w-6 text-(--gray-300)"/>
+                </Skeleton>
+                : (
+                    <Avatar className={avatarContainer}>
+                        <AvatarImage src={getDoctorImgUrl || undefined} />
+                        <AvatarFallback>{avatarFallbackText}</AvatarFallback>
+                    </Avatar>
+                )}
             <div className={userDataContainer}>
                 <h1 className={userName}>{doctor?.name + " " + doctor?.lastName}</h1>
                 <div className={dataContainer}>
@@ -62,9 +71,32 @@ function DoctorProfileCard( { doctorId } : { doctorId: string | undefined} ) {
                     <p className={ratingText}>({doctor?.ratingCount})</p>
                 </div>
                     )}
-                <BadgeComponent specialties={specialtiesList} maxBadges={maxBadges} />
+                {isLoadingSpecialties ? (
+                    <LoadingSpecialties />
+                    ) :
+                    <BadgeComponent specialties={specialtiesList} maxBadges={maxBadges} />
+                }
             </div>
         </Card>
+    );
+}
+
+const loadingSpecialtiesContainer =
+    "flex flex-wrap gap-1 mt-2 sm:px-0 px-5 justify-center sm:justify-start";
+const loadingSpecialty =
+    "h-7 w-20 rounded-full";
+const loadingSpecialtyPlus =
+    "h-7 w-8 rounded-full";
+
+function LoadingSpecialties() {
+    return (
+        <div className={loadingSpecialtiesContainer}>
+            <Skeleton className={loadingSpecialty} />
+            <Skeleton className={loadingSpecialty} />
+            <Skeleton className={loadingSpecialty} />
+            <Skeleton className={loadingSpecialty} />
+            <Skeleton className={loadingSpecialtyPlus} />
+        </div>
     );
 }
 

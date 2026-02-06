@@ -17,6 +17,7 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog.tsx";
+import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 
 const dashboardCointainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -44,20 +45,19 @@ function DoctorDashboardLayout() {
     const doctorId = auth.userId;
 
     const { data: doctor, isLoading: loadingDoctor, isError } = useDoctor(doctorId);
-
     const { data: offices, isLoading: loadingOffices } = useDoctorOffices(doctor?.offices);
 
     const [isDismissed, setIsDismissed] = useState(false);
 
-
-    const showOfficeModal = !loadingOffices && offices && offices.length === 0 && !isDismissed;
-    if (loadingDoctor) {
-        return <div>Loading...</div>;
+    if (loadingDoctor || loadingOffices) {
+        return <LoadingFullPageComponent />;
     }
 
     if (!doctor || isError) {
         return <div>Error loading profile...</div>;
     }
+
+    const showOfficeModal = !loadingOffices && offices && offices.length === 0 && !isDismissed;
 
     return (
         <div className={dashboardCointainer}>
@@ -93,7 +93,7 @@ function DoctorDashboardLayout() {
                 </DialogContent>
             </Dialog>
 
-            <DoctorProfileCard doctorId={doctorId} />
+            <DoctorProfileCard doctor={doctor} />
 
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>

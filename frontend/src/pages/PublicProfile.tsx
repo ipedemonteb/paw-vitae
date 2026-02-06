@@ -11,7 +11,10 @@ import {
     Calendar,
     Hospital,
     MapPin,
-    BriefcaseBusiness, Trash2, Plus, Loader2, HeartPlus
+    BriefcaseBusiness,
+    Trash2,
+    Plus,
+    HeartPlus
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
@@ -68,6 +71,9 @@ import {DatePicker} from "@/components/ui/date-picker.tsx";
 import {isoToLocalDate, localDateToIso} from "@/utils/dateUtils.ts";
 import {useDoctorOffices} from "@/hooks/useOffices.ts";
 import {userIdFromSelf} from "@/utils/IdUtils.ts";
+import {Spinner} from "@/components/ui/spinner.tsx";
+import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
@@ -85,7 +91,7 @@ function PublicProfile() {
     const { data: offices, isLoading: isLoadingOffices } = useDoctorOffices(doctor?.offices);
 
     if (isLoadingDoctor || isLoadingCertifications || isLoadingCoverages || isLoadingExperiences || isLoadingProfile || isLoadingOffices || isLoadingRatings || isLoadingSpecialties)
-        return <div className="flex justify-center mt-36"><Loader2 className="animate-spin h-8 w-8" /></div>;
+        return <LoadingFullPageComponent/>
 
     if (isError || !doctor) return <GenericError code={404} />;
 
@@ -145,7 +151,7 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
         return (a + b).toUpperCase() || "U";
     })();
     const { t } = useTranslation();
-    const { url: getDoctorImgUrl } = useDoctorImageUrl(String(doctor.self.split('/').pop()));
+    const { url: getDoctorImgUrl, isLoading: isLoadingImage } = useDoctorImageUrl(String(doctor.self.split('/').pop()));
     const specialtyNames = specialties.map(s => t(s.name));
     const navigate = useNavigate();
     const doctorId = userIdFromSelf(doctor.self);
@@ -171,10 +177,16 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
                 )}
             </div>
             <div className={profileContent}>
-                <Avatar className={avatarContainer}>
-                    <AvatarImage src={getDoctorImgUrl || undefined} />
-                    <AvatarFallback>{avatarFallbackText}</AvatarFallback>
-                </Avatar>
+                {isLoadingImage ?
+                    <Skeleton className={`${avatarContainer} flex justify-center items-center`}>
+                        <Spinner className="h-6 w-6 text-(--gray-300)"/>
+                    </Skeleton>
+                     : (
+                    <Avatar className={avatarContainer}>
+                        <AvatarImage src={getDoctorImgUrl || undefined} />
+                        <AvatarFallback>{avatarFallbackText}</AvatarFallback>
+                    </Avatar>
+                )}
                 <div className={userDataContainer}>
                     <h1 className={userName}>{doctor.name} {doctor.lastName}</h1>
                     <div className={dataContainer}>
