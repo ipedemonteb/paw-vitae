@@ -52,6 +52,8 @@ const heroSearch =
     "mb-10 w-full bg-transparent overflow-visible";
 const searchBar =
     "flex items-stretch overflow-visible rounded-md border border-gray-200 bg-white shadow-md relative";
+const inputContainer =
+    "relative flex-1";
 const heroInput =
     "flex-1 h-12 border-0 rounded-none px-4 text-[var(--text-light)] max-w-85 shadow-none focus-visible:ring-0 hover:bg-[var(--gray-100)]";
 const heroCombo =
@@ -114,22 +116,40 @@ function HeroSection() {
                     <div className="flex items-center">
                         <div className={heroSearch}>
                             <div className={searchBar}>
-                                <Input
-                                    placeholder={t("landing.hero.search_placeholder")}
-                                    className={heroInput}
-                                    onFocus={() => setFocus(true)}
-                                    onBlur={(e) => {
-                                        const related = e.relatedTarget;
-                                        if (divRef.current && related && divRef.current.contains(related)) return;
-                                        setFocus(false);
-                                    }}
-                                    type="search"
-                                    value={keyword}
-                                    onChange={(e) => setKeyword(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") doSearch();
-                                    }}
-                                />
+                                <div className={inputContainer}>
+                                    <Input
+                                        placeholder={t("landing.hero.search_placeholder")}
+                                        className={heroInput}
+                                        onFocus={() => setFocus(true)}
+                                        onBlur={(e) => {
+                                            const related = e.relatedTarget;
+                                            if (divRef.current && related && divRef.current.contains(related)) return;
+                                            setFocus(false);
+                                        }}
+                                        type="search"
+                                        value={keyword}
+                                        onChange={(e) => setKeyword(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") doSearch();
+                                        }}
+                                    />
+                                    <div ref={divRef} onMouseDown={(e) => e.preventDefault()} className={`${
+                                        open
+                                            ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
+                                            : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
+                                    } absolute max-w-85 z-50 max-h-56 scrollbar overscroll-contain overflow-y-auto border rounded-md bg-white w-full p-0 overflow-hidden transition-all duration-200 ease-out origin-top transform`}>
+                                        {!isLoading && searchResults && searchResults.data.length > 0 && (
+                                            searchResults.data.map((d) => (
+                                                <SearchResultsCard doctor={d} key={d.self}/>
+                                            ))
+                                        )}
+                                        {!isLoading && searchResults && searchResults.data.length === 0 && (
+                                            <div className="h-20 w-full bg-gray-100 flex items-center justify-center gap-1">
+                                                <span className="text-(--text-light) text-sm">{t("search.searchbar.empty")}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                                 <SpecialtyCombobox
                                     className={heroCombo}
                                     value={specialtySelf}
@@ -142,22 +162,6 @@ function HeroSection() {
                                     <Search className="h-5 w-5"/>
                                     {t("landing.hero.search")}
                                 </Button>
-                                <div ref={divRef} onMouseDown={(e) => e.preventDefault()} className={`${
-                                    open
-                                        ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
-                                        : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
-                                } absolute max-w-85 z-50 max-h-56 scrollbar overscroll-contain overflow-scroll border flex flex-col top-12 rounded-md bg-white w-full  transition-all duration-200 ease-out origin-top transform motion-reduce:transition-none`}>
-                                    {!isLoading && searchResults && searchResults.data.length > 0 && (
-                                        searchResults.data.map((d) => (
-                                            <SearchResultsCard doctor={d} key={d.self}/>
-                                        ))
-                                    )}
-                                    {!isLoading && searchResults && searchResults.data.length === 0 && (
-                                        <div className="h-20 w-full bg-gray-100 flex items-center justify-center gap-1">
-                                            <span className="text-(--text-light) text-sm">{t("search.searchbar.empty")}</span>
-                                        </div>
-                                    )}
-                                </div>
                             </div>
                         </div>
                     </div>
