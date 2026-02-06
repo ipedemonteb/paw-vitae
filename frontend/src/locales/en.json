@@ -226,6 +226,28 @@
     "aria_email": "Email address",
     "aria_password": "Password"
   },
+  "change_password": {
+    "title": "Change Password",
+    "subtitle": "Please enter a new secure password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm Password",
+    "submit": "Change Password",
+    "back_to_login": "Back to login",
+    "strength": {
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong"
+    },
+    "req_length": "Minimum 8 characters",
+    "passwords_match": "Passwors match",
+    "req_uppercase": "At least one uppercase letter",
+    "req_number": "At least one number",
+    "error_mismatch": "Passwords do not match",
+    "success_title": "Password Updated!",
+    "success_message": "Your password has been changed successfully. You can now login with your new credentials.",
+    "error_generic": "An error occurred while changing the password. Please try again.",
+    "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
+  },
   "register": {
     "title_register" : "Register",
     "subtitle_register" : "Create your account to access our health services.",
@@ -295,32 +317,8 @@
       "no_coverages_available": "No insurance plans found at the moment. Please try again later.",
       "terms_required" : "You must accept the terms and conditions to continue.",
       "select_neighborhood": "Please select a neighborhood."
-
     }
   },
-  "change_password": {
-    "title": "Change Password",
-    "subtitle": "Please enter a new secure password",
-    "new_password": "New Password",
-    "confirm_password": "Confirm Password",
-    "submit": "Change Password",
-    "back_to_login": "Back to login",
-    "strength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong"
-    },
-    "req_length": "Minimum 8 characters",
-    "passwords_match": "Passwors match",
-    "req_uppercase": "At least one uppercase letter",
-    "req_number": "At least one number",
-    "error_mismatch": "Passwords do not match",
-    "success_title": "Password Updated!",
-    "success_message": "Your password has been changed successfully. You can now login with your new credentials.",
-    "error_generic": "An error occurred while changing the password. Please try again.",
-    "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
-  },
-
   "medical-history": {
     "title": "Medical History",
     "subtitle": "View all your patients' medical files and appointment records",
@@ -330,7 +328,6 @@
       "old-first": "Oldest First",
       "new-first": "Newest First"
     },
-
     "no-appointments": "No past appointments.",
     "component": {
       "reason": "Reason for Visit:",
@@ -402,7 +399,6 @@
     "doctor": {
       "dashboard": "Doctor Dashboard",
       "profile": "My Public Profile"
-
     },
     "patient": {
       "dashboard": "Dashboard"
