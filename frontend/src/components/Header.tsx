@@ -22,6 +22,7 @@ import {useTranslation} from "react-i18next";
 import {useDoctorImageUrl} from "@/hooks/useDoctors.ts";
 import {useUser} from "@/hooks/useUser.ts";
 import OfflineBanner from "@/components/OfflineBanner.tsx";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 type UserRole = "ANON" | "PATIENT" | "DOCTOR";
 
@@ -104,11 +105,12 @@ function Header() {
 
     const isLoggedIn = auth.isAuthenticated;
     const userRole = deriveUserRole(isLoggedIn, auth.role);
-    const { url: getDoctorImgUrl } = useDoctorImageUrl(auth.userId);
+    const { url: getDoctorImgUrl, isLoading: imageIsLoading } = useDoctorImageUrl(auth.userId);
     const doctorImgUrl = getDoctorImgUrl;
 
     const user = useUser(auth.role, auth.userId)
 
+    const isLoading = user?.isLoading || imageIsLoading;
     const displayName = user?.data ? `${user.data.name} ${user.data.lastName}` : auth.email ?? "";
 
     const avatarFallbackText = (() => {
@@ -175,6 +177,9 @@ function Header() {
                     </NavigationMenu>
 
                     {isLoggedIn ? (
+                        isLoading ? (
+                            <LoadingComponent/>
+                            ) : (
                         <LoggedInComponent
                             userRole={userRole}
                             open={dropdownOpen}
@@ -182,7 +187,7 @@ function Header() {
                             displayName={displayName}
                             avatarFallbackText={avatarFallbackText}
                             doctorImgUrl={doctorImgUrl}
-                        />
+                        />)
                     ) : (
                         <NotLoggedInComponent open={dropdownOpen} onOpenChange={setDropdownOpen} />
                     )}
@@ -408,6 +413,15 @@ function LoggedInComponent({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+        </div>
+    );
+}
+
+function LoadingComponent() {
+    return (
+        <div className={authDesktop}>
+            <Skeleton className={`${headerAvatar} rounded-full`} />
+            <Skeleton className="w-[140px] h-6" />
         </div>
     );
 }

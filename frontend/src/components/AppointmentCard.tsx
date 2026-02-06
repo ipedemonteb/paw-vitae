@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog.tsx";
 import {Spinner as Loader} from "@/components/ui/spinner.tsx";
 import {useState} from "react";
+import {toast} from "sonner";
 
 const statusClassname =
     "h-7 font-medium border-solid border text-xs w-3/4 rounded-2xl flex items-center justify-center";
@@ -245,10 +246,21 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
                                             onClick={() => {
                                                 if (!appointmentId) return;
                                                 setCancelOpen(false);
-                                                cancelMutation.mutate({
-                                                    id: appointmentId,
-                                                    userId: String(auth.userId),
-                                                });
+                                                cancelMutation.mutate(
+                                                    {
+                                                        id: appointmentId,
+                                                        userId: String(auth.userId),
+                                                    },
+                                                    {
+                                                        onSuccess: () => {
+                                                            toast.success(t("appointment.cancel.success"));
+                                                        },
+                                                        onError: (error: any) => {
+                                                            console.error(error);
+                                                            toast.error(t("appointment.cancel.error"));
+                                                        }
+                                                    }
+                                                );
                                             }}
                                         >
                                             {cancelMutation.isPending ? (
