@@ -1,0 +1,49 @@
+/* eslint-disable react-refresh/only-export-components */
+import type { ReactElement, ReactNode } from 'react';
+import {
+    render,
+    renderHook,
+    type RenderOptions,
+    type RenderHookOptions
+} from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MemoryRouter } from 'react-router-dom';
+import { AuthProvider } from '../../context/authContext.tsx';
+
+const AllTheProviders = ({ children }: { children: ReactNode }) => {
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: false,
+                gcTime: 0,
+                staleTime: 0,
+            },
+        },
+    });
+
+    return (
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <MemoryRouter initialEntries={['/']}>
+                    {children}
+                </MemoryRouter>
+            </AuthProvider>
+        </QueryClientProvider>
+    );
+};
+
+const customRender = (
+    ui: ReactElement,
+    options?: Omit<RenderOptions, 'wrapper'>
+) => render(ui, { wrapper: AllTheProviders, ...options });
+
+const customRenderHook = <Result, Props>(
+    render: (initialProps: Props) => Result,
+    options?: Omit<RenderHookOptions<Props>, 'wrapper'>,
+) => renderHook(render, { wrapper: AllTheProviders, ...options });
+
+// Re-exportamos todo
+export * from '@testing-library/react';
+
+export { customRender as render };
+export { customRenderHook as renderHook };
