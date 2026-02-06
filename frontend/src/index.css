@@ -191,3 +191,14 @@ textarea::-moz-selection {
     @apply bg-background text-foreground;
     }
 }
+
+html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+}
+
+html body[data-scroll-locked][data-scroll-locked] {
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+    --removed-body-scroll-bar-size: 0px !important;
+}
