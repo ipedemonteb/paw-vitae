@@ -41,8 +41,8 @@ export function RatingCard({
         "p-[30px] flex flex-col gap-[18px] text-left border-0 rounded-2xl shadow-[var(--shadow-md)]";
     const ratingUpperContent = "flex gap-[16px] items-start";
     const ratingIconBox = "shrink-0 w-[48px] h-[48px] flex items-top justify-center text-[var(--primary-color)]";
-    const ratingQuote = "flex-1";
-    const ratingText = "text-[16px] text-[var(--text-color)] leading-[1.6]";
+    const ratingQuote = "flex-1 overflow-hidden";
+    const ratingText = "text-[16px] text-[var(--text-color)] leading-[1.6] overflow-hidden wrap-break-word text-wrap";
     const ratingStars = "mt-[10px]";
     const ratingBottomContent =
         "pt-[14px] border-t border-[var(--gray-200)] flex items-center justify-between";

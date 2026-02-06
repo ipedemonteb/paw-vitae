@@ -516,9 +516,9 @@ function MedicalHistoryCard({canAccessMedicalHistory = false, isDoctor, patientI
     );
 }
 
-const doctorCommentContainer = "flex flex-row items-center px-5 gap-0";
+const doctorCommentContainer = "flex flex-row items-center px-5 gap-0 overflow-hidden";
 const asteriskIcon = "w-8 h-8 text-[var(--primary-color)] shrink-0 mr-3";
-const doctorComment = "text-md text-[var(--text-color)]";
+const doctorComment = "text-md text-[var(--text-color)] overflow-hidden text-wrap wrap-break-word";
 const noReport = "text-sm text-[var(--text-light)]";
 const reportTitle = "text-md font-[500]";
 const submitReportButton = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white cursor-pointer";
@@ -672,7 +672,7 @@ function RatingComponent({ rating, comment }: { rating: number | undefined; comm
                     <p className={noReport}>{t("appointment.details.no-rating")}</p>
                 ) : (
                     <>
-                        <p className={hasComment ? "" : noReport}>
+                        <p className={hasComment ? "overflow-hidden text-wrap wrap-break-word" : noReport}>
                             {hasComment ? comment : t("appointment.details.no-comment")}
                         </p>
                         <Separator />

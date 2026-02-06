@@ -74,7 +74,7 @@ const filesIcon =
 const openContainer =
     "bg-[var(--gray-100)] px-6 py-4";
 const reportContainer =
-    "gap-1 py-4 px-5";
+    "gap-1 py-4 px-5 overflow-clip";
 const reportTitle =
     "flex flex-row items-center gap-1 text-[var(--primary-color)] font-[600]";
 const reportIcon =
@@ -203,7 +203,7 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
                                 <ClipboardPenLine className={reportIcon}/>
                                 <h3>{t("medical-history.component.report")}</h3>
                             </div>
-                            <p className={appointment.report.length > 0 ? "" : "text-(--text-light)"}>
+                            <p className={appointment.report.length > 0 ? "overflow-clip text-wrap wrap-break-word" : "text-(--text-light)"}>
                                 {appointment.report.length > 0 ? appointment.report : t("medical-history.component.no-report")}
                             </p>
                         </Card>
@@ -230,13 +230,13 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 }
 
 const fileCard =
-    "w-full py-2 px-3 gap-4";
+    "w-full py-2 px-3 gap-4 max-h-30 overflow-hidden";
 const fileUpperContainer =
-    "flex flex-row items-center gap-2";
+    "flex flex-row items-center gap-2 overflow-clip";
 const fileIconContainer =
     "bg-[var(--primary-bg)] text-[var(--primary-color)] p-2 rounded-md";
 const reportFileTitle =
-    "text-md font-[500] leading-tight mb-1";
+    "text-md font-[500] leading-tight mb-1 text-ellipsis text-nowrap overflow-clip";
 const uploadedByContainer =
     "flex flex-row items-center gap-1 text-[var(--text-light)] text-sm";
 const userIcon =
@@ -265,7 +265,7 @@ function FileComponent({name, uploader, view, download}:{
                 <div className={fileIconContainer}>
                     <File/>
                 </div>
-                <div>
+                <div className="overflow-hidden">
                     <h3 className={reportFileTitle}>{name}</h3>
                     <div className={uploadedByContainer}>
                         <User className={userIcon}/>
