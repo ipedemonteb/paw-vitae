@@ -13,8 +13,8 @@ export default function DashboardNavLoader({ className }: { className?: string }
                 className
             )}
         >
-            <Spinner className="h-8 w-8 text-(--text-light)" />
-            <span className="text-(--text-light)">{t("loading")}</span>
+            <Spinner className="h-8 w-8 text-(--gray-400)" />
+            <span className="text-(--gray-500)">{t("loading")}</span>
         </div>
     );
 }

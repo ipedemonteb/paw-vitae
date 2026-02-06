@@ -303,7 +303,7 @@ export default function UnavailabilityComponent() {
             </Dialog>
 
             {isLoading ? (
-                <DashboardNavLoader className="h-24" />
+                <DashboardNavLoader />
             ) : (
                 <div className={unavailabilityContainer}>
                     {!isUnavailability ? (

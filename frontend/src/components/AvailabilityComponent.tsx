@@ -187,7 +187,7 @@ export default function AvailabilityComponent() {
     const officesQuery = useDoctorOffices(doctorQuery.data?.offices);
     const availabilityQuery = useDoctorAvailability(auth.userId);
 
-    const isLoading = doctorQuery.isLoading || officesQuery.isLoading || availabilityQuery.isLoading;
+    const isLoading = doctorQuery?.isLoading || officesQuery?.isLoading || availabilityQuery?.isLoading;
 
     const officeOptions = useMemo(() => {
         const offices = officesQuery.data ?? [];
