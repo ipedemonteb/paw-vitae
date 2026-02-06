@@ -105,7 +105,9 @@ function Header() {
 
     const isLoggedIn = auth.isAuthenticated;
     const userRole = deriveUserRole(isLoggedIn, auth.role);
-    const { url: getDoctorImgUrl, isLoading: imageIsLoading } = useDoctorImageUrl(auth.userId);
+    const isDoctor = (isLoggedIn && userRole === "DOCTOR") ? true : undefined;
+    const doctorId = isDoctor ? auth.userId : undefined;
+    const { url: getDoctorImgUrl, isLoading: imageIsLoading } = useDoctorImageUrl(doctorId);
     const doctorImgUrl = getDoctorImgUrl;
 
     const user = useUser(auth.role, auth.userId)

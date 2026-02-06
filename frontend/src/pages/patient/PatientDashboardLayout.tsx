@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import PatientProfileCard from "@/components/PatientProfileCard.tsx";
 import {useTranslation} from "react-i18next";
 import {useAuth} from "@/hooks/useAuth.ts";
+import {usePatientById} from "@/hooks/usePatients.ts";
+import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 
 const dashboardContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -53,10 +55,16 @@ function DashboardTab({ to, end, icon: Icon, children }: {
 function PatientDashboardLayout() {
     const auth=useAuth();
     const { t } = useTranslation();
-    const patientId=auth.userId
+    const patientId= auth.userId;
+    const { data: patient, isLoading: isLoadingPatient } = usePatientById(patientId);
+
+    if (isLoadingPatient) {
+        return <LoadingFullPageComponent />
+    }
+
     return (
         <div className={dashboardContainer}>
-            <PatientProfileCard patientId={patientId || ""}/>
+            <PatientProfileCard patient={patient}/>
             <Card className={sectionCard}>
                 <ButtonGroup orientation="horizontal" className={tabsGroup}>
                     <DashboardTab to="/patient/dashboard/upcoming" end icon={Calendar}>
