@@ -21,8 +21,8 @@ public class DoctorDaoHibeImpl implements DoctorDao {
     private EntityManager em;
 
     @Override
-    public Doctor create(String name, String lastName, String email, String password, String phone, String language, Long imageId, List<Specialty> specialties, List<Coverage> coverages) {
-        Doctor doctor = new Doctor(name, lastName, email, password, phone, language, imageId, false, specialties, coverages);
+    public Doctor create(String name, String lastName, String email, String password, String phone, String language, List<Specialty> specialties, List<Coverage> coverages) {
+        Doctor doctor = new Doctor(name, lastName, email, password, phone, language, false, specialties, coverages);
         em.persist(doctor);
         return doctor;
     }

@@ -57,16 +57,15 @@ public class Doctor extends User {
     public Doctor() {
     }
 
-    public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, Double rating, int ratingCount, boolean verified) {
+    public Doctor(String name, String lastName, String email, String password, String phone, String language, Double rating, int ratingCount, boolean verified) {
         super(name, lastName, email, password, phone, language, verified);
-        this.imageId = imageId;
+
         this.rating = rating;
         this.ratingCount = ratingCount;
     }
 
-    public Doctor(String name, String lastName, String email, String password, String phone, String language, Long imageId, boolean verified, List<Specialty> specialtyList, List<Coverage> coverageList) {
+    public Doctor(String name, String lastName, String email, String password, String phone, String language, boolean verified, List<Specialty> specialtyList, List<Coverage> coverageList) {
         super(name, lastName, email, password, phone, language, verified);
-        this.imageId = imageId;
         this.specialtyList = specialtyList;
         this.coverageList = coverageList;
 

@@ -30,18 +30,12 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public long create(MultipartFile image, long doctorId) {
         LOGGER.debug("Creating image with name '{}' and size {} bytes", image.getOriginalFilename(), image.getSize());
-//        if (image.isEmpty()) {
-//            LOGGER.warn("Image is empty");
-//            throw new IllegalArgumentException();
-//        }
-        // TODO: already validated at form?
         Images toReturnImage;
         try {
             toReturnImage = imageDao.create(image.getBytes());
         } catch (IOException e) {
             LOGGER.error("Error while creating image", e);
             throw new RuntimeException("Failed to persist uploaded image", e);
-            //TODO: custom exception?
         }
         LOGGER.info("Image created with id: {}", toReturnImage.getId());
         return toReturnImage.getId();

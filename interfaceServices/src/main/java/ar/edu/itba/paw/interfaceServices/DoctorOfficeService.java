@@ -16,7 +16,7 @@ public interface DoctorOfficeService {
 
     DoctorOffice create(DoctorOffice doctorOffice);
 
-   DoctorOffice transformToDoctorOffice(Doctor doctor, DoctorOfficeForm officeForms);
+    DoctorOffice transformToDoctorOffice(Doctor doctor, DoctorOfficeForm officeForms);
 
     Optional<DoctorOffice> getById(long id);
 
@@ -24,15 +24,13 @@ public interface DoctorOfficeService {
 
     List<DoctorOffice> getActiveByDoctorId(long doctorId);
 
-    List<DoctorOffice> getInactiveByDoctorId(long doctorId);
-
     List<DoctorOffice> getAllByDoctorId(long doctorId);
 
     List<DoctorOffice> getAllByDoctorIdWithAvailability(long doctorId);
 
-     DoctorOffice update(long officeId, DoctorOfficeForm form, long doctorId);
+    DoctorOffice update(long officeId, DoctorOfficeForm form, long doctorId);
 
-     void delete(long officeId, long doctorId);
+    void delete(long officeId, long doctorId);
 
     void updateSpecialties(Doctor doctor, List<Specialty> specialties);
 }

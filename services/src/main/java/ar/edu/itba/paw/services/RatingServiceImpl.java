@@ -67,29 +67,10 @@ public class RatingServiceImpl implements RatingService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Rating> getRatingsByDoctorId(long doctorId, int page, int pageSize) {
-        return ratingDao.getRatingsByDoctorId(doctorId, page, pageSize);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<Rating> getRatingsByPatientId(long patientId) {
-        return ratingDao.getRatingsByPatientId(patientId);
-    }
-
-
-    @Transactional(readOnly = true)
-    @Override
     public Map<Rating, Patient> getFiveTopRatings() {
         return ratingDao.getFiveTopRatings().stream().collect(Collectors.toMap(
                 rating -> rating,
                 rating -> patientService.getById(rating.getPatient().getId()).orElseThrow(UserNotFoundException::new)));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Rating> getFiveTopRatingsByDoctorId(long doctorId) {
-        return ratingDao.getFiveTopRatingsByDoctorId(doctorId);
     }
 
     @Transactional(readOnly = true)

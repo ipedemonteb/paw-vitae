@@ -39,13 +39,6 @@ public class CoverageServiceImpl implements CoverageService {
     @Transactional(readOnly = true)
     @Cacheable
     @Override
-    public Optional<Coverage> findByName(String name) {
-        return coverageDao.findByName(name);
-    }
-
-    @Transactional(readOnly = true)
-    @Cacheable
-    @Override
     public List<Coverage> getAll() {
         return coverageDao.getAll();
     }

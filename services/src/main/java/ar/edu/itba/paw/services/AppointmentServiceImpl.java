@@ -176,18 +176,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointments;
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public Map<LocalDate, List<Integer>> getFutureAppointmentsByUserAndDate(long userId) {
-        LOGGER.debug("Getting future appointments for userId: {}", userId);
-        List<Appointment> appointments = appointmentDao.getFutureAppointmentsByUser(userId);
-        Map<LocalDate, List<Integer>> appointmentsByDate = new HashMap<>();
-        for (Appointment appointment : appointments) {
-            LocalDate date = appointment.getDate().toLocalDate();
-            appointmentsByDate.computeIfAbsent(date, k -> new ArrayList<>()).add(appointment.getDate().getHour());
-        }
-        return appointmentsByDate;
-    }
+
 
     @Transactional(readOnly = true)
     @Override

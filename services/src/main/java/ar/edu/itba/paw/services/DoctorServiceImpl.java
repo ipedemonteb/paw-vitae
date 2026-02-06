@@ -59,8 +59,7 @@ public class DoctorServiceImpl implements DoctorService {
             Coverage coverage = coverageService.findById(coverageId).orElseThrow(CoverageNotFoundException::new);
             coveragesList.add(coverage);
         }
-        //TODO: Maybe remove field imageId?
-        Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, null, specialtiesList, coveragesList);
+        Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, specialtiesList, coveragesList);
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
         userService.setVerificationToken(email);
         return doctor;
@@ -77,24 +76,7 @@ public class DoctorServiceImpl implements DoctorService {
         return doctor;
     }
 
-    @Override
-    public Optional<Doctor> getByIdWithAvailableOffices(long id) {
-        LOGGER.debug("Getting doctor with id {} with available offices", id);
-        Optional<Doctor> doctor = this.doctorDao.getByIdWithAvailableOffices(id);
-        if (doctor.isEmpty()) {
-            LOGGER.warn("No doctor found with id {}", id);
-        }
-        return doctor;
-    }
 
-    @Transactional(readOnly = true)
-    @Override
-    public Page<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
-        LOGGER.debug("Getting doctors with special id {}", specialtyId);
-        int total = doctorDao.countBySpecialty(specialtyId);
-        List<Doctor> docs = doctorDao.getBySpecialty(specialtyId, page, pageSize);
-        return new Page<>(docs, page, pageSize, total);
-    }
 
     @Transactional(readOnly = true)
     @Override
@@ -190,11 +172,6 @@ public class DoctorServiceImpl implements DoctorService {
         Map<String, Object> response = new HashMap<>();
         response.put("doctors", doctors);
         return JsonUtils.toJson(response, Doctor.Views.Public.class);
-    }
-
-    @Override
-    public void setResetPasswordToken(String email) {
-        userService.setResetPasswordToken(email);
     }
 
     @Override

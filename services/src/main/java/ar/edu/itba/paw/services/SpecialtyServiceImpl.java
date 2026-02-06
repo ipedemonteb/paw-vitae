@@ -33,13 +33,6 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     @Transactional(readOnly = true)
     @Cacheable
     @Override
-    public Optional<Specialty> getByName(String name) {
-        return specialtyDao.getByName(name);
-    }
-
-    @Transactional(readOnly = true)
-    @Cacheable
-    @Override
     public List<Specialty> getAll() {
         return specialtyDao.getAll();
     }

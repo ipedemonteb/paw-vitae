@@ -5,9 +5,9 @@ import ar.edu.itba.paw.models.DoctorProfile;
 
 public interface DoctorProfileService {
 
-    public DoctorProfile create(long doctorId, String bio, String description);
+     DoctorProfile create(long doctorId, String bio, String description);
 
-    public DoctorProfile findByDoctorId(long id);
+     DoctorProfile findByDoctorId(long id);
 
-    public void update(Doctor doctor, String bio, String description);
+     void update(Doctor doctor, String bio, String description);
 }

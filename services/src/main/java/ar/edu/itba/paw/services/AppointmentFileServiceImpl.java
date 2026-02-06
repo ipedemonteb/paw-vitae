@@ -58,12 +58,6 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<AppointmentFile> getById(long id) {
-        return appointmentFileDao.getById(id);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public List<AppointmentFile> getByAppointmentId(long appointment_id) {
         return appointmentFileDao.getByAppointmentId(appointment_id);
     }
@@ -83,15 +77,6 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         Appointment appointment = appointmentOpt.get();
         LOGGER.info("File {} authorized for appointment {} and user {}", file, appointment, username);
         return Optional.of(file);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<AppointmentFile> getAllFilesForPatient(long patientId, int pageNumber, int pageSize) {
-        LOGGER.debug("Getting files for patient {} on page {}", patientId, pageNumber);
-        int totalFiles = appointmentFileDao.getAllFilesForPatientCount(patientId);
-        List<AppointmentFile> files = appointmentFileDao.getAllFilesForPatient(patientId, pageNumber, pageSize);
-        return new Page<>(files, pageNumber, pageSize, totalFiles);
     }
 
     @Transactional(readOnly = true)
