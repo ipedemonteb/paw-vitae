@@ -20,6 +20,7 @@ import SearchResultsCard from "@/components/SearchResultCard.tsx";
 import {SearchSpecialtyCombobox} from "@/components/SearchSpecialtyCombobox.tsx";
 import SearchEmpty from "@/components/SearchEmpty.tsx";
 import {SortSelector} from "@/components/SortSelector.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 const container =
     "px-[24px] mx-auto max-w-6xl w-full";
 
@@ -29,7 +30,7 @@ function transformWeekdays(weekdays: string[]) {
 
 function Search() {
     const doctorsQuery = useDoctorQueryParams();
-    const {data: doctors, isLoading: isLoadingDoctors} = useDoctors({
+    const {data: doctors, isLoading: isLoadingDoctors, isError: isErrorDoctors, refetch, isRefetching} = useDoctors({
         specialty: Number(doctorsQuery.specialty),
         coverage: Number(doctorsQuery.coverage),
         weekdays: transformWeekdays(doctorsQuery.weekdays),
@@ -39,12 +40,15 @@ function Search() {
         page: doctorsQuery.page
     })
 
+    const loadingDelayed = useDelayedBoolean(isLoadingDoctors, 500)
+    const refetchingDelayed = useDelayedBoolean(isRefetching, 500)
+
     return (
         <div className="bg-(--background-light) min-h-screen pb-10 pt-22">
             <div className={container}>
                 <HeroSection searchParams={doctorsQuery} />
                 <FilterSection searchParams={doctorsQuery} />
-                <ResultSection paginationData={doctors} isLoading={isLoadingDoctors} searchParams={doctorsQuery} />
+                <ResultSection isRefetching={refetchingDelayed} refetch={refetch} isError={isErrorDoctors} paginationData={doctors} isLoading={loadingDelayed} searchParams={doctorsQuery} />
             </div>
         </div>
     );
@@ -75,7 +79,7 @@ function HeroSection({searchParams}: SectionProps) {
     const [debounced] = useDebounce(keyword, 500)
     const specialty = "All Specialties"
 
-    const {data: searchResults, isLoading} = useDoctors({
+    const {data: searchResults, isLoading, isError} = useDoctors({
         keyword: debounced,
         pageSize: 5
     })
@@ -88,7 +92,7 @@ function HeroSection({searchParams}: SectionProps) {
     }, [searchParams.keyword]);
 
     useEffect(() => {
-        setOpen(keyword.length > 0 && !isLoading && focus);
+        setOpen(keyword.length > 0 && !isLoading && focus && !isError);
     }, [keyword, focus, isLoading]);
 
     return (
@@ -260,10 +264,13 @@ const formatBtnInactive =
 type ResultSectionProps = {
     paginationData?: PaginationData<DoctorDTO[]>
     isLoading: boolean
+    isRefetching: boolean
+    isError: boolean
+    refetch?: () => void
     searchParams: PaginationParams & {setParams: (updater: (p: URLSearchParams) => void) => void}
 }
 
-function ResultSection({paginationData, isLoading, searchParams}: ResultSectionProps ) {
+function ResultSection({paginationData, isLoading, isRefetching, isError, refetch, searchParams}: ResultSectionProps ) {
     const { t } = useTranslation();
 
     const [view, setView] = useState<"list" | "grid">("list");
@@ -298,6 +305,8 @@ function ResultSection({paginationData, isLoading, searchParams}: ResultSectionP
                         ))}
                 </div>
 
+            ) : isError ? (
+                <SearchEmpty isRefetching={isRefetching} error={true} refetch={refetch}/>
             ) : (
                 <ResultList data={paginationData?.data}/>
             ) : isLoading ? (
@@ -306,6 +315,8 @@ function ResultSection({paginationData, isLoading, searchParams}: ResultSectionP
                         <Skeleton key={i} className="h-92 w-88 p-0 gap-0"/>
                     ))}
                 </div>
+            ) : isError ? (
+                <SearchEmpty isRefetching={isRefetching} error={true} refetch={refetch}/>
             ) : (
                 <ResultGrid data={paginationData?.data}/>
             )
@@ -333,7 +344,7 @@ function ResultList({data}: ResultProps) {
 
     if (data?.length === 0) {
         return (
-            <SearchEmpty/>
+            <SearchEmpty error={false}/>
         )
     }
     return (
@@ -365,7 +376,7 @@ function ResultGrid({data}: ResultProps) {
 
     if (data?.length === 0) {
         return (
-            <SearchEmpty/>
+            <SearchEmpty error={false}/>
         )
     }
     return (
