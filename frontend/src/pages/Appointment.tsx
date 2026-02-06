@@ -42,6 +42,7 @@ import {
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
 import {daysBetweenUtc} from "@/utils/dateUtils.ts";
+import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -120,8 +121,8 @@ function Appointment() {
 
     const { data: doctor, isLoading: loadingDoctor, isError: errorDoctor, error: doctorError } = useDoctor(doctorId);
     const { data: offices, isLoading: loadingOffices } = useDoctorOffices(doctor?.offices, { status: "active" });
-    const { data: officeSpecialties } = useDoctorOfficesSpecialties(offices);
-    const { data: doctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
+    const { data: officeSpecialties, isLoading: isLoadingOfficeSpecialties } = useDoctorOfficesSpecialties(offices);
+    const { data: doctorSpecialties, isLoading: isLoadingDoctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
 
     const resolvePage = Math.floor((daysBetweenUtc(today, selectedDate) / 10) + 1)
 
@@ -136,7 +137,7 @@ function Appointment() {
 
     const unavailableRanges = unavailabilityPage?.data || [];
 
-    const isLoading = loadingDoctor || loadingOffices || loadingSlots || loadingUnavailability;
+    const isLoading = loadingDoctor || loadingOffices || loadingSlots || loadingUnavailability || isLoadingOfficeSpecialties ||     isLoadingDoctorSpecialties;
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -305,12 +306,7 @@ function Appointment() {
 
     if (isLoading) {
         return (
-            <div className={appointmentBackground}>
-                <div className="flex flex-col items-center justify-center h-screen gap-4">
-                    <Loader2 className="h-12 w-12 animate-spin text-(--primary-color)" />
-                    <p className="text-(--text-light) font-medium">{t("common.loading", "Cargando...")}</p>
-                </div>
-            </div>
+            <LoadingFullPageComponent/>
         );
     }
 
@@ -516,7 +512,7 @@ function OfficeSelector({
                         <SelectValue placeholder={t("appointment.booking.office")} />
                     </SelectTrigger>
 
-                    <SelectContent>
+                    <SelectContent position="popper" side="bottom">
                         <SelectGroup>
                             {options.map((o) => (
                                 <SelectItem key={o.self} value={o.self}>
@@ -549,7 +545,7 @@ function SpecialtySelector({options, selectedSpecialty, setSelectedSpecialty}: {
                     <SelectTrigger className={selectorButton}>
                         <SelectValue placeholder={t("appointment.booking.specialty")}/>
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="popper" side="bottom">
                         <SelectGroup>
                             {options.map((s) => (
                                 <SelectItem key={s.self} value={s.self}>

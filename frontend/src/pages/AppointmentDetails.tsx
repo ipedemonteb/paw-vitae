@@ -55,6 +55,8 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog.tsx";
 import {useDoctor} from "@/hooks/useDoctors.ts";
+import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
+import {usePatientById} from "@/hooks/usePatients.ts";
 
 const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
@@ -103,13 +105,14 @@ function AppointmentDetails() {
     const patientId = userIdFromSelf(appointment?.patient);
     const doctorId = userIdFromSelf(appointment?.doctor);
     const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
+    const { data: patient, isLoading: loadingPatient } = usePatientById(patientId);
     const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment?.specialty);
     const { data: office, isLoading: loadingOffice } = useDoctorOffice(appointment?.doctorOffice);
-    const { data: neighborhood } = useNeighborhood(office?.neighborhood);
+    const { data: neighborhood, isLoading: loadingNeighbourhood } = useNeighborhood(office?.neighborhood);
     const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointment?.appointmentFiles);
-    const { data: rating } = useRating(appointment?.rating);
+    const { data: rating, isLoading: loadingRating } = useRating(appointment?.rating);
 
-    const isLoading = loadingAppointment || loadingSpecialty || loadingOffice || loadingFiles || loadingDoctor;
+    const isLoading = loadingAppointment || loadingSpecialty || loadingOffice || loadingFiles || loadingDoctor || loadingRating || loadingNeighbourhood || loadingPatient;
     const isError = errorAppointment;
 
     const { patientFiles, doctorFiles } = useMemo(() => {
@@ -124,12 +127,7 @@ function AppointmentDetails() {
 
     if (isLoading) {
         return (
-            <div className={appointmentBackground}>
-                <div className="flex flex-col items-center justify-center h-screen gap-4">
-                    <Spinner className="h-12 w-12" />
-                    <p className="text-[var(--text-light)] font-medium">{t("common.loading", "Cargando detalles...")}</p>
-                </div>
-            </div>
+            <LoadingFullPageComponent/>
         );
     }
 
@@ -155,7 +153,7 @@ function AppointmentDetails() {
                     </div>
                     <div className={appointmentContent}>
                         {isDoctor ? (
-                            <PatientProfileCard patientId={patientId ?? ""} />
+                            <PatientProfileCard patient={patient} />
                         ) : (
                             <DoctorProfileCard doctor={doctor} />
                         )}
@@ -172,7 +170,6 @@ function AppointmentDetails() {
                         <div className="flex flex-col gap-6">
                             <PatientFileCard files={patientFiles} />
                             <MedicalHistoryCard isDoctor={isDoctor} canAccessMedicalHistory={appointment.allowFullHistory} patientId={patientId}/>
-
 
                             {showPostVisit ? (
                                 isDoctor && !isCompleted && (appointment.report ?? "").trim().length === 0 ? (
