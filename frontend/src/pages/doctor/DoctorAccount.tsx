@@ -37,6 +37,7 @@ import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {initialsFallback} from "@/utils/userUtils.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
 const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
@@ -94,7 +95,7 @@ function DoctorAccount() {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const { url: doctorImageUrl } = useDoctorImageUrl(auth.userId);
+    const { url: doctorImageUrl, isLoading: isLoadingImageUrl } = useDoctorImageUrl(auth.userId);
     useEffect(() => {
         if (doctor) {
             setFormData({
@@ -179,9 +180,7 @@ function DoctorAccount() {
         });
     };
 
-    if (isLoadingDoctor || isLoadingCurrentSpecs || isLoadingCurrentCovs || isLoadingAllSpecs || isLoadingAllCovs) {
-        return <div className="flex justify-center mt-36"><Spinner className="animate-spin h-8 w-8" /></div>;
-    }
+    const isLoading = isLoadingDoctor || isLoadingCurrentSpecs || isLoadingCurrentCovs || isLoadingAllSpecs || isLoadingAllCovs;
 
     if (isError || !doctor) return <GenericError code={404} />;
     const isSaving = updateProfileMutation.isPending;
@@ -197,7 +196,7 @@ function DoctorAccount() {
                 )}
                 {isEditing && <div className="h-9" />}
             </DashboardNavHeader>
-            {isLoadingDoctor ? <DashboardNavLoader /> :
+            {isLoading ? <DashboardNavLoader /> :
                 <div className={containerStyles}>
                     <Card className={cardStyles}>
                         <div className={cardHeaderStyles}>
@@ -210,12 +209,17 @@ function DoctorAccount() {
                         <CardContent className="p-0 flex flex-col gap-2">
                             <div className="flex flex-col items-center justify-center py-8 bg-(--gray-100) border-b">
                                 <div className="relative group">
-                                    <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
-                                        <AvatarImage src={previewImage || doctorImageUrl || undefined} className="object-cover" />
-                                        <AvatarFallback className="text-2xl bg-(--gray-200)">
-                                            {initialsFallback(doctor?.name, doctor?.lastName)}
-                                        </AvatarFallback>
-                                    </Avatar>
+                                    {isLoadingImageUrl ?
+                                        <Skeleton className={"flex justify-center items-center h-32 w-32 border-4 border-white rounded-full"}>
+                                            <Spinner className="h-6 w-6 text-(--gray-300)"/>
+                                        </Skeleton> :
+                                        <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
+                                            <AvatarImage src={previewImage || doctorImageUrl || undefined} className="object-cover" />
+                                            <AvatarFallback className="text-2xl bg-(--gray-200)">
+                                                {initialsFallback(doctor?.name, doctor?.lastName)}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    }
                                     {isEditing && (
                                         <div
                                             className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
