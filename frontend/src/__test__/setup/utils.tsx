@@ -34,16 +34,22 @@ const AllTheProviders = ({ children }: { children: ReactNode }) => {
 
 const customRender = (
     ui: ReactElement,
-    options?: Omit<RenderOptions, 'wrapper'>
+    options?: RenderOptions
 ) => render(ui, { wrapper: AllTheProviders, ...options });
 
 const customRenderHook = <Result, Props>(
     render: (initialProps: Props) => Result,
-    options?: Omit<RenderHookOptions<Props>, 'wrapper'>,
-) => renderHook(render, { wrapper: AllTheProviders, ...options });
+    options?: RenderHookOptions<Props>,
+) => {
 
-// Re-exportamos todo
+    const userWrapper = options?.wrapper;
+
+    return renderHook(render, {
+        wrapper: userWrapper ?? AllTheProviders,
+        ...options
+    });
+};
+
 export * from '@testing-library/react';
-
 export { customRender as render };
 export { customRenderHook as renderHook };
