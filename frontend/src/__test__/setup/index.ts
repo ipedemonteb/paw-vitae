@@ -16,4 +16,10 @@ export const handlers = [
         { id: '2', name: 'Recoleta' },
         { id: '3', name: 'Palermo' }
     ]),
+    ...createCatalogHandlers('specialties', [
+        { id: '1', name: 'Cardiología' },
+        { id: '2', name: 'Dermatología' },
+        { id: '3', name: 'Pediatría' },
+        { id: '4', name: 'Neurología' }
+    ]),
 ];

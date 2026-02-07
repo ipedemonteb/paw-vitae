@@ -6,7 +6,7 @@ import {useNeighborhood, useNeighborhoods} from "@/hooks/useNeighborhoods.ts";
 describe('UseNeighborhoods', () => {
 
     describe('useNeighborhoods hook', () => {
-        it('should return a list of coverages', async () => {
+        it('deberia retornar una lista de barrios', async () => {
             const {result} = renderHook(() => useNeighborhoods());
 
             expect(result.current.isLoading).toBe(true);
@@ -25,7 +25,7 @@ describe('UseNeighborhoods', () => {
     })
 
     describe('useNeighborhood hook', () => {
-        it('should return a single neighborhood', async () => {
+        it('deberia retornar un unico barrio', async () => {
 
             const {result} = renderHook(() => useNeighborhood('/neighborhoods/1'));
 
@@ -40,7 +40,7 @@ describe('UseNeighborhoods', () => {
 
         })
 
-        it('should return an error if the neighborhood does not exist', async () => {
+        it('deberia retornar error si no existe el barrio', async () => {
             const {result} = renderHook(() => useNeighborhood('/neighborhoods/error'));
             await waitFor(() => expect(result.current.isError).toBe(true));
         })
