@@ -40,8 +40,8 @@ describe('UseNeighborhoods', () => {
 
         })
 
-        it('should return an error if the coverage does not exist', async () => {
-            const {result} = renderHook(() => useNeighborhood('/coverages/error'));
+        it('should return an error if the neighborhood does not exist', async () => {
+            const {result} = renderHook(() => useNeighborhood('/neighborhoods/error'));
             await waitFor(() => expect(result.current.isError).toBe(true));
         })
 
