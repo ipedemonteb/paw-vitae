@@ -172,13 +172,13 @@ function HeroSection() {
         <span className="text-4xl font-bold text-[var(--primary-color)]">
           {loadingDoctors ? '…' : doctors}
         </span>
-                        <span className="text-lg text-[var(--text-light)]">Doctores</span>
+                        <span className="text-lg text-[var(--text-light)]">{t("landing.hero.doctors_count")}</span>
                     </div>
                     <div className="flex flex-col">
         <span className="text-4xl font-bold text-[var(--primary-color)]">
           {loadingPatients ? '…' : patients}
         </span>
-                        <span className="text-lg text-[var(--text-light)]">Pacientes</span>
+                        <span className="text-lg text-[var(--text-light)]">{t("landing.hero.patients_count")}</span>
                     </div>
                 </div>
             </div>
