@@ -1,11 +1,19 @@
 import { appointmentHandlers } from '../mocks/AppointmentsApiMock';
 import {authHandlers} from "@/__test__/mocks/AuthApiMock.ts";
-import {coveragesHandlers} from "@/__test__/mocks/CoveragesApiMock.ts";
-import {neighborhoodHandlers} from "@/__test__/mocks/NeighborhoodsApiMock.ts";
+import {createCatalogHandlers} from "@/__test__/mocks/factories.ts";
 
 export const handlers = [
     ...appointmentHandlers,
     ...authHandlers,
-    ...coveragesHandlers,
-    ...neighborhoodHandlers
+    ...createCatalogHandlers('coverages', [
+        { id: '1', name: 'Medifé' },
+        { id: '2', name: 'Galeno' },
+        { id: '3', name: 'OSDE' }
+    ]),
+
+    ...createCatalogHandlers('neighborhoods', [
+        { id: '1', name: 'Belgrano' },
+        { id: '2', name: 'Recoleta' },
+        { id: '3', name: 'Palermo' }
+    ]),
 ];
