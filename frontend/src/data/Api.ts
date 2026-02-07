@@ -7,7 +7,7 @@ import axios, {
 
 import {getAccessToken, clearAuth, getRefreshToken, setAuth} from "@/context/auth-store.ts";
 
-const BASE_URL = "http://localhost:8080/api/";
+const BASE_URL = "http://localhost:8080/api";
 
 const AUTHZ = "Authorization";
 export const NEW_JWT_HEADER = "x-vitae-authtoken";

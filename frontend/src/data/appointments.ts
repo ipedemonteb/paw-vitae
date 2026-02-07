@@ -127,6 +127,7 @@ export async function uploadAppointmentFile(appointmentId: string, doc: File, ro
     formData.append(paramName, doc);
     return await api.post<AppointmentFileDTO>(`/appointments/${appointmentId}/files/${role}`, formData, {
         headers: {"Content-Type": "multipart/form-data"}
+        //TODO: Haciendo los tests, charlanod con la IA dice que esta linea no es necesaria, revisar.
     });
 }
 export async function fetchFileBlob(url: string) {
