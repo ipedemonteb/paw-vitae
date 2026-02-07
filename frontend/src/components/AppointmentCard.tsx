@@ -22,9 +22,10 @@ import {
     DialogTrigger,
     DialogClose,
 } from "@/components/ui/dialog.tsx";
-import {Spinner as Loader} from "@/components/ui/spinner.tsx";
+import {Spinner, Spinner as Loader} from "@/components/ui/spinner.tsx";
 import {useState} from "react";
 import {toast} from "sonner";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 const statusClassname =
     "h-7 font-medium border-solid border text-xs w-3/4 rounded-2xl flex items-center justify-center";
@@ -38,6 +39,8 @@ const statusClassnameDictionary = {
     cancelado: cancelledStatusClassname,
 };
 
+const loadingSkeleton =
+    "w-full h-118 sm:h-56";
 const leftSection =
     "bg-gray-100 w-full max-w-none min-w-0 space-y-3 flex flex-col justify-center items-center " +
     "py-6 sm:py-8 sm:w-1/6 sm:max-w-44 sm:min-w-36 self-stretch " +
@@ -67,7 +70,6 @@ const reasonLabel = "text-(--text-light)";
 const reasonTextWrap = "relative w-full min-w-0";
 const reasonText = "truncate block w-full";
 const reasonFade = "pointer-events-none absolute top-0 right-0 h-full w-8 bg-linear-to-r from-transparent to-gray-50";
-
 const bottomRow =
     "flex flex-col gap-3 items-stretch w-full sm:flex-row sm:justify-between sm:items-center mt-2";
 const specialtyPill =
@@ -77,12 +79,10 @@ const detailsButton =
 const cancelButton =
     "flex gap-2 cursor-pointer items-center rounded-lg justify-center px-2 py-2 " +
     "border border-(--danger) text-(--danger) bg-white hover:bg-(--danger) hover:text-white";
-
 const avatarClass =
     "h-10 w-10 shrink-0 border border-solid border-blue-500 bg-blue-200";
 const avatarFallbackClass =
     "bg-(--primary-bg) text-(--primary-color) font-semibold";
-
 const dialogHeader = "font-bold text-xl text-[var(--text-color)]";
 const dialogText = "text-[var(--text-light)] text-lg font-normal";
 const dialogFooter = "mt-2";
@@ -122,12 +122,12 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
     const isDoctor = auth.role === "ROLE_DOCTOR";
     const doctorId = userIdFromSelf(appointment.doctor);
 
-    const { data: patient } = usePatient(appointment.patient);
-    const { data: doctor } = useDoctor(doctorId);
-    const { url: doctorImgUrl } = useDoctorImageUrl(doctorId);
+    const { data: patient, isLoading: loadingPatient } = usePatient(appointment.patient);
+    const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
+    const { url: doctorImgUrl, isLoading: loadingDoctorImg } = useDoctorImageUrl(doctorId);
 
-    const { data: specialty } = useSpecialty(appointment.specialty);
-    const { data: coverage } = useCoverage(patient?.coverages);
+    const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment.specialty);
+    const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverages);
 
     const locale = i18n?.language || "en-US";
 
@@ -155,6 +155,10 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
 
     const [cancelOpen, setCancelOpen] = useState(false);
 
+    const isLoading = loadingPatient || loadingDoctor || loadingSpecialty || loadingCoverage;
+
+    if(isLoading) return <Skeleton className={loadingSkeleton}/>
+
     return (
         <div style={{ transitionDelay: `${animationDelay * 80}ms` }} className={cardContainer}>
             <div className={leftSection}>
@@ -176,10 +180,16 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
 
             <div className={rightSection}>
                 <div className={topRow}>
-                    <Avatar className={avatarClass}>
-                        <AvatarImage src={avatarSrc} />
-                        <AvatarFallback className={avatarFallbackClass}>{fallbackText}</AvatarFallback>
-                    </Avatar>
+                    {loadingDoctorImg ?
+                        <Skeleton className={`${avatarClass} flex items-center justify-center rounded-full`}>
+                            <Spinner className="text-(--gray-400)"/>
+                        </Skeleton>
+                    :
+                        <Avatar className={avatarClass}>
+                            <AvatarImage src={avatarSrc} />
+                            <AvatarFallback className={avatarFallbackClass}>{fallbackText}</AvatarFallback>
+                        </Avatar>
+                    }
                     <div className={nameBlock}>
                         <span className={fullNameText}>{displayName}</span>
                         <span className={coverageRow}>
