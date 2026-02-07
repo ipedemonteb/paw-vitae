@@ -14,7 +14,11 @@ import {usePatient} from "@/hooks/usePatients.ts";
 import {useSpecialty} from "@/hooks/useSpecialties.ts";
 import {useCoverage} from "@/hooks/useCoverages.ts";
 import type {AppointmentDTO} from "@/data/appointments.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
+const loadingSkeleton =
+    "w-full h-102 sm:h-56";
 const appointmentContainer =
     "p-0 border border-solid shadow gap-0";
 const upperContainer =
@@ -72,7 +76,7 @@ const detailsButton =
 const filesIcon =
     "w-4 h-4";
 const openContainer =
-    "bg-[var(--gray-100)] px-6 py-4";
+    "bg-(--gray-100) rounded-b-xl px-6 py-4";
 const reportContainer =
     "gap-1 py-4 px-5 overflow-clip";
 const reportTitle =
@@ -100,15 +104,14 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 
     const doctorId = userIdFromSelf(appointment?.doctor);
 
-    const { data: patient } = usePatient(appointment.patient);
-    const { data: doctor } = useDoctor(doctorId);
-    const { url: doctorImgUrl } = useDoctorImageUrl(doctorId);
-    const { data: specialty } = useSpecialty(appointment.specialty);
-    const { data: coverage } = useCoverage(patient?.coverages);
-    const { data: files } = useAppointmentFiles(appointment.appointmentFiles);
+    const { data: patient, isLoading: loadingPatient } = usePatient(appointment.patient);
+    const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
+    const { url: doctorImgUrl, isLoading: loadingDoctorImg } = useDoctorImageUrl(doctorId);
+    const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment.specialty);
+    const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverages);
+    const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointment.appointmentFiles);
 
     const [open, setOpen] = useState(false);
-
 
     const dateObj = new Date(appointment.date);
     const isValidDate = !Number.isNaN(dateObj.getTime());
@@ -131,6 +134,10 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 
     const fileCount = files?.length ?? 0;
 
+    const isLoading = loadingPatient || loadingDoctor || loadingSpecialty || loadingCoverage || loadingFiles;
+
+    if(isLoading) return <Skeleton className={loadingSkeleton}/>
+
     return (
         <Card className={appointmentContainer}>
             <div className={`${upperContainer} ${open ? upperBorderWhenOpen : ""}`}>
@@ -148,10 +155,16 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
                 </div>
                 <div className={middleSection}>
                     <div className={doctorAvatar}>
-                        <Avatar className={avatarContainer}>
-                            <AvatarImage src={avatarSrc} />
-                            <AvatarFallback>{fallbackText}</AvatarFallback>
-                        </Avatar>
+                        {loadingDoctorImg ?
+                            <Skeleton className={`${avatarContainer} flex items-center justify-center`}>
+                                <Spinner className="text-(--gray-400)" />
+                            </Skeleton>
+                            :
+                            <Avatar className={avatarContainer}>
+                                <AvatarImage src={avatarSrc} />
+                                <AvatarFallback>{fallbackText}</AvatarFallback>
+                            </Avatar>
+                        }
                         <div className={nameBlock}>
                             <span className={fullNameText}>
                                 {displayName}
@@ -230,7 +243,7 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 }
 
 const fileCard =
-    "w-full py-2 px-3 gap-4 max-h-30 overflow-hidden";
+    "w-full p-4 gap-4 max-h-32 overflow-hidden";
 const fileUpperContainer =
     "flex flex-row items-center gap-2 overflow-clip";
 const fileIconContainer =
