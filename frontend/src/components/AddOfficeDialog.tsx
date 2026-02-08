@@ -4,9 +4,9 @@ import {
 } from "@/components/ui/dialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Plus} from 'lucide-react'
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
-import {type CreateOfficeForm, CreateOfficeSchema} from "@/lib/office-schema.ts";
+import {type CreateOfficeForm, getCreateOfficeSchema} from "@/lib/office-schema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "sonner";
 import {specialtyIdFromSelf} from "@/utils/IdUtils.ts";
@@ -20,8 +20,11 @@ export default function AddOfficeDialog() {
     const [open, setOpen] = useState(false)
     const {t} = useTranslation()
 
+
+    const schema = useMemo(() => getCreateOfficeSchema(t), [t]);
+
     const form = useForm<CreateOfficeForm>({
-        resolver: zodResolver(CreateOfficeSchema),
+        resolver: zodResolver(schema),
         mode: "onSubmit",
     })
 

@@ -586,7 +586,7 @@ function EditProfileDialog({
                 });
             },
             onError: () => {
-                toast.error(t("error", "Error"), {
+                toast.error(t("error.error", "Error"), {
                     description: t("doctor.profile.update_error")
                 });
             }
@@ -608,8 +608,12 @@ function EditProfileDialog({
                             id="description"
                             className={input}
                             value={desc}
+                            maxLength={220}
                             onChange={(e) => setDesc(e.target.value)}
                         />
+                        <span className={`text-xs text-right mt-1 ${desc.length >= 220 ? "text-red-500 font-bold" : "text-gray-400"}`}>
+                                    {desc.length}/{220}
+                                </span>
                     </div>
                     <div className={editDialogRowLabel}>
                         <Label htmlFor="bio">{t("doctor.profile.card.about")}</Label>
@@ -617,8 +621,12 @@ function EditProfileDialog({
                             id="bio"
                             className="min-h-37.5"
                             value={bio}
+                            maxLength={2600}
                             onChange={(e) => setBio(e.target.value)}
                         />
+                        <span className={`text-xs text-right mt-1 ${bio.length >= 2600 ? "text-red-500 font-bold" : "text-gray-400"}`}>
+                                    {bio.length}/{2600}
+                                </span>
                     </div>
                 </div>
                 <DialogFooter>
@@ -697,7 +705,7 @@ function EditExperienceDialog({
                 })
             },
             onError: () => {
-                toast.error(t("error"), {
+                toast.error(t("error.error"), {
                     description: t("doctor.profile.update_error"),
                 })
             },
@@ -845,7 +853,7 @@ function EditCertificatesDialog({
                 });
             },
             onError: () => {
-                toast.error(t("error", "Error"), {
+                toast.error(t("error.error", "Error"), {
                     description: t("doctor.profile.update_error")
                 });
             }

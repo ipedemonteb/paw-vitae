@@ -1,17 +1,20 @@
 import { z } from "zod";
+import type { TFunction } from "i18next";
 
-//TODO internacionalizar, jeje
 
-export const CreateOfficeSchema = z.object({
-    name: z.string().min(1, "Office name is required"),
-    neighborhood: z.string("Nieghborhood is required"),
-    specialties: z.array(z.string()).min(1, "At least one specialty is required"),
+export const getCreateOfficeSchema = (t: TFunction) => z.object({
+    name: z.string().min(1, t("offices.validation.name_required")),
+
+    neighborhood: z.string({
+        required_error: t("offices.validation.neighborhood_required")
+    }).min(1, t("offices.validation.neighborhood_required")),
+
+    specialties: z.array(z.string()).min(1, t("offices.validation.specialty_required")),
 });
 
-export  const EditOfficeSchema = CreateOfficeSchema.extend({
+export const getEditOfficeSchema = (t: TFunction) => getCreateOfficeSchema(t).extend({
     active: z.boolean()
-})
+});
 
-
-export type EditOfficeForm = z.infer<typeof EditOfficeSchema>;
-export type CreateOfficeForm = z.infer<typeof CreateOfficeSchema>;
+export type CreateOfficeForm = z.infer<ReturnType<typeof getCreateOfficeSchema>>;
+export type EditOfficeForm = z.infer<ReturnType<typeof getEditOfficeSchema>>;
