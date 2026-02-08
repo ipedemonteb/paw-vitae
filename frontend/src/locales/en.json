@@ -201,6 +201,9 @@
       "cancelling": "Cancelling",
         "success": "Appointment cancelled successfully.",
         "error": "An error occurred while cancelling the appointment. Please try again."
+    },
+    "validation": {
+      "reason_too_long": "Reason for visit cannot exceed 255 characters."
     }
   },
   "login": {
@@ -662,6 +665,11 @@
       "title": "Offices",
       "info": "Hover over an office to start managing it"
     },
+    "validation": {
+      "name_required": "Office name is required",
+      "neighborhood_required": "Neighborhood is required",
+      "specialty_required": "At least one specialty is required"
+    },
     "filter": {
       "message": "Status",
       "all": "All",
@@ -787,5 +795,8 @@
   },
   "date-picker": {
     "placeholder": "Select a Date"
+  },
+  "errors": {
+
   }
 }

@@ -7,9 +7,9 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import {useForm} from "react-hook-form";
-import {type EditOfficeForm, EditOfficeSchema} from "@/lib/office-schema.ts";
+import {type EditOfficeForm, getEditOfficeSchema} from "@/lib/office-schema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {officeIdFromSelf, specialtyIdFromSelf} from "@/utils/IdUtils.ts";
 import {extractIdFromUrl} from "@/lib/utils.ts";
 import {toast} from "sonner";
@@ -26,15 +26,19 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
     const {data: currentSpecialties, isLoading: isLoadingCurrentSpecialties} = useSpecialtiesByUrl(officeSpecialties?.map(s => s.specialty))
     const [open, setOpen] = useState(false)
     const [mounted, setMounted] = useState(false)
+
     useEffect(() => {
         setMounted(false);
         const id = requestAnimationFrame(() => setMounted(true));
         return () => cancelAnimationFrame(id);
     }, []);
+
     const {t} = useTranslation()
 
+    const schema = useMemo(() => getEditOfficeSchema(t), [t]);
+
     const form = useForm<EditOfficeForm>({
-        resolver: zodResolver(EditOfficeSchema),
+        resolver: zodResolver(schema),
         defaultValues: {
             name: office.name,
             neighborhood: office.neighborhood,
@@ -45,7 +49,6 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
     })
 
     const updateOfficeMutation = useUpdateOfficeMutation(office.self)
-
 
     useEffect(() => {
         if (!isLoadingCurrentSpecialties && currentSpecialties) {
