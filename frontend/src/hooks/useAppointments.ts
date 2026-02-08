@@ -31,11 +31,11 @@ export function useAppointment(id?: string) {
     });
 }
 
-export function useAppointmentFiles(url?: string) {
+export function useAppointmentFiles(id?: string | null, enabled: boolean = true) {
     return useQuery({
-        queryKey: ['auth', 'appointments', 'files', url],
-        queryFn: () => getAppointmentFiles(url!),
-        enabled: !!url,
+        queryKey: ['appointment', id, 'files'],
+        queryFn: () => getAppointmentFiles(id!),
+        enabled: !!id && enabled,
     })
 }
 
