@@ -51,7 +51,7 @@ public class RestRatingsController {
             @DefaultValue("9")
             @Min(1)
             @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE)
-            int pageSize, //TODO: control de tamaño o que no se pueda tocar. homogenizar en todos lados
+            int pageSize,
             @QueryParam("doctorId")
             Long doctorId
     ) {
