@@ -104,14 +104,14 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 
     const doctorId = userIdFromSelf(appointment?.doctor);
 
+    const [open, setOpen] = useState(false);
+
     const { data: patient, isLoading: loadingPatient } = usePatient(appointment.patient);
     const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
     const { url: doctorImgUrl, isLoading: loadingDoctorImg } = useDoctorImageUrl(doctorId);
     const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment.specialty);
     const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverages);
-    const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointment.appointmentFiles);
-
-    const [open, setOpen] = useState(false);
+    const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointment.appointmentFiles, open);
 
     const dateObj = new Date(appointment.date);
     const isValidDate = !Number.isNaN(dateObj.getTime());
@@ -134,7 +134,7 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 
     const fileCount = files?.length ?? 0;
 
-    const isLoading = loadingPatient || loadingDoctor || loadingSpecialty || loadingCoverage || loadingFiles;
+    const isLoading = loadingPatient || loadingDoctor || loadingSpecialty || loadingCoverage;
 
     if(isLoading) return <Skeleton className={loadingSkeleton}/>
 
@@ -220,20 +220,26 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
                                 {appointment.report.length > 0 ? appointment.report : t("medical-history.component.no-report")}
                             </p>
                         </Card>
-                        {(files?.length ?? 0) > 0 ? (
-                            <div className={filesContainer}>
-                                {files!.map((f: any, idx: number) => (
-                                    <FileComponent
-                                        key={f.self ?? f.view ?? f.download ?? `${idx}`}
-                                        name={f.fileName}
-                                        uploader={f.uploaderRole}
-                                        view={f.view}
-                                        download={f.download}
-                                    />
-                                ))}
+                        {loadingFiles ? (
+                            <div className="flex w-full items-center justify-center py-4">
+                                <Spinner className="text-[var(--primary-color)]" />
                             </div>
                         ) : (
-                            <NoFilesComponent />
+                            (files?.length ?? 0) > 0 ? (
+                                <div className={filesContainer}>
+                                    {files!.map((f: any, idx: number) => (
+                                        <FileComponent
+                                            key={f.self ?? f.view ?? f.download ?? `${idx}`}
+                                            name={f.fileName}
+                                            uploader={f.uploaderRole}
+                                            view={f.view}
+                                            download={f.download}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <NoFilesComponent />
+                            )
                         )}
                     </div>
                 </div>
@@ -264,10 +270,10 @@ const downloadButton =
     "border border-[var(--primary-color)] hover:border-[var(--primary-dark)] cursor-pointer";
 
 function FileComponent({name, uploader, view, download}:{
-        name: string,
-        uploader: string,
-        view: string,
-        download: string
+    name: string,
+    uploader: string,
+    view: string,
+    download: string
 }) {
     const { t } = useTranslation();
     const { mutate: handleFile, isPending } = useAppointmentFileHandlerMutation();
