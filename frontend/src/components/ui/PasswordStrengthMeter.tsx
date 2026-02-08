@@ -4,11 +4,11 @@ import { useEffect, useState } from "react"
 
 function RequirementItem({ isValid, text }: { isValid: boolean; text: string }) {
     return (
-        <div className={`text-xs flex items-center gap-2 mt-1 font-medium transition-colors duration-200 ${isValid ? "text-green-600" : "text-gray-500"}`}>
+        <div className={`text-xs flex items-center gap-2 mt-1 font-medium transition-colors duration-200 ${isValid ? "text-(--success)" : "text-(--gray-500)"}`}>
             {isValid ? (
-                <Check className="h-3.5 w-3.5 text-green-600 flex-shrink-0" />
+                <Check className="h-3.5 w-3.5 text-(--success) shrink-0" />
             ) : (
-                <div className="h-1.5 w-1.5 rounded-full bg-gray-300 mx-1 flex-shrink-0" />
+                <div className="h-1.5 w-1.5 rounded-full bg-(--gray-300) mx-1 shrink-0" />
             )}
             {text}
         </div>
@@ -46,10 +46,10 @@ export function PasswordStrengthMeter({ password }: PasswordStrengthMeterProps) 
     }, [password]);
 
     const getStrengthStyles = () => {
-        if (!password) return { width: "0%", color: "bg-gray-200", label: "" };
-        if (strength < 2) return { width: "20%", color: "bg-red-500", label: t("change_password.strength.weak") };
-        if (strength < 4) return { width: "60%", color: "bg-yellow-500", label: t("change_password.strength.medium") };
-        return { width: "100%", color: "bg-green-500", label: t("change_password.strength.strong") };
+        if (!password) return { width: "0%", color: "bg-(--gray-200)", label: "" };
+        if (strength < 2) return { width: "20%", color: "bg-(--danger)", label: t("change_password.strength.weak") };
+        if (strength < 4) return { width: "60%", color: "bg-(--warning)", label: t("change_password.strength.medium") };
+        return { width: "100%", color: "bg-(--success)", label: t("change_password.strength.strong") };
     };
 
     const style = getStrengthStyles();
@@ -58,10 +58,10 @@ export function PasswordStrengthMeter({ password }: PasswordStrengthMeterProps) 
         <div className="mt-2">
             <div className={`transition-all duration-300 ${password ? 'opacity-100 max-h-24' : 'opacity-0 max-h-0 overflow-hidden'}`}>
                 <div className="flex justify-between text-xs mb-1">
-                    <span className="text-gray-500 font-medium">Fortaleza</span>
+                    <span className="text-(--gray-500) font-medium">Fortaleza</span>
                     <span className="text-gray-900 font-bold">{style.label}</span>
                 </div>
-                <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-(--gray-100) rounded-full overflow-hidden">
                     <div
                         className={`h-full transition-all duration-500 ease-out ${style.color}`}
                         style={{ width: style.width }}

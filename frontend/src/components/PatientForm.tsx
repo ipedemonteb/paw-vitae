@@ -12,10 +12,15 @@ import { FormInput } from "@/components/ui/FormInput"
 import { PasswordInput } from "@/components/ui/passwordInput"
 import { PasswordStrengthMeter } from "@/components/ui/PasswordStrengthMeter"
 import {useRegisterPatientMutation} from "@/hooks/usePatients.ts";
+import {Spinner} from "@/components/ui/spinner.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 interface PatientFormProps {
     onSuccess: (email: string) => void;
 }
+
+const sectionTitle = "text-xl font-bold text-(--primary-color) mb-4 border-b-2 border-(--primary-color) w-fit";
+const baseInputStyles = "w-full py-0 bg-gray-50 border border-(--gray-200) pl-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-transparent transition-all";
 
 export function PatientForm({ onSuccess }: PatientFormProps) {
     const { t } = useTranslation()
@@ -157,7 +162,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
         <form onSubmit={handleSubmit} noValidate className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
             <section>
-                <h2 className="text-xl font-bold text-blue-600 mb-6 border-b-2 border-blue-600 w-fit pb-1">
+                <h2 className={sectionTitle}>
                     {t('register.section_personal')}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -195,9 +200,9 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                         error={errors.email}
                     />
 
-
+                    {/*TODO: CHANGE THIS STYLING*/}
                     <div className="space-y-2 relative" id="neighborhoodUrl">
-                        <label htmlFor="neighborhood" className="text-sm font-medium text-gray-700">
+                        <label htmlFor="neighborhood" className="text-sm font-medium text-(--gray-600)">
                             {t('register.label_neighborhood')} <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
@@ -216,7 +221,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                                 className={`w-full pl-9 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-all
                                     ${errors.neighborhoodUrl
                                     ? 'border-red-500 focus:ring-red-200 '
-                                    : 'border-gray-300 focus:ring-blue-500'}`}
+                                    : 'border-gray-300 focus:ring-(--primary-color)'}`}
                                 autoComplete="off"
                             />
                         </div>
@@ -264,7 +269,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
             </section>
 
             <section>
-                <h2 className="text-xl font-bold text-blue-600 mb-6 border-b-2 border-blue-600 w-fit pb-1">
+                <h2 className="text-xl font-bold text-(--primary-color) mb-6 border-b-2 border-(--primary-color) w-fit pb-1">
                     {t('register.section_security')}
                 </h2>
 
@@ -295,10 +300,11 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
             </section>
 
             <section id="coverageUrl">
-                <h2 className="text-xl font-bold text-blue-600 mb-6 border-b-2 border-blue-600 w-fit pb-1">
-                    {t('register.section_coverage')} <span className="text-red-500 text-sm">*</span>
+                <h2 className="text-xl font-bold text-(--primary-color) mb-6 border-b-2 border-(--primary-color) w-fit pb-1">
+                    {t('register.section_coverage')} <span className="text-(--danger) text-sm">*</span>
                 </h2>
 
+                {/*TODO: HANDLE ISLOADING CORRECTLY*/}
                 {isLoadingCoverages ? (
                     <div className="flex items-center gap-2 text-gray-500 text-sm"><Loader2 className="h-4 w-4 animate-spin"/> {t('register.loader_coverages')}</div>
                 ) : (
@@ -313,7 +319,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                                     }}
                                     className={`flex items-center space-x-2 border p-4 rounded-lg cursor-pointer w-full md:w-auto transition-colors select-none
                                         ${formData.coverageUrl === cov.self
-                                        ? 'bg-blue-50 border-blue-500 shadow-sm'
+                                        ? 'bg-(--primary-bg) border-(--primary-color) shadow-sm'
                                         : errors.coverageUrl
                                             ? ''
                                             : 'hover:bg-gray-50 border-gray-200'}`}
@@ -325,7 +331,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                                         value={cov.self}
                                         checked={formData.coverageUrl === cov.self}
                                         onChange={() => {}}
-                                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                        className="h-4 w-4 text-(--primary-color) focus:ring-(--primary-color) cursor-pointer"
                                     />
                                     <label htmlFor={`cov-${cov.name}`} className="text-sm font-medium text-gray-700 cursor-pointer">
                                         {cov.name}
@@ -335,7 +341,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                         </div>
 
                         {errors.coverageUrl && (
-                            <p className="text-sm text-red-500 font-medium animate-in fade-in slide-in-from-top-1">
+                            <p className="text-sm text-(--danger) font-medium animate-in fade-in slide-in-from-top-1">
                                 {errors.coverageUrl}
                             </p>
                         )}
@@ -345,7 +351,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
 
             <div className="pt-4 border-t space-y-2">
                 {globalError && (
-                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+                    <div className="bg-(--danger-lightest) border border-(--danger-light) text-(--danger) px-4 py-3 rounded-md text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
                         <AlertCircle className="h-4 w-4 shrink-0" />
                         <span>{globalError}</span>
                     </div>
@@ -359,30 +365,30 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                             setFormData(prev => ({...prev, agreeTerms: e.target.checked}))
                             if(errors.agreeTerms) setErrors(prev => ({...prev, agreeTerms: ""}))
                         }}
-                        className={`h-4 w-4 rounded border-gray-300 focus:ring-blue-500 cursor-pointer ${errors.agreeTerms ? '' : ''}`}
+                        className={`h-4 w-4 rounded border-gray-300 focus:ring-(--primary-color) cursor-pointer ${errors.agreeTerms ? '' : ''}`}
                     />
-                    <label htmlFor="terms" className={`text-sm cursor-pointer select-none ${errors.agreeTerms ? 'text-red-600' : 'text-gray-600'}`}>
-                        {t('register.terms_agree')} <a href="#" className="text-blue-600 hover:underline">{t('register.terms_link')}</a>
+                    <label htmlFor="terms" className={`text-sm cursor-pointer select-none text-(--gray-600)`}>
+                        {t('register.terms_agree')} <a href="#" className="text-(--primary-color) hover:underline">{t('register.terms_link')}</a>
                     </label>
                 </div>
 
                 {errors.agreeTerms && (
-                    <p className="text-sm text-red-500 font-medium">{errors.agreeTerms}</p>
+                    <p className="text-sm text-(--danger) font-medium">{errors.agreeTerms}</p>
                 )}
 
-                <div className="pt-4">
-                    <button
+                <div className="flex w-full justify-center pt-4">
+                    <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`w-full font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2
+                        className={`w-3xs text-base py-4 font-semibold mt-3 bg-(--primary-color) hover:bg-(--primary-dark)
                             ${isSubmitting
-                            ? 'bg-slate-400 cursor-not-allowed'
-                            : 'bg-slate-500 hover:bg-slate-600 text-white'
+                            ? ' cursor-not-allowed'
+                            : ' cursor-pointer'
                         }`}
                     >
                         {isSubmitting ? (
                             <>
-                                <Loader2 className="h-5 w-5 animate-spin" />
+                                <Spinner className="h-5 w-5" />
                                 {t('register.btn_registering')}
                             </>
                         ) : (
@@ -391,11 +397,11 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                                 {t('register.btn_register')}
                             </>
                         )}
-                    </button>
+                    </Button>
                 </div>
 
                 <p className="text-center mt-4 text-sm text-gray-600">
-                    {t('register.have_account')} <a href="/login" className="text-blue-600 font-medium hover:underline">{t('register.login_link')}</a>
+                    {t('register.have_account')} <a href="/login" className="text-(--primary-color) font-medium hover:underline">{t('register.login_link')}</a>
                 </p>
             </div>
         </form>
