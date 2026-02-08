@@ -535,7 +535,7 @@ function RatingsCard({ ratings }: { ratings: RatingsDTO[] }) {
                                             className="max-w-xl"
                                             comment={r.comment}
                                             rating={r.rating}
-                                            userName={"Anonymous"}
+                                            userName={t("landing.ratings.anonymous","Anónimo")}
                                         />
                                     </div>
                                 </CarouselItem>
