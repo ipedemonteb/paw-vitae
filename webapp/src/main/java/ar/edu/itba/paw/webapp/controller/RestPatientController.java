@@ -50,7 +50,7 @@ public class RestPatientController {
 
         long count = patientService.getAllPatientsDisplayCount();
 
-        return Response.ok() //TODO: 204? (No Content)
+        return Response.ok()
                 .header("X-Total-Count", count)
                 .build();
     }
