@@ -26,10 +26,6 @@ public class AccessHandler {
         this.doctorOfficeService = doctorOfficeService;
     }
 
-    /**
-     * Helper privado para obtener el usuario casteado de forma segura.
-     * Evita repetir el instanceof y el cast en cada método.
-     */
     private AuthUserDetails getPrincipal(Authentication auth) {
         if (auth != null && auth.getPrincipal() instanceof AuthUserDetails) {
             return (AuthUserDetails) auth.getPrincipal();

@@ -35,7 +35,6 @@ public class RestSpecialtyController {
         return Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialty, uriInfo)) {}).build();
     }
 
-//TODO: Pagination?
     @GET
     @Produces(CustomMediaType.APPLICATION_SPECIALTY_LIST)
     public Response getAll() {
