@@ -124,10 +124,13 @@
       "reason": "Reason for Visit (Optional)",
       "patient-files": "Patient Files",
       "medical-history": "Medical History",
-      "no-access": "This patient did not allow full access to their medical history or more than a week has passed. You will only be able to see the files they uploaded for this appointment.",
+      "no-access": {
+        "doctor": "This patient did not allow full access to their medical history or more than a week has passed. You will only be able to see the files they uploaded for this appointment.",
+        "patient": "Your doctor does not have access to your medical history."
+      },
       "access": {
         "doctor": "You have access to your patients medical history for a limited time.",
-        "patient": "Your doctor has access to your medical history for a limited time"
+        "patient": "Your doctor has access to your medical history for a limited time."
       },
       "access-button": "Access Medical History",
       "post-visit": "Post Visit Information",
@@ -241,7 +244,7 @@
       "strong": "Strong"
     },
     "req_length": "Minimum 8 characters",
-    "passwords_match": "Passwors match",
+    "passwords_match": "Passwords match",
     "req_uppercase": "At least one uppercase letter",
     "req_number": "At least one number",
     "error_mismatch": "Passwords do not match",

@@ -505,7 +505,9 @@ function MedicalHistoryCard({canAccessMedicalHistory = false, isDoctor, patientI
             ) :
             <div className={noMedicalHistoryContainer}>
                 <Info className={infoIcon}/>
-                <p className={noMedicalHistoryText}>{t("appointment.details.no-access")}</p>
+                <p className={noMedicalHistoryText}>
+                    {isDoctor ? t("appointment.details.no-access.doctor") : t("appointment.details.no-access.patient")}
+                </p>
             </div>
             }
         </div>
