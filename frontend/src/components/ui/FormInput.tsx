@@ -9,20 +9,20 @@ export function FormInput({ label, id, required, className, error, ...props }: F
     return (
         <div className="space-y-2">
             <label htmlFor={id} className="text-sm font-medium text-gray-700">
-                {label} {required && <span className="text-red-500">*</span>}
+                {label} {required && <span className="text-(--danger)">*</span>}
             </label>
             <input
                 id={id}
                 required={required}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-all 
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-all bg-(--gray-50)
                 ${error
-                    ? "border-red-500 focus:ring-red-500 text-red-900 placeholder-red-300"
-                    : "border-gray-300 focus:ring-blue-500"
+                    ? "border-(--danger) focus:ring-(--danger) text-(--danger-dark) placeholder-(--danger/2)"
+                    : "border-(--gray-200) focus:ring-(--primary-color) focus:border-transparent"
                 } ${className}`}
                 {...props}
             />
             {error && (
-                <p className="text-sm text-red-500 font-medium animate-in fade-in slide-in-from-top-1">
+                <p className="text-sm text-(--danger) font-medium animate-in fade-in slide-in-from-top-1">
                     {error}
                 </p>
             )}

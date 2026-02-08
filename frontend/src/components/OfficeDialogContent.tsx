@@ -1,7 +1,7 @@
 import {DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Input} from "@/components/ui/input.tsx";
-import NeighborhoodCombobox from "@/components/NeighborhoodCombobox.tsx";
+import NeighborhoodCombobox from "@/components/ui/NeighborhoodCombobox.tsx";
 import {Switch} from "@/components/ui/switch.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import SpecialtyToggleGroup from "@/components/SpecialtyToggleGroup.tsx";
