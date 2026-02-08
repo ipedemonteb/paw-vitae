@@ -52,11 +52,12 @@ public class HomeDTO implements Serializable {
     public static HomeDTO fromUriInfo(final UriInfo uriInfo) {
         final HomeDTO dto = new HomeDTO();
         final String baseUri = uriInfo.getBaseUri().toString() + "api/";
+
         dto.usersUrl = baseUri + "users";
-        dto.doctorsUrl = baseUri + "doctors{?specialty,coverage,weekdays,keyword,orderBy,direction,page}";
 
-        dto.appointmentsUrl = baseUri + "appointments{?userId,collection,filter,page,pageSize}";
+        dto.doctorsUrl = baseUri + "doctors{?specialty,coverage,weekdays,keyword,orderBy,direction,page,pageSize}";
 
+        dto.appointmentsUrl = baseUri + "appointments{?userId,doctorId,collection,filter,page,pageSize,sort}";
         dto.ratingsUrl = baseUri + "ratings{?page,size,doctorId}";
 
         dto.patientsUrl = baseUri + "patients";
@@ -73,10 +74,12 @@ public class HomeDTO implements Serializable {
         dto.doctorSpecialtiesUrl = baseUri + "doctors/{id}/specialties";
         dto.doctorCoveragesUrl = baseUri + "doctors/{id}/coverages";
 
+        dto.doctorOfficesUrl = baseUri + "doctors/{id}/offices{?status}";
 
-        dto.doctorOfficesUrl = baseUri + "doctors/{id}/offices";
         dto.doctorOfficeByIdUrl = baseUri + "doctors/{doctorId}/offices/{officeId}";
-        dto.doctorOfficeAvailabilityUrl = baseUri + "doctors/{doctorId}/offices/{officeId}/availability";
+
+        dto.doctorOfficeAvailabilityUrl = baseUri + "doctors/{id}/availability{?officeId}";
+
         dto.doctorOfficeSpecialtiesUrl = baseUri + "doctors/{doctorId}/offices/{officeId}/specialties";
 
         dto.appointmentByIdUrl = baseUri + "appointments/{id}";
