@@ -145,7 +145,7 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
         ? initialsFallback(patient?.name, patient?.lastName)
         : initialsFallback(doctor?.name, doctor?.lastName);
 
-    const avatarSrc = isDoctor ? undefined : (doctorImgUrl || undefined);
+
 
     const status = "appointment.filters." + transformStatus(appointment.status);
     const base = isDoctor ? "/doctor/dashboard" : "/patient/dashboard";
@@ -180,16 +180,10 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
 
             <div className={rightSection}>
                 <div className={topRow}>
-                    {loadingDoctorImg ?
-                        <Skeleton className={`${avatarClass} flex items-center justify-center rounded-full`}>
-                            <Spinner className="text-(--gray-400)"/>
-                        </Skeleton>
-                    :
                         <Avatar className={avatarClass}>
-                            <AvatarImage src={avatarSrc} />
+                            <AvatarImage src={doctorImgUrl || undefined} />
                             <AvatarFallback className={avatarFallbackClass}>{fallbackText}</AvatarFallback>
                         </Avatar>
-                    }
                     <div className={nameBlock}>
                         <span className={fullNameText}>{displayName}</span>
                         <span className={coverageRow}>
