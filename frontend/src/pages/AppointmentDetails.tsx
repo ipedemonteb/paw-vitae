@@ -486,29 +486,29 @@ function MedicalHistoryCard({canAccessMedicalHistory = false, isDoctor, patientI
                 <h1 className={cardTitle}>{t("appointment.details.medical-history")}</h1>
             </div>
             {canAccessMedicalHistory ? (
-                <Card className={medicalHistoryContainer}>
-                    <div className={medicalHistoryUpper}>
-                        <Info/>
-                        <h3>{isDoctor ? t("appointment.details.access.doctor") : t("appointment.details.access.patient")}</h3>
-                    </div>
-                    {isDoctor && (
-                        <div className={medicalHistoryLower}>
-                            <Button className={medicalHistoryButton} asChild>
-                                <Link to={`/medical-history/${patientId}`}>
-                                    {t("appointment.details.access-button")}
-                                    <ArrowRight className="ml-2 h-4 w-4" />
-                                </Link>
-                            </Button>
+                    <Card className={medicalHistoryContainer}>
+                        <div className={medicalHistoryUpper}>
+                            <Info/>
+                            <h3>{isDoctor ? t("appointment.details.access.doctor") : t("appointment.details.access.patient")}</h3>
                         </div>
-                    )}
-                </Card>
-            ) :
-            <div className={noMedicalHistoryContainer}>
-                <Info className={infoIcon}/>
-                <p className={noMedicalHistoryText}>
-                    {isDoctor ? t("appointment.details.no-access.doctor") : t("appointment.details.no-access.patient")}
-                </p>
-            </div>
+                        {isDoctor && (
+                            <div className={medicalHistoryLower}>
+                                <Button className={medicalHistoryButton} asChild>
+                                    <Link to={`/medical-history/${patientId}`}>
+                                        {t("appointment.details.access-button")}
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            </div>
+                        )}
+                    </Card>
+                ) :
+                <div className={noMedicalHistoryContainer}>
+                    <Info className={infoIcon}/>
+                    <p className={noMedicalHistoryText}>
+                        {isDoctor ? t("appointment.details.no-access.doctor") : t("appointment.details.no-access.patient")}
+                    </p>
+                </div>
             }
         </div>
     );
@@ -537,15 +537,21 @@ function PostVisitComponent({
 
     const hasReport = (report ?? "").trim().length > 0;
     const [draft, setDraft] = useState<string>(report ?? "");
+    const maxLength = 255;
 
     useEffect(() => {
         setDraft(report ?? "");
     }, [report]);
 
-    const canSubmit = isDoctor && !hasReport && draft.trim().length > 0;
+    const canSubmit = isDoctor && !hasReport && draft.trim().length > 0 && draft.length <= maxLength;
 
     const handleSubmit = () => {
         if (!canSubmit) return;
+
+        if (draft.length > maxLength) {
+            toast.error(t("appointment.details.error.too_long"));
+            return;
+        }
 
         updateReport({ id: appointmentId, report: draft }, {
             onSuccess: () => {
@@ -570,14 +576,21 @@ function PostVisitComponent({
                     {hasReport ? (
                         <p className={doctorComment}>{report}</p>
                     ) : isDoctor ? (
-                        <div className="flex flex-col w-full gap-3 py-3">
+                        /* AQUÍ ESTÁ LA CORRECCIÓN: flex-1 min-w-0 en lugar de w-full */
+                        <div className="flex flex-col flex-1 min-w-0 gap-3 py-3">
                             <p className={reportTitle}>{t("appointment.details.report")}</p>
-                            <Textarea
-                                value={draft}
-                                onChange={(e) => setDraft(e.target.value)}
-                                placeholder={t("appointment.details.write-report")}
-                                disabled={isPending}
-                            />
+                            <div className="flex flex-col w-full">
+                                <Textarea
+                                    value={draft}
+                                    onChange={(e) => setDraft(e.target.value)}
+                                    placeholder={t("appointment.details.write-report")}
+                                    disabled={isPending}
+                                    maxLength={maxLength}
+                                />
+                                <span className={`text-xs text-right mt-1 ${draft.length >= maxLength ? "text-red-500 font-bold" : "text-gray-400"}`}>
+                                    {draft.length}/{maxLength}
+                                </span>
+                            </div>
                             <div className="flex justify-end">
                                 <Button
                                     className={submitReportButton}
@@ -699,10 +712,16 @@ function RateComponent({
     const { t } = useTranslation();
     const [comment, setComment] = useState("");
     const { mutate: submitRating, isPending } = useCreateRating();
+    const maxLength = 255;
 
     const handleSubmit = () => {
         if (rating === 0) {
             toast.error(t("error.rating_required", "Debe seleccionar una calificación"));
+            return;
+        }
+
+        if (comment.length > maxLength) {
+            toast.error(t("appointment.details.error.too_long"));
             return;
         }
 
@@ -736,12 +755,18 @@ function RateComponent({
                 />
 
                 <p className={rateText}>{t("appointment.details.review")}</p>
-                <Textarea
-                    placeholder={t("appointment.details.write-review")}
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    disabled={isPending}
-                />
+                <div className="flex flex-col w-full">
+                    <Textarea
+                        placeholder={t("appointment.details.write-review")}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        disabled={isPending}
+                        maxLength={maxLength}
+                    />
+                    <span className={`text-xs text-right mt-1 ${comment.length >= maxLength ? "text-red-500 font-bold" : "text-gray-400"}`}>
+                        {comment.length}/{maxLength}
+                    </span>
+                </div>
 
                 <div className={submitContainer}>
                     <Button

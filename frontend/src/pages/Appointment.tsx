@@ -269,10 +269,13 @@ function Appointment() {
         }
 
         if (!selectedTime || !selectedSpecialty || !selectedOffice || !selectedDate) {
-            toast.error(t("error"), { description: t("register.errors.missing_fields", "Complete todos los campos") });
+            toast.error(t("error.error"), { description: t("register.errors.missing_fields", "Complete todos los campos") });
             return;
         }
-
+        if (reason.length > 250) {
+            toast.error(t("error.error"), { description: t("appointment.validation.reason_too_long", "El motivo no puede superar los 250 caracteres") });
+            return;
+        }
         const [hours] = selectedTime.split(":").map(Number);
 
         const appointmentForm = {

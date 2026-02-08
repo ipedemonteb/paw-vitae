@@ -74,6 +74,9 @@
     "success_message": "Hemos enviado un enlace de restablecimiento a {{email}}."
   },
   "appointment": {
+    "validation": {
+      "reason_too_long": "La razón de la visita no puede exceder los 255 caracteres."
+    },
     "history": "Historial de Citas",
     "upcoming": "Próximas Citas",
     "filters": {
@@ -661,6 +664,11 @@
     "header": {
       "title": "Oficinas",
       "info": "Pase el cursor sobre una oficina para comenzar a gestionarla"
+    },
+    "validation": {
+      "name_required": "El nombre del consultorio es obligatorio",
+      "neighborhood_required": "El barrio es obligatorio",
+      "specialty_required": "Debe seleccionar al menos una especialidad"
     },
     "filter": {
       "message": "Estado",
