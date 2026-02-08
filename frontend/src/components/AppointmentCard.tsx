@@ -180,10 +180,16 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
 
             <div className={rightSection}>
                 <div className={topRow}>
+                    { doctorImgUrl === undefined && loadingDoctorImg ?
+                        <Skeleton className={`${avatarClass} flex items-center justify-center rounded-full`}>
+                            <Spinner className="text-(--gray-400)"/>
+                        </Skeleton>
+                    :
                         <Avatar className={avatarClass}>
                             <AvatarImage src={doctorImgUrl || undefined} />
                             <AvatarFallback className={avatarFallbackClass}>{fallbackText}</AvatarFallback>
                         </Avatar>
+                    }
                     <div className={nameBlock}>
                         <span className={fullNameText}>{displayName}</span>
                         <span className={coverageRow}>
