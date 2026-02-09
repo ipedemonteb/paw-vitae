@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next"
 import { useSpecialties } from "@/hooks/useSpecialties"
 import { useCoverages } from "@/hooks/useCoverages"
 
-import { FormInput } from "@/components/ui/FormInput"
+import { FormInput } from "@/components/FormInput.tsx"
 import { PasswordInput } from "@/components/ui/passwordInput"
 import { FormStepper } from "@/components/FormStepper.tsx"
 import {PasswordStrengthMeter} from "@/components/PasswordStrengthMeter.tsx";

@@ -402,8 +402,8 @@
     "about": "Sobre Nosotros",
     "login": "Iniciar Sesión",
     "register": "Registrarse",
-    "register_patient": "Registrarse como Paciente",
-    "register_doctor": "Registrarse como Doctor",
+    "register_patient": "Registrar Paciente",
+    "register_doctor": "Registrar Doctor",
     "account": "Cuenta",
     "doctor": {
       "dashboard": "Panel de Doctor",
