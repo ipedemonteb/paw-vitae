@@ -67,7 +67,7 @@ function DoctorProfileCard( { doctor } : { doctor: DoctorDTO | undefined} ) {
                 <div className={ratingContent}>
 
                     <RatingStars rating={doctor?.rating || 0} sizeClassName="h-4 w-4" />
-                    <p>{doctor?.rating}</p>
+                    <p>{doctor?.rating.toPrecision(2)}</p>
                     <p className={ratingText}>({doctor?.ratingCount})</p>
                 </div>
                     )}
