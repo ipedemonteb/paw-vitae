@@ -72,7 +72,7 @@ function DoctorDashboardLayout() {
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <div className="mx-auto bg-blue-100 p-3 rounded-full w-fit mb-4">
-                            <Building2 className="h-6 w-6 text-[var(--primary-color)]" />
+                            <Building2 className="h-6 w-6 text-(--primary-color)" />
                         </div>
                         <DialogTitle className="text-center">
                             {t("doctor.dashboard.noOfficesTitle") || "Configura tu Consultorio"}
@@ -82,7 +82,7 @@ function DoctorDashboardLayout() {
                         </DialogDescription>
                     </DialogHeader>
                     <div className="flex justify-center mt-4">
-                        <Button asChild variant="default" className="w-full sm:w-auto"><Link
+                        <Button asChild variant="default" className="w-full sm:w-auto bg-(--primary-color) hover:bg-(--primary-dark)"><Link
                                 to="/doctor/dashboard/offices"
                                 onClick={() => setIsDismissed(true)}
                             >
