@@ -310,7 +310,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                         className={`h-4 w-4 rounded border-gray-300 focus:ring-(--primary-color) cursor-pointer ${errors.agreeTerms ? '' : ''}`}
                     />
                     <label htmlFor="terms" className={`text-sm cursor-pointer select-none text-(--gray-600)`}>
-                        {t('register.terms_agree')} <a href="#" className="text-(--primary-color) hover:underline">{t('register.terms_link')}</a>
+                        {t('register.terms_agree')} <a href="#" className="text-(--primary-color) hover:underline hover:text-(--primary-dark)">{t('register.terms_link')}</a>
                     </label>
                 </div>
 
@@ -342,8 +342,8 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                     </Button>
                 </div>
 
-                <p className="text-center mt-4 text-sm text-gray-600">
-                    {t('register.have_account')} <a href="/login" className="text-(--primary-color) font-medium hover:underline">{t('register.login_link')}</a>
+                <p className="text-center mt-4 text-sm text-(--gray-600)">
+                    {t('register.have_account')} <a href="/login" className="text-(--primary-color) font-medium hover:underline hover:text-(--primary-dark)">{t('register.login_link')}</a>
                 </p>
             </div>
         </form>
