@@ -1,5 +1,3 @@
-"use client"
-
 import React, {useEffect, useState} from "react"
 import {
     ArrowRight,
@@ -15,8 +13,8 @@ import { useCoverages } from "@/hooks/useCoverages"
 
 import { FormInput } from "@/components/ui/FormInput"
 import { PasswordInput } from "@/components/ui/passwordInput"
-import { FormStepper } from "@/components/ui/FormStepper"
-import {PasswordStrengthMeter} from "@/components/ui/PasswordStrengthMeter.tsx";
+import { FormStepper } from "@/components/FormStepper.tsx"
+import {PasswordStrengthMeter} from "@/components/PasswordStrengthMeter.tsx";
 import {useRegisterDoctorMutation} from "@/hooks/useDoctors.ts";
 import type {AxiosError} from "axios";
 
@@ -165,18 +163,14 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
 
 
     return (
-        <form onSubmit={handleSubmit} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-
-            <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-blue-600">{t('register.title_doctor')}</h2>
-                <p className="text-gray-600 text-sm mt-1">{t('register.subtitle_doctor')}</p>
-            </div>
+        <form onSubmit={handleSubmit} className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col items-center">
 
             <FormStepper
                 currentStep={step}
                 steps={[
                     { id: 1, label: t('register.step_personal') },
                     { id: 2, label: t('register.step_professional') }]}
+                className="max-w-lg"
             />
 
             {step === 1 && (
