@@ -6,7 +6,7 @@ import { PasswordInput } from "@/components/ui/passwordInput"
 import { Button } from "@/components/ui/button"
 import {useAuth, useChangePasswordMutation} from "@/hooks/useAuth"
 
-import { PasswordStrengthMeter } from "@/components/ui/PasswordStrengthMeter"
+import { PasswordStrengthMeter } from "@/components/PasswordStrengthMeter.tsx"
 
 const pageContainer = "min-h-screen bg-gray-50/50 flex flex-col items-center pt-32 pb-12 px-4 sm:px-6 lg:px-8";
 const cardContainer = "w-full max-w-lg space-y-8 bg-white p-8 sm:p-12 rounded-xl border border-gray-200 shadow-xl ";

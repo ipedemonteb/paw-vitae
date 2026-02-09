@@ -68,7 +68,7 @@ function RegisterContent() {
             <div className={pageContainer}>
                 <div className={headerCard}>
                     <h1 className="text-3xl font-bold mb-2">{t("register.title_register")}</h1>
-                    <p className={headerSubtitle}>{t("register.subtitle_register")}</p>
+                    <p className={headerSubtitle}>{userType === "patient" ? t("register.subtitle_register") : t('register.subtitle_doctor')}</p>
 
                     <div className="mt-4 md:mt-0 md:absolute md:top-6 md:right-6">
                         <Button variant="secondary" className={dropdownBtn} onClick={toggleType}>
