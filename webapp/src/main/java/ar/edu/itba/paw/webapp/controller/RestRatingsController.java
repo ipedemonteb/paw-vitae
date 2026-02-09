@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.Rating;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.RatingDTO;
 import ar.edu.itba.paw.webapp.form.PatientRatingForm;
+import ar.edu.itba.paw.webapp.form.RatingSearchForm;
 import ar.edu.itba.paw.webapp.utils.ResponseUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,21 +42,12 @@ public class RestRatingsController {
 
     @GET
     @Produces(CustomMediaType.APPLICATION_RATING_LIST)
-    public Response getAll(
-            @QueryParam("page")
-            @DefaultValue("1")
-            @Min(1)
-            int page,
-
-            @QueryParam("size" )
-            @DefaultValue("9")
-            @Min(1)
-            @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE)
-            int pageSize,
-            @QueryParam("doctorId")
-            Long doctorId
-    ) {
-        Page<Rating> ratingPage = ratingService.getAllRatings(page, pageSize,doctorId);
+    public Response getAll(@BeanParam @Valid RatingSearchForm form) {
+        Page<Rating> ratingPage = ratingService.getAllRatings(
+                form.getPage(),
+                form.getPageSize(),
+                form.getDoctorId()
+        );
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(RatingDTO.fromRating(ratingPage.getContent(), uriInfo)) {}), ratingPage, uriInfo);
     }
 
