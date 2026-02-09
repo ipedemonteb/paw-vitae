@@ -167,8 +167,7 @@ export const appointmentHandlers = [
             {
                 status: 201,
                 headers: {
-                    'Location': `${BASE_URL}/appointments/123`,
-                    'Content-Type': 'application/json'
+                    'Location': `${BASE_URL}/appointments/123`
                 }
             }
         );
