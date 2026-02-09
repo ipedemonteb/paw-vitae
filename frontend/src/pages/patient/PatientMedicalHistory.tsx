@@ -10,6 +10,7 @@ import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import {CalendarFoldIcon} from "lucide-react";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const headerContainer = "flex items-center sm:justify-center gap-2 mt-2 sm:mt-0";
 const sortTitle = "flex font-normal text-sm items-center justify-center text-(--text-light)";
@@ -61,7 +62,7 @@ function PatientMedicalHistory() {
                     </Select>
                 </div>
             </DashboardNavHeader>
-            {isLoading ? (
+            {useDelayedBoolean(isLoading) ? (
                 <DashboardNavLoader />
             ) : completed.length > 0 ? (
                 completed.map((a) => (
@@ -75,7 +76,7 @@ function PatientMedicalHistory() {
                 />
             )}
 
-            {!isLoading && completed.length > 0 && appointments?.pagination && (
+            {!useDelayedBoolean(isLoading) && completed.length > 0 && appointments?.pagination && (
                 <PaginationComponent pagination={appointments.pagination} searchParams={searchParams} />
             )}
         </DashboardNavContainer>
