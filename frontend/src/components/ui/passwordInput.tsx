@@ -52,7 +52,7 @@ export function PasswordInput({ label, tooltip, id, required, className, error, 
             </div>
 
             {error && (
-                <p className="text-sm text-(--danger)font-medium animate-in fade-in slide-in-from-top-1">
+                <p className="text-sm text-(--danger) font-medium animate-in fade-in slide-in-from-top-1">
                     {error}
                 </p>
             )}
