@@ -19,6 +19,7 @@
     --danger-dark: #b91c1c;
     --danger-light: #f9dede;
     --danger-lighter: #fff5f5;
+    --danger-placeholder: color-mix(in oklab, var(--danger) 50%, transparent);
     --warning: #f59e0b;
     --warning-dark: #a16207;
     --warning-medium: #fbd548;

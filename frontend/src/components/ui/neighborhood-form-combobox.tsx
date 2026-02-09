@@ -67,7 +67,7 @@ export function NeighborhoodFormCombobox({
         "w-full h-11 px-3 py-2 border rounded-lg transition-all bg-(--gray-50) text-left",
         "focus:outline-none focus:ring-2 focus:border-transparent",
         error
-            ? "border-(--danger) focus:ring-(--danger) text-(--danger-dark) placeholder-(--danger/2)"
+            ? "border-(--danger) focus:ring-(--danger) text-(--danger)"
             : "border-(--gray-200) focus:ring-(--primary-color)",
         disabled ? "opacity-70 cursor-not-allowed" : "cursor-pointer",
         "flex items-center justify-between gap-2",
@@ -76,7 +76,7 @@ export function NeighborhoodFormCombobox({
 
     return (
         <div className="space-y-2" id={id}>
-            <label htmlFor={id} className="text-sm font-medium (--text-color)">
+            <label className="text-sm font-medium text-(--text-color)">
                 {label} {required && <span className="text-(--danger)">*</span>}
             </label>
 
@@ -94,14 +94,13 @@ export function NeighborhoodFormCombobox({
               <MapPin
                   className={cn(
                       "h-4 w-4 shrink-0",
-                      error ? "text-(--danger)" : "text-(--gray-400)",
-                      selected?.name ? "text-(--text-color)" : "text-(--gray-400)"
+                      error ? "text-(--danger-placeholder)" : selected?.name ? "text-(--text-color)" : "text-(--gray-400)"
                   )}
               />
               <span
                   className={cn(
                       "truncate",
-                      selected?.name ? "text-(--text-color)" : "text-(--gray-400)"
+                      error ? "text-(--danger-placeholder)" : selected?.name ? "text-(--text-color)" : "text-(--gray-400)"
                   )}
               >
                 {displayText}
