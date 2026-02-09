@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import {createMockDoctor, createMockPatient} from "@/__test__/utils/factories.ts";
+import {BASE_URL} from "@/__test__/utils/utils.ts";
 
-const BASE_URL = 'http://localhost:8080/api';
 
 
 export const userHandlers = [

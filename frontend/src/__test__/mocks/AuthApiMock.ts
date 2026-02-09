@@ -1,7 +1,5 @@
 import {http, HttpResponse} from 'msw';
-
-
-const BASE_URL = 'http://localhost:8080/api';
+import {BASE_URL} from "@/__test__/utils/utils.ts";
 
 
 export const authHandlers = [

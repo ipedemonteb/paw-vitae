@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook, waitFor } from '@/__test__/setup/utils';
 import { useSpecialties, useSpecialty, useSpecialtiesByUrl } from '@/hooks/useSpecialties';
-
-const BASE_URL = 'http://localhost:8080/api';
+import {BASE_URL} from "@/__test__/utils/utils.ts";
 
 describe('Specialties Hooks', () => {
 

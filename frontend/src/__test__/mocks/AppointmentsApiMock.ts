@@ -1,6 +1,6 @@
 import {http, HttpResponse} from 'msw';
+import {BASE_URL} from "@/__test__/utils/utils.ts";
 
-const BASE_URL = 'http://localhost:8080/api';
 
 export const appointmentHandlers = [
     http.get(`${BASE_URL}/appointments/:id`, ({ params }) => {
