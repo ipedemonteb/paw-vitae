@@ -11,6 +11,7 @@ import EditOfficeDialog from "@/components/EditOfficeDialog.tsx";
 import {HoverCard, HoverCardContent, HoverCardTrigger} from "@/components/ui/hover-card.tsx";
 import AddOfficeDialog from "@/components/AddOfficeDialog.tsx";
 import DashboardNavSelect from "@/components/DashboardNavSelect.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const officeStatusEnum = ['all', 'active', 'inactive']
 
@@ -53,7 +54,7 @@ export default function OfficesComponent() {
                     <AddOfficeDialog/>
                 </div>
             </DashboardNavHeader>
-            {isLoading ? (
+            {useDelayedBoolean(isLoading) ? (
                 <DashboardNavLoader/>
             ) : offices && offices.length > 0 ? (
                 <div className="flex relative flex-wrap gap-x-6 gap-y-3 justify-center w-fit px-2 pt-6">

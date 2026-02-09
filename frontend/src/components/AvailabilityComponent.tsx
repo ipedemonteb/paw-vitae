@@ -40,6 +40,7 @@ import {type DoctorAvailabilityFormDTO, type OfficeDTO} from "@/data/offices.ts"
 import type { AvailabilityDTO } from "@/data/offices.ts"
 import { officeIdFromSelf } from "@/utils/IdUtils.ts";
 import {toast} from "sonner";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 type AvailabilitySlot = {
     id: string;
@@ -332,7 +333,7 @@ export default function AvailabilityComponent() {
                 )}
             </DashboardNavHeader>
 
-            {isLoading ? (
+            {useDelayedBoolean(isLoading) ? (
                 <DashboardNavLoader />
             ) : (
                 <div className={availabilityContainer}>

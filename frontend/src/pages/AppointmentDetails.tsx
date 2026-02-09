@@ -57,6 +57,7 @@ import {
 import {useDoctor} from "@/hooks/useDoctors.ts";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {usePatientById} from "@/hooks/usePatients.ts";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
@@ -125,7 +126,7 @@ function AppointmentDetails() {
 
     const [newRating, setNewRating] = useState<number>(0);
 
-    if (isLoading) {
+    if (useDelayedBoolean(isLoading)) {
         return (
             <LoadingFullPageComponent/>
         );

@@ -38,6 +38,7 @@ import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {initialsFallback} from "@/utils/userUtils.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
 const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
@@ -196,12 +197,12 @@ function DoctorAccount() {
                 )}
                 {isEditing && <div className="h-9" />}
             </DashboardNavHeader>
-            {isLoading ? <DashboardNavLoader /> :
+            {useDelayedBoolean(isLoading) ? <DashboardNavLoader /> :
                 <div className={containerStyles}>
                     <Card className={cardStyles}>
                         <div className={cardHeaderStyles}>
                             <h2 className={cardTitleStyles}>
-                                <User className="h-5 w-5 text-[var(--primary-color)]" />
+                                <User className="h-5 w-5 text-(--primary-color)" />
                                 {t("dashboard.profile.title")}
                             </h2>
                         </div>
@@ -209,7 +210,7 @@ function DoctorAccount() {
                         <CardContent className="p-0 flex flex-col gap-2">
                             <div className="flex flex-col items-center justify-center py-8 bg-(--gray-100) border-b">
                                 <div className="relative group">
-                                    {isLoadingImageUrl && getDoctorImgUrl != undefined ?
+                                    {isLoadingImageUrl ?
                                         <Skeleton className={"flex justify-center items-center h-32 w-32 border-4 border-white rounded-full"}>
                                             <Spinner className="h-6 w-6 text-(--gray-300)"/>
                                         </Skeleton> :

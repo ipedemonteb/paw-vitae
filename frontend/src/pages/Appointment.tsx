@@ -43,6 +43,7 @@ import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
 import {daysBetweenUtc} from "@/utils/dateUtils.ts";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -307,7 +308,7 @@ function Appointment() {
         });
     };
 
-    if (isLoading) {
+    if (useDelayedBoolean(isLoading)) {
         return (
             <LoadingFullPageComponent/>
         );
