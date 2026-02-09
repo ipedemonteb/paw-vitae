@@ -202,7 +202,7 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
                     {doctor.ratingCount > 0 ? (
                         <div className={ratingContent}>
                             <RatingStars rating={doctor.rating} sizeClassName="h-4 w-4" />
-                            <p>{doctor.rating}</p>
+                            <p>{doctor.rating.toPrecision(2)}</p>
                             <p className={ratingText}>({doctor.ratingCount} {t("doctor.profile.card.rating")})</p>
                         </div>
                     ) : null}
