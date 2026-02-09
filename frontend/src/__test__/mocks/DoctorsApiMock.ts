@@ -82,9 +82,7 @@ export const doctorsHandlers = [
     http.get(`${BASE_URL}/doctors/:id`, ({ params }) => {
         const { id } = params;
         if (id === "error") return new HttpResponse(null, { status: 500 });
-        return HttpResponse.json(createMockDoctor({
-            image: `${BASE_URL}/doctors/${id}/image`
-        }));
+        return HttpResponse.json(createMockDoctor());
     }),
 
     http.get(`${BASE_URL}/doctors/:id/image`, () => {

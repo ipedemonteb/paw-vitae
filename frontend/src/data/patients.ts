@@ -1,5 +1,4 @@
 import {api} from "@/data/Api.ts";
-import type { AxiosRequestConfig } from "axios";
 import { ContentTypes } from "@/utils/contentTypes.js";
 export type PatientDTO = {
     name: string;
@@ -49,15 +48,6 @@ export const patientUrl = (id: string) => `/patients/${id}`;
 
 export async function getPatientById(id: string) {
     const res = await api.get<PatientDTO>(patientUrl(id));
-    return res.data;
-}
-
-export async function changePatientPassword(url: string, form: ChangePasswordForm) {
-    const res = await api.patch(`${url}`,form,{
-        headers: {
-           "content-type":  ContentTypes.USER_PASSWORD
-        }
-    } as AxiosRequestConfig);
     return res.data;
 }
 

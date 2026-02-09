@@ -6,6 +6,7 @@ import {slotsHandler} from "@/__test__/mocks/SlotsApiMock.ts";
 import {ratingHandler} from "@/__test__/mocks/RatingApiMock.ts";
 import {officeHandlers} from "@/__test__/mocks/OfficesApiMock.ts";
 import {doctorsHandlers} from "@/__test__/mocks/DoctorsApiMock.ts";
+import {patientHandler} from "@/__test__/mocks/PatientsApiMock.ts";
 
 export const handlers = [
     ...appointmentHandlers,
@@ -31,5 +32,6 @@ export const handlers = [
     ...slotsHandler,
     ...ratingHandler,
     ...officeHandlers,
-    ...doctorsHandlers
+    ...doctorsHandlers,
+    ...patientHandler
 ];
