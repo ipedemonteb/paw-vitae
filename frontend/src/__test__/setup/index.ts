@@ -2,6 +2,8 @@ import { appointmentHandlers } from '../mocks/AppointmentsApiMock';
 import {authHandlers} from "@/__test__/mocks/AuthApiMock.ts";
 import {createCatalogHandlers} from "@/__test__/mocks/factories.ts";
 import {userHandlers} from "@/__test__/mocks/UserApiMock.ts";
+import {slotsHandler} from "@/__test__/mocks/SlotsApiMock.ts";
+import {ratingHandler} from "@/__test__/mocks/RatingApiMock.ts";
 
 export const handlers = [
     ...appointmentHandlers,
@@ -23,5 +25,7 @@ export const handlers = [
         { id: '3', name: 'Pediatría' },
         { id: '4', name: 'Neurología' }
     ]),
-    ...userHandlers
+    ...userHandlers,
+    ...slotsHandler,
+    ...ratingHandler
 ];
