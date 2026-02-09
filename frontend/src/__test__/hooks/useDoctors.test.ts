@@ -1,0 +1,229 @@
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
+import { renderHook, waitFor } from "@/__test__/setup/utils.tsx";
+import { BASE_URL } from "@/__test__/utils/utils.ts";
+import {
+    useDoctors,
+    useDoctor,
+    useDoctorImageUrl,
+    useDoctorSpecialties,
+    useDoctorCoverages,
+    useDoctorExperience,
+    useDoctorCertifications,
+    useDoctorBiography,
+    useDoctorUnavailability,
+    useDoctorsCount,
+    useRegisterDoctorMutation,
+    useUpdateDoctorProfileMutation,
+    useUpdateDoctorImageMutation,
+    useUpdateDoctorUnavailabilityMutation,
+    useUpdateDoctorMutation
+} from "@/hooks/useDoctors.ts";
+import * as doctorService from "@/data/doctors";
+
+
+beforeAll(() => {
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:mock-preview-url');
+    globalThis.URL.revokeObjectURL = vi.fn();
+});
+
+afterAll(() => {
+    vi.clearAllMocks();
+});
+
+describe('Doctors Hooks Integration Tests', () => {
+
+    describe('useDoctors (Listado)', () => {
+        it('debería traer la lista de doctores paginada', async () => {
+            const { result } = renderHook(() => useDoctors({ page: 1, pageSize: 10 }));
+
+            expect(result.current.isLoading).toBe(true);
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+            expect(result.current.data?.data).toHaveLength(3);
+            expect(result.current.data?.data[0].lastName).toBe('House');
+
+            expect(result.current.data?.pagination.total).toBe(3);
+        });
+    });
+
+    describe('useDoctor (Detalle)', () => {
+        it('debería traer el detalle de un doctor específico', async () => {
+            const { result } = renderHook(() => useDoctor('1'));
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+            expect(result.current.data?.name).toBe('Gregory');
+            expect(result.current.data?.email).toBe('house@princeton.edu');
+        });
+    });
+
+    describe('useDoctorsCount', () => {
+        it('debería traer la cantidad total de doctores (HEAD request)', async () => {
+            const { result } = renderHook(() => useDoctorsCount());
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+            expect(result.current.data).toBe(3);
+        });
+    });
+
+
+
+    describe('useDoctorImageUrl', () => {
+        it('debería descargar la imagen y generar una URL de objeto', async () => {
+            const { result } = renderHook(() => useDoctorImageUrl('1'));
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+
+            expect(result.current.url).toBe('blob:mock-preview-url');
+        });
+
+        it('no debería ejecutarse si el ID no es numérico', async () => {
+            const { result } = renderHook(() => useDoctorImageUrl('invalid'));
+            expect(result.current.fetchStatus).toBe('idle');
+            expect(result.current.url).toBeNull();
+        });
+    });
+
+
+    describe('Sub-resource Hooks', () => {
+
+        it('useDoctorSpecialties debería traer especialidades', async () => {
+            const url = `${BASE_URL}/doctors/1/specialties`;
+            const { result } = renderHook(() => useDoctorSpecialties(url));
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+            expect(result.current.data).toHaveLength(3);
+            expect(result.current.data![0].name).toBe('Cardiologia');
+        });
+
+        it('useDoctorCoverages debería traer obras sociales', async () => {
+            const url = `${BASE_URL}/doctors/1/coverages`;
+            const { result } = renderHook(() => useDoctorCoverages(url));
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+            expect(result.current.data![0].name).toBe('Galeno');
+        });
+
+        it('useDoctorBiography debería traer perfil/bio', async () => {
+            const url = `${BASE_URL}/doctors/1/profile`;
+            const { result } = renderHook(() => useDoctorBiography(url));
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+            expect(result.current.data?.bio).toContain('General Doctor');
+        });
+
+        it('useDoctorExperience debería traer experiencias', async () => {
+            const url = `${BASE_URL}/doctors/1/experiences`;
+            const { result } = renderHook(() => useDoctorExperience(url));
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+            expect(result.current.data![0].organizationName).toBe('Princeton University');
+        });
+
+        it('useDoctorCertifications debería traer certificaciones', async () => {
+            const url = `${BASE_URL}/doctors/1/certifications`;
+            const { result } = renderHook(() => useDoctorCertifications(url));
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+            expect(result.current.data![0].certificateName).toBe('Certificacion 1');
+        });
+
+        it('useDoctorUnavailability debería traer fechas no disponibles', async () => {
+            const url = `${BASE_URL}/doctors/1/unavailability`;
+            const { result } = renderHook(() => useDoctorUnavailability(url));
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+            expect(result.current.data?.data).toHaveLength(2);
+        });
+    });
+
+    describe('Mutations', () => {
+
+        it('useRegisterDoctorMutation debería registrar un doctor', async () => {
+            const { result } = renderHook(() => useRegisterDoctorMutation());
+
+            const newDoctor = {
+                name: 'Wilson',
+                lastName: 'James',
+                email: 'wilson@princeton.edu',
+                password: 'password',
+                repeatPassword: 'password',
+                phone: '123456',
+                selectedSpecialties: [`${BASE_URL}/specialties/1`],
+                selectedCoverages: [`${BASE_URL}/coverages/1`]
+            };
+
+            result.current.mutate(newDoctor);
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+        });
+
+        it('useUpdateDoctorProfileMutation debería actualizar bio', async () => {
+            const url = `${BASE_URL}/doctors/1/biography`;
+            const { result } = renderHook(() => useUpdateDoctorProfileMutation(url));
+
+            result.current.mutate({ biography: 'New Bio', description: 'New Desc' });
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+        });
+
+        it('useUpdateDoctorImageMutation debería llamar al servicio de imagen', async () => {
+            //ACLARACIÓN:
+            // ---------------------------------------------------------------------------
+            // Mockeamos la función del servicio 'putDoctorImage' para evitar enviarla por la red simulada (MSW).
+            //
+            // EXPLICACIÓN:
+            // En entornos de test (JSDOM/Node), la combinación de Axios + FormData a menudo falla al
+            // generar correctamente los headers de 'multipart/form-data' (específicamente el 'boundary').
+            // Esto causa que MSW rechace la petición, haciendo fallar el test aunque el código esté bien.
+            // Al usar spyOn().mockResolvedValue(), saltamos la capa de red defectuosa y probamos
+            // lo que realmente importa: que el hook llame a la función con los parámetros correctos.
+            // ---------------------------------------------------------------------------
+            const spy = vi.spyOn(doctorService, 'putDoctorImage').mockResolvedValue({ status: 'ok' });
+
+            const url = `${BASE_URL}/doctors/1/image`;
+            const { result } = renderHook(() => useUpdateDoctorImageMutation(url));
+
+            const file = new File(['(⌐□_□)'], 'avatar.png', { type: 'image/png' });
+
+            result.current.mutate(file);
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+            expect(spy).toHaveBeenCalledWith(url, file);
+        });
+
+        it('useUpdateDoctorMutation debería actualizar datos e imagen simultáneamente', async () => {
+            const spyUpdate = vi.spyOn(doctorService, 'updateDoctorProfileComplete').mockResolvedValue({ status: 'ok' });
+
+            const { result } = renderHook(() => useUpdateDoctorMutation());
+            const fakeFile = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
+
+            const params = {
+                doctorUrl: `${BASE_URL}/doctors/1`,
+                imageUrl: `${BASE_URL}/doctors/1/image`,
+                doctorId: '1',
+                data: { name: 'Gregory Updated' },
+                imageFile: fakeFile
+            };
+
+            result.current.mutate(params);
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+            expect(spyUpdate).toHaveBeenCalled();
+        });
+
+        it('useUpdateDoctorUnavailabilityMutation debería actualizar fechas', async () => {
+            const url = `${BASE_URL}/doctors/1/unavailability`;
+            const { result } = renderHook(() => useUpdateDoctorUnavailabilityMutation(url));
+
+            const payload = {
+                unavailabilitySlots: [
+                    { startDate: '2026-05-01', endDate: '2026-05-10' }
+                ]
+            };
+
+            result.current.mutate(payload);
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+        });
+    });
+});

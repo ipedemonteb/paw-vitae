@@ -171,15 +171,6 @@ export async function listDoctors(params: DoctorsQuery): Promise<PaginationData<
     };
 }
 
-export async function changeDoctorPassword(url: string, form: ChangePasswordForm) {
-    const res = await api.patch(url, form,{
-        headers: {
-            "content-type":  ContentTypes.USER_PASSWORD
-        }
-    } );
-    return res.data;
-}
-
 export async function getDoctor(id: string) {
     const res = await api.get<DoctorDTO>(`/doctors/${id}`,{
         headers: {
