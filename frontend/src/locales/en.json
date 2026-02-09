@@ -310,7 +310,7 @@
     "no_neighborhoods": "No neighborhoods found",
     "errors": {
       "passwords_mismatch": "Passwords do not match",
-      "password_requirements": "Password must have at least 8 characters, one uppercase letter, and one number.",
+      "password_requirements": "Password does not meet requirements.",
       "select_valid": "Please select a valid insurance plan and neighborhood",
       "email_taken": "Error: That email is already registered.",
       "generic": "An error occurred during registration.",

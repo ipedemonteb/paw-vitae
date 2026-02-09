@@ -257,15 +257,19 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                     </div>
 
 
-                    <div className="flex justify-center mt-4 md:mt-0 md:justify-end pt-6">
+                    <div className="flex justify-center mt-4 pt-6">
                         <Button
                             type="button"
                             onClick={handleNextStep}
-                            className="w-3xs bg-(--primary-color) text-white px-6 py-2.5 rounded-md hover:bg-b(--primary-dark) font-medium flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+                            className="w-sm bg-(--primary-color) text-white text-base rounded-md hover:bg-b(--primary-dark) font-semibold flex items-center gap-2 shadow-sm transition-all hover:bg-(--primary-dark) cursor-pointer"
                         >
                             {t('register.btn_next')} <ArrowRight className="h-4 w-4" />
                         </Button>
                     </div>
+
+                    <p className="text-center mt-4 text-sm text-(--gray-600)">
+                        {t('register.have_account')} <a href="/login" className="text-(--primary-color) font-medium hover:underline hover:text-(--primary-dark)">{t('register.login_link')}</a>
+                    </p>
                 </div>
             )}
 
@@ -371,7 +375,7 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                         <p>{t('register.note_availability')}</p>
                     </div>
 
-                    <div className="pt-6 border-t flex flex-col gap-4">
+                    <div className="pt-4 border-t flex flex-col gap-4">
                         {globalError && (
                             <div className="bg-(--danger-lightest) border border-(--danger-light) text-(--danger) px-4 py-3 rounded-md text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
                                 <AlertCircle className="h-4 w-4 shrink-0" />
@@ -390,7 +394,7 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                             </label>
                         </div>
 
-                        <div className="flex items-center justify-between mt-2 gap-4 w-full min-w-0">
+                        <div className="flex items-center justify-between mt-4 mb-1 gap-4 w-full min-w-0">
                             <Button
                                 type="button"
                                 onClick={() => setStep(1)}
@@ -402,7 +406,7 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                             <Button
                                 type="submit"
                                 disabled={!formData.agreeTerms || isSubmitting}
-                                className={`w-3xs max-w-full min-w-0 shrink px-4 py-2.5 rounded-md font-medium shadow-md transition-all flex items-center justify-center gap-2 bg-(--primary-color)
+                                className={`w-3xs max-w-full min-w-0 shrink font-semibold rounded-md shadow-md transition-all flex items-center justify-center gap-2 bg-(--primary-color)
                                   ${(!formData.agreeTerms || isSubmitting)
                                     ? "cursor-not-allowed text-white opacity-70"
                                     : "hover:bg-(--primary-dark) text-white cursor-pointer"
@@ -421,7 +425,6 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                                 )}
                             </Button>
                         </div>
-
                     </div>
                 </div>
             )}
