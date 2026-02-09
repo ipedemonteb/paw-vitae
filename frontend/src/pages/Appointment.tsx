@@ -263,7 +263,7 @@ function Appointment() {
 
     const handleBook = () => {
         if (!patientId) {
-            toast.error(t("error"), { description: "Debe iniciar sesión para reservar." });
+            toast.error(t("error.error"), { description: "Debe iniciar sesión para reservar." });
             navigate("/login");
             return;
         }
