@@ -22,7 +22,7 @@ export const appointmentHandlers = [
             doctor: `${BASE_URL}/doctors/1`,
             patient: `${BASE_URL}/patients/1`,
             specialty: `${BASE_URL}/specialties/1`,
-            doctorOffice: `${BASE_URL}/offices/1`,
+            doctorOffice: `${BASE_URL}/doctors/1/offices/1`,
             appointmentFiles: `${BASE_URL}/appointments/${id}/files`
         };
 
@@ -84,7 +84,7 @@ export const appointmentHandlers = [
                 doctor: `${BASE_URL}/doctors/1`,
                 patient: `${BASE_URL}/patients/10`,
                 specialty: `${BASE_URL}/specialties/cardio`,
-                doctorOffice: `${BASE_URL}/offices/5`,
+                doctorOffice: `${BASE_URL}/doctors/1/offices/5`,
                 appointmentFiles: `${BASE_URL}/appointments/1/files`,
                 rating: `${BASE_URL}/ratings/1`
             },
@@ -100,7 +100,7 @@ export const appointmentHandlers = [
                 doctor: `${BASE_URL}/doctors/2`,
                 patient: `${BASE_URL}/patients/10`,
                 specialty: `${BASE_URL}/specialties/derma`,
-                doctorOffice: `${BASE_URL}/offices/6`,
+                doctorOffice: `${BASE_URL}/doctors/2/offices/6`,
                 appointmentFiles: `${BASE_URL}/appointments/2/files`,
                 rating: null
             }

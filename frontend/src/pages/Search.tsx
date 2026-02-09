@@ -283,6 +283,7 @@ function ResultSection({paginationData, isLoading, isRefetching, isError, refetc
                     <ButtonGroup orientation="horizontal">
                         <Button
                             type="button"
+                            aria-label="view-list"
                             onClick={() => setView("list")}
                             className={`${formatBtnBase} ${view === "list" ? formatBtnActive : formatBtnInactive}`}
                         >
@@ -290,6 +291,7 @@ function ResultSection({paginationData, isLoading, isRefetching, isError, refetc
                         </Button>
                         <Button
                             type="button"
+                            aria-label="view-grid"
                             onClick={() => setView("grid")}
                             className={`${formatBtnBase} ${view === "grid" ? formatBtnActive : formatBtnInactive}`}
                         >
