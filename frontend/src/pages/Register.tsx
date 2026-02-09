@@ -1,5 +1,3 @@
-"use client"
-
 import { Suspense, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button.tsx"
 import { PatientForm } from "../components/PatientForm.tsx"
@@ -20,8 +18,9 @@ export default function RegisterPage() {
 }
 
 function RegisterContent() {
-    const [searchParams] = useSearchParams()
+    const [searchParams, setSearchParams] = useSearchParams()
     const typeParam = searchParams.get("type")
+
     const [userType, setUserType] = useState<UserType>(
         typeParam === "doctor" ? "doctor" : "patient"
     )
@@ -30,6 +29,18 @@ function RegisterContent() {
         if (typeParam === "doctor") setUserType("doctor")
         else if (typeParam === "patient") setUserType("patient")
     }, [typeParam])
+
+    const toggleType = () => {
+        const next: UserType = userType === "patient" ? "doctor" : "patient"
+
+        setUserType(next)
+
+        setSearchParams((prev) => {
+            const p = new URLSearchParams(prev)
+            p.set("type", next)
+            return p
+        })
+    }
 
     const { t } = useTranslation()
     const [successEmail, setSuccessEmail] = useState<string | null>(null)
@@ -43,7 +54,7 @@ function RegisterContent() {
     const pageContainer =
         "mt-25 py-10 w-full min-h-screen bg-[var(--background-light)] flex flex-col items-center"
     const headerCard =
-        "w-full max-w-4xl rounded-t-xl p-8 text-center shadow-[var(--shadow-lg)] relative " +
+        "w-full max-w-4xl rounded-t-xl p-8 text-center relative " +
         "bg-[var(--primary-color)] text-white"
     const headerSubtitle = "opacity-90"
     const dropdownBtn =
@@ -60,7 +71,7 @@ function RegisterContent() {
                     <p className={headerSubtitle}>{t("register.subtitle_register")}</p>
 
                     <div className="mt-4 md:mt-0 md:absolute md:top-6 md:right-6">
-                        <Button variant="secondary" className={dropdownBtn} onClick={() => setUserType(userType === "patient" ? "doctor" : "patient")}>
+                        <Button variant="secondary" className={dropdownBtn} onClick={toggleType}>
                             {userType === "patient"
                                 ? t("register.register_im_doctor")
                                 : t("register.register_im_patient")}
