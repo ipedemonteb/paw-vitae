@@ -1,26 +1,21 @@
-"use client"
-
 import React, {useEffect, useState} from "react"
-import {MapPin, Loader2, User, AlertCircle} from "lucide-react"
+import {Loader2, User, AlertCircle} from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { useCoverages } from "@/hooks/useCoverages"
-import { useNeighborhoods } from "@/hooks/useNeighborhoods"
-
-
 import { FormInput } from "@/components/ui/FormInput"
 import { PasswordInput } from "@/components/ui/passwordInput"
 import { PasswordStrengthMeter } from "@/components/ui/PasswordStrengthMeter"
 import {useRegisterPatientMutation} from "@/hooks/usePatients.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import {NeighborhoodFormCombobox} from "@/components/ui/neighborhood-form-combobox.tsx";
 
 interface PatientFormProps {
     onSuccess: (email: string) => void;
 }
 
 const sectionTitle = "text-xl font-bold text-(--primary-color) mb-4 border-b-2 border-(--primary-color) w-fit";
-const baseInputStyles = "w-full py-0 bg-gray-50 border border-(--gray-200) pl-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-transparent transition-all";
 
 export function PatientForm({ onSuccess }: PatientFormProps) {
     const { t } = useTranslation()
@@ -28,7 +23,6 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
     const {mutate: registerPatient, isPending: isSubmitting} = useRegisterPatientMutation()
 
     const {data: coverages, isLoading: isLoadingCoverages} = useCoverages()
-    const {data: neighborhoods, isLoading: isLoadingNeighborhoods} = useNeighborhoods()
 
     const [formData, setFormData] = useState({
         name: "",
@@ -43,8 +37,6 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
         agreeTerms: false
     })
 
-    const [neighborhoodQuery, setNeighborhoodQuery] = useState("")
-    const [showNeighborhoods, setShowNeighborhoods] = useState(false)
     const [errors, setErrors] = useState<{[key : string] : string}>({})
     const [isPasswordValid, setIsPasswordValid] = useState(false)
 
@@ -64,19 +56,6 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
         setFormData(prev => ({ ...prev, [id]: value }))
         if (errors[id]) {
             setErrors(prev => ({ ...prev, [id]: "" }))
-        }
-    }
-
-    const handleNeighborhoodSelect = (neighborhood: { name: string, self: string }) => {
-        setFormData(prev => ({
-            ...prev,
-            neighborhoodUrl: neighborhood.self,
-            neighborhoodDisplayName: neighborhood.name
-        }))
-        setNeighborhoodQuery(neighborhood.name)
-        setShowNeighborhoods(false)
-        if (errors.neighborhoodUrl) {
-            setErrors(prev => ({ ...prev, neighborhoodUrl: "" }))
         }
     }
 
@@ -154,10 +133,6 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
 
     }
 
-    const filteredNeighborhoods = neighborhoods?.filter(n =>
-        n.name.toLowerCase().includes(neighborhoodQuery.toLowerCase())
-    ) || []
-
     return (
         <form onSubmit={handleSubmit} noValidate className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
@@ -200,58 +175,25 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                         error={errors.email}
                     />
 
-                    {/*TODO: CHANGE THIS STYLING*/}
-                    <div className="space-y-2 relative" id="neighborhoodUrl">
-                        <label htmlFor="neighborhood" className="text-sm font-medium text-(--gray-600)">
-                            {t('register.label_neighborhood')} <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                            <MapPin className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${errors.neighborhoodUrl ? 'text-red-500' : 'text-gray-400'}`} />
-                            <input
-                                id="neighborhood"
-                                type="text"
-                                placeholder={t('register.placeholder_neighborhood')}
-                                value={formData.neighborhoodDisplayName || neighborhoodQuery}
-                                onChange={(e) => {
-                                    setNeighborhoodQuery(e.target.value)
-                                    setFormData(prev => ({...prev, neighborhoodDisplayName: ""}))
-                                    setShowNeighborhoods(true)
-                                }}
-                                onFocus={() => setShowNeighborhoods(true)}
-                                className={`w-full pl-9 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-all
-                                    ${errors.neighborhoodUrl
-                                    ? 'border-red-500 focus:ring-red-200 '
-                                    : 'border-gray-300 focus:ring-(--primary-color)'}`}
-                                autoComplete="off"
-                            />
-                        </div>
-
-                        {errors.neighborhoodUrl && (
-                            <p className="text-sm text-red-500 font-medium animate-in fade-in slide-in-from-top-1">
-                                {errors.neighborhoodUrl}
-                            </p>
-                        )}
-
-                        {showNeighborhoods && !isLoadingNeighborhoods ? (
-                            <div className="absolute z-10 w-full bg-white border rounded-md shadow-lg mt-1 max-h-40 overflow-y-auto">
-                                {filteredNeighborhoods.length > 0 ? (
-                                    filteredNeighborhoods.map(n => (
-                                        <div
-                                            key={n.name}
-                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                                            onClick={() => handleNeighborhoodSelect(n)}
-                                        >
-                                            {n.name}
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="px-4 py-2 text-gray-500 text-sm">{t('register.no_neighborhoods')}</div>
-                                )}
-                            </div>
-                        ) : isLoadingNeighborhoods ? (
-                            <div className="flex items-center gap-2 text-gray-500 text-sm"><Loader2 className="h-4 w-4 animate-spin"/> {t('register.loader_neighborhoods')}</div>
-                        ): (<></>)}
-                    </div>
+                    <NeighborhoodFormCombobox
+                        id="neighborhoodUrl"
+                        label={t("register.label_neighborhood")}
+                        required
+                        value={formData.neighborhoodUrl || undefined}
+                        disabled={isSubmitting}
+                        error={errors.neighborhoodUrl}
+                        placeholder={t("register.label_neighborhood")}
+                        onChange={(n) => {
+                            setFormData((prev) => ({
+                                ...prev,
+                                neighborhoodUrl: n?.self ?? "",
+                                neighborhoodDisplayName: n?.name ?? "",
+                            }))
+                            if (errors.neighborhoodUrl) {
+                                setErrors((prev) => ({ ...prev, neighborhoodUrl: "" }))
+                            }
+                        }}
+                    />
 
                     <div className="md:col-span-2">
                         <FormInput
@@ -380,7 +322,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`w-3xs text-base py-4 font-semibold mt-3 bg-(--primary-color) hover:bg-(--primary-dark)
+                        className={`w-sm text-base py-4 font-semibold mt-3 bg-(--primary-color) hover:bg-(--primary-dark)
                             ${isSubmitting
                             ? ' cursor-not-allowed'
                             : ' cursor-pointer'

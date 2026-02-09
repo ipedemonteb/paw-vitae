@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import { getClaims } from "@/context/auth-store";
 
-const cardContainer = "flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full md:w-1/2 rounded-xl md:h-160";
+const cardContainer = "flex flex-col items-center justify-center p-8 md:p-12 bg-white w-full md:w-1/2 rounded-r-xl md:h-160 border-r border-y border-(--gray-200)";
 const headerSection = "text-center space-y-2 mb-8";
 const headerTitle = "text-3xl font-bold text-(--text-color)";
 const headerSubtitle = "text-(--text-color) text-sm";

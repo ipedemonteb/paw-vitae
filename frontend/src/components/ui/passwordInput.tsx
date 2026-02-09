@@ -33,7 +33,7 @@ export function PasswordInput({ label, tooltip, id, required, className, error, 
                     type={show ? "text" : "password"}
                     required={required}
                     className={cn(
-                        "flex h-10 w-full rounded-lg border bg-(--gray-50) px-3 py-2 placeholder:text-(--gray-400) focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 pr-10 transition-all",
+                        "flex h-11 w-full rounded-lg border bg-(--gray-50) px-3 py-2 placeholder:text-(--gray-400) focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 pr-10 transition-all",
                         error
                             ? "border-(--danger) focus:ring-(--danger) text-(--danger-dark) placeholder-(--danger/2)"
                             : "border-(--gray-300) focus:ring-(--primary-color) focus:border-transparent",
