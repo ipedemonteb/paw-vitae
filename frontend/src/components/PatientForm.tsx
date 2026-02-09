@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next"
 import { useCoverages } from "@/hooks/useCoverages"
 import { FormInput } from "@/components/ui/FormInput"
 import { PasswordInput } from "@/components/ui/passwordInput"
-import { PasswordStrengthMeter } from "@/components/ui/PasswordStrengthMeter"
+import { PasswordStrengthMeter } from "@/components/PasswordStrengthMeter.tsx"
 import {useRegisterPatientMutation} from "@/hooks/usePatients.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {Button} from "@/components/ui/button.tsx";
