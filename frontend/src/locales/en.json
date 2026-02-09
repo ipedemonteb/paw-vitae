@@ -570,7 +570,7 @@
       "account": "Account",
       "noOfficesTitle" : "No Offices Configured",
       "noOfficesMessage" : "You have not added any offices yet. Please add at least one office to manage your appointments.",
-      "addOffice" : "Go to add Offices"
+      "addOffice" : "Go to Add Offices"
     },
     "profile": {
       "doctor": "Doctor",
