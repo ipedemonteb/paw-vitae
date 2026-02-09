@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import { Input } from "@/components/ui/input";
 import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, List, Grid2X2, Eraser } from "lucide-react";
-import { CoverageCombobox } from "@/components/ui/CoverageCombobox.tsx";
+import { CoverageCombobox } from "@/components/ui/coverage-combobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { ButtonGroup } from "@/components/ui/button-group.tsx";
 import SearchListCard from "@/components/SearchListCard.tsx";
