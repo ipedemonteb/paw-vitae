@@ -18,6 +18,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog.tsx";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const dashboardCointainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -49,7 +50,11 @@ function DoctorDashboardLayout() {
 
     const [isDismissed, setIsDismissed] = useState(false);
 
-    if (loadingDoctor || loadingOffices) {
+    const isLoadingDoctor = useDelayedBoolean(loadingDoctor);
+    const isLoadingOffices = useDelayedBoolean(loadingOffices);
+    const isLoading = isLoadingDoctor || isLoadingOffices;
+
+    if (useDelayedBoolean(isLoading)) {
         return <LoadingFullPageComponent />;
     }
 

@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/useAuth.ts";
 import {usePatientById} from "@/hooks/usePatients.ts";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const historyBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
@@ -59,7 +60,9 @@ function MedicalHistory() {
 
     const completed = (appointments?.data ?? []).filter(a => a.status === "completo");
 
-    if (isLoading || isLoadingPatient) return (
+    const loading = isLoading || isLoadingPatient;
+
+    if (useDelayedBoolean(loading)) return (
         <LoadingFullPageComponent/>
     )
 
@@ -72,7 +75,7 @@ function MedicalHistory() {
         if (isError) {
             return (
                 <div className={noAppointments}>
-        <p className="text-red-500">{t("error.generic", "Error al cargar el historial.")}</p>
+        <p className="text-(--danger)">{t("error.generic", "Error al cargar el historial.")}</p>
                 </div>
             );
         }

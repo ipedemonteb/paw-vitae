@@ -169,16 +169,16 @@ function HeroSection() {
 
                 <div className="flex gap-10">
                     <div className="flex flex-col">
-        <span className="text-4xl font-bold text-[var(--primary-color)]">
+        <span className="text-4xl font-bold text-(--primary-color)">
           {loadingDoctors ? "..." : doctors}
         </span>
-                        <span className="text-lg text-[var(--text-light)]">{t("landing.hero.doctors")}</span>
+                        <span className="text-lg text-(--text-light)">{t("landing.hero.doctors")}</span>
                     </div>
                     <div className="flex flex-col">
-        <span className="text-4xl font-bold text-[var(--primary-color)]">
+        <span className="text-4xl font-bold text-(--primary-color)">
           {loadingPatients ? "..." : patients}
         </span>
-                        <span className="text-lg text-[var(--text-light)]">{t("landing.hero.patients")}</span>
+                        <span className="text-lg text-(--text-light)">{t("landing.hero.patients")}</span>
                     </div>
                 </div>
             </div>

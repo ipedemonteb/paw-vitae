@@ -17,6 +17,7 @@ import type {DoctorDTO} from "@/data/doctors.ts";
 import {userIdFromSelf} from "@/utils/IdUtils.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const confirmationBackground =
     "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
@@ -98,7 +99,9 @@ function AppointmentConfirmation() {
         isLoading: isLoadingDoctor
     } = useDoctor(doctorId)
 
-    if (isLoading || isLoadingSpecialty || isLoadingOffice || isLoadingNeighborhood || isLoadingDoctor) {
+    const loading = isLoading || isLoadingSpecialty || isLoadingOffice || isLoadingNeighborhood || isLoadingDoctor
+
+    if (useDelayedBoolean(loading)) {
         return <LoadingFullPageComponent/>
     }
 

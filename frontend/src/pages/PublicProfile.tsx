@@ -74,6 +74,7 @@ import {userIdFromSelf} from "@/utils/IdUtils.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
@@ -90,7 +91,9 @@ function PublicProfile() {
     const { data: ratings, isLoading: isLoadingRatings } = useRatings(doctor?.ratings);
     const { data: offices, isLoading: isLoadingOffices } = useDoctorOffices(doctor?.offices);
 
-    if (isLoadingDoctor || isLoadingCertifications || isLoadingCoverages || isLoadingExperiences || isLoadingProfile || isLoadingOffices || isLoadingRatings || isLoadingSpecialties)
+    const isLoading = isLoadingDoctor || isLoadingCertifications || isLoadingCoverages || isLoadingExperiences || isLoadingProfile || isLoadingOffices || isLoadingRatings || isLoadingSpecialties;
+
+    if (useDelayedBoolean(isLoading))
         return <LoadingFullPageComponent/>
 
     if (isError || !doctor) return <GenericError code={404} />;

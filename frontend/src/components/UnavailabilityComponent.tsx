@@ -23,6 +23,7 @@ import {Spinner} from "@/components/ui/spinner.tsx";
 import {useSearchParams} from "react-router-dom";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {toast} from "sonner";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 type UnavailabilityRange = {
     startDate: string;
@@ -302,7 +303,7 @@ export default function UnavailabilityComponent() {
                 </DialogContent>
             </Dialog>
 
-            {isLoading ? (
+            {useDelayedBoolean(isLoading) ? (
                 <DashboardNavLoader />
             ) : (
                 <div className={unavailabilityContainer}>
