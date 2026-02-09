@@ -209,7 +209,7 @@ function DoctorAccount() {
                         <CardContent className="p-0 flex flex-col gap-2">
                             <div className="flex flex-col items-center justify-center py-8 bg-(--gray-100) border-b">
                                 <div className="relative group">
-                                    {isLoadingImageUrl ?
+                                    {isLoadingImageUrl && getDoctorImgUrl != undefined ?
                                         <Skeleton className={"flex justify-center items-center h-32 w-32 border-4 border-white rounded-full"}>
                                             <Spinner className="h-6 w-6 text-(--gray-300)"/>
                                         </Skeleton> :

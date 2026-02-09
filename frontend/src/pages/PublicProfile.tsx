@@ -177,7 +177,7 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
                 )}
             </div>
             <div className={profileContent}>
-                {isLoadingImage ?
+                {isLoadingImage && getDoctorImgUrl != undefined ?
                     <Skeleton className={`${avatarContainer} flex justify-center items-center`}>
                         <Spinner className="h-6 w-6 text-(--gray-300)"/>
                     </Skeleton>
