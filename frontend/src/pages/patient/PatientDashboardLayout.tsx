@@ -9,6 +9,7 @@ import {useTranslation} from "react-i18next";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {usePatientById} from "@/hooks/usePatients.ts";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const dashboardContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6";
@@ -58,7 +59,7 @@ function PatientDashboardLayout() {
     const patientId= auth.userId;
     const { data: patient, isLoading: isLoadingPatient } = usePatientById(patientId);
 
-    if (isLoadingPatient) {
+    if (useDelayedBoolean(isLoadingPatient, 300)) {
         return <LoadingFullPageComponent />
     }
 

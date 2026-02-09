@@ -29,6 +29,7 @@ import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const ghostFilter = "h-0 sm:h-9";
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
@@ -153,12 +154,12 @@ function PatientAccount() {
                 )}
                 {isEditing && <div className={ghostFilter} />}
             </DashboardNavHeader>
-            {isLoading ? <DashboardNavLoader /> :
+            {useDelayedBoolean(isLoading) ? <DashboardNavLoader /> :
             <div className={containerStyles}>
                 <Card className={cardStyles}>
                     <div className={cardHeaderStyles}>
                         <h2 className={cardTitleStyles}>
-                            <User className="h-5 w-5 text-[var(--primary-color)]" />
+                            <User className="h-5 w-5 text-(--primary-color)" />
                             {t("dashboard.profile.title")}
                         </h2>
                     </div>
@@ -247,7 +248,7 @@ function PatientAccount() {
                     <Card className={cardStyles}>
                         <div className={cardHeaderStyles}>
                             <h3 className={cardTitleStyles}>
-                                <ShieldPlus className="h-5 w-5 text-[var(--primary-color)]" />
+                                <ShieldPlus className="h-5 w-5 text-(--primary-color)" />
                                 {t("dashboard.profile.coverage")}
                             </h3>
                         </div>

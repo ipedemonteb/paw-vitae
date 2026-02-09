@@ -12,6 +12,7 @@ import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
 import {useEffect, useState} from "react";
 import DashboardNavSelect from "@/components/DashboardNavSelect.tsx";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const typeDictionary = {
     history: {
@@ -84,16 +85,17 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                     <DashboardNavSelect all={t("appointment.filters.all")} value={filterValue} onValueChange={(val) => setFilter(val)} content={componentType.popoverData} display={(s:string) => t(transformFilter(s))}/>
                 </div>
             </DashboardNavHeader>
-            {(isLoading) ? (
+            {(useDelayedBoolean(isLoading)) ? (
                 <DashboardNavLoader/>
             ) : (appointments?.data !== undefined && appointments.data.length > 0) ? (
                 appointments.data.map((a, i) => (
                     <AppointmentCard animationDelay={i} mounted={mounted} key={a.self} appointment={a} isUpcoming={type === "upcoming"}/>
                 ))
+
             ) : (
                 <DashboardNavEmptyContent Icon={CalendarFoldIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>
             )}
-            {!isLoading && appointments?.data !== undefined && appointments?.data?.length > 0 && appointments?.pagination && (
+            {!(useDelayedBoolean(isLoading)) && appointments?.data !== undefined && appointments?.data?.length > 0 && appointments?.pagination && (
                 <PaginationComponent pagination={appointments.pagination} searchParams={searchParams} />
             )}
         </DashboardNavContainer>
