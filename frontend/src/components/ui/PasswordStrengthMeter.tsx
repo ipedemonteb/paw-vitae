@@ -58,7 +58,7 @@ export function PasswordStrengthMeter({ password }: PasswordStrengthMeterProps) 
         <div className="mt-2">
             <div className={`transition-all duration-300 ${password ? 'opacity-100 max-h-24' : 'opacity-0 max-h-0 overflow-hidden'}`}>
                 <div className="flex justify-between text-xs mb-1">
-                    <span className="text-(--gray-500) font-medium">Fortaleza</span>
+                    <span className="text-(--gray-500) font-medium">{t("register.strength")}</span>
                     <span className="text-gray-900 font-bold">{style.label}</span>
                 </div>
                 <div className="w-full h-1.5 bg-(--gray-100) rounded-full overflow-hidden">

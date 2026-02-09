@@ -289,6 +289,7 @@
     "placeholder_neighborhood": "Buscar barrio...",
     "placeholder_password": "********",
     "tooltip_password": "Mínimo 8 caracteres, una mayúscula y un número.",
+    "strength": "Fortaleza",
     "btn_register": "Registrarse",
     "btn_registering": "Registrando...",
     "btn_next": "Siguiente",
@@ -314,7 +315,7 @@
       "email_taken": "Error: Ese correo electrónico ya está registrado.",
       "generic": "Ocurrió un error al registrar.",
       "missing_fields": "Por favor complete todos los campos obligatorios antes de continuar.",
-      "required": "Este campo es obligatorio",
+      "required": "Este campo es obligatorio.",
       "name_required": "El nombre es obligatorio.",
       "lastname_required": "El apellido es obligatorio.",
       "phone_required": "El teléfono es obligatorio.",
@@ -323,7 +324,7 @@
       "select_neighborhoods": "Por favor seleccione un barrio.",
       "no_specialties_available": "No se encontraron especialidades en este momento. Intente nuevamente mas tarde",
       "no_coverages_available": "No se encontraron obras sociales en este momento. Intente nuevamente mas tarde",
-      "terms_required" : "Debe aceptar los términos y condiciones para continuar",
+      "terms_required" : "Debe aceptar los términos y condiciones para continuar.",
       "select_neighborhood": "Por favor seleccione un barrio."
     }
   },
