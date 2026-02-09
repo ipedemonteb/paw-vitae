@@ -9,22 +9,15 @@ import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.FileUtils;
-import ar.edu.itba.paw.webapp.utils.ResponseUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -35,7 +28,6 @@ import static ar.edu.itba.paw.webapp.utils.ResponseUtils.*;
 @Component
 public class RestDoctorController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestDoctorController.class);
 
     private final DoctorService doctorService;
     private final SpecialtyService specialtyService;
@@ -80,16 +72,9 @@ public class RestDoctorController {
     @GET
     @Produces(value = CustomMediaType.APPLICATION_DOCTOR_LIST)
     public Response list(
-            @QueryParam("specialty") @DefaultValue("0") @Min(0) long specialtyId,
-            @QueryParam("page") @DefaultValue("1") @Min(1) int page,
-            @QueryParam("pageSize") @DefaultValue("9") @Min(1) @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE) int pageSize,
-            @QueryParam("coverage") @DefaultValue("0") @Min(0) long coverageId,
-            @QueryParam("weekdays") List<Integer> weekdays,
-            @QueryParam("keyword") @DefaultValue("") String keyword,
-            @QueryParam("orderBy") @DefaultValue("name") String orderBy,
-            @QueryParam("direction") @DefaultValue("asc") String direction
+    @Valid @BeanParam final DoctorSearchForm doctorSearchForm
     ) {
-        Page<Doctor> doctorPage = this.doctorService.getWithFilters(specialtyId, coverageId, weekdays, keyword, orderBy, direction, page, pageSize);
+        Page<Doctor> doctorPage = this.doctorService.getWithFilters(doctorSearchForm.getSpecialtyId(), doctorSearchForm.getCoverageId(), doctorSearchForm.getWeekdays(), doctorSearchForm.getKeyword(), doctorSearchForm.getOrderBy(), doctorSearchForm.getDirection(), doctorSearchForm.getPage(), doctorSearchForm.getPageSize());
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctorPage.getContent(), uriInfo)) {}), doctorPage, uriInfo);
     }
 
@@ -119,12 +104,17 @@ public class RestDoctorController {
     @GET
     @Path("/{id:\\d+}/unavailability")
     @Produces(value = CustomMediaType.APPLICATION_UNAVAILABILITY_LIST)
-    public Response getDoctorUnavailability(@PathParam("id") final long id,
-                                            @QueryParam("from") String from,
-                                            @QueryParam("to") String to,
-                                            @QueryParam("page") @DefaultValue("1") @Min(1) int page,
-                                            @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE) int pageSize){
-        Page<UnavailabilitySlot> unavailabilitySlotPage = this.unavailabilitySlotsService.getUnavailabilityByDoctorId(id, from, to, page, pageSize);
+    public Response getDoctorUnavailability(
+            @PathParam("id") final long id,
+            @BeanParam @Valid UnavailabilitySearchForm form
+    ) {
+        Page<UnavailabilitySlot> unavailabilitySlotPage = this.unavailabilitySlotsService.getUnavailabilityByDoctorId(
+                id,
+                form.getFrom(),
+                form.getTo(),
+                form.getPage(),
+                form.getPageSize()
+        );
         return buildPaginationHeaders(Response.ok(new GenericEntity<>(UnavailabilityDTO.fromUnavailabilitySlot(unavailabilitySlotPage.getContent(), uriInfo)) {}), unavailabilitySlotPage, uriInfo);
     }
 
@@ -133,9 +123,9 @@ public class RestDoctorController {
     @Produces(value = CustomMediaType.APPLICATION_OFFICE_LIST)
     public Response getDoctorOffices(
             @PathParam("id") final long id,
-            @QueryParam("status") @DefaultValue("all") final String status
-    ) {
-        List<DoctorOffice> offices = this.doctorOfficeService.getByDoctorId(id, status);
+            @BeanParam @Valid OfficeSearchForm form) {
+
+        List<DoctorOffice> offices = this.doctorOfficeService.getByDoctorId(id, form.getStatus());
         return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(offices, uriInfo)) {}).build();
     }
 
@@ -149,8 +139,8 @@ public class RestDoctorController {
     @GET
     @Path("/{id:\\d+}/availability")
     @Produces(value = CustomMediaType.APPLICATION_AVAILABILITY_LIST)
-    public Response getDoctorOfficeAvailability(@PathParam("id") final long id, @QueryParam("officeId") final Long officeId) {
-        List<DoctorOfficeAvailability> availabilities = this.doctorOfficeAvailabilityService.getWithFilters(id,officeId);
+    public Response getDoctorOfficeAvailability(@PathParam("id") final long id, @BeanParam @Valid AvailabilityOfficeForm availabilityOfficeForm) {
+        List<DoctorOfficeAvailability> availabilities = this.doctorOfficeAvailabilityService.getWithFilters(id,availabilityOfficeForm.getOfficeId());
         return Response.ok(new GenericEntity<>(AvailabilityDTO.fromDoctorOfficeAvailability(availabilities, uriInfo)) {}).build();
     }
 
@@ -338,10 +328,11 @@ public class RestDoctorController {
     @Consumes(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOTS_LIST)
     public Response getDoctorAvailabilitySlots(
             @PathParam("id") final long id,
-            @NotNull @QueryParam("from") String from,
-            @NotNull @QueryParam("to") String to
-    ) {
-        List<OccupiedSlots> slots = this.occupiedSlotsService.getByDoctorIdInDateRange(id, LocalDate.parse(from), LocalDate.parse(to));
+            @BeanParam @Valid OccupiedSlotsSearchForm form) {
+
+        List<OccupiedSlots> slots = this.occupiedSlotsService.getByDoctorIdInDateRange(
+                id, LocalDate.parse(form.getFrom()), LocalDate.parse(form.getTo())
+        );
         return Response.ok(new GenericEntity<>(OccupiedSlotDTO.fromList(slots, uriInfo)) {}).build();
     }
     @GET

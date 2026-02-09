@@ -8,6 +8,7 @@ import ar.edu.itba.paw.webapp.dto.AppointmentDTO;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.AppointmentReportForm;
 import ar.edu.itba.paw.webapp.CustomMediaType;
+import ar.edu.itba.paw.webapp.form.AppointmentSearchForm;
 import ar.edu.itba.paw.webapp.utils.ResponseUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.slf4j.Logger;
@@ -19,15 +20,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PATCH;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
 
@@ -51,16 +44,16 @@ public class RestAppointmentController {
 
     @GET
     @Produces(value = CustomMediaType.APPLICATION_APPOINTMENT_LIST)
-    public Response list(
-            @QueryParam("userId") @NotNull Long userId,
-            @QueryParam("doctorId") Long doctorId,
-            @QueryParam("collection") @DefaultValue("upcoming") String collection,
-            @QueryParam("filter") @DefaultValue("all") String filter,
-            @QueryParam("page") @DefaultValue("1") @Min(1)  int page,
-            @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(ResponseUtils.MAX_PAGINATION_PAGE_SIZE) int pageSize,
-            @QueryParam("sort") @DefaultValue("asc") String sort
-    ) {
-        Page<Appointment> appointmentPage = appointmentService.getAppointments(userId, "upcoming".equalsIgnoreCase(collection), page, pageSize, filter, sort);
+    public Response list(@BeanParam @Valid AppointmentSearchForm form) {
+
+        Page<Appointment> appointmentPage = appointmentService.getAppointments(
+                form.getUserId(),
+                "upcoming".equalsIgnoreCase(form.getCollection()),
+                form.getPage(),
+                form.getPageSize(),
+                form.getFilter(),
+                form.getSort()
+        );
         Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointmentPage.getContent(), uriInfo)) {});
         return buildPaginationHeaders(rb, appointmentPage, uriInfo);
     }
