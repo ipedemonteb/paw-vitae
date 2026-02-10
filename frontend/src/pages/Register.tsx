@@ -50,7 +50,7 @@ function RegisterContent() {
     }
 
     const registerPage =
-        "bg-[var(--background-light)] px-5 flex justify-center items-start min-h-screen";
+        "bg-(--background-light) px-5 flex justify-center items-start min-h-screen";
     const pageContainer =
         "mt-25 py-10 w-full min-h-screen bg-[var(--background-light)] flex flex-col items-center"
     const headerCard =
