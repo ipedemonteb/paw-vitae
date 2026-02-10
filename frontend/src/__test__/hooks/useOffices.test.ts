@@ -16,8 +16,8 @@ import type {OfficeDTO} from "@/data/offices.ts";
 describe('Doctor Office Hooks Integration Tests', () => {
 
 
-    describe('useDoctorOffices (Listado)', () => {
-        it('debería traer la lista de oficinas del doctor correctamente', async () => {
+    describe('useDoctorOffices (List)', () => {
+        it('should bring the list of the offices of the doctor correctly', async () => {
             const url = `${BASE_URL}/doctors/1/offices`;
             const { result } = renderHook(() => useDoctorOffices(url));
 
@@ -30,7 +30,7 @@ describe('Doctor Office Hooks Integration Tests', () => {
             expect(result.current.data![1].status).toBe('inactive');
         });
 
-        it('debería filtrar oficinas por estado si se solicita', async () => {
+        it('should filter the offices by their status if asked for', async () => {
             const url = `${BASE_URL}/doctors/1/offices`;
             const { result } = renderHook(() => useDoctorOffices(url, { status: 'active' }));
 
@@ -41,8 +41,8 @@ describe('Doctor Office Hooks Integration Tests', () => {
         });
     });
 
-    describe('useDoctorOffice (Detalle)', () => {
-        it('debería traer el detalle de una oficina específica', async () => {
+    describe('useDoctorOffice (Detail)', () => {
+        it('should bring the details of a specific office', async () => {
             const url = `${BASE_URL}/doctors/1/offices/1`;
             const { result } = renderHook(() => useDoctorOffice(url));
 
@@ -52,7 +52,7 @@ describe('Doctor Office Hooks Integration Tests', () => {
             expect(result.current.data?.self).toContain('/offices/1');
         });
 
-        it('debería manejar errores si la oficina no existe', async () => {
+        it('should handle errors if the office does not exist', async () => {
             const url = `${BASE_URL}/doctors/1/offices/error`;
             const { result } = renderHook(() => useDoctorOffice(url));
 
@@ -60,8 +60,8 @@ describe('Doctor Office Hooks Integration Tests', () => {
         });
     });
 
-    describe('useDoctorAvailability (Disponibilidad)', () => {
-        it('debería traer toda la disponibilidad si no se filtra', async () => {
+    describe('useDoctorAvailability (Availability)', () => {
+        it('should bring all availability if not filtered', async () => {
             const { result } = renderHook(() => useDoctorAvailability('1'));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -69,7 +69,7 @@ describe('Doctor Office Hooks Integration Tests', () => {
             expect(result.current.data).toHaveLength(2);
         });
 
-        it('debería filtrar disponibilidad por oficina', async () => {
+        it('should filter availability by office', async () => {
             const { result } = renderHook(() => useDoctorAvailability('1', '2'));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -81,7 +81,7 @@ describe('Doctor Office Hooks Integration Tests', () => {
 
 
     describe('useDoctorOfficesSpecialties (useQueries)', () => {
-        it('debería cargar especialidades de múltiples oficinas en paralelo', async () => {
+        it('should parallel load specialties of multiple offices', async () => {
             const mockOffices: Partial<OfficeDTO>[] = [
                 { officeSpecialties: `${BASE_URL}/doctors/1/offices/1/specialties` },
                 { officeSpecialties: `${BASE_URL}/doctors/1/offices/2/specialties` }
@@ -102,7 +102,7 @@ describe('Doctor Office Hooks Integration Tests', () => {
 
     describe('Mutations', () => {
 
-        it('useCreateDoctorOfficeMutation debería crear una oficina (201)', async () => {
+        it('should create an office (201)', async () => {
             const { result } = renderHook(() => useCreateDoctorOfficeMutation('1'));
 
             const newOfficeForm = {
@@ -120,7 +120,7 @@ describe('Doctor Office Hooks Integration Tests', () => {
             expect(result.current.error).toBeNull();
         });
 
-        it('useUpdateOfficeMutation debería actualizar una oficina (204)', async () => {
+        it('should update an office (204)', async () => {
             const url = `${BASE_URL}/doctors/1/offices/1`;
             const { result } = renderHook(() => useUpdateOfficeMutation(url));
 
@@ -133,7 +133,7 @@ describe('Doctor Office Hooks Integration Tests', () => {
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
         });
 
-        it('useDeleteOfficeMutation debería borrar una oficina (204)', async () => {
+        it('should delete an office (204)', async () => {
             const url = `${BASE_URL}/doctors/1/offices/1`;
             const { result } = renderHook(() => useDeleteOfficeMutation(url));
 
@@ -142,7 +142,7 @@ describe('Doctor Office Hooks Integration Tests', () => {
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
         });
 
-        it('useUpdateDoctorAvailabilityMutation debería guardar horarios (204)', async () => {
+        it('should update the schedule (204)', async () => {
             const { result } = renderHook(() => useUpdateDoctorAvailabilityMutation('1'));
 
             const availabilityData = {

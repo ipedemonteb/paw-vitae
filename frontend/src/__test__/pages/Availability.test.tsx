@@ -68,7 +68,7 @@ describe('Doctor Availability Management', () => {
         vi.clearAllMocks();
     });
 
-    it('debería permitir editar la disponibilidad semanal (Happy Path)', async () => {
+    it('should allow the weekly availability to be edited (Happy Path)', async () => {
         const user = userEvent.setup();
         renderComponent();
 
@@ -104,7 +104,7 @@ describe('Doctor Availability Management', () => {
         });
     });
 
-    it('debería impedir guardar si hay solapamiento de horarios (Overlap)', async () => {
+    it('should prevent saving the avaialability if there is overlap', async () => {
         const user = userEvent.setup();
         renderComponent();
 
@@ -134,7 +134,7 @@ describe('Doctor Availability Management', () => {
         expect(screen.getByText('save')).toBeDisabled();
     });
 
-    it('debería permitir agregar una fecha de no disponibilidad (Vacaciones)', async () => {
+    it('should be able to add and save unavailability dates', async () => {
         const user = userEvent.setup();
         renderComponent();
 

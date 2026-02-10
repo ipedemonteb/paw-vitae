@@ -101,7 +101,7 @@ describe('Appointment Booking Flow', () => {
         vi.clearAllMocks();
     });
 
-    it('debería permitir reservar un turno completo (Happy Path)', async () => {
+    it('should let me book an appointment (Happy Path)', async () => {
         server.use(
             http.get(`${BASE_URL}/doctors/:id/slots`, () => HttpResponse.json([]))
         );
@@ -143,7 +143,7 @@ describe('Appointment Booking Flow', () => {
         });
     });
 
-    it('debería mostrar la página de confirmación correctamente', async () => {
+    it('should correctly show the appointment confirmation page', async () => {
         renderApp(`/appointment/999/confirmation`);
 
         await waitFor(() => {
@@ -154,7 +154,7 @@ describe('Appointment Booking Flow', () => {
         });
     });
 
-    it('debería mostrar error si falla la creación del turno (Error 500)', async () => {
+    it('shoudl show error if the appointment creation fails (Error 500)', async () => {
         server.use(
             http.get(`${BASE_URL}/doctors/:id/slots`, () => HttpResponse.json([])),
             http.post(`${BASE_URL}/appointments`, () => {

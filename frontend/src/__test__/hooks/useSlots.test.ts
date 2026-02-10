@@ -4,7 +4,7 @@ import { useOccupiedSlots } from "@/hooks/useSlots.ts";
 
 describe('useOccupiedSlots Hook', () => {
 
-    it('debería traer los slots ocupados correctamente', async () => {
+    it('should bring all the occupied slots correctly', async () => {
 
         const { result } = renderHook(() =>
             useOccupiedSlots('2026-02-01', '2026-02-28', '1')
@@ -22,7 +22,7 @@ describe('useOccupiedSlots Hook', () => {
         expect(slots![0].date).toBe('2026-02-01')
     });
 
-    it('debería manejar errores del servidor (500)', async () => {
+    it('should handle server errors (500)', async () => {
         const { result } = renderHook(() =>
             useOccupiedSlots('2026-02-01', '2026-02-28', 'error')
         );

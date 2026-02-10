@@ -78,7 +78,7 @@ describe('Search Page Integration', () => {
         vi.clearAllMocks();
     });
 
-    it('debería renderizar la página y cargar la lista de doctores', async () => {
+    it('should render the page and load the list of doctors', async () => {
         renderSearch();
 
         expect(screen.getByText("search.title")).toBeInTheDocument();
@@ -92,7 +92,7 @@ describe('Search Page Integration', () => {
         expect(cards[0]).toBeInTheDocument();
     });
 
-    it('debería permitir escribir en el buscador', async () => {
+    it('should allow writing in the search bar', async () => {
         const user = userEvent.setup();
         renderSearch();
 
@@ -101,7 +101,7 @@ describe('Search Page Integration', () => {
         expect(searchInput).toHaveValue("House");
     });
 
-    it('debería cambiar entre vista Lista y Grilla verificando el cambio de estructura', async () => {
+    it('should switch between List and Grid view, verifying the change of structure', async () => {
         const user = userEvent.setup();
         renderSearch();
 
