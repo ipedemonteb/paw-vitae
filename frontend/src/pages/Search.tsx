@@ -283,7 +283,7 @@ function ResultSection({paginationData, isLoading, isRefetching, isError, refetc
                 {useDelayedBoolean(isLoading) ? <Skeleton className="h-4 w-26 rounded-md" /> :
                     <p className={resultText}>{t("search.found", { doctorsFound: paginationData?.pagination.total })}</p>
                 }
-                <div>
+                <div className="hidden sm:block">
                     <ButtonGroup orientation="horizontal">
                         <Button
                             type="button"
