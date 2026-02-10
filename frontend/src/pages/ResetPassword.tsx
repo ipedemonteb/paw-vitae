@@ -8,7 +8,7 @@ import {Spinner} from "@/components/ui/spinner.tsx";
 
 
 const pageContainer =
-    "min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8";
+    "min-h-screen bg-(--background-light) flex flex-col items-center pt-36 pb-12 px-4 sm:px-6 lg:px-8";
 const cardContainer =
     "w-full max-w-lg bg-white py-10 px-16 rounded-xl border border-[var(--gray-300)] shadow-sm";
 const headerContainer =

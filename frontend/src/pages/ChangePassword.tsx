@@ -1,25 +1,31 @@
 import { useState, useEffect, type FormEvent } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useSearchParams } from "react-router-dom"
-import {Lock, CheckCircle2, ArrowLeft, Check, X, AlertCircle, Loader2} from "lucide-react"
+import {Lock, CheckCircle2, ArrowLeft, Check, X, AlertCircle} from "lucide-react"
 import { PasswordInput } from "@/components/ui/passwordInput"
 import { Button } from "@/components/ui/button"
 import {useAuth, useChangePasswordMutation} from "@/hooks/useAuth"
 
 import { PasswordStrengthMeter } from "@/components/PasswordStrengthMeter.tsx"
+import {Spinner} from "@/components/ui/spinner.tsx";
 
-const pageContainer = "min-h-screen bg-gray-50/50 flex flex-col items-center pt-32 pb-12 px-4 sm:px-6 lg:px-8";
-const cardContainer = "w-full max-w-lg space-y-8 bg-white p-8 sm:p-12 rounded-xl border border-gray-200 shadow-xl ";
-const headerContainer = "flex flex-col items-center text-center";
-const iconCircle = "h-16 w-16 bg-[var(--primary-color)]/10 text-[var(--primary-color)] rounded-full flex items-center justify-center mb-6";
-const successIconCircle = "h-16 w-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6";
+const pageContainer =
+    "min-h-screen bg-(--background-light) flex flex-col items-center pt-36 pb-6 px-4 sm:px-6 lg:px-8";
+const cardContainer =
+    "w-full max-w-lg bg-white py-10 px-16 rounded-xl border border-[var(--gray-300)] shadow-sm";
+const headerContainer =
+    "flex flex-col items-center text-center";
+const iconCircle =
+    "h-14 w-14 bg-[var(--primary-color)]/10 text-[var(--primary-color)] rounded-full flex items-center justify-center mb-6";
+const successIconCircle = "h-16 w-16 bg-(--success-light) text-(--success) rounded-full flex items-center justify-center mb-6";
 const titleText = "text-3xl font-bold tracking-tight text-[var(--text-color)]";
-const subtitleText = "mt-3 text-base text-[var(--text-light)] max-w-sm mx-auto";
-const formContainer = "mt-8 space-y-6";
-const inputGroup = "space-y-4";
+const subtitleText = "mt-3 text-base text-(--text-light) max-w-sm mx-auto";
+const formContainer = "mt-8";
+const inputGroup = "mt-8";
 const inputStyle = "text-base";
-const backLinkContainer = "flex items-center justify-center mt-8";
+const backLinkContainer = "flex items-center justify-center mt-6";
 const backLink = "flex items-center gap-2 text-sm font-medium text-[var(--text-light)] hover:text-[var(--primary-color)] transition-colors";
+const submitButton = "w-full text-base mt-8 font-semibold bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 export default function ChangePassword() {
     const { t } = useTranslation()
@@ -116,8 +122,8 @@ export default function ChangePassword() {
 
                 <form className={formContainer} onSubmit={handleSubmit} noValidate>
                     {apiError && (
-                        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md flex items-center gap-2 text-sm">
-                            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                        <div className="bg-(--danger-lighter) border border-(--danger) text-(--danger) px-4 py-3 rounded-md flex items-center gap-2 text-sm">
+                            <AlertCircle className="h-5 w-5 shrink-0" />
                             <span>{apiError}</span>
                         </div>
                     )}
@@ -128,7 +134,7 @@ export default function ChangePassword() {
                             label={t("change_password.new_password")}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className={`${inputStyle} ${isValid ? "border-green-500 ring-green-500" : ""}`}
+                            className={`${inputStyle} ${isValid ? "border-(--success) ring-(--success)" : ""}`}
                             required
                         />
 
@@ -141,18 +147,18 @@ export default function ChangePassword() {
                             label={t("change_password.confirm_password")}
                             value={repeatPassword}
                             onChange={(e) => setRepeatPassword(e.target.value)}
-                            className={`${inputStyle} ${repeatPassword && !passwordsMatch ? "border-red-500 ring-red-500" : (passwordsMatch ? "border-green-500 ring-green-500" : "")}`}
+                            className={`${inputStyle} ${repeatPassword && !passwordsMatch ? "border-(--danger) ring-(--danger)" : (passwordsMatch ? "border-(--success) ring-(--success)" : "")}`}
                             required
                         />
 
                         {repeatPassword && !passwordsMatch && (
-                            <p className="text-sm text-red-500 mt-2 flex items-center gap-1 animate-in fade-in slide-in-from-top-1 font-medium">
+                            <p className="text-sm text-(--danger) mt-2 flex items-center gap-1 animate-in fade-in slide-in-from-top-1 font-medium">
                                 <X className="h-4 w-4" />
                                 {t("change_password.error_mismatch")}
                             </p>
                         )}
                         {passwordsMatch && (
-                            <p className="text-sm text-green-600 mt-2 flex items-center gap-1 animate-in fade-in slide-in-from-top-1 font-medium">
+                            <p className="text-sm text-(--success) mt-2 flex items-center gap-1 animate-in fade-in slide-in-from-top-1 font-medium">
                                 <Check className="h-4 w-4" />
                                 {t("change_password.passwords_match")}
                             </p>
@@ -161,11 +167,11 @@ export default function ChangePassword() {
 
                     <Button
                         type="submit"
-                        className="w-full mt-6 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] h-12 text-base font-semibold shadow-md transition-all"
+                        className={submitButton}
                         size="lg"
                         disabled={!isFormValid || isLoading}
                     >
-                        {isLoading ? <Loader2 className="h-5 w-5 animate-spin"/> : t("change_password.submit")}
+                        {isLoading ? <Spinner className="h-5 w-5"/> : t("change_password.submit")}
                     </Button>
                 </form>
 
