@@ -7,7 +7,7 @@ import {useTranslation} from "react-i18next";
 const dataSpecialty =
     "flex flex-row text-sm items-center gap-1 text-[var(--primary-color)] mb-1";
 const dataIcon =
-    "h-4 w-4";
+    "h-3 w-3";
 
 type SearchSpecialtyBadgeComponentProps = {
     specialties: SpecialtyDTO[],
@@ -21,7 +21,7 @@ export default function SearchSpecialtyBadgeComponent({specialties, maxDisplay}:
            {specialties.slice(0, maxDisplay).map(s => (
                <div key={s.self} className={dataSpecialty}>
                    <Stethoscope className={dataIcon} />
-                   <p>{t(s.name)}</p>
+                   <p className="mr-1">{t(s.name)}</p>
                </div>
            ))}
            {specialties.length > 3 && (
@@ -36,7 +36,7 @@ export default function SearchSpecialtyBadgeComponent({specialties, maxDisplay}:
                            {specialties.slice(3).map(s => (
                                <div className={dataSpecialty}>
                                    <Stethoscope className={dataIcon} />
-                                   <p>{t(s.name)}</p>
+                                   <p className="mr-1">{t(s.name)}</p>
                                </div>
                            ))}
                        </div>

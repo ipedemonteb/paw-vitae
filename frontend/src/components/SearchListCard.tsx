@@ -11,6 +11,8 @@ import {generatePath, Link} from "react-router-dom";
 import {extractIdFromUrl} from "@/lib/utils.ts";
 import {useTranslation} from "react-i18next";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 const cardContainer =
     "flex flex-col items-stretch p-0 md:flex-row";
@@ -34,6 +36,8 @@ const viewProfileButton =
     "w-full bg-white text-[var(--primary-color)] border border-[var(--primary-color)] py-2 px-4 hover:text-white hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] cursor-pointer";
 const ratingStars =
     "mt-[10px]";
+const skeletonBadge =
+    "h-4 w-20 rounded-md";
 
 export type SearchCardProps = {
     doctor: DoctorDTO
@@ -45,7 +49,7 @@ function SearchListCard({doctor}: SearchCardProps) {
     const {t} = useTranslation();
 
     const { data: specialties, isLoading: loadingSpecialties } = useDoctorSpecialties(doctor.specialties);
-    const { url:imageUrl } = useDoctorImageUrl(doctor.self.split("/").pop());
+    const { url:imageUrl, isLoading: loadingDoctorImgUrl } = useDoctorImageUrl(doctor.self.split("/").pop());
     const doctorId = extractIdFromUrl(doctor.self)
     const profilePath = generatePath("/profile/:id", { id: String(doctorId) })
     const schedulePath = generatePath("/appointment/:id", { id: String(doctorId) })
@@ -53,15 +57,26 @@ function SearchListCard({doctor}: SearchCardProps) {
     return (
         <Card className={cardContainer}>
             <div className={iconContainer}>
-                <Avatar className={icon}>
-                    <AvatarImage src={imageUrl || undefined} />
-                    <AvatarFallback>{avatarFallbackText}</AvatarFallback>
-                </Avatar>
+                {loadingDoctorImgUrl ?
+                    <Skeleton className={`${icon} flex justify-center items-center rounded-full`}>
+                        <Spinner className="h-6 w-6 text-(--gray-300)"/>
+                    </Skeleton>
+                    :
+                    <Avatar className={icon}>
+                        <AvatarImage src={imageUrl || undefined} />
+                        <AvatarFallback>{avatarFallbackText}</AvatarFallback>
+                    </Avatar>
+                }
             </div>
             <div className={dataContainer}>
                 <h3 className={dataName}>{doctor.name} {doctor.lastName}</h3>
                 {useDelayedBoolean(loadingSpecialties) ?
-                    <div></div>
+                    <div className="flex gap-2 my-1">
+                        <Skeleton className={skeletonBadge} />
+                        <Skeleton className={skeletonBadge} />
+                        <Skeleton className={skeletonBadge} />
+                        <Skeleton className="h-4 w-8 rounded-md" />
+                    </div>
                     :
                     <SearchSpecialtyBadgeComponent specialties={specialties || []} maxDisplay={3}/>
                 }
