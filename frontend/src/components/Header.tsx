@@ -315,7 +315,7 @@ function NotLoggedInComponent({
 }
 
 const loggedInContainer =
-    "flex items-center gap-2 cursor-pointer hover:bg-[var(--gray-100)] rounded-sm px-3 py-2";
+    "flex items-center gap-2 cursor-pointer hover:bg-[var(--gray-100)] rounded-lg px-3 py-2";
 const headerAvatar = "w-8 h-8";
 const userName = "max-w-[120px] truncate text-base text-[var(--text-color)]";
 const chevronDown =
@@ -332,8 +332,7 @@ const dialogText =
 const dialogFooter =
     "mt-2";
 const dialogCancel =
-    "bg-white text-(--primary-color) border border-(--primary-color) " +
-    "hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark) cursor-pointer"
+    "bg-white text-(--gray-600) border border-(--gray-400) hover:bg-(--gray-100) hover:border-(--gray-500-) hover:text-(--text-color) cursor-pointer transition-colors";
 const dialogConfirm =
     "text-white bg-[var(--danger)] border border-[var(--danger)] hover:text-white hover:bg-[var(--danger-dark)] hover:border hover:border-[var(--danger-dark)] cursor-pointer";
 

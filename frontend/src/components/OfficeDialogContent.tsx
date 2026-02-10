@@ -102,7 +102,7 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                     )}
                 </div>
                 <DialogFooter className="pt-6">
-                    <DialogClose disabled={mutationPending} className="hover:bg-(--primary-dark) rounded-md py-1 px-3 text-sm bg-white text-(--primary-color) border border-(--primary-color) hover:border-(--primary-dark) hover:text-white cursor-pointer">
+                    <DialogClose disabled={mutationPending} className="py-1 px-3 text-sm rounded-md bg-white text-(--gray-600) border border-(--gray-400) hover:bg-(--gray-100) hover:border-(--gray-500-) hover:text-(--text-color) cursor-pointer transition-colors">
                         {t("offices.dialog.cancel")}
                     </DialogClose>
                     <Button disabled={mutationPending} type="submit" className="border-none hover:bg-(--primary-dark)  bg-(--primary-color) text-white cursor-pointer">
