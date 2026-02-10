@@ -1,7 +1,7 @@
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import {useTranslation} from "react-i18next";
-import { Building, Info} from "lucide-react";
+import {Building, Info} from "lucide-react";
 import {useSearchParams} from "react-router-dom";
 import {useDoctorOffices} from "@/hooks/useOffices.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
@@ -51,16 +51,16 @@ export default function OfficesComponent() {
                             return p;
                         })
                     }} content={officeStatusEnum} display={(s: string) => t("offices.filter." + s)}/>
-                    <AddOfficeDialog/>
                 </div>
             </DashboardNavHeader>
             {useDelayedBoolean(isLoading) ? (
                 <DashboardNavLoader/>
             ) : offices && offices.length > 0 ? (
-                <div className="flex relative flex-wrap gap-x-6 gap-y-3 justify-center w-fit px-2 pt-6">
+                <div className="grid w-full px-2 gap-x-6 gap-y-3 justify-start grid-cols-[repeat(auto-fill,minmax(14rem,14rem))]">
                     {offices.sort((o1, o2) => o1.name.localeCompare(o2.name)).map((o, i) => (
                         <EditOfficeDialog key={o.self} office={o} animateInDelay={i}/>
                     ))}
+                    <AddOfficeDialog />
                 </div>
             ) : (
                 <DashboardNavEmptyContent title={t("offices.empty.title")} text={officeStatus === "all" ? t("offices.empty.textAll") : t("offices.empty.text")} Icon={Building} />

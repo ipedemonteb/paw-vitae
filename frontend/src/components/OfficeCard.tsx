@@ -41,8 +41,8 @@ export default function OfficeCard({office, onClick, animateInDelay, mounted}: O
 
 
     return (
-        <div id="container" style={{ transitionDelay: `${animateInDelay * 100}ms` }} onMouseLeave={() => setOpen(false)} className={`flex flex-col justify-center items-center transition-all w-auto ${mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'}`}>
-            <div onMouseEnter={() => setOpen(true)} onClick={onClick} className="relative max-w-20 max-h-54 peer flex transition-all overflow-hidden group hover:border-(--primary-color) hover:text-(--text-light) rounded-2xl min-w-56 cursor-pointer items-center hover:shadow  border-2">
+        <div id="container" style={{ transitionDelay: `${animateInDelay * 100}ms` }} onMouseLeave={() => setOpen(false)} className={`flex flex-col justify-center items-center transition-all w-full ${mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'}`}>
+            <div onMouseEnter={() => setOpen(true)} onClick={onClick} className="relative w-full h-56 peer flex transition-all overflow-hidden group hover:border-(--primary-color) hover:text-(--text-light) rounded-2xl cursor-pointer items-center hover:shadow border-2 sm:max-w-56 sm:mx-auto">
                 <div className=" text-ellipsis group-hover:opacity-35  transition-opacity text-[1.3rem] flex justify-center-safe items-center overflow-hidden  flex-col font-semibold   rounded-2xl w-full px-8 py-7">
                     <Building2 className="size-14 stroke-[1.5]"/>
                     <p className="w-full text-center min-w-0 text-ellipsis text-nowrap overflow-clip">{office.name}</p>

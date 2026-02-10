@@ -269,7 +269,7 @@ const stepTitle =
 const stepText =
     "text-[var(--text-light)]";
 const startButton =
-    "mt-16 p-6.5 text-base font-medium bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
+    "mt-16 p-6.5 text-base rounded-xl font-medium bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 function ProcessSection() {
     const { t } = useTranslation();
