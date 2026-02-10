@@ -1,57 +1,40 @@
 import { useState, type FormEvent } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { useTranslation } from "react-i18next"
-import { KeyRound, ArrowLeft, Mail, AlertCircle, Loader2, CheckCircle2 } from "lucide-react"
+import { KeyRound, ArrowLeft, Mail, AlertCircle, CheckCircle2 } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useUserMutation } from "@/hooks/useUser"
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 
 const pageContainer =
     "min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8";
-
 const cardContainer =
-    "w-full max-w-lg space-y-8 bg-white p-10 rounded-xl border border-[var(--gray-300)] shadow-sm";
-
+    "w-full max-w-lg bg-white py-10 px-16 rounded-xl border border-[var(--gray-300)] shadow-sm";
 const headerContainer =
     "flex flex-col items-center text-center";
-
 const iconCircle =
     "h-14 w-14 bg-[var(--primary-color)]/10 text-[var(--primary-color)] rounded-full flex items-center justify-center mb-6";
-
-// Icono de Éxito (Check Verde)
 const successIconCircle =
-    "h-14 w-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6";
-
+    "h-14 w-14 bg-(--success-light) text-(--success) rounded-full flex items-center justify-center mb-6";
 const titleText =
     "text-3xl font-bold tracking-tight text-[var(--text-color)]";
-
 const subtitleText =
     "mt-3 text-base text-[var(--text-light)] max-w-sm mx-auto";
-
 const formContainer =
-    "mt-10 space-y-6";
-
+    "mt-6 space-y-6";
 const inputWrapper =
     "relative";
-
-// const inputIcon =
-//     "absolute left-3 top-3 h-5 w-5 text-gray-400";
-
 const inputField =
-    "pl-10 h-11";
-
+    "w-full pl-10 py-2 bg-(--gray-50) border border-(--gray-200) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-transparent transition-all";
 const submitButton =
-    "w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
-
+    "w-full text-base py-4 font-semibold bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 const backLinkContainer =
-    "flex items-center justify-center mt-8";
-
+    "flex items-center justify-center mt-6";
 const backLink =
     "flex items-center gap-2 text-sm font-medium text-[var(--text-light)] hover:text-[var(--primary-color)] transition-colors";
-
 const errorMessage =
-    "flex items-center gap-2 text-sm text-red-500 mt-2 animate-in fade-in slide-in-from-top-1";
+    "flex items-center gap-2 text-sm text-(--danger) mt-2 animate-in fade-in slide-in-from-top-1";
 
 
 export default function RecoverPassword() {
@@ -109,7 +92,6 @@ export default function RecoverPassword() {
     return (
         <div className={pageContainer}>
             <div className={cardContainer}>
-
                 <div className={headerContainer}>
                     <div className={iconCircle}>
                         <KeyRound className="h-7 w-7" />
@@ -121,14 +103,13 @@ export default function RecoverPassword() {
                         {t("recover.subtitle")}
                     </p>
                 </div>
-
                 <form className={formContainer} onSubmit={handleSubmit} noValidate>
                     <div className="space-y-2">
                         <div className={inputWrapper}>
-                            <Mail className={`absolute left-3 top-3 h-5 w-5 ${validationError || isError ? "text-red-500" : "text-gray-400"}`} />
-                            <Input
+                            <Mail className={`absolute left-3 top-3 h-5 w-5 ${validationError || isError ? "text-(--danger)" : ""}`} />
+                            <input
                                 type="email"
-                                className={`${inputField} ${validationError || isError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                className={`${inputField} ${validationError || isError ? "border-(--danger) focus-visible:ring-(--danger)" : ""}`}
                                 placeholder={t("recover.placeholder_email")}
                                 aria-label={t("login.aria_email")}
                                 value={email}
@@ -159,7 +140,7 @@ export default function RecoverPassword() {
                     <Button type="submit" className={submitButton} disabled={isPending}>
                         {isPending ? (
                             <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Spinner className="mr-2 h-4 w-4 " />
                                 {t("loading") || "Sending..."}
                             </>
                         ) : (
