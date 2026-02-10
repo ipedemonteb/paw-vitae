@@ -21,6 +21,7 @@ import {SearchSpecialtyCombobox} from "@/components/SearchSpecialtyCombobox.tsx"
 import SearchEmpty from "@/components/SearchEmpty.tsx";
 import {SortSelector} from "@/components/SortSelector.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {Spinner} from "@/components/ui/spinner.tsx";
 const container =
     "px-[24px] mx-auto max-w-6xl w-full";
 
@@ -274,11 +275,14 @@ function ResultSection({paginationData, isLoading, isRefetching, isError, refetc
     const { t } = useTranslation();
 
     const [view, setView] = useState<"list" | "grid">("list");
+    const hasResults = (paginationData?.data?.length ?? 0) > 0;
 
     return (
         <div>
             <div className={resultHeader}>
-                <p className={isLoading ? resultText + " invisible" : resultText}>{t("search.found", { doctorsFound: paginationData?.pagination.total })}</p>
+                {useDelayedBoolean(isLoading) ? <Skeleton className="h-4 w-26 rounded-md" /> :
+                    <p className={resultText}>{t("search.found", { doctorsFound: paginationData?.pagination.total })}</p>
+                }
                 <div>
                     <ButtonGroup orientation="horizontal">
                         <Button
@@ -300,30 +304,28 @@ function ResultSection({paginationData, isLoading, isRefetching, isError, refetc
                     </ButtonGroup>
                 </div>
             </div>
-            {view === "list" ? isLoading ? (
-                <div className="h-full w-full flex flex-col gap-4 pb-6">
-                    {Array.from({length: 9}).map((_, i) => (
-                        <Skeleton key={i} className="h-52 w-full"/>
-                        ))}
-                </div>
-
-            ) : isError ? (
-                <SearchEmpty isRefetching={isRefetching} error={true} refetch={refetch}/>
-            ) : (
-                <ResultList data={paginationData?.data}/>
-            ) : isLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                    {Array.from({length: 5}).map((_, i) => (
-                        <Skeleton key={i} className="h-92 w-88 p-0 gap-0"/>
-                    ))}
+            {useDelayedBoolean(isLoading) ? (
+                <div className="w-full py-24 flex flex-col items-center justify-center gap-2">
+                    <Spinner className="h-8 w-8 text-(--gray-400)" />
+                    <p className="text-lg text-(--gray-500)">{t("loading")}</p>
                 </div>
             ) : isError ? (
-                <SearchEmpty isRefetching={isRefetching} error={true} refetch={refetch}/>
+                <SearchEmpty isRefetching={isRefetching} error={true} refetch={refetch} />
             ) : (
-                <ResultGrid data={paginationData?.data}/>
-            )
-            }
-            <PaginationComponent pagination={paginationData?.pagination} searchParams={searchParams}/>
+                <>
+                    {view === "list" ? (
+                        <ResultList data={paginationData?.data} />
+                    ) : (
+                        <ResultGrid data={paginationData?.data} />
+                    )}
+                    {hasResults && (
+                        <PaginationComponent
+                            pagination={paginationData?.pagination}
+                            searchParams={searchParams}
+                        />
+                    )}
+                </>
+            )}
         </div>
     );
 }

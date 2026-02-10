@@ -10,15 +10,16 @@ import {initialsFallback} from "@/utils/userUtils.ts";
 import {generatePath, Link} from "react-router-dom";
 import {extractIdFromUrl} from "@/lib/utils.ts";
 import {useTranslation} from "react-i18next";
+import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 
 const cardContainer =
-    "flex flex-col items-stretch p-0 sm:flex-row";
+    "flex flex-col items-stretch p-0 md:flex-row";
 const iconContainer =
-    "flex items-center justify-center px-8 py-6 border-b sm:py-0 sm:border-b-0 sm:border-r";
+    "flex items-center justify-center px-8 py-6 border-b md:py-0 md:border-b-0 md:border-r";
 const icon =
     "w-16 h-16";
 const dataContainer =
-    "flex flex-col items-center justify-center px-6 py-2 sm:py-6 sm:px-1 sm:items-start";
+    "flex flex-col items-center justify-center px-6 py-2 md:py-6 md:px-1 md:items-start";
 const dataName =
     "font-[600]";
 const dataIcon =
@@ -26,7 +27,7 @@ const dataIcon =
 const dataContact =
     "flex flex-row items-center gap-1 text-[var(--text-light)] text-sm mb-1";
 const scheduleContainer =
-    "flex flex-col justify-center items-stretch gap-2 px-8 py-6 border-t sm:items-center sm:py-4 sm:ml-auto sm:border-t-0 sm:border-l";
+    "flex flex-col justify-center items-stretch gap-2 px-8 py-6 border-t md:items-center md:py-4 md:ml-auto md:border-t-0 md:border-l";
 const scheduleButton =
     "w-full bg-[var(--primary-color)] border border-[var(--primary-color)] text-white py-2 px-4 hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] cursor-pointer";
 const viewProfileButton =
@@ -43,11 +44,12 @@ function SearchListCard({doctor}: SearchCardProps) {
 
     const {t} = useTranslation();
 
-    const specialties = useDoctorSpecialties(doctor.specialties);
-    const {url:imageUrl} = useDoctorImageUrl(doctor.self.split("/").pop());
+    const { data: specialties, isLoading: loadingSpecialties } = useDoctorSpecialties(doctor.specialties);
+    const { url:imageUrl } = useDoctorImageUrl(doctor.self.split("/").pop());
     const doctorId = extractIdFromUrl(doctor.self)
     const profilePath = generatePath("/profile/:id", { id: String(doctorId) })
     const schedulePath = generatePath("/appointment/:id", { id: String(doctorId) })
+
     return (
         <Card className={cardContainer}>
             <div className={iconContainer}>
@@ -58,7 +60,11 @@ function SearchListCard({doctor}: SearchCardProps) {
             </div>
             <div className={dataContainer}>
                 <h3 className={dataName}>{doctor.name} {doctor.lastName}</h3>
-                <SearchSpecialtyBadgeComponent specialties={specialties.data || []} maxDisplay={3}/>
+                {useDelayedBoolean(loadingSpecialties) ?
+                    <div></div>
+                    :
+                    <SearchSpecialtyBadgeComponent specialties={specialties || []} maxDisplay={3}/>
+                }
                 <div className={dataContact}>
                     <Mail className={dataIcon} />
                     <p>{doctor.email}</p>
