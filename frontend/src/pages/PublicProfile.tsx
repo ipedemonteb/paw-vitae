@@ -561,7 +561,7 @@ const editDialogContent = "sm:max-w-[600px] max-h-[85vh] overflow-y-auto p-8 gap
 const editDialogInnerContainer = "flex flex-col gap-4 py-4";
 const editDialogRowLabel = "grid gap-2";
 const editDialogSaveButton = "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white cursor-pointer";
-const editDialogCancelButton = "bg-white text-(--primary-color) border border-(--primary-color) hover:bg-(--primary-dark) hover:text-white hover:border-(--primary-dark) cursor-pointer";
+const editDialogCancelButton = "bg-white text-(--gray-600) border border-(--gray-400) hover:bg-(--gray-100) hover:border-(--gray-500-) hover:text-(--text-color) cursor-pointer transition-colors";
 
 function EditProfileDialog({
                                doctorUrl,

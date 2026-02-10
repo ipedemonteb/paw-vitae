@@ -77,8 +77,7 @@ const dialogErrorText =
 const dialogFooter =
     "mt-2";
 const dialogCancel =
-    "bg-white text-(--primary-color) border border-(--primary-color) " +
-    "hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark) cursor-pointer";
+    "bg-white text-(--gray-600) border border-(--gray-400) hover:bg-(--gray-100) hover:border-(--gray-500-) hover:text-(--text-color) cursor-pointer transition-colors";
 const dialogConfirm =
     "bg-(--primary-color) border border-(--primary-color) " +
     "hover:text-white hover:bg-(--primary-dark) hover:border-(--primary-dark) cursor-pointer";

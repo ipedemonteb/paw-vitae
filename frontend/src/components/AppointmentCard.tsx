@@ -87,8 +87,7 @@ const dialogHeader = "font-bold text-xl text-[var(--text-color)]";
 const dialogText = "text-[var(--text-light)] text-lg font-normal";
 const dialogFooter = "mt-2";
 const dialogCancel =
-    "bg-white text-[var(--primary-color)] border border-[var(--primary-color)] " +
-    "hover:text-white hover:bg-[var(--primary-dark)] hover:border hover:border-[var(--primary-dark)] cursor-pointer";
+    "bg-white text-(--gray-600) border border-(--gray-400) hover:bg-(--gray-100) hover:border-(--gray-500-) hover:text-(--text-color) cursor-pointer transition-colors";
 const dialogConfirm =
     "text-white bg-[var(--danger)] border border-[var(--danger)] hover:text-white hover:bg-[var(--danger-dark)] hover:border hover:border-[var(--danger-dark)] cursor-pointer";
 

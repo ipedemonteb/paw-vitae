@@ -35,7 +35,7 @@ export default function RemoveOfficeDialog({officeName, onClick, open, setOpen, 
 
                 <DialogFooter className="pt-6">
                     <DialogClose asChild>
-                        <Button variant="ghost" disabled={mutationPending} className="text-(--text-light) cursor-pointer">
+                        <Button variant="ghost" disabled={mutationPending} className="bg-white text-(--gray-600) border border-(--gray-400) hover:bg-(--gray-100) hover:border-(--gray-500-) hover:text-(--text-color) cursor-pointer transition-colors">
                             {t("offices.dialog.cancel")}
                         </Button>
                     </DialogClose>
