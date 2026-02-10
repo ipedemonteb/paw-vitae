@@ -45,15 +45,15 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                 event.preventDefault()
                 onSubmit()
             }}>
-                <DialogHeader className="mb-3">
-                    <DialogTitle className="border-b w-full relative pb-3">
+                <DialogHeader className="">
+                    <DialogTitle className="w-full relative pb-3">
                         {title}
                     </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col items-center gap-2.5">
+                <div className="flex flex-col items-center gap-3">
                     <div className="flex justify-between w-full items-center gap-4">
                         <div className="flex flex-col gap-1.5 text-(--text-light)  ">
-                            <Label htmlFor="name" className="pl-1 text-[1rem]">{t("offices.dialog.nameLabel")}</Label>
+                            <Label htmlFor="name" className="text-md">{t("offices.dialog.nameLabel")}</Label>
                             <Input
                                 disabled={mutationPending}
                                 id="name"
@@ -65,8 +65,8 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                                 <p className="text-(--danger) text-sm">{errors.name.message}</p>
                             )}
                         </div>
-                        <div className="flex flex-col gap-1.5 text-(--text-light) text-[1rem]">
-                            <Label className="pl-1 text-[1rem]">{t("offices.dialog.neighborhoodLabel")}</Label>
+                        <div className="flex flex-col gap-1.5 text-(--text-light) text-md">
+                            <Label className="text-[1rem]">{t("offices.dialog.neighborhoodLabel")}</Label>
                             <NeighborhoodCombobox
                                 error={errors.neighborhood}
                                 mutationPending={mutationPending}
@@ -77,14 +77,14 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                     </div>
                     {form.watch("active") !== undefined  && (
                         <div className="flex w-full items-center justify-baseline gap-6">
-                            <div className=" flex flex-col gap-1 ">
-                                <Label htmlFor="active" className="text-[1rem] text-(--text-light)">{t("offices.dialog.activeLabel")}</Label>
-                                <Switch disabled={!hasAvailability || mutationPending} onCheckedChange={(checked) => form.setValue("active", checked)}  defaultChecked={form.watch("active")} id="active" className="data-[state=checked]:bg-(--success) data-[state=checked]: transition-all " />
+                            <div className=" flex flex-col gap-1">
+                                <Label htmlFor="active" className="text-md text-(--text-light)">{t("offices.dialog.activeLabel")}</Label>
+                                <Switch disabled={!hasAvailability || mutationPending} onCheckedChange={(checked) => form.setValue("active", checked)}  defaultChecked={form.watch("active")} id="active" className="cursor-pointer data-[state=checked]:bg-(--success) data-[state=checked]: transition-all " />
                             </div>
                         </div>
                     )}
-                    <div className="w-full flex flex-col gap-1.5">
-                        <Label className="text-[1rem] text-(--text-light)">{t("offices.dialog.specialtiesLabel")}</Label>
+                    <div className="w-full flex flex-col gap-2">
+                        <Label className="text-md text-(--text-light)">{t("offices.dialog.specialtiesLabel")}</Label>
                         {(isLoading || isLoadingSpecialties) ? (
                             <div className="w-full flex flex-wrap gap-y-1 gap-x-0.5 ">
                                 {Array.from({length: 15}).map((_, i) => (
@@ -102,8 +102,8 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                         </Alert>
                     )}
                 </div>
-                <DialogFooter className="pt-4">
-                    <DialogClose disabled={mutationPending} className="  hover:bg-gray-100 rounded-md py-1 px-3 text-sm bg-white text-(--text-light) border cursor-pointer">
+                <DialogFooter className="pt-6">
+                    <DialogClose disabled={mutationPending} className="hover:bg-(--primary-dark) rounded-md py-1 px-3 text-sm bg-white text-(--primary-color) border border-(--primary-color) hover:border-(--primary-dark) hover:text-white cursor-pointer">
                         {t("offices.dialog.cancel")}
                     </DialogClose>
                     <Button disabled={mutationPending} type="submit" className="border-none hover:bg-(--primary-dark)  bg-(--primary-color) text-white cursor-pointer">
