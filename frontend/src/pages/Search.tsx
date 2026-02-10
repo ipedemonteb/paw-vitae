@@ -277,6 +277,20 @@ function ResultSection({paginationData, isLoading, isRefetching, isError, refetc
     const [view, setView] = useState<"list" | "grid">("list");
     const hasResults = (paginationData?.data?.length ?? 0) > 0;
 
+    useEffect(() => {
+        const mq = window.matchMedia("(min-width: 640px)");
+        const sync = () => {
+            if (!mq.matches) setView("list");
+        };
+        sync();
+        mq.addEventListener("change", sync);
+        return () => mq.removeEventListener("change", sync);
+    }, []);
+
+    const isSmUp = typeof window !== "undefined"
+        ? window.matchMedia("(min-width: 640px)").matches
+        : true;
+
     return (
         <div>
             <div className={resultHeader}>
@@ -313,7 +327,7 @@ function ResultSection({paginationData, isLoading, isRefetching, isError, refetc
                 <SearchEmpty isRefetching={isRefetching} error={true} refetch={refetch} />
             ) : (
                 <>
-                    {view === "list" ? (
+                    {view === "list" || !isSmUp ? (
                         <ResultList data={paginationData?.data} />
                     ) : (
                         <ResultGrid data={paginationData?.data} />
