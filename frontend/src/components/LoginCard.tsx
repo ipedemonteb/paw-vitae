@@ -20,7 +20,7 @@ const eyeButtonStyles = "absolute right-3 top-1/2 -translate-y-1/2 text-(--gray-
 const optionsRow = "flex items-center justify-between text-sm mb-1";
 const checkboxLabel = "flex items-center gap-2 cursor-pointer text-(--gray-600)";
 const checkboxStyles = "w-4 h-4 rounded border-(--gray-300) text-[var(--primary-color)] focus:ring-(--primary-color)";
-const forgotLinkStyles = "text-[var(--primary-color)] font-[400] hover:underline";
+const forgotLinkStyles = "text-(--primary-color) font-[400] hover:underline hover:text-(--primary-dark)";
 const submitButtonStyles = "w-full text-base py-4 font-semibold mt-3 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 const footerSection = "flex flex-col gap-2 mt-6 text-center";
 const footerText = "text-sm text-(--gray-500)";
@@ -122,7 +122,7 @@ function LoginCard() {
                 </div>
 
                 {login.isError && (
-                    <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-md flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+                    <div className="bg-red-50 border border-(--danger-light) text-(--danger) text-sm px-4 py-3 rounded-md flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
                         <AlertCircle className="h-4 w-4 shrink-0" />
                         <span>
                             {login.failureReason?.message
