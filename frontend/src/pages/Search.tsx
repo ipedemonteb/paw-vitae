@@ -122,7 +122,7 @@ function HeroSection({searchParams}: SectionProps) {
                     open
                         ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
                         : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
-                } absolute max-w-85 z-50 max-h-56 scrollbar overscroll-contain overflow-y-auto border rounded-md bg-white w-full p-0 overflow-hidden transition-all duration-200 ease-out origin-top transform`}>
+                } absolute z-50 max-h-56 scrollbar overscroll-contain overflow-y-auto border rounded-md bg-white w-full p-0 overflow-hidden transition-all duration-200 ease-out origin-top transform`}>
                     {!isLoading && searchResults && searchResults.data.length > 0 && (
                         searchResults.data.map((d) => (
                             <SearchResultsCard doctor={d} key={d.self}/>
