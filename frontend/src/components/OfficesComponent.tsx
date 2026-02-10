@@ -60,7 +60,7 @@ export default function OfficesComponent() {
                     {offices.sort((o1, o2) => o1.name.localeCompare(o2.name)).map((o, i) => (
                         <EditOfficeDialog key={o.self} office={o} animateInDelay={i}/>
                     ))}
-                    <AddOfficeDialog />
+                    {officeStatus === "all" && <AddOfficeDialog />}
                 </div>
             ) : (
                 <DashboardNavEmptyContent title={t("offices.empty.title")} text={officeStatus === "all" ? t("offices.empty.textAll") : t("offices.empty.text")} Icon={Building} />
