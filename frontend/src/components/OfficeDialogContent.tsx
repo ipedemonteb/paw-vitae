@@ -17,7 +17,6 @@ import type {CreateOfficeForm, EditOfficeForm} from "@/lib/office-schema.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useDoctor, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
 
-
 type OfficeDialogComponentProps = {
     onSubmit: () => void,
     title: string,
