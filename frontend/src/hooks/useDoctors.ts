@@ -55,6 +55,7 @@ export function useDoctorImageUrl(id?: string | undefined) {
         queryFn: () => getDoctorImage(id!),
         enabled: enabled,
         staleTime: 5 * 60_000,
+        retry: false
     });
 
     const [url, setUrl] = useState<string | null>(null);
