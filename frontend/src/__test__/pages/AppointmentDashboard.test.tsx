@@ -148,7 +148,7 @@ describe('Patient Appointment Dashboard Flow', () => {
         vi.clearAllMocks();
     });
 
-    it('debería ver turnos próximos, navegar al detalle y cancelar el turno', async () => {
+    it('shouldd show the coming appointments, navigate to appt details and cancel appt', async () => {
         const user = userEvent.setup();
         renderWithRouter();
 

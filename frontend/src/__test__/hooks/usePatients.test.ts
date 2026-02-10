@@ -13,7 +13,7 @@ describe('Patient Hooks Integration Tests', () => {
 
 
     describe('usePatient (Get by URL)', () => {
-        it('debería traer un paciente usando su URL HATEOAS', async () => {
+        it('should return a patient using its URL HATEOAS', async () => {
             const url = `${BASE_URL}/patients/1`;
             const { result } = renderHook(() => usePatient(url));
 
@@ -27,7 +27,7 @@ describe('Patient Hooks Integration Tests', () => {
     });
 
     describe('usePatientById (Get by ID)', () => {
-        it('debería traer un paciente usando solo su ID', async () => {
+        it('should return a patient just by its ID', async () => {
             const { result } = renderHook(() => usePatientById('1'));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -35,7 +35,7 @@ describe('Patient Hooks Integration Tests', () => {
             expect(result.current.data?.self).toContain('/patients/1');
         });
 
-        it('debería manejar errores del servidor', async () => {
+        it('should handle server errors', async () => {
             const { result } = renderHook(() => usePatientById('error'));
 
             await waitFor(() => expect(result.current.isError).toBe(true));
@@ -43,7 +43,7 @@ describe('Patient Hooks Integration Tests', () => {
     });
 
     describe('usePatientsCount (HEAD)', () => {
-        it('debería retornar la cantidad total de pacientes', async () => {
+        it('should return the total amount of patients', async () => {
             const { result } = renderHook(() => usePatientsCount());
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -54,7 +54,7 @@ describe('Patient Hooks Integration Tests', () => {
 
     describe('Mutations', () => {
 
-        it('useRegisterPatientMutation debería registrar un paciente', async () => {
+        it('should register a patient', async () => {
             const { result } = renderHook(() => useRegisterPatientMutation());
 
             const newPatientData = {
@@ -75,7 +75,7 @@ describe('Patient Hooks Integration Tests', () => {
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
         });
 
-        it('useUpdatePatientMutation debería actualizar datos del paciente', async () => {
+        it('should update the data of the patient', async () => {
             const url = `${BASE_URL}/patients/1`;
             const { result } = renderHook(() => useUpdatePatientMutation(url));
 

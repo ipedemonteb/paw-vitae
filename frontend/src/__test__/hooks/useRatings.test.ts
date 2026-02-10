@@ -6,7 +6,7 @@ import { BASE_URL } from "@/__test__/utils/utils.ts";
 describe('Ratings Hooks', () => {
 
     describe('useRatings (Doctor List)', () => {
-        it('debería retornar una lista de ratings filtrada por doctor', async () => {
+        it('should return a list of ratings filtered by doctor', async () => {
             const mockUrl = `${BASE_URL}/ratings?doctorId=1`;
 
             const { result } = renderHook(() => useRatings(mockUrl));
@@ -20,7 +20,7 @@ describe('Ratings Hooks', () => {
             expect(result.current.data![0].rating).toBe(5);
         });
 
-        it('debería manejar errores del servidor', async () => {
+        it('should handle server errors', async () => {
             const errorUrl = `${BASE_URL}/ratings?doctorId=error`;
 
             const { result } = renderHook(() => useRatings(errorUrl));
@@ -30,7 +30,7 @@ describe('Ratings Hooks', () => {
     });
 
     describe('useAllRatings (Global List)', () => {
-        it('debería retornar la lista global paginada', async () => {
+        it('should return the global list paginated', async () => {
             const { result } = renderHook(() => useAllRatings());
 
             expect(result.current.isLoading).toBe(true);
@@ -43,7 +43,7 @@ describe('Ratings Hooks', () => {
     });
 
     describe('useRating (Detail)', () => {
-        it('debería retornar el detalle de un rating específico', async () => {
+        it('should show the details of a specific rating', async () => {
             const detailUrl = `${BASE_URL}/ratings/99`;
 
             const { result } = renderHook(() => useRating(detailUrl));
@@ -54,7 +54,7 @@ describe('Ratings Hooks', () => {
             expect(result.current.data?.rating).toBe(1);
         });
 
-        it('debería manejar error si el rating no existe o falla', async () => {
+        it('should handle server errors if the rating does not exist or fails', async () => {
             const errorUrl = `${BASE_URL}/ratings/error`;
             const { result } = renderHook(() => useRating(errorUrl));
 
@@ -63,7 +63,7 @@ describe('Ratings Hooks', () => {
     });
 
     describe('useCreateRating (Mutation)', () => {
-        it('debería crear un rating exitosamente', async () => {
+        it('should successfully create a rating', async () => {
             const { result } = renderHook(() => useCreateRating());
 
             const newRatingData = {

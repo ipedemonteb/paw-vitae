@@ -28,7 +28,7 @@ describe('Auth Hooks', () => {
     });
 
     describe('useLogin', () => {
-        it('Debería hacer login y guardar los tokens en el store', async () => {
+        it('Should login and save the tokens in the store', async () => {
             const setAuthSpy = vi.spyOn(authStore, 'setAuth').mockImplementation(() => {});
 
             const { result } = renderHook(() => useLogin(), { wrapper });
@@ -44,7 +44,7 @@ describe('Auth Hooks', () => {
     });
 
     describe('useChangePasswordMutation', () => {
-        it('Debería detectar rol DOCTOR y llamar al endpoint correcto', async () => {
+        it('Should detect role doctor and call the correct endpoint', async () => {
             const { result } = renderHook(() => useChangePasswordMutation(), { wrapper });
 
             // Simulamos que al decodificar el token, el usuario es un DOCTOR
@@ -71,7 +71,7 @@ describe('Auth Hooks', () => {
             expect(mockLogout).toHaveBeenCalled();
         });
 
-        it('Debería detectar rol PATIENT y llamar al endpoint correcto', async () => {
+        it('should detect role patient and call the right endpoint', async () => {
             const { result } = renderHook(() => useChangePasswordMutation(), { wrapper });
 
             // Simulamos que es un PACIENTE
@@ -96,7 +96,7 @@ describe('Auth Hooks', () => {
             expect(mockLogout).toHaveBeenCalled();
         });
 
-        it('Debería fallar si useAuth no está dentro del Provider', () => {
+        it('Should fail if useAuth is not inside the provider', () => {
 
             try {
                 renderHook(() => useAuth());

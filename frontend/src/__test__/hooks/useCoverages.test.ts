@@ -6,7 +6,7 @@ import {useCoverage, useCoverages} from "@/hooks/useCoverages.ts";
 describe('useCoverages', () => {
 
     describe('useCoverages hook', () => {
-        it('deberia retornar una lista de coverages', async () => {
+        it('should return a list of coverages', async () => {
             const {result} = renderHook(() => useCoverages());
 
             expect(result.current.isLoading).toBe(true);
@@ -25,7 +25,7 @@ describe('useCoverages', () => {
     })
 
     describe('useCoverage hook', () => {
-        it('deberia retornar un unico coverage', async () => {
+        it('should return a single coverage', async () => {
 
             const {result} = renderHook(() => useCoverage('/coverages/1'));
 
@@ -40,7 +40,7 @@ describe('useCoverages', () => {
 
         })
 
-        it('deberia retornar error si no existe el coverage', async () => {
+        it('should return error if there is no such coverage', async () => {
             const {result} = renderHook(() => useCoverage('/coverages/error'));
             await waitFor(() => expect(result.current.isError).toBe(true));
         })

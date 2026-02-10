@@ -8,17 +8,16 @@ import {
 } from "@/hooks/useAppointments.ts";
 import {act} from "react";
 import * as appointmentsApi from '@/data/appointments';
-//TODO: La idea es que hagamos un describe grande por archivo de hooks. Uno describe por hook y despues un it por caso
 
 describe('useAppointments File', () => {
 
     afterEach(() => {
-        vi.clearAllMocks(); // Reinicia los contadores de llamadas a 0
+        vi.clearAllMocks();
     });
 
     describe('useAppointment Hook', () => {
 
-        it('debería retornar el DTO con las URLs HATEOAS correctas', async () => {
+        it('should return the DTO with the correct URLs HATEOAS', async () => {
             const {result} = renderHook(() => useAppointment('1'));
 
             expect(result.current.isLoading).toBe(true);
@@ -34,12 +33,12 @@ describe('useAppointments File', () => {
             expect(data?.doctor).toContain('/doctors/1');
         });
 
-        it('debería manejar errores del servidor (500)', async () => {
+        it('should handle server errors (500)', async () => {
             const {result} = renderHook(() => useAppointment('error'));
             await waitFor(() => expect(result.current.isError).toBe(true));
         });
 
-        it('debería incluir la URL de rating si el turno ya fue calificado', async () => {
+        it('should include the rating URL if the appt was already rated', async () => {
             const {result} = renderHook(() => useAppointment('rated-1'));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -48,7 +47,7 @@ describe('useAppointments File', () => {
             expect(result.current.data?.rating).toContain('/ratings/99');
         });
 
-        it('no debería tener rating si el turno está completo pero sin calificar', async () => {
+        it('should not have a rating if the appt is completed but unrated', async () => {
             const {result} = renderHook(() => useAppointment('unrated-1'));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -56,7 +55,7 @@ describe('useAppointments File', () => {
             expect(result.current.data?.rating).toBeFalsy();
         });
 
-        it('no debería tener rating si el turno no está completo', async () => {
+        it('should not have a rating if the appt is not completed', async () => {
             const {result} = renderHook(() => useAppointment('uncompleted-1'));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -65,10 +64,9 @@ describe('useAppointments File', () => {
         });
     });
 
-    //TODO: mas casos?
     describe('useAppointments Hook', () => {
 
-        it('debería retornar una lista de turnos y la metadata de paginación', async () => {
+        it('should return a list of appts and the metadata of the pagination', async () => {
             const {result} = renderHook(() => useAppointments({page: 1, filter: 'all', userId: '1'}));
 
             await waitFor(() => expect(result.current.isPending).toBe(false));
@@ -85,8 +83,7 @@ describe('useAppointments File', () => {
             expect(pagination?.next).toContain('page=2');
         });
 
-        it('debería retornar lista vacía si aplicamos un filtro sin resultados', async () => {
-            //Pedimos filtro 'cancelled'
+        it('should return an empty list if a filter with no results is applied', async () => {
             const {result} = renderHook(() => useAppointments({page: 1, filter: 'cancelled', userId: '1'}));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -101,18 +98,18 @@ describe('useAppointments File', () => {
 
     describe('useAppointmentsFiles Hook', () => {
 
-        it('deberia retornar un array vacio si no hay archivos', async () => {
+        it('should return an empty array if there are no files', async () => {
             const {result} = renderHook(() => useAppointmentFiles('appointments/empty/files'));
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
             expect(result.current.data).toHaveLength(0);
         })
 
-        it('debería manejar errores del servidor (500)', async () => {
+        it('should handle server errors (500)', async () => {
             const {result} = renderHook(() => useAppointmentFiles('appointments/error/files'));
             await waitFor(() => expect(result.current.isError).toBe(true));
         });
 
-        it('deberia retornar un array con archivos de un turno ', async () => {
+        it('should return an array with the files of an appt ', async () => {
             const {result} = renderHook(() => useAppointmentFiles('appointments/1/files'));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -126,7 +123,7 @@ describe('useAppointments File', () => {
 
         });
 
-        it('NO debería ejecutarse si la URL es undefined o vacía', async () => {
+        it('should NOT execute if the URL is undefined or empty', async () => {
             const {result} = renderHook(() => useAppointmentFiles(undefined));
 
 
@@ -140,7 +137,7 @@ describe('useAppointments File', () => {
 
     describe('useBookAppointmentMutation', () => {
 
-        it('debería crear un turno sin archivos y retornar el nuevo ID', async () => {
+        it('should create an appt without files and return the new ID', async () => {
             const {result} = renderHook(() => useBookAppointmentMutation());
 
             const mockForm = {
@@ -166,7 +163,7 @@ describe('useAppointments File', () => {
             expect(result.current.data).toBe('123');
         });
 
-        it('debería crear un turno, subir archivos y retornar el nuevo ID', async () => {
+        it('should create an appt, upload files and return the new ID', async () => {
             const {result} = renderHook(() => useBookAppointmentMutation());
 
 
@@ -202,7 +199,7 @@ describe('useAppointments File', () => {
             expect(uploadSpy).toHaveBeenCalledWith('123', files[0], 'patient');
         });
 
-        it('debería fallar si el servidor no devuelve el header Location', async () => {
+        it('should fail if the server does not return header location', async () => {
             const {server} = await import('../setup/setup');
             const {http, HttpResponse} = await import('msw');
 
@@ -229,7 +226,7 @@ describe('useAppointments File', () => {
 
     describe('useUpdateReportMutation',  () => {
 
-        it('Deberia updatear correctamente el reporte y devolver updated', async () => {
+        it('should correctly update the report and return updated', async () => {
             const { result } = renderHook(() => useUpdateReportMutation());
 
             const updateData = {
@@ -245,7 +242,7 @@ describe('useAppointments File', () => {
 
         });
 
-        it('Deberia fallar y manejar el 500 si el id es error', async () => {
+        it('should fail and handle the server error', async () => {
             const { result } = renderHook(() => useUpdateReportMutation());
 
             act(() => {
@@ -261,7 +258,7 @@ describe('useAppointments File', () => {
     //TODO: revisar
     describe('useUploadDoctorFilesMutation', () => {
 
-        it('Deberia subir correctamente los archivos con el rol de DOCTOR', async () => {
+        it('should correctly upload files with role DOCTOR', async () => {
             const uploadSpy = vi.spyOn(appointmentsApi, 'uploadAppointmentFile')
                 .mockResolvedValue({} as any);
 
@@ -287,7 +284,7 @@ describe('useAppointments File', () => {
 
     describe('useCancelAppointmentMutation', () => {
 
-        it('Deberia cancelar correctamente el turno', async () => {
+        it('should cancel the appt correctly', async () => {
             const { result } = renderHook(() => useCancelAppointmentMutation());
 
             const variables = { id: '1', userId: '1' };
@@ -300,7 +297,7 @@ describe('useAppointments File', () => {
 
 
         })
-        it('Debería manejar errores del servidor al cancelar (500)', async () => {
+        it('should handle server errors when cancelling', async () => {
             const { result } = renderHook(() => useCancelAppointmentMutation());
 
             // Usamos ID 'error' para detonar el fallo en MSW
@@ -314,10 +311,6 @@ describe('useAppointments File', () => {
 
 
     })
-
-    //TODO: Falto testear useAppointmentFileHandlerMutation pero no le veo uso
-
-
 
 
 })

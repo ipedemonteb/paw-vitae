@@ -32,8 +32,8 @@ afterAll(() => {
 
 describe('Doctors Hooks Integration Tests', () => {
 
-    describe('useDoctors (Listado)', () => {
-        it('debería traer la lista de doctores paginada', async () => {
+    describe('useDoctors (List)', () => {
+        it('should return the list of doctors paginated', async () => {
             const { result } = renderHook(() => useDoctors({ page: 1, pageSize: 10 }));
 
             expect(result.current.isLoading).toBe(true);
@@ -46,8 +46,8 @@ describe('Doctors Hooks Integration Tests', () => {
         });
     });
 
-    describe('useDoctor (Detalle)', () => {
-        it('debería traer el detalle de un doctor específico', async () => {
+    describe('useDoctor (Detail)', () => {
+        it('should bring the details of a specific doctor', async () => {
             const { result } = renderHook(() => useDoctor('1'));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -58,7 +58,7 @@ describe('Doctors Hooks Integration Tests', () => {
     });
 
     describe('useDoctorsCount', () => {
-        it('debería traer la cantidad total de doctores (HEAD request)', async () => {
+        it('should return the amount of total doctors (HEAD request)', async () => {
             const { result } = renderHook(() => useDoctorsCount());
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -69,7 +69,7 @@ describe('Doctors Hooks Integration Tests', () => {
 
 
     describe('useDoctorImageUrl', () => {
-        it('debería descargar la imagen y generar una URL de objeto', async () => {
+        it('should download the image and generate an object URl', async () => {
             const { result } = renderHook(() => useDoctorImageUrl('1'));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -78,7 +78,7 @@ describe('Doctors Hooks Integration Tests', () => {
             expect(result.current.url).toBe('blob:mock-preview-url');
         });
 
-        it('no debería ejecutarse si el ID no es numérico', async () => {
+        it('should not execute if the ID is not numeric', async () => {
             const { result } = renderHook(() => useDoctorImageUrl('invalid'));
             expect(result.current.fetchStatus).toBe('idle');
             expect(result.current.url).toBeNull();
@@ -88,7 +88,7 @@ describe('Doctors Hooks Integration Tests', () => {
 
     describe('Sub-resource Hooks', () => {
 
-        it('useDoctorSpecialties debería traer especialidades', async () => {
+        it('should bring the doctor specialties', async () => {
             const url = `${BASE_URL}/doctors/1/specialties`;
             const { result } = renderHook(() => useDoctorSpecialties(url));
 
@@ -97,7 +97,7 @@ describe('Doctors Hooks Integration Tests', () => {
             expect(result.current.data![0].name).toBe('Cardiologia');
         });
 
-        it('useDoctorCoverages debería traer obras sociales', async () => {
+        it('should bring the coverages', async () => {
             const url = `${BASE_URL}/doctors/1/coverages`;
             const { result } = renderHook(() => useDoctorCoverages(url));
 
@@ -105,7 +105,7 @@ describe('Doctors Hooks Integration Tests', () => {
             expect(result.current.data![0].name).toBe('Galeno');
         });
 
-        it('useDoctorBiography debería traer perfil/bio', async () => {
+        it('should bring the doctor profile/bio', async () => {
             const url = `${BASE_URL}/doctors/1/profile`;
             const { result } = renderHook(() => useDoctorBiography(url));
 
@@ -113,7 +113,7 @@ describe('Doctors Hooks Integration Tests', () => {
             expect(result.current.data?.bio).toContain('General Doctor');
         });
 
-        it('useDoctorExperience debería traer experiencias', async () => {
+        it('should bring the experiences', async () => {
             const url = `${BASE_URL}/doctors/1/experiences`;
             const { result } = renderHook(() => useDoctorExperience(url));
 
@@ -121,7 +121,7 @@ describe('Doctors Hooks Integration Tests', () => {
             expect(result.current.data![0].organizationName).toBe('Princeton University');
         });
 
-        it('useDoctorCertifications debería traer certificaciones', async () => {
+        it('should bring the certifications', async () => {
             const url = `${BASE_URL}/doctors/1/certifications`;
             const { result } = renderHook(() => useDoctorCertifications(url));
 
@@ -129,7 +129,7 @@ describe('Doctors Hooks Integration Tests', () => {
             expect(result.current.data![0].certificateName).toBe('Certificacion 1');
         });
 
-        it('useDoctorUnavailability debería traer fechas no disponibles', async () => {
+        it('should bring unavailability dates', async () => {
             const url = `${BASE_URL}/doctors/1/unavailability`;
             const { result } = renderHook(() => useDoctorUnavailability(url));
 
@@ -140,7 +140,7 @@ describe('Doctors Hooks Integration Tests', () => {
 
     describe('Mutations', () => {
 
-        it('useRegisterDoctorMutation debería registrar un doctor', async () => {
+        it('should register a doctor', async () => {
             const { result } = renderHook(() => useRegisterDoctorMutation());
 
             const newDoctor = {
@@ -158,7 +158,7 @@ describe('Doctors Hooks Integration Tests', () => {
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
         });
 
-        it('useUpdateDoctorProfileMutation debería actualizar bio', async () => {
+        it('should update doctor bio', async () => {
             const url = `${BASE_URL}/doctors/1/biography`;
             const { result } = renderHook(() => useUpdateDoctorProfileMutation(url));
 
@@ -166,7 +166,7 @@ describe('Doctors Hooks Integration Tests', () => {
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
         });
 
-        it('useUpdateDoctorImageMutation debería llamar al servicio de imagen', async () => {
+        it('should call the image service', async () => {
             //ACLARACIÓN:
             // ---------------------------------------------------------------------------
             // Mockeamos la función del servicio 'putDoctorImage' para evitar enviarla por la red simulada (MSW).
@@ -192,7 +192,7 @@ describe('Doctors Hooks Integration Tests', () => {
             expect(spy).toHaveBeenCalledWith(url, file);
         });
 
-        it('useUpdateDoctorMutation debería actualizar datos e imagen simultáneamente', async () => {
+        it('should update the list of data and images at the same time', async () => {
             const spyUpdate = vi.spyOn(doctorService, 'updateDoctorProfileComplete').mockResolvedValue({ status: 'ok' });
 
             const { result } = renderHook(() => useUpdateDoctorMutation());
@@ -212,7 +212,7 @@ describe('Doctors Hooks Integration Tests', () => {
             expect(spyUpdate).toHaveBeenCalled();
         });
 
-        it('useUpdateDoctorUnavailabilityMutation debería actualizar fechas', async () => {
+        it('should update the unavailability dates', async () => {
             const url = `${BASE_URL}/doctors/1/unavailability`;
             const { result } = renderHook(() => useUpdateDoctorUnavailabilityMutation(url));
 

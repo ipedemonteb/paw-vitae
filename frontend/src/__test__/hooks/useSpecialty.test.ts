@@ -6,7 +6,7 @@ import {BASE_URL} from "@/__test__/utils/utils.ts";
 describe('Specialties Hooks', () => {
 
     describe('useSpecialties (List)', () => {
-        it('deberia retornar una lista de especialdiades', async () => {
+        it('should return a list of specialties', async () => {
             const { result } = renderHook(() => useSpecialties());
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -18,14 +18,14 @@ describe('Specialties Hooks', () => {
 
 
     describe('useSpecialty (Single)', () => {
-        it('deberia retornar una unica especialidad', async () => {
+        it('should return a single specialty', async () => {
             const url = `${BASE_URL}/specialties/1`;
             const { result } = renderHook(() => useSpecialty(url));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
             expect(result.current.data?.name).toBe('Cardiología');
         });
-        it('deberia retornar error si no existe la especialidad', async () => {
+        it('should return error if the specialty does not exist', async () => {
             const {result} = renderHook(() => useSpecialty('/neighborhoods/error'));
             await waitFor(() => expect(result.current.isError).toBe(true));
         })
@@ -34,7 +34,7 @@ describe('Specialties Hooks', () => {
 
     describe('useSpecialtiesByUrl (useQueries)', () => {
 
-        it('deberia fetchear varias especialidades en paralelo', async () => {
+        it('should parallel fetch specialties', async () => {
             const urlsToFetch = [
                 `${BASE_URL}/specialties/1`,
                 `${BASE_URL}/specialties/2`
@@ -61,7 +61,7 @@ describe('Specialties Hooks', () => {
             expect(results[1].data?.name).toBe('Dermatología');
         });
 
-        it('deberia retornar un array vacio si no se da un URL', async () => {
+        it('should return an empty array if the URL is not provided', async () => {
             const { result } = renderHook(() => useSpecialtiesByUrl([]));
 
             await waitFor(() => expect(result.current.isLoading).toBe(false));
