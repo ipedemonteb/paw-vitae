@@ -366,7 +366,7 @@ function ResultList({data}: ResultProps) {
         )
     }
     return (
-        <div className={resultContentList}>
+        <div data-testid="view-list" className={resultContentList}>
             {data?.map((d, i) => (
                 <div
                     key={d.self}
@@ -398,7 +398,7 @@ function ResultGrid({data}: ResultProps) {
         )
     }
     return (
-        <div className={resultContentGrid}>
+        <div data-testid="view-grid" className={resultContentGrid}>
             {data?.map((d, i) => (
                 <div
                     key={d.self}
