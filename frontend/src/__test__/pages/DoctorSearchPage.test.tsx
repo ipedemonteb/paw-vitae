@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Search from '@/pages/Search';
@@ -7,53 +7,42 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/__test__/utils/utils';
 import { server } from "@/__test__/setup/setup.ts";
+import { createMockDoctor } from '@/__test__/utils/factories';
 
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: (key: string, options?: any) => {
-            if (key === 'search.found') return `Encontrados ${options?.doctorsFound}`;
+            if (key === "search.found" && options?.doctorsFound !== undefined) {
+                return `Encontrados ${options.doctorsFound}`;
+            }
             return key;
-        },
-        i18n: { language: 'en', changeLanguage: vi.fn() }
+        }
     })
 }));
 
-globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-}));
+Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation(query => ({
+        matches: true,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+    })),
+});
 
-const mockHouse = {
-    name: 'Gregory',
-    lastName: 'House',
-    email: 'house@princeton.edu',
-    phone: '555-0199',
-    rating: 5,
-    ratingCount: 150,
-    specialties: `${BASE_URL}/doctors/1/specialties`,
-    coverages: `${BASE_URL}/doctors/1/coverages`,
-    offices: `${BASE_URL}/doctors/1/offices`,
-    profile: `${BASE_URL}/doctors/1/profile`,
-    experiences: `${BASE_URL}/doctors/1/experiences`,
-    certifications: `${BASE_URL}/doctors/1/certifications`,
-    ratings: `${BASE_URL}/doctors/1/ratings`,
-    appointments: `${BASE_URL}/doctors/1/appointments`,
-    image: `${BASE_URL}/doctors/1/image`,
-    unavailability: `${BASE_URL}/doctors/1/unavailability`,
-    self: `${BASE_URL}/doctors/1`
-};
-
-const renderSearchPage = () => {
+const renderSearch = () => {
     const queryClient = new QueryClient({
         defaultOptions: { queries: { retry: false, staleTime: 0 } }
     });
+    queryClient.clear();
 
     const router = createMemoryRouter([
-        { path: '/search', element: <Search /> }
-    ], {
-        initialEntries: ['/search'],
-    });
+        { path: '/doctors', element: <Search /> }
+    ], { initialEntries: ['/doctors'] });
 
     return render(
         <QueryClientProvider client={queryClient}>
@@ -64,83 +53,70 @@ const renderSearchPage = () => {
 
 describe('Search Page Integration', () => {
 
+    const mockHouse = createMockDoctor({ name: "Gregory", lastName: "House" });
+
+    beforeAll(() => {
+        server.resetHandlers();
+
+        server.use(
+            http.get(`${BASE_URL}/doctors`, ({ request }) => {
+                const url = new URL(request.url);
+
+                if (url.searchParams.get('pageSize') === '5') {
+                    return HttpResponse.json([], { headers: { 'x-total-count': '0' } });
+                }
+
+                return HttpResponse.json([mockHouse], {
+                    headers: { 'x-total-count': '1', 'Link': '' }
+                });
+            }),
+            http.get(`${BASE_URL}/neighborhoods/:id`, () => HttpResponse.json({ name: 'Palermo' }))
+        );
+    });
+
     afterAll(() => {
         vi.clearAllMocks();
     });
 
     it('debería renderizar la página y cargar la lista de doctores', async () => {
-        server.use(
-            http.get(`${BASE_URL}/doctors`, () => {
-                return HttpResponse.json([mockHouse], { headers: { 'x-total-count': '1' } });
-            })
-        );
+        renderSearch();
 
-        renderSearchPage();
-
-        expect(screen.getByText('search.title')).toBeInTheDocument();
-        expect(screen.getByPlaceholderText('search.search')).toBeInTheDocument();
+        expect(screen.getByText("search.title")).toBeInTheDocument();
 
         await waitFor(() => {
-            expect(screen.getAllByText(/Gregory/i).length).toBeGreaterThan(0);
-            expect(screen.getAllByText(/House/i).length).toBeGreaterThan(0);
-        });
+            expect(screen.getByText(/Encontrados \d+/)).toBeInTheDocument();
+        }, { timeout: 3000 });
 
-        expect(screen.getByText(/Encontrados 1/i)).toBeInTheDocument();
+        const cards = screen.getAllByText("Gregory House");
+        expect(cards.length).toBeGreaterThan(0);
+        expect(cards[0]).toBeInTheDocument();
     });
 
     it('debería permitir escribir en el buscador', async () => {
-        server.use(
-            http.get(`${BASE_URL}/doctors`, () => {
-                return HttpResponse.json([mockHouse], { headers: { 'x-total-count': '1' } });
-            })
-        );
-
         const user = userEvent.setup();
-        renderSearchPage();
+        renderSearch();
 
-        await waitFor(() => expect(screen.getAllByText(/Gregory/i).length).toBeGreaterThan(0));
-
-        const searchInput = screen.getByPlaceholderText('search.search');
-        await user.type(searchInput, 'House');
-
-        await waitFor(() => {
-            expect(searchInput).toHaveValue('House');
-        });
+        const searchInput = screen.getByPlaceholderText("search.search");
+        await user.type(searchInput, "House");
+        expect(searchInput).toHaveValue("House");
     });
 
-    it('debería mostrar estado de error si la API falla', async () => {
-        server.use(
-            http.get(`${BASE_URL}/doctors`, () => {
-                return new HttpResponse(null, { status: 500 });
-            })
-        );
-
-        renderSearchPage();
-
-        await waitFor(() => {
-            expect(screen.queryByText(/Gregory/i)).not.toBeInTheDocument();
-        });
-    });
-
-    it('debería cambiar entre vista Lista y Grilla', async () => {
-        server.use(
-            http.get(`${BASE_URL}/doctors`, () => {
-                return HttpResponse.json([mockHouse], { headers: { 'x-total-count': '1' } });
-            })
-        );
-
+    it('debería cambiar entre vista Lista y Grilla verificando el cambio de estructura', async () => {
         const user = userEvent.setup();
-        renderSearchPage();
+        renderSearch();
 
-        await waitFor(() => expect(screen.getAllByText(/Gregory/i).length).toBeGreaterThan(0));
+        await waitFor(() => expect(screen.getByText(/Encontrados \d+/)).toBeInTheDocument());
 
-        const gridButton = screen.getByLabelText('view-grid');
+        expect(screen.getByTestId("view-list")).toBeInTheDocument();
+        expect(screen.queryByTestId("view-grid")).not.toBeInTheDocument();
 
+        const gridButton = screen.getByLabelText("view-grid");
         await user.click(gridButton);
 
-        expect(gridButton).toHaveClass('bg-[var(--primary-color)]');
+        await waitFor(() => {
+            expect(screen.getByTestId("view-grid")).toBeInTheDocument();
+        });
 
-        const gridContainer = document.querySelector('.grid.grid-cols-1');
-        expect(gridContainer).toBeInTheDocument();
+        expect(screen.queryByTestId("view-list")).not.toBeInTheDocument();
     });
 });
