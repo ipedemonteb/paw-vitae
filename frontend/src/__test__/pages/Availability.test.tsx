@@ -21,6 +21,10 @@ vi.mock('@/hooks/useAuth.ts', () => ({
     useAuth: () => ({ userId: '1', role: 'ROLE_DOCTOR' })
 }));
 
+vi.mock("@/utils/queryUtils.ts", () => ({
+    useDelayedBoolean: (val: boolean) => val
+}));
+
 vi.mock('sonner', () => ({
     toast: {
         success: (msg: string) => {
@@ -72,10 +76,11 @@ describe('Doctor Availability Management', () => {
         const user = userEvent.setup();
         renderComponent();
 
+
         await waitFor(() => {
-            expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+            expect(screen.queryAllByText(/loading/i)).toHaveLength(0);
             expect(screen.getByText('availability.headerTitle')).toBeInTheDocument();
-        });
+        }, { timeout: 3000 });
 
         await user.click(screen.getByText('edit'));
         await user.click(await screen.findByText('availability.addSchedule'));
@@ -108,13 +113,13 @@ describe('Doctor Availability Management', () => {
         const user = userEvent.setup();
         renderComponent();
 
-        await waitFor(() => expect(screen.queryByText(/loading/i)).not.toBeInTheDocument());
+        await waitFor(() => expect(screen.queryAllByText(/loading/i)).toHaveLength(0));
+
         await user.click(screen.getByText('edit'));
         await user.click(await screen.findByText('availability.addSchedule'));
 
         const selects = screen.getAllByRole('combobox');
         const lastIndex = selects.length - 1;
-
 
         await user.click(selects[lastIndex - 2]);
         const mondayOptions = await screen.findAllByRole('option', { name: /monday/i });
@@ -139,7 +144,7 @@ describe('Doctor Availability Management', () => {
         renderComponent();
 
         await waitFor(() => {
-            expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+            expect(screen.queryAllByText(/loading/i)).toHaveLength(0);
             expect(screen.getByText('unavailability.title')).toBeInTheDocument();
         });
 

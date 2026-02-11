@@ -20,6 +20,10 @@ vi.mock('react-i18next', () => ({
     })
 }));
 
+vi.mock("@/utils/queryUtils.ts", () => ({
+    useDelayedBoolean: (val: boolean) => val
+}));
+
 Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation(query => ({
@@ -57,6 +61,12 @@ describe('Search Page Integration', () => {
 
     beforeAll(() => {
         server.resetHandlers();
+
+        vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: any) => {
+            cb(0);
+            return 0;
+        });
+        vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
 
         server.use(
             http.get(`${BASE_URL}/doctors`, ({ request }) => {
