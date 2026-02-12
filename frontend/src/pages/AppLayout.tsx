@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Header from "@/components/Header.tsx";
 import ScrollToTop from "@/components/ScrollToTop.tsx";
-import {Toaster} from "sonner";
+import {Toaster} from "@/components/ui/sonner.tsx";
 
 export default function AppLayout() {
     return (
@@ -11,7 +11,7 @@ export default function AppLayout() {
             <main className="flex-1">
                 <Outlet />
             </main>
-            <Toaster richColors position="bottom-right" />
+            <Toaster position="bottom-right" />
         </div>
     );
 }

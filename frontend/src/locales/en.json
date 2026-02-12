@@ -428,8 +428,8 @@
       "subtitle": "Connect with verified healthcare professionals and book appointments online in minutes.",
       "search_placeholder": "Search by doctor name",
       "search": "Search",
-      "doctors_count": "Doctors",
-      "patients_count": "Patients"
+      "doctors": "Doctors",
+      "patients": "Patients"
     },
     "mission": {
       "tag": "Mission",
