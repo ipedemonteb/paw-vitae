@@ -312,7 +312,7 @@
       "passwords_mismatch": "Passwords do not match",
       "password_requirements": "Password does not meet requirements.",
       "select_valid": "Please select a valid insurance plan and neighborhood",
-      "email_taken": "Error: That email is already registered.",
+      "email_taken": "That email is already registered.",
       "generic": "An error occurred during registration.",
       "missing_fields": "Please complete all required fields before continuing.",
       "required": "This field is required.",

@@ -312,7 +312,7 @@
       "passwords_mismatch": "Las contraseñas no coinciden",
       "password_requirements": "La contraseña no cumple con los requisitos.",
       "select_valid": "Por favor seleccione una obra social y un barrio válido",
-      "email_taken": "Error: Ese correo electrónico ya está registrado.",
+      "email_taken": "Ese correo electrónico ya está registrado.",
       "generic": "Ocurrió un error al registrar.",
       "missing_fields": "Por favor complete todos los campos obligatorios antes de continuar.",
       "required": "Este campo es obligatorio.",
