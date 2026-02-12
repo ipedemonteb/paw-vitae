@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button.tsx"
 import { PatientForm } from "../components/PatientForm.tsx"
 import { DoctorForm } from "../components/DoctorForm.tsx"
@@ -9,15 +9,6 @@ import { useSearchParams } from "react-router-dom"
 type UserType = "patient" | "doctor"
 
 export default function RegisterPage() {
-    const { t } = useTranslation()
-    return (
-        <Suspense fallback={<div>{t("loading")}</div>}>
-            <RegisterContent />
-        </Suspense>
-    )
-}
-
-function RegisterContent() {
     const [searchParams, setSearchParams] = useSearchParams()
     const typeParam = searchParams.get("type")
 
