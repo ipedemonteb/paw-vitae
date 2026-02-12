@@ -12,7 +12,7 @@ import { useSpecialties } from "@/hooks/useSpecialties"
 import { useCoverages } from "@/hooks/useCoverages"
 
 import { FormInput } from "@/components/FormInput.tsx"
-import { PasswordInput } from "@/components/ui/passwordInput"
+import { PasswordInput } from "@/components/PasswordInput.tsx"
 import { FormStepper } from "@/components/FormStepper.tsx"
 import {PasswordStrengthMeter} from "@/components/PasswordStrengthMeter.tsx";
 import {useRegisterDoctorMutation} from "@/hooks/useDoctors.ts";
