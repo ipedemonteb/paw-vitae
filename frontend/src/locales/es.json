@@ -257,7 +257,10 @@
     "error_token_expired": "El token ha expirado o es inválido."
   },
   "register": {
-    "title_register" : "Registrarse",
+    "title" : {
+      "patient" : "Registrar Paciente",
+      "doctor": "Registrar Doctor"
+    },
     "subtitle_register" : "Crea tu cuenta para acceder a nuestros servicios de salud.",
     "register_patient" : "Registrarse como Paciente",
     "register_doctor" : "Registrarse como Doctor",
