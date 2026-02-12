@@ -390,9 +390,7 @@ function RatingsSection() {
     const { data: ratings = [], isLoading, isError } = useAllRatings();
 
     return (
-        ratings.length === 0 ? (
-                null
-            ) : (
+        ratings.length === 0 ? null : (
         <div className={container}>
             <div className={sectionHeader}>
                 <span className={sectionTag}>

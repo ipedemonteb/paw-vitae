@@ -8,7 +8,7 @@ import {Spinner} from "@/components/ui/spinner.tsx";
 
 
 const pageContainer =
-    "min-h-screen bg-(--background-light) flex flex-col items-center pt-36 pb-12 px-4 sm:px-6 lg:px-8";
+    "min-h-screen bg-(--background-light) flex flex-col items-center pt-36 pb-6 px-4 sm:px-6 lg:px-8";
 const cardContainer =
     "w-full max-w-lg bg-white py-10 px-16 rounded-xl border border-[var(--gray-300)] shadow-sm";
 const headerContainer =
@@ -16,7 +16,7 @@ const headerContainer =
 const iconCircle =
     "h-14 w-14 bg-[var(--primary-color)]/10 text-[var(--primary-color)] rounded-full flex items-center justify-center mb-6";
 const successIconCircle =
-    "h-14 w-14 bg-(--success-light) text-(--success) rounded-full flex items-center justify-center mb-6";
+    "h-16 w-16 bg-(--success-light) text-(--success) rounded-full flex items-center justify-center mb-6";
 const titleText =
     "text-3xl font-bold tracking-tight text-[var(--text-color)]";
 const subtitleText =
@@ -69,7 +69,7 @@ export default function RecoverPassword() {
                 <div className={cardContainer}>
                     <div className={headerContainer}>
                         <div className={successIconCircle}>
-                            <CheckCircle2 className="h-7 w-7" />
+                            <CheckCircle2 className="h-8 w-8" />
                         </div>
                         <h1 className={titleText}>
                             {t("recover.success_title") || "Check your email"}

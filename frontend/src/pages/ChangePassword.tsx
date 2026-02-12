@@ -2,7 +2,7 @@ import { useState, useEffect, type FormEvent } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useSearchParams } from "react-router-dom"
 import {Lock, CheckCircle2, ArrowLeft, Check, X, AlertCircle} from "lucide-react"
-import { PasswordInput } from "@/components/ui/passwordInput"
+import { PasswordInput } from "@/components/PasswordInput.tsx"
 import { Button } from "@/components/ui/button"
 import {useAuth, useChangePasswordMutation} from "@/hooks/useAuth"
 
@@ -17,15 +17,24 @@ const headerContainer =
     "flex flex-col items-center text-center";
 const iconCircle =
     "h-14 w-14 bg-[var(--primary-color)]/10 text-[var(--primary-color)] rounded-full flex items-center justify-center mb-6";
-const successIconCircle = "h-16 w-16 bg-(--success-light) text-(--success) rounded-full flex items-center justify-center mb-6";
-const titleText = "text-3xl font-bold tracking-tight text-[var(--text-color)]";
-const subtitleText = "mt-3 text-base text-(--text-light) max-w-sm mx-auto";
-const formContainer = "mt-8";
-const inputGroup = "mt-8";
-const inputStyle = "text-base";
-const backLinkContainer = "flex items-center justify-center mt-6";
-const backLink = "flex items-center gap-2 text-sm font-medium text-[var(--text-light)] hover:text-[var(--primary-color)] transition-colors";
-const submitButton = "w-full text-base mt-8 font-semibold bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
+const successIconCircle =
+    "h-16 w-16 bg-(--success-light) text-(--success) rounded-full flex items-center justify-center mb-6";
+const titleText =
+    "text-3xl font-bold tracking-tight text-[var(--text-color)]";
+const subtitleText =
+    "mt-3 text-base text-(--text-light) max-w-sm mx-auto";
+const formContainer =
+    "mt-8";
+const inputGroup =
+    "mt-8";
+const inputStyle =
+    "text-base";
+const backLinkContainer =
+    "flex items-center justify-center mt-6";
+const backLink =
+    "flex items-center gap-2 text-sm font-medium text-[var(--text-light)] hover:text-[var(--primary-color)] transition-colors";
+const submitButton =
+    "w-full text-base mt-8 font-semibold bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 
 export default function ChangePassword() {
     const { t } = useTranslation()

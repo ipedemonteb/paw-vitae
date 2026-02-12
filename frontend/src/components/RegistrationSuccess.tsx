@@ -1,48 +1,60 @@
 "use client"
 
-import { CheckCircle } from "lucide-react"
+import {ArrowLeft, CheckCircle2} from "lucide-react"
 import { useTranslation } from "react-i18next"
+import {Link} from "react-router-dom";
 
 interface RegistrationSuccessProps {
     email: string;
 }
 
+const pageContainer =
+    "min-h-screen bg-(--background-light) flex flex-col items-center pt-36 pb-6 px-4 sm:px-6 lg:px-8";
+const cardContainer =
+    "w-full max-w-lg bg-white py-10 px-16 rounded-xl border border-[var(--gray-300)] shadow-sm";
+const headerContainer =
+    "flex flex-col items-center text-center";
+const successIconCircle =
+    "h-16 w-16 bg-(--success-light) text-(--success) rounded-full flex items-center justify-center mb-6";
+const titleText =
+    "text-3xl font-bold tracking-tight text-[var(--text-color)]";
+const subtitleText =
+    "mt-3 text-base text-(--text-light) max-w-sm mx-auto";
+const backLinkContainer =
+    "flex items-center justify-center mt-6";
+const backLink =
+    "flex items-center gap-2 text-sm font-medium text-[var(--text-light)] hover:text-[var(--primary-color)] transition-colors";
+
 export function RegistrationSuccess({ email }: RegistrationSuccessProps) {
     const { t } = useTranslation();
 
     return (
-        <div className="w-full h-[calc(100vh-100px)] flex items-center justify-center overflow-hidden p-4">
-
-            <div className="w-full max-w-lg shadow-2xl rounded-xl animate-in fade-in zoom-in-95 duration-500 flex flex-col">
-
-                <div className="bg-blue-600 rounded-t-xl p-8 text-center text-white">
-                </div>
-
-                <div className="bg-white rounded-b-xl p-8 flex flex-col items-center text-center">
-
-                    <div className="mb-6 bg-green-100 p-3 rounded-full">
-                        <CheckCircle className="h-12 w-12 text-green-600" />
+        <div className={pageContainer}>
+            <div className={cardContainer}>
+                <div className={headerContainer}>
+                    <div className={successIconCircle}>
+                        <CheckCircle2 className="h-8 w-8 text-(--success)" />
                     </div>
 
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                    <h1 className={titleText}>
                         {t('register.success_title')}
-                    </h2>
+                    </h1>
 
-                    <p className="text-gray-600 mb-6 text-sm">
+                    <p className={subtitleText}>
                         {t('register.success_message')} <br/>
-                        <strong className="text-gray-900 font-medium">{email}</strong>.
+                        <strong className="text-(--text-color) font-medium">{email}</strong>.
                     </p>
 
-                    <div className="w-full bg-blue-50 text-blue-800 rounded-lg p-4 text-sm border border-blue-100 mb-6">
+                    <div className="w-full bg-(--primary-bg) text-(--primary-color) rounded-lg p-4 text-sm border border-(--primary-color) mt-4">
                         {t('register.success_check_email')}
                     </div>
 
-                    <button
-                        onClick={() => window.location.href = '/login'}
-                        className="text-blue-600 font-semibold hover:text-blue-800 hover:underline transition-colors"
-                    >
-                        {t('register.btn_go_login')}
-                    </button>
+                    <div className={backLinkContainer}>
+                        <Link to="/login" className={backLink}>
+                            <ArrowLeft className="h-4 w-4" />
+                            {t("change_password.back_to_login")}
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>
