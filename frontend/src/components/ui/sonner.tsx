@@ -13,21 +13,35 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
+      closeButton
+      richColors
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       icons={{
-        success: <CircleCheckIcon className="size-4" />,
-        info: <InfoIcon className="size-4" />,
-        warning: <TriangleAlertIcon className="size-4" />,
-        error: <OctagonXIcon className="size-4" />,
-        loading: <Loader2Icon className="size-4 animate-spin" />,
+        success: <CircleCheckIcon className="size-5" />,
+        info: <InfoIcon className="size-5" />,
+        warning: <TriangleAlertIcon className="size-5" />,
+        error: <OctagonXIcon className="size-5" />,
+        loading: <Loader2Icon className="size-5 animate-spin" />,
       }}
       style={
         {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)",
+            "--normal-bg": "var(--popover)",
+            "--normal-text": "var(--popover-foreground)",
+            "--normal-border": "var(--border)",
+            "--border-radius": "var(--radius)",
+
+            "--success-bg": "var(--success-lighter)",
+            "--success-text": "var(--success)",
+            "--success-border": "var(--success)",
+
+            "--error-bg": "var(--danger-light)",
+            "--error-text": "var(--danger)",
+            "--error-border": "var(--danger)",
+
+            "--warning-bg": "var(--warning-lighter)",
+            "--warning-text": "var(--warning)",
+            "--warning-border": "var(--warning)",
         } as React.CSSProperties
       }
       {...props}

@@ -24,6 +24,7 @@
     --warning-dark: #a16207;
     --warning-medium: #fbd548;
     --warning-light: #fef3c7;
+    --warning-lighter: #fffbeb;
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
     --gray-200: #e5e7eb;
@@ -75,6 +76,7 @@
     --bubble-color: #FFFFFF33;
     --success: #16a34a;
     --success-light: #dcfce7;
+    --success-lighter: #f0fdf4;
     --success-dark: #15803d;
 }
 
@@ -158,18 +160,6 @@ body {
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
-}
-
-[data-sonner-toaster] {
-    --success-bg: var(--success-light);
-    --success-text: var(--success-dark);
-    --success-border: var(--success);
-
-    --error-bg: var(--danger-light);
-    --error-text: var(--danger-dark);
-    --error-border: var(--danger);
-
-    /* --info-bg: ...; --warning-bg: ...; */
 }
 
 input::selection,

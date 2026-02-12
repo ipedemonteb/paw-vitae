@@ -257,7 +257,10 @@
     "error_token_expired": "The reset token has expired or is invalid. Please request a new password reset."
   },
   "register": {
-    "title_register" : "Register",
+    "title" : {
+      "patient" : "Register Patient",
+      "doctor": "Register Doctor"
+    },
     "subtitle_register" : "Create your account to access our health services.",
     "register_patient" : "Register as Patient",
     "register_doctor" : "Register as Doctor",
@@ -425,8 +428,8 @@
       "subtitle": "Connect with verified healthcare professionals and book appointments online in minutes.",
       "search_placeholder": "Search by doctor name",
       "search": "Search",
-      "doctors_count": "Doctors",
-      "patients_count": "Patients"
+      "doctors": "Doctors",
+      "patients": "Patients"
     },
     "mission": {
       "tag": "Mission",
