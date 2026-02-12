@@ -2,7 +2,7 @@ import { useState, useEffect, type FormEvent } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useSearchParams } from "react-router-dom"
 import {Lock, CheckCircle2, ArrowLeft, Check, X, AlertCircle} from "lucide-react"
-import { PasswordInput } from "@/components/ui/passwordInput"
+import { PasswordInput } from "@/components/PasswordInput.tsx"
 import { Button } from "@/components/ui/button"
 import {useAuth, useChangePasswordMutation} from "@/hooks/useAuth"
 
