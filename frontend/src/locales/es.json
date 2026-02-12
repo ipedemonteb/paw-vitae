@@ -799,5 +799,9 @@
   },
   "date-picker": {
     "placeholder": "Seleccione una fecha"
+  },
+  "offlineBanner": {
+    "offlineMessage": "Parece que estás desconectado. Algunas funciones pueden no estar disponibles.",
+    "networkUnreachable": "La red no es alcanzable"
   }
 }

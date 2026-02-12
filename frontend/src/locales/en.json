@@ -802,5 +802,9 @@
   },
   "errors": {
 
+  },
+  "offlineBanner": {
+    "offlineMessage": "You’re offline. Some actions may not work.",
+    "networkUnreachable": "Network unreachable"
   }
 }
