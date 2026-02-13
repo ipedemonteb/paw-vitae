@@ -53,7 +53,7 @@ import type { SpecialtyDTO } from "@/data/specialties.ts";
 import type { RatingsDTO } from "@/data/ratings.ts";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {
     Dialog,
     DialogContent,
@@ -650,12 +650,22 @@ function EditProfileDialog({
     );
 }
 
+function isStartAfterEnd(startIso?: string, endIso?: string) {
+    if (!startIso || !endIso) return false;
+    const s = new Date(startIso).getTime();
+    const e = new Date(endIso).getTime();
+    if (!Number.isFinite(s) || !Number.isFinite(e)) return false;
+    return s > e;
+}
+
 const editItemDeleteButton = "absolute top-2 right-2 h-8 w-8 text-(--danger) hover:text-white hover:bg-(--danger) cursor-pointer";
 const editItemCard = "relative border bg-muted/20 gap-0";
 const editItemCardContent = "grid gap-5 p-4 pt-10 sm:pt-4";
 const editItemCardRow = "grid sm:grid-cols-2 gap-6";
 const editItemCardInput = "space-y-2";
 const editDialogAddNew = "w-full border-dashed border-(--gray-400) cursor-pointer";
+const invalidCard = "bg-(--danger-lighter) border border-(--danger)";
+const invalidText = "text-sm text-(--danger) font-medium mt-2";
 
 function EditExperienceDialog({
                                   experiencesUrl,
@@ -694,7 +704,13 @@ function EditExperienceDialog({
         setItems(items.filter((_, i) => i !== index))
     }
 
+    const hasAnyDateOrderError = useMemo(() => {
+        return items.some((it) => isStartAfterEnd(it.startDate, it.endDate));
+    }, [items]);
+
     const handleSave = () => {
+        if (hasAnyDateOrderError) return;
+
         const payload = items.map((item) => ({
             ...item,
             endDate: item.endDate === "" ? undefined : item.endDate,
@@ -724,64 +740,72 @@ function EditExperienceDialog({
                 </DialogHeader>
 
                 <div className={editDialogInnerContainer}>
-                    {items.map((item, idx) => (
-                        <Card key={idx} className={editItemCard}>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className={editItemDeleteButton}
-                                onClick={() => removeItem(idx)}
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </Button>
+                    {items.map((item, idx) => {
+                        const hasDateOrderError = isStartAfterEnd(item.startDate, item.endDate);
 
-                            <CardContent className={editItemCardContent}>
-                                <div className={editItemCardRow}>
-                                    <div className={editItemCardInput}>
-                                        <Label>{t("doctor.profile.position", "Position")}</Label>
-                                        <Input
-                                            className={input}
-                                            value={item.positionTitle}
-                                            onChange={(e) => updateItem(idx, "positionTitle", e.target.value)}
-                                        />
+                        return (
+                            <Card key={idx} className={`${editItemCard} ${hasDateOrderError ? invalidCard : ""}`}>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className={editItemDeleteButton}
+                                    onClick={() => removeItem(idx)}
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+
+                                <CardContent className={editItemCardContent}>
+                                    <div className={editItemCardRow}>
+                                        <div className={editItemCardInput}>
+                                            <Label>{t("doctor.profile.position", "Position")}</Label>
+                                            <Input
+                                                className={input}
+                                                value={item.positionTitle}
+                                                onChange={(e) => updateItem(idx, "positionTitle", e.target.value)}
+                                            />
+                                        </div>
+
+                                        <div className={editItemCardInput}>
+                                            <Label>{t("doctor.profile.organization")}</Label>
+                                            <Input
+                                                className={input}
+                                                value={item.organizationName}
+                                                onChange={(e) => updateItem(idx, "organizationName", e.target.value)}
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className={editItemCardInput}>
-                                        <Label>{t("doctor.profile.organization")}</Label>
-                                        <Input
-                                            className={input}
-                                            value={item.organizationName}
-                                            onChange={(e) => updateItem(idx, "organizationName", e.target.value)}
-                                        />
-                                    </div>
-                                </div>
+                                    <div className={editItemCardRow}>
+                                        <div className={editItemCardInput}>
+                                            <Label>{t("doctor.profile.startDate")}</Label>
+                                            <DatePicker
+                                                value={isoToLocalDate(item.startDate)}
+                                                onChange={(d) => updateItem(idx, "startDate", localDateToIso(d))}
+                                                fromDate={new Date(1920, 0, 1)}
+                                                toDate={new Date()}
+                                            />
+                                        </div>
 
-                                <div className={editItemCardRow}>
-                                    <div className={editItemCardInput}>
-                                        <Label>{t("doctor.profile.startDate")}</Label>
-                                        <DatePicker
-                                            value={isoToLocalDate(item.startDate)}
-                                            onChange={(d) => updateItem(idx, "startDate", localDateToIso(d))}
-                                            fromDate={new Date(1920, 0, 1)}
-                                            toDate={new Date()}
-                                        />
+                                        <div className={editItemCardInput}>
+                                            <Label>{t("doctor.profile.endDate")}</Label>
+                                            <DatePicker
+                                                value={isoToLocalDate(item.endDate || "")}
+                                                onChange={(d) => updateItem(idx, "endDate", localDateToIso(d))}
+                                                disabled={!item.startDate}
+                                                fromDate={new Date(1920, 0, 1)}
+                                                toDate={new Date()}
+                                            />
+                                        </div>
                                     </div>
-
-                                    <div className={editItemCardInput}>
-                                        <Label>{t("doctor.profile.endDate")}</Label>
-                                        <DatePicker
-                                            value={isoToLocalDate(item.endDate || "")}
-                                            onChange={(d) => updateItem(idx, "endDate", localDateToIso(d))}
-                                            disabled={!item.startDate}
-                                            // fromDate={isoToLocalDate(item.startDate)}
-                                            fromDate={new Date(1920, 0, 1)}
-                                            toDate={new Date()}
-                                        />
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
+                                    {hasDateOrderError ? (
+                                        <p className={invalidText}>
+                                            {t("doctor.profile.errorEndBeforeStart", "La fecha de fin no puede ser anterior a la de inicio.")}
+                                        </p>
+                                    ) : null}
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
                     <Button
                         variant="outline"
                         onClick={() =>
@@ -805,7 +829,7 @@ function EditExperienceDialog({
                     >
                         {t("cancel")}
                     </Button>
-                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending}>
+                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending || hasAnyDateOrderError}>
                         {mutation.isPending ? t("saving") : t("save")}
                     </Button>
                 </DialogFooter>
