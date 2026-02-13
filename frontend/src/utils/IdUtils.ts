@@ -7,10 +7,15 @@ export function coverageIdFromSelf(self: string): number | null {
     return m ? Number(m[1]) : null;
 }
 
-export function  userIdFromImageUrl(url: string | undefined): string | undefined {
-    if (!url) return undefined;
-    const m = url.match(/\/(\d+)\/?$/);
-    return m ? String(m[1]) : undefined;
+export function userIdFromImageUrl(url: string | undefined): string | undefined {
+    if (!url) {
+        return undefined;
+    }
+    const m = url.match(/\/(\d+)(?=\/[^/]*$)/);
+    if (!m) {
+        return undefined;
+    }
+    return String(m[1]);
 }
 export function userIdFromSelf(self: string | undefined): string | undefined {
     if (!self) return undefined;
