@@ -325,8 +325,8 @@
       "select_coverage": "Please select an insurance plan.",
       "select_specialty": "Please select at least one specialty.",
       "select_neighborhoods": "Please select a neighborhood.",
-      "no_specialties_available": "No specialties found at the moment. Please try again later.",
-      "no_coverages_available": "No insurance plans found at the moment. Please try again later.",
+      "no_specialties_available": "No specialties found.",
+      "no_coverages_available": "No insurance plans found.",
       "terms_required" : "You must accept the terms and conditions to continue.",
       "select_neighborhood": "Please select a neighborhood."
     }

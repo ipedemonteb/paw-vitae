@@ -293,7 +293,7 @@ function NotLoggedInComponent({
             <DropdownMenu open={open} onOpenChange={onOpenChange}>
                 <DropdownMenuTrigger className={btnFilled}>
                     {t("header.register")}
-                    <ChevronDown className="h-4 w-4 ml-1" />
+                    <ChevronDown className={open ? "h-4 w-4 ml-1 transition-transform rotate-180" : "h-4 w-4 ml-1 transition-transform"} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem onClick={() => onOpenChange(false)} className={dropDownItem}>

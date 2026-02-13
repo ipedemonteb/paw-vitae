@@ -45,11 +45,15 @@ export function RefetchComponent({
 
     return (
         <div className={`${defaultWrap} ${className ?? ""}`}>
-            <p className="text-(--danger) mb-4">{msg}</p>
+            <p className="text-(--danger) mb-2">{msg}</p>
 
             <Button
+                type="button"
                 variant="outline"
-                onClick={onRefetch}
+                onClick={(e) => {
+                    e.preventDefault();
+                    onRefetch();
+                }}
                 className={`${defaultButton} ${buttonClassName ?? ""}`}
                 disabled={isDisabled}
                 aria-busy={isFetching}
