@@ -204,7 +204,8 @@ public class RestDoctorController {
             @Valid @NotNull UpdateDoctorForm updateDoctorForm
     ) {
         Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
-        this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(), updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages());
+        this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(),
+                updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages());
         return Response.noContent().build();
     }
 
