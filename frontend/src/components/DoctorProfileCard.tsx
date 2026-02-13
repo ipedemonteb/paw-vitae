@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card.tsx";
 import {useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
 import {initialsFallback} from "@/utils/userUtils.ts";
 import type {DoctorDTO} from "@/data/doctors.ts";
-import {userIdFromSelf} from "@/utils/IdUtils.ts";
+import {userIdFromImageUrl} from "@/utils/IdUtils.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 
@@ -31,7 +31,7 @@ const ratingText =
 
 function DoctorProfileCard( { doctor } : { doctor: DoctorDTO | undefined} ) {
 
-    const { url: getDoctorImgUrl, isLoading: isLoadingImage } = useDoctorImageUrl(userIdFromSelf(doctor?.self));
+    const { url: getDoctorImgUrl, isLoading: isLoadingImage } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const { data: specialties, isLoading: isLoadingSpecialties } = useDoctorSpecialties(doctor?.specialties);
 
     const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);

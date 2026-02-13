@@ -70,7 +70,7 @@ import { toast } from "sonner";
 import {DatePicker} from "@/components/ui/date-picker.tsx";
 import {isoToLocalDate, localDateToIso} from "@/utils/dateUtils.ts";
 import {useDoctorOffices} from "@/hooks/useOffices.ts";
-import {userIdFromSelf} from "@/utils/IdUtils.ts";
+import {userIdFromImageUrl, userIdFromSelf} from "@/utils/IdUtils.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
@@ -154,7 +154,7 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
         return (a + b).toUpperCase() || "U";
     })();
     const { t } = useTranslation();
-    const { url: getDoctorImgUrl, isLoading: isLoadingImage } = useDoctorImageUrl(String(doctor.self.split('/').pop()));
+    const { url: getDoctorImgUrl, isLoading: isLoadingImage } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const specialtyNames = specialties.map(s => t(s.name));
     const navigate = useNavigate();
     const doctorId = userIdFromSelf(doctor.self);

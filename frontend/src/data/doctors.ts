@@ -40,7 +40,7 @@ export type DoctorDTO = {
     certifications: string;
     ratings: string;
     appointments: string;
-    image: string;
+    image?: string;
     unavailability: string;
     self: string;
 

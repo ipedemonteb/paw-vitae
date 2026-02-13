@@ -13,6 +13,7 @@ import {useTranslation} from "react-i18next";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {userIdFromImageUrl} from "@/utils/IdUtils.ts";
 
 const cardContainer =
     "flex flex-col items-stretch p-0 md:flex-row";
@@ -49,7 +50,7 @@ function SearchListCard({doctor}: SearchCardProps) {
     const {t} = useTranslation();
 
     const { data: specialties, isLoading: loadingSpecialties } = useDoctorSpecialties(doctor.specialties);
-    const { url:imageUrl, isLoading: loadingDoctorImgUrl } = useDoctorImageUrl(doctor.self.split("/").pop());
+    const { url:imageUrl, isLoading: loadingDoctorImgUrl } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const doctorId = extractIdFromUrl(doctor.self)
     const profilePath = generatePath("/profile/:id", { id: String(doctorId) })
     const schedulePath = generatePath("/appointment/:id", { id: String(doctorId) })
