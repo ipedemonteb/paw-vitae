@@ -14,6 +14,7 @@ import {useAllRatings} from "@/hooks/useRatings.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import SearchResultsCard from "@/components/SearchResultCard.tsx";
 import {useDebounce} from "use-debounce";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 // TODO: internacionalizacion
 
@@ -71,8 +72,10 @@ function HeroSection() {
     const isDoctor = role === "ROLE_DOCTOR";
 
 
-    const { data: doctors = 0, isLoading: loadingDoctors } = useDoctorsCount();
-    const { data: patients = 0, isLoading: loadingPatients } = usePatientsCount();
+    const { data: doctors = 0, isLoading: loadingDoctors, isError: errorDoctors } = useDoctorsCount();
+    const { data: patients = 0, isLoading: loadingPatients, isError: errorPatients } = usePatientsCount();
+
+    const isError = errorDoctors || errorPatients;
 
     const navigate = useNavigate();
     const [keyword, setKeyword] = useState("");
@@ -144,7 +147,7 @@ function HeroSection() {
                                             ))
                                         )}
                                         {!isLoading && searchResults && searchResults.data.length === 0 && (
-                                            <div className="h-20 w-full bg-gray-100 flex items-center justify-center gap-1">
+                                            <div className="h-20 w-full bg-(--gray-100) flex items-center justify-center gap-1">
                                                 <span className="text-(--text-light) text-sm">{t("search.searchbar.empty")}</span>
                                             </div>
                                         )}
@@ -167,20 +170,32 @@ function HeroSection() {
                     </div>
                 )}
 
-                <div className="flex gap-10">
-                    <div className="flex flex-col">
-        <span className="text-4xl font-bold text-(--primary-color)">
-          {loadingDoctors ? "..." : doctors}
-        </span>
-                        <span className="text-lg text-(--text-light)">{t("landing.hero.doctors")}</span>
+                {!isError && (
+                    <div className="flex gap-10">
+                        <div className="flex flex-col">
+                        <span className="text-4xl font-bold text-(--primary-color) flex items-center justify-center h-12">
+                          {loadingDoctors ?
+                              <div className="flex justify-center items-center">
+                                  <Spinner className="size-8"/>
+                              </div>
+                              :
+                              doctors}
+                        </span>
+                            <span className="text-lg text-(--text-light)">{t("landing.hero.doctors")}</span>
+                        </div>
+                        <div className="flex flex-col">
+                        <span className="text-4xl font-bold text-(--primary-color) flex items-center justify-center h-12">
+                          {loadingPatients ?
+                              <div className="flex justify-center items-center">
+                                  <Spinner className="size-8"/>
+                              </div>
+                              :
+                              patients}
+                        </span>
+                            <span className="text-lg text-(--text-light)">{t("landing.hero.patients")}</span>
+                        </div>
                     </div>
-                    <div className="flex flex-col">
-        <span className="text-4xl font-bold text-(--primary-color)">
-          {loadingPatients ? "..." : patients}
-        </span>
-                        <span className="text-lg text-(--text-light)">{t("landing.hero.patients")}</span>
-                    </div>
-                </div>
+                )}
             </div>
             <div className={heroSpace} />
         </div>
@@ -383,6 +398,12 @@ const carouselContent =
     "-ml-4 py-2";
 const carouselItem =
     "pl-4 basis-full";
+const loadingContainer =
+    "flex flex-col gap-4 justify-center items-center";
+const spinner =
+    "h-8 w-8 text-(--gray-400)";
+const loadingText =
+    "text-md text-(--gray-500)";
 
 function RatingsSection() {
     const { t } = useTranslation();
@@ -406,10 +427,13 @@ function RatingsSection() {
 
             <div className={ratingsContainer}>
                 {isLoading ? (
-                    <div className="text-center">…</div>
+                    <div className={loadingContainer}>
+                        <Spinner className={spinner} />
+                        <p className={loadingText}>{t("loading")}</p>
+                    </div>
                 ) : isError ? (
-                    <div className="text-center text-red-500">
-                        {t("landing.ratings.error") ?? "Error al cargar reseñas"}
+                    <div className="text-center text-(--danger)">
+                        {t("landing.ratings.error")}
                     </div>
                 ) :  (
                     <Carousel opts={{ align: "start", loop: true }} className={carousel}>
