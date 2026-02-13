@@ -64,6 +64,6 @@ public class DoctorProfile {
 
     @Override
     public int hashCode() {
-        return Objects.hash(doctor.hashCode(), bio, description);
+        return Objects.hash( bio, description);
     }
 }

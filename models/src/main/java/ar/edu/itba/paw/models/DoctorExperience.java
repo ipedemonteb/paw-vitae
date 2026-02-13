@@ -88,6 +88,6 @@ public class DoctorExperience {
 
     @Override
     public int hashCode() {
-        return Objects.hash(doctor.hashCode(), positionTitle, organizationName, startDate, endDate);
+        return Objects.hash(positionTitle, organizationName, startDate, endDate);
     }
 }

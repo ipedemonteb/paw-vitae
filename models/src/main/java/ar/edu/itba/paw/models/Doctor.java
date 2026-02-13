@@ -174,7 +174,7 @@ public class Doctor extends User {
     }
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), specialtiesHashCode(), coveragesHashCode(), officesHashCode(), rating, ratingCount, imageId, profile.hashCode(), experiencesHashCode(), certificationsHashCode());
+        return Objects.hash(super.hashCode(), specialtiesHashCode(), coveragesHashCode(), officesHashCode(), ratingCount, imageId, profile.hashCode(), experiencesHashCode(), certificationsHashCode());
     }
 
 }

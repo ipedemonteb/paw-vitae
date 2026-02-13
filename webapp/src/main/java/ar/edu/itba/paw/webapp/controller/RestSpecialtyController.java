@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaceServices.SpecialtyService;
 import ar.edu.itba.paw.models.Specialty;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.SpecialtyDTO;
+import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.glassfish.jersey.server.Uri;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,10 @@ public class RestSpecialtyController {
     @GET
     @Path("/{id:\\d+}")
     @Produces(CustomMediaType.APPLICATION_SPECIALTY)
-    public Response getById(@PathParam("id") final long id) {
+    public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Specialty specialty = specialtyService.getById(id).orElseThrow(NotFoundException::new);
-        return Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialty, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialty, uriInfo)) {}), request, specialty.hashCode()).build();
+      //  return Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialty, uriInfo)) {}).build();
     }
 
     @GET
