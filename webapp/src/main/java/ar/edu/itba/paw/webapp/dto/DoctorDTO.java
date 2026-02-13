@@ -13,7 +13,6 @@ public class DoctorDTO {
     private String phone;
     private double rating;
     private int ratingCount;
-
     private URI specialties;
     private URI coverages;
     private URI offices;
@@ -47,7 +46,9 @@ public class DoctorDTO {
         dto.ratings = uriInfo.getBaseUriBuilder().path("api").path("ratings").queryParam("doctorId",doctorId).build();
         dto.appointments = uriInfo.getBaseUriBuilder().path("api").path("appointments").queryParam("doctorId", doctorId).build();
         dto.unavailability = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("unavailability").build();
-        dto.image = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("image").build();
+        if (doctor.getImageId() != null) {
+            dto.image = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("image").build();
+        }
         dto.self = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).build();
 
         return dto;

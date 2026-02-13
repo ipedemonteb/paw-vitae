@@ -14,7 +14,7 @@ import {useTranslation} from "react-i18next";
 import {Link, useParams} from "react-router-dom";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import type {DoctorDTO} from "@/data/doctors.ts";
-import {userIdFromSelf} from "@/utils/IdUtils.ts";
+import {userIdFromImageUrl, userIdFromSelf} from "@/utils/IdUtils.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
@@ -209,7 +209,7 @@ const contactIcon =
 
 function DoctorConfirmationCard( { doctor } : { doctor: DoctorDTO | undefined} ) {
 
-    const { url: getDoctorImgUrl, isLoading: isLoadingImgUrl } = useDoctorImageUrl(userIdFromSelf(doctor?.self));
+    const { url: getDoctorImgUrl, isLoading: isLoadingImgUrl } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
 
     const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
 

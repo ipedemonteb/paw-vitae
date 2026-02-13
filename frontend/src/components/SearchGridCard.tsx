@@ -13,6 +13,7 @@ import {useTranslation} from "react-i18next";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {userIdFromImageUrl} from "@/utils/IdUtils.ts";
 
 const cardContainer =
     "p-0 gap-0 h-full flex flex-col justify-between ";
@@ -43,7 +44,7 @@ function SearchGridCard({doctor}: SearchCardProps) {
     const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
     const {t} = useTranslation();
     const { data: specialties, isLoading: loadingSpecialties } = useDoctorSpecialties(doctor.specialties);
-    const { url:imageUrl, isLoading: loadingDoctorImgUrl } = useDoctorImageUrl(doctor.self.split("/").pop());
+    const { url:imageUrl, isLoading: loadingDoctorImgUrl } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const doctorId = extractIdFromUrl(doctor.self)
     const profilePath = generatePath("/profile/:id", { id: String(doctorId) })
     const schedulePath = generatePath("/appointment/:id", { id: String(doctorId) })

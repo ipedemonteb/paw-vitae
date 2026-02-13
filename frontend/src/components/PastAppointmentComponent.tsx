@@ -6,7 +6,7 @@ import {useTranslation} from "react-i18next";
 import {useState} from "react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
 import {useAppointmentFileHandlerMutation, useAppointmentFiles} from "@/hooks/useAppointments.ts";
-import {userIdFromSelf} from "@/utils/IdUtils.ts";
+import {userIdFromImageUrl, userIdFromSelf} from "@/utils/IdUtils.ts";
 import {useDoctor, useDoctorImageUrl} from "@/hooks/useDoctors.ts";
 import {initialsFallback} from "@/utils/userUtils.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
@@ -108,7 +108,7 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 
     const { data: patient, isLoading: loadingPatient } = usePatient(appointment.patient);
     const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
-    const { url: doctorImgUrl, isLoading: loadingDoctorImg } = useDoctorImageUrl(doctorId);
+    const { url: doctorImgUrl, isLoading: loadingDoctorImg } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment.specialty);
     const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverages);
     const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointment.appointmentFiles, open);
