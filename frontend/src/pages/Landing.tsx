@@ -440,12 +440,13 @@ function RatingsSection() {
                         <Spinner className={spinner} />
                         <p className={loadingText}>{t("loading")}</p>
                     </div>
-                ) : isError ? (
+                ) : isError || true ? (
                     <RefetchComponent
                         isFetching={isFetching}
                         onRefetch={() => refetch()}
                         errorText={t("landing.ratings.error")}
                         className="-mt-8"
+                        buttonClassName="mt-2"
                     />
                 ) :  (
                     <Carousel opts={{ align: "start", loop: true }} className={carousel}>

@@ -325,8 +325,8 @@
       "select_coverage": "Por favor seleccione una obra social.",
       "select_specialty": "Por favor seleccione al menos una especialidad.",
       "select_neighborhoods": "Por favor seleccione un barrio.",
-      "no_specialties_available": "No se encontraron especialidades en este momento. Intente nuevamente mas tarde",
-      "no_coverages_available": "No se encontraron obras sociales en este momento. Intente nuevamente mas tarde",
+      "no_specialties_available": "No se encontraron especialidades.",
+      "no_coverages_available": "No se encontraron obras sociales.",
       "terms_required" : "Debe aceptar los términos y condiciones para continuar.",
       "select_neighborhood": "Por favor seleccione un barrio."
     }
