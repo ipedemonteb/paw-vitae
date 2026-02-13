@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import { Input } from "@/components/ui/input";
-import { Search as SearchIcon, Calendar, List, Grid2X2, Eraser } from "lucide-react";
+import { Search as SearchIcon, Stethoscope, ShieldPlus, ChevronsUpDown, Calendar, List, Grid2X2, Eraser } from "lucide-react";
+import { CoverageCombobox } from "@/components/ui/coverage-combobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { ButtonGroup } from "@/components/ui/button-group.tsx";
 import SearchListCard from "@/components/SearchListCard.tsx";
@@ -16,7 +17,9 @@ import {Skeleton} from "@/components/ui/skeleton.tsx";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useDebounce} from "use-debounce";
 import SearchResultsCard from "@/components/SearchResultCard.tsx";
+import {SearchSpecialtyCombobox} from "@/components/SearchSpecialtyCombobox.tsx";
 import SearchEmpty from "@/components/SearchEmpty.tsx";
+import {SortSelector} from "@/components/SortSelector.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 const container =
@@ -171,10 +174,8 @@ function FilterSection({searchParams}: SectionProps) {
 
     const days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] as const;
 
-    const backendValues = [1, 2, 3, 4, 5, 6, 0];
-
     const weekdays = transformWeekdays(searchParams.weekdays)
-
+    const backendValues = [1, 2, 3, 4, 5, 6, 0];
     const toggleDay = (day: number) => {
         searchParams.setParams((p) => {
             const existing = p.getAll("weekdays");
@@ -187,7 +188,38 @@ function FilterSection({searchParams}: SectionProps) {
 
     return (
         <div>
-            {/* ... resto del código ... */}
+            <div className={filterContainer}>
+                <div className={filterGroup}>
+                    <div className={filterLabel}>
+                        <Stethoscope className={iconSize} />
+                        <p>{t("search.specialty.title")}</p>
+                    </div>
+                    <SearchSpecialtyCombobox
+                        searchParams={searchParams}
+                        className={filterCombo}
+                    />
+                </div>
+                <div className={filterGroup}>
+                    <div className={filterLabel}>
+                        <ShieldPlus className={iconSize} />
+                        <p>{t("search.coverage.title")}</p>
+                    </div>
+                    <CoverageCombobox
+                        searchParams={searchParams}
+                        className={filterCombo}
+                    />
+                </div>
+                <div className={filterGroup}>
+                    <div className={filterLabel}>
+                        <ChevronsUpDown className={iconSize} />
+                        <p>{t("search.sort.title")}</p>
+                    </div>
+                    <SortSelector
+                        searchParams={searchParams}
+                        className={filterCombo}
+                    />
+                </div>
+            </div>
 
             <div className={availabilityContainer}>
                 <div className={availabilityTitle}>
@@ -198,7 +230,6 @@ function FilterSection({searchParams}: SectionProps) {
                     <div className={availabilityButtons}>
                         {days.map((day, index) => {
                             const dayValue = backendValues[index];
-
                             return (
                                 <Button
                                     key={day}
