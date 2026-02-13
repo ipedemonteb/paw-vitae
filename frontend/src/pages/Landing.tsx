@@ -1,7 +1,15 @@
 import { Input } from "@/components/ui/input.tsx";
 import { SpecialtyCombobox } from "@/components/SpecialtyCombobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { Search, PersonStandingIcon, Lightbulb, CalendarDays, ShieldPlus, ShieldCheck, Pointer } from "lucide-react";
+import {
+    Search,
+    PersonStandingIcon,
+    Lightbulb,
+    CalendarDays,
+    ShieldPlus,
+    ShieldCheck,
+    Pointer
+} from "lucide-react";
 import { Card } from "@/components/ui/card.tsx";
 import { RatingCard } from "@/components/Rating.tsx";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx";
@@ -15,6 +23,7 @@ import {useAuth} from "@/hooks/useAuth.ts";
 import SearchResultsCard from "@/components/SearchResultCard.tsx";
 import {useDebounce} from "use-debounce";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 // TODO: internacionalizacion
 
@@ -408,7 +417,7 @@ const loadingText =
 function RatingsSection() {
     const { t } = useTranslation();
 
-    const { data: ratings = [], isLoading, isError } = useAllRatings();
+    const { data: ratings = [], isLoading, isError, refetch, isFetching } = useAllRatings();
 
     return (
         ratings.length === 0 ? null : (
@@ -432,9 +441,12 @@ function RatingsSection() {
                         <p className={loadingText}>{t("loading")}</p>
                     </div>
                 ) : isError ? (
-                    <div className="text-center text-(--danger)">
-                        {t("landing.ratings.error")}
-                    </div>
+                    <RefetchComponent
+                        isFetching={isFetching}
+                        onRefetch={() => refetch()}
+                        errorText={t("landing.ratings.error")}
+                        className="-mt-8"
+                    />
                 ) :  (
                     <Carousel opts={{ align: "start", loop: true }} className={carousel}>
                         <CarouselContent className={carouselContent}>
@@ -445,7 +457,7 @@ function RatingsSection() {
                                             className="max-w-none"
                                             comment={r.comment}
                                             rating={r.rating}
-                                            userName={t("landing.ratings.anonymous","Anónimo")}
+                                            userName={t("landing.ratings.anonymous")}
                                             timeAgo={""}
                                         />
                                     </div>
