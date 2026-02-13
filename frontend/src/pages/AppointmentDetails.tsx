@@ -245,7 +245,11 @@ function AppointmentDetails() {
                                                     cancelMutation.mutate(
                                                         { id: appointmentId, userId: String(auth.userId) },
                                                         {
-                                                            onSuccess: () => navigate(base),
+                                                            onSuccess: () => {
+                                                                toast.success(t("appointment.cancel.success"));
+                                                                navigate(base)
+                                                            },
+                                                            onError: () => toast.error(t("appointment.cancel.error"))
                                                         }
                                                     );
                                                 }}

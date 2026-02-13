@@ -144,8 +144,6 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
         ? initialsFallback(patient?.name, patient?.lastName)
         : initialsFallback(doctor?.name, doctor?.lastName);
 
-
-
     const status = "appointment.filters." + transformStatus(appointment.status);
     const base = isDoctor ? "/doctor/dashboard" : "/patient/dashboard";
 

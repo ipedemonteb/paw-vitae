@@ -564,9 +564,9 @@ function SpecialtySelector({options, selectedSpecialty, setSelectedSpecialty}: {
     );
 }
 
-const confirmation = "mx-6 py-2 px-5 bg-[var(--success-light)] rounded-lg border border-[var(--success)]";
-const confirmationTitle = "text-[var(--text-color)] text-md font-[500]";
-const confirmationText = "text-[var(--text-color)] text-sm font-[300]";
+const confirmation = "mx-6 py-2 px-5 bg-(--success-lighter) rounded-lg border border-(--success)";
+const confirmationTitle = "text-(--success-dark) text-md font-[500]";
+const confirmationText = "text-(--success-dark) text-sm font-[300]";
 
 function Confirmation({ text }: { text: string }) {
     const { t } = useTranslation();
