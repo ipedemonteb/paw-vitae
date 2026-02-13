@@ -379,7 +379,7 @@
       "title": "An Error Occurred",
       "message": "An unexpected error has occurred. Please try again."
     },
-    "try_again": "Try Again"
+    "try-again": "Try Again"
   },
   "verify": {
     "loading_title": "Verifying account...",
@@ -479,7 +479,7 @@
       "tag": "Ratings",
       "title": "Doctor Ratings",
       "subtitle": "See what our patients say about our doctors.",
-      "error": "There has been an error loading the ratings. Please try again later.",
+      "error": "There has been an error loading the ratings.",
       "anonymous": "Anonymous User"
     }
   },
