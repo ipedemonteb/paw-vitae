@@ -377,9 +377,9 @@
     },
     "default": {
       "title": "Ocurrió un error",
-      "message": "Ha ocurrido un error inesperado. Por favor intenta nuevamente."
+      "message": "Ha ocurrido un error inesperado. Por favor intente nuevamente."
     },
-    "try-again": "Intentar de nuevo"
+    "try-again": "Intentar Nuevamente"
   },
   "verify": {
     "loading_title": "Verificando cuenta...",
@@ -479,7 +479,7 @@
       "tag": "Calificaciones",
       "title": "Calificaciones de Doctores",
       "subtitle": "Vea lo que nuestros pacientes dicen sobre nuestros doctores.",
-      "error" : "Hubo un error cargando las calificaciones. Por favor intente de nuevo mas tarde",
+      "error" : "Hubo un error cargando las calificaciones",
       "anonymous": "Paciente Anónimo"
     }
   },

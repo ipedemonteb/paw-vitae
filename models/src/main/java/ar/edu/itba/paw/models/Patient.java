@@ -45,6 +45,6 @@ public class Patient extends User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), coverage, neighborhood);
+        return Objects.hash(super.hashCode(), coverage.getId(), neighborhood.getId());
     }
 }
