@@ -75,6 +75,7 @@ import {Spinner} from "@/components/ui/spinner.tsx";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
@@ -82,21 +83,22 @@ const profileContainer =
 function PublicProfile() {
     const auth = useAuth();
     const { id } = useParams<{ id: string }>();
-    const { data: doctor, isLoading: isLoadingDoctor, isError } = useDoctor(id);
+    const { data: doctor, isLoading: isLoadingDoctor, isError: doctorError } = useDoctor(id);
+    // TODO: HANDLE IS ERROR FOR SPECIALTIES
     const { data: specialties, isLoading: isLoadingSpecialties } = useDoctorSpecialties(doctor?.specialties);
-    const { data: coverages, isLoading: isLoadingCoverages } = useDoctorCoverages(doctor?.coverages);
-    const { data: experiences, isLoading: isLoadingExperiences } = useDoctorExperience(doctor?.experiences);
-    const { data: certifications, isLoading: isLoadingCertifications } = useDoctorCertifications(doctor?.certifications);
-    const { data: profile, isLoading: isLoadingProfile } = useDoctorBiography(doctor?.profile);
-    const { data: ratings, isLoading: isLoadingRatings } = useRatings(doctor?.ratings);
-    const { data: offices, isLoading: isLoadingOffices } = useDoctorOffices(doctor?.offices);
+    const { data: coverages, isLoading: isLoadingCoverages, isError: errorCoverages, refetch: refetchCoverages, isFetching: fetchingCoverages } = useDoctorCoverages(doctor?.coverages);
+    const { data: experiences, isLoading: isLoadingExperiences, isError: errorExperiences, refetch: refetchExperiences, isFetching: fetchingExperiences } = useDoctorExperience(doctor?.experiences);
+    const { data: certifications, isLoading: isLoadingCertifications, isError: errorCertifications, refetch: refetchCertifications, isFetching: fetchingCertifications } = useDoctorCertifications(doctor?.certifications);
+    const { data: profile, isLoading: isLoadingProfile, isError: errorProfile } = useDoctorBiography(doctor?.profile);
+    const { data: ratings, isLoading: isLoadingRatings, isError: errorRatings, refetch: refetchRatings, isFetching: fetchingRatings } = useRatings(doctor?.ratings);
+    const { data: offices, isLoading: isLoadingOffices, isError: errorOffices, refetch: refetchOffices, isFetching: fetchingOffices } = useDoctorOffices(doctor?.offices);
 
-    const isLoading = isLoadingDoctor || isLoadingCertifications || isLoadingCoverages || isLoadingExperiences || isLoadingProfile || isLoadingOffices || isLoadingRatings || isLoadingSpecialties;
+    const isLoading = isLoadingDoctor || isLoadingSpecialties;
 
     if (useDelayedBoolean(isLoading))
         return <LoadingFullPageComponent/>
 
-    if (isError || !doctor) return <GenericError code={404} />;
+    if (doctorError || !doctor) return <GenericError code={404} />;
 
     const maxBadges = 4;
     const isOwner = auth.email === doctor?.email;
@@ -104,12 +106,12 @@ function PublicProfile() {
     return (
         <div className={profileContainer}>
             <ProfileCard doctor={doctor} profile={profile} specialties={specialties || []} maxBadges={maxBadges} isOwner={isOwner} />
-            <AboutMeCard bio={profile?.bio || ""} />
-            <CoverageCard coverages={coverages || []} />
-            <OfficesCard offices={offices || []} />
-            <ExperienceCard experiences={experiences || []} isOwner={isOwner} updateUrl={doctor.experiences} />
-            <CertificatesCard certifications={certifications || []} isOwner={isOwner} updateUrl={doctor.certifications} />
-            <RatingsCard ratings={ratings || []} />
+            <AboutMeCard bio={profile?.bio || ""} isLoading={isLoadingProfile} isError={errorProfile} />
+            <CoverageCard coverages={coverages || []} isLoading={isLoadingCoverages} isError={errorCoverages} refetch={refetchCoverages} isFetching={fetchingCoverages}/>
+            <OfficesCard offices={offices || []} isLoading={isLoadingOffices} isError={errorOffices} refetch={refetchOffices} isFetching={fetchingOffices} />
+            <ExperienceCard experiences={experiences || []} isOwner={isOwner} updateUrl={doctor.experiences} isLoading={isLoadingExperiences} isError={errorExperiences} refetch={refetchExperiences} isFetching={fetchingExperiences} />
+            <CertificatesCard certifications={certifications || []} isOwner={isOwner} updateUrl={doctor.certifications} isLoading={isLoadingCertifications} isError={errorCertifications} refetch={refetchCertifications} isFetching={fetchingCertifications} />
+            <RatingsCard ratings={ratings || []} isLoading={isLoadingRatings} isError={errorRatings} refetch={refetchRatings} isFetching={fetchingRatings} />
         </div>
     );
 }
@@ -131,12 +133,24 @@ const cardTitleText = "text-lg font-[500] min-w-0";
 const profileContent = "flex flex-col gap-0 items-center md:flex-row pt-6";
 const aboutTitle = " text-lg font-[500]";
 const aboutText = " wrap-break-word flex-wrap text-[var(--text-color)] text-md";
+const errorText = " wrap-break-word flex-wrap text-(--danger) text-md";
 
 function EmptySection({ icon: Icon, text }: { icon: React.ElementType, text: string }) {
     return (
         <div className="flex flex-col items-center justify-center w-full py-8 text-(--text-light) opacity-60">
             <Icon className="w-10 h-10 mb-3 stroke-1" />
             <p className="text-sm font-medium text-center">{text}</p>
+        </div>
+    );
+}
+
+function LoadingComponent({ className } : { className?: string }) {
+    const { t } = useTranslation();
+    const style = className ? className : "flex flex-col items-center justify-center gap-1 h-36";
+    return (
+        <div className={style}>
+            <Spinner className="size-6 text-(--gray-400)" />
+            <p className="text-(--gray-500)">{t("loading")}</p>
         </div>
     );
 }
@@ -228,7 +242,11 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
     );
 }
 
-function AboutMeCard({ bio }: { bio: string }) {
+function AboutMeCard({ bio, isLoading, isError }: {
+    bio: string;
+    isLoading: boolean;
+    isError: boolean;
+}) {
     const { t } = useTranslation();
     return (
         <Card className={card}>
@@ -237,7 +255,13 @@ function AboutMeCard({ bio }: { bio: string }) {
                 <h1 className={cardTitleText}>{t("doctor.profile.card.about")}</h1>
             </div>
             <div className={aboutContent}>
-                <p className={aboutText}>{bio || t("doctor.profile.no_bio_available", "No biography available.")}</p>
+                {isLoading ?
+                    <LoadingComponent className="flex flex-col items-center justify-center gap-1" />
+                : isError ?
+                    <p className={errorText}>{t("doctor.profile.error.no_profile")}</p>
+                :
+                    <p className={aboutText}>{bio || t("doctor.profile.no_bio_available", "No biography available.")}</p>
+                }
             </div>
         </Card>
     );
@@ -245,7 +269,13 @@ function AboutMeCard({ bio }: { bio: string }) {
 
 const cardContent = "flex flex-col items-center gap-3 px-6 py-6 sm:flex-row sm:flex-wrap sm:justify-center";
 
-function CoverageCard({ coverages }: { coverages: CoverageDTO[] }) {
+function CoverageCard({ coverages, isLoading, isError, refetch, isFetching }: {
+    coverages: CoverageDTO[]
+    isLoading: boolean;
+    isError: boolean;
+    refetch: () => void;
+    isFetching: boolean;
+}) {
     const { t } = useTranslation();
     return (
         <Card className={card}>
@@ -254,15 +284,28 @@ function CoverageCard({ coverages }: { coverages: CoverageDTO[] }) {
                 <h1 className={cardTitleText}>{t("doctor.profile.coverages")}</h1>
             </div>
             <div className={cardContent}>
-                {coverages.length > 0 ? (
-                    coverages.map((cov) => (
-                        <CoverageComponent
-                            key={cov.name}
-                            coverageName={cov.name}
-                        />
-                    ))
+                {isLoading ?
+                    <LoadingComponent />
+                : isError ? (
+                    <RefetchComponent
+                        isFetching={isFetching}
+                        onRefetch={refetch}
+                        className="h-34 flex justify-center items-center"
+                        errorText={t("doctor.profile.error.no_coverage")}
+                    />
                 ) : (
-                    <EmptySection icon={ShieldPlus} text={t("doctor.profile.no_coverages")} />
+                    <>
+                        {coverages.length > 0 ? (
+                            coverages.map((cov) => (
+                                <CoverageComponent
+                                    key={cov.name}
+                                    coverageName={cov.name}
+                                />
+                            ))
+                        ) : (
+                            <EmptySection icon={ShieldPlus} text={t("doctor.profile.no_coverages")} />
+                        )}
+                    </>
                 )}
             </div>
         </Card>
@@ -284,7 +327,13 @@ function CoverageComponent({ coverageName }: {
     );
 }
 
-function OfficesCard({ offices }: { offices: OfficeDTO[] }) {
+function OfficesCard({ offices, isLoading, isError, refetch, isFetching }: {
+    offices: OfficeDTO[]
+    isLoading: boolean;
+    isError: boolean;
+    refetch: () => void;
+    isFetching: boolean;
+}) {
     const { t } = useTranslation();
 
     return (
@@ -294,16 +343,29 @@ function OfficesCard({ offices }: { offices: OfficeDTO[] }) {
                 <h1 className={cardTitleText}>{t("doctor.profile.offices")}</h1>
             </div>
             <div className={cardContent}>
-                {offices.length > 0 ? (
-                    offices.map((office, idx) => (
-                        <OfficeComponent
-                            key={office.self || idx}
-                            officeTitle={office.name || t("doctor.profile.office", "Consultorio")}
-                            neighborhoodUrl={office.neighborhood}
-                        />
-                    ))
+                {isLoading ?
+                    <LoadingComponent />
+                : isError ? (
+                    <RefetchComponent
+                        isFetching={isFetching}
+                        onRefetch={refetch}
+                        className="h-34 flex justify-center items-center"
+                        errorText={t("doctor.profile.error.no_offices")}
+                    />
                 ) : (
-                    <EmptySection icon={Hospital} text={t("doctor.profile.no_offices", "No registered offices.")} />
+                    <>
+                        {offices.length > 0 ? (
+                            offices.map((office, idx) => (
+                                <OfficeComponent
+                                    key={office.self || idx}
+                                    officeTitle={office.name || t("doctor.profile.office", "Consultorio")}
+                                    neighborhoodUrl={office.neighborhood}
+                                />
+                            ))
+                        ) : (
+                            <EmptySection icon={Hospital} text={t("doctor.profile.no_offices", "No registered offices.")} />
+                        )}
+                    </>
                 )}
             </div>
         </Card>
@@ -349,10 +411,14 @@ const experienceContent = "pr-6 py-6";
 const timelineContainer = "relative pl-10 before:content-[''] before:absolute before:top-3 before:bottom-3 before:left-14 before:w-[2px] before:-translate-x-1/2 before:bg-[var(--gray-300)]";
 const editComponentButton = "ml-auto shrink-0 w-26 h-10 bg-transparent text-[var(--primary-dark)] hover:bg-transparent hover:border hover:border-(--primar-dark) cursor-pointer transition-none";
 
-function ExperienceCard({ experiences, isOwner, updateUrl }: {
+function ExperienceCard({ experiences, isOwner, updateUrl, isLoading, isError, refetch, isFetching }: {
     experiences: ExperienceDTO[];
     isOwner: boolean;
     updateUrl: string;
+    isLoading: boolean;
+    isError: boolean;
+    refetch: () => void;
+    isFetching: boolean;
 }) {
     const { t } = useTranslation();
     const formatDateRange = (start: string, end?: string) => {
@@ -379,28 +445,41 @@ function ExperienceCard({ experiences, isOwner, updateUrl }: {
                 )}
             </div>
             <div className={experienceContent}>
-                {experiences.length === 0 ? (
-                    <EmptySection icon={BriefcaseBusiness} text={t("doctor.profile.no_experiences")} />
-                ) : (
-                    <div className={timelineContainer}>
-                        {experiences.map((e, idx) => (
-                            <ExperienceItem
-                                key={`${e.positionTitle}-${idx}`}
-                                position={e.positionTitle}
-                                organization={e.organizationName}
-                                period={formatDateRange(e.startDate, e.endDate)}
-                                description={""}
-                                isLast={idx === experiences.length - 1}
-                            />
-                        ))}
-                    </div>
-                )}
+                {isLoading ?
+                    <LoadingComponent />
+                : isError ?
+                    <RefetchComponent
+                        isFetching={isFetching}
+                        onRefetch={refetch}
+                        className="h-34 flex justify-center items-center"
+                        errorText={t("doctor.profile.error.no_experience")}
+                    />
+                :
+                    <>
+                        {experiences.length === 0 ? (
+                            <EmptySection icon={BriefcaseBusiness} text={t("doctor.profile.no_experiences")} />
+                        ) : (
+                            <div className={timelineContainer}>
+                                {experiences.map((e, idx) => (
+                                    <ExperienceItem
+                                        key={`${e.positionTitle}-${idx}`}
+                                        position={e.positionTitle}
+                                        organization={e.organizationName}
+                                        period={formatDateRange(e.startDate, e.endDate)}
+                                        description={""}
+                                        isLast={idx === experiences.length - 1}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </>
+                }
             </div>
         </Card>
     );
 }
-const input="hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
+const input="hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500";
 const careerItem = "relative pb-4";
 const careerDot = "absolute left-4 top-[6px] -translate-x-1/2 w-6 h-6 rounded-full bg-white border-2 border-[var(--gray-300)] grid place-items-center after:content-[''] after:block after:w-2.5 after:h-2.5 after:rounded-full after:bg-[var(--primary-color)]";
 const careerPosition = "text-nowrap overflow-clip text-ellipsis text-base font-[600] text-[var(--text-color)] leading-tight";
@@ -435,10 +514,14 @@ function ExperienceItem({ position, organization, period, description, isLast }:
 const certificatesContent = "flex flex-col gap-2 px-6";
 const certificatesScrollWrap = "py-6";
 
-function CertificatesCard({ certifications, isOwner, updateUrl }: {
+function CertificatesCard({ certifications, isOwner, updateUrl, isLoading, isError, refetch, isFetching }: {
     certifications: CertificationDTO[];
     isOwner: boolean;
     updateUrl: string;
+    isLoading: boolean;
+    isError: boolean;
+    refetch: () => void;
+    isFetching: boolean;
 }) {
     const { t } = useTranslation();
     return (
@@ -460,22 +543,35 @@ function CertificatesCard({ certifications, isOwner, updateUrl }: {
                 )}
             </div>
             <div className={certificatesScrollWrap}>
-                {certifications.length > 0 ? (
-                    <div className={certificatesContent}>
-                        {certifications.map((cert, idx) => (
-                            <CertificateComponent
-                                key={idx}
-                                certificate={cert.certificateName}
-                                issuer={cert.issuingEntity}
-                                date={cert.issueDate}
-                            />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="py-6 flex items-center justify-center">
-                        <EmptySection icon={FileBadge} text={t("doctor.profile.no_certificates")} />
-                    </div>
-                )}
+                {isLoading ?
+                    <LoadingComponent />
+                : isError ?
+                    <RefetchComponent
+                        isFetching={isFetching}
+                        onRefetch={refetch}
+                        className="h-34 flex justify-center items-center"
+                        errorText={t("doctor.profile.error.no_certificates")}
+                    />
+                :
+                    <>
+                        {certifications.length > 0 ? (
+                            <div className={certificatesContent}>
+                                {certifications.map((cert, idx) => (
+                                    <CertificateComponent
+                                        key={idx}
+                                        certificate={cert.certificateName}
+                                        issuer={cert.issuingEntity}
+                                        date={cert.issueDate}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="py-6 flex items-center justify-center">
+                                <EmptySection icon={FileBadge} text={t("doctor.profile.no_certificates")} />
+                            </div>
+                        )}
+                    </>
+                }
             </div>
         </Card>
     );
@@ -518,7 +614,13 @@ const carousel = "relative max-w-3xl w-full mx-auto px-12 -mt-5";
 const carouselContentClass = "-ml-4 py-2";
 const carouselItemClass = "pl-4 basis-full";
 
-function RatingsCard({ ratings }: { ratings: RatingsDTO[] }) {
+function RatingsCard({ ratings, isLoading, isError, refetch, isFetching }: {
+    ratings: RatingsDTO[];
+    isLoading: boolean;
+    isError: boolean;
+    refetch: () => void;
+    isFetching: boolean;
+}) {
     const { t } = useTranslation();
 
     return (
@@ -528,30 +630,43 @@ function RatingsCard({ ratings }: { ratings: RatingsDTO[] }) {
                 <h1 className={cardTitleText}>{t("doctor.profile.ratings")}</h1>
             </div>
             <div className={ratingsContentWrapper}>
-                {ratings && ratings.length > 0 ? (
-                    <Carousel opts={{ align: "start", loop: true }} className={carousel}>
-                        <CarouselContent className={carouselContentClass}>
-                            {ratings.map((r, idx) => (
-                                <CarouselItem key={idx} className={carouselItemClass}>
-                                    <div className="py-2">
-                                        <RatingCard
-                                            className="max-w-xl"
-                                            comment={r.comment}
-                                            rating={r.rating}
-                                            userName={t("landing.ratings.anonymous","Anónimo")}
-                                        />
-                                    </div>
-                                </CarouselItem>
-                            ))}
-                        </CarouselContent>
-                        <CarouselPrevious className="left-2 cursor-pointer" />
-                        <CarouselNext className="right-2 cursor-pointer" />
-                    </Carousel>
-                ) : (
-                    <div className="pb-6">
-                        <EmptySection icon={UserStar} text={t("doctor.profile.no_ratings", "No ratings yet.")} />
-                    </div>
-                )}
+                {isLoading ?
+                    <LoadingComponent className="flex flex-col items-center justify-center gap-1 h-48"/>
+                : isError ?
+                    <RefetchComponent
+                        isFetching={isFetching}
+                        onRefetch={refetch}
+                        className="h-48 flex justify-center items-center"
+                        errorText={t("doctor.profile.error.no_ratings")}
+                    />
+                :
+                    <>
+                        {ratings && ratings.length > 0 ? (
+                            <Carousel opts={{ align: "start", loop: true }} className={carousel}>
+                                <CarouselContent className={carouselContentClass}>
+                                    {ratings.map((r, idx) => (
+                                        <CarouselItem key={idx} className={carouselItemClass}>
+                                            <div className="py-2">
+                                                <RatingCard
+                                                    className="max-w-xl"
+                                                    comment={r.comment}
+                                                    rating={r.rating}
+                                                    userName={t("landing.ratings.anonymous","Anónimo")}
+                                                />
+                                            </div>
+                                        </CarouselItem>
+                                    ))}
+                                </CarouselContent>
+                                <CarouselPrevious className="left-2 cursor-pointer" />
+                                <CarouselNext className="right-2 cursor-pointer" />
+                            </Carousel>
+                        ) : (
+                            <div className="pb-6">
+                                <EmptySection icon={UserStar} text={t("doctor.profile.no_ratings", "No ratings yet.")} />
+                            </div>
+                        )}
+                    </>
+                }
             </div>
         </Card>
     );

@@ -611,7 +611,15 @@
       "no_offices": "Este doctor aún no ha agregado consultorios.",
       "no_coverages": "Este doctor aún no ha agregado coberturas.",
       "no_bio_available": "Este doctor aún no ha agregado una biografía.",
-      "no_description_available": "Este doctor aún no ha agregado una descripción."
+      "no_description_available": "Este doctor aún no ha agregado una descripción.",
+      "error": {
+        "no_profile": "No se pudo cargar la información del doctor. Intentelo nuevamente más tarde.",
+        "no_coverage": "No se pudieron cargar las coberturas del doctor.",
+        "no_offices": "No se pudieron cargar las oficinas del doctor.",
+        "no_experience": "No se pudieron cargar las experiencias del doctor.",
+        "no_certificates": "No se pudieron cargar los certificados del doctor.",
+        "no_ratings": "No se pudieron cargar las calificaciones del doctor."
+      }
     }
   },
   "search": {

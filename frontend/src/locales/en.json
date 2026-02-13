@@ -611,7 +611,15 @@
       "no_offices": "This doctor has not added any offices yet.",
       "no_coverages": "This doctor has not added any coverages yet.",
       "no_bio_available": "This doctor has not provided a bio yet.",
-      "no_description_available": "No description available."
+      "no_description_available": "No description available.",
+      "error": {
+        "no_profile": "Could not load doctor information. Try again later.",
+        "no_coverage": "Could not load doctor coverages.",
+        "no_offices": "Could not load doctor offices.",
+        "no_experience": "Could not load doctor experiences.",
+        "no_certificates": "Could not load doctor certificates.",
+        "no_ratings": "Could not load doctor ratings."
+      }
     }
   },
   "search": {
