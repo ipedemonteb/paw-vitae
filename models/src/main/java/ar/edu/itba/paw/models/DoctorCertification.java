@@ -75,6 +75,6 @@ public class DoctorCertification {
 
     @Override
     public int hashCode() {
-        return Objects.hash(doctor.hashCode(), certificateName, issuingEntity, issueDate);
+        return Objects.hash(certificateName, issuingEntity, issueDate);
     }
 }

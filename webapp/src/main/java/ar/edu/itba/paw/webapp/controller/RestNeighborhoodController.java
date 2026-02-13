@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.exception.NeighborhoodNotFoundException;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CoverageDTO;
 import ar.edu.itba.paw.webapp.dto.NeighborhoodDTO;
+import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,9 +42,10 @@ public class RestNeighborhoodController {
     @GET
     @Path("/{id:\\d+}")
     @Produces(value = CustomMediaType.APPLICATION_NEIGHBORHOOD)
-    public Response getById(@PathParam("id") final long id) {
+    public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Neighborhood neighborhood = neighborhoodService.getById(id).orElseThrow(NeighborhoodNotFoundException::new);
-        return Response.ok(new GenericEntity<>(NeighborhoodDTO.fromNeighborhood(neighborhood, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(NeighborhoodDTO.fromNeighborhood(neighborhood, uriInfo)) {}), request, neighborhood.hashCode()).build();
+       // return Response.ok(new GenericEntity<>(NeighborhoodDTO.fromNeighborhood(neighborhood, uriInfo)) {}).build();
     }
 
 }

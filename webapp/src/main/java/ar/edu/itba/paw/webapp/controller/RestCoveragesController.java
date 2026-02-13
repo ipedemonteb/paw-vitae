@@ -5,10 +5,12 @@ import ar.edu.itba.paw.models.Coverage;
 import ar.edu.itba.paw.models.exception.CoverageNotFoundException;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CoverageDTO;
+import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Cache;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
@@ -31,9 +33,10 @@ public class RestCoveragesController {
     @GET
     @Path("/{id:\\d+}")
     @Produces(CustomMediaType.APPLICATION_COVERAGE)
-    public Response getById(@PathParam("id") final long id) {
+    public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Coverage coverage = coverageService.findById(id).orElseThrow(CoverageNotFoundException::new);
-        return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverage, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverage, uriInfo)) {}), request, coverage.hashCode()).build();
+        //return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverage, uriInfo)) {}).build();
     }
 
 

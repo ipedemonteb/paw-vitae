@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.AppointmentReportForm;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.form.AppointmentSearchForm;
+import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.ResponseUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.slf4j.Logger;
@@ -79,9 +80,10 @@ public class RestAppointmentController {
     @GET
     @Path("/{id:\\d+}")
     @Produces(value = CustomMediaType.APPLICATION_APPOINTMENT)
-    public Response getById(@PathParam("id") final long id) {
+    public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Appointment appointment = this.appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
-        return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}), request, appointment.hashCode()).build();
+        //return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}).build();
     }
 
     @PATCH

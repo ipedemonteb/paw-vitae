@@ -10,6 +10,7 @@ import ar.edu.itba.paw.webapp.form.ChangePasswordForm;
 import ar.edu.itba.paw.webapp.form.PatientForm;
 import ar.edu.itba.paw.webapp.form.RecoverPasswordForm;
 import ar.edu.itba.paw.webapp.form.UpdatePatientForm;
+import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +40,10 @@ public class RestPatientController {
     @GET
     @Path("/{id:\\d+}")
     @Produces(value = CustomMediaType.APPLICATION_PATIENT)
-    public Response getById(@PathParam("id") final long id) {
+    public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
-        return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}), request, patient.hashCode()).build();
+      //  return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}).build();
     }
 
     @HEAD

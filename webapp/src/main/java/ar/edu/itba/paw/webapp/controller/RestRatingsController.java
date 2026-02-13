@@ -7,6 +7,7 @@ import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.RatingDTO;
 import ar.edu.itba.paw.webapp.form.PatientRatingForm;
 import ar.edu.itba.paw.webapp.form.RatingSearchForm;
+import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.ResponseUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +55,10 @@ public class RestRatingsController {
     @GET
     @Path("/{id:\\d+}")
     @Produces(value = CustomMediaType.APPLICATION_RATING)
-    public Response getRatingsById(@PathParam("id") final long id) {
+    public Response getRatingsById(@PathParam("id") final long id, @Context final Request request) {
         final Rating rating = this.ratingService.getRating(id).orElseThrow(NotFoundException::new);
-        return Response.ok(new GenericEntity<>(RatingDTO.fromRating(rating, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(RatingDTO.fromRating(rating, uriInfo)) {}), request, rating.hashCode()).build();
+        //return Response.ok(new GenericEntity<>(RatingDTO.fromRating(rating, uriInfo)) {}).build();
     }
 
     @POST

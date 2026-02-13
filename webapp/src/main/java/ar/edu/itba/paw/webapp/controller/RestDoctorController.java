@@ -64,9 +64,10 @@ public class RestDoctorController {
     @GET
     @Path("/{id:\\d+}")
     @Produces(value = CustomMediaType.APPLICATION_DOCTOR)
-    public Response getById(@PathParam("id") final long id) {
+    public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Doctor doctor = this.doctorService.getById(id).orElseThrow(DoctorOfficeNotFoundException::new);
-        return Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctor, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctor, uriInfo)) {}), request, doctor.hashCode()).build();
+//        return Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctor, uriInfo)) {}).build();
     }
 
     @GET
@@ -132,9 +133,10 @@ public class RestDoctorController {
     @GET
     @Path("/{id:\\d+}/offices/{officeId:\\d+}")
     @Produces(value = CustomMediaType.APPLICATION_OFFICE)
-    public Response getDoctorOffices(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
+    public Response getDoctorOffices(@PathParam("id") final long id, @PathParam("officeId") final long officeId, @Context final Request request) {
         DoctorOffice office = this.doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
-        return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(office, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(office, uriInfo)) {}), request, office.hashCode()).build();
+       // return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(office, uriInfo)) {}).build();
     }
     @GET
     @Path("/{id:\\d+}/availability")
@@ -155,9 +157,10 @@ public class RestDoctorController {
     @GET
     @Path("/{id:\\d+}/biography")
     @Produces(value = CustomMediaType.APPLICATION_DOCTOR_PROFILE)
-    public Response getDoctorProfile(@PathParam("id") final long id) {
+    public Response getDoctorProfile(@PathParam("id") final long id, @Context final Request request) {
         DoctorProfile profile = this.doctorProfileService.findByDoctorId(id);
-        return Response.ok(new GenericEntity<>(ProfileDTO.fromDoctorProfile(profile, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(ProfileDTO.fromDoctorProfile(profile, uriInfo)) {}), request, profile.hashCode()).build();
+       // return Response.ok(new GenericEntity<>(ProfileDTO.fromDoctorProfile(profile, uriInfo)) {}).build();
     }
 
     @GET
@@ -335,6 +338,8 @@ public class RestDoctorController {
         );
         return Response.ok(new GenericEntity<>(OccupiedSlotDTO.fromList(slots, uriInfo)) {}).build();
     }
+
+    //todo: cache?
     @GET
     @Path("/{id:\\d+}/slots/{slotId:\\d+}")
     @Consumes(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOT)
