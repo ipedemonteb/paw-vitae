@@ -19,6 +19,7 @@ import {useRegisterDoctorMutation} from "@/hooks/useDoctors.ts";
 import type {AxiosError} from "axios";
 import {Button} from "@/components/ui/button.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 interface DoctorFormProps {
     onSuccess: (email: string) => void;
@@ -33,8 +34,8 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
 
     const {mutate: registerDoctor, isPending: isSubmitting} = useRegisterDoctorMutation()
 
-    const {data: specialties, isLoading: isLoadingSpecialties} = useSpecialties()
-    const {data: coverages, isLoading: isLoadingCoverages} = useCoverages()
+    const {data: specialties, isLoading: isLoadingSpecialties, isError: errorSpecialties, refetch: refetchSpecialties, isRefetching: refetchingSpecialties} = useSpecialties()
+    const {data: coverages, isLoading: isLoadingCoverages, isError: errorCoverages, refetch: refetchCoverages, isRefetching: refetchingCoverages} = useCoverages()
 
     const [formData, setFormData] = useState({
         name: "",
@@ -284,13 +285,20 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                             {t('register.label_specialties')} <span className="text-(--danger)">*</span>
                         </label>
 
-                        {/*TODO: Handle this correctly*/}
                         {isLoadingSpecialties ? (
-                            <div className="flex items-center gap-2 text-(--gray-500) text-sm">
-                                <Spinner className="h-4 w-4"/> {t('register.loader_specialties')}
+                            <div className="flex flex-col items-center gap-1 text-(--gray-500) text-md my-10">
+                                <Spinner className="size-6"/>
+                                {t('register.loader_specialties')}
                             </div>
+                        ) : errorSpecialties ? (
+                            <RefetchComponent
+                                isFetching={refetchingSpecialties}
+                                onRefetch={() => refetchSpecialties()}
+                                className="flex justify-center h-32"
+                                errorText={t("register.errors.no_specialties_available")}
+                            />
                         ) : (specialties && specialties.length > 0) ? (
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <div className="mt-1 grid grid-cols-2 md:grid-cols-3 gap-3">
                                 {specialties.map((spec) => (
                                     <div
                                         key={spec.name}
@@ -330,13 +338,20 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                             {t('register.label_coverages')} <span className="text-(--danger)">*</span>
                         </label>
 
-                        {/*TODO: handle this correctly*/}
                         {isLoadingCoverages ? (
-                            <div className="flex items-center gap-2 text-(--gray-500) text-sm">
-                                <Spinner className="h-4 w-4"/> {t('register.loader_coverages')}
+                            <div className="flex flex-col items-center gap-1 text-(--gray-500) text-md my-10">
+                                <Spinner className="size-6"/>
+                                {t('register.loader_coverages')}
                             </div>
+                        ) : errorCoverages ? (
+                            <RefetchComponent
+                                isFetching={refetchingCoverages}
+                                onRefetch={() => refetchCoverages()}
+                                className="flex justify-center h-32"
+                                errorText={t("register.errors.no_coverages_available")}
+                            />
                         ) : (coverages && coverages.length > 0) ? (
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <div className="mt-1 grid grid-cols-2 md:grid-cols-3 gap-3">
                                 {coverages.map((cov) => (
                                     <div
                                         key={cov.name}
@@ -370,7 +385,7 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
                         )}
                     </div>
 
-                    <div className="bg-(--warning-light) border border-(--warning) rounded-md p-4 text-sm text-(--warning-dark) flex gap-2 items-start mt-4">
+                    <div className="bg-(--warning-lighter) border border-(--warning) rounded-md p-4 text-sm text-(--warning-dark) flex gap-2 items-start mt-4">
                         <Calendar className="h-5 w-5 shrink-0" />
                         <p>{t('register.note_availability')}</p>
                     </div>

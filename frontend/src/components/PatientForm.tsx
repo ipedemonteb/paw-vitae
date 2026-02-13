@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react"
-import {Loader2, User, AlertCircle} from "lucide-react"
+import {User, AlertCircle} from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { useCoverages } from "@/hooks/useCoverages"
@@ -10,19 +10,22 @@ import {useRegisterPatientMutation} from "@/hooks/usePatients.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {NeighborhoodFormCombobox} from "@/components/ui/neighborhood-form-combobox.tsx";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 interface PatientFormProps {
     onSuccess: (email: string) => void;
 }
 
 const sectionTitle = "text-xl font-bold text-(--primary-color) mb-4 border-b-2 border-(--primary-color) w-fit";
+const skeletonStyle = "h-13 w-23 rounded-lg";
 
 export function PatientForm({ onSuccess }: PatientFormProps) {
     const { t } = useTranslation()
 
     const {mutate: registerPatient, isPending: isSubmitting} = useRegisterPatientMutation()
 
-    const {data: coverages, isLoading: isLoadingCoverages} = useCoverages()
+    const {data: coverages, isLoading: isLoadingCoverages, isError: errorCoverage, refetch, isFetching} = useCoverages()
 
     const [formData, setFormData] = useState({
         name: "",
@@ -246,9 +249,18 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                     {t('register.section_coverage')} <span className="text-(--danger) text-sm">*</span>
                 </h2>
 
-                {/*TODO: HANDLE ISLOADING CORRECTLY*/}
                 {isLoadingCoverages ? (
-                    <div className="flex items-center gap-2 text-gray-500 text-sm"><Loader2 className="h-4 w-4 animate-spin"/> {t('register.loader_coverages')}</div>
+                    <div className="flex flex-row gap-4">
+                        <Skeleton className={skeletonStyle} />
+                        <Skeleton className={skeletonStyle} />
+                        <Skeleton className={skeletonStyle} />
+                    </div>
+                ) : errorCoverage ? (
+                    <RefetchComponent
+                        isFetching={isFetching}
+                        onRefetch={() => refetch()}
+                        errorText={t("register.errors.no_coverages_available")}
+                    />
                 ) : (
                     <div className="space-y-2">
                         <div className="flex flex-wrap gap-4">
@@ -264,7 +276,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                                         ? 'bg-(--primary-bg) border-(--primary-color) shadow-sm'
                                         : errors.coverageUrl
                                             ? ''
-                                            : 'hover:bg-gray-50 border-gray-200'}`}
+                                            : 'hover:bg-(--gray-50) border-(--gray-200)'}`}
                                 >
                                     <input
                                         type="radio"
@@ -307,7 +319,7 @@ export function PatientForm({ onSuccess }: PatientFormProps) {
                             setFormData(prev => ({...prev, agreeTerms: e.target.checked}))
                             if(errors.agreeTerms) setErrors(prev => ({...prev, agreeTerms: ""}))
                         }}
-                        className={`h-4 w-4 rounded border-gray-300 focus:ring-(--primary-color) cursor-pointer ${errors.agreeTerms ? '' : ''}`}
+                        className={`h-4 w-4 rounded border-(--gray-300) focus:ring-(--primary-color) cursor-pointer ${errors.agreeTerms ? '' : ''}`}
                     />
                     <label htmlFor="terms" className={`text-sm cursor-pointer select-none text-(--gray-600)`}>
                         {t('register.terms_agree')} <a href="#" className="text-(--primary-color) hover:underline hover:text-(--primary-dark)">{t('register.terms_link')}</a>
