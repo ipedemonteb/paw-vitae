@@ -158,6 +158,6 @@ public class DoctorOffice {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, neighborhood.hashCode(), specialtiesHashCode(), officeName, active, removed);
+        return Objects.hash(id, neighborhood.getId(), specialtiesHashCode(), officeName, active, removed);
     }
 }
