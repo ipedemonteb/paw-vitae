@@ -63,7 +63,7 @@ const searchBar =
 const inputContainer =
     "relative flex-1";
 const heroInput =
-    "flex-1 h-12 border-0 rounded-none px-4 text-[var(--text-light)] max-w-85 shadow-none focus-visible:ring-0 hover:bg-[var(--gray-100)]";
+    "flex-1 h-12 border-0 rounded-none px-4 text-[var(--text-light)] w-full max-w-none md:max-w-85 shadow-none focus-visible:ring-0 hover:bg-[var(--gray-100)]";
 const heroCombo =
     "h-12 border-0 min-w-58 rounded-none px-4 text-gray-500 font-normal hover:text-[var(--text-light)] hover:bg-[var(--gray-100)] cursor-pointer shadow-none border-l border-gray-200";
 const heroButton =
@@ -143,36 +143,48 @@ function HeroSection() {
                                             if (e.key === "Enter") doSearch();
                                         }}
                                     />
-                                    <div ref={divRef} onMouseDown={(e) => e.preventDefault()} className={`${
-                                        open
-                                            ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
-                                            : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
-                                    } absolute max-w-85 z-50 max-h-56 scrollbar overscroll-contain overflow-y-auto border rounded-md bg-white w-full p-0 overflow-hidden transition-all duration-200 ease-out origin-top transform`}>
-                                        {!isLoading && searchResults && searchResults.data.length > 0 && (
-                                            searchResults.data.map((d) => (
-                                                <SearchResultsCard doctor={d} key={d.self}/>
-                                            ))
-                                        )}
-                                        {!isLoading && searchResults && searchResults.data.length === 0 && (
-                                            <div className="h-20 w-full bg-(--gray-100) flex items-center justify-center gap-1">
-                                                <span className="text-(--text-light) text-sm">{t("search.searchbar.empty")}</span>
-                                            </div>
-                                        )}
-                                    </div>
                                 </div>
+
                                 <SpecialtyCombobox
-                                    className={heroCombo}
+                                    className={`hidden sm:inline-flex ${heroCombo}`}
                                     value={specialtySelf}
                                     onValueChange={(self, id) => {
                                         setSpecialtySelf(self);
                                         setSpecialtyId(id);
                                     }}
-                                ></SpecialtyCombobox>
+                                />
+
                                 <Button className={heroButton} onClick={doSearch}>
-                                    <Search className="h-5 w-5"/>
+                                    <Search className="h-5 w-5" />
                                     {t("landing.hero.search")}
                                 </Button>
+
+                                <div
+                                    ref={divRef}
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    className={`${
+                                        open
+                                            ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
+                                            : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
+                                    } absolute top-full z-50 mt-1 max-h-56 overscroll-contain overflow-y-auto border rounded-md bg-white overflow-hidden transition-all duration-200 ease-out origin-top transform
+                                      left-0 w-full md:left-0 md:right-0 md:w-auto`}
+                                >
+                                    {!isLoading && searchResults && searchResults.data.length > 0 && (
+                                        searchResults.data.map((d) => (
+                                            <SearchResultsCard doctor={d} key={d.self} />
+                                        ))
+                                    )}
+
+                                    {!isLoading && searchResults && searchResults.data.length === 0 && (
+                                        <div className="h-20 w-full flex items-center justify-center gap-1">
+                                            <span className="text-(--text-light) text-sm">
+                                              {t("search.searchbar.empty")}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 )}
