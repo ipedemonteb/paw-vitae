@@ -178,8 +178,8 @@ function PatientAccount() {
                         <div className="flex flex-col items-center justify-center py-8 bg-(--gray-100) border-b">
                             <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
                                 <AvatarFallback className="text-3xl bg-(--gray-200) text-(--gray-500)">
-                                    {patient.name?.[0]}
-                                    {patient.lastName?.[0]}
+                                    {patient?.name?.[0]}
+                                    {patient?.lastName?.[0]}
                                 </AvatarFallback>
                             </Avatar>
                         </div>
@@ -201,7 +201,7 @@ function PatientAccount() {
                                             disabled={isSaving}
                                         />
                                     ) : (
-                                        <div className={infoValueStyles}>{patient.name}</div>
+                                        <div className={infoValueStyles}>{patient?.name}</div>
                                     )}
                                 </div>
 
@@ -216,7 +216,7 @@ function PatientAccount() {
                                             disabled={isSaving}
                                         />
                                     ) : (
-                                        <div className={infoValueStyles}>{patient.lastName}</div>
+                                        <div className={infoValueStyles}>{patient?.lastName}</div>
                                     )}
                                 </div>
 
@@ -226,7 +226,7 @@ function PatientAccount() {
                                     </Label>
                                     <div className={infoValueStyles}>
                                         <Mail className="h-4 w-4" />
-                                        {patient.email}
+                                        {patient?.email}
                                     </div>
                                 </div>
 
@@ -245,7 +245,7 @@ function PatientAccount() {
                                     ) : (
                                         <div className={infoValueStyles}>
                                             <Phone className="h-4 w-4" />
-                                            {patient.phone}
+                                            {patient?.phone}
                                         </div>
                                     )}
                                 </div>

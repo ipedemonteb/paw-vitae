@@ -193,10 +193,9 @@ export function useUpdateDoctorMutation() {
     return useMutation({
         mutationFn: (params: {
             doctorUrl: string;
-            imageUrl: string;
+            doctorId: string;
             data: DoctorUpdateForm;
             imageFile?: File | null;
-            doctorId: string;
         }) => updateDoctorProfileComplete(params),
 
         onSuccess: async (_, variables) => {

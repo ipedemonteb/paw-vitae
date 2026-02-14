@@ -24,6 +24,7 @@ import {useSearchParams} from "react-router-dom";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {toast} from "sonner";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {DashboardRefetch} from "@/components/DashboardRefetch.tsx";
 
 type UnavailabilityRange = {
     startDate: string;
@@ -106,6 +107,9 @@ export default function UnavailabilityComponent() {
     const {
         data: unavailabilityPage,
         isLoading: unavailabilityLoading,
+        isError: unavailabilityError,
+        refetch: unavailabilityRefetch,
+        isFetching: unavailabilityFetching,
     } = useDoctorUnavailability(unavailabilityUrl, {
         page: page,
         pageSize: pageSize
@@ -214,6 +218,18 @@ export default function UnavailabilityComponent() {
         });
     };
 
+    const delayedLoading = useDelayedBoolean(isLoading);
+
+    if(unavailabilityError)
+        return (
+            <DashboardRefetch
+                title={t("unavailability.title")}
+                text={t("unavailability.error-loading")}
+                isFetching={unavailabilityFetching}
+                refetch={unavailabilityRefetch}
+            />
+        );
+
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={t("unavailability.title")}>
@@ -302,7 +318,7 @@ export default function UnavailabilityComponent() {
                 </DialogContent>
             </Dialog>
 
-            {useDelayedBoolean(isLoading) ? (
+            {delayedLoading ? (
                 <DashboardNavLoader />
             ) : (
                 <div className={unavailabilityContainer}>
@@ -329,7 +345,6 @@ export default function UnavailabilityComponent() {
                         </div>
                     )}
 
-                    {/* 4. Pasar handleSetParams en lugar de setSearchParams directo */}
                     <PaginationComponent
                         pagination={unavailabilityPage?.pagination}
                         searchParams={{ page, pageSize, setParams: handleSetParams }}

@@ -41,6 +41,7 @@ import type { AvailabilityDTO } from "@/data/offices.ts"
 import { officeIdFromSelf } from "@/utils/IdUtils.ts";
 import {toast} from "sonner";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {DashboardRefetch} from "@/components/DashboardRefetch.tsx";
 
 type AvailabilitySlot = {
     id: string;
@@ -189,6 +190,16 @@ export default function AvailabilityComponent() {
     const availabilityQuery = useDoctorAvailability(auth.userId);
 
     const isLoading = doctorQuery?.isLoading || officesQuery?.isLoading || availabilityQuery?.isLoading;
+    const isError = doctorQuery?.isError || officesQuery?.isError || availabilityQuery?.isError;
+    const isFetching =
+        doctorQuery.isFetching || officesQuery.isFetching || availabilityQuery.isFetching;
+    const handleRefetchAll = async () => {
+        await Promise.all([
+            doctorQuery.refetch(),
+            officesQuery.refetch(),
+            availabilityQuery.refetch(),
+        ]);
+    };
 
     const officeOptions = useMemo(() => {
         const offices = officesQuery.data ?? [];
@@ -320,6 +331,18 @@ export default function AvailabilityComponent() {
         setSlots((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
     };
 
+    const delayedLoading = useDelayedBoolean(isLoading);
+
+    if(isError)
+        return (
+            <DashboardRefetch
+                title={t("availability.headerTitle")}
+                text={t("availability.error-loading")}
+                isFetching={isFetching}
+                refetch={handleRefetchAll}
+            />
+        );
+
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={t("availability.headerTitle")}>
@@ -333,7 +356,7 @@ export default function AvailabilityComponent() {
                 )}
             </DashboardNavHeader>
 
-            {useDelayedBoolean(isLoading) ? (
+            {delayedLoading ? (
                 <DashboardNavLoader />
             ) : (
                 <div className={availabilityContainer}>

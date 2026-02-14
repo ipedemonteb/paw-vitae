@@ -1,17 +1,17 @@
 import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import {useTranslation} from "react-i18next";
-import {Building, Info} from "lucide-react";
+import {Building} from "lucide-react";
 import {useSearchParams} from "react-router-dom";
 import {useDoctorOffices} from "@/hooks/useOffices.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import EditOfficeDialog from "@/components/EditOfficeDialog.tsx";
-import {HoverCard, HoverCardContent, HoverCardTrigger} from "@/components/ui/hover-card.tsx";
 import AddOfficeDialog from "@/components/AddOfficeDialog.tsx";
 import DashboardNavSelect from "@/components/DashboardNavSelect.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {DashboardRefetch} from "@/components/DashboardRefetch.tsx";
 
 const officeStatusEnum = ['all', 'active', 'inactive']
 
@@ -24,22 +24,24 @@ export default function OfficesComponent() {
     const [sp, setSp] = useSearchParams();
     const officeStatus = sanitizeQueryParam(sp.get("status")) ?? "all"
     const auth = useAuth()
-    const {data: offices, isLoading} = useDoctorOffices(`/doctors/${auth.userId}/offices`, { status: officeStatus })
+    const { data: offices, isLoading, isError, refetch, isFetching } = useDoctorOffices(`/doctors/${auth.userId}/offices`, { status: officeStatus })
+
+    const delayedLoading = useDelayedBoolean(isLoading);
+
+    if(isError)
+        return (
+            <DashboardRefetch
+                title={t("offices.header.title")}
+                text={t("offices.error")}
+                isFetching={isFetching}
+                refetch={refetch}
+            />
+        );
+
+
     return (
         <DashboardNavContainer>
-            <DashboardNavHeader title={
-                <div className="flex gap-2 items-center justify-center">
-                    {t("offices.header.title")}
-                    <HoverCard openDelay={10} closeDelay={40}>
-                        <HoverCardTrigger asChild>
-                            <Info className="size-4 text-(--text-light)" />
-                        </HoverCardTrigger>
-                        <HoverCardContent side="top" className="bg-gray-50 text-(--text-light) max-w-40 flex justify-center items-center w-fit text-sm">
-                            {t("offices.header.info")}
-                        </HoverCardContent>
-                    </HoverCard>
-                </div>
-            }>
+            <DashboardNavHeader title={t("offices.header.title")}>
                 <div className="flex items-center sm:justify-center gap-2 mt-2 sm:mt-0">
                     <span className="flex font-normal text-sm items-center justify-center text-(--text-light)">
                         {t("offices.filter.message")}
@@ -53,7 +55,7 @@ export default function OfficesComponent() {
                     }} content={officeStatusEnum} display={(s: string) => t("offices.filter." + s)}/>
                 </div>
             </DashboardNavHeader>
-            {useDelayedBoolean(isLoading) ? (
+            {delayedLoading ? (
                 <DashboardNavLoader/>
             ) : offices && offices.length > 0 ? (
                 <div className="grid w-full px-2 gap-x-6 gap-y-3 justify-start grid-cols-[repeat(auto-fill,minmax(14rem,14rem))]">

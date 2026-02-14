@@ -14,6 +14,7 @@ import {usePatientById} from "@/hooks/usePatients.ts";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 const historyBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
@@ -30,7 +31,7 @@ const historySortIcon = "w-5 h-5 p-0 m-0";
 const sortText = "text-md mr-2";
 const pastAppointmentsContainer = "flex flex-col gap-4";
 const selectTrigger = "font-light text-normal text-(--text-color) cursor-pointer select-none focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0";
-const noAppointments = "flex flex-row items-center justify-center px-4 py-10 text-[var(--gray-500)] bg-[var(--gray-100)] rounded-lg gap-2 border border-dashed border-[var(--gray-400)]";
+const noAppointments = "flex flex-row items-center justify-center px-4 py-14 text-[var(--gray-500)] rounded-lg gap-2 border border-dashed border-[var(--gray-400)]";
 const goBackButton = "w-3xs bg-white text-[var(--primary-color)] border border-[var(--primary-color)] hover:bg-[var(--primary-dark)] hover:border hover:border-[var(--primary-dark)] hover:text-white cursor-pointer";
 
 
@@ -46,7 +47,7 @@ function MedicalHistory() {
         navigate(-1);
     };
 
-    const { data: appointments, isLoading, isError } = useAppointments({
+    const { data: appointments, isLoading, isError, refetch, isFetching } = useAppointments({
         userId: patientId,
         collection: "history",
         filter: "completed",
@@ -56,7 +57,7 @@ function MedicalHistory() {
         doctorId: auth.userId
     });
 
-    const { data: patient, isLoading: isLoadingPatient} = usePatientById(patientId);
+    const { data: patient, isLoading: isLoadingPatient } = usePatientById(patientId);
 
     const completed = (appointments?.data ?? []).filter(a => a.status === "completo");
 
@@ -75,7 +76,11 @@ function MedicalHistory() {
         if (isError) {
             return (
                 <div className={noAppointments}>
-        <p className="text-(--danger)">{t("error.generic", "Error al cargar el historial.")}</p>
+                    <RefetchComponent
+                        isFetching={isFetching}
+                        onRefetch={refetch}
+                        errorText={t("medical-history.error")}
+                    />
                 </div>
             );
         }
