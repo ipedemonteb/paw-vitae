@@ -14,9 +14,9 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx"
 import { useTranslation } from "react-i18next"
 import { Spinner } from "@/components/ui/spinner.tsx"
-import { useCoverages } from "@/hooks/useCoverages.ts"
-import { coverageIdFromSelf } from "@/utils/IdUtils.ts"
+import { specialtyIdFromSelf } from "@/utils/IdUtils.ts"
 import type { DoctorQueryParams, PaginationParams } from "@/hooks/useQueryParams.ts"
+import { useSpecialties } from "@/hooks/useSpecialties.ts"
 import { useDelayedBoolean } from "@/utils/queryUtils.ts"
 import { RefetchComponent } from "@/components/ui/refetch.tsx"
 
@@ -29,32 +29,32 @@ type ComboboxProps = {
     } & DoctorQueryParams
 }
 
-export function CoverageCombobox({
-                                     className,
-                                     buttonClassName,
-                                     contentClassName,
-                                     searchParams,
-                                 }: ComboboxProps) {
+export function SearchSpecialtyCombobox({
+                                            className,
+                                            buttonClassName,
+                                            contentClassName,
+                                            searchParams,
+                                        }: ComboboxProps) {
     const [open, setOpen] = React.useState(false)
     const { t } = useTranslation()
 
-    const coverage = searchParams.coverage
+    const specialty = searchParams.specialty
 
-    const { data: coverages, isLoading, isError, refetch, isFetching } = useCoverages()
+    const { data: specialties, isLoading, isError, refetch, isFetching } = useSpecialties()
     const loading = useDelayedBoolean(isLoading || isFetching, 500)
 
     const selectedDto = React.useMemo(() => {
-        const numberId = Number(coverage)
-        if (!coverage || Number.isNaN(numberId)) return undefined
-        return coverages?.find((c) => coverageIdFromSelf(c.self) === numberId)
-    }, [coverage, coverages])
+        const numberId = Number(specialty)
+        if (!specialty || Number.isNaN(numberId)) return undefined
+        return specialties?.find((s) => specialtyIdFromSelf(s.self) === numberId)
+    }, [specialty, specialties])
 
-    const selectedLabel = selectedDto ? selectedDto.name : t("search.coverage.select")
+    const selectedLabel = selectedDto ? t(selectedDto.name) : t("search.specialty.select")
 
     const setSelected = (self: string | null) => {
         searchParams.setParams((p) => {
-            if (!self) p.delete("coverage")
-            else p.set("coverage", String(coverageIdFromSelf(self)))
+            if (!self) p.delete("specialty")
+            else p.set("specialty", String(specialtyIdFromSelf(self)))
             p.set("page", "1")
         })
         setOpen(false)
@@ -75,7 +75,7 @@ export function CoverageCombobox({
 
             <PopoverContent className={cn("w-56 p-0", contentClassName)}>
                 <Command>
-                    <CommandInput placeholder={t("search.coverage.search")} className="h-9" />
+                    <CommandInput placeholder={t("search.specialty.search")} className="h-9" />
                     <CommandList>
                         {loading ? (
                             <div className="py-3 h-32 flex items-center justify-center space-x-1">
@@ -85,35 +85,38 @@ export function CoverageCombobox({
                             <RefetchComponent
                                 isFetching={isFetching}
                                 onRefetch={() => refetch()}
-                                errorText={t("search.coverage.error")}
+                                errorText={t("search.specialty.error")}
                                 className="py-3 px-2 h-32 flex flex-col items-center justify-center"
                                 textClassName="text-sm"
                             />
                         ) : (
                             <>
-                                <CommandEmpty>{t("search.coverage.empty")}</CommandEmpty>
+                                <CommandEmpty>{t("search.specialty.empty")}</CommandEmpty>
 
                                 <CommandGroup>
                                     <CommandItem
-                                        key="coverage.all"
-                                        value={t("search.coverage.all")}
+                                        key="specialty.all"
+                                        value={t("search.specialty.all")}
                                         onSelect={() => setSelected(null)}
                                         className="text-(--text-light)"
                                     >
-                                        {t("search.coverage.all")}
+                                        {t("search.specialty.all")}
                                         <Check className={cn("ml-auto", !selectedDto ? "opacity-100" : "opacity-0")} />
                                     </CommandItem>
 
-                                    {coverages?.map((c) => (
+                                    {specialties?.map((s) => (
                                         <CommandItem
-                                            key={c.self}
-                                            value={c.name}
-                                            onSelect={() => setSelected(c.self)}
+                                            key={s.self}
+                                            value={t(s.name)}
+                                            onSelect={() => setSelected(s.self)}
                                             className="text-(--text-light)"
                                         >
-                                            {c.name}
+                                            {t(s.name)}
                                             <Check
-                                                className={cn("ml-auto", selectedDto?.self === c.self ? "opacity-100" : "opacity-0")}
+                                                className={cn(
+                                                    "ml-auto",
+                                                    selectedDto?.self === s.self ? "opacity-100" : "opacity-0"
+                                                )}
                                             />
                                         </CommandItem>
                                     ))}

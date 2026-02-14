@@ -17,9 +17,9 @@ import {Skeleton} from "@/components/ui/skeleton.tsx";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useDebounce} from "use-debounce";
 import SearchResultsCard from "@/components/SearchResultCard.tsx";
-import {SearchSpecialtyCombobox} from "@/components/SearchSpecialtyCombobox.tsx";
+import {SearchSpecialtyCombobox} from "@/components/ui/search-specialty-combobox.tsx";
 import SearchEmpty from "@/components/SearchEmpty.tsx";
-import {SortSelector} from "@/components/SortSelector.tsx";
+import {SortSelector} from "@/components/ui/sort-selector.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 const container =
