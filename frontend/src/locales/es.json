@@ -634,14 +634,16 @@
       "select": "Seleccionar especialidad...",
       "all": "Todas las Especialidades",
       "empty": "No se encontraron especialidades",
-      "search": "Buscar por especialidades..."
+      "search": "Buscar por especialidades...",
+      "error": "No se pudieron cargar las especialidades."
     },
     "coverage": {
       "title": "Cobertura",
       "select": "Seleccionar cobertura...",
       "all": "Todas las Coberturas",
       "empty": "No se encontraron coberturas",
-      "search": "Buscar coberturas"
+      "search": "Buscar coberturas",
+      "error": "No se pudieron cargar las coberturas."
     },
     "sort": {
       "title": "Ordenar Por",

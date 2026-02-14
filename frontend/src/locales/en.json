@@ -634,14 +634,16 @@
       "select": "Select specialty...",
       "all": "All Specialties",
       "empty": "No Specialties Found",
-      "search": "Search for specialties..."
+      "search": "Search for specialties...",
+      "error": "Unable to load specialties."
     },
     "coverage": {
       "title": "Coverage",
       "select": "Select coverage...",
       "all": "All Coverages",
       "empty": "No Coverages Found",
-      "search": "Search for coverages"
+      "search": "Search for coverages",
+      "error": "Unable to load coverages."
     },
     "sort": {
       "title": "Sort By",
