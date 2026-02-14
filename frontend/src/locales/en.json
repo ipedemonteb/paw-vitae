@@ -350,6 +350,7 @@
       "files": "files",
       "file": "file",
       "no-files": "No files uploaded.",
+      "error-files": "Could not load files.",
       "details": "View Details",
       "report": "Visit Report",
       "uploaded": "Uploaded By",

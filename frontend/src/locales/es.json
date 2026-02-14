@@ -350,6 +350,7 @@
       "files": "archivos",
       "file": "archivo",
       "no-files": "No hay archivos subidos.",
+      "error-files": "No se pudieron cargar los archivos.",
       "details": "Ver Detalles",
       "report": "Reporte de la Consulta",
       "uploaded": "Subido por",
