@@ -45,12 +45,8 @@ import type {
     ExperienceForm,
     CertificateForm
 } from "@/data/doctors.ts";
-import type { CoverageDTO } from "@/data/coverages.ts";
-import type { OfficeDTO } from "@/data/offices.ts";
 import GenericError from "@/pages/GenericError.tsx";
 import { useRatings } from "@/hooks/useRatings.ts";
-import type { SpecialtyDTO } from "@/data/specialties.ts";
-import type { RatingsDTO } from "@/data/ratings.ts";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import React, {useEffect, useMemo, useState} from "react";
@@ -76,6 +72,7 @@ import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.ts
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 import {RefetchComponent} from "@/components/ui/refetch.tsx";
+import {LoadingSpecialties} from "@/components/ui/loading-badges.tsx";
 
 const profileContainer =
     "flex flex-col mt-36 px-5 mx-auto max-w-6xl w-full gap-6 mb-6";
@@ -84,18 +81,9 @@ function PublicProfile() {
     const auth = useAuth();
     const { id } = useParams<{ id: string }>();
     const { data: doctor, isLoading: isLoadingDoctor, isError: doctorError } = useDoctor(id);
-    // TODO: HANDLE IS ERROR FOR SPECIALTIES
-    const { data: specialties, isLoading: isLoadingSpecialties } = useDoctorSpecialties(doctor?.specialties);
-    const { data: coverages, isLoading: isLoadingCoverages, isError: errorCoverages, refetch: refetchCoverages, isFetching: fetchingCoverages } = useDoctorCoverages(doctor?.coverages);
-    const { data: experiences, isLoading: isLoadingExperiences, isError: errorExperiences, refetch: refetchExperiences, isFetching: fetchingExperiences } = useDoctorExperience(doctor?.experiences);
-    const { data: certifications, isLoading: isLoadingCertifications, isError: errorCertifications, refetch: refetchCertifications, isFetching: fetchingCertifications } = useDoctorCertifications(doctor?.certifications);
     const { data: profile, isLoading: isLoadingProfile, isError: errorProfile } = useDoctorBiography(doctor?.profile);
-    const { data: ratings, isLoading: isLoadingRatings, isError: errorRatings, refetch: refetchRatings, isFetching: fetchingRatings } = useRatings(doctor?.ratings);
-    const { data: offices, isLoading: isLoadingOffices, isError: errorOffices, refetch: refetchOffices, isFetching: fetchingOffices } = useDoctorOffices(doctor?.offices);
 
-    const isLoading = isLoadingDoctor || isLoadingSpecialties;
-
-    if (useDelayedBoolean(isLoading))
+    if (useDelayedBoolean(isLoadingDoctor))
         return <LoadingFullPageComponent/>
 
     if (doctorError || !doctor) return <GenericError code={404} />;
@@ -105,13 +93,13 @@ function PublicProfile() {
 
     return (
         <div className={profileContainer}>
-            <ProfileCard doctor={doctor} profile={profile} specialties={specialties || []} maxBadges={maxBadges} isOwner={isOwner} />
+            <ProfileCard doctor={doctor} profile={profile} maxBadges={maxBadges} isOwner={isOwner}/>
             <AboutMeCard bio={profile?.bio || ""} isLoading={isLoadingProfile} isError={errorProfile} />
-            <CoverageCard coverages={coverages || []} isLoading={isLoadingCoverages} isError={errorCoverages} refetch={refetchCoverages} isFetching={fetchingCoverages}/>
-            <OfficesCard offices={offices || []} isLoading={isLoadingOffices} isError={errorOffices} refetch={refetchOffices} isFetching={fetchingOffices} />
-            <ExperienceCard experiences={experiences || []} isOwner={isOwner} updateUrl={doctor.experiences} isLoading={isLoadingExperiences} isError={errorExperiences} refetch={refetchExperiences} isFetching={fetchingExperiences} />
-            <CertificatesCard certifications={certifications || []} isOwner={isOwner} updateUrl={doctor.certifications} isLoading={isLoadingCertifications} isError={errorCertifications} refetch={refetchCertifications} isFetching={fetchingCertifications} />
-            <RatingsCard ratings={ratings || []} isLoading={isLoadingRatings} isError={errorRatings} refetch={refetchRatings} isFetching={fetchingRatings} />
+            <CoverageCard coveragesUrl={doctor?.coverages} />
+            <OfficesCard officesUrl={doctor?.offices} />
+            <ExperienceCard experiencesUrl={doctor?.experiences} isOwner={isOwner} />
+            <CertificatesCard certificationsUrl={doctor?.certifications} isOwner={isOwner} />
+            <RatingsCard ratingsUrl={doctor?.ratings} />
         </div>
     );
 }
@@ -132,7 +120,7 @@ const aboutContent = "px-7 pt-4 pb-6";
 const cardTitleText = "text-lg font-[500] min-w-0";
 const profileContent = "flex flex-col gap-0 items-center md:flex-row pt-6";
 const aboutTitle = " text-lg font-[500]";
-const aboutText = " wrap-break-word flex-wrap text-[var(--text-color)] text-md";
+const aboutText = " wrap-break-word flex-wrap text-[var(--gray-500)] text-md";
 const errorText = " wrap-break-word flex-wrap text-(--danger) text-md";
 
 function EmptySection({ icon: Icon, text }: { icon: React.ElementType, text: string }) {
@@ -155,10 +143,9 @@ function LoadingComponent({ className } : { className?: string }) {
     );
 }
 
-function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
+function ProfileCard({ doctor, profile, maxBadges, isOwner }: {
     doctor: DoctorDTO;
     profile: DoctorProfileDTO | undefined;
-    specialties: SpecialtyDTO[];
     maxBadges: number;
     isOwner: boolean;
 }) {
@@ -168,10 +155,12 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
         return (a + b).toUpperCase() || "U";
     })();
     const { t } = useTranslation();
+    const { data: specialties, isLoading: isLoadingSpecialties, isError: errorSpecialties } = useDoctorSpecialties(doctor?.specialties);
     const { url: getDoctorImgUrl, isLoading: isLoadingImage } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
-    const specialtyNames = specialties.map(s => t(s.name));
+    const specialtyNames = specialties?.map(s => t(s.name));
     const navigate = useNavigate();
     const doctorId = userIdFromSelf(doctor.self);
+
     return (
         <Card className={card}>
             <div className={cardTitle}>
@@ -223,7 +212,13 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
                             <p className={ratingText}>({doctor.ratingCount} {t("doctor.profile.card.rating")})</p>
                         </div>
                     ) : null}
-                    <BadgeComponent specialties={specialtyNames} maxBadges={maxBadges} />
+                    {isLoadingSpecialties ?
+                        <LoadingSpecialties badgesCount={maxBadges}/>
+                    : errorSpecialties ?
+                        null
+                    :
+                        <BadgeComponent specialties={specialtyNames} maxBadges={maxBadges} />
+                    }
                 </div>
                 {!isOwner && (
                     <Button className={scheduleButton} onClick={() => navigate(`/appointment/${doctorId}`)}>
@@ -235,7 +230,7 @@ function ProfileCard({ doctor, profile, specialties, maxBadges, isOwner }: {
             <div className={aboutContent}>
                 <h1 className={aboutTitle}>{t("doctor.profile.card.description")}</h1>
                 <p className={aboutText}>
-                    {profile?.description || t("doctor.profile.no_description_available", "No description available.")}
+                    {profile?.description || t("doctor.profile.no_description_available")}
                 </p>
             </div>
         </Card>
@@ -269,14 +264,12 @@ function AboutMeCard({ bio, isLoading, isError }: {
 
 const cardContent = "flex flex-col items-center gap-3 px-6 py-6 sm:flex-row sm:flex-wrap sm:justify-center";
 
-function CoverageCard({ coverages, isLoading, isError, refetch, isFetching }: {
-    coverages: CoverageDTO[]
-    isLoading: boolean;
-    isError: boolean;
-    refetch: () => void;
-    isFetching: boolean;
+function CoverageCard({ coveragesUrl }: {
+    coveragesUrl: string | undefined;
 }) {
     const { t } = useTranslation();
+    const { data: coverages = [], isLoading, isError, refetch, isFetching } = useDoctorCoverages(coveragesUrl);
+
     return (
         <Card className={card}>
             <div className={cardTitle}>
@@ -327,14 +320,11 @@ function CoverageComponent({ coverageName }: {
     );
 }
 
-function OfficesCard({ offices, isLoading, isError, refetch, isFetching }: {
-    offices: OfficeDTO[]
-    isLoading: boolean;
-    isError: boolean;
-    refetch: () => void;
-    isFetching: boolean;
+function OfficesCard({ officesUrl }: {
+    officesUrl: string | undefined;
 }) {
     const { t } = useTranslation();
+    const { data: offices = [], isLoading, isError, refetch, isFetching } = useDoctorOffices(officesUrl);
 
     return (
         <Card className={card}>
@@ -411,14 +401,9 @@ const experienceContent = "pr-6 py-6";
 const timelineContainer = "relative pl-10 before:content-[''] before:absolute before:top-3 before:bottom-3 before:left-14 before:w-[2px] before:-translate-x-1/2 before:bg-[var(--gray-300)]";
 const editComponentButton = "ml-auto shrink-0 w-26 h-10 bg-transparent text-[var(--primary-dark)] hover:bg-transparent hover:border hover:border-(--primar-dark) cursor-pointer transition-none";
 
-function ExperienceCard({ experiences, isOwner, updateUrl, isLoading, isError, refetch, isFetching }: {
-    experiences: ExperienceDTO[];
+function ExperienceCard({ experiencesUrl, isOwner }: {
+    experiencesUrl: string | undefined;
     isOwner: boolean;
-    updateUrl: string;
-    isLoading: boolean;
-    isError: boolean;
-    refetch: () => void;
-    isFetching: boolean;
 }) {
     const { t } = useTranslation();
     const formatDateRange = (start: string, end?: string) => {
@@ -426,14 +411,16 @@ function ExperienceCard({ experiences, isOwner, updateUrl, isLoading, isError, r
         const endYear = end ? new Date(end).getFullYear() : t("doctor.profile.present", "Present");
         return `${startYear} – ${endYear}`;
     };
+    const { data: experiences = [], isLoading, isError, refetch, isFetching } = useDoctorExperience(experiencesUrl);
+
     return (
         <Card className={card}>
             <div className={cardTitle}>
                 <BriefcaseBusiness className={titleIcon}></BriefcaseBusiness>
                 <h1 className={cardTitleText}>{t("doctor.profile.experiences")}</h1>
-                {isOwner && updateUrl && (
+                {isOwner && experiencesUrl && (
                     <EditExperienceDialog
-                        experiencesUrl={updateUrl}
+                        experiencesUrl={experiencesUrl}
                         initialData={experiences}
                         trigger={
                             <Button className={editComponentButton}>
@@ -514,24 +501,21 @@ function ExperienceItem({ position, organization, period, description, isLast }:
 const certificatesContent = "flex flex-col gap-2 px-6";
 const certificatesScrollWrap = "py-6";
 
-function CertificatesCard({ certifications, isOwner, updateUrl, isLoading, isError, refetch, isFetching }: {
-    certifications: CertificationDTO[];
+function CertificatesCard({ certificationsUrl, isOwner }: {
+    certificationsUrl: string | undefined;
     isOwner: boolean;
-    updateUrl: string;
-    isLoading: boolean;
-    isError: boolean;
-    refetch: () => void;
-    isFetching: boolean;
 }) {
     const { t } = useTranslation();
+    const { data: certifications = [], isLoading, isError, refetch, isFetching } = useDoctorCertifications(certificationsUrl);
+
     return (
         <Card className={card}>
             <div className={cardTitle}>
                 <FileBadge className={titleIcon}></FileBadge>
                 <h1 className={cardTitleText}>{t("doctor.profile.certificates")}</h1>
-                {isOwner && updateUrl && (
+                {isOwner && certificationsUrl && (
                     <EditCertificatesDialog
-                        certsUrl={updateUrl}
+                        certsUrl={certificationsUrl}
                         initialData={certifications}
                         trigger={
                             <Button className={editComponentButton}>
@@ -614,14 +598,11 @@ const carousel = "relative max-w-3xl w-full mx-auto px-12 -mt-5";
 const carouselContentClass = "-ml-4 py-2";
 const carouselItemClass = "pl-4 basis-full";
 
-function RatingsCard({ ratings, isLoading, isError, refetch, isFetching }: {
-    ratings: RatingsDTO[];
-    isLoading: boolean;
-    isError: boolean;
-    refetch: () => void;
-    isFetching: boolean;
+function RatingsCard({ ratingsUrl }: {
+    ratingsUrl: string | undefined;
 }) {
     const { t } = useTranslation();
+    const { data: ratings, isLoading, isError, refetch, isFetching } = useRatings(ratingsUrl);
 
     return (
         <Card className={card}>

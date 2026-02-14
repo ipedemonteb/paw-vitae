@@ -9,6 +9,7 @@ import type {DoctorDTO} from "@/data/doctors.ts";
 import {userIdFromImageUrl} from "@/utils/IdUtils.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {LoadingSpecialties} from "@/components/ui/loading-badges.tsx";
 
 const profileCard =
     "flex flex-col gap-0 items-center sm:flex-row";
@@ -56,7 +57,7 @@ function DoctorProfileCard( { doctor } : { doctor: DoctorDTO | undefined} ) {
                 <div className={dataContainer}>
                     <div className={contactData}>
                         <Mail className={contactIcon} />
-                        <p className="max-w-[150px] truncate sm:max-w-[300px] sm:truncate">{doctor?.email}</p>
+                        <p className="max-w-37.5 truncate sm:max-w-75 sm:truncate">{doctor?.email}</p>
                     </div>
                     <div className={contactData}>
                         <Phone className={contactIcon} />
@@ -72,31 +73,12 @@ function DoctorProfileCard( { doctor } : { doctor: DoctorDTO | undefined} ) {
                 </div>
                     )}
                 {isLoadingSpecialties ? (
-                    <LoadingSpecialties />
+                    <LoadingSpecialties badgesCount={4} />
                     ) :
                     <BadgeComponent specialties={specialtiesList} maxBadges={maxBadges} />
                 }
             </div>
         </Card>
-    );
-}
-
-const loadingSpecialtiesContainer =
-    "flex flex-wrap gap-1 mt-2 sm:px-0 px-5 justify-center sm:justify-start";
-const loadingSpecialty =
-    "h-6 w-20 rounded-full";
-const loadingSpecialtyPlus =
-    "h-6 w-8 rounded-full";
-
-function LoadingSpecialties() {
-    return (
-        <div className={loadingSpecialtiesContainer}>
-            <Skeleton className={loadingSpecialty} />
-            <Skeleton className={loadingSpecialty} />
-            <Skeleton className={loadingSpecialty} />
-            <Skeleton className={loadingSpecialty} />
-            <Skeleton className={loadingSpecialtyPlus} />
-        </div>
     );
 }
 
