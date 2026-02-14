@@ -44,7 +44,7 @@ function DoctorProfileCard( { doctor } : { doctor: DoctorDTO | undefined} ) {
         <Card className={profileCard}>
             {isLoadingImage && getDoctorImgUrl != undefined  ?
                 <Skeleton className={`${avatarContainer} flex justify-center items-center`}>
-                    <Spinner className="h-6 w-6 text-(--gray-300)"/>
+                    <Spinner className="h-6 w-6 text-(--gray-400)"/>
                 </Skeleton>
                 : (
                     <Avatar className={avatarContainer}>

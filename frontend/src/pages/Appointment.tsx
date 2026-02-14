@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card.tsx"
 import DoctorProfileCard from "@/components/DoctorProfileCard.tsx";
-import { Stethoscope, Hospital, CalendarDays, Loader2 } from "lucide-react";
+import { Stethoscope, Hospital, CalendarDays } from "lucide-react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import { DatePicker } from "@/components/ui/date-picker.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -44,6 +44,7 @@ import GenericError from "@/pages/GenericError.tsx";
 import {daysBetweenUtc} from "@/utils/dateUtils.ts";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -82,7 +83,7 @@ function isOfficeValid(offices: OfficeDTO[], selectedOffice: string | null) {
 const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
 const appointmentContainer = "p-0 pb-8";
-const appointmentHeader = "flex flex-col items-center py-8 rounded-t-xl gap-3 bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
+const appointmentHeader = "flex flex-col items-center px-8 text-center py-8 rounded-t-xl gap-3 bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
 const appointmentTitle = "font-bold text-4xl text-center text-[var(--text-color)]";
 const appointmentContent = "flex flex-col px-8 gap-4";
 const selectorTitle = "text-[var(--text-color)] text-md font-[500]";
@@ -138,7 +139,7 @@ function Appointment() {
 
     const unavailableRanges = unavailabilityPage?.data || [];
 
-    const isLoading = loadingDoctor || loadingOffices || loadingSlots || loadingUnavailability || isLoadingOfficeSpecialties ||     isLoadingDoctorSpecialties;
+    const isLoading = loadingDoctor || loadingOffices || loadingSlots || loadingUnavailability || isLoadingOfficeSpecialties || isLoadingDoctorSpecialties;
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -366,7 +367,7 @@ function Appointment() {
                             >
                                 {isBooking ? (
                                     <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        <Spinner className="mr-2 h-4 w-4" />
                                         {t("saving")}
                                     </>
                                 ) : (
@@ -441,7 +442,7 @@ function DateSelector({
                 {selectedDate ? (
                     <div className={availableTimesFormat}>
                         {availableSlots.length === 0 ? (
-                            <p className="px-5 text-sm text-[var(--text-light)]">
+                            <p className="px-5 text-sm text-(--text-light)">
                                 {t("appointment.booking.no-times")}
                             </p>
                         ) : (
@@ -516,7 +517,13 @@ function OfficeSelector({
                         <SelectValue placeholder={t("appointment.booking.office")} />
                     </SelectTrigger>
 
-                    <SelectContent position="popper" side="bottom">
+                    <SelectContent
+                        position="popper"
+                        side="bottom"
+                        sideOffset={2}
+                        avoidCollisions={false}
+                        className="max-h-56 overflow-y-auto"
+                    >
                         <SelectGroup>
                             {options.map((o) => (
                                 <SelectItem key={o.self} value={o.self}>
@@ -549,7 +556,13 @@ function SpecialtySelector({options, selectedSpecialty, setSelectedSpecialty}: {
                     <SelectTrigger className={selectorButton}>
                         <SelectValue placeholder={t("appointment.booking.specialty")}/>
                     </SelectTrigger>
-                    <SelectContent position="popper" side="bottom">
+                    <SelectContent
+                        position="popper"
+                        side="bottom"
+                        sideOffset={2}
+                        avoidCollisions={false}
+                        className="max-h-56 overflow-y-auto"
+                    >
                         <SelectGroup>
                             {options.map((s) => (
                                 <SelectItem key={s.self} value={s.self}>
@@ -614,12 +627,12 @@ function MedicalHistory({ checked, onCheckedChange }: { checked: boolean, onChec
 
     return (
         <div className={medicalCointainer}>
-            <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-[var(--primary-color)] has-[[aria-checked=true]]:bg-[var(--primary-bg)] dark:has-[[aria-checked=true]]:border-[var(--primary-light)] dark:has-[[aria-checked=true]]:bg-[var(--primary-dark)]">
+            <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-aria-checked:border-(--primary-color) has-aria-checked:bg-(--primary-bg) dark:has-aria-checked:border-(--primary-light) dark:has-aria-checked:bg-(--primary-dark)">
                 <Checkbox
                     id="toggle-2"
                     checked={checked}
                     onCheckedChange={onCheckedChange}
-                    className="data-[state=checked]:border-[var(--primary-color)] data-[state=checked]:bg-[var(--primary-color)] data-[state=checked]:text-white dark:data-[state=checked]:border-[var(--primary-light)] dark:data-[state=checked]:bg-[var(--primary-light)] dark:data-[state=checked]:text-[var(--text-color)] cursor-pointer"
+                    className="data-[state=checked]:border-(--primary-color) data-[state=checked]:bg-(--primary-color) data-[state=checked]:text-white dark:data-[state=checked]:border-(--primary-light) dark:data-[state=checked]:bg-(--primary-light) dark:data-[state=checked]:text-(--text-color) cursor-pointer"
                 />
                 <div className="grid gap-1.5 font-normal">
                     <p className="text-sm leading-none font-medium">{t("appointment.booking.allow.title")}</p>

@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useSearchParams } from "react-router-dom"
-import { CheckCircle2, XCircle, Loader2, Home, ArrowLeft } from "lucide-react"
+import { CheckCircle2, XCircle, Home, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/useAuth"
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 const pageContainer =
     "min-h-screen bg-gray-50/50 flex flex-col items-center pt-32 pb-12 px-4 sm:px-6 lg:px-8";
@@ -73,7 +74,7 @@ export default function VerifyAccount() {
                 <div className={cardContainer}>
                     <div className={headerContainer}>
                         <div className={loadingIconCircle}>
-                            <Loader2 className="h-10 w-10 animate-spin" />
+                            <Spinner className="h-10 w-10" />
                         </div>
                         <h1 className={titleText}>{t("verify.loading_title")}</h1>
                         <p className={subtitleText}>{t("verify.loading_message")}</p>

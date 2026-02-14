@@ -22,7 +22,6 @@ import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
-import GenericError from "@/pages/GenericError.tsx";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
@@ -30,6 +29,8 @@ import DashboardNavContainer from "@/components/DashboardNavContainer.tsx";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 const ghostFilter = "h-0 sm:h-9";
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
@@ -47,10 +48,9 @@ function PatientAccount() {
     const auth = useAuth();
     const [isEditing, setIsEditing] = useState(false);
 
-    const { data: patient, isLoading, isError } = usePatientById(auth.userId);
-    const { data: allCoveragesList } = useCoverages();
-
-    const { data: coverage } = useCoverage(patient?.coverages);
+    const { data: patient, isLoading, isError, refetch: refetchPatient, isFetching: fetchingPatient } = usePatientById(auth.userId);
+    const { data: allCoveragesList, isLoading: loadingCoverages, isError: errorCoverages, refetch: refetchCoverages, isFetching: fetchingCoverages } = useCoverages();
+    const { data: coverage, isLoading: loadingCoverage, isError: errorCoverage, refetch: refetchCoverage, isFetching: fetchingCoverage } = useCoverage(patient?.coverages);
 
     const updatePatientMutation = useUpdatePatientMutation(patient?.self || "");
 
@@ -138,15 +138,32 @@ function PatientAccount() {
         });
     };
 
-    //TODO: Handle correctly
-    if (isError || !patient) return <GenericError code={404} />;
+    const delayedLoading = useDelayedBoolean(isLoading);
+
+    //TODO: Check if this implementation is OK
+    if (isError || !patient )
+        return (
+            <DashboardNavContainer>
+                <DashboardNavHeader title={t("patient.dashboard.account")}>
+                    {isEditing && <div className={ghostFilter} />}
+                </DashboardNavHeader>
+                <div className={containerStyles}>
+                    <RefetchComponent
+                        isFetching={fetchingPatient}
+                        onRefetch={() => refetchPatient()}
+                        errorText={t("dashboard.profile.error.not-found-user")}
+                        className="w-full flex justify-center h-40"
+                    />
+                </div>
+            </DashboardNavContainer>
+        );
 
     const isSaving = updatePatientMutation.isPending;
 
     return (
         <DashboardNavContainer>
             <DashboardNavHeader title={t("patient.dashboard.account")}>
-                {!isEditing && (
+                {!isEditing && !isError && (
                     <Button onClick={() => setIsEditing(true)} className={editButtonStyles}>
                         <Pencil className="w-4 h-4 mr-2" />
                         {t("dashboard.profile.edit")}
@@ -154,7 +171,7 @@ function PatientAccount() {
                 )}
                 {isEditing && <div className={ghostFilter} />}
             </DashboardNavHeader>
-            {useDelayedBoolean(isLoading) ? <DashboardNavLoader /> :
+            {delayedLoading ? <DashboardNavLoader /> :
             <div className={containerStyles}>
                 <Card className={cardStyles}>
                     <div className={cardHeaderStyles}>
@@ -175,7 +192,7 @@ function PatientAccount() {
                         </div>
 
                         <div className={sectionStyles}>
-                            <h3 className="text-lg font-[500] mb-4 border-b pb-2">
+                            <h3 className="text-lg font-medium mb-4 border-b pb-2">
                                 {t("dashboard.profile.personalInfo")}
                             </h3>
 
@@ -254,47 +271,70 @@ function PatientAccount() {
                         </div>
                         <CardContent className="p-6">
                             {isEditing ? (
+                                errorCoverages ?
+                                    <RefetchComponent
+                                        isFetching={fetchingCoverages}
+                                        onRefetch={() => refetchCoverages()}
+                                        errorText={t("dashboard.profile.error.not-found-coverages")}
+                                        className="w-full"
+                                    />
+                                :
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto pr-2">
-                                    {allCoveragesList?.map((c) => {
-                                        const cId = Number(c.self.split("/").pop());
-                                        const isSelected = selectedCoverageId === cId;
-                                        return (
-                                            <div
-                                                key={cId}
-                                                onClick={() => selectCoverage(cId)}
-                                                className={cn(
-                                                    "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-(--success) select-none",
-                                                    isSelected
-                                                        ? "bg-(--success-light) border-(--success-dark) text-(--success-dark) font-medium shadow-sm"
-                                                        : "bg-white text-(--gray-600) border-(--gray-200)"
-                                                )}
-                                            >
+                                    {loadingCoverages ?
+                                        Array.from({ length: 3 }).map((_, i) => (
+                                                <Skeleton key={i} className="h-9.5 rounded-md" />
+                                        ))
+                                    :
+                                        allCoveragesList?.map((c) => {
+                                            const cId = Number(c.self.split("/").pop());
+                                            const isSelected = selectedCoverageId === cId;
+                                            return (
                                                 <div
+                                                    key={cId}
+                                                    onClick={() => selectCoverage(cId)}
                                                     className={cn(
-                                                        "w-4 h-4 rounded-full border flex items-center justify-center shrink-0",
-                                                        isSelected ? "bg-(--success) border-(--success)" : "border-(--gray-300)"
+                                                        "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-(--success) select-none",
+                                                        isSelected
+                                                            ? "bg-(--success-light) border-(--success-dark) text-(--success-dark) font-medium shadow-sm"
+                                                            : "bg-white text-(--gray-600) border-(--gray-200)"
                                                     )}
                                                 >
-                                                    {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
+                                                    <div
+                                                        className={cn(
+                                                            "w-4 h-4 rounded-full border flex items-center justify-center shrink-0",
+                                                            isSelected ? "bg-(--success) border-(--success)" : "border-(--gray-300)"
+                                                        )}
+                                                    >
+                                                        {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
+                                                    </div>
+                                                    <span className="truncate">{c.name}</span>
                                                 </div>
-                                                <span className="truncate">{c.name}</span>
-                                            </div>
-                                        );
-                                    })}
+                                            );
+                                        })
+                                    }
                                 </div>
                             ) : (
                                 <div className="flex flex-wrap gap-2">
-                                    {coverage ? (
+                                    {loadingCoverage ?
+                                        <Skeleton className="h-7.5 w-20 rounded-full"/>
+                                    : errorCoverage ?
+                                        <RefetchComponent
+                                            isFetching={fetchingCoverage}
+                                            onRefetch={() => refetchCoverage()}
+                                            errorText={t("dashboard.profile.error.not-found-coverage")}
+                                            className="w-full"
+                                        />
+                                    : coverage ? (
                                         <span
                                             key={coverage.name}
                                             className="bg-(--success-light) text-(--success-dark) px-3 py-1 rounded-full text-sm font-medium border border-(--success-dark)"
                                         >
-                    {coverage.name}
-                  </span>
+                                            {coverage.name}
+                                        </span>
                                     ) : (
                                         <p className="text-(--gray-400) text-sm">
                                             {t("dashboard.profile.no-coverage")}
-                                        </p>
+                           ~             </p>
                                     )}
                                 </div>
                             )}
