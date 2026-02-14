@@ -207,7 +207,8 @@
     },
     "validation": {
       "reason_too_long": "Reason for visit cannot exceed 255 characters."
-    }
+    },
+    "error": "Could not load appointments."
   },
   "login": {
     "welcome_title": "Welcome Back!",
@@ -357,7 +358,8 @@
       "view": "View",
       "no-report": "No report available."
     },
-    "back" : "Back to appointment details"
+    "back" : "Back to appointment details",
+    "error": "Could not load medical history."
   },
   "common": {
     "go_back": "Go Back",

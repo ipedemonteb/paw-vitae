@@ -13,6 +13,7 @@ import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
 import {useEffect, useState} from "react";
 import DashboardNavSelect from "@/components/DashboardNavSelect.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {DashboardRefetch} from "@/components/DashboardRefetch.tsx";
 
 const typeDictionary = {
     history: {
@@ -66,7 +67,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
         });
     };
 
-    const {data: appointments, isLoading} = useAppointments({
+    const { data: appointments, isLoading, isError, refetch, isFetching} = useAppointments({
         userId: auth.userId,
         collection: type,
         page: searchParams.page,
@@ -74,6 +75,18 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
         filter: searchParams.filter,
         sort: type === "history" ? "desc" : "asc",
     });
+
+    const delayedLoading = useDelayedBoolean(isLoading);
+
+    if (isError)
+        return (
+            <DashboardRefetch
+                title={t(componentType.title)}
+                text={t("appointment.error")}
+                isFetching={isFetching}
+                refetch={refetch}
+            />
+        );
 
     return (
         <DashboardNavContainer>
@@ -85,7 +98,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
                     <DashboardNavSelect all={t("appointment.filters.all")} value={filterValue} onValueChange={(val) => setFilter(val)} content={componentType.popoverData} display={(s:string) => t(transformFilter(s))}/>
                 </div>
             </DashboardNavHeader>
-            {(useDelayedBoolean(isLoading)) ? (
+            {(delayedLoading) ? (
                 <DashboardNavLoader/>
             ) : (appointments?.data !== undefined && appointments.data.length > 0) ? (
                 appointments.data.map((a, i) => (
@@ -95,7 +108,7 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
             ) : (
                 <DashboardNavEmptyContent Icon={CalendarFoldIcon} title={t(componentType.emptyTitle)} text={t(componentType.emptyText)}/>
             )}
-            {!(useDelayedBoolean(isLoading)) && appointments?.data !== undefined && appointments?.data?.length > 0 && appointments?.pagination && (
+            {!delayedLoading && appointments?.data !== undefined && appointments?.data?.length > 0 && appointments?.pagination && (
                 <PaginationComponent pagination={appointments.pagination} searchParams={searchParams} />
             )}
         </DashboardNavContainer>
