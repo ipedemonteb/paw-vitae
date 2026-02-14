@@ -14,18 +14,18 @@ const hoverBadges =
     "flex flex-wrap gap-1";
 
 function BadgeComponent({specialties, maxBadges}:{
-    specialties: string[];
+    specialties: string[] | undefined;
     maxBadges: number;
 }) {
 
     const { t } = useTranslation();
-    const shownBadges = specialties.slice(0, maxBadges);
-    const hiddenBadges = specialties.slice(maxBadges);
-    const hiddenCount = hiddenBadges.length;
+    const shownBadges = specialties?.slice(0, maxBadges);
+    const hiddenBadges = specialties?.slice(maxBadges);
+    const hiddenCount = hiddenBadges?.length || 0;
 
     return (
         <div className={badgeContainer}>
-            {shownBadges.map((s) => (
+            {shownBadges?.map((s) => (
                 <Badge className={badge} key={t(s)}>
                     {t(s)}
                 </Badge>
@@ -38,7 +38,7 @@ function BadgeComponent({specialties, maxBadges}:{
 
                     <HoverCardContent className={hoverContent}>
                         <div className={hoverBadges}>
-                            {hiddenBadges.map((s) => (
+                            {hiddenBadges?.map((s) => (
                                 <Badge key={t(s)} className={badge}>
                                     {t(s)}
                                 </Badge>
