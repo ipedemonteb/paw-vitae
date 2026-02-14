@@ -25,8 +25,6 @@ import {useDebounce} from "use-debounce";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
-// TODO: internacionalizacion
-
 const heroSection=
     "mt-25 bg-[linear-gradient(135deg,var(--background-light)_0%,var(--landing-light)_100%)]";
 const grayBackground =
@@ -440,7 +438,7 @@ function RatingsSection() {
                         <Spinner className={spinner} />
                         <p className={loadingText}>{t("loading")}</p>
                     </div>
-                ) : isError || true ? (
+                ) : isError ? (
                     <RefetchComponent
                         isFetching={isFetching}
                         onRefetch={() => refetch()}
