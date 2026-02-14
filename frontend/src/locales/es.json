@@ -45,7 +45,10 @@
         "lastname": "El apellido es obligatorio.",
         "phone": "El teléfono es obligatorio.",
         "coverage": "Por favor seleccione una cobertura.",
-        "specialties": "Por favor seleccione al menos una especialidad."
+        "specialties": "Por favor seleccione al menos una especialidad.",
+        "not-found-coverage": "No se pudo cargar la obra social.",
+        "not-found-coverages": "No se pudieron cargar las obras sociales.",
+        "not-found-user": "No se pudon cargar la cuenta del usuario."
       }
     }
   },

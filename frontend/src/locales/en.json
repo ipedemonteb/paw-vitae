@@ -45,7 +45,10 @@
         "lastname": "Last name is required.",
         "phone": "Phone is required.",
         "coverage": "Please select a coverage.",
-        "specialties": "Please select at least one specialty."
+        "specialties": "Please select at least one specialty.",
+        "not-found-coverage": "Could not load coverage.",
+        "not-found-coverages": "Could not load coverages.",
+        "not-found-user": "Could not load user account."
       }
     }
   },
