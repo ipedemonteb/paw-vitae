@@ -39,6 +39,8 @@ import {Spinner} from "@/components/ui/spinner.tsx";
 import {initialsFallback} from "@/utils/userUtils.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {DashboardRefetch} from "@/components/DashboardRefetch.tsx";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
 const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
@@ -58,27 +60,41 @@ function DoctorAccount() {
     const {
         data: doctor,
         isLoading: isLoadingDoctor,
-        isError
+        isError: errorDoctor,
+        refetch: refetchDoctor,
+        isFetching: fetchingDoctor
     } = useDoctor(auth.userId);
 
     const {
         data: currentSpecialties,
-        isLoading: isLoadingCurrentSpecs
+        isLoading: isLoadingCurrentSpecs,
+        isError: errorCurrentSpecs,
+        refetch: refetchCurrentSpecs,
+        isFetching: fetchingCurrentSpecs
     } = useDoctorSpecialties(doctor?.specialties);
 
     const {
         data: currentCoverages,
-        isLoading: isLoadingCurrentCovs
+        isLoading: isLoadingCurrentCovs,
+        isError: errorCurrentCovs,
+        refetch: refetchCurrentCovs,
+        isFetching: fetchingCurrentCovs
     } = useDoctorCoverages(doctor?.coverages);
 
     const {
         data: allSpecialtiesList,
-        isLoading: isLoadingAllSpecs
+        isLoading: isLoadingAllSpecs,
+        isError: errorAllSpecs,
+        refetch: refetchAllSpecs,
+        isFetching: fetchingAllSpecs
     } = useSpecialties();
 
     const {
         data: allCoveragesList,
-        isLoading: isLoadingAllCovs
+        isLoading: isLoadingAllCovs,
+        isError: errorAllCovs,
+        refetch: refetchAllCovs,
+        isFetching: fetchingAllCovs
     } = useCoverages();
 
     const updateProfileMutation = useUpdateDoctorMutation();
@@ -161,7 +177,6 @@ function DoctorAccount() {
         updateProfileMutation.mutate({
             doctorId: auth.userId,
             doctorUrl: doctor.self,
-            imageUrl: doctor.image,
             data: {
                 name: formData.name,
                 lastName: formData.lastName,
@@ -181,14 +196,23 @@ function DoctorAccount() {
         });
     };
 
-    const isLoading = isLoadingDoctor || isLoadingCurrentSpecs || isLoadingCurrentCovs || isLoadingAllSpecs || isLoadingAllCovs;
-
-    if (isError || !doctor) return <GenericError code={404} />;
+    const delayedLoading = useDelayedBoolean(isLoadingDoctor);
     const isSaving = updateProfileMutation.isPending;
+    const isError = errorDoctor || errorCurrentSpecs || errorCurrentCovs || errorAllSpecs || errorAllCovs;
+
+    if(errorDoctor)
+        return (
+            <DashboardRefetch
+                title={t("doctor.dashboard.account")}
+                text={t("dashboard.profile.error.not-found-user")}
+                isFetching={fetchingDoctor}
+                refetch={refetchDoctor}
+            />
+        );
 
     return (
         <DashboardNavContainer>
-            <DashboardNavHeader title={t("patient.dashboard.account")}>
+            <DashboardNavHeader title={t("doctor.dashboard.account")}>
                 {!isEditing && (
                     <Button onClick={() => setIsEditing(true)} className={actionButtonStyles}>
                         <Pencil className="w-4 h-4" />
@@ -197,7 +221,7 @@ function DoctorAccount() {
                 )}
                 {isEditing && <div className="h-9" />}
             </DashboardNavHeader>
-            {useDelayedBoolean(isLoading) ? <DashboardNavLoader /> :
+            {delayedLoading ? <DashboardNavLoader /> :
                 <div className={containerStyles}>
                     <Card className={cardStyles}>
                         <div className={cardHeaderStyles}>
@@ -246,7 +270,7 @@ function DoctorAccount() {
                             </div>
 
                             <div className={sectionStyles}>
-                                <h3 className="text-lg font-[500] mb-4 border-b pb-2">
+                                <h3 className="text-lg font-medium mb-4 border-b pb-2">
                                     {t("dashboard.profile.personalInfo")}
                                 </h3>
 
@@ -262,7 +286,7 @@ function DoctorAccount() {
                                                 disabled={isSaving}
                                             />
                                         ) : (
-                                            <div className={infoValueStyles}>{doctor.name}</div>
+                                            <div className={infoValueStyles}>{doctor?.name}</div>
                                         )}
                                     </div>
                                     <div className="space-y-2">
@@ -276,7 +300,7 @@ function DoctorAccount() {
                                                 disabled={isSaving}
                                             />
                                         ) : (
-                                            <div className={infoValueStyles}>{doctor.lastName}</div>
+                                            <div className={infoValueStyles}>{doctor?.lastName}</div>
                                         )}
                                     </div>
 
@@ -286,7 +310,7 @@ function DoctorAccount() {
                                         </Label>
                                         <div className={infoValueStyles}>
                                             <Mail className="h-4 w-4" />
-                                            {doctor.email}
+                                            {doctor?.email}
                                         </div>
                                     </div>
 
@@ -305,7 +329,7 @@ function DoctorAccount() {
                                         ) : (
                                             <div className={infoValueStyles}>
                                                 <Phone className="h-4 w-4" />
-                                                {doctor.phone}
+                                                {doctor?.phone}
                                             </div>
                                         )}
                                     </div>
@@ -318,33 +342,51 @@ function DoctorAccount() {
                         <Card className={cardStyles}>
                             <div className={cardHeaderStyles}>
                                 <h3 className={cardTitleStyles}>
-                                    <Stethoscope className="h-5 w-5 text-[var(--primary-color)]" />
+                                    <Stethoscope className="h-5 w-5 text-(--primary-color)" />
                                     {t("dashboard.profile.specialties")}
                                 </h3>
                             </div>
                             <CardContent className="p-6">
-                                {isEditing ? (
-                                    <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
-                                        {allSpecialtiesList?.map((s) => {
-                                            const sId = Number(s.self.split('/').pop());
-                                            const isSelected = selectedSpecIds.includes(sId);
-                                            return (
-                                                <div
-                                                    key={sId}
-                                                    onClick={() => toggleSpecialty(sId)}
-                                                    className={cn(
-                                                        "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all select-none hover:border-(--primary-color)",
-                                                        isSelected ? "bg-(--primary-bg) border-(--primary-color) text-(--primary-color) font-medium shadow-sm" : "bg-white text-(--gray-600) border-(--gray-200)"
-                                                    )}
-                                                >
-                                                    <div className={cn("w-4 h-4 rounded border flex items-center justify-center shrink-0", isSelected ? "bg-(--primary-color) border-(--primary-color)" : "border-(--gray-300)")}>
-                                                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                                {isLoadingCurrentSpecs ?
+                                    <LoadingComponent />
+                                : errorCurrentSpecs ?
+                                    <RefetchComponent
+                                        errorText={t("doctor.dashboard.error.your-specialties")}
+                                        isFetching={fetchingCurrentSpecs}
+                                        onRefetch={refetchCurrentSpecs}
+                                    />
+                                : isEditing ? (
+                                    isLoadingAllSpecs ?
+                                        <LoadingComponent />
+                                    : errorAllSpecs ?
+                                        <RefetchComponent
+                                            errorText={t("doctor.dashboard.error.specialties")}
+                                            isFetching={fetchingAllSpecs}
+                                            onRefetch={refetchAllSpecs}
+                                        />
+                                    :
+                                        <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
+                                            {allSpecialtiesList?.map((s) => {
+                                                const sId = Number(s.self.split('/').pop());
+                                                const isSelected = selectedSpecIds.includes(sId);
+                                                return (
+                                                    <div
+                                                        key={sId}
+                                                        onClick={() => toggleSpecialty(sId)}
+                                                        className={cn(
+                                                            "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all select-none hover:border-(--primary-color)",
+                                                            isSelected ? "bg-(--primary-bg) border-(--primary-color) text-(--primary-color) font-medium shadow-sm" : "bg-white text-(--gray-600) border-(--gray-200)"
+                                                        )}
+                                                    >
+                                                        <div className={cn("w-4 h-4 rounded border flex items-center justify-center shrink-0", isSelected ? "bg-(--primary-color) border-(--primary-color)" : "border-(--gray-300)")}>
+                                                            {isSelected && <Check className="w-3 h-3 text-white" />}
+                                                        </div>
+                                                        <span className="truncate">{t(s.name)}</span>
                                                     </div>
-                                                    <span className="truncate">{t(s.name)}</span>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
+                                                )
+                                            })}
+                                        </div>
+
                                 ) : (
                                     currentSpecialties && currentSpecialties.length > 0 ? (
                                         <div className="flex flex-wrap gap-2">
@@ -364,38 +406,55 @@ function DoctorAccount() {
                         <Card className={cardStyles}>
                             <div className={cardHeaderStyles}>
                                 <h3 className={cardTitleStyles}>
-                                    <ShieldPlus className="h-5 w-5 text-[var(--primary-color)]" />
+                                    <ShieldPlus className="h-5 w-5 text-(--primary-color)" />
                                     {t("dashboard.profile.coverages")}
                                 </h3>
                             </div>
                             <CardContent className="p-6">
-                                {isEditing ? (
-                                    <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
-                                        {allCoveragesList?.map((c) => {
-                                            const cId = Number(c.self.split('/').pop());
-                                            const isSelected = selectedCovIds.includes(cId);
-                                            return (
-                                                <div
-                                                    key={cId}
-                                                    onClick={() => toggleCoverage(cId)}
-                                                    className={cn(
-                                                        "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-(--success) select-none",
-                                                        isSelected
-                                                            ? "bg-(--success-light) border-(--success-dark) text-(--success-dark) font-medium shadow-sm"
-                                                            : "bg-white text-(--gray-600) border-(--gray-200)"
-                                                    )}
-                                                >
-                                                    <div className={cn(
-                                                        "w-4 h-4 rounded-full border flex items-center justify-center shrink-0",
-                                                        isSelected ? "bg-(--success) border-(--success)" : "border-(--gray-300)"
-                                                    )}>
-                                                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                                {isLoadingCurrentCovs ?
+                                    <LoadingComponent />
+                                : errorCurrentCovs ?
+                                    <RefetchComponent
+                                        errorText={t("doctor.dashboard.error.your-coverages")}
+                                        isFetching={fetchingCurrentCovs}
+                                        onRefetch={refetchCurrentCovs}
+                                    />
+                                : isEditing ? (
+                                    isLoadingAllCovs ?
+                                        <LoadingComponent />
+                                    : errorAllCovs ?
+                                        <RefetchComponent
+                                            errorText={t("doctor.dashboard.error.coverages")}
+                                            isFetching={fetchingAllCovs}
+                                            onRefetch={refetchAllCovs}
+                                        />
+                                    :
+                                        <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
+                                            {allCoveragesList?.map((c) => {
+                                                const cId = Number(c.self.split('/').pop());
+                                                const isSelected = selectedCovIds.includes(cId);
+                                                return (
+                                                    <div
+                                                        key={cId}
+                                                        onClick={() => toggleCoverage(cId)}
+                                                        className={cn(
+                                                            "cursor-pointer border rounded-md p-2 text-sm flex items-center gap-2 transition-all hover:border-(--success) select-none",
+                                                            isSelected
+                                                                ? "bg-(--success-light) border-(--success-dark) text-(--success-dark) font-medium shadow-sm"
+                                                                : "bg-white text-(--gray-600) border-(--gray-200)"
+                                                        )}
+                                                    >
+                                                        <div className={cn(
+                                                            "w-4 h-4 rounded-full border flex items-center justify-center shrink-0",
+                                                            isSelected ? "bg-(--success) border-(--success)" : "border-(--gray-300)"
+                                                        )}>
+                                                            {isSelected && <Check className="w-3 h-3 text-white" />}
+                                                        </div>
+                                                        <span className="truncate">{c.name}</span>
                                                     </div>
-                                                    <span className="truncate">{c.name}</span>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
+                                                )
+                                            })}
+                                        </div>
                                 ) : (
                                     currentCoverages && currentCoverages.length > 0 ? (
                                         <div className="flex flex-wrap gap-2">
@@ -424,7 +483,7 @@ function DoctorAccount() {
                                 {t("cancel")}
                             </Button>
 
-                            <Button onClick={handleSave} className={saveButton} disabled={isSaving}>
+                            <Button onClick={handleSave} className={saveButton} disabled={isSaving || isError}>
                                 {isSaving ? (
                                     <>
                                         <Spinner className="w-4 h-4 mr-2" />
@@ -442,6 +501,16 @@ function DoctorAccount() {
                 </div>
             }
         </DashboardNavContainer>
+    );
+}
+
+function LoadingComponent() {
+    const { t } = useTranslation();
+    return (
+        <div className="flex flex-col h-32 gap-1 justify-center items-center">
+            <Spinner className="h-8 w-8 text-(--gray-400)" />
+            <p className="text-md text-(--gray-500)">{t("loading")}</p>
+        </div>
     );
 }
 

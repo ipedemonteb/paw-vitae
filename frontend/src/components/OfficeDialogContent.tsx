@@ -57,7 +57,7 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
                                 disabled={mutationPending}
                                 id="name"
                                 placeholder={t("offices.dialog.placeholderName")}
-                                className={` w-70 placeholder:opacity-70 selection:bg-blue-300 selection:text-black" type="text ${form.formState.errors.name ? "border-(--danger)" : ""}`}
+                                className={` w-70 placeholder:opacity-70  selection:text-black" type="text ${form.formState.errors.name ? "border-(--danger)" : ""}`}
                                 {...form.register("name")}
                             />
                             {errors.name && (

@@ -580,7 +580,13 @@
       "account": "Account",
       "noOfficesTitle" : "No Offices Configured",
       "noOfficesMessage" : "You have not added any offices yet. Please add at least one office to manage your appointments.",
-      "addOffice" : "Go to Add Offices"
+      "addOffice" : "Go to Add Offices",
+      "error": {
+        "your-specialties": "Could not load your specialties.",
+        "your-coverages": "Could not load your coverages.",
+        "specialties": "Could not load specialties.",
+        "coverages": "Could not load coverages."
+      }
     },
     "profile": {
       "doctor": "Doctor",
@@ -748,7 +754,8 @@
       "activeLabel": "Active",
       "specialtiesLabel": "Specialties",
       "cancel": "Cancel"
-    }
+    },
+    "error": "Could not load offices."
   },
   "neighborhoodCombobox": {
     "placeholder": "Select a Neighborhood...",
@@ -777,6 +784,7 @@
     "errorOverlap": "Time overlaps with another",
     "success" : "Availability correctly updated",
     "error" : "There was an error updating your availability. Please try again later.",
+    "error-loading": "Could not load availability.",
     "warning_title" :  "Office Status Warning",
     "warning_text" : "If you remove all slots for an office, it will be automatically set to inactive. To reactivate an office, simply do so in the offices section and remember to add a timeslot for it."
   },
@@ -812,7 +820,8 @@
     "item-dialog": {
       "title": "Delete Unavailability",
       "subtitle": "Are you sure you want to delete this date? This action can’t be undone."
-    }
+    },
+    "error-loading": "Could not load unavailability."
   },
   "date-picker": {
     "placeholder": "Select a Date"

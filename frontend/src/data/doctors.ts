@@ -333,10 +333,10 @@ export async function updateDoctor(doctorUrl:string, form: DoctorUpdateForm){
 export async function putDoctorImage(doctorImageUrl: string, image: File) {
     const formData = new FormData();
     formData.append("file", image);
-
     const res = await api.put(doctorImageUrl, formData);
     return res.data;
 }
+
 
 export async function putDoctorUnavailability(url: string, data:DoctorUnavailabilityFormDTO){
     const res = await api.put(url, data, {
@@ -349,12 +349,12 @@ export async function putDoctorUnavailability(url: string, data:DoctorUnavailabi
 
 export async function updateDoctorProfileComplete(params: {
     doctorUrl: string;
-    imageUrl: string;
+    doctorId: string;
     data: DoctorUpdateForm;
     imageFile?: File | null;
 }) {
     if (params.imageFile) {
-        await putDoctorImage(params.imageUrl, params.imageFile);
+        await putDoctorImage(`/doctors/${params.doctorId}/image`, params.imageFile);
     }
 
     return updateDoctor(params.doctorUrl, params.data);

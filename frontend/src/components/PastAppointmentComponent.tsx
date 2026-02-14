@@ -1,9 +1,9 @@
-import {ChevronDown, ClipboardPenLine, Download, Eye, File, Paperclip, User, Info} from "lucide-react";
+import {ChevronDown, ClipboardPenLine, Download, Eye, File, User, Info} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
 import {useTranslation} from "react-i18next";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
 import {useAppointmentFileHandlerMutation, useAppointmentFiles} from "@/hooks/useAppointments.ts";
 import {userIdFromImageUrl, userIdFromSelf} from "@/utils/IdUtils.ts";
@@ -69,13 +69,9 @@ const reasonText =
 const reasonFade =
     "pointer-events-none absolute top-0 right-0 h-full w-8 bg-linear-to-r from-transparent to-gray-50";
 const bottomRow =
-    "flex flex-col gap-3 items-stretch w-full sm:flex-row sm:justify-between sm:items-center";
-const specialtyPill =
-    "flex gap-1 rounded-2xl font-[500] text-xs text-[var(--gray-600)] h-min py-1.5 px-2.5 text-sm flex items-center justify-center border border-[var(--gray-500)]";
+    "flex flex-col gap-3 items-right w-full justify-center items-center sm:flex-row sm:justify-end sm:items-center";
 const detailsButton =
     "flex gap-2 text-sm font-[400] hover:bg-(--primary-dark) cursor-pointer items-center text-white justify-center px-2 py-2 bg-(--primary-color)";
-const filesIcon =
-    "w-4 h-4";
 const openContainer =
     "bg-(--gray-100) rounded-b-xl px-6 py-4";
 const reportContainer =
@@ -86,14 +82,8 @@ const reportIcon =
     "w-5 h-5";
 const filesContainer =
     "mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
-const detailsAnim =
-    "grid transition-[grid-template-rows] duration-400 ease-in-out";
-const detailsClosed =
-    "grid-rows-[0fr]";
-const detailsOpen =
-    "grid-rows-[1fr]";
-const detailsInner =
-    "overflow-hidden";
+const detailsOuter =
+    "overflow-hidden transition-[max-height,opacity,transform] duration-500 ease-out";
 const upperBorderWhenOpen =
     "border-b border-[var(--gray-300)]";
 
@@ -131,9 +121,20 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
         ? initialsFallback(patient?.name, patient?.lastName)
         : initialsFallback(doctor?.name, doctor?.lastName);
 
-    const avatarSrc = isDoctor ? undefined : (doctorImgUrl || undefined);
+    const detailsRef = useRef<HTMLDivElement | null>(null);
+    const [detailsMaxH, setDetailsMaxH] = useState<number>(0);
 
-    const fileCount = files?.length ?? 0;
+    useEffect(() => {
+        if (!detailsRef.current) return;
+
+        if (open) {
+            setDetailsMaxH(detailsRef.current.scrollHeight);
+        } else {
+            setDetailsMaxH(0);
+        }
+    }, [open, files, loadingFiles, filesError]);
+
+    const avatarSrc = isDoctor ? undefined : (doctorImgUrl || undefined);
 
     const isLoading = loadingPatient || loadingDoctor || loadingSpecialty || loadingCoverage;
 
@@ -195,10 +196,6 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
                         </div>
                     </div>
                     <div className={bottomRow}>
-                        <div className={specialtyPill}>
-                            <Paperclip className={filesIcon}/>
-                            {`${fileCount} ${fileCount === 1 ? t("medical-history.component.file") : t("medical-history.component.files")}`}
-                        </div>
                         <Button
                             className={detailsButton}
                             type="button"
@@ -211,9 +208,11 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
                     </div>
                 </div>
             </div>
-            <div className={`${detailsAnim} ${open ? detailsOpen : detailsClosed}`}>
-                <div className={detailsInner}>
-                    <div className={openContainer}>
+            <div
+                className={`${detailsOuter} ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"}`}
+                style={{ maxHeight: open ? `${detailsMaxH}px` : "0px" }}
+            >
+                <div ref={detailsRef} className={openContainer}>
                         <Card className={reportContainer}>
                             <div className={reportTitle}>
                                 <ClipboardPenLine className={reportIcon}/>
@@ -227,7 +226,7 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
                             <div className="flex w-full h-36 items-center justify-center">
                                 <Spinner className="size-6 text-(--primary-color)" />
                             </div>
-                        : filesError || true ?
+                        : filesError ?
                             <Card className="mt-4">
                                 <RefetchComponent
                                     isFetching={filesFetching}
@@ -251,7 +250,6 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 
                         }
                     </div>
-                </div>
             </div>
         </Card>
     );

@@ -580,7 +580,13 @@
       "account": "Cuenta",
       "noOfficesTitle" : "No has configurado tus consultorios aún",
       "noOfficesMessage" : "Configura por lo menos un consultorio para que los pacientes puedan reservar citas contigo.",
-      "addOffice" : "Ir a Agregar Consultorio"
+      "addOffice" : "Ir a Agregar Consultorio",
+      "error": {
+        "your-specialties": "No se pudieron cargar tus especialidades.",
+        "your-coverages": "No se pudieron cargar tus coberturas.",
+        "specialties": "No se pudieron cargar las especialidades.",
+        "coverages": "No se pudieron cargar las coberturas."
+      }
     },
     "profile": {
       "doctor": "Doctor",
@@ -748,7 +754,8 @@
       "activeLabel": "Activa",
       "specialtiesLabel": "Especialidades",
       "cancel": "Cancelar"
-    }
+    },
+    "error": "No se pudieron cargar las oficinas."
   },
   "neighborhoodCombobox": {
     "placeholder": "Seleccione un Barrio...",
@@ -777,6 +784,7 @@
     "errorOverlap": "Horario superpuesto con otro intervalo",
     "success"  : "Horarios actualizados con éxito",
     "error" : "Hubo un error actualizando sus horarios. Pruebe de nuevo mas tarde.",
+    "error-loading": "No se pudo cargar la disponibilidad.",
     "warning_title": "Advertencia del Estado de Consultorio",
     "warning_text" : "Si un consultorio no tiene horarios, automáticamente esta se volverá inactiva. Para reactivarla, edite la oficina en la sección de consultorios y agregue un horario para este."
   },
@@ -812,7 +820,8 @@
     "item-dialog": {
       "title": "Eliminar Ausencia",
       "subtitle": "¿Está seguro que desea eliminar esta ausencia? Esta acción no puede ser revertida."
-    }
+    },
+    "error-loading": "No se pudieron cargar las ausencias."
   },
   "date-picker": {
     "placeholder": "Seleccione una fecha"
