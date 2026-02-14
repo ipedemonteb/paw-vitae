@@ -429,7 +429,8 @@
       "search_placeholder": "Buscar por nombre de médico",
       "search": "Buscar",
       "doctors": "Doctores",
-      "patients": "Pacientes"
+      "patients": "Pacientes",
+      "specialties_error": "No se pudieron cargar las especialidades."
     },
     "mission": {
       "tag": "Misión",

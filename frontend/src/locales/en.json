@@ -429,7 +429,8 @@
       "search_placeholder": "Search by doctor name",
       "search": "Search",
       "doctors": "Doctors",
-      "patients": "Patients"
+      "patients": "Patients",
+      "specialties_error": "Unable to load specialties."
     },
     "mission": {
       "tag": "Mission",

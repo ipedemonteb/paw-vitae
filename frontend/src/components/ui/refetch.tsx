@@ -2,6 +2,7 @@ import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useTranslation } from "react-i18next";
+import {cn} from "@/lib/utils.ts";
 
 type RefetchStateProps = {
     isFetching?: boolean;
@@ -11,6 +12,7 @@ type RefetchStateProps = {
     tryAgainText?: string;
 
     className?: string;
+    textClassName?: string;
     buttonClassName?: string;
     spinnerClassName?: string;
 
@@ -30,6 +32,7 @@ export function RefetchComponent({
                                      tryAgainText,
 
                                      className,
+                                     textClassName,
                                      buttonClassName,
                                      spinnerClassName,
 
@@ -45,7 +48,9 @@ export function RefetchComponent({
 
     return (
         <div className={`${defaultWrap} ${className ?? ""}`}>
-            <p className="text-(--danger) mb-2">{msg}</p>
+            <p className={cn("text-(--danger) mb-2", textClassName)}>
+                {msg}
+            </p>
 
             <Button
                 type="button"

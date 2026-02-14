@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
@@ -19,13 +17,14 @@ import { Spinner } from "@/components/ui/spinner.tsx";
 import { specialtyIdFromSelf } from "@/utils/IdUtils.ts";
 import type { SpecialtyDTO } from "@/data/specialties.ts";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 type Props = {
     className?: string;
     buttonClassName?: string;
     contentClassName?: string;
 
-    value?: string | null; // specialty self (controlado). null => "todas"
+    value?: string | null;
     onValueChange?: (self: string | null, derivedId: number | null, dto?: SpecialtyDTO) => void;
 };
 
@@ -41,7 +40,7 @@ export function SpecialtyCombobox({
 
     const selectedSelf = value !== undefined ? value : internal;
 
-    const { data: specialties, isLoading, isError, refetch, isRefetching } = useSpecialties();
+    const { data: specialties, isLoading, isError, refetch, isFetching } = useSpecialties();
     const { t } = useTranslation();
 
     const triggerClass = cn("w-[200px] justify-between", buttonClassName, className);
@@ -59,14 +58,16 @@ export function SpecialtyCombobox({
         setOpen(false);
     };
 
-    const loading = useDelayedBoolean(isLoading || isRefetching, 500)
+    const loading = useDelayedBoolean(isLoading || isFetching, 500)
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button variant="outline" role="combobox" aria-expanded={open} className={triggerClass}>
-                    {selectedLabel}
-                    <ChevronsUpDown className="opacity-50" />
+                    <span className="min-w-0 flex-1 text-left whitespace-nowrap overflow-hidden text-ellipsis">
+                        {selectedLabel}
+                    </span>
+                    <ChevronsUpDown className="opacity-50 shrink-0 ml-2" />
                 </Button>
             </PopoverTrigger>
 
@@ -75,14 +76,17 @@ export function SpecialtyCombobox({
                     <CommandInput placeholder={t("combobox.specialty.search")} className="h-9" />
                     <CommandList>
                         {loading ? (
-                            <div className="py-3 h-20 flex items-center justify-center space-x-1">
-                                <Spinner className="text-(--text-light) size-5" />
+                            <div className="py-3 h-32 flex items-center justify-center space-x-1">
+                                <Spinner className="text-(--gray-400) size-6" />
                             </div>
                         ) : isError ? (
-                            <div className="py-3 h-20 flex flex-col items-center justify-center gap-2">
-                                <p className="text-(--text-light) text-sm">Unable to load specialties</p>
-                                <Button className="cursor-pointer text-xs bg-transparen hover:bg-(--gray-100) text-black border px-2 py-1" onClick={() => refetch()}>Retry</Button>
-                            </div>
+                            <RefetchComponent
+                                isFetching={isFetching}
+                                onRefetch={() => refetch()}
+                                errorText={t("landing.hero.specialties_error")}
+                                className="py-3 px-2 h-32 flex flex-col items-center justify-center"
+                                textClassName="text-sm"
+                            />
                         ) : (
                             <>
                                 <CommandEmpty>No Specialties Found</CommandEmpty>
