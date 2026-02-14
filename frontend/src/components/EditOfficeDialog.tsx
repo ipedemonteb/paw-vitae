@@ -10,7 +10,7 @@ import {type EditOfficeForm, getEditOfficeSchema} from "@/lib/office-schema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect, useMemo, useState} from "react";
 import {officeIdFromSelf, specialtyIdFromSelf} from "@/utils/IdUtils.ts";
-import {extractIdFromUrl} from "@/lib/utils.ts";
+import {cn, extractIdFromUrl} from "@/lib/utils.ts";
 import {toast} from "sonner";
 import OfficeDialogComponent from "@/components/OfficeDialogContent.tsx";
 import {useTranslation} from "react-i18next";
@@ -21,6 +21,13 @@ export type OfficeDialogProps = {
     office: OfficeDTO;
     animateInDelay: number;
 };
+
+const anim =
+    "transition-all duration-500 ease-out will-change-transform will-change-opacity";
+const animFrom =
+    "opacity-0 translate-y-2 scale-[0.99]";
+const animTo =
+    "opacity-100 translate-y-0 scale-100";
 
 export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogProps) {
     const {data: officeSpecialties, isLoading} = useDoctorOfficeSpecialties(office.officeSpecialties);
@@ -78,7 +85,7 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
     });
 
     return (
-        <div className="relative">
+        <div className={cn("relative", anim, mounted ? animTo : animFrom)} style={{ transitionDelay: `${animateInDelay}ms` }}>
             <div className="absolute top-2 right-2 z-10">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -91,7 +98,7 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
                             <Pencil className="size-4" />
                             {t("offices.dialog.edit.button")}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => setDeleteOpen(true)} className="cursor-pointer text-(--danger) focus:text-(--danger) data-[highlighted]:text-[var(--danger-dark)] data-[highlighted]:bg-[var(--danger-light)]">
+                        <DropdownMenuItem onSelect={() => setDeleteOpen(true)} className="cursor-pointer text-(--danger) focus:text-(--danger) data-highlighted:text-(--danger-dark) data-highlighted:bg-(--danger-light)">
                             <Trash2 className="size-4 text-(--danger)" />
                             {t("offices.dialog.remove.button")}
                         </DropdownMenuItem>

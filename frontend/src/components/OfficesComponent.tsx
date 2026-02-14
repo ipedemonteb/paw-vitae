@@ -58,7 +58,7 @@ export default function OfficesComponent() {
             {delayedLoading ? (
                 <DashboardNavLoader/>
             ) : offices && offices.length > 0 ? (
-                <div className="grid w-full px-2 gap-x-6 gap-y-3 justify-start grid-cols-[repeat(auto-fill,minmax(14rem,14rem))]">
+                <div className="grid w-full px-2 gap-x-6 gap-y-3 sm:grid-cols-[repeat(auto-fill,minmax(14rem,14rem))] sm:justify-start">
                     {offices.sort((o1, o2) => o1.name.localeCompare(o2.name)).map((o, i) => (
                         <EditOfficeDialog key={o.self} office={o} animateInDelay={i}/>
                     ))}

@@ -25,7 +25,7 @@ export default function NeighborhoodCombobox({value, onChange, mutationPending, 
 
     if (isLoadingNeighborhood) {
         return (
-            <Skeleton className="min-w-0 w-70 h-9" />
+            <Skeleton className="w-full h-9" />
         )
     }
 
@@ -38,13 +38,16 @@ export default function NeighborhoodCombobox({value, onChange, mutationPending, 
                         disabled={mutationPending}
                         role="combobox"
                         aria-expanded={open}
-                        className={`flex-1 min-w-0 hover:text-(--text-light) cursor-pointer font-normal w-70 justify-between ${error ? "border-(--danger)" : ""}`}
+                        className={cn(
+                            "w-full min-w-0 justify-between cursor-pointer font-normal hover:text-(--text-light)",
+                            error ? "border-(--danger)" : ""
+                        )}
                     >
                         <p className={neighborhood?.name ? "" : "opacity-70"}>{neighborhood?.name ?? t("neighborhoodCombobox.placeholder")}</p>
                         <ChevronsUpDown className="opacity-50" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-60 p-0">
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
                     <Command>
                         <CommandInput placeholder={t("offices.neighborhoods.placeholder")} className="h-9"/>
                         <CommandList onWheel={(e) => e.stopPropagation()}>

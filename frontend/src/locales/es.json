@@ -365,7 +365,8 @@
     "go_back": "Volver atrás",
     "return_home": "Ir al Inicio",
     "download": "Descargar",
-    "view": "Ver"
+    "view": "Ver",
+    "deleting": "Eliminando"
   },
   "error": {
     "error": "Error",
@@ -742,7 +743,7 @@
         "description": "Esta seguro de que desea eliminar esta oficina? Esta acción no se puede deshacer.",
         "officeConfirmationLabel": "La siguiente oficina sera eliminada:",
         "alert": "Eliminar una oficina es una acción permanente",
-        "confirm": "Eliminar Oficina",
+        "confirm": "Eliminar",
         "toast": {
           "success": "Oficina eliminada con éxito",
           "error": "Ha ocurrido un error"

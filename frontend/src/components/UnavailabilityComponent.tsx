@@ -445,8 +445,8 @@ function UnavailabilityItem({
                         >
                             {pending && pendingAction === "delete" ? (
                                 <>
-                                    <Spinner className="w-4 h-4 mr-2" />
-                                    {t("deleting")}
+                                    <Spinner className="w-4 h-4" />
+                                    {t("common.deleting")}
                                 </>
                             ) : (
                                 t("delete")
