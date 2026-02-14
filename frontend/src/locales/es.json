@@ -77,9 +77,6 @@
     "success_message": "Hemos enviado un enlace de restablecimiento a {{email}}."
   },
   "appointment": {
-    "validation": {
-      "reason_too_long": "La razón de la visita no puede exceder los 255 caracteres."
-    },
     "history": "Historial de Citas",
     "upcoming": "Próximas Citas",
     "filters": {
@@ -207,7 +204,11 @@
       "cancelling": "Cancelando",
         "success": "Turno cancelado exitosamente.",
         "error": "Error al cancelar el turno. Por favor, inténtalo de nuevo."
-    }
+    },
+    "validation": {
+      "reason_too_long": "La razón de la visita no puede exceder los 255 caracteres."
+    },
+    "error": "Could not load appointments."
   },
   "login": {
     "welcome_title": "Bienvenido de nuevo!",
@@ -357,7 +358,8 @@
       "view": "Ver",
       "no-report": "No hay reporte disponible para esta consulta."
     },
-    "back" : "Volver a los detalles del turno"
+    "back" : "Volver a los detalles del turno",
+    "error": "No se pudo cargar el historial médico."
   },
   "common": {
     "go_back": "Volver atrás",

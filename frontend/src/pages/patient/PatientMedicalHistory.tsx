@@ -11,6 +11,7 @@ import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx"
 import {CalendarFoldIcon} from "lucide-react";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {DashboardRefetch} from "@/components/DashboardRefetch.tsx";
 
 const headerContainer = "flex items-center sm:justify-center gap-2 mt-2 sm:mt-0";
 const sortTitle = "flex font-normal text-sm items-center justify-center text-(--text-light)";
@@ -24,7 +25,7 @@ function PatientMedicalHistory() {
     const searchParams = useAppointmentsQueryParams();
     const sort: "asc" | "desc" = searchParams.sort === "desc" ? "desc" : "asc";
 
-    const { data: appointments, isLoading } = useAppointments({
+    const { data: appointments, isLoading, isError, refetch, isFetching } = useAppointments({
         userId: auth.userId,
         collection: "history",
         filter: "completed",
@@ -33,9 +34,19 @@ function PatientMedicalHistory() {
         pageSize: searchParams.pageSize,
     });
 
-    // TODO: Handle isError case
-
     const completed = (appointments?.data ?? []).filter(a => a.status === "completo");
+
+    const delayedLoading = useDelayedBoolean(isLoading);
+
+    if (isError)
+        return (
+            <DashboardRefetch
+                title={t("medical-history.title")}
+                text={t("medical-history.error")}
+                isFetching={isFetching}
+                refetch={refetch}
+            />
+        );
 
     return (
         <DashboardNavContainer>
@@ -64,7 +75,7 @@ function PatientMedicalHistory() {
                     </Select>
                 </div>
             </DashboardNavHeader>
-            {useDelayedBoolean(isLoading) ? (
+            {delayedLoading ? (
                 <DashboardNavLoader />
             ) : completed.length > 0 ? (
                 completed.map((a) => (
@@ -78,7 +89,7 @@ function PatientMedicalHistory() {
                 />
             )}
 
-            {!useDelayedBoolean(isLoading) && completed.length > 0 && appointments?.pagination && (
+            {!delayedLoading && completed.length > 0 && appointments?.pagination && (
                 <PaginationComponent pagination={appointments.pagination} searchParams={searchParams} />
             )}
         </DashboardNavContainer>

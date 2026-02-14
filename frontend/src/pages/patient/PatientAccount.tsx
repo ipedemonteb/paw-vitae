@@ -31,6 +31,7 @@ import {Spinner} from "@/components/ui/spinner.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {RefetchComponent} from "@/components/ui/refetch.tsx";
+import {DashboardRefetch} from "@/components/DashboardRefetch.tsx";
 
 const ghostFilter = "h-0 sm:h-9";
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
@@ -140,22 +141,14 @@ function PatientAccount() {
 
     const delayedLoading = useDelayedBoolean(isLoading);
 
-    //TODO: Check if this implementation is OK
-    if (isError || !patient )
+    if (isError)
         return (
-            <DashboardNavContainer>
-                <DashboardNavHeader title={t("patient.dashboard.account")}>
-                    {isEditing && <div className={ghostFilter} />}
-                </DashboardNavHeader>
-                <div className={containerStyles}>
-                    <RefetchComponent
-                        isFetching={fetchingPatient}
-                        onRefetch={() => refetchPatient()}
-                        errorText={t("dashboard.profile.error.not-found-user")}
-                        className="w-full flex justify-center h-40"
-                    />
-                </div>
-            </DashboardNavContainer>
+            <DashboardRefetch
+                title={t("patient.dashboard.account")}
+                text={t("dashboard.profile.error.not-found-user")}
+                isFetching={fetchingPatient}
+                refetch={refetchPatient}
+            />
         );
 
     const isSaving = updatePatientMutation.isPending;
