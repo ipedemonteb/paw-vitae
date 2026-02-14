@@ -33,6 +33,8 @@ function PatientMedicalHistory() {
         pageSize: searchParams.pageSize,
     });
 
+    // TODO: Handle isError case
+
     const completed = (appointments?.data ?? []).filter(a => a.status === "completo");
 
     return (

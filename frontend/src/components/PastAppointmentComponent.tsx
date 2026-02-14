@@ -16,6 +16,7 @@ import {useCoverage} from "@/hooks/useCoverages.ts";
 import type {AppointmentDTO} from "@/data/appointments.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 const loadingSkeleton =
     "w-full h-102 sm:h-56";
@@ -111,7 +112,7 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
     const { url: doctorImgUrl, isLoading: loadingDoctorImg } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment.specialty);
     const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverages);
-    const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointment.appointmentFiles, open);
+    const { data: files, isLoading: loadingFiles, isError: filesError, refetch: filesRefetch, isFetching: filesFetching } = useAppointmentFiles(appointment.appointmentFiles, open);
 
     const dateObj = new Date(appointment.date);
     const isValidDate = !Number.isNaN(dateObj.getTime());
@@ -138,10 +139,12 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 
     if(isLoading) return <Skeleton className={loadingSkeleton}/>
 
+    //TODO: handle isError
+
     return (
         <Card className={appointmentContainer}>
             <div className={`${upperContainer} ${open ? upperBorderWhenOpen : ""}`}>
-                <div className={leftSection}>
+                <div className={`${leftSection} ${open ? "" : "sm:rounded-l-xl"}`}>
                     <div className={dateBlock}>
                         <span className={monthText}>{month}</span>
                         <span className={dayText}>{day}</span>
@@ -220,12 +223,19 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
                                 {appointment.report.length > 0 ? appointment.report : t("medical-history.component.no-report")}
                             </p>
                         </Card>
-                        {loadingFiles ? (
-                            <div className="flex w-full items-center justify-center py-4">
-                                <Spinner className="text-[var(--primary-color)]" />
+                        {loadingFiles ?
+                            <div className="flex w-full h-36 items-center justify-center">
+                                <Spinner className="size-6 text-(--primary-color)" />
                             </div>
-                        ) : (
-                            (files?.length ?? 0) > 0 ? (
+                        : filesError || true ?
+                            <Card className="mt-4">
+                                <RefetchComponent
+                                    isFetching={filesFetching}
+                                    onRefetch={filesRefetch}
+                                    errorText={t("medical-history.component.error-files")}
+                                />
+                            </Card>
+                        :   (files?.length ?? 0) > 0 ? (
                                 <div className={filesContainer}>
                                     {files!.map((f: any, idx: number) => (
                                         <FileComponent
@@ -237,10 +247,9 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
                                         />
                                     ))}
                                 </div>
-                            ) : (
-                                <NoFilesComponent />
-                            )
-                        )}
+                            ) : <NoFilesComponent />
+
+                        }
                     </div>
                 </div>
             </div>
