@@ -39,39 +39,41 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
     const {data: availability} = useDoctorAvailability(id, officeId)
     const hasAvailability = !(availability?.filter(a => officeIdFromSelf(a.office) === officeId).length === 0);
     return (
-        <DialogContent className="max-w-155! p-5 overflow-x-auto">
-            <form onSubmit={(event) => {
+        <DialogContent className="overflow-x-auto w-[calc(100%-2rem)] mx-auto sm:max-w-155!">
+        <form onSubmit={(event) => {
                 event.preventDefault()
                 onSubmit()
             }}>
-                <DialogHeader className="">
-                    <DialogTitle className="w-full relative pb-3">
+                <DialogHeader className="font-bold text-xl text-(--text-color)">
+                    <DialogTitle>
                         {title}
                     </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col items-center gap-3">
-                    <div className="flex justify-between w-full items-center gap-4">
-                        <div className="flex flex-col gap-1.5 text-(--text-light)  ">
+                <div className="flex mt-4 flex-col items-center gap-3">
+                    <div className="flex flex-col sm:flex-row w-full items-start gap-4 sm:gap-4">
+                        <div className="flex flex-col gap-1 text-(--text-light) w-full sm:flex-1 min-w-0">
                             <Label htmlFor="name" className="text-md">{t("offices.dialog.nameLabel")}</Label>
                             <Input
                                 disabled={mutationPending}
                                 id="name"
                                 placeholder={t("offices.dialog.placeholderName")}
-                                className={` w-70 placeholder:opacity-70  selection:text-black" type="text ${form.formState.errors.name ? "border-(--danger)" : ""}`}
+                                className={` w-full sm:w-70 placeholder:opacity-70  selection:text-black" type="text ${form.formState.errors.name ? "border-(--danger)" : ""}`}
                                 {...form.register("name")}
                             />
                             {errors.name && (
                                 <p className="text-(--danger) text-sm">{errors.name.message}</p>
                             )}
                         </div>
-                        <div className="flex flex-col gap-1.5 text-(--text-light) text-md">
+                        <div className="flex flex-col gap-1 text-(--text-light) w-full sm:flex-1 min-w-0">
                             <Label className="text-[1rem]">{t("offices.dialog.neighborhoodLabel")}</Label>
-                            <NeighborhoodCombobox
-                                error={errors.neighborhood}
-                                mutationPending={mutationPending}
-                                value={form.watch("neighborhood")}
-                                onChange={(val) => form.setValue("neighborhood", val, { shouldDirty: true })}
-                            />
+                            <div className="w-full min-w-0">
+                                <NeighborhoodCombobox
+                                    error={errors.neighborhood}
+                                    mutationPending={mutationPending}
+                                    value={form.watch("neighborhood")}
+                                    onChange={(val) => form.setValue("neighborhood", val, { shouldDirty: true })}
+                                />
+                            </div>
                         </div>
                     </div>
                     {form.watch("active") !== undefined  && (

@@ -29,7 +29,6 @@ import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
-import GenericError from "@/pages/GenericError.tsx";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
