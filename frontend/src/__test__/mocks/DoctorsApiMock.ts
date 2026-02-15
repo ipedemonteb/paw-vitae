@@ -201,7 +201,20 @@ export const doctorsHandlers = [
         return new HttpResponse(null, { status: 204 });
     }),
 
-    http.put(`${BASE_URL}/doctors/:id/unavailability`, () => {
+    http.delete(`${BASE_URL}/doctors/:id/unavailability/:unavailabilityId`, () => {
         return new HttpResponse(null, { status: 204 });
+    }),
+
+    http.post(`${BASE_URL}/doctors/:id/unavailability`, ({ params }) => {
+        const { id } = params;
+
+        const newResourceUrl = `${BASE_URL}/doctors/${id}/unavailability/999`;
+
+        return new HttpResponse(null, {
+            status: 201,
+            headers: {
+                'Location': newResourceUrl
+            }
+        });
     })
 ];

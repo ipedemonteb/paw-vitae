@@ -15,10 +15,10 @@ import {
     useRegisterDoctorMutation,
     useUpdateDoctorProfileMutation,
     useUpdateDoctorImageMutation,
-    useUpdateDoctorUnavailabilityMutation,
-    useUpdateDoctorMutation
+    useUpdateDoctorMutation, useCreateDoctorUnavailabilityMutation
 } from "@/hooks/useDoctors.ts";
 import * as doctorService from "@/data/doctors";
+import type {UnavailabilityForm} from "@/data/doctors";
 
 
 beforeAll(() => {
@@ -214,13 +214,12 @@ describe('Doctors Hooks Integration Tests', () => {
 
         it('should update the unavailability dates', async () => {
             const url = `${BASE_URL}/doctors/1/unavailability`;
-            const { result } = renderHook(() => useUpdateDoctorUnavailabilityMutation(url));
+            const { result } = renderHook(() => useCreateDoctorUnavailabilityMutation(url));
 
-            const payload = {
-                unavailabilitySlots: [
-                    { startDate: '2026-05-01', endDate: '2026-05-10' }
-                ]
-            };
+            const payload: UnavailabilityForm = {
+                startDate: '2026-05-01',
+                endDate: '2026-05-10'
+            }
 
             result.current.mutate(payload);
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
