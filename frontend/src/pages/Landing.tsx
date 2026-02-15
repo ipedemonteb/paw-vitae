@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input.tsx";
-import { SpecialtyCombobox } from "@/components/SpecialtyCombobox.tsx";
+import { SpecialtyCombobox } from "@/components/ui/specialty-combobox.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
     Search,
