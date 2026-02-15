@@ -63,7 +63,7 @@ export function CoverageCombobox({
     const triggerClass = cn("w-[200px] justify-between", buttonClassName, className)
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={open} onOpenChange={setOpen} modal={true}>
             <PopoverTrigger asChild>
                 <Button variant="outline" role="combobox" aria-expanded={open} className={triggerClass}>
           <span className="min-w-0 flex-1 text-left whitespace-nowrap overflow-hidden text-ellipsis">
