@@ -17,6 +17,7 @@ export const ContentTypes = {
     OFFICE_LIST: "application/vnd.vitae.office-list.v1+json",
     AVAILABILITY_LIST: "application/vnd.vitae.availability-list.v1+json",
     UNAVAILABILITY_LIST: "application/vnd.vitae.unavailability-list.v1+json",
+    UNAVAILABILITY: "application/vnd.vitae.unavailability.v1+json",
     SPECIALTY: "application/vnd.vitae.specialty.v1+json",
     SPECIALTY_LIST: "application/vnd.vitae.specialty-list.v1+json",
     OFFICE_SPECIALTY_LIST: "application/vnd.vitae.office-specialty-list.v1+json",

@@ -17,7 +17,12 @@ import {
 } from "@/components/ui/dialog.tsx";
 import {DatePicker} from "@/components/ui/date-picker.tsx";
 import {formatLongDate, localDateToIso} from "@/utils/dateUtils.ts";
-import {useDoctor, useDoctorUnavailability, useUpdateDoctorUnavailabilityMutation} from "@/hooks/useDoctors.ts";
+import {
+    useDoctor,
+    useDoctorUnavailability,
+    useCreateDoctorUnavailabilityMutation,
+    useDeleteDoctorUnavailabilityMutation
+} from "@/hooks/useDoctors.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useSearchParams} from "react-router-dom";
@@ -27,6 +32,7 @@ import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 import {DashboardRefetch} from "@/components/DashboardRefetch.tsx";
 
 type UnavailabilityRange = {
+    id?: number;
     startDate: string;
     endDate: string;
 };
@@ -39,7 +45,7 @@ const normalizeRange = (startIso: string, endIso: string): UnavailabilityRange =
         : { startDate: endIso, endDate: startIso };
 };
 
-const rangeKey = (r: UnavailabilityRange) => `${r.startDate}_${r.endDate}`;
+const rangeKey = (r: UnavailabilityRange) => `${r.id}_${r.startDate}_${r.endDate}`;
 
 type UnavailabilityError = "range" | "overlap" | null;
 
@@ -117,12 +123,14 @@ export default function UnavailabilityComponent() {
 
     const unavailabilities = useMemo(() => {
         return (unavailabilityPage?.data || []).map(u => ({
+            id: u.id,
             startDate: u.startDate,
             endDate: u.endDate
         }));
     }, [unavailabilityPage]);
 
-    const putUnavailability = useUpdateDoctorUnavailabilityMutation(unavailabilityUrl ?? "");
+    const createUnavailability = useCreateDoctorUnavailabilityMutation(unavailabilityUrl ?? "");
+    const deleteUnavailability = useDeleteDoctorUnavailabilityMutation(unavailabilityUrl ?? "");
 
     const [addOpen, setAddOpen] = useState(false);
     const [startDate, setStartDate] = useState<Date | undefined>(undefined);
@@ -155,16 +163,9 @@ export default function UnavailabilityComponent() {
     }, []);
 
     const isLoading = doctorLoading || unavailabilityLoading;
-    const pending = putUnavailability.isPending;
+    const pending = createUnavailability.isPending || deleteUnavailability.isPending;
     const [pendingAction, setPendingAction] = useState<"add" | "delete" | null>(null);
     const isUnavailability = unavailabilities.length > 0;
-
-    const buildPayload = (ranges: UnavailabilityRange[]) => ({
-        unavailabilitySlots: ranges.map((r) => ({
-            startDate: r.startDate,
-            endDate: r.endDate,
-        })),
-    });
 
     const onConfirmAdd = () => {
         if (!startDate || !endDate) return;
@@ -177,15 +178,15 @@ export default function UnavailabilityComponent() {
         const normalized = normalizeRange(startIso, endIso);
 
         if (endIso < startIso) return;
-        if (hasOverlap(normalized, unavailabilities)) return;
-
-        const next = [normalized, ...unavailabilities];
 
         setAddOpen(false);
         setStartDate(undefined);
         setEndDate(undefined);
 
-        putUnavailability.mutate(buildPayload(next), {
+        createUnavailability.mutate({
+            startDate: normalized.startDate,
+            endDate: normalized.endDate
+        }, {
             onSuccess: () => {
                 toast.success(t("unavailability.toast_saved"));
                 setPendingAction(null);
@@ -199,18 +200,15 @@ export default function UnavailabilityComponent() {
 
     const onDeleteRange = (range: UnavailabilityRange) => {
         if (!unavailabilityUrl) return;
+        if (!range.id) return;
 
         setPendingAction("delete");
 
-        const next = unavailabilities.filter(
-            (x) => !(x.startDate === range.startDate && x.endDate === range.endDate)
-        );
-
-        putUnavailability.mutate(buildPayload(next), {
+        deleteUnavailability.mutate(range.id, {
             onSuccess: () => {
                 toast.success(t("unavailability.toast_deleted"));
                 setPendingAction(null);
-                },
+            },
             onError: () => {
                 toast.error(t("unavailability.toast_deleted_error"));
                 setPendingAction(null);
@@ -377,7 +375,7 @@ function UnavailabilityItem({
                                 pending,
                                 pendingAction,
                             }: {
-    range: { startDate: string; endDate: string };
+    range: { id?: number; startDate: string; endDate: string };
     locale: string;
     onDelete: () => void;
     pending: boolean;

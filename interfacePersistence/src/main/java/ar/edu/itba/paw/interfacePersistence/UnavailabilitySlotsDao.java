@@ -4,12 +4,13 @@ import ar.edu.itba.paw.models.UnavailabilitySlot;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface UnavailabilitySlotsDao {
 
     UnavailabilitySlot create(UnavailabilitySlot slot);
-
-    void updateDoctorUnavailability(long doctorId, List<UnavailabilitySlot> unavailabilitySlots);
+    Optional<UnavailabilitySlot> getById(long unavailabilitySlotId);
+    void delete(UnavailabilitySlot slot);
 
     List<UnavailabilitySlot> getUnavailabilityByDoctorId(long doctorId);
     List<UnavailabilitySlot> getUnavailabilityByDoctorIdPaginated(long doctorId, int page, int pageSize);
@@ -22,4 +23,5 @@ public interface UnavailabilitySlotsDao {
      List<UnavailabilitySlot> getUnavailabilityByDoctorIdCurrentAndNextMonth(long doctorId);
 
      List<UnavailabilitySlot> getUnavailabilityByDoctorIdAndMonthAndYear(long doctorId, int month, int year);
+     boolean hasOverlap(long doctorId, LocalDate start, LocalDate end);
 }

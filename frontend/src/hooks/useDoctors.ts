@@ -19,7 +19,7 @@ import {
     type DoctorUpdateForm,
     putDoctorImage,
     updateDoctorProfileComplete,
-    type DoctorUnavailabilityFormDTO, putDoctorUnavailability, type UnavailabilityQuery,
+    type UnavailabilityQuery, createDoctorUnavailability, type UnavailabilityForm, deleteDoctorUnavailability,
 } from "@/data/doctors";
 import {keepPreviousData, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useEffect, useState, useMemo} from "react";
@@ -176,16 +176,7 @@ export function useUpdateDoctorImageMutation(url:string){
     });
 }
 
-export function useUpdateDoctorUnavailabilityMutation(url:string){
-    const queryClient = useQueryClient();
 
-    return useMutation<any, AxiosError<any>, DoctorUnavailabilityFormDTO>({
-        mutationFn: (data: DoctorUnavailabilityFormDTO) => putDoctorUnavailability(url, data),
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ['doctors', 'unavailability'] });
-        }
-    });
-}
 
 export function useUpdateDoctorMutation() {
     const queryClient = useQueryClient();
@@ -208,5 +199,23 @@ export function useUpdateDoctorMutation() {
             ])
         }
 
+    });
+}
+export function useCreateDoctorUnavailabilityMutation(url: string){
+    const queryClient = useQueryClient();
+    return useMutation<any, AxiosError<any>, UnavailabilityForm>({
+        mutationFn: (data: UnavailabilityForm) => createDoctorUnavailability(url, data),
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['doctors', 'unavailability'] });
+        }
+    });
+}
+export function useDeleteDoctorUnavailabilityMutation(url: string,slotId: number){
+    const queryClient = useQueryClient();
+    return useMutation<any, AxiosError<any>, number>({
+        mutationFn: (slotId: number) => deleteDoctorUnavailability(url, slotId),
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['doctors', 'unavailability'] });
+        }
     });
 }
