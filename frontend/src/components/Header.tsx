@@ -422,7 +422,7 @@ function LoadingComponent() {
     return (
         <div className={authDesktop}>
             <Skeleton className={`${headerAvatar} rounded-full`} />
-            <Skeleton className="w-[140px] h-6" />
+            <Skeleton className="w-35 h-6" />
         </div>
     );
 }
