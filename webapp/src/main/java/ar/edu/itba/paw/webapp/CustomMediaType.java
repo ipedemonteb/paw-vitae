@@ -44,6 +44,7 @@ public final class CustomMediaType {
     public static final String APPLICATION_OFFICE_LIST = "application/vnd.vitae.office-list.v1+json";
 
     // --- AVAILABILITY / UNAVAILABILITY ---
+    public static final String APPLICATION_UNAVAILABILITY ="application/vnd.vitae.unavailability.v1+json";
     public static final String APPLICATION_AVAILABILITY_LIST = "application/vnd.vitae.availability-list.v1+json";
     public static final String APPLICATION_UNAVAILABILITY_LIST = "application/vnd.vitae.unavailability-list.v1+json";
 

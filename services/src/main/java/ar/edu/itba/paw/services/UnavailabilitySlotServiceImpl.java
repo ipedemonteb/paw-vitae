@@ -4,6 +4,9 @@ import ar.edu.itba.paw.interfacePersistence.UnavailabilitySlotsDao;
 import ar.edu.itba.paw.interfaceServices.UnavailabilitySlotsService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exception.BussinesRuleException;
+import ar.edu.itba.paw.models.exception.ResourceOwnershipException;
+import ar.edu.itba.paw.models.exception.UnavailabilitySlotNotFoundException;
+import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,41 +34,36 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
         return unavailabilitySlotsDao.isUnavailableAtDate(doctorId, date);
     }
 
-    @Transactional
-    @Override
-    public UnavailabilitySlot create(UnavailabilitySlot slot) {
-        LOGGER.debug("Creating unavailability slot for doctor : {}", slot);
-        UnavailabilitySlot toReturn = unavailabilitySlotsDao.create(slot);
-        LOGGER.info("UnavailabilitySlot created: {}", toReturn);
-        return toReturn;
-    }
+
 
     @Transactional
     @Override
-    public List<UnavailabilitySlot> create(List<UnavailabilitySlot> slots) {
-        List<UnavailabilitySlot> returnSlots = new ArrayList<>();
-        for (UnavailabilitySlot slot : slots) {
-            returnSlots.add(create(slot));
+    public UnavailabilitySlot create(Doctor doctor, UnavailabilitySlotForm form) {
+        LOGGER.debug("Creating unavailability slot for doctor {}", doctor.getId());
+
+        if ( form.getEndDate() == null || form.getStartDate() == null || form.getStartDate().isAfter(form.getEndDate()) || form.getStartDate().isBefore(LocalDate.now())) {
+            throw new BussinesRuleException("exception.unavailable.invalidRange");
         }
-        LOGGER.debug("Creating {} unavailability slots for doctor ", slots.size());
-        return returnSlots;
+        boolean overlaps = unavailabilitySlotsDao.hasOverlap(doctor.getId(), form.getStartDate(), form.getEndDate());
+        if (overlaps) {
+            throw new BussinesRuleException("exception.unavailable.overlap");
+        }
+
+        UnavailabilitySlot slot = form.toEntity(doctor);
+        return unavailabilitySlotsDao.create(slot);
     }
+
 
     @Transactional
     @Override
-    public void updateDoctorUnavailability(Doctor doctor, List<UnavailabilitySlotForm> unavailabilitySlots) {
-        if (unavailabilitySlots == null) {
-            unavailabilitySlots = Collections.emptyList();
+    public void deleteDoctorUnavailability(long doctorId, long unavailabilitySlotId) {
+        UnavailabilitySlot slot = unavailabilitySlotsDao.getById(unavailabilitySlotId)
+                .orElseThrow(UnavailabilitySlotNotFoundException::new);
+        if (slot.getDoctor().getId() != doctorId) {
+            throw new ResourceOwnershipException();
         }
-        LOGGER.debug("Updating unavailability for doctor {}: {} slots", doctor.getId(), unavailabilitySlots.size());
-        List<UnavailabilitySlotForm> filteredSlots = unavailabilitySlots.stream()
-                .filter(slot -> slot.getStartDate() != null && slot.getEndDate() != null)
-                .toList();
-
-        unavailabilitySlotsDao.updateDoctorUnavailability(doctor.getId(), transformToUnavailabilitySlots(doctor, filteredSlots));
-        LOGGER.debug("Updated unavailability for doctor {}: {} slots", doctor.getId(), filteredSlots.size());
+        unavailabilitySlotsDao.delete(slot);
     }
-
     @Transactional(readOnly = true)
     @Override
     public Page<UnavailabilitySlot> getUnavailabilityByDoctorId(long doctorId, String from, String to, int page, int pageSize) {
@@ -84,14 +82,4 @@ public class UnavailabilitySlotServiceImpl implements UnavailabilitySlotsService
         return new Page<>(pagedSlots, page, pageSize, totalSlots);
     }
 
-    @Transactional
-    @Override
-    public List<UnavailabilitySlot> transformToUnavailabilitySlots(Doctor doctor, List<UnavailabilitySlotForm> unavailabilitySlots) {
-        List<UnavailabilitySlot> slots = new ArrayList<>();
-        for (UnavailabilitySlotForm slot : unavailabilitySlots) {
-            UnavailabilitySlot unavailabilitySlot = slot.toEntity(doctor);
-            slots.add(unavailabilitySlot);
-        }
-        return slots;
-    }
 }

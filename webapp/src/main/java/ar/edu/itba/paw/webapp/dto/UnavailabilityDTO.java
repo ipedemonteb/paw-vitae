@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UnavailabilityDTO {
-
+    private long id;
     private LocalDate startDate;
     private LocalDate endDate;
     private URI doctor;
@@ -18,7 +18,7 @@ public class UnavailabilityDTO {
         UnavailabilityDTO dto = new UnavailabilityDTO();
         dto.startDate = slot.getStartDate();
         dto.endDate = slot.getEndDate();
-
+        dto.id = slot.getId();
         dto.doctor = uriInfo.getBaseUriBuilder().path("api")
                 .path("doctors")
                 .path(String.valueOf(slot.getDoctor().getId()))
@@ -32,7 +32,8 @@ public class UnavailabilityDTO {
                 .map(s -> fromUnavailabilitySlot(s, uriInfo))
                 .collect(Collectors.toList());
     }
-
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
     public LocalDate getStartDate() { return startDate; }
     public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
     public LocalDate getEndDate() { return endDate; }

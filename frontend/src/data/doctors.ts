@@ -98,6 +98,7 @@ export interface DoctorProfileDTO {
 }
 
 export interface UnavailabilityDTO {
+    id: number;
     startDate: string;
     endDate: string;
     doctor: string;
@@ -119,9 +120,6 @@ export interface UnavailabilityForm {
     startDate: string;
 }
 
-export interface DoctorUnavailabilityFormDTO{
-    unavailabilitySlots: UnavailabilityForm[];
-}
 
 const extractIdFromUrl = (url: string): string => {
     if (!url) return "";
@@ -338,12 +336,8 @@ export async function putDoctorImage(doctorImageUrl: string, image: File) {
 }
 
 
-export async function putDoctorUnavailability(url: string, data:DoctorUnavailabilityFormDTO){
-    const res = await api.put(url, data, {
-        headers: {
-            "content-type" : ContentTypes.UNAVAILABILITY_LIST
-        }
-    });
+export async function deleteDoctorUnavailability(url: string, unavailabilityId: number) {
+    const res = await api.delete(url + `/${unavailabilityId}`);
     return res.data;
 }
 
@@ -358,4 +352,12 @@ export async function updateDoctorProfileComplete(params: {
     }
 
     return updateDoctor(params.doctorUrl, params.data);
+}
+export async function createDoctorUnavailability(url: string, data: UnavailabilityForm){
+    const res = await api.post(url, data, {
+        headers: {
+            "content-type" : ContentTypes.UNAVAILABILITY
+        }
+    });
+    return res.data;
 }

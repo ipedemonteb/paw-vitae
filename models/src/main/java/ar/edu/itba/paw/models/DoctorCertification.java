@@ -11,7 +11,8 @@ import java.util.Objects;
 public class DoctorCertification {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_certifications_id_seq")
+    @SequenceGenerator(name = "doctor_certifications_id_seq", sequenceName = "doctor_certifications_id_seq", allocationSize = 1)
     private Long id;
 
     @JsonBackReference

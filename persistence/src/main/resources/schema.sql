@@ -128,10 +128,11 @@ CREATE TABLE IF NOT EXISTS Doctor_Offices (
 );
 
 CREATE TABLE IF NOT EXISTS Doctor_Unavailability (
+    id SERIAL PRIMARY KEY,
     doctor_id INT NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    PRIMARY KEY (doctor_id, start_date, end_date),
+    UNIQUE (doctor_id, start_date, end_date),
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
 );
 

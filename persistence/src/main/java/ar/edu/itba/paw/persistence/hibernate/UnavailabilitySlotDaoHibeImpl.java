@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
@@ -24,19 +25,20 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
     }
 
     @Override
-    public void updateDoctorUnavailability(long doctorId, List<UnavailabilitySlot> unavailabilitySlots) {
-        em.createQuery("DELETE FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId")
-                .setParameter("doctorId", doctorId)
-                .executeUpdate();
+    public Optional<UnavailabilitySlot> getById(long unavailabilitySlotId) {
+        return Optional.ofNullable(em.find(UnavailabilitySlot.class, unavailabilitySlotId));
+    }
 
-        for (UnavailabilitySlot slot : unavailabilitySlots) {
-            em.persist(slot);
+    @Override
+    public void delete(UnavailabilitySlot slot) {
+        if(slot != null) {
+            em.remove(slot);
         }
     }
 
     @Override
     public List<UnavailabilitySlot> getUnavailabilityByDoctorId(long doctorId) {
-        return em.createQuery("FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId ORDER BY u.id.startDate",
+        return em.createQuery("FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId ORDER BY u.startDate",
                         UnavailabilitySlot.class)
                 .setParameter("doctorId", doctorId)
                 .getResultList();
@@ -45,7 +47,7 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
     @Override
     public boolean isUnavailableAtDate(long doctorId, LocalDate date) {
         Long count = em.createQuery(
-                        "SELECT COUNT(u) FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId AND :date BETWEEN u.id.startDate AND u.id.endDate", Long.class)
+                        "SELECT COUNT(u) FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId AND :date BETWEEN u.startDate AND u.endDate", Long.class)
                 .setParameter("doctorId", doctorId)
                 .setParameter("date", date)
                 .getSingleResult();
@@ -62,8 +64,8 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
             FROM UnavailabilitySlot u 
             WHERE u.doctor.id = :doctorId 
               AND (
-                  u.id.startDate <= :endOfNextMonth 
-                  AND u.id.endDate >= :startOfThisMonth
+                  u.startDate <= :endOfNextMonth 
+                  AND u.endDate >= :startOfThisMonth
               )
         """, UnavailabilitySlot.class)
                 .setParameter("doctorId", doctorId)
@@ -78,21 +80,38 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
         LocalDate now = LocalDate.now();
         return em.createQuery("FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId " +
-                        "AND u.id.startDate <= :end AND u.id.endDate >= :start AND u.id.endDate > :now ", UnavailabilitySlot.class)
+                        "AND u.startDate <= :end AND u.endDate >= :start AND u.endDate > :now ", UnavailabilitySlot.class)
                 .setParameter("doctorId", doctorId)
                 .setParameter("start", start)
                 .setParameter("end", end)
                 .setParameter("now", now)
                 .getResultList();
     }
+
+    @Override
+    public boolean hasOverlap(long doctorId, LocalDate start, LocalDate end) {
+        String query = "SELECT COUNT(u) FROM UnavailabilitySlot u " +
+                "WHERE u.doctor.id = :doctorId " +
+                "AND u.startDate <= :end " +
+                "AND u.endDate >= :start";
+
+        Long count = em.createQuery(query, Long.class)
+                .setParameter("doctorId", doctorId)
+                .setParameter("start", start)
+                .setParameter("end", end)
+                .getSingleResult();
+
+        return count > 0;
+    }
+
     @Override
     public List<UnavailabilitySlot> getUnavailabilityByDoctorIdInDateRange(long doctorId, LocalDate from, LocalDate to) {
         return em.createQuery("""
             FROM UnavailabilitySlot u 
             WHERE u.doctor.id = :doctorId 
-              AND u.id.startDate <= :to 
-              AND u.id.endDate >= :from
-            ORDER BY u.id.startDate ASC
+              AND u.startDate <= :to 
+              AND u.endDate >= :from
+            ORDER BY u.startDate ASC
             """, UnavailabilitySlot.class)
                 .setParameter("doctorId", doctorId)
                 .setParameter("from", from)
@@ -101,8 +120,10 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
     }
     @Override
     public List<UnavailabilitySlot> getUnavailabilityByDoctorIdPaginated(long doctorId, int page, int pageSize) {
-        return em.createQuery("FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId ORDER BY u.id.startDate DESC", UnavailabilitySlot.class)
+        LocalDate now = LocalDate.now();
+        return em.createQuery("FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId AND u.endDate >= :now ORDER BY u.startDate DESC", UnavailabilitySlot.class)
                 .setParameter("doctorId", doctorId)
+                .setParameter("now", now)
                 .setFirstResult((page - 1) * pageSize)
                 .setMaxResults(pageSize)
                 .getResultList();

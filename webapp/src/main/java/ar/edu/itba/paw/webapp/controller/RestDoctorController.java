@@ -270,18 +270,39 @@ public class RestDoctorController {
         return Response.noContent().build();
     }
 
-    @PUT
+//    @PUT
+//    @Path("/{id:\\d+}/unavailability")
+//    @Consumes(CustomMediaType.APPLICATION_UNAVAILABILITY_LIST)
+//    public Response setDoctorUnavailability(
+//            @PathParam("id") final long id,
+//            @Valid @NotNull DoctorUnavailabilityForm unavailabilityForm
+//    ) {
+//        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
+//        this.unavailabilitySlotsService.updateDoctorUnavailability(doctor,unavailabilityForm.getUnavailabilitySlots());
+//        return Response.noContent().build();
+//    }
+
+    @POST
     @Path("/{id:\\d+}/unavailability")
-    @Consumes(CustomMediaType.APPLICATION_UNAVAILABILITY_LIST)
-    public Response setDoctorUnavailability(
+    @Consumes(CustomMediaType.APPLICATION_UNAVAILABILITY)
+    public Response createDoctorUnavailability(
             @PathParam("id") final long id,
-            @Valid @NotNull DoctorUnavailabilityForm unavailabilityForm
+            @Valid @NotNull UnavailabilitySlotForm slotForm
     ) {
         Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
-        this.unavailabilitySlotsService.updateDoctorUnavailability(doctor,unavailabilityForm.getUnavailabilitySlots());
-        return Response.noContent().build();
+        UnavailabilitySlot createdSlot = this.unavailabilitySlotsService.create(doctor, slotForm);
+        return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(createdSlot.getId())).build()).build();
     }
 
+    @DELETE
+    @Path("/{id:\\d+}/unavailability/{slotId:\\d+}")
+    public Response deleteDoctorUnavailability(
+            @PathParam("id") final long doctorId,
+            @PathParam("slotId") final long slotId
+    ) {
+        this.unavailabilitySlotsService.deleteDoctorUnavailability(doctorId, slotId);
+        return Response.noContent().build();
+    }
     @POST
     @Path("/{id:\\d+}/offices")
     @Consumes(value = CustomMediaType.APPLICATION_OFFICE)

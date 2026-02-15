@@ -33,10 +33,7 @@ public class UnavailabilitySlotForm {
         );
     }
     public UnavailabilitySlot toEntity(Doctor doctor) {
-        UnavailabilitySlot slot = new UnavailabilitySlot();
-        slot.setId(new UnavailabilitySlotId(doctor.getId(), startDate, endDate));
-        slot.setDoctor(doctor);
-        return slot;
+        return new UnavailabilitySlot(doctor, this.startDate, this.endDate);
     }
 
 }

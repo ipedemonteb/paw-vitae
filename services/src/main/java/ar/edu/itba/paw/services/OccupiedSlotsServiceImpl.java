@@ -9,6 +9,7 @@ import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.DoctorOfficeAvailability;
 import ar.edu.itba.paw.models.Page; // Tu modelo de paginación
 import ar.edu.itba.paw.models.exception.BussinesRuleException;
+import ar.edu.itba.paw.models.exception.OccupiedSlotNotFoundException;
 import ar.edu.itba.paw.models.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,9 @@ public class OccupiedSlotsServiceImpl implements OccupiedSlotsService {
                 .filter(slot -> slot.getStartTime().equals(startTime))
                 .findFirst();
         occupiedSlotOpt.ifPresent(occupiedSlot -> occupiedSlotsDao.delete(occupiedSlot.getId()));
+        if (occupiedSlotOpt.isEmpty()) {
+            throw new OccupiedSlotNotFoundException();
+        }
     }
 
 
