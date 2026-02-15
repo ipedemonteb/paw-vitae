@@ -20,6 +20,9 @@ public class CoverageListValidator implements javax.validation.ConstraintValidat
         if (values == null) {
             return true;
         }
+        if (values.isEmpty()) {
+            return false;
+        }
         for (Long value : values) {
             if (cs.findById(value).isEmpty()) {
                 return false;
