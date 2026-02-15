@@ -24,6 +24,9 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildPaginationHeaders;
 
@@ -82,7 +85,7 @@ public class RestAppointmentController {
     @Produces(value = CustomMediaType.APPLICATION_APPOINTMENT)
     public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Appointment appointment = this.appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
-        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}), request, appointment.hashCode()).build();
+        return CacheUtils.conditionalCacheLastModified(Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}), request, appointment.getLastModified()).build();
         //return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}).build();
     }
 
