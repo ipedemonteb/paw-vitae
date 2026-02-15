@@ -89,17 +89,7 @@ public class RestPatientController {
             @Valid @NotNull UpdatePatientForm updatePatientForm
     ){
         final Patient patient = this.patientService.getById(id).orElseThrow(UserNotFoundException::new);
-        patientService.updatePatient(patient,updatePatientForm.getName(),updatePatientForm.getLastName(),updatePatientForm.getPhone(),updatePatientForm.getCoverage());
-        return Response.noContent().build();
-    }
-    @PATCH
-    @Path("/{id:\\d+}/")
-    @Consumes(CustomMediaType.APPLICATION_USER_PASSWORD)
-    public Response changePassword(
-            @PathParam("id") final long id,
-            @Valid @NotNull ChangePasswordForm changePasswordForm
-    ){
-        patientService.changePassword(id,changePasswordForm.getPassword());
+        patientService.updatePatient(patient,updatePatientForm.getName(),updatePatientForm.getLastName(),updatePatientForm.getPhone(),updatePatientForm.getCoverage(),updatePatientForm.getPassword());
         return Response.noContent().build();
     }
 

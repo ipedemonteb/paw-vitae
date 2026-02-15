@@ -9,24 +9,47 @@ import ar.edu.itba.paw.models.Specialty;
 import javax.validation.constraints.*;
 import java.util.List;
 
+@RepeatPasswordMatch(password = "password", repeatPassword = "repeatPassword", message = "register.passwordsDoNotMatch")
 public class UpdateDoctorForm {
-    @Size(min = 1, max = 30)
-    @NotEmpty
-    private String name;
 
+    @Pattern(regexp = ".*\\S.*", message = "name.invalid")
     @Size(min = 1, max = 30)
-    @NotEmpty
+    private String name;
+    @Pattern(regexp = ".*\\S.*", message = "lastName.invalid")
+    @Size(min = 1, max = 30)
     private String lastName;
 
-    @NotEmpty
     @Pattern(regexp = "\\+?[0-9. ()-]{7,25}",message = "phone.invalid")
     private String phone;
+
     @CoverageList(message = "{coverages.invalids}")
-    @NotEmpty
     private List<Long> coverages;
+
     @SpecialtyList(message = "specialties.invalids")
-    @NotEmpty
     private List<Long> specialties;
+
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "password.invalid")
+    @Size(min = 8, max = 50)
+    private String password;
+
+
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{8,}$", message = "password.invalid")
+    @Size(min = 8, max = 50)
+    private String repeatPassword;
+
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRepeatPassword(String repeatPassword) {
+        this.repeatPassword = repeatPassword;
+    }
+    public String getRepeatPassword(){
+        return repeatPassword;
+    }
 
     public String getName() {
         return name;

@@ -74,7 +74,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Transactional
     @Override
-    public void updatePatient(Patient patient, String name, String lastName, String phone, Long coverageId) {
+    public void updatePatient(Patient patient, String name, String lastName, String phone, Long coverageId,String newPassword) {
         LOGGER.debug("Updating patient with id {}: name={}, lastName={}, phone={}, coverageId={}", patient.getId(), name, lastName, phone, coverageId);
         if (name != null) {
             patient.setName(name);
@@ -89,6 +89,9 @@ public class PatientServiceImpl implements PatientService {
             Coverage coverage = coverageService.findById(coverageId)
                     .orElseThrow(CoverageNotFoundException::new);
             patient.setCoverage(coverage);
+        }
+        if (newPassword != null) {
+            userService.changePassword(patient.getId(), newPassword);
         }
 
         LOGGER.info("Patient updated successfully: id={}", patient.getId());

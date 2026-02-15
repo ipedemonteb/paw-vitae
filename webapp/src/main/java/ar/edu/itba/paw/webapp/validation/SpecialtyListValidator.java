@@ -17,11 +17,15 @@ public class SpecialtyListValidator implements ConstraintValidator<SpecialtyList
     }
 
     @Override
-    public boolean isValid(List<Long> strings, ConstraintValidatorContext constraintValidatorContext) {
-        if (strings == null) {
+    public boolean isValid(List<Long> specialties, ConstraintValidatorContext constraintValidatorContext) {
+        if (specialties == null) {
             return true;
         }
-        for (Long value : strings) {
+        if (specialties.isEmpty()) {
+            return false;
+        }
+
+        for (Long value : specialties) {
             if (specialtyService.getById(value).isEmpty()) {
                 return false;
             }

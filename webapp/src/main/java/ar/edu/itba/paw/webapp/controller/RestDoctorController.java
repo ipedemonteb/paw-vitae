@@ -208,7 +208,7 @@ public class RestDoctorController {
     ) {
         Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
         this.doctorService.updateDoctor(doctor, updateDoctorForm.getName(),
-                updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages());
+                updateDoctorForm.getLastName(), updateDoctorForm.getPhone(), updateDoctorForm.getSpecialties(), updateDoctorForm.getCoverages(),updateDoctorForm.getPassword());
         return Response.noContent().build();
     }
 
@@ -317,16 +317,6 @@ public class RestDoctorController {
     }
 
 
-    @PATCH
-    @Path("/{id:\\d+}")
-    @Consumes(value = CustomMediaType.APPLICATION_USER_PASSWORD)
-    public Response editDoctorPassword(
-            @PathParam("id") long id,
-            @Valid @NotNull final ChangePasswordForm changePasswordForm
-    ) {
-        doctorService.changePassword(id,changePasswordForm.getPassword());
-        return Response.noContent().build();
-    }
     @GET
     @Path("/{id:\\d+}/slots")
     @Consumes(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOTS_LIST)

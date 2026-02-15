@@ -87,16 +87,29 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages) {
+    public void updateDoctor(Doctor doctor, String name, String lastName, String phone, List<Long> specialties, List<Long> coverages,String newPassword) {
         LOGGER.debug("Updating doctor with id {}, name: {}, lastName: {}, phone: {}, specialties: {}, coverages: {}", doctor.getId(), name, lastName, phone, specialties, coverages);
-        doctor.setName(name);
-        doctor.setLastName(lastName);
-        doctor.setPhone(phone);
-        List<Specialty> newSpecialties = specialtyService.getByIds(specialties);
-        doctor.setSpecialtyList(newSpecialties);
-        List<Coverage> newCoverages = coverageService.findByIds(coverages);
-        doctorOfficeService.updateSpecialties(doctor, newSpecialties);
-        doctor.setCoverageList(newCoverages);
+        if (name != null){
+            doctor.setName(name);
+        }
+        if (lastName != null){
+             doctor.setLastName(lastName);
+        }
+        if (phone != null) {
+            doctor.setPhone(phone);
+        }
+        if (specialties != null) {
+            List<Specialty> newSpecialties = specialtyService.getByIds(specialties);
+            doctor.setSpecialtyList(newSpecialties);
+            doctorOfficeService.updateSpecialties(doctor, newSpecialties);
+        }
+        if (coverages != null) {
+            List<Coverage> newCoverages = coverageService.findByIds(coverages);
+            doctor.setCoverageList(newCoverages);
+        }
+        if (newPassword != null){
+            userService.changePassword(doctor.getId(), newPassword);
+        }
         LOGGER.info("Doctor updated successfully: id={}", doctor.getId());
     }
 

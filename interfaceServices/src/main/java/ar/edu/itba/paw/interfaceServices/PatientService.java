@@ -13,7 +13,7 @@ public interface PatientService {
     Patient create(String name, String lastName, String email, String password, String phone, List<Locale> locales, long coverageId, long neighborhoodId);
 
 
-    void updatePatient(Patient patient, String name, String lastName, String phone, Long coverageId);
+    void updatePatient(Patient patient, String name, String lastName, String phone, Long coverageId,String newPassword);
 
     long getAllPatientsDisplayCount();
     void changePassword(long userId,String password);
