@@ -65,7 +65,7 @@ vi.mock("@/components/ui/neighborhood-form-combobox.tsx", () => ({
 
 
 
-vi.mock("@/components/ui/passwordInput", () => ({
+vi.mock("@/components/PasswordInput", () => ({
     PasswordInput: ({ label, id, ...props }: any) => (
         <div>
             <label htmlFor={id}>{label}</label>

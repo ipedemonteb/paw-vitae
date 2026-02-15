@@ -8,7 +8,7 @@ import { useSearchParams } from "react-router-dom"
 
 type UserType = "patient" | "doctor"
 
-export default function RegisterPage() {
+export default function     RegisterPage() {
     const [searchParams, setSearchParams] = useSearchParams()
     const typeParam = searchParams.get("type")
 

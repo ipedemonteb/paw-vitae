@@ -92,8 +92,7 @@ describe("Login Page", () => {
         renderLogin();
 
         const passwordInput = screen.getByPlaceholderText("login.placeholder_password");
-        const toggleButton = screen.getByRole("button", { name: "login.show_password" }); // Asegúrate que el aria-label coincida con tu traducción mockeada
-
+        const toggleButton = screen.getByRole("button", { name: /show password/i });
         expect(passwordInput).toHaveAttribute("type", "password");
 
         await user.click(toggleButton);
@@ -133,7 +132,13 @@ describe("Login Page", () => {
         });
 
         renderLogin();
-        expect(screen.getByText("login.error_generic")).toBeInTheDocument();
+        const errorMessages = screen.getAllByText("login.error_generic");
+        expect(errorMessages).toHaveLength(2);
+
+        errorMessages.forEach(msg => {
+            expect(msg).toBeVisible();
+        });
+
     });
 
     it("should disable submit button while loading", () => {

@@ -54,7 +54,8 @@ vi.mock("@/utils/queryUtils.ts", () => ({
 }));
 
 vi.mock("@/utils/IdUtils.ts", () => ({
-    userIdFromSelf: () => "1"
+    userIdFromSelf: () => "1",
+    userIdFromImageUrl: vi.fn(() => "1")
 }));
 
 vi.mock('react-i18next', () => ({
