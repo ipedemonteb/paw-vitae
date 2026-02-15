@@ -4,6 +4,9 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 
@@ -20,9 +23,14 @@ public class CacheUtils {
         return responseBuilder.cacheControl(cacheControl);
     }
 
-    public static ResponseBuilder conditionalCacheLastModified(ResponseBuilder responseBuilder, Request request, Date lastModified) {
+    public static ResponseBuilder conditionalCacheLastModified(ResponseBuilder responseBuilder, Request request, LocalDateTime lastModifiedLDT) {
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setNoCache(true);
+
+        Date lastModified = null;
+        if (lastModifiedLDT != null) {
+            lastModified = Date.from(lastModifiedLDT.truncatedTo(ChronoUnit.SECONDS).atZone(ZoneId.systemDefault()).toInstant());
+        }
 
         final ResponseBuilder rb = request.evaluatePreconditions(lastModified);
         if (rb != null) {

@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS Appointments (
     report TEXT,
     office_id INT NOT NULL,
     allow_full_history BOOLEAN NOT NULL DEFAULT TRUE,
+    last_modified TIMESTAMP NOT NULL,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE,
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE,
     FOREIGN KEY (specialty_id) REFERENCES Specialties(id) ON DELETE RESTRICT,

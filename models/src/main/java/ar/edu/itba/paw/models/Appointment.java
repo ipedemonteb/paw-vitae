@@ -26,6 +26,9 @@ public class Appointment {
     @Column(name = "allow_full_history", nullable = false)
     private boolean allowFullHistory = true;
 
+    @Column(name = "last_modified", nullable = false)
+    private LocalDateTime lastModified;
+
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "specialty_id", nullable = false)
@@ -67,6 +70,16 @@ public class Appointment {
         this.report = report;
         this.doctorOffice = doctorOffice;
         this.allowFullHistory = allowFullHistory;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.lastModified = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.lastModified = LocalDateTime.now();
     }
 
     public long getId() {
@@ -127,6 +140,14 @@ public class Appointment {
 
     public void setReport(String report) {
         this.report = report;
+    }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
     }
 
     public Boolean getCancellable() {
