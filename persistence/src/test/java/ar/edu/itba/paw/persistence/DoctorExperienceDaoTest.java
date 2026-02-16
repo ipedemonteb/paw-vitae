@@ -61,6 +61,7 @@ public class DoctorExperienceDaoTest {
 
         //Exercise
         DoctorExperience newExperience = doctorExperienceDao.create(doctor, title, orgName, startDate, endDate);
+        em.flush();
 
         //Postconditions
         assertNotNull(newExperience);

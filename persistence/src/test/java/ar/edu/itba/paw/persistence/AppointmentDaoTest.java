@@ -127,7 +127,8 @@ public class AppointmentDaoTest {
                 "status", status,
                 "reason", reason,
                 "office_id", officeId,
-                "allow_full_history", allow
+                "allow_full_history", allow,
+                "last_modified", LocalDateTime.now()
         ));
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
@@ -137,7 +138,8 @@ public class AppointmentDaoTest {
                 "status", status,
                 "reason", reason,
                 "office_id", officeId,
-                "allow_full_history", allow
+                "allow_full_history", allow,
+                "last_modified", LocalDateTime.now()
         ));
 
         //Exercise
@@ -212,7 +214,8 @@ public class AppointmentDaoTest {
                 "status", status,
                 "reason", reason,
                 "office_id", officeId,
-                "allow_full_history", allow
+                "allow_full_history", allow,
+                "last_modified", LocalDateTime.now()
         ));
         insertAppointment.execute(Map.of(
                 "doctor_id", DOC_ID,
@@ -222,7 +225,8 @@ public class AppointmentDaoTest {
                 "status", status,
                 "reason", reason,
                 "office_id", officeId,
-                "allow_full_history", allow
+                "allow_full_history", allow,
+                "last_modified", LocalDateTime.now()
         ));
 
         //Exercise
