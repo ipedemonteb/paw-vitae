@@ -212,7 +212,7 @@ export function useCreateDoctorUnavailabilityMutation(url: string){
     });
 }
 
-export function useDeleteDoctorUnavailabilityMutation(url: string, slotId: number){
+export function useDeleteDoctorUnavailabilityMutation(url: string){
     const queryClient = useQueryClient();
     return useMutation<any, AxiosError<any>, number>({
         mutationFn: (slotId: number) => deleteDoctorUnavailability(url, slotId),
