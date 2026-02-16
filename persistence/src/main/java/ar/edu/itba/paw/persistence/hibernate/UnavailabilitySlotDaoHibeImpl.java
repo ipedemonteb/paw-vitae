@@ -118,6 +118,7 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
                 .setParameter("to", to)
                 .getResultList();
     }
+
     @Override
     public List<UnavailabilitySlot> getUnavailabilityByDoctorIdPaginated(long doctorId, int page, int pageSize) {
         LocalDate now = LocalDate.now();

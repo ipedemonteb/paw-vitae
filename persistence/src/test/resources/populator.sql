@@ -103,7 +103,7 @@ VALUES (1, 2, 'Certificación en Cardiología', 'Sociedad Argentina de Cardiolog
 INSERT INTO doctor_office_availability_slots (id, office_id, day_of_week, start_time, end_time)
 VALUES (1, 1, 0, '09:00:00', '12:00:00'),
        (2, 1, 1, '09:00:00', '12:00:00'),
-       (3, 2, 1, '09:00:00', '12:00:00');
+       (3, 3, 1, '09:00:00', '12:00:00');
        --(3, 2, 0, '09:00:00', '12:00:00'),
        --(4, 2, 1, '09:00:00', '12:00:00');
 
