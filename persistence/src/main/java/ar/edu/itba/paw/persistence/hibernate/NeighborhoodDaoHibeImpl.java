@@ -15,7 +15,6 @@ public class NeighborhoodDaoHibeImpl implements NeighborhoodDao {
     @PersistenceContext
     private EntityManager em;
 
-
     @Override
     public Optional<Neighborhood> getById(long id) {
         return Optional.ofNullable(em.find(Neighborhood.class, id));

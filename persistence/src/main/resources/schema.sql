@@ -82,12 +82,12 @@ CREATE TABLE IF NOT EXISTS Appointments (
     FOREIGN KEY (office_id) REFERENCES Doctor_Offices(id) ON DELETE RESTRICT
 );
 
-CREATE TABLE IF NOT EXISTS Occupied_slots (
-                                id SERIAL PRIMARY KEY,
-                                doctor_id INTEGER NOT NULL,
-                                date DATE NOT NULL,
-                                start_time TIME NOT NULL,
-                                CONSTRAINT uq_slot_concurrency UNIQUE (doctor_id, date, start_time)
+CREATE TABLE IF NOT EXISTS Occupied_Slots (
+    id SERIAL PRIMARY KEY,
+    doctor_id INTEGER NOT NULL,
+    slot_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    CONSTRAINT uq_slot_concurrency UNIQUE (doctor_id, slot_date, start_time)
 );
 
 CREATE TABLE IF NOT EXISTS Ratings (

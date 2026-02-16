@@ -70,7 +70,6 @@ public class DoctorDaoTest {
         String password = "hashedpassword";
         String phone = "123456789";
         String language = "es";
-        long imageId = 1L;
         List<Specialty> specialties = List.of(
                 em.getReference(Specialty.class, 1L),
                 em.getReference(Specialty.class, 2L)
@@ -81,7 +80,7 @@ public class DoctorDaoTest {
         );
 
         //Exercise
-        Doctor doctor = doctorDao.create(name, lastname, email, password, phone, language, imageId, specialties, coverages);
+        Doctor doctor = doctorDao.create(name, lastname, email, password, phone, language, specialties, coverages);
         em.flush();
 
         //Postconditions

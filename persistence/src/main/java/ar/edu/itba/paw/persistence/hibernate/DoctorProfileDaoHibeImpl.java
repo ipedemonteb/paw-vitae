@@ -32,6 +32,4 @@ public class DoctorProfileDaoHibeImpl implements DoctorProfileDao {
         }
         return Optional.of(query.getResultList().getFirst());
     }
-
-
 }

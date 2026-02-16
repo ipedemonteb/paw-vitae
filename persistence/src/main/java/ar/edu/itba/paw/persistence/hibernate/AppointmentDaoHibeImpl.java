@@ -116,6 +116,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
                 .getResultList();
     }
 
+    @Override
     public List<Appointment> getAppointmentsByPatientWithFilesOrReport(long patientId, int page, int size, String direction) {
         int firstResult = (page - 1) * size;
         String order = direction.equalsIgnoreCase("asc") ? "ASC" : "DESC";
@@ -132,6 +133,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
                 .getResultList();
     }
 
+    @Override
     public int countAppointmentsByPatientWithFilesOrReport(long patientId) {
         return ((Number) em.createQuery(
                         "SELECT COUNT(DISTINCT a) FROM Appointment a " +

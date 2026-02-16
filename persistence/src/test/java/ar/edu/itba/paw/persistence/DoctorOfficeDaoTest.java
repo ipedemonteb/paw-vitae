@@ -191,9 +191,38 @@ public class DoctorOfficeDaoTest {
         //Postconditions
         assertNotNull(doctorOffices);
         assertFalse(doctorOffices.isEmpty());
+        assertEquals(1, doctorOffices.size());
         for (DoctorOffice office : doctorOffices) {
             assertEquals(OFFICE_DOCTOR_ID, office.getDoctor().getId());
             assertTrue(office.isActive());
+        }
+    }
+
+    @Test
+    public void testGetInactiveByDoctorIdDoesNotExist() {
+        //Preconditions
+
+        //Exercise
+        List<DoctorOffice> doctorOffices = doctorOfficeDao.getInactiveByDoctorId(1000L);
+
+        //Postconditions
+        assertTrue(doctorOffices.isEmpty());
+    }
+
+    @Test
+    public void testGetInactiveByDoctorIdExists() {
+        //Preconditions
+
+        //Exercise
+        List<DoctorOffice> doctorOffices = doctorOfficeDao.getInactiveByDoctorId(OFFICE_DOCTOR_ID);
+
+        //Postconditions
+        assertNotNull(doctorOffices);
+        assertFalse(doctorOffices.isEmpty());
+        assertEquals(1, doctorOffices.size());
+        for (DoctorOffice office : doctorOffices) {
+            assertEquals(OFFICE_DOCTOR_ID, office.getDoctor().getId());
+            assertFalse(office.isActive());
         }
     }
 

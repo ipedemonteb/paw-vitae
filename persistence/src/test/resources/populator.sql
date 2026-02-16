@@ -28,8 +28,9 @@ VALUES (2, 'Cardiologo con mas de 10 años de experiencia', 'Especializado en ca
 
 INSERT INTO doctor_offices (id, doctor_id, neighborhood_id, office_name, active, removed)
 VALUES (1, 2, 1, 'Consultorio Recoleta', true, NULL),
-       (2, 4, 2, 'Consultorio Belgrano', true, NULL),
-       (3, 5, 1, 'Consultorio Palermo', true, NULL);
+       (2, 2, 2, 'Consultorio Viejo', false, NULL),
+       (3, 4, 2, 'Consultorio Belgrano', true, NULL),
+       (4, 5, 1, 'Consultorio Palermo', true, NULL);
 
 INSERT INTO Doctor_Coverages (doctor_id, coverage_id)
 VALUES (2, 1),
@@ -106,16 +107,9 @@ VALUES (1, 1, 0, '09:00:00', '12:00:00'),
        --(3, 2, 0, '09:00:00', '12:00:00'),
        --(4, 2, 1, '09:00:00', '12:00:00');
 
-INSERT INTO doctor_availability_slots (id, doctor_id, slot_date, start_time, status)
-VALUES (1, 2, '2026-03-02', '09:00:00', 'AVAILABLE'),
-       (2, 2, '2026-03-02', '10:00:00', 'AVAILABLE'),
-       (3, 2, '2026-03-02', '11:00:00', 'AVAILABLE'),
-       (4, 2, '2026-03-03', '09:00:00', 'AVAILABLE'),
-       (5, 2, '2026-03-03', '10:00:00', 'AVAILABLE'),
-       (6, 2, '2026-03-03', '11:00:00', 'AVAILABLE'),
-       (7, 4, '2026-03-03', '09:00:00', 'UNAVAILABLE'),
-       (8, 4, '2026-03-03', '10:00:00', 'UNAVAILABLE'),
-       (9, 4, '2026-03-03', '11:00:00', 'UNAVAILABLE');
+INSERT INTO Occupied_Slots (id, doctor_id, slot_date, start_time)
+VALUES (1, 2, '2026-04-01', '10:00:00'),
+       (2, 2, '2026-04-01', '11:00:00');
 
 ALTER SEQUENCE users_id_seq RESTART WITH 6;
 ALTER SEQUENCE coverages_id_seq RESTART WITH 3;
@@ -126,8 +120,8 @@ ALTER SEQUENCE ratings_id_seq RESTART WITH 10;
 ALTER SEQUENCE appointment_files_id_seq RESTART WITH 3;
 ALTER SEQUENCE images_id_seq RESTART WITH 2;
 ALTER SEQUENCE neighborhoods_id_seq RESTART WITH 3;
-ALTER SEQUENCE doctor_offices_id_seq RESTART WITH 4;
+ALTER SEQUENCE doctor_offices_id_seq RESTART WITH 5;
 ALTER SEQUENCE doctor_experience_id_seq RESTART WITH 3;
-ALTER SEQUENCE doctor_certification_id_seq RESTART WITH 3;
+ALTER SEQUENCE doctor_certifications_id_seq RESTART WITH 3;
 ALTER SEQUENCE doctor_office_availability_slots_id_seq RESTART WITH 4;
-ALTER SEQUENCE doctor_availability_slots_id_seq RESTART WITH 10;
+ALTER SEQUENCE occupied_slots_id_seq RESTART WITH 3;

@@ -61,6 +61,7 @@ public class DoctorCertificationDaoTest {
 
         //Exercise
         DoctorCertification newCertification = doctorCertificationDao.create(doctor, certificateName, issuingEntity, issueDate);
+        em.flush();
 
         //Postconditions
         assertNotNull(newCertification);
