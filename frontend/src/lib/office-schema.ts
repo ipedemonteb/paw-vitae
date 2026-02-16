@@ -5,9 +5,7 @@ import type { TFunction } from "i18next";
 export const getCreateOfficeSchema = (t: TFunction) => z.object({
     name: z.string().min(1, t("offices.validation.name_required")),
 
-    neighborhood: z.string({
-        required_error: t("offices.validation.neighborhood_required")
-    }).min(1, t("offices.validation.neighborhood_required")),
+    neighborhood: z.string().min(1, t("offices.validation.neighborhood_required")),
 
     specialties: z.array(z.string()).min(1, t("offices.validation.specialty_required")),
 });

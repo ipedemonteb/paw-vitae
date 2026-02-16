@@ -123,7 +123,7 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
 
     const { data: patient, isLoading: loadingPatient } = usePatient(appointment.patient);
     const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
-    const { url, isLoadingImg } = useDoctorImageUrl(isDoctor ? undefined : doctorId);
+    const { url, isLoading: isLoadingImg } = useDoctorImageUrl(isDoctor ? undefined : doctorId);
     const doctorImgUrl = isDoctor ? undefined : url;
     const loadingDoctorImg = isDoctor ? false : isLoadingImg;
     const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment.specialty);
