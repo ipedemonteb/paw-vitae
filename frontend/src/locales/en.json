@@ -685,6 +685,10 @@
     "empty": {
       "title": "No results found",
       "message": "No doctors match your current filters, try searching for something else"
+    },
+    "error" : {
+      "title" : "Unable to load doctors",
+      "message" : "Check your connection or press the retry button"
     }
   },
   "offices": {

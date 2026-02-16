@@ -25,8 +25,6 @@ export default function SearchEmpty({error, isRefetching, refetch}: SearchEmptyP
     const from = "opacity-0 translate-y-2";
     const to = "opacity-100 translate-y-0";
 
-    //TODO internacionalizar
-
     return (
         <div className={`${base} ${transition} ${mounted ? to : from}`}>
             {error ? (
@@ -35,8 +33,8 @@ export default function SearchEmpty({error, isRefetching, refetch}: SearchEmptyP
                 <SearchX className="text-(--text-light) size-10"/>
             )}
             <div className="flex flex-col justify-center items-center gap-0.5">
-                <p className="text-xl">{error ? "Unable to load doctors" : t("search.empty.title")}</p>
-                <p className="text-sm">{error? "Check your network connection or click the button below to retry" : t("search.empty.message")}</p>
+                <p className="text-xl">{error ? t("search.error.title") : t("search.empty.title")}</p>
+                <p className="text-sm">{error? t("search.error.message")  : t("search.empty.message")}</p>
                 {error && (
                     isRefetching ? <Spinner className="size-6 text-(--text-light) my-2.5"/> : <Button disabled={isRefetching} className="mt-2 cursor-pointer text-white font-semibold bg-(--gray-400) hover:bg-(--gray-500)" onClick={() => refetch && refetch()}>Retry</Button>
                 )}

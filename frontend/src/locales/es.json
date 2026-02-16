@@ -685,6 +685,10 @@
     "empty": {
       "title": "No se han encontrado resultados",
       "message": "Ningún doctor coincide con sus criterios de búsqueda actual, intente buscar algo distinto"
+    },
+    "error" : {
+      "title" : "No se pudieron cargar los doctores",
+      "message" : "Revise su conexion o aprete el boton para recargar los resultados"
     }
   },
   "offices": {
