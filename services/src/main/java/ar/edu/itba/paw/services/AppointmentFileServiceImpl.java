@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
                 MailDTO dto = new MailDTO(appointment);
                 mailService.sendFileUploadMail(dto, List.of(createdFile));
             }
+            appointment.setLastModified(LocalDateTime.now());
             LOGGER.info("Appointment file created successfully for appointment with id {}", appointment_id);
             return createdFile;
         } catch (IOException e) {
