@@ -46,7 +46,6 @@ import static ar.edu.itba.paw.webapp.auth.AuthUtils.HEADER_REFRESH_TOKEN;
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthUserDetailsService authUserDetailsService;
-    private final String rememberMeSecretKey;
 
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
@@ -55,9 +54,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     private BasicFilter basicFilter;
 
     @Autowired
-    public WebAuthConfig(@Lazy AuthUserDetailsService authUserDetailsService, String rememberMeSecretKey) {
+    public WebAuthConfig(@Lazy AuthUserDetailsService authUserDetailsService) {
         this.authUserDetailsService = authUserDetailsService;
-        this.rememberMeSecretKey = rememberMeSecretKey;
     }
 
 
@@ -80,63 +78,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-//    @Override
-//    protected void configure(final HttpSecurity http) throws Exception {
-//        http.sessionManagement()
-//                .invalidSessionUrl("/")
-//                .and()
-//                .authorizeRequests()
-//                .antMatchers("/", "/verify", "/verify-confirmation", "/verify-result", "/email-sent", "/image/*", "/recover-password", "/change-password", "/change-password-result", "/about-us").permitAll()
-//                .antMatchers("/search", "/search/doctors/*").access("isAnonymous() or hasRole('PATIENT')")
-//                .antMatchers("/search/{id}").access("isAnonymous() or hasRole('PATIENT') or (hasRole('DOCTOR') and @accessHandler.canAccessDoctorProfile(authentication, #id))")
-//                .antMatchers("/search/").access("isAnonymous() or hasRole('PATIENT') or !hasRole('DOCTOR')")
-//                .antMatchers("/login", "/register-patient", "/register", "/email-sent").anonymous()
-//                .antMatchers("/doctor/appointments/{id}/history").access("hasRole('DOCTOR') and @accessHandler.canSeeMedicalHistory(authentication,#id)")
-//                .antMatchers("/doctor/dashboard/appointment-details/{id}").access("@accessHandler.canHandleAppointment(authentication, #id) and hasRole('DOCTOR')")
-//                .antMatchers( "/appointment/{id}/file/").access("@accessHandler.canHandleAppointment(authentication, #id)")
-//                .antMatchers("/patient/dashboard/appointment-details/{id}").access("@accessHandler.canHandleAppointment(authentication, #id) and hasRole('PATIENT')")
-//                .antMatchers("doctor/dashboard/appointment/cancel").access("@accessHandler.canHandleAppointment(authentication, request.getParameter('appointmentId')) and hasRole('DOCTOR')")
-//                .antMatchers( "patient/dashboard/appointment/cancel").access("@accessHandler.canHandleAppointment(authentication, request.getParameter('appointmentId')) and hasRole('PATIENT')")
-//                .antMatchers("/appointment/confirmation/{id}").access("hasRole('PATIENT') and @accessHandler.canHandleAppointment(authentication, #id)")
-//                .antMatchers("/appointment").access("hasRole('PATIENT') ")
-//                .antMatchers("/appointment/{appointmentId}/file-view/{fileId}", "/appointment/{appointmentId}/file/{fileId}").access("@accessHandler.hasEnabledFullMedicalHistory(authentication, #appointmentId)")
-//                .antMatchers("/doctor/dashboard/unavailability/**").access("hasRole('DOCTOR') and @accessHandler.canHandleUnavailability(request)")
-//                .antMatchers("appointment/doctor/*/availability").access("hasRole('PATIENT')")
-//                .antMatchers("/doctor/**").hasRole("DOCTOR")
-//                .antMatchers("/patient/**").hasRole("PATIENT")
-//                .antMatchers("/appointment/*/file/*").authenticated()
-//                .antMatchers("/doctors/**").anonymous()
-//                .antMatchers("/patients/**").anonymous()
-//                .antMatchers("/images/**").anonymous()
-//                .antMatchers("/appointments/**").anonymous()
-//                .antMatchers("/neighborhoods/**").anonymous()
-//                .antMatchers("/coverages/**").anonymous()
-//                .antMatchers("/specialties/**").anonymous()
-//                .antMatchers("/ratings/**").anonymous()
-//                .anyRequest().authenticated()
-//                .and()
-//                .formLogin()
-//                .usernameParameter("j_email")
-//                .passwordParameter("j_password")
-//                .loginPage("/login")
-//                .successHandler(customAuthenticationSuccessHandler())
-//                .and()
-//                .rememberMe()
-//                .rememberMeParameter("j_rememberme")
-//                .userDetailsService(authUserDetailsService)
-//                .key(rememberMeSecretKey)
-//                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-//                .and()
-//                .logout()
-//                .logoutUrl("/logout")
-//                .logoutSuccessUrl("/login")
-//                .and()
-//                .exceptionHandling()
-//                    .authenticationEntryPoint(authEntryPointHandler())
-//                .and()
-//                .csrf()
-//                .disable();
-//    }
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {

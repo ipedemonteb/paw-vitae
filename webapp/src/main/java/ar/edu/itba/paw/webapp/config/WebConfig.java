@@ -194,17 +194,6 @@ public class WebConfig extends WebMvcConfigurerAdapter implements CachingConfigu
     }
 
     @Bean
-    public String secretKey() {
-        try {
-            Resource resource = new ClassPathResource("secret.key");
-            Path path = resource.getFile().toPath();
-            return Files.readString(path).trim();
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not read the secret key file from the classpath", e);
-        }
-    }
-
-    @Bean
     public ParamsResolver ParamsResolver() {
         return new ParamsResolver();
     }
