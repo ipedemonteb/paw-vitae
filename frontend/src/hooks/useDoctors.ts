@@ -147,6 +147,7 @@ export function  useUpdateDoctorExperienceMutation(url: string ) {
         }
     });
 }
+
 export function  useUpdateDoctorProfileMutation(url: string ) {
     const queryClient = useQueryClient()
     return useMutation<any, AxiosError<any>, {biography: string, description: string}>({
@@ -156,6 +157,7 @@ export function  useUpdateDoctorProfileMutation(url: string ) {
         }
     });
 }
+
 export function useUpdateDoctorCertificatesMutation(url: string ) {
     const queryClient = useQueryClient()
     return useMutation<any, AxiosError<any>, CertificateForm[]>({
@@ -175,8 +177,6 @@ export function useUpdateDoctorImageMutation(url:string){
         }
     });
 }
-
-
 
 export function useUpdateDoctorMutation() {
     const queryClient = useQueryClient();
@@ -201,6 +201,7 @@ export function useUpdateDoctorMutation() {
 
     });
 }
+
 export function useCreateDoctorUnavailabilityMutation(url: string){
     const queryClient = useQueryClient();
     return useMutation<any, AxiosError<any>, UnavailabilityForm>({
@@ -210,7 +211,8 @@ export function useCreateDoctorUnavailabilityMutation(url: string){
         }
     });
 }
-export function useDeleteDoctorUnavailabilityMutation(url: string,slotId: number){
+
+export function useDeleteDoctorUnavailabilityMutation(url: string, slotId: number){
     const queryClient = useQueryClient();
     return useMutation<any, AxiosError<any>, number>({
         mutationFn: (slotId: number) => deleteDoctorUnavailability(url, slotId),
