@@ -34,7 +34,6 @@ public class RestSpecialtyController {
     public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Specialty specialty = specialtyService.getById(id).orElseThrow(NotFoundException::new);
         return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialty, uriInfo)) {}), request, specialty.hashCode()).build();
-      //  return Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialty, uriInfo)) {}).build();
     }
 
     @GET

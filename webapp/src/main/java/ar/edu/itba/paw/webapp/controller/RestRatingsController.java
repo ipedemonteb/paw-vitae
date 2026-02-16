@@ -58,7 +58,6 @@ public class RestRatingsController {
     public Response getRatingsById(@PathParam("id") final long id, @Context final Request request) {
         final Rating rating = this.ratingService.getRating(id).orElseThrow(NotFoundException::new);
         return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(RatingDTO.fromRating(rating, uriInfo)) {}), request, rating.hashCode()).build();
-        //return Response.ok(new GenericEntity<>(RatingDTO.fromRating(rating, uriInfo)) {}).build();
     }
 
     @POST

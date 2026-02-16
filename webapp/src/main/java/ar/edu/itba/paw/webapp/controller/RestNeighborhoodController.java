@@ -45,7 +45,6 @@ public class RestNeighborhoodController {
     public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Neighborhood neighborhood = neighborhoodService.getById(id).orElseThrow(NeighborhoodNotFoundException::new);
         return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(NeighborhoodDTO.fromNeighborhood(neighborhood, uriInfo)) {}), request, neighborhood.hashCode()).build();
-       // return Response.ok(new GenericEntity<>(NeighborhoodDTO.fromNeighborhood(neighborhood, uriInfo)) {}).build();
     }
 
 }

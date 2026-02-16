@@ -43,7 +43,6 @@ public class RestPatientController {
     public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
         return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}), request, patient.hashCode()).build();
-      //  return Response.ok(new GenericEntity<>(PatientDTO.fromPatient(patient, uriInfo)) {}).build();
     }
 
     @HEAD

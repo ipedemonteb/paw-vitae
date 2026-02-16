@@ -36,7 +36,6 @@ public class RestCoveragesController {
     public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Coverage coverage = coverageService.findById(id).orElseThrow(CoverageNotFoundException::new);
         return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverage, uriInfo)) {}), request, coverage.hashCode()).build();
-        //return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverage, uriInfo)) {}).build();
     }
 
 
