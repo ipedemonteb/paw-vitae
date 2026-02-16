@@ -153,7 +153,7 @@ const ghostFilter =
 const editButton =
     "mt-2 sm:mt-0 bg-transparent text-(--primary-color) hover:bg-(--primary-bg) cursor-pointer";
 const availabilityContainer =
-    "flex flex-col";
+    "flex flex-col gap-0";
 const warningContainer =
     "flex items-start gap-3 mb-6 rounded-lg bg-(--primary-bg) p-4 border border-(--primary-color) animate-in fade-in slide-in-from-top-2";
 const warningIcon =

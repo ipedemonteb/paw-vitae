@@ -60,7 +60,7 @@ const hasOverlap = (candidate: UnavailabilityRange, existing: UnavailabilityRang
 const editButton =
     "mt-2 sm:mt-0 bg-transparent text-(--primary-color) hover:bg-(--primary-bg) cursor-pointer";
 const unavailabilityContainer =
-    "flex flex-col gap-6";
+    "flex flex-col gap-6 mb-4";
 const unavailabilityEmptyContentContainer =
     "flex flex-col items-center gap-6";
 const unavailabilityContentContainer =
@@ -216,6 +216,9 @@ export default function UnavailabilityComponent() {
         });
     };
 
+    const pagination = unavailabilityPage?.pagination;
+    const showPagination = !!pagination && ((pagination.total ?? 0) > pageSize || !!pagination.next || !!pagination.prev);
+
     const delayedLoading = useDelayedBoolean(isLoading);
 
     if(unavailabilityError)
@@ -343,10 +346,12 @@ export default function UnavailabilityComponent() {
                         </div>
                     )}
 
-                    <PaginationComponent
-                        pagination={unavailabilityPage?.pagination}
-                        searchParams={{ page, pageSize, setParams: handleSetParams }}
-                    />
+                    {showPagination && (
+                        <PaginationComponent
+                            pagination={unavailabilityPage?.pagination}
+                            searchParams={{ page, pageSize, setParams: handleSetParams }}
+                        />
+                    )}
                 </div>
             )}
         </DashboardNavContainer>

@@ -65,7 +65,7 @@ const heroSubtitle =
 const searchWrapper =
     "relative w-full max-w-2xl mx-auto  rounded-3xl";
 const searchHero =
-    "w-full bg-white rounded-full pr-6 pl-12 py-5 text-slate-900 placeholder:text-slate-400";
+    "w-full bg-white rounded-full pr-6 pl-12 py-5 text-(--text-light) placeholder:text-(--gray-400)";
 
 type SectionProps =  {
     searchParams: PaginationParams & {setParams: (updater: (p: URLSearchParams) => void) => void, clearParams: () => void} & DoctorQueryParams
@@ -101,7 +101,7 @@ function HeroSection({searchParams}: SectionProps) {
             <h1 className={heroTitle}>{t("search.title")}</h1>
             <p className={heroSubtitle}>{t("search.subtitle", { specialty: specialty })}</p>
             <div className={searchWrapper}>
-                <SearchIcon className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                <SearchIcon className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-(--gray-400)" />
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
@@ -130,7 +130,7 @@ function HeroSection({searchParams}: SectionProps) {
                         ))
                     )}
                     {!isLoading && searchResults && searchResults.data.length === 0 && (
-                        <div className="h-20 w-full bg-gray-100 flex items-center justify-center gap-1">
+                        <div className="h-20 w-full bg-(--gray-100) flex items-center justify-center gap-1">
                             <span className="text-(--text-light) text-sm">{t("search.searchbar.empty")}</span>
                         </div>
                     )}
