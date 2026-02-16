@@ -86,7 +86,6 @@ public class RestAppointmentController {
     public Response getById(@PathParam("id") final long id, @Context final Request request) {
         final Appointment appointment = this.appointmentService.getById(id).orElseThrow(AppointmentNotFoundException::new);
         return CacheUtils.conditionalCacheLastModified(Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}), request, appointment.getLastModified()).build();
-        //return Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointment, uriInfo)) {}).build();
     }
 
     @PATCH
