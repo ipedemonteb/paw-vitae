@@ -33,12 +33,11 @@ export function useLogin() {
 }
 
 export function useChangePasswordMutation() {
-    const {logout} = useAuth()
+    const { logout } = useAuth();
     return useMutation({
-        mutationFn: async ({email, password, repeatPassword,token}: {email: string, password: string, repeatPassword: string,token:string}) => {
-            const {jwt, refresh} = await login(email, token)
-
-            setAuth(jwt, refresh)
+        mutationFn: async ({ email, password, repeatPassword, token }: { email: string, password: string, repeatPassword: string, token: string }) => {
+            const { jwt, refresh } = await login(email, token);
+            setAuth(jwt, refresh);
 
             const claims = getClaims()!;
             const userId = claims.userId;
@@ -49,13 +48,11 @@ export function useChangePasswordMutation() {
                 repeatPassword: repeatPassword
             };
 
-            let url;
-
-            if (userRole === ROLE_DOCTOR) url = `/doctors/${userId}` //I CHECK IF ROLE VALID WHEN LOGIN SO NO OTHER POSSIBLE ROLE
-            else url = `/patients/${userId}`
-
-            await changePassword(url, formPayload)
+            let url = userRole === ROLE_DOCTOR ? `/doctors/${userId}` : `/patients/${userId}`;
+            await changePassword(url, formPayload);
         },
-        onSettled: () => logout()
-    })
+        onSuccess: () => {
+            logout("/change-password-confirmation", { fromChangePassword: true });
+        }
+    });
 }

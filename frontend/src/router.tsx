@@ -15,7 +15,7 @@ const DoctorDashboardLayout = lazy(() =>
     import("@/pages/doctor/DoctorDashboardLayout")
 );
 
-
+const ChangePasswordConfirmation = lazy(() => import("@/pages/ChangePasswordConfirmation"));
 const Landing = lazy(() => import("@/pages/Landing"));
 const About = lazy(() => import("@/pages/About"));
 const PublicProfile = lazy(() => import("@/pages/PublicProfile"));
@@ -94,6 +94,7 @@ export const router = createBrowserRouter([
                     { path: "verify", element: <VerifyAccount /> },
                     { path: "register", element: <Register /> },
                     { path: "recover-password", element: <RecoverPassword /> },
+                    { path: "change-password-confirmation", element: <ChangePasswordConfirmation /> },
                 ],
             },
 
