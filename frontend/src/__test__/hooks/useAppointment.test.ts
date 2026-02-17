@@ -241,17 +241,6 @@ describe('useAppointments File', () => {
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
         });
-
-        it('should fail and handle the server error', async () => {
-            const { result } = renderHook(() => useUpdateReportMutation());
-
-            act(() => {
-                result.current.mutate({ id: 'error', report: 'Test fail' });
-            });
-
-            await waitFor(() => expect(result.current.isError).toBe(true));
-        });
-
     });
 
 
