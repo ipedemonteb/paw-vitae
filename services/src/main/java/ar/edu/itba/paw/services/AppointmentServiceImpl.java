@@ -69,9 +69,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment create(long patientId, long doctorId, LocalDate date, Integer time, String reason, long specialtyId, long officeId, boolean allowFullHistory) {
         LOGGER.debug("Creating appointment for patientId: {}, doctorId: {}, reason: {}, specialtyId: {}", patientId, doctorId, reason, specialtyId);
         LocalDateTime localDateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), time, 0, 0);
-        Optional<Specialty> specialty = specialtyService.getById(specialtyId);
+        Specialty specialty = specialtyService.getById(specialtyId).orElseThrow(SpecialtyNotFoundException::new);
         DoctorOffice doctorOffice = doctorOfficeService.getById(officeId).orElseThrow(DoctorOfficeNotFoundException::new);
-        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty.orElseThrow(SpecialtyNotFoundException::new ),doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice, allowFullHistory);
+        Appointment appointment = appointmentDao.create(localDateTime, AppointmentStatus.CONFIRMADO.getValue(), reason, specialty,doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new) , patientService.getById(patientId).orElseThrow(UserNotFoundException::new), "", doctorOffice, allowFullHistory);
         occupiedSlotsService.create(doctorId, date, localDateTime.toLocalTime());
         MailDTO dto = new MailDTO(appointment);
         mailService.sendAppointmentStatusEmail("email.newAppointment", dto);
@@ -184,22 +184,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         LOGGER.debug("Checking history permission for appointment with id: {}", appointmentId);
         Optional<Appointment> appointment = appointmentDao.getById(appointmentId);
         return appointment.isPresent() && appointment.get().isAllowFullHistory() && appointment.get().getDoctor().getId() == doctorId;
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Patient getPatientByAppointmentId(long appointmentId) {
-        LOGGER.debug("Getting patient by appointmentId: {}", appointmentId);
-        Appointment appointment = getById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
-        return appointment.getPatient();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<Appointment> getAppointmentsForPatientWithFilesOrReport(long patientId, int page, int pageSize, String direction) {
-        List<Appointment> appointments = appointmentDao.getAppointmentsByPatientWithFilesOrReport(patientId, page, pageSize, direction);
-        int total = appointmentDao.countAppointmentsByPatientWithFilesOrReport(patientId);
-        return new Page<>(appointments, page, pageSize, total);
     }
 
     @Override

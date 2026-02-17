@@ -32,36 +32,6 @@ public class DoctorDaoHibeImpl implements DoctorDao {
         return Optional.ofNullable(em.find(Doctor.class, id));
     }
 
-    @Override
-    public Optional<Doctor> getByIdWithAvailableOffices(long id) {
-        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d LEFT JOIN FETCH d.doctorOffices o WHERE d.id = :id AND o.removed IS NULL", Doctor.class);
-        query.setParameter("id", id);
-        List<Doctor> result = query.getResultList();
-        return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
-    }
-
-    @Override
-    public List<Doctor> getBySpecialty(long specialtyId, int page, int pageSize) {
-        Query nativeQuery = getNativeQuery(specialtyId, 0, null, null, "name", "asc",  false);
-        nativeQuery.setFirstResult((page-1) * pageSize);
-        nativeQuery.setMaxResults(pageSize);
-
-        List<?> doctorIdsRaw = nativeQuery.getResultList();
-        List<Long> doctorIds = doctorIdsRaw.stream().map(id -> ((Number) id).longValue()).collect(Collectors.toList());
-        if (doctorIds.isEmpty()) {
-            return new ArrayList<>();
-        }
-        TypedQuery<Doctor> query = em.createQuery("FROM Doctor d WHERE d.id IN (:doctorIds)", Doctor.class);
-        query.setParameter("doctorIds", doctorIds);
-
-        return query.getResultList();
-    }
-
-    @Override
-    public int countBySpecialty(long specialtyId) {
-        Query nativeQuery = getNativeQuery(specialtyId, 0, null, null, "name", "asc",true);
-        return ((Number) nativeQuery.getSingleResult()).intValue();
-    }
 
     @Override
     public Optional<Doctor> getByEmail(String email) {

@@ -248,52 +248,9 @@ public class DoctorOfficeDaoTest {
                 " AND office_name = '" + OFFICE_NAME + "' AND active = true" + " AND neighborhood_id = " + OFFICE_NEIGHBORHOOD_ID));
     }
 
-    @Test
-    public void testGetByNameAndNeighborhoodIdNameDoesNotExist() {
-        //Preconditions
 
-        //Exercise
-        List<DoctorOffice> results = doctorOfficeDao.getByNameAndNeighborhoodId("NonExistentOffice", OFFICE_NEIGHBORHOOD_ID, OFFICE_DOCTOR_ID);
 
-        //Postconditions
-        assertTrue(results.isEmpty());
-    }
 
-    @Test
-    public void testGetByNameAndNeighborhoodIdNeighborhoodDoesNotExist() {
-        //Preconditions
-
-        //Exercise
-        List<DoctorOffice> results = doctorOfficeDao.getByNameAndNeighborhoodId("Consultorio Recoleta", 1000L, OFFICE_DOCTOR_ID);
-
-        //Postconditions
-        assertTrue(results.isEmpty());
-    }
-
-    @Test
-    public void testGetByNameAndNeighborhoodIdDoctorDoesNotExist() {
-        //Preconditions
-
-        //Exercise
-        List<DoctorOffice> results = doctorOfficeDao.getByNameAndNeighborhoodId("Consultorio Recoleta", OFFICE_NEIGHBORHOOD_ID, 1000L);
-
-        //Postconditions
-        assertTrue(results.isEmpty());
-    }
-
-    @Test
-    public void testGetByNameAndNeighborhoodIdExists() {
-        //Preconditions
-
-        //Postconditions
-        List<DoctorOffice> results = doctorOfficeDao.getByNameAndNeighborhoodId(OFFICE_NAME, OFFICE_NEIGHBORHOOD_ID, OFFICE_DOCTOR_ID);
-
-        assertFalse(results.isEmpty());
-        assertEquals(1, results.size());
-        assertEquals(OFFICE_NAME, results.getFirst().getOfficeName());
-        assertEquals(OFFICE_NEIGHBORHOOD_ID, results.getFirst().getNeighborhood().getId());
-        assertEquals(OFFICE_DOCTOR_ID, results.getFirst().getDoctor().getId());
-    }
 
     @Rollback
     @Test

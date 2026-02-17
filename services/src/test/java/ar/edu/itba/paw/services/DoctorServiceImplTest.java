@@ -38,7 +38,7 @@ public class DoctorServiceImplTest {
     private static final Coverage COVERAGE = new Coverage(1L, "Coverage A");
 
     private static final Doctor DOCTOR = new Doctor(NAME, LAST_NAME, EMAIL, PASSWORD, PHONE, "es",
-            IMG_ID, RATING, RATING_COUNT, true);
+             RATING, RATING_COUNT, true);
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -94,7 +94,7 @@ public class DoctorServiceImplTest {
         when(specialtyService.getById(anyLong())).thenReturn(Optional.of(SPECIALTY));
         when(coverageService.findById(anyLong())).thenReturn(Optional.of(COVERAGE));
         when(doctorDao.create(
-                any(), any(), any(), any(), any(), any(), any(),
+                any(), any(), any(), any(), any(), any(),
                 any(), any()
         )).thenReturn(DOCTOR);
 
@@ -125,7 +125,7 @@ public class DoctorServiceImplTest {
     public void testSetImage() {
         //Preconditions
         Doctor doctor = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-                1L, 4.5, 10, true);
+                4.5, 10, true);
         when(doctorDao.getById(anyLong())).thenReturn(Optional.of(doctor));
 
         //Exercise
@@ -153,7 +153,7 @@ public class DoctorServiceImplTest {
         long newRating = 5;
         double expectedRating = (RATING * RATING_COUNT + newRating) / (RATING_COUNT + 1);
         Doctor doctor = new Doctor(NAME, LAST_NAME, EMAIL, PASSWORD, PHONE, "es",
-                IMG_ID, RATING, RATING_COUNT, true);
+                RATING, RATING_COUNT, true);
         when(doctorDao.getById(anyLong())).thenReturn(Optional.of(doctor));
 
         //Exercise
@@ -163,30 +163,5 @@ public class DoctorServiceImplTest {
         assertEquals(expectedRating, doctor.getRating(), 0.01);
     }
 
-    @Test
-    public void testSearchEmpty() {
-        //Preconditions
-        when(doctorDao.search(anyString(), anyInt())).thenReturn(List.of());
 
-        //Exercise
-        String search = doctorService.search("keyword", 2);
-
-        //Postconditions
-        assertNotNull(search);
-        assertEquals("{\"doctors\": []}", search);
-    }
-
-    @Test
-    public void testSearch() {
-        //Preconditions
-        when(doctorDao.search(anyString(), anyInt())).thenReturn(List.of(DOCTOR));
-        String expectedResult = "{\"doctors\":[{\"id\":0,\"email\":\"jane@test.com\",\"name\":\"Jane\",\"lastName\":\"Smith\",\"phone\":\"987654321\",\"language\":\"es\",\"specialtyList\":[],\"coverageList\":[],\"doctorOffices\":[],\"rating\":4.5,\"ratingCount\":10,\"imageId\":1,\"experiences\":[],\"certifications\":[]}]}";
-
-        //Exercise
-        String search = doctorService.search("keyword", 2);
-
-        //Postconditions
-        assertNotNull(search);
-        assertEquals(expectedResult, search);
-    }
 }

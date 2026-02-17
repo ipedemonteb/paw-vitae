@@ -92,63 +92,12 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
         return query.getResultList();
     }
 
-    @Override
-    public List<Appointment> getFutureAppointmentsByUser(long userId) {
-        TypedQuery<Appointment> query = em.createQuery("SELECT a FROM Appointment a WHERE (a.doctor.id = :userId OR a.patient.id = :userId) AND a.date > :now", Appointment.class);
-        query.setParameter("userId", userId);
-        query.setParameter("now", now);
-        return query.getResultList();
-    }
+
 
     @Override
     public int countAppointments(long userId, boolean isFuture, String filter) {
         Query nativeQuery = getNativeQuery(userId, isFuture, filter, true, "asc");
         return ((Number) nativeQuery.getSingleResult()).intValue();
-    }
-
-    @Override
-    public List<Appointment> getAppointmentsByPatient(long patientId, int page, int size) {
-        int firstResult = (page - 1) * size;
-        return em.createQuery("FROM Appointment a WHERE a.patient.id = :patientId ORDER BY a.date ASC", Appointment.class)
-                .setParameter("patientId", patientId)
-                .setFirstResult(firstResult)
-                .setMaxResults(size)
-                .getResultList();
-    }
-
-    @Override
-    public List<Appointment> getAppointmentsByPatientWithFilesOrReport(long patientId, int page, int size, String direction) {
-        int firstResult = (page - 1) * size;
-        String order = direction.equalsIgnoreCase("asc") ? "ASC" : "DESC";
-        return em.createQuery(
-                        "SELECT DISTINCT a FROM Appointment a " +
-                                "LEFT JOIN a.appointmentFiles af " +
-                                "WHERE a.patient.id = :patientId " +
-                                "AND (af.id IS NOT NULL OR (a.report IS NOT NULL AND a.report <> '')) " +
-                                "ORDER BY a.date " + order,
-                        Appointment.class)
-                .setParameter("patientId", patientId)
-                .setFirstResult(firstResult)
-                .setMaxResults(size)
-                .getResultList();
-    }
-
-    @Override
-    public int countAppointmentsByPatientWithFilesOrReport(long patientId) {
-        return ((Number) em.createQuery(
-                        "SELECT COUNT(DISTINCT a) FROM Appointment a " +
-                                "LEFT JOIN a.appointmentFiles af " +
-                                "WHERE a.patient.id = :patientId " +
-                                "AND (af.id IS NOT NULL OR (a.report IS NOT NULL AND a.report <> ''))")
-                .setParameter("patientId", patientId)
-                .getSingleResult()).intValue();
-    }
-
-    @Override
-    public int countAppointmentsByPatient(long patientId) {
-        return ((Number) em.createQuery("SELECT COUNT(a) FROM Appointment a WHERE a.patient.id = :patientId")
-                .setParameter("patientId", patientId)
-                .getSingleResult()).intValue();
     }
 
     @Override

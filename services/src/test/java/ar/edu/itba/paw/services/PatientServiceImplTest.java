@@ -111,7 +111,7 @@ public class PatientServiceImplTest {
 
         //Exercise & Postconditions
         assertThrows(CoverageNotFoundException.class, () -> {
-                patientService.updatePatient(PATIENT, NAME, LAST_NAME, PHONE, COVERAGE_ID);
+                patientService.updatePatient(PATIENT, NAME, LAST_NAME, PHONE, COVERAGE_ID,null);
             }
         );
     }
@@ -129,7 +129,7 @@ public class PatientServiceImplTest {
         when(coverageService.findById(anyLong())).thenReturn(Optional.of(newCoverage));
 
         //Exercise
-        patientService.updatePatient(patient, newName, newLastName, newPhone, COVERAGE_ID);
+        patientService.updatePatient(patient, newName, newLastName, newPhone, COVERAGE_ID,null);
 
         //Postconditions
         assertEquals(newName, patient.getName());

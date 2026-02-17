@@ -48,21 +48,7 @@ public class CoverageDaoTest {
         jdbcTemplate = new JdbcTemplate(ds);
     }
 
-    @Rollback
-    @Test
-    public void testCreate() {
-        //Preconditions
-        String testCoverageName = "TestCoverage";
 
-        //Exercise
-        Coverage test_Coverage = coverageDao.create(testCoverageName);
-        em.flush();
-
-        //Postconditions
-        assertNotNull(test_Coverage);
-        assertEquals(testCoverageName, test_Coverage.getName());
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, COVERAGE_TABLE, "id = " + test_Coverage.getId()));
-    }
 
     @Test
     public void testFindByIdDoesNotExist() {
@@ -88,29 +74,9 @@ public class CoverageDaoTest {
         assertEquals(COVERAGE_NAME_1, maybeCoverage.get().getName());
     }
 
-    @Test
-    public void testFindByNameDoesNotExist() {
-        //Preconditions
 
-        //Exercise
-        Optional<Coverage> coverage = coverageDao.findByName("NoCoverage");
 
-        //Postconditions
-        assertFalse(coverage.isPresent());
-    }
 
-    @Test
-    public void testFindByNameExists() {
-        //Preconditions
-
-        //Exercise
-        Optional<Coverage> maybeCoverage = coverageDao.findByName(COVERAGE_NAME_1);
-
-        //Postconditions
-        assertTrue(maybeCoverage.isPresent());
-        assertEquals(COVERAGE_ID_1, maybeCoverage.get().getId());
-        assertEquals(COVERAGE_NAME_1, maybeCoverage.get().getName());
-    }
 
     @Test
     public void testGetAll() {

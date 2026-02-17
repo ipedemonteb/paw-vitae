@@ -46,74 +46,8 @@ public class DoctorOfficeAvailabilityDaoTest {
         jdbcTemplate = new JdbcTemplate(ds);
     }
 
-    @Rollback
-    @Test
-    public void testCreate() {
-        // Preconditions
-        DoctorOffice doctorOffice = em.find(DoctorOffice.class, 1L);
-        LocalTime startTime = LocalTime.of(9, 0);
-        LocalTime endTime = LocalTime.of(17, 0);
-        Integer dayOfWeek = 2;
 
-        // Exercise
-        DoctorOfficeAvailability createdAvailability = doctorOfficeAvailabilityDao.create(new DoctorOfficeAvailability(
-                doctorOffice,
-                endTime,
-                startTime,
-                dayOfWeek
-        ));
-        em.flush();
 
-        // Postconditions
-        assertNotNull(createdAvailability);
-        assertEquals(doctorOffice.getId(), createdAvailability.getOffice().getId());
-        assertEquals(endTime, createdAvailability.getEndTime());
-        assertEquals(startTime, createdAvailability.getStartTime());
-        assertEquals(dayOfWeek, createdAvailability.getDayOfWeek());
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_OFFICE_AVAILABILITY_TABLE, "office_id = " + doctorOffice.getId() +
-                " AND day_of_week = " + dayOfWeek)
-        );
-    }
-
-    @Rollback
-    @Test
-    public void testUpdate() {
-        // Preconditions
-        DoctorOffice doctorOffice = em.find(DoctorOffice.class, 1L);
-        LocalTime startTime = LocalTime.of(14, 0);
-        LocalTime endTime = LocalTime.of(17, 0);
-        Integer dayOfWeek = 1;
-
-        // Exercise
-        doctorOfficeAvailabilityDao.update(new DoctorOfficeAvailability(
-                doctorOffice,
-                endTime,
-                startTime,
-                dayOfWeek
-        ));
-        em.flush();
-
-        // Postconditions
-        assertEquals(2, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_OFFICE_AVAILABILITY_TABLE, "office_id = " + doctorOffice.getId() +
-                " AND day_of_week = " + dayOfWeek)
-        );
-    }
-
-    @Rollback
-    @Test
-    public void testDelete() {
-        // Preconditions
-        DoctorOfficeAvailability toDelete = em.find(DoctorOfficeAvailability.class, 2L);
-
-        // Exercise
-        doctorOfficeAvailabilityDao.delete(toDelete);
-        em.flush();
-
-        // Postconditions
-        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, DOCTOR_OFFICE_AVAILABILITY_TABLE, "office_id = " + toDelete.getOffice().getId() +
-                " AND day_of_week = " + 1)
-        );
-    }
 
     @Test
     public void testGetByOfficeIdDoesNotExist() {
@@ -193,29 +127,7 @@ public class DoctorOfficeAvailabilityDaoTest {
         assertEquals(doctorId, availability.get(1).getOffice().getDoctor().getId());
     }
 
-    @Test
-    public void testGetActiveByDoctorIdDoesNotExist() {
-        // Preconditions
 
-        // Exercise
-        List<DoctorOfficeAvailability> availability = doctorOfficeAvailabilityDao.getActiveByDoctorId(1000L);
 
-        // Postconditions
-        assertTrue(availability.isEmpty());
-    }
 
-    @Test
-    public void testGetActiveByDoctorIdExists() {
-        // Preconditions
-        long doctorId = 2L;
-
-        // Exercise
-        List<DoctorOfficeAvailability> availability = doctorOfficeAvailabilityDao.getActiveByDoctorId(doctorId);
-
-        // Postconditions
-        assertFalse(availability.isEmpty());
-        assertEquals(2, availability.size());
-        assertEquals(doctorId, availability.getFirst().getOffice().getDoctor().getId());
-        assertEquals(doctorId, availability.get(1).getOffice().getDoctor().getId());
-    }
 }

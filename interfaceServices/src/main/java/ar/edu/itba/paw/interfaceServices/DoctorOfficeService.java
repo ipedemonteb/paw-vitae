@@ -10,8 +10,6 @@ import java.util.Optional;
 
 public interface DoctorOfficeService {
 
-    List<DoctorOffice> create(List<DoctorOffice> doctorOffice);
-
     DoctorOffice create(Doctor doctor,  DoctorOfficeForm doctorOfficeForms);
 
     DoctorOffice create(DoctorOffice doctorOffice);

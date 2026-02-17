@@ -17,10 +17,4 @@ public interface AppointmentFileDao {
 
     List<AppointmentFile> getByAppointmentId(long appointment_id);
 
-    List<AppointmentFile> getAllFilesForPatient(long patientId, int pageNumber, int pageSize);
-
-    int getAllFilesForPatientCount(long patientId);
-
-    List<AppointmentFile> getFilesByAppointmentIds(List<Long> appointmentIds);
-
 }

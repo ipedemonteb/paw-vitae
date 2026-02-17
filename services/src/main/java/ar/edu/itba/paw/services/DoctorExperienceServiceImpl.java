@@ -33,16 +33,6 @@ public class DoctorExperienceServiceImpl implements DoctorExperienceService {
         this.doctorService = doctorService;
     }
 
-    @Transactional
-    @Override
-    public DoctorExperience create(long doctorId, String title, String orgName, LocalDate startDate, LocalDate endDate) {
-        LOGGER.debug("Creating doctor experience for doctor with ID: {}", doctorId);
-        Doctor doctor = doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new);
-        DoctorExperience experience = doctorExperienceDao.create(doctor, title, orgName, startDate, endDate);
-        LOGGER.info("Doctor experience created for doctor with ID: {}", doctorId);
-        return experience;
-    }
-
     @Transactional(readOnly = true)
     @Override
     public List<DoctorExperience> findByDoctorId(long doctorId) {

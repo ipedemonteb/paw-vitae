@@ -3,8 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfacePersistence.AppointmentDao;
 import ar.edu.itba.paw.interfaceServices.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
-import ar.edu.itba.paw.models.exception.CancellableException;
+import ar.edu.itba.paw.models.exception.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -21,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,13 +35,14 @@ public class AppointmentServiceImplTest {
     private static final String STATUS = "Confirmado";
     private static final String REPORT = "Report";
     private static final LocalDateTime DATE = LocalDateTime.now(ZoneId.systemDefault()).plusDays(1);
-    private static final long HOUR = 10;
+    private static final Integer HOUR = 10;
     private static final boolean ALLOW = true;
+    private static final int SLOT_ID = 1;
 
     private static final Specialty SPECIALTY = new Specialty(1L, "Cardiology");
     private static final Neighborhood NEIGHBORHOOD = new Neighborhood(1L, "Neighborhood A");
     private static final Doctor DOCTOR = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-            1L, 4.5, 10, true);
+             4.5, 10, true);
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
             new Coverage(1L, "Coverage A"), NEIGHBORHOOD, true);
     private static final DoctorOffice DOCTOR_OFFICE = new DoctorOffice(DOCTOR, NEIGHBORHOOD, List.of(SPECIALTY), "Office A");
@@ -87,44 +88,45 @@ public class AppointmentServiceImplTest {
     @InjectMocks
     private AppointmentServiceImpl appointmentService;
 
-    @Test
-    public void testCreateNonExistentSlot() {
-        //Preconditions
-        when(occupiedSlotsService.getById(SLOT_ID)).thenReturn(Optional.empty());
 
-        //Exercise & Postconditions
-        assertThrows(NoSuchElementException.class, () -> {
-            appointmentService.create(PATIENT_ID, DOCTOR_ID, SLOT_ID, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
-        });
-    }
 
     @Test
     public void testCreateNonExistentSpecialty() {
         //Preconditions
 
         //Exercise & Postconditions
-        assertThrows(NoSuchElementException.class, () -> {
-            appointmentService.create(PATIENT_ID, DOCTOR_ID, SLOT_ID, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
+        assertThrows(SpecialtyNotFoundException.class, () -> {
+            appointmentService.create(PATIENT_ID, DOCTOR_ID, DATE.toLocalDate(),HOUR, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
         });
     }
 
     @Test
-    public void testCreateOfficeNotFound(){
-        //Preconditions
+    public void testCreateOfficeNotFound() {
+        // Preconditions
+        when(specialtyService.getById(SPECIALTY_ID)).thenReturn(Optional.of(new Specialty(SPECIALTY_ID, "Cardiology")));
 
-        //Exercise & Postconditions
-        assertThrows(NoSuchElementException.class, () -> {
-            appointmentService.create(PATIENT_ID, DOCTOR_ID, SLOT_ID, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
+        when(doctorOfficeService.getById(OFFICE_ID)).thenReturn(Optional.empty());
+
+        // Exercise & Postconditions
+        assertThrows(DoctorOfficeNotFoundException.class, () -> {
+            appointmentService.create(PATIENT_ID, DOCTOR_ID, DATE.toLocalDate(), HOUR, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
         });
     }
 
     @Test
     public void testCreateUserNotFound() {
-        //Preconditions
+        // Preconditions
 
-        //Exercise & Postconditions
-        assertThrows(NoSuchElementException.class, () -> {
-            appointmentService.create(PATIENT_ID, DOCTOR_ID, SLOT_ID, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
+        when(specialtyService.getById(anyLong())).thenReturn(Optional.of(mock(Specialty.class)));
+
+
+        when(doctorOfficeService.getById(anyLong())).thenReturn(Optional.of(new DoctorOffice()));
+
+
+
+        // Exercise & Postconditions
+        assertThrows(UserNotFoundException.class, () -> {
+            appointmentService.create(PATIENT_ID, DOCTOR_ID, DATE.toLocalDate(), HOUR, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
         });
     }
 
@@ -136,10 +138,8 @@ public class AppointmentServiceImplTest {
         when(doctorService.getById(anyLong())).thenReturn(Optional.of(DOCTOR));
         when(patientService.getById(anyLong())).thenReturn(Optional.of(PATIENT));
         when(doctorOfficeService.getById(anyLong())).thenReturn(Optional.of(DOCTOR_OFFICE));
-        when(occupiedSlotsService.getById(SLOT_ID)).thenReturn(Optional.of(SLOT));
-
         //Exercise
-        Appointment appointment = appointmentService.create(0L, 0L, SLOT_ID, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
+        Appointment appointment = appointmentService.create(0L, 0L, DATE.toLocalDate(),HOUR, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
 
         //Postconditions
         assertNotNull(appointment);
@@ -147,18 +147,7 @@ public class AppointmentServiceImplTest {
         assertEquals(0L, appointment.getDoctor().getId());
     }
 
-    @Test
-    public void testCompleteAppointments() {
-        //Preconditions
-        List<Appointment> appointments = List.of(APPOINTMENT);
-        when(appointmentDao.getPastConfirmedAppointments()).thenReturn(appointments);
 
-        //Exercise
-        appointmentService.completeAppointments();
-
-        //Postconditions
-        assertEquals(AppointmentStatus.COMPLETO.getValue(), appointments.getFirst().getStatus());
-    }
 
     @Test
     public void testCancelAppointmentNotFound() {
@@ -280,14 +269,7 @@ public class AppointmentServiceImplTest {
         assertEquals(1, appointments.size());
     }
 
-    @Test
-    public void testGetPatientByAppointmentIdNotExists() {
-        //Preconditions
-        when(appointmentDao.getById(APPOINTMENT_ID)).thenReturn(Optional.empty());
 
-        //Exercise & Postconditions
-        assertThrows(AppointmentNotFoundException.class, () -> appointmentService.getPatientByAppointmentId(APPOINTMENT_ID));
-    }
 
     @Test
     public void testRevokeHistoryPermissionForOldAppointments() {

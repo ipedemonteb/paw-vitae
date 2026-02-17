@@ -14,12 +14,9 @@ public interface AppointmentFileService {
 
     AppointmentFile create(MultipartFile file, String uploader_role, long appointment_id);
 
-
     List<AppointmentFile> getByAppointmentId(long appointment_id);
 
     Optional<AppointmentFile> getAuthorizedFile(long fileId, long appointmentId, String username);
-
-    Page<Map.Entry<Appointment, List<AppointmentFile>>> getGroupedFilesForPatient(long patientId, int page, int pageSize, String direction);
 
     List<AppointmentFile> getByAppointmentIdForDoctor(long appointmentId);
     }

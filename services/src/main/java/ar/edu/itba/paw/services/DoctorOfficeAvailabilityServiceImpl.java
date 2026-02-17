@@ -31,24 +31,6 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
         this.doctorOfficeService = doctorOfficeService;
     }
 
-    @Transactional
-    @Override
-    public DoctorOfficeAvailability create(DoctorOfficeAvailabilityForm slot, DoctorOffice doctorOffice) {
-        LOGGER.debug("Creating availability slot for office : {}",  slot);
-        DoctorOfficeAvailability toReturn = doctorOfficeAvailabilityDao.create(slot.toEntity(doctorOffice));
-        LOGGER.info("AvailabilitySlot for office created: {}", toReturn);
-        return toReturn;
-    }
-
-
-
-    @Transactional
-    @Override
-    public List<DoctorOfficeAvailability> create(List<DoctorOfficeAvailabilityForm> slots, DoctorOffice doctorOffice) {
-        List<DoctorOfficeAvailability> toReturn = new ArrayList<>();
-        slots.forEach(slot -> toReturn.add(create(slot, doctorOffice)));
-        return toReturn;
-    }
 
     @Transactional
     @Override
@@ -109,30 +91,6 @@ public class DoctorOfficeAvailabilityServiceImpl implements DoctorOfficeAvailabi
         }
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public String getJsonByDoctorId(long doctorId) {
-        List<DoctorOfficeAvailability> slots = doctorOfficeAvailabilityDao.getActiveByDoctorId(doctorId);
-        if (slots.isEmpty()) {
-            LOGGER.debug("No availability slots found for doctor with id: {}", doctorId);
-            return "[]";
-        }
-
-        Map<Long, List<DoctorOfficeAvailability>> officeSlotsMap = new HashMap<>();
-        for (DoctorOfficeAvailability slot : slots) {
-            long officeId = slot.getOffice().getId();
-            officeSlotsMap.computeIfAbsent(officeId, k -> new ArrayList<>()).add(slot);
-        }
-
-        Map<String, Object> responseMap = new HashMap<>();
-        for (Map.Entry<Long, List<DoctorOfficeAvailability>> entry : officeSlotsMap.entrySet()) {
-            long officeId = entry.getKey();
-            List<DoctorOfficeAvailability> officeSlots = entry.getValue();
-            responseMap.put(String.valueOf(officeId), officeSlots);
-        }
-
-        return JsonUtils.toJson(responseMap, DoctorOfficeAvailability.Views.Public.class);
-    }
 
     @Transactional(readOnly = true)
     @Override

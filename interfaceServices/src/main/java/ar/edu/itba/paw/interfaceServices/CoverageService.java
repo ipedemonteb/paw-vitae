@@ -15,8 +15,6 @@ public interface CoverageService {
 
     List<Coverage> findByDoctorId(long id);
 
-    Coverage create(String name);
-
     List<Coverage> getAll();
 
 

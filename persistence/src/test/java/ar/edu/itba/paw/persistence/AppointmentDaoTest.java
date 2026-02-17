@@ -198,55 +198,6 @@ public class AppointmentDaoTest {
         assertEquals(userId, appointments.getFirst().getPatient().getId());
     }
 
-    @Test
-    public void testGetFutureAppointmentsByUserExist() {
-        //Preconditions
-        long specialtyId = 1L;
-        String status = "confirmado";
-        String reason = "General checking";
-        long officeId = 1L;
-        boolean allow = true;
-        insertAppointment.execute(Map.of(
-                "doctor_id", DOC_ID,
-                "patient_id", PAT_ID,
-                "specialty_id", specialtyId,
-                "date", LocalDateTime.now(ZoneId.systemDefault()).plusDays(6),
-                "status", status,
-                "reason", reason,
-                "office_id", officeId,
-                "allow_full_history", allow,
-                "last_modified", LocalDateTime.now()
-        ));
-        insertAppointment.execute(Map.of(
-                "doctor_id", DOC_ID,
-                "patient_id", PAT_ID,
-                "specialty_id", specialtyId,
-                "date", LocalDateTime.now(ZoneId.systemDefault()).plusDays(8),
-                "status", status,
-                "reason", reason,
-                "office_id", officeId,
-                "allow_full_history", allow,
-                "last_modified", LocalDateTime.now()
-        ));
-
-        //Exercise
-        List<Appointment> appointments = appointmentDao.getFutureAppointmentsByUser(PAT_ID);
-
-        //Postconditions
-        assertFalse(appointments.isEmpty());
-        assertEquals(2, appointments.size());
-    }
-
-    @Test
-    public void testGetFutureAppointmentsByUserDoNotExist() {
-        //Preconditions
-
-        //Exercise
-        List<Appointment> appointments = appointmentDao.getFutureAppointmentsByUser(PAT_ID);
-
-        //Postconditions
-        assertTrue(appointments.isEmpty());
-    }
 
     @Test
     public void testGetPastConfirmedAppointments() {
@@ -273,61 +224,11 @@ public class AppointmentDaoTest {
         assertEquals(3, appointments.size());
     }
 
-    @Test
-    public void testGetAppointmentsByPatientDoesNotExist() {
-        //Preconditions
-        long patientId = 1000L;
-        int page = 1;
-        int size = 10;
 
-        //Exercise
-        List<Appointment> appointments = appointmentDao.getAppointmentsByPatient(patientId, page, size);
 
-        //Postconditions
-        assertTrue(appointments.isEmpty());
-    }
 
-    @Test
-    public void testGetAppointmentsByPatientExists() {
-        //Preconditions
-        int page = 1;
-        int size = 10;
 
-        //Exercise
-        List<Appointment> appointments = appointmentDao.getAppointmentsByPatient(PAT_ID, page, size);
 
-        //Postconditions
-        assertFalse(appointments.isEmpty());
-        assertEquals(2, appointments.size());
-    }
-
-    @Test
-    public void testGetAppointmentsByPatientWithFilesOrReport() {
-        //Preconditions
-        int page = 1;
-        int size = 10;
-        String order = "desc";
-
-        //Exercise
-        List<Appointment> appointments = appointmentDao.getAppointmentsByPatientWithFilesOrReport(PAT_ID, page, size, order);
-
-        //Postconditions
-        assertFalse(appointments.isEmpty());
-        assertEquals(2, appointments.size());
-        assertEquals(2L, appointments.getFirst().getId());
-        assertEquals(1L, appointments.get(1).getId());
-    }
-
-    @Test
-    public void testCountAppointmentsByPatientWithFilesOrReport() {
-        //Preconditions
-
-        //Exercise
-        int count = appointmentDao.countAppointmentsByPatientWithFilesOrReport(PAT_ID);
-
-        //Postconditions
-        assertEquals(2, count);
-    }
 
     @Test
     public void testHasFullMedicalHistoryEnabled() {
@@ -342,17 +243,7 @@ public class AppointmentDaoTest {
         assertTrue(hasFullHistory);
     }
 
-    @Test
-    public void testCountAppointmentsByPatient() {
-        //Preconditions
-        long patientId = 3L;
 
-        //Exercise
-        int count = appointmentDao.countAppointmentsByPatient(patientId);
-
-        //Postconditions
-        assertEquals(8, count);
-    }
 
     @Test
     public void testOfficeHasAppointments() {

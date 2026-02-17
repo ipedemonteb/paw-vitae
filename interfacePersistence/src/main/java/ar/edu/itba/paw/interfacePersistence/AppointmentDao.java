@@ -27,17 +27,7 @@ public interface AppointmentDao {
 
     List<Appointment> getAppointmentsByDate(LocalDate today);
 
-    List<Appointment> getFutureAppointmentsByUser(long userId);
-
     int countAppointments(long userId, boolean isFuture, String filter);
-
-    List<Appointment> getAppointmentsByPatient(long patientId, int page, int size);
-
-    int countAppointmentsByPatient(long patientId);
-
-    int countAppointmentsByPatientWithFilesOrReport(long patientId);
-
-    List<Appointment> getAppointmentsByPatientWithFilesOrReport(long patientId, int page, int size, String direction);
 
     boolean hasFullMedicalHistoryEnabled(long appointmentId, long doctorId);
 }

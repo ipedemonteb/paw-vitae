@@ -14,9 +14,5 @@ public interface CoverageDao {
 
     List<Coverage> findByDoctorId(long id);
 
-    Coverage create(String name);
-
-    Optional<Coverage> findByName(String name);
-
     List<Coverage> getAll();
 }

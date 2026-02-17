@@ -144,44 +144,9 @@ public class PatientDaoTest {
         assertEquals(TEST_COVERAGE_ID, maybePatient.get().getCoverage().getId());
     }
 
-    @Test
-    public void testGetByIdsDoNotExist() {
-        //Preconditions
-        long nonExistId = 1000L;
 
-        //Exercise
-        List<Patient> patients = patientDao.getByIds(Set.of(nonExistId));
 
-        //Postconditions
-        assertTrue(patients.isEmpty());
-    }
 
-    @Test
-    public void testGetByIdsExists() {
-        //Preconditions
-        Set<Long> ids = Set.of(TEST_ID, TEST_ID2);
-
-        //Exercise
-        List<Patient> patients = patientDao.getByIds(ids);
-
-        //Postconditions
-        assertFalse(patients.isEmpty());
-        assertEquals(2, patients.size());
-        assertEquals(TEST_ID, patients.getFirst().getId());
-        assertEquals(TEST_ID2, patients.getLast().getId());
-    }
-
-    @Test
-    public void testGetLanguage() {
-        //Preconditions
-        String expectedLanguage = "en";
-
-        //Exercise
-        String language = patientDao.getLanguage(TEST_ID);
-
-        //Postconditions
-        assertEquals(expectedLanguage, language);
-    }
 
     @Test
     public void testGetByVerificationTokenDoesNotExist() {

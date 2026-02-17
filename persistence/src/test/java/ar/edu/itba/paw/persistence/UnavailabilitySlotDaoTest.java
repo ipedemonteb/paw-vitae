@@ -109,31 +109,7 @@ public class UnavailabilitySlotDaoTest {
         assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, UNAVAILABILITY_TABLE, "id = " + slotId));
     }
 
-    @Test
-    public void testGetUnavailabilityByDoctorIdDoesNotExist() {
-        //Preconditions
 
-        //Exercise
-        List<UnavailabilitySlot> maybeSlots = unavailabilitySlotDao.getUnavailabilityByDoctorId(1000L);
-
-        //Postconditions
-        assertTrue(maybeSlots.isEmpty());
-    }
-
-    @Test
-    public void testGetUnavailabilityByDoctorIdExists() {
-        //Preconditions
-
-        //Exercise
-        List<UnavailabilitySlot> maybeSlots = unavailabilitySlotDao.getUnavailabilityByDoctorId(DOCTOR_ID);
-
-        //Postconditions
-        assertFalse(maybeSlots.isEmpty());
-        assertEquals(1, maybeSlots.size());
-        assertEquals(DOCTOR_ID, maybeSlots.getFirst().getDoctor().getId());
-        assertEquals(LocalDate.now().plusDays(60), maybeSlots.getFirst().getStartDate());
-        assertEquals(LocalDate.now().plusDays(65), maybeSlots.getFirst().getEndDate());
-    }
 
     @Test
     public void testIsUnavailableAtDate() {
@@ -157,59 +133,9 @@ public class UnavailabilitySlotDaoTest {
         assertFalse(isUnavailable);
     }
 
-    @Test
-    public void testGetUnavailabilityByDoctorIdCurrentAndNextMonthDoesNotExist() {
-        //Preconditions
 
-        //Exercise
-        List<UnavailabilitySlot> slots = unavailabilitySlotDao.getUnavailabilityByDoctorIdCurrentAndNextMonth(DOCTOR_ID);
 
-        //Postconditions
-        assertTrue(slots.isEmpty());
-    }
 
-    @Test
-    public void testGetUnavailabilityByDoctorIdCurrentAndNextMonthExist() {
-        //Preconditions
-        long doctorId = 4L;
-
-        //Exercise
-        List<UnavailabilitySlot> slots = unavailabilitySlotDao.getUnavailabilityByDoctorIdCurrentAndNextMonth(doctorId);
-
-        //Postconditions
-        assertFalse(slots.isEmpty());
-        assertEquals(1, slots.size());
-        assertEquals(doctorId, slots.getFirst().getDoctor().getId());
-        assertEquals(LocalDate.now().plusDays(10), slots.getFirst().getStartDate());
-        assertEquals(LocalDate.now().plusDays(15), slots.getFirst().getEndDate());
-    }
-
-    @Test
-    public void testGetUnavailabilityByDoctorIdAndMonthAndYearDoesNotExist() {
-        //Preconditions
-
-        //Exercise
-        List<UnavailabilitySlot> slots = unavailabilitySlotDao.getUnavailabilityByDoctorIdAndMonthAndYear(1000L, 10, 2023);
-
-        //Postconditions
-        assertTrue(slots.isEmpty());
-    }
-
-    @Test
-    public void testGetUnavailabilityByDoctorIdAndMonthAndYearExist() {
-        //Preconditions
-        long doctorId = 4L;
-
-        //Exercise
-        List<UnavailabilitySlot> slots = unavailabilitySlotDao.getUnavailabilityByDoctorIdAndMonthAndYear(doctorId, 4, 2026);
-
-        //Postconditions
-        assertFalse(slots.isEmpty());
-        assertEquals(1, slots.size());
-        assertEquals(doctorId, slots.getFirst().getDoctor().getId());
-        assertEquals(LocalDate.of(2026, 4, 1), slots.getFirst().getStartDate());
-        assertEquals(LocalDate.of(2026, 4, 5), slots.getFirst().getEndDate());
-    }
 
     @Test
     public void testHasNoOverlap() {

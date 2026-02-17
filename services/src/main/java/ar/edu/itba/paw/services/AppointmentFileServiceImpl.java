@@ -64,6 +64,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         return appointmentFileDao.getByAppointmentId(appointment_id);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Optional<AppointmentFile> getAuthorizedFile(long fileId, long appointmentId, String username) {
         LOGGER.debug("Getting authorized file {} for appointment {} and user {}", fileId, appointmentId, username);
@@ -81,27 +82,7 @@ public class AppointmentFileServiceImpl implements AppointmentFileService {
         return Optional.of(file);
     }
 
-    @Transactional(readOnly = true)
-    public Page<Map.Entry<Appointment, List<AppointmentFile>>> getGroupedFilesForPatient(long patientId, int page, int pageSize, String direction) {
-        Page<Appointment> appointmentPage = appointmentService.getAppointmentsForPatientWithFilesOrReport(patientId, page, pageSize, direction);
-        List<Appointment> appointments = appointmentPage.getContent();
 
-        if (appointments.isEmpty()) {
-            return new Page<>(Collections.emptyList(), page, pageSize, 0);
-        }
-
-        List<Long> appointmentIds = appointments.stream().map(Appointment::getId).collect(Collectors.toList());
-        List<AppointmentFile> files = appointmentFileDao.getFilesByAppointmentIds(appointmentIds);
-
-        Map<Long, List<AppointmentFile>> filesByAppointmentId = files.stream()
-                .collect(Collectors.groupingBy(f -> f.getAppointment().getId()));
-
-        List<Map.Entry<Appointment, List<AppointmentFile>>> groupedList = appointments.stream()
-                .map(appt -> Map.entry(appt, filesByAppointmentId.getOrDefault(appt.getId(), Collections.emptyList())))
-                .collect(Collectors.toList());
-
-        return new Page<>(groupedList, page, pageSize, appointmentPage.getTotalElements());
-    }
 
     @Transactional(readOnly = true)
     @Override

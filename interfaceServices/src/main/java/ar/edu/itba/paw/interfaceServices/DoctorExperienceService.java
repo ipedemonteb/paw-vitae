@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface DoctorExperienceService {
 
-     DoctorExperience create(long doctorId, String title, String orgName, LocalDate startDate, LocalDate endDate);
-
      List<DoctorExperience> findByDoctorId(long doctorId);
 
      void update(Doctor doctor, List<ExperienceForm> experiences);

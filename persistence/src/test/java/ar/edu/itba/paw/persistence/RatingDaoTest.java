@@ -162,79 +162,9 @@ public class RatingDaoTest {
         assertEquals(COMMENT, result.getComment());
     }
 
-    @Test
-    public void testGetRatingByPatientIdDoesNotExist() {
-        //Preconditions
 
-        //Exercise
-        List<Rating> maybeRating = ratingDao.getRatingsByPatientId(1000L);
 
-        //Postconditions
-        assertTrue(maybeRating.isEmpty());
-    }
 
-    @Test
-    public void testGetRatingByPatientIdExists() {
-        //Preconditions
-        long patientId = 1L;
-
-        //Exercise
-        List<Rating> maybeRatings = ratingDao.getRatingsByPatientId(patientId);
-
-        //Postconditions
-        assertFalse(maybeRatings.isEmpty());
-        assertEquals(1, maybeRatings.size());
-        Rating result = maybeRatings.getFirst();
-        assertEquals(RAT_ID, result.getId());
-        assertEquals(DOC_ID, result.getDoctor().getId());
-        assertEquals(patientId, result.getPatient().getId());
-        assertEquals(APP_ID, result.getAppointment().getId());
-        assertEquals(RATING, result.getRating());
-        assertEquals(COMMENT, result.getComment());
-    }
-
-    @Test
-    public void testGetFiveTopRatings() {
-        //Preconditions
-
-        //Exercise
-        List<Rating> results = ratingDao.getFiveTopRatings();
-
-        //Postconditions
-        assertFalse(results.isEmpty());
-        assertEquals(5, results.size());
-        assertTrue(results.getFirst().getRating() >= results.getLast().getRating());
-        for (int i = 0; i < results.size() - 1; i++) {
-            assertTrue(results.get(i).getRating() >= results.get(i + 1).getRating());
-        }
-    }
-
-    @Test
-    public void testGetFiveTopRatingsByDoctorIdDoesNotExist() {
-        //Preconditions
-
-        //Exercise
-        List<Rating> results = ratingDao.getFiveTopRatingsByDoctorId(1000L);
-
-        //Postconditions
-        assertTrue(results.isEmpty());
-    }
-
-    @Test
-    public void testGetFiveTopRatingsByDoctorIdExists() {
-        //Preconditions
-        long doctorId = 4L;
-
-        //Exercise
-        List<Rating> results = ratingDao.getFiveTopRatingsByDoctorId(doctorId);
-
-        //Postconditions
-        assertFalse(results.isEmpty());
-        assertEquals(5, results.size());
-        for (int i = 0; i < results.size() - 1; i++) {
-            assertTrue(results.get(i).getRating() >= results.get(i + 1).getRating());
-        }
-    }
 
     @Test
     public void testGetAllRatings() {

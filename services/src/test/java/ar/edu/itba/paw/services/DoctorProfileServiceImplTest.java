@@ -23,7 +23,7 @@ public class DoctorProfileServiceImplTest {
 
     private static final long DOC_ID = 1L;
     private static final Doctor DOCTOR = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-            1L, 4.5, 10, true);
+             4.5, 10, true);
     private static final String BIO = "biography";
     private static final String DESC = "description";
     private static final DoctorProfile PROFILE = new DoctorProfile(DOCTOR, BIO, DESC);
