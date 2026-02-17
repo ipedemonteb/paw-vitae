@@ -48,11 +48,14 @@ export function useDoctorOfficesSpecialties(offices?: OfficeDTO[]) {
     });
 
     const isLoading = queries.some((q) => q.isLoading);
+    const isFetching = queries.some((q) => q.isFetching);
     const isError = queries.some((q) => q.isError);
 
     const data = queries.map((q) => (q.data ?? []) as OfficeSpecialtyDTO[]);
 
-    return { data, isLoading, isError };
+    const refetch = () => Promise.all(queries.map((q) => q.refetch()));
+
+    return { data, isLoading, isFetching, isError, refetch, queries };
 }
 
 export function useDoctorAvailability(doctorId?: string, officeId?: string) {
