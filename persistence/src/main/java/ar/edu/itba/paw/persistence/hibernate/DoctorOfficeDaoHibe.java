@@ -73,19 +73,6 @@ public class DoctorOfficeDaoHibe implements DoctorOfficeDao {
     }
 
     @Override
-    public List<DoctorOffice> getByNameAndNeighborhoodId(String officeName, long neighborhoodId, long doctorId){
-        return em.createQuery(
-                        "SELECT d FROM DoctorOffice d " +
-                                "WHERE d.doctor.id = :doctorId " +
-                                "AND d.neighborhood.id = :neighborhoodId " +
-                                "AND LOWER(TRIM(d.officeName)) = :name", DoctorOffice.class)
-                .setParameter("doctorId", doctorId)
-                .setParameter("neighborhoodId", neighborhoodId)
-                .setParameter("name", officeName.trim().toLowerCase())
-                .getResultList();
-    }
-
-    @Override
     public void remove(long id) {
         DoctorOffice office = em.find(DoctorOffice.class, id);
         if (office != null) {

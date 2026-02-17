@@ -15,8 +15,6 @@ public interface AppointmentService {
 
      void sendDailyReminders();
 
-    void completeAppointments();
-
     Boolean cancelAppointment(long appointmentId, long userId);
 
     Optional<Appointment> getById(long appointmentId);
@@ -29,13 +27,11 @@ public interface AppointmentService {
 
     boolean hasHistoryAllowedByAppointmentId(long appointmentId, long doctorId);
 
-    Patient getPatientByAppointmentId(long appointmentId);
-
-    Page<Appointment> getAppointmentsForPatientWithFilesOrReport(long patientId, int page, int pageSize, String direction);
-
     boolean hasFullMedicalHistoryEnabled(long patientId, long doctorId);
 
     boolean officeHasAppointments(long officeId);
+
+    void completeAppointments();
 
     void revokeHistoryPermissionForOldAppointments();
 

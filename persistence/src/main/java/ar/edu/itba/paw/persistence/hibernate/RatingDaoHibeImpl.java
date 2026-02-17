@@ -63,30 +63,6 @@ public class RatingDaoHibeImpl implements RatingDao {
         return new Page<>(ratings, page, pageSize, totalItems);
     }
 
-    @Override
-    public List<Rating> getRatingsByPatientId(long patientId) {
-        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.patient.id = :id", Rating.class);
-        query.setParameter("id", patientId);
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Rating> getFiveTopRatings() {
-        TypedQuery<Rating> query = em.createQuery("FROM Rating AS r WHERE r.comment <> '' ORDER BY r.rating DESC", Rating.class);
-        query.setMaxResults(5);
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Rating> getFiveTopRatingsByDoctorId(long doctorId) {
-        TypedQuery<Rating> query = em.createQuery(
-                "FROM Rating AS r WHERE r.doctor.id = :doctorId AND r.comment <> '' ORDER BY r.rating DESC",
-                Rating.class
-        );
-        query.setParameter("doctorId", doctorId);
-        query.setMaxResults(5);
-        return query.getResultList();
-    }
 
     @Override
     public Page<Rating> getAllRatings(int page, int pageSize) {

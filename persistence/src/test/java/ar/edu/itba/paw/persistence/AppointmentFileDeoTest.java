@@ -143,79 +143,8 @@ public class AppointmentFileDeoTest {
         assertTrue(maybeImage.stream().anyMatch(f -> "informe.pdf".equals(f.getFileName())));
     }
 
-    @Test
-    public void testGetAllFilesForPatientDoesNotExist() {
-        //Preconditions
-        int pageNumber = 1;
-        int pageSize = 10;
 
-        //Exercise
-        List<AppointmentFile> files = fileDao.getAllFilesForPatient(1000L, pageNumber, pageSize);
 
-        //Postconditions
-        assertTrue(files.isEmpty());
-    }
 
-    @Test
-    public void testGetAllFilesForPatientExists() {
-        //Preconditions
-        long patientId = 1L;
-        int pageNumber = 1;
-        int pageSize = 10;
 
-        //Exercise
-        List<AppointmentFile> files = fileDao.getAllFilesForPatient(patientId, pageNumber, pageSize);
-
-        //Postconditions
-        assertFalse(files.isEmpty());
-        assertEquals(2, files.size());
-    }
-
-    @Test
-    public void testGetAllAppointmentsForPatientCountDoesNotExist() {
-        //Preconditions
-
-        //Exercise
-        int count = fileDao.getAllFilesForPatientCount(1000L);
-
-        //Postconditions
-        assertEquals(0, count);
-    }
-
-    @Test
-    public void testGetAllFilesForPatientCountExists() {
-        //Preconditions
-        long patientId = 1L;
-
-        //Exercise
-        int count = fileDao.getAllFilesForPatientCount(patientId);
-
-        //Postconditions
-        assertEquals(2, count);
-    }
-
-    @Test
-    public void testGetFilesByAppointmentIdsDoNotExist() {
-        //Preconditions
-        List<Long> appointmentIds = List.of(1000L, 2000L);
-
-        //Exercise
-        List<AppointmentFile> files = fileDao.getFilesByAppointmentIds(appointmentIds);
-
-        //Postconditions
-        assertTrue(files.isEmpty());
-    }
-
-    @Test
-    public void testGetFilesByAppointmentIdsExist() {
-        //Preconditions
-        List<Long> appointmentIds = List.of(APPOINTMENT_ID, 2L);
-
-        //Exercise
-        List<AppointmentFile> files = fileDao.getFilesByAppointmentIds(appointmentIds);
-
-        //Postconditions
-        assertFalse(files.isEmpty());
-        assertEquals(2, files.size());
-    }
 }

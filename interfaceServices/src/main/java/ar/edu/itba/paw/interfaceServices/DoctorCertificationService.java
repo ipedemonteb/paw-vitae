@@ -9,9 +9,7 @@ import java.util.List;
 
 public interface DoctorCertificationService {
 
-    public DoctorCertification create(long doctorId, String certificateName, String issuingEntity, LocalDate issueDate);
+     List<DoctorCertification> findByDoctorId(long id);
 
-    public List<DoctorCertification> findByDoctorId(long id);
-
-    public void update(Doctor doctor, List<CertificateForm> certificates);
+     void update(Doctor doctor, List<CertificateForm> certificates);
 }

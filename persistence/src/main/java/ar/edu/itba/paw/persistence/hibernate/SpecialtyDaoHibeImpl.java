@@ -21,19 +21,6 @@ public class SpecialtyDaoHibeImpl implements SpecialtyDao {
         return Optional.ofNullable(em.find(Specialty.class, id));
     }
 
-    @Override
-    public Optional<Specialty> getByName(String name) {
-        final TypedQuery<Specialty> query = em.createQuery(
-                "FROM Specialty AS s WHERE s.key = :key",
-                Specialty.class
-        );
-        query.setParameter("key", name);
-        List<Specialty> results = query.getResultList();
-        if (results.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(results.getFirst());
-    }
 
     @Override
     public List<Specialty> getAll() {

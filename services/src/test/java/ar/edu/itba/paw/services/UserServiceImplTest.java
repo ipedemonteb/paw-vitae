@@ -27,7 +27,7 @@ public class UserServiceImplTest {
 
     private static final String EMAIL = "jane@test.com";
     private static final Doctor DOCTOR = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-            1L, 4.5, 10, true);
+             4.5, 10, true);
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
             new Coverage(1L, "Coverage A"), new Neighborhood(1L, "Neighborhood A"), true);
 
@@ -139,7 +139,7 @@ public class UserServiceImplTest {
     public void testChangeLanguage() {
         //Preconditions
         Doctor doctor = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-                1L, 4.5, 10, true);
+                 4.5, 10, true);
         String newLanguage = "en";
         when(doctorDao.getById(anyLong())).thenReturn(Optional.of(doctor));
 
@@ -207,7 +207,7 @@ public class UserServiceImplTest {
     public void testSetVerificationToken() {
         //Preconditions
         Doctor doctor = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-                1L, 4.5, 10, true);
+                 4.5, 10, true);
         when(doctorDao.getByEmail(EMAIL)).thenReturn(Optional.of(doctor));
 
         //Exercise
@@ -221,7 +221,7 @@ public class UserServiceImplTest {
     public void testSetResetPasswordTokenInvalidUser() {
         //Preconditions
         Doctor doctor = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-                1L, 4.5, 10, true);
+                 4.5, 10, true);
         String token = "TOKEN";
         doctor.setResetPasswordToken(token);
         when(doctorDao.getByEmail(anyString())).thenReturn(Optional.empty());
@@ -237,7 +237,7 @@ public class UserServiceImplTest {
     public void testSetResetPasswordToken() {
         //Preconditions
         Doctor doctor = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-                1L, 4.5, 10, true);
+                 4.5, 10, true);
         String token = "TOKEN";
         doctor.setResetPasswordToken(token);
         when(doctorDao.getByEmail(anyString())).thenReturn(Optional.of(doctor));
@@ -304,7 +304,7 @@ public class UserServiceImplTest {
         //Preconditions
         long userId = 1L;
         Doctor doctor = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-                1L, 4.5, 10, true);
+                4.5, 10, true);
         when(doctorDao.getById(userId)).thenReturn(Optional.of(doctor));
         String newPassword = "NEWPASSWORD";
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);

@@ -117,78 +117,8 @@ public class DoctorDaoTest {
         assertEquals(TEST_ID, doctor.getId());
     }
 
-    @Test
-    public void testGetByIdWithAvailableOfficesDoesNotExist() {
-        //Preconditions
 
-        //Exercise
-        Optional<Doctor> maybeDoctor = doctorDao.getByIdWithAvailableOffices(1000L);
 
-        //Postconditions
-        assertFalse(maybeDoctor.isPresent());
-    }
-
-    @Test
-    public void testGetByIdWithAvailableOfficesExists() {
-        //Preconditions
-        long doctorId = 4L;
-
-        //Exercise
-        Optional<Doctor> maybeDoctor = doctorDao.getByIdWithAvailableOffices(doctorId);
-
-        //Postconditions
-        assertTrue(maybeDoctor.isPresent());
-        Doctor doctor = maybeDoctor.get();
-        assertEquals(doctorId, doctor.getId());
-    }
-
-    @Test
-    public void testGetBySpecialtyEmpty() {
-        //Preconditions
-        long specialtyId = 4L;
-
-        //Exercise
-        List<Doctor> doctors = doctorDao.getBySpecialty(specialtyId, 1, 1);
-
-        //Postconditions
-        assertTrue(doctors.isEmpty());
-    }
-
-    @Test
-    public void testGetBySpecialtyExists() {
-        //Preconditions
-
-        //Exercise
-        List<Doctor> doctors = doctorDao.getBySpecialty(SPEC_ID, 1, 2);
-
-        //Postconditions
-        assertFalse(doctors.isEmpty());
-        assertEquals(2, doctors.size());
-        assertEquals(TEST_ID, doctors.getFirst().getId());
-        assertEquals(4L, doctors.get(1).getId());
-    }
-
-    @Test
-    public void testCountBySpecialtyDoesNotExist() {
-        //Preconditions
-
-        //Exercise
-        int count = doctorDao.countBySpecialty(1000L);
-
-        //Postconditions
-        assertEquals(0, count);
-    }
-
-    @Test
-    public void testCountBySpecialtyExists() {
-        //Preconditions
-
-        //Exercise
-        int count = doctorDao.countBySpecialty(SPEC_ID);
-
-        //Postconditions
-        assertEquals(2, count);
-    }
 
     @Test
     public void testGetByEmailDoesNotExist() {

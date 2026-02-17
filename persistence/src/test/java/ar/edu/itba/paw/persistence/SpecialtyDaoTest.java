@@ -61,28 +61,6 @@ public class SpecialtyDaoTest {
         assertEquals("Cardiology", maybeSpeciality.get().getKey());
     }
 
-    @Test
-    public void testGetByNameDoesNotExist() {
-        //Preconditions
-
-        //Exercise
-        Optional<Specialty> specialty = specialtyDao.getByName("NoSpecialty");
-
-        //Postconditions
-        assertFalse(specialty.isPresent());
-    }
-
-    @Test
-    public void testGetByNameExists() {
-        //Preconditions
-
-        //Exercise
-        Optional<Specialty> fetchedSpecialty = specialtyDao.getByName("Neurology");
-
-        //Postconditions
-        assertTrue(fetchedSpecialty.isPresent());
-        assertEquals("Neurology", fetchedSpecialty.get().getKey());
-    }
 
     @Test
     public void testGetAll() {

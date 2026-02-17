@@ -30,12 +30,6 @@ public class CoverageServiceImpl implements CoverageService {
         return coverageDao.findById(id);
     }
 
-    @Transactional
-    @Override
-    public Coverage create(String name) {
-        return coverageDao.create(name);
-    }
-
     @Transactional(readOnly = true)
     @Cacheable
     @Override

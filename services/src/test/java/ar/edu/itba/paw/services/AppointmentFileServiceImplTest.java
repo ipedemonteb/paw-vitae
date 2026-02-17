@@ -34,7 +34,7 @@ public class AppointmentFileServiceImplTest {
     private static final Neighborhood NEIGHBORHOOD = new Neighborhood(1L, "Neighborhood A");
     private static final Specialty SPECIALTY = new Specialty(1L, "Cardiology");
     private static final Doctor DOCTOR = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-            1L, 4.5, 10, true);
+            4.5, 1, true);
     private static final DoctorOffice DOCTOR_OFFICE = new DoctorOffice(DOCTOR, NEIGHBORHOOD, List.of(SPECIALTY), "Office A");
 
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
@@ -176,34 +176,5 @@ public class AppointmentFileServiceImplTest {
         assertEquals(0L, file.get().getAppointment().getId());
     }
 
-    @Test
-    public void testGetGroupedFilesForPatient() {
-        //Preconditions
-        long patientId = 1L;
-        int page = 0, pageSize = 2;
-        String direction = "desc";
-        Appointment appointment1 = mock(Appointment.class);
-        when(appointment1.getId()).thenReturn(1L);
-        Appointment appointment2 = mock(Appointment.class);
-        when(appointment2.getId()).thenReturn(2L);
-        List<Appointment> appointments = List.of(appointment1, appointment2);
-        Page<Appointment> appointmentPage = new Page<>(appointments, page, pageSize, 2);
-        AppointmentFile file1 = new AppointmentFile("file1", new byte[]{1}, "doctor", appointment1);
-        AppointmentFile file2 = new AppointmentFile("file2", new byte[]{2}, "doctor", appointment2);
-        when(appointmentService.getAppointmentsForPatientWithFilesOrReport(patientId, page, pageSize, direction))
-                .thenReturn(appointmentPage);
-        when(appointmentFileDao.getFilesByAppointmentIds(anyList()))
-                .thenReturn(List.of(file1, file2));
 
-        //Exercise
-        Page<Map.Entry<Appointment, List<AppointmentFile>>> result = appointmentFileService.getGroupedFilesForPatient(patientId, page, pageSize, direction);
-
-        //Postconditions
-        assertNotNull(result);
-        assertEquals(2, result.getContent().size());
-        assertEquals(appointment1.getId(), result.getContent().getFirst().getKey().getId());
-        assertEquals(appointment2.getId(), result.getContent().getLast().getKey().getId());
-        assertArrayEquals(file1.getFileData(), result.getContent().getFirst().getValue().getFirst().getFileData());
-        assertArrayEquals(file2.getFileData(), result.getContent().getLast().getValue().getFirst().getFileData());
-    }
 }

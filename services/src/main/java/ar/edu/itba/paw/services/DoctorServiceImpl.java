@@ -173,22 +173,5 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorDao.countAll();
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public String search(String keyword, int results) {
-        LOGGER.debug("Searching for doctors with keyword: {}", keyword);
-        List<Doctor> doctors = doctorDao.search(keyword, results);
-        if (doctors.isEmpty()) {
-            LOGGER.warn("No doctors found for keyword: {}", keyword);
-            return "{\"doctors\": []}";
-        }
-        Map<String, Object> response = new HashMap<>();
-        response.put("doctors", doctors);
-        return JsonUtils.toJson(response, Doctor.Views.Public.class);
-    }
 
-    @Override
-    public void changePassword(long userId,String password) {
-        userService.changePassword(userId,password);
-    }
 }

@@ -29,16 +29,6 @@ public class DoctorCertificationServiceImpl implements DoctorCertificationServic
         this.doctorService = doctorService;
     }
 
-    @Transactional
-    @Override
-    public DoctorCertification create(long doctorId, String certificateName, String issuingEntity, LocalDate issueDate) {
-        LOGGER.debug("Creating doctor profile for doctor with ID: {}", doctorId);
-        Doctor doctor = doctorService.getById(doctorId).orElseThrow(UserNotFoundException::new);
-        DoctorCertification certification = doctorCertificationDao.create(doctor, certificateName, issuingEntity, issueDate);
-        LOGGER.info("Doctor profile created for doctor with ID: {}", doctorId);
-        return certification;
-    }
-
 
     @Transactional(readOnly = true)
     @Override

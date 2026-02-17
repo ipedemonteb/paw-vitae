@@ -47,36 +47,4 @@ public class AppointmentFileDaoHibeImpl implements AppointmentFileDao {
         return query.getResultList();
     }
 
-    @Override
-    public List<AppointmentFile> getAllFilesForPatient(long patientId, int pageNumber, int pageSize) {
-        int firstResult = (pageNumber - 1) * pageSize;
-        final TypedQuery<AppointmentFile> query = em.createQuery(
-                "SELECT new AppointmentFile(af.id, af.fileName, af.uploaderRole, af.appointment) " +
-                        "FROM AppointmentFile af WHERE af.appointment.patient.id = :patientId", AppointmentFile.class);
-
-        query.setParameter("patientId", patientId);
-        query.setFirstResult(firstResult);
-        query.setMaxResults(pageSize);
-        return query.getResultList();
-    }
-
-    @Override
-    public List<AppointmentFile> getFilesByAppointmentIds(List<Long> appointmentIds) {
-        if (appointmentIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-        final TypedQuery<AppointmentFile> query = em.createQuery(
-                "SELECT new AppointmentFile(af.id, af.fileName, af.uploaderRole, af.appointment) " +
-                        "FROM AppointmentFile af WHERE af.appointment.id IN :appointmentIds", AppointmentFile.class);
-
-        query.setParameter("appointmentIds", appointmentIds);
-        return query.getResultList();
-    }
-
-    @Override
-    public int getAllFilesForPatientCount(long patientId) {
-        return ((Number) em.createQuery("SELECT COUNT(af) FROM AppointmentFile af WHERE af.appointment.patient.id = :patientId")
-                .setParameter("patientId", patientId)
-                .getSingleResult()).intValue();
-    }
 }

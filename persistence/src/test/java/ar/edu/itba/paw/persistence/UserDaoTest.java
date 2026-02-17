@@ -48,48 +48,6 @@ public class UserDaoTest {
 
     @Rollback
     @Test
-    public void testSetVerificationToken() {
-        //Preconditions
-        String token = "TESTTOKEN";
-
-        //Exercise
-        userDao.setVerificationToken(PAT_ID, token, expirationDate);
-        em.flush();
-
-        //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "verification_token = '" + token + "'"));
-    }
-
-    @Rollback
-    @Test
-    public void testSetVerificationStatus() {
-        //Preconditions
-        boolean status = false;
-
-        //Exercise
-        userDao.setVerificationStatus(PAT_ID, status);
-        em.flush();
-
-        //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "is_verified = " + status));
-    }
-
-    @Rollback
-    @Test
-    public void testSetResetPasswordToken() {
-        //Preconditions
-        String newResetToken = "NEWRESETTOKEN";
-
-        //Exercise
-        userDao.setResetPasswordToken(PAT_ID, newResetToken, expirationDate);
-        em.flush();
-
-        //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "reset_token = '" + newResetToken + "'"));
-    }
-
-    @Rollback
-    @Test
     public void testRemoveVerificationToken() {
         //Preconditions
         String verification_token = "VERIFTOKEN";
@@ -102,41 +60,6 @@ public class UserDaoTest {
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = 1 AND verification_token IS NULL"));
     }
 
-    @Rollback
-    @Test
-    public void testChangePassword() {
-        //Preconditions
-        String newPassword = "NEWPASSWORD";
-
-        //Exercise
-        userDao.changePassword(PAT_ID, newPassword);
-        em.flush();
-
-        //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = 1 AND password = '" + newPassword + "'"));
-    }
-
-    @Test
-    public void testGetLanguageByIdDoesNotExist() {
-        //Preconditions
-
-        //Exercise
-        String language = userDao.getLanguageById(1000L);
-
-        //Postconditions
-        assertNull(language);
-    }
-
-    @Test
-    public void testGetLanguageByIdExists() {
-        //Preconditions
-
-        //Exercise
-        String language = userDao.getLanguageById(PAT_ID);
-
-        //Postconditions
-        assertEquals("en", language);
-    }
 
     @Test
     public void testTokenExpirationDateDoesNotExist() {
@@ -164,31 +87,4 @@ public class UserDaoTest {
         assertEquals(expirationDate.getYear(), expiration.getYear());
     }
 
-    @Rollback
-    @Test
-    public void testChangeLanguage() {
-        //Preconditions
-        String newLanguage = "es";
-
-        //Exercise
-        userDao.changeLanguage(PAT_ID, newLanguage);
-        em.flush();
-
-        //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = 1 AND language = '" + newLanguage + "'"));
-    }
-
-    @Rollback
-    @Test
-    public void testRemoveResetToken() {
-        //Preconditions
-        String reset_token = "RESTOKEN";
-
-        //Exercise
-        userDao.removeResetToken(reset_token);
-        em.flush();
-
-        //Postconditions
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "id = 1 AND reset_token IS NULL"));
-    }
 }

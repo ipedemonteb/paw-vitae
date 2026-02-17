@@ -74,6 +74,10 @@ public class DoctorCertification {
         this.issueDate = issueDate;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(certificateName, issuingEntity, issueDate);

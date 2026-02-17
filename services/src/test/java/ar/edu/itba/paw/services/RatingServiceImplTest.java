@@ -32,7 +32,7 @@ public class RatingServiceImplTest {
     private static final String EMAIL = "john@test.com";
     private static final long DOCTOR_ID = 2L;
     private static final Doctor DOCTOR = new Doctor("Jane", "Smith", "jane@test.com", "hashedpassword", "987654321", "es",
-            1L, 4.5, 10, true);
+             4.5, 10, true);
     private static final long PATIENT_ID = 1L;
     private static final Neighborhood NEIGHBORHOOD = new Neighborhood(1L, "Neighborhood A");
     private static final Patient PATIENT = new Patient("John", "Doe", "john@test.com", "hashedpassword", "123456789", "en",
@@ -129,15 +129,5 @@ public class RatingServiceImplTest {
         assertEquals(COMMENT, rating.getComment());
     }
 
-    @Test
-    public void testGetFiveTopRatingsInvalidPatient() {
-        //Preconditions
-        when(ratingDao.getFiveTopRatings()).thenReturn(List.of(RATING));
-        when(patientService.getById(anyLong())).thenReturn(Optional.empty());
 
-        //Exercise & Postconditions
-        assertThrows(UserNotFoundException.class, () ->
-                ratingService.getFiveTopRatings()
-        );
-    }
 }

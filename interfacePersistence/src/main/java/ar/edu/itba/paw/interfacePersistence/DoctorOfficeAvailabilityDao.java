@@ -6,11 +6,6 @@ import java.util.List;
 
 public interface DoctorOfficeAvailabilityDao {
 
-    DoctorOfficeAvailability create(DoctorOfficeAvailability slot);
-
-    void update(DoctorOfficeAvailability slot);
-
-    void delete(DoctorOfficeAvailability slot);
 
     List<DoctorOfficeAvailability> getByOfficeId(long officeId);
 
@@ -18,5 +13,4 @@ public interface DoctorOfficeAvailabilityDao {
 
     List<DoctorOfficeAvailability> getByDoctorId(long doctorId);
 
-    List<DoctorOfficeAvailability> getActiveByDoctorId(long doctorId);
 }

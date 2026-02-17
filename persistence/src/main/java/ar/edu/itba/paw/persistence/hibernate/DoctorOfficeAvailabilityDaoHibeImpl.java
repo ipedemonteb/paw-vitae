@@ -15,25 +15,6 @@ public class DoctorOfficeAvailabilityDaoHibeImpl implements DoctorOfficeAvailabi
     @PersistenceContext
     private EntityManager em;
 
-    @Override
-    public DoctorOfficeAvailability create(DoctorOfficeAvailability slot) {
-        em.persist(slot);
-        return slot;
-    }
-
-    @Override
-    public void update(DoctorOfficeAvailability slot) {
-        slot.setOffice(em.getReference(DoctorOffice.class, slot.getOffice().getId()));
-        em.merge(slot);
-    }
-
-    @Override
-    public void delete(DoctorOfficeAvailability slot) {
-        DoctorOfficeAvailability toDelete = em.find(DoctorOfficeAvailability.class, slot.getId());
-        if (toDelete != null) {
-            em.remove(toDelete);
-        }
-    }
 
     @Override
     public List<DoctorOfficeAvailability> getByOfficeId(long officeId) {
@@ -59,11 +40,4 @@ public class DoctorOfficeAvailabilityDaoHibeImpl implements DoctorOfficeAvailabi
                 .getResultList();
     }
 
-    @Override
-    public List<DoctorOfficeAvailability> getActiveByDoctorId(long doctorId) {
-        return em.createQuery("SELECT d FROM DoctorOfficeAvailability d JOIN d.office o WHERE o.doctor.id = :doctorId AND o.active = true AND o.removed IS NULL ORDER BY o.officeName, d.dayOfWeek, d.startTime",
-                DoctorOfficeAvailability.class)
-                .setParameter("doctorId", doctorId)
-                .getResultList();
-    }
 }

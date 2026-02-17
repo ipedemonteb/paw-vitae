@@ -27,28 +27,29 @@ public class ImageServiceImplTest {
     @InjectMocks
     private ImageServiceImpl imageService;
 
-    //TODO: Finish create testing when method is fixed
-//    @Test
-//    public void testCreate() {
-//        //Preconditions
-//        MultipartFile imageFile = mock(MultipartFile.class);
-//        byte[] imageBytes = new byte[]{1, 2, 3};
-//        when(imageFile.isEmpty()).thenReturn(false);
-//        try {
-//            when(imageFile.getBytes()).thenReturn(imageBytes);
-//        } catch (IOException e) {
-//            fail("Unexpected error during mocking getBytes: " + e.getMessage());
-//        }
-//        when(imageDao.create(imageBytes)).thenReturn(new Images(1, imageBytes));
-//
-//        //Exercise
-//        Images image = imageService.create(imageFile);
-//
-//        //Postconditions
-//        assertNotNull(image);
-//        assertEquals(1L, image.getId());
-//        assertArrayEquals(imageBytes, image.getImage());
-//    }
+    @Test
+    public void testCreate() throws IOException {
+        //Preconditions
+        MultipartFile imageFile = mock(MultipartFile.class);
+        byte[] imageBytes = new byte[]{1, 2, 3};
+        long doctorId = 1L;
+        long expectedImageId = 100L;
+
+        when(imageFile.getBytes()).thenReturn(imageBytes);
+        when(imageFile.getOriginalFilename()).thenReturn("profile.jpg");
+        when(imageFile.getSize()).thenReturn((long) imageBytes.length);
+
+        Images mockedImage = mock(Images.class);
+        when(mockedImage.getId()).thenReturn(expectedImageId);
+
+        when(imageDao.create(imageBytes)).thenReturn(mockedImage);
+
+        //Exercise
+        long imageId = imageService.create(imageFile, doctorId);
+
+        //Postconditions
+        assertEquals(expectedImageId, imageId);
+    }
 
     @Test
     public void testFindByIdNotExits() {

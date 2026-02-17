@@ -41,22 +41,6 @@ public class PatientDaoHibeImpl implements PatientDao {
     }
 
     @Override
-    public List<Patient> getByIds(Set<Long> ids) {
-        if (ids == null || ids.isEmpty()) {
-            return List.of();
-        }
-        TypedQuery<Patient> query = em.createQuery("FROM Patient p WHERE p.id IN :ids", Patient.class);
-        query.setParameter("ids", ids);
-        return query.getResultList();
-    }
-
-    @Override
-    public String getLanguage(long id) {
-        Patient patient = em.find(Patient.class, id);
-        return patient != null ? patient.getLanguage() : "";
-    }
-
-    @Override
     public Optional<Patient> getByVerificationToken(String token) {
         TypedQuery<Patient> query = em.createQuery("FROM Patient p WHERE p.verificationToken = :token", Patient.class);
         query.setParameter("token", token);

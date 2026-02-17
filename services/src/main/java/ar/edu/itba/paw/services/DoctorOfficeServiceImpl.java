@@ -60,15 +60,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         return doctorOfficeDao.create(office);
     }
 
-    @Transactional
-    @Override
-    public List<DoctorOffice> create(List<DoctorOffice> doctorOffice) {
-        List<DoctorOffice> doctorOffices = new ArrayList<>();
-        for (DoctorOffice office : doctorOffice) {
-            doctorOffices.add(create(office));
-        }
-        return doctorOffices;
-    }
+
 
     @Transactional
     @Override

@@ -24,28 +24,6 @@ public class CoverageDaoHibeImpl implements CoverageDao {
     }
 
     @Override
-    @Transactional
-    public Coverage create(String name) {
-        final Coverage coverage = new Coverage(name);
-        em.persist(coverage);
-        return coverage;
-    }
-
-    @Override
-    public Optional<Coverage> findByName(String name) {
-        final TypedQuery<Coverage> query = em.createQuery(
-                "FROM Coverage AS c WHERE c.name = :name",
-                Coverage.class
-        );
-        query.setParameter("name", name);
-        List<Coverage> results = query.getResultList();
-        if (results.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(results.getFirst());
-    }
-
-    @Override
     public List<Coverage> getAll() {
         return em.createQuery("FROM Coverage", Coverage.class).getResultList();
     }

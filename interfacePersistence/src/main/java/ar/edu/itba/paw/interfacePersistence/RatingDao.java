@@ -15,11 +15,5 @@ public interface RatingDao {
 
      Page<Rating> getRatingsByDoctorId(long doctorId, int page, int pageSize);
 
-     List<Rating> getRatingsByPatientId(long patientId);
-
-     List<Rating> getFiveTopRatings();
-
-     List<Rating> getFiveTopRatingsByDoctorId(long doctorId);
-
      Page<Rating> getAllRatings(int page, int pageSize);
 }

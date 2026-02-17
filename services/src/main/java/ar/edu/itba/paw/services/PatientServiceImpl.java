@@ -102,8 +102,5 @@ public class PatientServiceImpl implements PatientService {
         return patientDao.countAll();
     }
 
-    @Override
-    public void changePassword(long userId,String password) {
-        userService.changePassword(userId,password);
-    }
+
 }

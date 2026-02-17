@@ -26,7 +26,5 @@ public interface DoctorService {
 
     long getAllDoctorsDisplayCount();
 
-    String search(String keyword, int results);
 
-    void changePassword(long userId,String password);
 }

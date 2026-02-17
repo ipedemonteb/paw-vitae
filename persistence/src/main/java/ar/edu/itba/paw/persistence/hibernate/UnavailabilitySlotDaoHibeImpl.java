@@ -36,13 +36,6 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
         }
     }
 
-    @Override
-    public List<UnavailabilitySlot> getUnavailabilityByDoctorId(long doctorId) {
-        return em.createQuery("FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId ORDER BY u.startDate",
-                        UnavailabilitySlot.class)
-                .setParameter("doctorId", doctorId)
-                .getResultList();
-    }
 
     @Override
     public boolean isUnavailableAtDate(long doctorId, LocalDate date) {
@@ -54,39 +47,6 @@ public class UnavailabilitySlotDaoHibeImpl implements UnavailabilitySlotsDao {
         return count > 0;
     }
 
-    @Override
-    public List<UnavailabilitySlot> getUnavailabilityByDoctorIdCurrentAndNextMonth(long doctorId) {
-        LocalDate now = LocalDate.now();
-        LocalDate startOfThisMonth = now.withDayOfMonth(1);
-        LocalDate endOfNextMonth = now.plusMonths(1).withDayOfMonth(1).plusMonths(1).minusDays(1);
-
-        return em.createQuery("""
-            FROM UnavailabilitySlot u 
-            WHERE u.doctor.id = :doctorId 
-              AND (
-                  u.startDate <= :endOfNextMonth 
-                  AND u.endDate >= :startOfThisMonth
-              )
-        """, UnavailabilitySlot.class)
-                .setParameter("doctorId", doctorId)
-                .setParameter("startOfThisMonth", startOfThisMonth)
-                .setParameter("endOfNextMonth", endOfNextMonth)
-                .getResultList();
-    }
-
-    @Override
-    public List<UnavailabilitySlot> getUnavailabilityByDoctorIdAndMonthAndYear(long doctorId, int month, int year) {
-        LocalDate start = LocalDate.of(year, month, 1);
-        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
-        LocalDate now = LocalDate.now();
-        return em.createQuery("FROM UnavailabilitySlot u WHERE u.doctor.id = :doctorId " +
-                        "AND u.startDate <= :end AND u.endDate >= :start AND u.endDate > :now ", UnavailabilitySlot.class)
-                .setParameter("doctorId", doctorId)
-                .setParameter("start", start)
-                .setParameter("end", end)
-                .setParameter("now", now)
-                .getResultList();
-    }
 
     @Override
     public boolean hasOverlap(long doctorId, LocalDate start, LocalDate end) {
