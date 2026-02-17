@@ -10,8 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-//@OfficeOwnedByDoctor(message = "{office.invalid}")
-//@ActiveOfficeSlots
+
 public class DoctorAvailabilityForm {
     @NotNull
     @ValidOfficeTimeSlot(message = "office.invalid.timeSlot")

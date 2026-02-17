@@ -97,8 +97,8 @@ public class RestAppointmentController {
         return Response.noContent().build();
     }
 
-    @PATCH
-    @Path("/{id:\\d+}")
+    @PUT
+    @Path("/{id:\\d+}/report")
     @Consumes(CustomMediaType.APPLICATION_APPOINTMENT_REPORT)
     public Response updateReport(@PathParam("id") final long id,
                                  @Valid @NotNull AppointmentReportForm form) {

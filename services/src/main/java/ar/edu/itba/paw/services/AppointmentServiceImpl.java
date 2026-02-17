@@ -149,16 +149,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (report == null ) {
             return Optional.empty();
         }
-        Optional<Appointment> appointment = getById(appointmentId);
-        if (appointment.isPresent()) {
-            appointment.get().setReport(report);
-            mailService.sendReportAddedMail(appointment.get().getDoctor(), appointment.get().getPatient(), appointment.get(), report);
-            LOGGER.info("Report added to appointment: {}", appointment.get());
-            return Optional.of(appointment.get().getId());
-        } else {
-            LOGGER.info("Appointment not found: {}", appointmentId);
-        }
-        return Optional.empty();
+        Appointment appointment = getById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
+        appointment.setReport(report);
+        mailService.sendReportAddedMail(appointment.getDoctor(), appointment.getPatient(), appointment, report);
+        LOGGER.info("Report added to appointment: {}", appointment);
+        return Optional.of(appointment.getId());
     }
 
     @Transactional(readOnly = true)
