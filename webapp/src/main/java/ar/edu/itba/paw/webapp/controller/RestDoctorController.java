@@ -65,7 +65,7 @@ public class RestDoctorController {
     @Path("/{id:\\d+}")
     @Produces(value = CustomMediaType.APPLICATION_DOCTOR)
     public Response getById(@PathParam("id") final long id, @Context final Request request) {
-        final Doctor doctor = this.doctorService.getById(id).orElseThrow(DoctorOfficeNotFoundException::new);
+        final Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
         return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(DoctorDTO.fromDoctor(doctor, uriInfo)) {}), request, doctor.hashCode()).build();
     }
 
