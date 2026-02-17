@@ -196,14 +196,15 @@ export const appointmentHandlers = [
             return HttpResponse.json({ status: 'cancelled' }, { status: 200 });
         }
 
-        // CASO B: ACTUALIZAR REPORTE
-        if (contentType && contentType.includes('report')) {
-            return HttpResponse.json({ status: 'report_updated' }, { status: 200 });
-        }
-
         // CASO DEFAULT (Por si acaso)
         return HttpResponse.json({ status: 'ok' }, { status: 200 });
     }),
+
+    http.put(`${BASE_URL}/appointments/:id/report`, () => {
+        return HttpResponse.json({ status: 'ok' }, { status: 200 });
+    })
+
+
 
 
 ];
