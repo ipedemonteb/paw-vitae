@@ -38,7 +38,8 @@ function Search() {
         keyword: doctorsQuery.keyword,
         orderBy: doctorsQuery.orderBy,
         direction: doctorsQuery.direction,
-        page: doctorsQuery.page
+        page: doctorsQuery.page,
+        pageSize: doctorsQuery.pageSize
     })
 
     const loadingDelayed = useDelayedBoolean(isLoadingDoctors, 500)
