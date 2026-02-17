@@ -230,7 +230,7 @@ function ProfileCard({ doctor, profile, maxBadges, isOwner }: {
             <div className={aboutContent}>
                 <h1 className={aboutTitle}>{t("doctor.profile.card.description")}</h1>
                 <p className={aboutText}>
-                    {profile?.description || t("doctor.profile.no_description_available")}
+                    {profile?.description.trim() > 0 ? profile?.description :  t("doctor.profile.no_description_available")}
                 </p>
             </div>
         </Card>
@@ -255,7 +255,7 @@ function AboutMeCard({ bio, isLoading, isError }: {
                 : isError ?
                     <p className={errorText}>{t("doctor.profile.error.no_profile")}</p>
                 :
-                    <p className={aboutText}>{bio || t("doctor.profile.no_bio_available", "No biography available.")}</p>
+                        <p className={aboutText}>{bio?.trim().length > 0 ? bio : t("doctor.profile.no_bio_available", "No biography available.")}</p>
                 }
             </div>
         </Card>
