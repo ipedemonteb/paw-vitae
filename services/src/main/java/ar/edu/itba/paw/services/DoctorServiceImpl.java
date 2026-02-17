@@ -22,7 +22,7 @@ public class DoctorServiceImpl implements DoctorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DoctorServiceImpl.class);
 
     private final DoctorDao doctorDao;
-
+    private final DoctorProfileService doctorProfileService;
     private final ImageService imageService;
     private final PasswordEncoder passwordEncoder;
     private final SpecialtyService specialtyService;
@@ -32,7 +32,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Autowired
     public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder, ImageService imageService,
-                             SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService,UserService userService) {
+                             SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService,UserService userService,DoctorProfileService doctorProfileService) {
         this.doctorDao = doctorDao;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
@@ -40,6 +40,7 @@ public class DoctorServiceImpl implements DoctorService {
         this.coverageService = coverageService;
         this.doctorOfficeService = doctorOfficeService;
         this.userService = userService;
+        this.doctorProfileService = doctorProfileService;
     }
 
     @Transactional
@@ -60,6 +61,7 @@ public class DoctorServiceImpl implements DoctorService {
             coveragesList.add(coverage);
         }
         Doctor doctor = this.doctorDao.create(name, lastName, email, passwordEncoded, phone, language, specialtiesList, coveragesList);
+        this.doctorProfileService.create(doctor.getId(), "", "");
         LOGGER.info("Successfully created doctor: id={}, email={}", doctor.getId(), doctor.getEmail());
         userService.setVerificationToken(email);
         return doctor;

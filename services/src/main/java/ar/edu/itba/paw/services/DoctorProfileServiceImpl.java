@@ -40,7 +40,7 @@ public class DoctorProfileServiceImpl implements DoctorProfileService {
     @Transactional
     @Override
     public DoctorProfile findByDoctorId(long id) {
-        return doctorProfileDao.getByDoctorId(id).orElseGet(() -> create(id, "", ""));
+        return doctorProfileDao.getByDoctorId(id).orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional
