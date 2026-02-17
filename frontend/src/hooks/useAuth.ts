@@ -2,7 +2,7 @@ import {useContext} from "react";
 import {AuthContext} from "@/context/authContext.tsx";
 import {getClaims, setAuth} from "@/context/auth-store.ts";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {changePassword, login} from "@/data/auth.ts";
+import {changePasswordDoctor, changePasswordPatient, login} from "@/data/auth.ts";
 import {ROLE_DOCTOR} from "@/lib/constants.ts";
 import type {AxiosError} from "axios";
 
@@ -49,12 +49,15 @@ export function useChangePasswordMutation() {
                 repeatPassword: repeatPassword
             };
 
-            let url;
 
-            if (userRole === ROLE_DOCTOR) url = `/doctors/${userId}` //I CHECK IF ROLE VALID WHEN LOGIN SO NO OTHER POSSIBLE ROLE
-            else url = `/patients/${userId}`
-
-            await changePassword(url, formPayload)
+            if (userRole === ROLE_DOCTOR){
+                const url = `/doctors/${userId}`
+                await changePasswordDoctor(url,formPayload)
+            }
+            else {
+                const url = `/patients/${userId}`
+                await changePasswordPatient(url, formPayload)
+            }
         },
         onSettled: () => logout()
     })

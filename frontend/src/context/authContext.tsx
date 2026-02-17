@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = useLogin()
 
     const logout = useCallback(() => {
-        window.location.href = "/"
+        window.location.href = import.meta.env.VITE_BASE_URL
         clearAuth();
         queryClient.removeQueries({ queryKey: ['auth'], exact: false });
     }, [queryClient]);

@@ -22,9 +22,15 @@ export async function login(email: string, password: string, rememberMe?: boolea
     return { jwt, refresh };
 }
 
-export async function changePassword(url: string, form: ChangePasswordForm) {
+export async function changePasswordDoctor(url: string, form: ChangePasswordForm) {
     const res = await api.patch(`${url}`,form,{
-        headers: {"Content-Type":  ContentTypes.USER_PASSWORD }
+        headers: {"Content-Type":  ContentTypes.DOCTOR }
+    });
+    return res.data;
+}
+export async function changePasswordPatient(url: string, form: ChangePasswordForm) {
+    const res = await api.patch(`${url}`,form,{
+        headers: {"Content-Type":  ContentTypes.PATIENT }
     });
     return res.data;
 }
