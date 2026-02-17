@@ -138,7 +138,7 @@ export async function fetchFileBlob(url: string) {
     };
 }
 export async function updateAppointmentReport(id: string, report: string) {
-    return await api.patch(`/appointments/${id}`, { report }, {
+    return await api.put(`/appointments/${id}/report`, { report }, {
         headers: { "Content-Type": ContentTypes.APPOINTMENT_REPORT }
     });
 }
