@@ -39,7 +39,6 @@ public class DoctorProfileServiceImplTest {
     @Test
     public void testCreateInvalidDoctor() {
         //Preconditions
-        when(doctorService.getById(anyLong())).thenReturn(Optional.empty());
 
         //Exercise & Postconditions
         assertThrows(UserNotFoundException.class, () ->

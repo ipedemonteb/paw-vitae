@@ -230,9 +230,9 @@ function ProfileCard({ doctor, profile, maxBadges, isOwner }: {
             <div className={aboutContent}>
                 <h1 className={aboutTitle}>{t("doctor.profile.card.description")}</h1>
                 <p className={aboutText}>
-                    {profile?.description.trim() > 0 ? profile?.description :  t("doctor.profile.no_description_available")}
-                </p>
-            </div>
+                    {(profile?.description?.trim()?.length ?? 0) > 0
+                        ? profile?.description
+                        : t("doctor.profile.no_description_available")}    </p>       </div>
         </Card>
     );
 }

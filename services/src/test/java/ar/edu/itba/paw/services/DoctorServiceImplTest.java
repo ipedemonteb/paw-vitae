@@ -44,6 +44,10 @@ public class DoctorServiceImplTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private DoctorDao doctorDao;
+
+    @Mock
+    private DoctorProfileService doctorProfileService;
+
     @Mock
     private MailService mailService;
     @Mock
@@ -91,6 +95,8 @@ public class DoctorServiceImplTest {
     @Test
     public void testCreateDoctor() {
         //Preconditions
+        when(doctorProfileService.create(anyLong(), anyString(), anyString())).thenReturn(new DoctorProfile(DOCTOR, "bio", "desc"));
+        when(passwordEncoder.encode(anyString())).thenReturn(PASSWORD);
         when(specialtyService.getById(anyLong())).thenReturn(Optional.of(SPECIALTY));
         when(coverageService.findById(anyLong())).thenReturn(Optional.of(COVERAGE));
         when(doctorDao.create(
