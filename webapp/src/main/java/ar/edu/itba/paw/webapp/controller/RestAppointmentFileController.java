@@ -32,7 +32,6 @@ import java.util.List;
 @Component
 public class RestAppointmentFileController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestAppointmentFileController.class);
 
     private final AppointmentFileService appointmentFileService;
     private final AppointmentService appointmentService;
