@@ -96,6 +96,12 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>frontend</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
     </dependency>
@@ -186,11 +192,6 @@
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-maven-plugin</artifactId>
           <version>9.4.53.v20231009</version>
-          <configuration>
-            <webApp>
-              <contextPath>/</contextPath>
-            </webApp>
-          </configuration>
         </plugin>
 
         <plugin>
@@ -213,6 +214,14 @@
         <plugin>
           <artifactId>maven-war-plugin</artifactId>
           <version>3.4.0</version>
+          <configuration>
+            <packagingExcludes>**/logback-test.xml</packagingExcludes>
+            <webResources>
+              <resource>
+                <directory>../frontend/dist</directory>
+              </resource>
+            </webResources>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>

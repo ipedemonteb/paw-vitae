@@ -52,7 +52,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
   </filter>
   <filter-mapping>
     <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/api/*</url-pattern>
   </filter-mapping>
   <filter>
     <filter-name>openEntityManagerInViewFilter</filter-name>
@@ -60,7 +60,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
   </filter>
   <filter-mapping>
         <filter-name>openEntityManagerInViewFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
   </filter-mapping>
   <filter>
     <filter-name>jersey</filter-name>
@@ -81,7 +81,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
   </filter>
   <filter-mapping>
     <filter-name>jersey</filter-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/api/*</url-pattern>
   </filter-mapping>
 
   <filter>
@@ -95,5 +95,13 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
   <servlet-mapping>
     <servlet-name>default</servlet-name>
     <url-pattern>/assets/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>index</servlet-name>
+    <jsp-file>/index.html</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>index</servlet-name>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
 </web-app>

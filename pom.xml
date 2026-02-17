@@ -289,6 +289,11 @@
           <packagingExcludes>**/logback-test.xml</packagingExcludes>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.15.0</version>
+      </plugin>
     </plugins>
   </build>
 

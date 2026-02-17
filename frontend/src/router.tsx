@@ -163,4 +163,7 @@ export const router = createBrowserRouter([
             { path: "*", element: <GenericError code={404} /> },
         ],
     },
-]);
+
+],{
+    basename: import.meta.env.BASE_URL
+});
