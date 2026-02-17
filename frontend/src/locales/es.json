@@ -179,7 +179,9 @@
       "book": "Reservar Turno",
       "error": {
         "failed": "Reserva de turno fallida",
-        "try-again": "Intente nuevamente."
+        "try-again": "Intente nuevamente.",
+        "refetch": "No se pudo cargar la disponibilidad del doctor."
+
       }
     },
     "confirmation": {

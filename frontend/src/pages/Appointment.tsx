@@ -45,6 +45,8 @@ import {daysBetweenUtc} from "@/utils/dateUtils.ts";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
+import {cn} from "@/lib/utils.ts";
 
 function buildSpecialtyToOfficesMapFromLinks(
     offices: OfficeDTO[],
@@ -122,24 +124,22 @@ function Appointment() {
     const toStr = useMemo(() => format(maxDate, 'yyyy-MM-dd'), [maxDate]);
 
     const { data: doctor, isLoading: loadingDoctor, isError: errorDoctor, error: doctorError } = useDoctor(doctorId);
-    const { data: offices, isLoading: loadingOffices } = useDoctorOffices(doctor?.offices, { status: "active" });
-    const { data: officeSpecialties, isLoading: isLoadingOfficeSpecialties } = useDoctorOfficesSpecialties(offices);
-    const { data: doctorSpecialties, isLoading: isLoadingDoctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
-
-    const resolvePage = Math.floor((daysBetweenUtc(today, selectedDate) / 10) + 1)
-
-    const {data: appointments} = useAppointments({userId: patientId, collection: "upcoming", pageSize: 15, page: resolvePage})
-
-    const { data: allAvailability } = useDoctorAvailability(doctorId);
-    const { data: occupiedSlots, isLoading: loadingSlots } = useOccupiedSlots(fromStr, toStr, doctorId);
-    const { data: unavailabilityPage, isLoading: loadingUnavailability } = useDoctorUnavailability(doctor?.unavailability, {
-        from: fromStr,
-        to: toStr
-    });
+    const { data: offices, isLoading: loadingOffices, isFetching: fetchingOffices, isError: errorOffices, refetch: refetchOffices } = useDoctorOffices(doctor?.offices, { status: "active" });
+    const { data: officeSpecialties, isLoading: isLoadingOfficeSpecialties, isFetching: fetchingOfficeSpecialties, isError: errorOfficeSpecialties, refetch: refetchOfficeSpecialties } = useDoctorOfficesSpecialties(offices);
+    const { data: doctorSpecialties, isLoading: isLoadingDoctorSpecialties, isFetching: fetchingDoctorSpecialties, isError: errorDoctorSpecialties, refetch: refetchDoctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
+    const resolvePage = Math.floor((daysBetweenUtc(today, selectedDate) / 10) + 1);
+    const { data: appointments, isLoading: loadingAppointments, isFetching: fetchingAppointments, isError: errorAppointments, refetch: refetchAppointments } = useAppointments({ userId: patientId, collection: "upcoming", pageSize: 15, page: resolvePage });
+    const { data: allAvailability, isLoading: loadingAvailability, isFetching: fetchingAvailability, isError: errorAvailability, refetch: refetchAvailability } = useDoctorAvailability(doctorId);
+    const { data: occupiedSlots, isLoading: loadingSlots, isFetching: fetchingSlots, isError: errorSlots, refetch: refetchSlots } = useOccupiedSlots(fromStr, toStr, doctorId);
+    const { data: unavailabilityPage, isLoading: loadingUnavailability, isFetching: fetchingUnavailability, isError: errorUnavailability, refetch: refetchUnavailability } = useDoctorUnavailability(doctor?.unavailability, { from: fromStr, to: toStr });
 
     const unavailableRanges = unavailabilityPage?.data || [];
+    const isLoading = loadingDoctor || loadingOffices || loadingSlots || loadingUnavailability || isLoadingOfficeSpecialties || isLoadingDoctorSpecialties || loadingAvailability || loadingAppointments;
+    const isBookingError = errorOffices || errorOfficeSpecialties || errorDoctorSpecialties || errorAvailability || errorSlots || errorUnavailability || errorAppointments;
+    const isBookingFetching = fetchingOffices || fetchingOfficeSpecialties || fetchingDoctorSpecialties || fetchingAvailability || fetchingSlots || fetchingUnavailability || fetchingAppointments;
 
-    const isLoading = loadingDoctor || loadingOffices || loadingSlots || loadingUnavailability || isLoadingOfficeSpecialties || isLoadingDoctorSpecialties;
+    const refetchBookingData = () => { refetchOffices(); refetchOfficeSpecialties(); refetchDoctorSpecialties(); refetchAvailability(); refetchSlots(); refetchUnavailability(); refetchAppointments(); };
+
 
     const specialtyBySelf = useMemo(() => {
         const m = new Map<string, SpecialtyDTO>();
@@ -330,30 +330,35 @@ function Appointment() {
                     </div>
                     <div className={appointmentContent}>
                         <DoctorProfileCard doctor={doctor}/>
-                        <div className={selectorsContainer}>
-                            <SpecialtySelector
-                                options={specialtyOptions}
-                                selectedSpecialty={selectedSpecialty}
-                                setSelectedSpecialty={setSelectedSpecialty}/>
-                            <OfficeSelector
-                                options={filteredOffices}
-                                selectedOffice={selectedOffice}
-                                setSelectedOffice={setSelectedOffice}
-                                disabled={!selectedSpecialty}
-                            />
-                        </div>
+                        {isBookingError ?
+                            <RefetchData isFetching={isBookingFetching} onRefetch={refetchBookingData} errorText={t("appointment.booking.error.refetch")}/>
+                        :
+                            <>
+                                <div className={selectorsContainer}>
+                                    <SpecialtySelector
+                                        options={specialtyOptions}
+                                        selectedSpecialty={selectedSpecialty}
+                                        setSelectedSpecialty={setSelectedSpecialty}/>
+                                    <OfficeSelector
+                                        options={filteredOffices}
+                                        selectedOffice={selectedOffice}
+                                        setSelectedOffice={setSelectedOffice}
+                                        disabled={!selectedSpecialty}
+                                    />
+                                </div>
+                                <DateSelector
+                                    selectedDate={selectedDate}
+                                    setSelectedDate={setSelectedDate}
+                                    selectedTime={selectedTime}
+                                    setSelectedTime={setSelectedTime}
+                                    availableSlots={slotsForDay}
+                                    disabled={!selectedOffice}
+                                    isDateDisabled={(d) => !isDateSelectable(d)}
+                                    maxDate={maxDate}
+                                />
 
-                        <DateSelector
-                            selectedDate={selectedDate}
-                            setSelectedDate={setSelectedDate}
-                            selectedTime={selectedTime}
-                            setSelectedTime={setSelectedTime}
-                            availableSlots={slotsForDay}
-                            disabled={!selectedOffice}
-                            isDateDisabled={(d) => !isDateSelectable(d)}
-                            maxDate={maxDate}
-                        />
-
+                            </>
+                        }
                         <div className={optionalsContainer}>
                             <ReasonInput value={reason} onChange={setReason} />
                             <FilesUpload onFilesChange={setFiles} />
@@ -644,5 +649,34 @@ function MedicalHistory({ checked, onCheckedChange }: { checked: boolean, onChec
         </div>
     );
 }
+
+function RefetchData({
+                         isFetching = false,
+                         onRefetch,
+                         errorText,
+                         tryAgainText,
+                         className,
+                         disabled,
+                     }: {
+    isFetching?: boolean;
+    onRefetch: () => void;
+    errorText?: string;
+    tryAgainText?: string;
+    className?: string;
+    disabled?: boolean;
+}) {
+    return (
+        <Card className={cn("w-full p-8", className)}>
+            <RefetchComponent
+                isFetching={isFetching}
+                onRefetch={onRefetch}
+                errorText={errorText}
+                tryAgainText={tryAgainText}
+                disabled={disabled}
+            />
+        </Card>
+    );
+}
+
 
 export default Appointment;

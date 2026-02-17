@@ -179,7 +179,8 @@
       "book": "Book Appointment",
       "error": {
         "failed": "Appointment booking failed",
-        "try-again": "Try again."
+        "try-again": "Try again.",
+        "refetch": "Could not load doctor availability."
       }
     },
     "confirmation": {
