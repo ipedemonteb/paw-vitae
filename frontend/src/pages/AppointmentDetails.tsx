@@ -58,6 +58,7 @@ import {useDoctor} from "@/hooks/useDoctors.ts";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {usePatientById} from "@/hooks/usePatients.ts";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 const appointmentBackground = "bg-[var(--background-light)] flex justify-center items-start min-h-screen";
 const cardContainer = "mt-36 px-5 mx-auto max-w-6xl w-full mb-8";
@@ -104,16 +105,23 @@ function AppointmentDetails() {
     } = useAppointment(appointmentId);
     const patientId = userIdFromSelf(appointment?.patient);
     const doctorId = userIdFromSelf(appointment?.doctor);
-    const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
-    const { data: patient, isLoading: loadingPatient } = usePatientById(patientId);
-    const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment?.specialty);
-    const { data: office, isLoading: loadingOffice } = useDoctorOffice(appointment?.doctorOffice);
-    const { data: neighborhood, isLoading: loadingNeighbourhood } = useNeighborhood(office?.neighborhood);
-    const { data: files, isLoading: loadingFiles } = useAppointmentFiles(appointment?.appointmentFiles);
-    const { data: rating, isLoading: loadingRating } = useRating(appointment?.rating);
+    const { data: doctor, isLoading: loadingDoctor, isError: isErrorDoctor, error: errorDoctor } = useDoctor(doctorId);
+    const { data: patient, isLoading: loadingPatient, isError: isErrorPatient, error: errorPatient } = usePatientById(patientId);
+    const { data: specialty, isLoading: loadingSpecialty, isError: errorSpecialty, refetch: refetchSpecialty, isFetching: fetchingSpecialty } = useSpecialty(appointment?.specialty);
+    const { data: office, isLoading: loadingOffice, isError: errorOffice, refetch: refetchOffice, isFetching: fetchingOffice } = useDoctorOffice(appointment?.doctorOffice);
+    const { data: neighborhood, isLoading: loadingNeighbourhood, isError: errorNeighborhood, refetch: refetchNeighborhood, isFetching: fetchingNeighborhood } = useNeighborhood(office?.neighborhood);
+    const { data: files, isLoading: loadingFiles, isError: errorFiles,  refetch: refetchFiles, isFetching: fetchingFiles } = useAppointmentFiles(appointment?.appointmentFiles);
+    const { data: rating, isLoading: loadingRating, isError: errorRating, refetch: refetchRating, isFetching: fetchingRating } = useRating(appointment?.rating);
 
     const isLoading = loadingAppointment || loadingSpecialty || loadingOffice || loadingFiles || loadingDoctor || loadingRating || loadingNeighbourhood || loadingPatient;
     const isError = errorAppointment;
+    const isErrorDetails = errorSpecialty || errorOffice || errorNeighborhood;
+    const isFetchingDetails = fetchingSpecialty || fetchingOffice || fetchingNeighborhood;
+    const refetchDetails = () => {
+        refetchSpecialty();
+        refetchOffice();
+        refetchNeighborhood();
+    }
 
     const { patientFiles, doctorFiles } = useMemo(() => {
         const all = files ?? [];
@@ -134,6 +142,16 @@ function AppointmentDetails() {
     if (isError || !appointment) {
         const status = appointmentError ? (appointmentError as any).response?.status : 404;
         return <GenericError code={status} />;
+    }
+
+    if(isErrorDoctor) {
+        const status = errorDoctor ? (errorDoctor as any).response?.status : 404;
+        return <GenericError code={status} />;
+    }
+
+    if(isErrorPatient) {
+        const status = errorPatient ? (errorPatient as any).response?.status : 404;
+        return <GenericError code={status}/>
     }
 
     const hasRating = typeof rating?.rating === "number" && !Number.isNaN(rating.rating);
@@ -158,33 +176,87 @@ function AppointmentDetails() {
                             <DoctorProfileCard doctor={doctor} />
                         )}
 
-                        <div className={appointmentData}>
-                            <StatusCard status={appointment.status} />
-                            <DateCard date={appointment.date} />
-                            <SpecialtyCard specialty={specialty?.name} />
-                            <OfficeCard name={office?.name} neighborhood={neighborhood?.name} />
-                        </div>
+                        {isErrorDetails ?
+                            <Card className="w-full p-8">
+                                <RefetchComponent
+                                    isFetching={isFetchingDetails}
+                                    onRefetch={refetchDetails}
+                                    errorText={t("appointment.details.error")}
+                                />
+                            </Card>
+                        :
+                            <div className={appointmentData}>
+                                <StatusCard status={appointment.status} />
+                                <DateCard date={appointment.date} />
+                                <SpecialtyCard specialty={specialty?.name} />
+                                <OfficeCard name={office?.name} neighborhood={neighborhood?.name} />
+                            </div>
+                        }
 
                         <VisitCard reason={appointment.reason} />
 
                         <div className="flex flex-col gap-6">
-                            <PatientFileCard files={patientFiles} />
+                            {errorFiles ?
+                                <div>
+                                    <div className={cardIconContainer}>
+                                        <FileCheckCorner className={cardIcon}/>
+                                        <h1 className={cardTitle}>{t("appointment.details.patient-files")}</h1>
+                                    </div>
+                                    <Card className="w-full p-8">
+                                        <RefetchComponent
+                                            isFetching={fetchingFiles}
+                                            onRefetch={refetchFiles}
+                                            errorText={t("appointment.details.error-files")}
+                                        />
+                                    </Card>
+                                </div>
+                            :
+                                <PatientFileCard files={patientFiles} />
+                            }
                             <MedicalHistoryCard isDoctor={isDoctor} canAccessMedicalHistory={appointment.allowFullHistory} patientId={patientId}/>
 
                             {showPostVisit ? (
                                 isDoctor && !isCompleted && (appointment.report ?? "").trim().length === 0 ? (
                                     <PostVisitLockedComponent/>
-                                ) : (
+                                ) : errorFiles ?
+                                    <div>
+                                        <div className={cardIconContainer}>
+                                            <Cross className={cardIcon} />
+                                            <h1 className={cardTitle}>{t("appointment.details.post-visit")}</h1>
+                                        </div>
+                                        <Card className="w-full py-8">
+                                            <RefetchComponent
+                                                isFetching={fetchingFiles}
+                                                onRefetch={refetchFiles}
+                                                errorText={t("appointment.details.error-files")}
+                                            />
+                                        </Card>
+                                    </div>
+                                :
                                     <PostVisitComponent
                                         appointmentId={appointmentId}
                                         files={doctorFiles}
                                         report={appointment.report}
                                         isDoctor={role === "ROLE_DOCTOR"}
                                     />
-                                )
                             ) : null}
 
-                            {showRatingBlock ? (
+                            {errorRating ?
+                                <div>
+                                    <div className={cardIconContainer}>
+                                        <Star className={cardIcon} />
+                                        <h1 className={cardTitle}>{t("appointment.details.rating")}</h1>
+                                    </div>
+                                    <Card className="w-full py-8">
+                                        <RefetchComponent
+                                            isFetching={fetchingRating}
+                                            onRefetch={refetchRating}
+                                            errorText={t("appointment.details.error-rating")}
+                                        />
+                                    </Card>
+                                </div>
+                            :
+                            showRatingBlock ? (
                                 hasRating ? (
                                     <RatingComponent rating={rating?.rating} comment={rating?.comment} />
                                 ) : isDoctor ? (
