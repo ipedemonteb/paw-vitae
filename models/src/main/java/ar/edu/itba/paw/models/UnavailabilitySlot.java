@@ -67,13 +67,12 @@ public class UnavailabilitySlot {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UnavailabilitySlot)) return false;
-        UnavailabilitySlot that = (UnavailabilitySlot) o;
+        if (!(o instanceof UnavailabilitySlot that)) return false;
         return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,doctor, startDate, endDate);
+        return Objects.hash(id, startDate, endDate);
     }
 }

@@ -149,15 +149,9 @@ public class DoctorOffice {
         return Objects.equals(id, that.id);
     }
 
-    private int specialtiesHashCode() {
-        return specialties == null ? 0 :
-                specialties.stream()
-                        .mapToInt(Specialty::hashCode)
-                        .sum();
-    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, neighborhood.getId(), specialtiesHashCode(), officeName, active, removed);
+        return Objects.hash(id, neighborhood.getId(), officeName, active, removed);
     }
 }
