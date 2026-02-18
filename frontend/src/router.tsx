@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
             { path: "about-us", element: <About /> },
             { path: "profile/:id", element: <PublicProfile /> },
             { path: "change-password", element: <ChangePassword /> },
-
+            { path: "change-password-confirmation", element: <ChangePasswordConfirmation /> },
             // Search (no doctor)
             {
                 element: <ExcludeRolesGuard forbiddenRoles={["ROLE_DOCTOR"]} />,
@@ -94,7 +94,7 @@ export const router = createBrowserRouter([
                     { path: "verify", element: <VerifyAccount /> },
                     { path: "register", element: <Register /> },
                     { path: "recover-password", element: <RecoverPassword /> },
-                    { path: "change-password-confirmation", element: <ChangePasswordConfirmation /> },
+
                 ],
             },
 

@@ -24,7 +24,7 @@ interface AuthContextType {
         unknown
     >;
 
-    logout: () => void;
+    logout: (redirectPath?: string) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -42,12 +42,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const login = useLogin()
 
-    const logout = useCallback((redirectPath: string = "/", state?: any) => {
+    const logout = useCallback((redirectPath: string = "/") => {
         clearAuth();
         queryClient.removeQueries({ queryKey: ['auth'], exact: false });
-        if (state) {
-            window.history.replaceState(state, "");
-        }
         window.location.href = import.meta.env.BASE_URL + redirectPath.replace(/^\//, "");
     }, [queryClient]);
 
