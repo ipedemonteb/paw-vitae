@@ -91,6 +91,5 @@ public class Rating {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, rating, doctor, patient, appointment, comment);
-    }
+        return Objects.hash(id, rating, comment);    }
 }

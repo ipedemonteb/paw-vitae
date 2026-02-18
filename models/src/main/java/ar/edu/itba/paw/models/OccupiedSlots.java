@@ -34,10 +34,6 @@ public class OccupiedSlots {
         this.startTime = startTime;
     }
 
-    public enum SlotStatus {
-        AVAILABLE,
-        UNAVAILABLE
-    }
 
     public Long getId() {
         return id;
@@ -86,6 +82,6 @@ public class OccupiedSlots {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, doctor, slotDate, startTime);
+        return Objects.hash(id, slotDate, startTime);
     }
 }

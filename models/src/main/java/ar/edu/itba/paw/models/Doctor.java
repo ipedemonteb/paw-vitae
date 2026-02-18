@@ -138,43 +138,9 @@ public class Doctor extends User {
     public void setCertifications(List<DoctorCertification> certifications) { this.certifications = certifications; }
 
 
-    private int specialtiesHashCode() {
-        return specialtyList == null ? 0 :
-                specialtyList.stream()
-                        .mapToInt(Specialty::hashCode)
-                        .sum();
-    }
-
-    private int coveragesHashCode() {
-        return coverageList == null ? 0 :
-                coverageList.stream()
-                        .mapToInt(Coverage::hashCode)
-                        .sum();
-    }
-
-    private int officesHashCode() {
-        return doctorOffices == null ? 0 :
-                doctorOffices.stream()
-                        .mapToInt(DoctorOffice::hashCode)
-                        .sum();
-    }
-
-    private int experiencesHashCode() {
-        return experiences == null ? 0 :
-                experiences.stream()
-                        .mapToInt(DoctorExperience::hashCode)
-                        .sum();
-    }
-
-    private int certificationsHashCode() {
-        return certifications == null ? 0 :
-                certifications.stream()
-                        .mapToInt(DoctorCertification::hashCode)
-                        .sum();
-    }
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), specialtiesHashCode(), coveragesHashCode(), officesHashCode(), ratingCount, imageId, profile.hashCode(), experiencesHashCode(), certificationsHashCode());
+        return Objects.hash(super.hashCode(), ratingCount, imageId);
     }
 
 }
