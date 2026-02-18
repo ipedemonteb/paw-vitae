@@ -268,17 +268,7 @@ public class RestDoctorController {
         return Response.noContent().build();
     }
 
-//    @PUT
-//    @Path("/{id:\\d+}/unavailability")
-//    @Consumes(CustomMediaType.APPLICATION_UNAVAILABILITY_LIST)
-//    public Response setDoctorUnavailability(
-//            @PathParam("id") final long id,
-//            @Valid @NotNull DoctorUnavailabilityForm unavailabilityForm
-//    ) {
-//        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
-//        this.unavailabilitySlotsService.updateDoctorUnavailability(doctor,unavailabilityForm.getUnavailabilitySlots());
-//        return Response.noContent().build();
-//    }
+
 
     @POST
     @Path("/{id:\\d+}/unavailability")
@@ -349,7 +339,6 @@ public class RestDoctorController {
         return Response.ok(new GenericEntity<>(OccupiedSlotDTO.fromList(slots, uriInfo)) {}).build();
     }
 
-    //todo: cache?
     @GET
     @Path("/{id:\\d+}/slots/{slotId:\\d+}")
     @Consumes(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOT)
