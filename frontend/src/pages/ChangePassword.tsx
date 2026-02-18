@@ -4,8 +4,7 @@ import { Link, useSearchParams } from "react-router-dom"
 import {Lock, CheckCircle2, ArrowLeft, Check, X, AlertCircle} from "lucide-react"
 import { PasswordInput } from "@/components/PasswordInput.tsx"
 import { Button } from "@/components/ui/button"
-import {useAuth, useChangePasswordMutation} from "@/hooks/useAuth"
-
+import { useChangePasswordMutation} from "@/hooks/useAuth"
 import { PasswordStrengthMeter } from "@/components/PasswordStrengthMeter.tsx"
 import {Spinner} from "@/components/ui/spinner.tsx";
 
@@ -39,7 +38,6 @@ const submitButton =
 export default function ChangePassword() {
     const { t } = useTranslation()
     const [searchParams] = useSearchParams()
-    const { logout } = useAuth()
     const changePassword = useChangePasswordMutation()
 
     const token = searchParams.get("token")
