@@ -88,17 +88,17 @@ public class RestDoctorController {
     @GET
     @Path("/{id:\\d+}/specialties")
     @Produces(value = CustomMediaType.APPLICATION_SPECIALTY_LIST)
-    public Response getDoctorSpecialties(@PathParam("id") final long id) {
+    public Response getDoctorSpecialties(@PathParam("id") final long id,@Context final Request request) {
         List<Specialty> specialties = this.specialtyService.getByDoctorId(id);
-        return Response.ok(new GenericEntity<List<SpecialtyDTO>>(SpecialtyDTO.fromSpecialty(specialties, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialties, uriInfo)) {}), request, specialties.hashCode()).build();
     }
 
     @GET
     @Path("/{id:\\d+}/coverages")
     @Produces(value = CustomMediaType.APPLICATION_COVERAGE_LIST)
-    public Response getDoctorCoverages(@PathParam("id") final long id) {
+    public Response getDoctorCoverages(@PathParam("id") final long id,@Context final Request request) {
         List<Coverage> coverages = this.coverageService.findByDoctorId(id);
-        return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}), request, coverages.hashCode()).build();
     }
 
     @GET
@@ -123,10 +123,10 @@ public class RestDoctorController {
     @Produces(value = CustomMediaType.APPLICATION_OFFICE_LIST)
     public Response getDoctorOffices(
             @PathParam("id") final long id,
-            @BeanParam @Valid OfficeSearchForm form) {
+            @BeanParam @Valid OfficeSearchForm form,@Context final Request request) {
 
         List<DoctorOffice> offices = this.doctorOfficeService.getByDoctorId(id, form.getStatus());
-        return Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(offices, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(OfficeDTO.fromDoctorOffice(offices, uriInfo)) {}), request, offices.hashCode()).build();
     }
 
     @GET
@@ -148,9 +148,9 @@ public class RestDoctorController {
     @GET
     @Path("/{id:\\d+}/offices/{officeId:\\d+}/specialties")
     @Produces(value = CustomMediaType.APPLICATION_OFFICE_SPECIALTY_LIST)
-    public Response getDoctorOfficeSpecialties(@PathParam("id") final long id, @PathParam("officeId") final long officeId) {
+    public Response getDoctorOfficeSpecialties(@PathParam("id") final long id, @PathParam("officeId") final long officeId, @Context final Request request) {
         List<DoctorOfficeSpecialty> specialties = this.doctorOfficeSpecialtyService.getByOfficeId(officeId);
-        return Response.ok(new GenericEntity<>(OfficeSpecialtyDTO.fromDoctorOfficeSpecialty(specialties, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(OfficeSpecialtyDTO.fromDoctorOfficeSpecialty(specialties, uriInfo)) {}), request, specialties.hashCode()).build();
     }
 
     @GET
@@ -164,17 +164,17 @@ public class RestDoctorController {
     @GET
     @Path("/{id:\\d+}/experiences")
     @Produces(value = CustomMediaType.APPLICATION_DOCTOR_EXPERIENCE_LIST)
-    public Response getDoctorExperiences(@PathParam("id") final long id) {
+    public Response getDoctorExperiences(@PathParam("id") final long id,@Context final Request request) {
         List<DoctorExperience> experiences = this.doctorExperienceService.findByDoctorId(id);
-        return Response.ok(new GenericEntity<>(ExperienceDTO.fromDoctorExperience(experiences, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(ExperienceDTO.fromDoctorExperience(experiences, uriInfo)) {}), request, experiences.hashCode()).build();
     }
 
     @GET
     @Path("/{id:\\d+}/certifications")
     @Produces(value = CustomMediaType.APPLICATION_DOCTOR_CERTIFICATION_LIST)
-    public Response getDoctorCertifications(@PathParam("id") final long id) {
+    public Response getDoctorCertifications(@PathParam("id") final long id,@Context final Request request) {
         List<DoctorCertification> certifications = this.doctorCertificationService.findByDoctorId(id);
-        return Response.ok(new GenericEntity<>(CertificationDTO.fromDoctorCertification(certifications, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(CertificationDTO.fromDoctorCertification(certifications, uriInfo)) {}), request, certifications.hashCode()).build();
     }
 
 
@@ -268,17 +268,6 @@ public class RestDoctorController {
         return Response.noContent().build();
     }
 
-//    @PUT
-//    @Path("/{id:\\d+}/unavailability")
-//    @Consumes(CustomMediaType.APPLICATION_UNAVAILABILITY_LIST)
-//    public Response setDoctorUnavailability(
-//            @PathParam("id") final long id,
-//            @Valid @NotNull DoctorUnavailabilityForm unavailabilityForm
-//    ) {
-//        Doctor doctor = this.doctorService.getById(id).orElseThrow(UserNotFoundException::new);
-//        this.unavailabilitySlotsService.updateDoctorUnavailability(doctor,unavailabilityForm.getUnavailabilitySlots());
-//        return Response.noContent().build();
-//    }
 
     @POST
     @Path("/{id:\\d+}/unavailability")
@@ -349,7 +338,6 @@ public class RestDoctorController {
         return Response.ok(new GenericEntity<>(OccupiedSlotDTO.fromList(slots, uriInfo)) {}).build();
     }
 
-    //todo: cache?
     @GET
     @Path("/{id:\\d+}/slots/{slotId:\\d+}")
     @Consumes(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOT)
