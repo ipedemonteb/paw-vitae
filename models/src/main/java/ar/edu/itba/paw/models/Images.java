@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Entity
 @Table(name = "images")
@@ -38,4 +40,8 @@ public class Images {
         this.image = image;
     }
 
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(image);
+    }
 }
