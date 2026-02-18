@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
     const isProduction = mode === 'production';
 
     return {
-        base: isProduction ? "/paw-2025a-11/" : "/",
+        base: isProduction ? "/paw-2025a-11" : "/",
 
         root: '.',
         plugins: [
