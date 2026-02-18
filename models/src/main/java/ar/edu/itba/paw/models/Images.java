@@ -42,6 +42,6 @@ public class Images {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(image);
+        return Objects.hash(id);
     }
 }
