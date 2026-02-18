@@ -83,7 +83,6 @@ export default function ChangePassword() {
         changePassword.mutate({email, password, repeatPassword,token}, {
             onSuccess: () => setIsSubmitted(true),
             onError: () => setApiError( t("change_password.error_token_expired") || "Error al cambiar la contraseña."),
-            onSettled: () => logout()
         })
     };
 

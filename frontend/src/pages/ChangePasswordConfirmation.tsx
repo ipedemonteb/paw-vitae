@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { CheckCircle2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {useEffect} from "react";
 
 const pageContainer = "min-h-screen bg-(--background-light) flex flex-col items-center pt-36 pb-6 px-4 sm:px-6 lg:px-8";
 const cardContainer = "w-full max-w-lg bg-white py-10 px-16 rounded-xl border border-[var(--gray-300)] shadow-sm";
@@ -15,12 +16,15 @@ const submitButton = "w-full text-base mt-8 font-semibold bg-[var(--primary-colo
 
 export default function ChangePasswordConfirmation() {
     const { t } = useTranslation();
-    const location = useLocation();
-
-    // SEGURIDAD: Si no existe el estado "fromChangePassword", lo mandamos al home
-    if (!location.state?.fromChangePassword) {
+    const isAuthorized = sessionStorage.getItem("fromChangePassword");
+    if (!isAuthorized) {
         return <Navigate to="/" replace />;
     }
+    useEffect(() => {
+        return () => {
+            sessionStorage.removeItem("fromChangePassword");
+        };
+    }, []);
 
     return (
         <div className={pageContainer}>
@@ -42,7 +46,7 @@ export default function ChangePasswordConfirmation() {
                 <div className={backLinkContainer}>
                     <Link to="/" className={backLink}>
                         <ArrowLeft className="h-4 w-4" />
-                        {t("common.back_to_home")}
+                        {t("common.return_home")}
                     </Link>
                 </div>
             </div>

@@ -59,7 +59,8 @@ export function useChangePasswordMutation() {
             }
         },
         onSuccess: () => {
-            logout("/change-password-confirmation", { fromChangePassword: true });
+            sessionStorage.setItem("fromChangePassword", "true");
+            logout("/change-password-confirmation");
         }
     });
 }
