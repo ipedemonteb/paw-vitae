@@ -158,7 +158,9 @@
       "rating-error": "Error al enviar la calificación. Por favor, inténtalo de nuevo.",
       "back": "Volver a Turnos",
       "error": "No se pudieron cargar los detalles del turno.",
-      "error-doctor": "No se pudo cargar la información del doctor."
+      "error-doctor": "No se pudo cargar la información del doctor.",
+      "error-files": "No se pudieron cargar los archivos.",
+      "error-rating": "No se pudo cargar la reseña."
     },
     "booking": {
       "header": {
