@@ -80,13 +80,16 @@ const profileContainer =
 function PublicProfile() {
     const auth = useAuth();
     const { id } = useParams<{ id: string }>();
-    const { data: doctor, isLoading: isLoadingDoctor, isError: doctorError } = useDoctor(id);
+    const { data: doctor, isLoading: isLoadingDoctor, isError: isDoctorError,  error: doctorError} = useDoctor(id);
     const { data: profile, isLoading: isLoadingProfile, isError: errorProfile } = useDoctorBiography(doctor?.profile);
 
     if (useDelayedBoolean(isLoadingDoctor))
         return <LoadingFullPageComponent/>
 
-    if (doctorError || !doctor) return <GenericError code={404} />;
+    if (isDoctorError || !doctor) {
+        const status = doctorError ? (doctorError as any).response?.status : 404;
+        return <GenericError code={status} />;
+    }
 
     const maxBadges = 4;
     const isOwner = auth.email === doctor?.email;
