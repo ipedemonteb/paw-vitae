@@ -34,7 +34,7 @@ export function createMockPatient(overrides: Partial<PatientDTO> = {}): PatientD
         lastName: 'Argento',
         email: 'pepe@racing.com',
         phone: '555-1234',
-        coverages: `${BASE_URL}/patients/1/coverages`,
+        coverage: `${BASE_URL}/patients/1/coverages`,
         neighborhood: `${BASE_URL}/neighborhoods/1`,
         appointments: `${BASE_URL}/patients/1/appointments`,
         self: `${BASE_URL}/patients/1`,
