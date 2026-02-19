@@ -83,7 +83,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
-                // TODO: AGREGAR LAS RUTAS
                 .antMatchers(HttpMethod.POST,UriUtils.USERS).permitAll()
 
 
