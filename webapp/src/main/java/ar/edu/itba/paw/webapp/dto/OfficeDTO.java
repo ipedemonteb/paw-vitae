@@ -21,14 +21,20 @@ public class OfficeDTO {
         OfficeDTO dto = new OfficeDTO();
 
         dto.name = office.getOfficeName();
-        dto.status = office.isActive() ? "active" : "inactive"; //TODO this good?
+        dto.status = office.isActive() ? "active" : "inactive";
 
         String doctorId = String.valueOf(office.getDoctor().getId());
         String officeId = String.valueOf(office.getId());
         String neighborhoodId = String.valueOf(office.getNeighborhood().getId());
         dto.doctor = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).build();
         dto.neighborhood = uriInfo.getBaseUriBuilder().path("api").path("neighborhoods").path(neighborhoodId).build();
-        dto.officeAvailability = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("offices").path(officeId).path("availability").build();
+        dto.officeAvailability = uriInfo.getBaseUriBuilder()
+                .path("api")
+                .path("doctors")
+                .path(doctorId)
+                .path("availability")
+                .queryParam("officeId", officeId)
+                .build();
         dto.officeSpecialties = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("offices").path(officeId).path("specialties").build();
         dto.self = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("offices").path(officeId).build();
 

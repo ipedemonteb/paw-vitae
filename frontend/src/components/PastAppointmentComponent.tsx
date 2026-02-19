@@ -101,7 +101,7 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
     const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
     const { url: doctorImgUrl, isLoading: loadingDoctorImg } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment.specialty);
-    const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverages);
+    const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverage);
     const { data: files, isLoading: loadingFiles, isError: filesError, refetch: filesRefetch, isFetching: filesFetching } = useAppointmentFiles(appointment.appointmentFiles, open);
 
     const dateObj = new Date(appointment.date);

@@ -11,7 +11,7 @@ public class PatientDTO {
     private String lastName;
     private String email;
     private String phone;
-    private URI coverages;
+    private URI coverage;
     private URI neighborhood;
     private URI appointments;
     private URI self;
@@ -27,9 +27,9 @@ public class PatientDTO {
         String patientId = String.valueOf(patient.getId());
 
         if(patient.getCoverage() != null)        {
-            res.coverages = uriInfo.getBaseUriBuilder().path("api").path("coverages").path(String.valueOf(patient.getCoverage().getId())).build();
+            res.coverage = uriInfo.getBaseUriBuilder().path("api").path("coverages").path(String.valueOf(patient.getCoverage().getId())).build();
         } else {
-            res.coverages = null;
+            res.coverage = null;
         }
 
         res.neighborhood = uriInfo.getBaseUriBuilder().path("api").path("neighborhoods").path(String.valueOf(patient.getNeighborhood().getId())).build();
@@ -54,8 +54,8 @@ public class PatientDTO {
         return phone;
     }
 
-    public URI getCoverages() {
-        return coverages;
+    public URI getCoverage() {
+        return coverage;
     }
 
     public URI getNeighborhood() {
@@ -82,8 +82,8 @@ public class PatientDTO {
         this.phone = phone;
     }
 
-    public void setCoverages(URI coverages) {
-        this.coverages = coverages;
+    public void setCoverage(URI coverages) {
+        this.coverage = coverages;
     }
 
     public void setNeighborhood(URI neighborhood) {
