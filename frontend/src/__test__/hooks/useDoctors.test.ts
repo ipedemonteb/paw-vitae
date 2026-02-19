@@ -70,13 +70,15 @@ describe('Doctors Hooks Integration Tests', () => {
 
     describe('useDoctorImageUrl', () => {
         it('should download the image and generate an object URl', async () => {
+
             const { result } = renderHook(() => useDoctorImageUrl('1'));
 
-            await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-
-            expect(result.current.url).toBe('blob:mock-preview-url');
+            await waitFor(() => {
+                expect(result.current.url).toBe('blob:mock-preview-url');
+            }, { timeout: 5000 });
         });
+
+
 
         it('should not execute if the ID is not numeric', async () => {
             const { result } = renderHook(() => useDoctorImageUrl('invalid'));

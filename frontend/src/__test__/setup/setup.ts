@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
-import { beforeAll, afterEach, afterAll } from 'vitest';
+import { beforeAll, afterEach, afterAll, vi } from 'vitest';
 import { setupServer } from 'msw/node';
 import {handlers} from "./index";
 
@@ -15,3 +15,5 @@ afterEach(() => {
 });
 
 afterAll(() => server.close());
+
+window.scrollTo = vi.fn();
