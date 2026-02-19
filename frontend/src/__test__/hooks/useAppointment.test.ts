@@ -193,8 +193,7 @@ describe('useAppointments File', () => {
 
             expect(result.current.data).toBe('123');
 
-            //TODO: Explota cuando subo un archivo por alguina razon la solucioon es usar el spy
-            // Esto confirma que tu loop "for (const file of files)" funcionó
+
             expect(uploadSpy).toHaveBeenCalledTimes(1);
             expect(uploadSpy).toHaveBeenCalledWith('123', files[0], 'patient');
         });
@@ -244,7 +243,6 @@ describe('useAppointments File', () => {
     });
 
 
-    //TODO: revisar
     describe('useUploadDoctorFilesMutation', () => {
 
         it('should correctly upload files with role DOCTOR', async () => {

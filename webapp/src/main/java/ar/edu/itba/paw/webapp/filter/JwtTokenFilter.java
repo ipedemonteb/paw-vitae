@@ -48,7 +48,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header == null) { //TODO revise, if login works like refresh (i can hit any endpoint), all good.
+        if (header == null) {
             response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\"");
             response.addHeader("WWW-Authenticate", "Basic realm=\"Vitae\"");
         }
