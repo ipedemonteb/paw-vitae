@@ -51,7 +51,7 @@ function PatientAccount() {
 
     const { data: patient, isLoading, isError, refetch: refetchPatient, isFetching: fetchingPatient } = usePatientById(auth.userId);
     const { data: allCoveragesList, isLoading: loadingCoverages, isError: errorCoverages, refetch: refetchCoverages, isFetching: fetchingCoverages } = useCoverages();
-    const { data: coverage, isLoading: loadingCoverage, isError: errorCoverage, refetch: refetchCoverage, isFetching: fetchingCoverage } = useCoverage(patient?.coverages);
+    const { data: coverage, isLoading: loadingCoverage, isError: errorCoverage, refetch: refetchCoverage, isFetching: fetchingCoverage } = useCoverage(patient?.coverage);
 
     const updatePatientMutation = useUpdatePatientMutation(patient?.self || "");
 

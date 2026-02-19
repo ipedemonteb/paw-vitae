@@ -45,9 +45,6 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendAppointmentStatusEmail(String subject, MailDTO appointment) {
 
-        //Doctor doctor = appointment.getDoctor();
-        //Patient patient = appointment.getPatient();
-
         Locale patientLocale = Locale.forLanguageTag(appointment.getPatientLanguage());
         Locale doctorLocale = Locale.forLanguageTag(appointment.getDoctorLanguage());
 
@@ -62,7 +59,7 @@ public class MailServiceImpl implements MailService {
         templateModel.put("patientName", appointment.getPatientName());
         LocalDateTime date = appointment.getDate();
         templateModel.put("appointmentDate", date.toLocalDate().toString());
-        templateModel.put("appointmentTime", date.getHour());
+        templateModel.put("appointmentTime", date.getHour() + ":00");
         templateModel.put("appointmentId", appointment.getId());
         templateModel.put("appointmentOffice", appointment.getOfficeName());
         templateModel.put("appointmentOfficeNeighborhood", appointment.getOfficeNeighborhood());

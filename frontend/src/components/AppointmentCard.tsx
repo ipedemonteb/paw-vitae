@@ -127,7 +127,7 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
     const doctorImgUrl = isDoctor ? undefined : url;
     const loadingDoctorImg = isDoctor ? false : isLoadingImg;
     const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment.specialty);
-    const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverages);
+    const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverage);
 
     const locale = i18n?.language || "en-US";
 
