@@ -43,10 +43,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = useLogin()
 
     const logout = useCallback((redirectPath: string = "/") => {
-        clearAuth();
-        queryClient.removeQueries({ queryKey: ['auth'], exact: false });
-        window.location.href = import.meta.env.BASE_URL + redirectPath;
-    }, [queryClient]);
+        window.location.href = import.meta.env.BASE_URL.replace(/\/$/,"") + redirectPath;
+        setTimeout(() => {
+            clearAuth();
+            queryClient.removeQueries({ queryKey: ['auth'], exact: false });
+        }, 0);
+    }, [queryClient, clearAuth]);
 
     const value = useMemo(
         () => ({
