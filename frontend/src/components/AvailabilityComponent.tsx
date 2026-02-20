@@ -102,6 +102,7 @@ function computeOverlapIds(slots: AvailabilitySlot[]) {
 
     return overlap;
 }
+
 function buildOfficeIndex(offices?: OfficeDTO[] | null) {
     const byId = new Map<string, OfficeDTO>();
     if (!offices) return byId;

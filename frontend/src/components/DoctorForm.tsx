@@ -97,7 +97,6 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
         if(errors[name]) setErrors(prev => ({ ...prev, [name]: "" }))
     }
 
-
     const toggleSelection = (listName: 'selectedSpecialties' | 'selectedCoverages', url: string) => {
         setFormData(prev => {
             const list = prev[listName]
@@ -165,7 +164,6 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
         })
 
     }
-
 
     return (
         <form onSubmit={handleSubmit} className="w-animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col items-center">

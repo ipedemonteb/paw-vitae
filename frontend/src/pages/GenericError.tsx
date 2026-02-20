@@ -76,7 +76,7 @@ export default function GenericError({
                         <Button
                             type="button"
                             variant="outline"
-                            className="w-full sm:w-auto border border-[var(--gray-300)] text-[var(--text-color)] hover:bg-[var(--gray-100)] cursor-pointer"
+                            className="w-full sm:w-auto border border-(--gray-300) text-(--text-color) hover:bg-(--gray-100) cursor-pointer"
                             onClick={() => navigate(-1)}
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -85,7 +85,7 @@ export default function GenericError({
                     )}
 
                     <Link to="/" className="w-full sm:w-auto">
-                        <Button className="w-full bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white cursor-pointer">
+                        <Button className="w-full bg-(--primary-color) hover:bg-(--primary-dark) text-white cursor-pointer">
                             <Home className="mr-2 h-4 w-4" />
                             {t("common.return_home", "Return Home")}
                         </Button>
