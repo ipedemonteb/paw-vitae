@@ -737,7 +737,8 @@
           "success": "Office updated successfully",
           "error": "An unexpected error occurred"
         },
-        "activeWarning": "To activate this office you must add availability slots for it"
+        "activeWarning": "To activate this office you must add availability slots for it",
+        "error": "Could not load this office."
       },
       "add": {
         "title": "Add Office",
