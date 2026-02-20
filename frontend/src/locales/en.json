@@ -705,7 +705,8 @@
     "validation": {
       "name_required": "Office name is required",
       "neighborhood_required": "Neighborhood is required",
-      "specialty_required": "At least one specialty is required"
+      "specialty_required": "At least one specialty is required",
+      "name_max" : "Office name must be less than 50 characters"
     },
     "filter": {
       "message": "Status",
