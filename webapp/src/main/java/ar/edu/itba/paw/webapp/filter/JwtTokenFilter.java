@@ -55,16 +55,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         final String token = header.substring(AUTH_HEADER.length()).trim();
-        final JwtDetails jwtDetails = jwtService.validate(token, response);
+        final JwtDetails jwtDetails = jwtService.validate(token, request);
         if (jwtDetails == null) {
-            response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\"");
             chain.doFilter(request, response);
             return;
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtDetails.getEmail());
         if (userDetails == null) {
-            response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\"");
             chain.doFilter(request, response);
             return;
         }

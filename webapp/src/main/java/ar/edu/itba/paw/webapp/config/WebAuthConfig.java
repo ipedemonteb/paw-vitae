@@ -14,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -118,7 +119,27 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint((request, response, ex) -> {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+                    String jwtError = (String) request.getAttribute("jwt_error");
+                    String jwtErrorDesc = (String) request.getAttribute("jwt_error_desc");
+                    StringBuilder authHeader = new StringBuilder("Bearer realm=\"Vitae\"");
+                    if (jwtError != null) {
+                        authHeader.append(", error=\"").append(jwtError).append("\"");
+                        if (jwtErrorDesc != null) {
+                            authHeader.append(", error_description=\"").append(jwtErrorDesc).append("\"");
+                        }
+                    }
+                    response.setHeader(HttpHeaders.WWW_AUTHENTICATE, authHeader.toString());
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+
+                    response.getWriter().write(String.format("{\"message\": \"%s\"}", ex.getMessage()));                })
+
+                .accessDeniedHandler((request, response, ex) -> {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"message\": \"Access denied. You do not have the necessary permissions to perform this action.\"}");
                 })
 
                 .and().headers().cacheControl().disable()
@@ -149,7 +170,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
 
        //TODO: REMOVE THIS IN PRODUCTION
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+//        config.setAllowedOrigins(List.of("http://localhost:5173"));
 
         config.setAllowCredentials(true);
 
