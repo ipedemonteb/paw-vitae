@@ -25,7 +25,14 @@ export function useSpecialtiesByUrl(specialtiesUrl?: string[]) {
         combine: (results) => {
             return {
                 data: results,
-                isLoading: results.some(r => r.isLoading)
+                isLoading: results.some(r => r.isLoading),
+                isError: results.some(r => r.isError),
+                refetch: async () => {
+                    return await Promise.allSettled(
+                        results.map((r) => r.refetch())
+                    );
+                },
+                isFetching: results.some(r => r.isFetching)
             }
         }
     })

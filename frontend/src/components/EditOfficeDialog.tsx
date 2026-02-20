@@ -16,6 +16,7 @@ import OfficeDialogComponent from "@/components/OfficeDialogContent.tsx";
 import {useTranslation} from "react-i18next";
 import RemoveOfficeAlertDialog from "@/components/RemoveOfficeAlertDialog.tsx";
 import {MoreVertical, Pencil, Trash2} from "lucide-react";
+import {RefetchComponent} from "@/components/ui/refetch.tsx";
 
 export type OfficeDialogProps = {
     office: OfficeDTO;
@@ -30,8 +31,14 @@ const animTo =
     "opacity-100 translate-y-0 scale-100";
 
 export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogProps) {
-    const {data: officeSpecialties, isLoading} = useDoctorOfficeSpecialties(office.officeSpecialties);
-    const {data: currentSpecialties, isLoading: isLoadingCurrentSpecialties} = useSpecialtiesByUrl(officeSpecialties?.map(s => s.specialty));
+    const {data: officeSpecialties, isLoading, isError: errorOfficeSpecialties, refetch: refetchOfficeSpecialties, isFetching: fetchingOfficeSpecialties} = useDoctorOfficeSpecialties(office.officeSpecialties);
+    const {data: currentSpecialties, isLoading: isLoadingCurrentSpecialties, isError: errorCurrentSpecialties, refetch: refetchCurrentSpecialties, isFetching: fetchingCurrentSpecialties} = useSpecialtiesByUrl(officeSpecialties?.map(s => s.specialty));
+    const isError = errorOfficeSpecialties || errorCurrentSpecialties;
+    const onRefetch = () => {
+        refetchOfficeSpecialties();
+        refetchCurrentSpecialties();
+    }
+    const isFetching = fetchingOfficeSpecialties || fetchingCurrentSpecialties;
 
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
@@ -86,37 +93,51 @@ export default function EditOfficeDialog({office, animateInDelay}: OfficeDialogP
 
     return (
         <div className={cn("relative", anim, mounted ? animTo : animFrom)} style={{ transitionDelay: `${animateInDelay}ms` }}>
-            <div className="absolute top-2 right-2 z-10">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full cursor-pointer">
-                            <MoreVertical className="size-5 text-(--text-light)" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="min-w-36">
-                        <DropdownMenuItem onSelect={() => { form.reset(); setEditOpen(true); }} className="cursor-pointer">
-                            <Pencil className="size-4" />
-                            {t("offices.dialog.edit.button")}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => setDeleteOpen(true)} className="cursor-pointer text-(--danger) focus:text-(--danger) data-highlighted:text-(--danger-dark) data-highlighted:bg-(--danger-light)">
-                            <Trash2 className="size-4 text-(--danger)" />
-                            {t("offices.dialog.remove.button")}
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
+            {isError ?
+                <div style={{transitionDelay: `${animateInDelay * 100}ms`}} className={`flex flex-col justify-center items-stretch transition-all w-full ${mounted ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"}`}>
+                    <div className="relative w-full h-56 peer flex transition-all p-5 overflow-hidden rounded-2xl items-center border-2 justify-center sm:max-w-56 sm:mx-auto">
+                        <RefetchComponent
+                            onRefetch={onRefetch}
+                            isFetching={isFetching}
+                            errorText={t("offices.dialog.edit.error")}
+                        />
+                    </div>
+                </div>
+            :
+                <>
+                    <div className="absolute top-2 right-2 z-10">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full cursor-pointer">
+                                    <MoreVertical className="size-5 text-(--text-light)" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="min-w-36">
+                                <DropdownMenuItem onSelect={() => { form.reset(); setEditOpen(true); }} className="cursor-pointer">
+                                    <Pencil className="size-4" />
+                                    {t("offices.dialog.edit.button")}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onSelect={() => setDeleteOpen(true)} className="cursor-pointer text-(--danger) focus:text-(--danger) data-highlighted:text-(--danger-dark) data-highlighted:bg-(--danger-light)">
+                                    <Trash2 className="size-4 text-(--danger)" />
+                                    {t("offices.dialog.remove.button")}
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
 
-            <OfficeCard mounted={mounted} animateInDelay={animateInDelay} office={office} />
+                    <OfficeCard mounted={mounted} animateInDelay={animateInDelay} office={office} />
 
-            <Dialog open={editOpen} onOpenChange={(open) => { if (open) form.reset(); setEditOpen(open); }}>
-                <OfficeDialogComponent mutationPending={updateOfficeMutation.isPending} errors={form.formState.errors} officeId={officeIdFromSelf(office.self)} confirm={t("offices.dialog.edit.confirm")} title={t("offices.dialog.edit.title")} onSubmit={onSubmit} form={form} isLoading={isLoading || isLoadingCurrentSpecialties}/>
-            </Dialog>
+                    <Dialog open={editOpen} onOpenChange={(open) => { if (open) form.reset(); setEditOpen(open); }}>
+                        <OfficeDialogComponent mutationPending={updateOfficeMutation.isPending} errors={form.formState.errors} officeId={officeIdFromSelf(office.self)} confirm={t("offices.dialog.edit.confirm")} title={t("offices.dialog.edit.title")} onSubmit={onSubmit} form={form} isLoading={isLoading || isLoadingCurrentSpecialties}/>
+                    </Dialog>
 
-            <RemoveOfficeAlertDialog mutationPending={removeOfficeMutation.isPending} open={deleteOpen} setOpen={setDeleteOpen} officeName={office.name} onClick={() => removeOfficeMutation.mutate(undefined, {
-                onSuccess: () => toast.success(t("offices.dialog.remove.toast.success")),
-                onError: () => toast.error(t("offices.dialog.remove.toast.error")),
-                onSettled: () => setDeleteOpen(false),
-            })}/>
+                    <RemoveOfficeAlertDialog mutationPending={removeOfficeMutation.isPending} open={deleteOpen} setOpen={setDeleteOpen} officeName={office.name} onClick={() => removeOfficeMutation.mutate(undefined, {
+                        onSuccess: () => toast.success(t("offices.dialog.remove.toast.success")),
+                        onError: () => toast.error(t("offices.dialog.remove.toast.error")),
+                        onSettled: () => setDeleteOpen(false),
+                    })}/>
+                </>
+            }
         </div>
     );
 }
