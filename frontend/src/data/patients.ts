@@ -1,5 +1,6 @@
 import {api} from "@/data/Api.ts";
 import { ContentTypes } from "@/utils/contentTypes.js";
+
 export type PatientDTO = {
     name: string;
     lastName: string;
@@ -10,6 +11,7 @@ export type PatientDTO = {
     appointments: string;
     self: string
 }
+
 export type ChangePasswordForm = {
     password: string;
     repeatPassword: string;
@@ -26,6 +28,7 @@ export interface PatientRegisterData {
     coverageUrl: string;
     neighborhoodUrl: string;
 }
+
 export interface PatientUpdateData {
     name?: string;
     lastName?: string;
@@ -74,13 +77,13 @@ export async function registerPatient(data: PatientRegisterData) {
         { headers: { 'Content-Type': 'application/vnd.vitae.patient.v1+json' } });
 }
 
-
 export async function fetchCountsPatient(): Promise<number> {
     const res = await api.head('/patients')
     const header = res.headers['x-total-count'] ?? res.headers['X-Total-Count'];
     const parsed = parseInt(String(header ?? ''), 10);
     return Number.isNaN(parsed) ? 0 : parsed;
 }
+
 export async function updatePatient(url: string, data: PatientUpdateData) {
     const res = await api.patch(url, data, {
         headers: {

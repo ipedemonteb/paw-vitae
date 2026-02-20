@@ -117,17 +117,17 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
     const cardContainer =
         `w-full border border-solid rounded-md overflow-hidden shadow flex flex-col sm:flex-row sm:items-stretch transition-all ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`;
 
-
     const isDoctor = auth.role === "ROLE_DOCTOR";
     const doctorId = userIdFromSelf(appointment.doctor);
 
-    const { data: patient, isLoading: loadingPatient } = usePatient(appointment.patient);
-    const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
+    const { data: patient, isLoading: loadingPatient, isError: errorPatient } = usePatient(appointment.patient);
+    const { data: doctor, isLoading: loadingDoctor, isError: errorDoctor } = useDoctor(doctorId);
     const { url, isLoading: isLoadingImg } = useDoctorImageUrl(isDoctor ? undefined : doctorId);
     const doctorImgUrl = isDoctor ? undefined : url;
     const loadingDoctorImg = isDoctor ? false : isLoadingImg;
-    const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment.specialty);
-    const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverage);
+    const isError = errorDoctor || errorPatient;
+    const { data: specialty, isLoading: loadingSpecialty, isError: errorSpecialty } = useSpecialty(appointment.specialty);
+    const { data: coverage, isLoading: loadingCoverage, isError: errorCoverage } = useCoverage(patient?.coverage);
 
     const locale = i18n?.language || "en-US";
 
@@ -156,6 +156,8 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
     const isLoading = loadingPatient || loadingDoctor || loadingSpecialty || loadingCoverage;
 
     if(isLoading) return <Skeleton className={loadingSkeleton}/>
+    
+    if(isError) return null;
 
     return (
         <div style={{ transitionDelay: `${animationDelay * 80}ms` }} className={cardContainer}>
@@ -190,10 +192,12 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
                     }
                     <div className={nameBlock}>
                         <span className={fullNameText}>{displayName}</span>
-                        <span className={coverageRow}>
-                            <span className={coverageDot} />
-                            {t(coverage?.name || "")}
-                        </span>
+                        {errorCoverage ? null :
+                            <span className={coverageRow}>
+                                <span className={coverageDot} />
+                                {coverage?.name}
+                            </span>
+                        }
                     </div>
                 </div>
 
@@ -215,7 +219,7 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
                 </div>
 
                 <div className={bottomRow}>
-                    <div className={specialtyPill}>{t(specialty?.name || "")}</div>
+                    {errorSpecialty ? <div/> : <div className={specialtyPill}>{t(specialty?.name || "")}</div>}
                     <div className="flex gap-2 w-full sm:w-auto">
                         {isUpcoming && appointment.cancellable && (
                             <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>

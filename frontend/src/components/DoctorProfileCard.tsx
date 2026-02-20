@@ -33,7 +33,7 @@ const ratingText =
 function DoctorProfileCard( { doctor } : { doctor: DoctorDTO | undefined} ) {
 
     const { url: getDoctorImgUrl, isLoading: isLoadingImage } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
-    const { data: specialties, isLoading: isLoadingSpecialties } = useDoctorSpecialties(doctor?.specialties);
+    const { data: specialties, isLoading: isLoadingSpecialties, isError: isErrorSpecialties } = useDoctorSpecialties(doctor?.specialties);
 
     const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
     const specialtiesList: string[] = (specialties ?? []).map((s) => s.name);
@@ -66,16 +66,16 @@ function DoctorProfileCard( { doctor } : { doctor: DoctorDTO | undefined} ) {
                 </div>
                 {(doctor?.ratingCount ?? 0) > 0 && (
                 <div className={ratingContent}>
-
                     <RatingStars rating={doctor?.rating || 0} sizeClassName="h-4 w-4" />
                     <p>{doctor?.rating.toPrecision(2)}</p>
                     <p className={ratingText}>({doctor?.ratingCount})</p>
                 </div>
                     )}
-                {isLoadingSpecialties ? (
-                    <LoadingSpecialties badgesCount={4} />
-                    ) :
-                    <BadgeComponent specialties={specialtiesList} maxBadges={maxBadges} />
+                {isErrorSpecialties ? null :
+                    isLoadingSpecialties ? (
+                        <LoadingSpecialties badgesCount={4} />
+                        ) :
+                        <BadgeComponent specialties={specialtiesList} maxBadges={maxBadges} />
                 }
             </div>
         </Card>
