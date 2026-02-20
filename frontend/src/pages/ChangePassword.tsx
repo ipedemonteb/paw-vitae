@@ -1,7 +1,7 @@
 import { useState, useEffect, type FormEvent } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useSearchParams } from "react-router-dom"
-import {Lock, CheckCircle2, ArrowLeft, Check, X, AlertCircle} from "lucide-react"
+import {Lock, ArrowLeft, Check, X, AlertCircle} from "lucide-react"
 import { PasswordInput } from "@/components/PasswordInput.tsx"
 import { Button } from "@/components/ui/button"
 import { useChangePasswordMutation} from "@/hooks/useAuth"
@@ -45,7 +45,6 @@ export default function ChangePassword() {
 
     const [password, setPassword] = useState("")
     const [repeatPassword, setRepeatPassword] = useState("")
-    const [isSubmitted, setIsSubmitted] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [apiError, setApiError] = useState<string | null>(null)
 
@@ -79,36 +78,10 @@ export default function ChangePassword() {
         setApiError(null);
 
         changePassword.mutate({email, password, repeatPassword,token}, {
-            onSuccess: () => setIsSubmitted(true),
             onError: () => setApiError( t("change_password.error_token_expired") || "Error al cambiar la contraseña."),
         })
     };
 
-    if (isSubmitted) {
-        return (
-            <div className={pageContainer}>
-                <div className={cardContainer}>
-                    <div className={headerContainer}>
-                        <div className={successIconCircle}>
-                            <CheckCircle2 className="h-8 w-8" />
-                        </div>
-                        <h1 className={titleText}>
-                            {t("change_password.success_title") || "Password Updated"}
-                        </h1>
-                        <p className={subtitleText}>
-                            {t("change_password.success_message") || "Your password has been changed successfully."}
-                        </p>
-                    </div>
-                    <div className={backLinkContainer}>
-                        <Link to="/login" className={backLink}>
-                            <ArrowLeft className="h-4 w-4" />
-                            {t("change_password.back_to_login")}
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        )
-    }
 
     return (
         <div className={pageContainer}>
