@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
-
+//TODO LOG
 @Service
 public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
@@ -30,12 +30,6 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         this.specialtyService = specialtyService;
         this.doctorOfficeAvailabilityService = doctorOfficeAvailabilityService;
         this.appointmentService = appointmentService;
-    }
-
-    @Transactional
-    @Override
-    public DoctorOffice create(DoctorOffice doctorOffice) { // TODO LOG EVERYTHING, OPTIMIZE MAYBE?
-        return doctorOfficeDao.create(doctorOffice);
     }
 
     @Transactional
@@ -58,17 +52,6 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
         specs.forEach(c -> {if (!permitted.contains(c)) {throw new SpecialtyNotOwnedException();}});
         DoctorOffice office = form.toEntity(doctor, nb, specs);
         return doctorOfficeDao.create(office);
-    }
-
-
-
-    @Transactional
-    @Override
-    public DoctorOffice transformToDoctorOffice(Doctor doctor, DoctorOfficeForm officeForm) {
-            Neighborhood neighborhood = neighborhoodService.getById(officeForm.getNeighborhoodId()).orElseThrow(NeighborhoodNotFoundException::new); //TODO MAKE CUSTOM EXCEPTION AND MAKE EFFICIENT (THERE CAN BE REPEATED NEIGHBORHOODS)
-            List<Specialty> specialties = specialtyService.getByIds(officeForm.getSpecialtyIds());
-            DoctorOffice doctorOffice = officeForm.toEntity(doctor, neighborhood, specialties);
-        return create(doctorOffice);
     }
 
     @Transactional(readOnly = true)
