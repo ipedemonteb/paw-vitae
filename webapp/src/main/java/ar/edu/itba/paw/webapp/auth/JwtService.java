@@ -12,6 +12,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -89,7 +90,7 @@ public class JwtService {
         return claims;
     }
 
-    public JwtDetails validate(String token, HttpServletResponse response) {
+    public JwtDetails validate(String token, HttpServletRequest request) {
         try {
             final Jws<Claims> parsed = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             final Claims claims = parsed.getBody();
@@ -107,24 +108,14 @@ public class JwtService {
                     .setTokenType(JwtTokenType.fromCode((claims.get(TOKEN_TYPE_CLAIM).toString())))
                     .build();
 
-        } catch (SignatureException ex) {
-            LOGGER.warn("Invalid JWT signature - {}", ex.getMessage());
-            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
-        } catch (MalformedJwtException ex) {
-            LOGGER.warn("Invalid JWT token - {}", ex.getMessage());
-            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
         } catch (ExpiredJwtException ex) {
             LOGGER.warn("Expired JWT token - {}", ex.getMessage());
-            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\", error_description=\"The access token expired\"");
-        } catch (UnsupportedJwtException ex) {
-            LOGGER.warn("Unsupported JWT token - {}", ex.getMessage());
-            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
-        } catch (IllegalArgumentException ex) {
-            LOGGER.warn("JWT claims string is empty - {}", ex.getMessage());
-            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
-        } catch (Exception ex) {
-            LOGGER.warn("JWT claims {}", ex.getMessage());
-            response.addHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
+            request.setAttribute("jwt_error", "invalid_token");
+            request.setAttribute("jwt_error_desc", "The access token expired");
+        } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
+            LOGGER.warn("Invalid JWT token - {}", ex.getMessage());
+            request.setAttribute("jwt_error", "invalid_token");
+            request.setAttribute("jwt_error_desc", "Token is invalid or malformed");
         }
         return null;
     }

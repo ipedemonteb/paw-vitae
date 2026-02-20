@@ -47,6 +47,15 @@ public class BasicFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+        boolean isLoginRequest = "HEAD".equalsIgnoreCase(request.getMethod()) &&
+                path.matches("^.*(/api/?|/)$");
+        if (!isLoginRequest ) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith(AUTH_HEADER)) {
@@ -98,8 +107,9 @@ public class BasicFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             SecurityContextHolder.clearContext();
             response.addHeader("WWW-Authenticate", "Basic realm=\"Vitae\"");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Basic credentials");
+            return;
         }
-
         filterChain.doFilter(request, response);
     }
 
