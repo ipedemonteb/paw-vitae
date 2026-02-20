@@ -44,7 +44,7 @@ public class DoctorDTO {
         dto.experiences = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("experiences").build();
         dto.certifications = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("certifications").build();
         dto.ratings = uriInfo.getBaseUriBuilder().path("api").path("ratings").queryParam("doctorId",doctorId).build();
-        dto.appointments = uriInfo.getBaseUriBuilder().path("api").path("appointments").queryParam("doctorId", doctorId).build();
+        dto.appointments = uriInfo.getBaseUriBuilder().path("api").path("appointments").queryParam("userId", doctorId).build();
         dto.unavailability = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("unavailability").build();
         if (doctor.getImageId() != null) {
             dto.image = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("image").build();

@@ -33,7 +33,7 @@ public class PatientDTO {
         }
 
         res.neighborhood = uriInfo.getBaseUriBuilder().path("api").path("neighborhoods").path(String.valueOf(patient.getNeighborhood().getId())).build();
-        res.appointments = uriInfo.getBaseUriBuilder().path("api").path("appointments").queryParam("patientId", patient.getId()).build();
+        res.appointments = uriInfo.getBaseUriBuilder().path("api").path("appointments").queryParam("userId", patient.getId()).build();
         res.self = uriInfo.getBaseUriBuilder().path("api").path("patients").path(patientId).build();
         return res;
     }
