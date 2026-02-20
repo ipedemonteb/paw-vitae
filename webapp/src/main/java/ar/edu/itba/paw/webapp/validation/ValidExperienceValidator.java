@@ -21,12 +21,16 @@ public class ValidExperienceValidator implements ConstraintValidator<ValidExperi
         for (ExperienceForm experience : experienceFormList) {
             if (experience.getOrganizationName() == null || experience.getOrganizationName().isEmpty() ||
                 experience.getPositionTitle() == null || experience.getPositionTitle().isEmpty() ||
-                experience.getStartDate() == null) {
+                experience.getStartDate() == null || experience.getOrganizationName().trim().isEmpty() || experience.getPositionTitle().trim().isEmpty()) {
                 return false;
             }
-            if ((experience.getEndDate() != null && experience.getEndDate().isBefore(experience.getStartDate())) || (experience.getEndDate() == null && experience.getStartDate().isAfter(LocalDate.now()))) {
+
+            if (experience.getStartDate().isAfter(LocalDate.now()) ||
+                    (experience.getEndDate() != null && (experience.getEndDate().isBefore(experience.getStartDate()) || experience.getEndDate().isAfter(LocalDate.now())))) {
                 return false;
             }
+            if(experience.getOrganizationName().length() > 100 ) return false;
+            if(experience.getPositionTitle().length() > 100 ) return false;
         }
         return true;
     }
