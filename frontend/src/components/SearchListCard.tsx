@@ -49,7 +49,7 @@ function SearchListCard({doctor}: SearchCardProps) {
 
     const {t} = useTranslation();
 
-    const { data: specialties, isLoading: loadingSpecialties } = useDoctorSpecialties(doctor.specialties);
+    const { data: specialties, isLoading: loadingSpecialties, isError: errorSpecialties } = useDoctorSpecialties(doctor.specialties);
     const { url:imageUrl, isLoading: loadingDoctorImgUrl } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const doctorId = extractIdFromUrl(doctor.self)
     const profilePath = generatePath("/profile/:id", { id: String(doctorId) })
@@ -78,6 +78,8 @@ function SearchListCard({doctor}: SearchCardProps) {
                         <Skeleton className={skeletonBadge} />
                         <Skeleton className="h-4 w-8 rounded-md" />
                     </div>
+                    :
+                    errorSpecialties ? null
                     :
                     <SearchSpecialtyBadgeComponent specialties={specialties || []} maxDisplay={3}/>
                 }
