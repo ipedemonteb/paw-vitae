@@ -807,6 +807,15 @@ function EditExperienceDialog({
         return items.some((it) => isStartAfterEnd(it.startDate, it.endDate));
     }, [items]);
 
+    const hasMissingFields = useMemo(() => {
+        return items.some(
+            (item) =>
+                !item.startDate ||
+                item.positionTitle.trim() === "" ||
+                item.organizationName.trim() === ""
+        );
+    }, [items]);
+
     const handleSave = () => {
         if (hasAnyDateOrderError) return;
 
@@ -841,6 +850,8 @@ function EditExperienceDialog({
                 <div className={editDialogInnerContainer}>
                     {items.map((item, idx) => {
                         const hasDateOrderError = isStartAfterEnd(item.startDate, item.endDate);
+
+
 
                         return (
                             <Card key={idx} className={`${editItemCard} ${hasDateOrderError ? invalidCard : ""}`}>
@@ -936,7 +947,11 @@ function EditExperienceDialog({
                     >
                         {t("cancel")}
                     </Button>
-                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending || hasAnyDateOrderError}>
+                    <Button
+                        className={editDialogSaveButton}
+                        onClick={handleSave}
+                        disabled={mutation.isPending || hasAnyDateOrderError || hasMissingFields}
+                    >
                         {mutation.isPending ? t("saving") : t("save")}
                     </Button>
                 </DialogFooter>
@@ -977,6 +992,15 @@ function EditCertificatesDialog({
 
     const eightyYearsAgo = new Date();
     eightyYearsAgo.setFullYear(eightyYearsAgo.getFullYear() - 80);
+
+    const hasMissingFields = useMemo(() => {
+        return items.some(
+            (item) =>
+                !item.issueDate ||
+                item.certificateName.trim() === "" ||
+                item.issuingEntity.trim() === ""
+        );
+    }, [items]);
 
     const handleSave = () => {
         mutation.mutate(items, {
@@ -1056,7 +1080,7 @@ function EditCertificatesDialog({
                     >
                         {t("cancel")}
                     </Button>
-                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending}>
+                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending || hasMissingFields} >
                         {mutation.isPending ? t("saving") : t("save")}
                     </Button>
                 </DialogFooter>
