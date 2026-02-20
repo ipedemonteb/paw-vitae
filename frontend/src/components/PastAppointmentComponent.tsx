@@ -97,11 +97,12 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 
     const [open, setOpen] = useState(false);
 
-    const { data: patient, isLoading: loadingPatient } = usePatient(appointment.patient);
-    const { data: doctor, isLoading: loadingDoctor } = useDoctor(doctorId);
+    const { data: patient, isLoading: loadingPatient, isError: errorPatient } = usePatient(appointment.patient);
+    const { data: doctor, isLoading: loadingDoctor, isError: errorDoctor } = useDoctor(doctorId);
+    const isError = errorDoctor || errorPatient;
     const { url: doctorImgUrl, isLoading: loadingDoctorImg } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
-    const { data: specialty, isLoading: loadingSpecialty } = useSpecialty(appointment.specialty);
-    const { data: coverage, isLoading: loadingCoverage } = useCoverage(patient?.coverage);
+    const { data: specialty, isLoading: loadingSpecialty, isError: errorSpecialty } = useSpecialty(appointment.specialty);
+    const { data: coverage, isLoading: loadingCoverage, isError: errorCoverage } = useCoverage(patient?.coverage);
     const { data: files, isLoading: loadingFiles, isError: filesError, refetch: filesRefetch, isFetching: filesFetching } = useAppointmentFiles(appointment.appointmentFiles, open);
 
     const dateObj = new Date(appointment.date);
@@ -140,7 +141,7 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
 
     if(isLoading) return <Skeleton className={loadingSkeleton}/>
 
-    //TODO: handle isError
+    if(isError) return null;
 
     return (
         <Card className={appointmentContainer}>
@@ -151,11 +152,13 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
                         <span className={dayText}>{day}</span>
                         <span className={yearText}>{year}</span>
                     </div>
-                    <div className={statusRow}>
-                        <Badge className={badge}>
-                            {t(specialty?.name || "")}
-                        </Badge>
-                    </div>
+                    {errorSpecialty ? null :
+                        <div className={statusRow}>
+                            <Badge className={badge}>
+                                {t(specialty?.name || "")}
+                            </Badge>
+                        </div>
+                    }
                 </div>
                 <div className={middleSection}>
                     <div className={doctorAvatar}>
@@ -173,10 +176,12 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
                             <span className={fullNameText}>
                                 {displayName}
                             </span>
-                            <span className={coverageRow}>
-                                <span className={coverageDot} />
-                                {coverage?.name}
-                            </span>
+                            {errorCoverage ? null :
+                                <span className={coverageRow}>
+                                    <span className={coverageDot} />
+                                    {coverage?.name}
+                                </span>
+                            }
                         </div>
                     </div>
                     <div className={middleRow}>

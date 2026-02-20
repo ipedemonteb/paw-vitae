@@ -22,7 +22,7 @@ type OfficeCardProps = {
 };
 
 export default function OfficeCard({office, animateInDelay, mounted}: OfficeCardProps) {
-    const {data: neighborhood, isLoading: isLoadingNeighborhood} = useNeighborhood(office.neighborhood);
+    const {data: neighborhood, isLoading: isLoadingNeighborhood, isError: errorNeighborhood} = useNeighborhood(office.neighborhood);
     const {t} = useTranslation();
 
     return (
@@ -31,10 +31,12 @@ export default function OfficeCard({office, animateInDelay, mounted}: OfficeCard
                 <div className="text-ellipsis transition-opacity text-[1.3rem] flex justify-center-safe items-center overflow-hidden flex-col font-semibold rounded-2xl w-full px-8 py-7">
                     <Building2 className="size-14 stroke-[1.5]"/>
                     <p className="w-full text-center min-w-0 text-ellipsis text-nowrap overflow-clip">{office.name}</p>
-                    <div className="flex text-sm items-center gap-1 pb-3 font-normal text-(--text-light)">
-                        <MapPinIcon className="size-4 text-(--primary-color)" />
-                        {(neighborhood?.name && !isLoadingNeighborhood) ? neighborhood.name : <Skeleton className="w-24 h-3.5" />}
-                    </div>
+                    {errorNeighborhood ? null :
+                        <div className="flex text-sm items-center gap-1 pb-3 font-normal text-(--text-light)">
+                            <MapPinIcon className="size-4 text-(--primary-color)" />
+                            {(neighborhood?.name && !isLoadingNeighborhood) ? neighborhood.name : <Skeleton className="w-24 h-3.5" />}
+                        </div>
+                    }
                     <div className={statusDictionary[office.status]}>
                         <Circle className={fillStatusDictionary[office.status]} />
                         {t("offices.status." + office.status)}
