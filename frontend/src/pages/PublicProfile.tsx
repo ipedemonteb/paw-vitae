@@ -715,7 +715,7 @@ function EditProfileDialog({
                         />
                         <span className={`text-xs text-right mt-1 ${desc.length >= 220 ? "text-red-500 font-bold" : "text-gray-400"}`}>
                                     {desc.length}/{220}
-                                </span>
+                        </span>
                     </div>
                     <div className={editDialogRowLabel}>
                         <Label htmlFor="bio">{t("doctor.profile.card.about")}</Label>
@@ -807,6 +807,15 @@ function EditExperienceDialog({
         return items.some((it) => isStartAfterEnd(it.startDate, it.endDate));
     }, [items]);
 
+    const hasMissingFields = useMemo(() => {
+        return items.some(
+            (item) =>
+                !item.startDate ||
+                item.positionTitle.trim() === "" ||
+                item.organizationName.trim() === ""
+        );
+    }, [items]);
+
     const handleSave = () => {
         if (hasAnyDateOrderError) return;
 
@@ -842,6 +851,8 @@ function EditExperienceDialog({
                     {items.map((item, idx) => {
                         const hasDateOrderError = isStartAfterEnd(item.startDate, item.endDate);
 
+
+
                         return (
                             <Card key={idx} className={`${editItemCard} ${hasDateOrderError ? invalidCard : ""}`}>
                                 <Button
@@ -861,7 +872,11 @@ function EditExperienceDialog({
                                                 className={input}
                                                 value={item.positionTitle}
                                                 onChange={(e) => updateItem(idx, "positionTitle", e.target.value)}
+                                                maxLength={100}
                                             />
+                                            <span className={`text-xs text-right mt-1 block ${item.positionTitle.length >= 100 ? "text-red-500 font-bold" : "text-gray-400"}`}>
+            {item.positionTitle.length}/100
+        </span>
                                         </div>
 
                                         <div className={editItemCardInput}>
@@ -870,7 +885,11 @@ function EditExperienceDialog({
                                                 className={input}
                                                 value={item.organizationName}
                                                 onChange={(e) => updateItem(idx, "organizationName", e.target.value)}
+                                                maxLength={100}
                                             />
+                                            <span className={`text-xs text-right mt-1 block ${item.organizationName.length >= 100 ? "text-red-500 font-bold" : "text-gray-400"}`}>
+            {item.organizationName.length}/100
+        </span>
                                         </div>
                                     </div>
 
@@ -928,7 +947,11 @@ function EditExperienceDialog({
                     >
                         {t("cancel")}
                     </Button>
-                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending || hasAnyDateOrderError}>
+                    <Button
+                        className={editDialogSaveButton}
+                        onClick={handleSave}
+                        disabled={mutation.isPending || hasAnyDateOrderError || hasMissingFields}
+                    >
                         {mutation.isPending ? t("saving") : t("save")}
                     </Button>
                 </DialogFooter>
@@ -970,6 +993,15 @@ function EditCertificatesDialog({
     const eightyYearsAgo = new Date();
     eightyYearsAgo.setFullYear(eightyYearsAgo.getFullYear() - 80);
 
+    const hasMissingFields = useMemo(() => {
+        return items.some(
+            (item) =>
+                !item.issueDate ||
+                item.certificateName.trim() === "" ||
+                item.issuingEntity.trim() === ""
+        );
+    }, [items]);
+
     const handleSave = () => {
         mutation.mutate(items, {
             onSuccess: () => {
@@ -1008,12 +1040,18 @@ function EditCertificatesDialog({
                             <CardContent className={editItemCardContent}>
                                 <div className={editItemCardInput}>
                                     <Label>{t("doctor.profile.certificateName")}</Label>
-                                    <Input value={item.certificateName} onChange={(e) => updateItem(idx, "certificateName", e.target.value)} />
+                                    <Input value={item.certificateName} maxLength={100} onChange={(e) => updateItem(idx, "certificateName", e.target.value)} />
+                                    <span className={`text-xs text-right mt-1 block ${item.certificateName.length >= 100 ? "text-red-500 font-bold" : "text-gray-400"}`}>
+                                        {item.certificateName.length}/100
+                                    </span>
                                 </div>
                                 <div className={editItemCardRow}>
                                     <div className={editItemCardInput}>
                                         <Label>{t("doctor.profile.issuingEntity")}</Label>
-                                        <Input value={item.issuingEntity} onChange={(e) => updateItem(idx, "issuingEntity", e.target.value)} />
+                                        <Input value={item.issuingEntity} maxLength={100} onChange={(e) => updateItem(idx, "issuingEntity", e.target.value)} />
+                                        <span className={`text-xs text-right mt-1 block ${item.issuingEntity.length >= 100 ? "text-red-500 font-bold" : "text-gray-400"}`}>
+                                            {item.issuingEntity.length}/100
+                                        </span>
                                     </div>
                                     <div className={editItemCardInput}>
                                         <Label>{t("doctor.profile.issueDate")}</Label>
@@ -1042,7 +1080,7 @@ function EditCertificatesDialog({
                     >
                         {t("cancel")}
                     </Button>
-                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending}>
+                    <Button className={editDialogSaveButton} onClick={handleSave} disabled={mutation.isPending || hasMissingFields} >
                         {mutation.isPending ? t("saving") : t("save")}
                     </Button>
                 </DialogFooter>

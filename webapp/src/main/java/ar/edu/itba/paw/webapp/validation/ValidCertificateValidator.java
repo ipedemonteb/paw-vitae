@@ -20,12 +20,14 @@ public class ValidCertificateValidator implements ConstraintValidator<ValidCerti
         for (CertificateForm certificate : certificateForms) {
             if (certificate.getCertificateName() == null || certificate.getCertificateName().isEmpty() ||
                 certificate.getIssuingEntity() == null|| certificate.getIssuingEntity().isEmpty() ||
-                certificate.getIssueDate() == null) {
+                certificate.getIssueDate() == null || certificate.getCertificateName().trim().isEmpty() || certificate.getIssuingEntity().trim().isEmpty()) {
                 return false;
             }
             if (certificate.getIssueDate().isAfter(LocalDate.now())) {
                 return false;
             }
+            if(certificate.getCertificateName().length() > 100) return false;
+            if(certificate.getIssuingEntity().length() > 100 ) return false;
         }
         return true;
     }
