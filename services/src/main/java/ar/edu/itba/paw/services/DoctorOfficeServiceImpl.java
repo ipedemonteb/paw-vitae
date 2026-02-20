@@ -198,13 +198,19 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
     @Transactional
     @Override
-    public void updateSpecialties(Doctor doctor, List<Specialty> specialties) {
+    public void updateSpecialties(Doctor doctor, List<Specialty> newSpecialties) {
         List<DoctorOffice> offices = doctorOfficeDao.getByDoctorId(doctor.getId());
+
         for (DoctorOffice office : offices) {
-            List<Specialty> updatedSpecialties = office.getSpecialties().stream()
-                    .filter(specialties::contains)
+            List<Specialty> updatedList = office.getSpecialties().stream()
+                    .filter(newSpecialties::contains)
                     .collect(Collectors.toList());
-            office.setSpecialties(updatedSpecialties);
+
+            if (updatedList.isEmpty()) {
+                office.setActive(false);
+            }
+
+            office.setSpecialties(updatedList);
             doctorOfficeDao.update(office);
         }
     }
