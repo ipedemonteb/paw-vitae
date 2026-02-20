@@ -40,6 +40,7 @@ function LoginCard() {
         if (!login.isError) return;
         const msg = login.failureReason?.message ? t(login.failureReason.message) : t("login.error_generic");
         setErrors({email: msg, password: msg});
+        login.reset();
     }, [login.isError]);
 
     const handleSubmit = (e: React.FormEvent) => {
