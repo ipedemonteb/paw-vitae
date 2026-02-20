@@ -16,8 +16,6 @@ const headerContainer =
     "flex flex-col items-center text-center";
 const iconCircle =
     "h-14 w-14 bg-[var(--primary-color)]/10 text-[var(--primary-color)] rounded-full flex items-center justify-center mb-6";
-const successIconCircle =
-    "h-16 w-16 bg-(--success-light) text-(--success) rounded-full flex items-center justify-center mb-6";
 const titleText =
     "text-3xl font-bold tracking-tight text-[var(--text-color)]";
 const subtitleText =

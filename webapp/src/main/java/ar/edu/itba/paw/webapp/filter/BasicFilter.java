@@ -95,7 +95,7 @@ public class BasicFilter extends OncePerRequestFilter {
 
             targetUser.ifPresent(user -> tokenResponseHelper.addAuthenticationHeaders(response, user, request));
 
-        } catch (AuthenticationException e) {
+        } catch (Exception e) {
             SecurityContextHolder.clearContext();
             response.addHeader("WWW-Authenticate", "Basic realm=\"Vitae\"");
         }

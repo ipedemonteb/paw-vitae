@@ -21,10 +21,8 @@ public class TokenResponseHelper {
         this.jwtService = jwtService;
     }
 
-    // AGREGAR HttpServletRequest request AQUI
     public void addAuthenticationHeaders(HttpServletResponse response, User user, HttpServletRequest request) {
 
-        // USAR fromContextPath(request) EN LUGAR DE fromCurrentContextPath()
         final ServletUriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromContextPath(request);
 
         final String accessToken = jwtService.generateAccessToken(uriBuilder, user);

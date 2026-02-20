@@ -9,5 +9,5 @@ public class AuthUtils {
     public static final String HEADER_ACCESS_TOKEN = "X-Vitae-AuthToken";
     public static final String HEADER_REFRESH_TOKEN = "X-Vitae-RefreshToken";
 
-    private AuthUtils() {} // Private constructor
+    private AuthUtils() {}
 }

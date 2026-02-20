@@ -137,16 +137,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-        return new CustomAuthenticationSuccessHandler();
-    }
-
-    @Bean
-    public AuthEntryPointHandler authEntryPointHandler() {
-        return new AuthEntryPointHandler();
-    }
-
-    @Bean
     public JwtService jwtTokenUtil(@Value("classpath:jwtSecret.key") Resource jwtKeyRes) throws IOException {
         return new JwtService(jwtKeyRes);
     }
@@ -159,7 +149,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
 
        //TODO: REMOVE THIS IN PRODUCTION
-//        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
 
         config.setAllowCredentials(true);
 

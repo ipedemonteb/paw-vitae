@@ -51,7 +51,6 @@ public class Appointment {
     @Column
     private String report;
 
-    //TODO: revisar esto?
     @OneToOne(mappedBy = "appointment", optional = true)
     private Rating rating;
 
@@ -180,7 +179,7 @@ public class Appointment {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, date, status, reason, allowFullHistory, (long) appointmentFiles.size());
+        return Objects.hash(id, date, status, reason, allowFullHistory);
     }
 
 

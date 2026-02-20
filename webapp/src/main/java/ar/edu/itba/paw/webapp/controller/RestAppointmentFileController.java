@@ -62,7 +62,6 @@ public class RestAppointmentFileController {
         AppointmentFile file = getAuthorizedFile(appointmentId, fileId);
 
         ResponseBuilder response = Response.ok(file.getFileData())
-                .type(MediaType.APPLICATION_OCTET_STREAM) //TODO removeS
                 .header("Content-Disposition", "attachment; filename=\"" + file.getFileName() + "\"");
         return CacheUtils.unconditionalCache(response, CacheUtils.FILE_MAX_AGE).build();
     }
@@ -78,7 +77,6 @@ public class RestAppointmentFileController {
         AppointmentFile file = getAuthorizedFile(appointmentId, fileId);
 
         ResponseBuilder response = Response.ok(file.getFileData())
-                .type("application/pdf") //TODO remove
                 .header("Content-Disposition", "inline; filename=\"" + file.getFileName() + "\"");
 
         return CacheUtils.unconditionalCache(response, CacheUtils.FILE_MAX_AGE).build();

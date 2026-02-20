@@ -100,30 +100,7 @@ public class DoctorOfficeServiceImplTest {
         assertEquals(DOCTOR.getId(), doctorOffice.getDoctor().getId());
         assertEquals(DOCTOR_OFFICE.getOfficeName(), doctorOffice.getOfficeName());
     }
-    @Test
-    public void testTransformToDoctorOfficeInvalidNeighborhood() {
-        //Preconditions
 
-        //Exercise & Postconditions
-        assertThrows(NeighborhoodNotFoundException.class, () -> {
-            doctorOfficeService.transformToDoctorOffice(DOCTOR, OFFICE_FORM);
-        });
-    }
-
-    @Test
-    public void testTransformToDoctorOffice() {
-        //Preconditions
-        when(neighborhoodService.getById(anyLong())).thenReturn(Optional.of(NEIGHBORHOOD));
-        DoctorOffice mockOffice = new DoctorOffice(DOCTOR, NEIGHBORHOOD, List.of(SPECIALTY), "Office A");
-        when(doctorOfficeDao.create(any(DoctorOffice.class))).thenReturn(mockOffice);
-
-        //Exercise
-        DoctorOffice doctorOffice = doctorOfficeService.transformToDoctorOffice(DOCTOR, OFFICE_FORM);
-
-        //Postconditions
-        assertNotNull(doctorOffice);
-        assertEquals(DOCTOR.getId(), doctorOffice.getDoctor().getId());
-    }
 
     @Test
     public void testUpdateInvalidDoctorOffice() {

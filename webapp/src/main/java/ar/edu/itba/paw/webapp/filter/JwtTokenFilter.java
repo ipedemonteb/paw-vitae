@@ -48,10 +48,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header == null) {
-            response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\"");
-            response.addHeader("WWW-Authenticate", "Basic realm=\"Vitae\"");
-        }
+
         if (!StringUtils.hasText(header) || !header.startsWith(AUTH_HEADER)) {
             chain.doFilter(request, response);
             return;
@@ -59,14 +56,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         final String token = header.substring(AUTH_HEADER.length()).trim();
         final JwtDetails jwtDetails = jwtService.validate(token, response);
-        if (jwtDetails == null) { //TODO i have no idea where but this: response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\""); needs to be included when jwt not present and it should be
+        if (jwtDetails == null) {
+            response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\"");
             chain.doFilter(request, response);
             return;
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtDetails.getEmail());
         if (userDetails == null) {
-            response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\"");//TODO check these if correct
+            response.addHeader("WWW-Authenticate", "Bearer realm=\"Vitae\"");
             chain.doFilter(request, response);
             return;
         }

@@ -12,10 +12,6 @@ public interface DoctorOfficeService {
 
     DoctorOffice create(Doctor doctor,  DoctorOfficeForm doctorOfficeForms);
 
-    DoctorOffice create(DoctorOffice doctorOffice);
-
-    DoctorOffice transformToDoctorOffice(Doctor doctor, DoctorOfficeForm officeForms);
-
     Optional<DoctorOffice> getById(long id);
 
     List<DoctorOffice> getByDoctorId(long doctorId, String status);
