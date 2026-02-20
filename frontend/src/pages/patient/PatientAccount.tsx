@@ -193,13 +193,19 @@ function PatientAccount() {
                                 <div className="space-y-2">
                                     <Label htmlFor="name">{t("dashboard.profile.name")}</Label>
                                     {isEditing ? (
-                                        <Input
-                                            id="name"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleInputChange}
-                                            disabled={isSaving}
-                                        />
+                                        <>
+                                            <Input
+                                                id="name"
+                                                name="name"
+                                                value={formData.name}
+                                                onChange={handleInputChange}
+                                                disabled={isSaving}
+                                                maxLength={50}
+                                            />
+                                            <span className={`text-xs text-right mt-1 block ${formData.name.length >= 50 ? "text-red-500 font-bold" : "text-(--gray-400)"}`}>
+                {formData.name.length}/50
+            </span>
+                                        </>
                                     ) : (
                                         <div className={infoValueStyles}>{patient?.name}</div>
                                     )}
@@ -208,13 +214,19 @@ function PatientAccount() {
                                 <div className="space-y-2">
                                     <Label htmlFor="lastName">{t("dashboard.profile.lastname")}</Label>
                                     {isEditing ? (
-                                        <Input
-                                            id="lastName"
-                                            name="lastName"
-                                            value={formData.lastName}
-                                            onChange={handleInputChange}
-                                            disabled={isSaving}
-                                        />
+                                        <>
+                                            <Input
+                                                id="lastName"
+                                                name="lastName"
+                                                value={formData.lastName}
+                                                onChange={handleInputChange}
+                                                disabled={isSaving}
+                                                maxLength={50}
+                                            />
+                                            <span className={`text-xs text-right mt-1 block ${formData.lastName.length >= 50 ? "text-red-500 font-bold" : "text-(--gray-400)"}`}>
+                {formData.lastName.length}/50
+            </span>
+                                        </>
                                     ) : (
                                         <div className={infoValueStyles}>{patient?.lastName}</div>
                                     )}
@@ -235,13 +247,19 @@ function PatientAccount() {
                                         {t("dashboard.profile.phone")}
                                     </Label>
                                     {isEditing ? (
-                                        <Input
-                                            id="phone"
-                                            name="phone"
-                                            value={formData.phone}
-                                            onChange={handleInputChange}
-                                            disabled={isSaving}
-                                        />
+                                        <>
+                                            <Input
+                                                id="phone"
+                                                name="phone"
+                                                value={formData.phone}
+                                                onChange={handleInputChange}
+                                                disabled={isSaving}
+                                                maxLength={20}
+                                            />
+                                            <span className={`text-xs text-right mt-1 block ${formData.phone.length >= 20 ? "text-red-500 font-bold" : "text-(--gray-400)"}`}>
+                {formData.phone.length}/20
+            </span>
+                                        </>
                                     ) : (
                                         <div className={infoValueStyles}>
                                             <Phone className="h-4 w-4" />

@@ -3,7 +3,7 @@ import type { TFunction } from "i18next";
 
 
 export const getCreateOfficeSchema = (t: TFunction) => z.object({
-    name: z.string().min(1, t("offices.validation.name_required")),
+    name: z.string().min(1, t("offices.validation.name_required")).max(50, t("offices.validation.name_max")),
 
     neighborhood: z.string().min(1, t("offices.validation.neighborhood_required")),
 
