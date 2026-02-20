@@ -706,7 +706,8 @@
     "validation": {
       "name_required": "El nombre del consultorio es obligatorio",
       "neighborhood_required": "El barrio es obligatorio",
-      "specialty_required": "Debe seleccionar al menos una especialidad"
+      "specialty_required": "Debe seleccionar al menos una especialidad",
+      "name_max" : "El nombre debe tener menos de 50 caracteres"
     },
     "filter": {
       "message": "Estado",

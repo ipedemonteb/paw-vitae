@@ -715,7 +715,7 @@ function EditProfileDialog({
                         />
                         <span className={`text-xs text-right mt-1 ${desc.length >= 220 ? "text-red-500 font-bold" : "text-gray-400"}`}>
                                     {desc.length}/{220}
-                                </span>
+                        </span>
                     </div>
                     <div className={editDialogRowLabel}>
                         <Label htmlFor="bio">{t("doctor.profile.card.about")}</Label>
@@ -861,7 +861,11 @@ function EditExperienceDialog({
                                                 className={input}
                                                 value={item.positionTitle}
                                                 onChange={(e) => updateItem(idx, "positionTitle", e.target.value)}
+                                                maxLength={100}
                                             />
+                                            <span className={`text-xs text-right mt-1 block ${item.positionTitle.length >= 100 ? "text-red-500 font-bold" : "text-gray-400"}`}>
+            {item.positionTitle.length}/100
+        </span>
                                         </div>
 
                                         <div className={editItemCardInput}>
@@ -870,7 +874,11 @@ function EditExperienceDialog({
                                                 className={input}
                                                 value={item.organizationName}
                                                 onChange={(e) => updateItem(idx, "organizationName", e.target.value)}
+                                                maxLength={100}
                                             />
+                                            <span className={`text-xs text-right mt-1 block ${item.organizationName.length >= 100 ? "text-red-500 font-bold" : "text-gray-400"}`}>
+            {item.organizationName.length}/100
+        </span>
                                         </div>
                                     </div>
 
@@ -1008,12 +1016,18 @@ function EditCertificatesDialog({
                             <CardContent className={editItemCardContent}>
                                 <div className={editItemCardInput}>
                                     <Label>{t("doctor.profile.certificateName")}</Label>
-                                    <Input value={item.certificateName} onChange={(e) => updateItem(idx, "certificateName", e.target.value)} />
+                                    <Input value={item.certificateName} maxLength={100} onChange={(e) => updateItem(idx, "certificateName", e.target.value)} />
+                                    <span className={`text-xs text-right mt-1 block ${item.certificateName.length >= 100 ? "text-red-500 font-bold" : "text-gray-400"}`}>
+                                        {item.certificateName.length}/100
+                                    </span>
                                 </div>
                                 <div className={editItemCardRow}>
                                     <div className={editItemCardInput}>
                                         <Label>{t("doctor.profile.issuingEntity")}</Label>
-                                        <Input value={item.issuingEntity} onChange={(e) => updateItem(idx, "issuingEntity", e.target.value)} />
+                                        <Input value={item.issuingEntity} maxLength={100} onChange={(e) => updateItem(idx, "issuingEntity", e.target.value)} />
+                                        <span className={`text-xs text-right mt-1 block ${item.issuingEntity.length >= 100 ? "text-red-500 font-bold" : "text-gray-400"}`}>
+                                            {item.issuingEntity.length}/100
+                                        </span>
                                     </div>
                                     <div className={editItemCardInput}>
                                         <Label>{t("doctor.profile.issueDate")}</Label>
