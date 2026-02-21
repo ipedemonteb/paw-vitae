@@ -127,7 +127,8 @@ describe("Login Page", () => {
                 mutate: vi.fn(),
                 isPending: false,
                 isError: true,
-                failureReason: null
+                failureReason: null,
+                reset: vi.fn()
             }
         });
 
