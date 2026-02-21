@@ -71,7 +71,7 @@
     "button_send": "Enviar",
     "back_to_login": "Volver al inicio de sesión",
     "error_required": "El correo electrónico es obligatorio",
-    "error_invalid": "Por favor ingrese un formato de correo válido",
+    "error_invalid": "Por favor ingrese un formato de correo válido.",
     "error_generic": "Ocurrió un error al procesar la solicitud. Inténtalo de nuevo.",
     "success_title": "¡Revisa tu correo!",
     "success_message": "Hemos enviado un enlace de restablecimiento a {{email}}."
@@ -239,8 +239,9 @@
     "logging_in": "Iniciando...",
     "show_password": "Mostrar contraseña",
     "hide_password": "Ocultar contraseña",
-    "error_credentials": "Las credenciales son inválidas",
+    "error_credentials": "Las credenciales son inválidas.",
     "error_generic": "Ocurrió un error al iniciar sesión. Verifique sus credenciales.",
+    "error_invalid": "Por favor ingrese un formato de correo válido.",
     "aria_email": "Correo electrónico",
     "aria_password": "Contraseña"
   },
@@ -322,7 +323,7 @@
     "loader_neighborhoods": "Cargando barrios...",
     "no_neighborhoods": "No se encontraron barrios",
     "errors": {
-      "passwords_mismatch": "Las contraseñas no coinciden",
+      "passwords_mismatch": "Las contraseñas no coinciden.",
       "password_requirements": "La contraseña no cumple con los requisitos.",
       "select_valid": "Por favor seleccione una obra social y un barrio válido",
       "email_taken": "Ese correo electrónico ya está registrado.",
@@ -338,7 +339,8 @@
       "no_specialties_available": "No se encontraron especialidades.",
       "no_coverages_available": "No se encontraron obras sociales.",
       "terms_required" : "Debe aceptar los términos y condiciones para continuar.",
-      "select_neighborhood": "Por favor seleccione un barrio."
+      "select_neighborhood": "Por favor seleccione un barrio.",
+      "invalid-email": "Por favor ingrese un formato de correo válido."
     }
   },
   "medical-history": {

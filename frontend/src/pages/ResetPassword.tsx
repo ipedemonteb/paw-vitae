@@ -5,7 +5,7 @@ import { KeyRound, ArrowLeft, Mail, AlertCircle, CheckCircle2 } from "lucide-rea
 import { Link } from "react-router-dom"
 import { useUserMutation } from "@/hooks/useUser"
 import {Spinner} from "@/components/ui/spinner.tsx";
-
+import {FormInput} from "@/components/FormInput.tsx";
 
 const pageContainer =
     "min-h-screen bg-(--background-light) flex flex-col items-center pt-36 pb-6 px-4 sm:px-6 lg:px-8";
@@ -25,8 +25,6 @@ const formContainer =
     "mt-6 space-y-6";
 const inputWrapper =
     "relative";
-const inputField =
-    "w-full pl-10 py-2 bg-(--gray-50) border border-(--gray-200) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-color) focus:border-transparent transition-all";
 const submitButton =
     "w-full text-base py-4 font-semibold bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] cursor-pointer";
 const backLinkContainer =
@@ -106,19 +104,18 @@ export default function RecoverPassword() {
                 <form className={formContainer} onSubmit={handleSubmit} noValidate>
                     <div className="space-y-2">
                         <div className={inputWrapper}>
-                            <Mail className={`absolute left-3 top-3 h-5 w-5 ${validationError || isError ? "text-(--danger)" : ""}`} />
-                            <input
+                            <FormInput
+                                id="email"
+                                name="email"
                                 type="email"
-                                className={`${inputField} ${validationError || isError ? "border-(--danger) focus-visible:ring-(--danger)" : ""}`}
-                                placeholder={t("recover.placeholder_email")}
-                                aria-label={t("login.aria_email")}
+                                label={t("login.aria_email")}
+                                hideLabel
+                                icon={<Mail size={16} />}
+                                placeholder={t("login.placeholder_email")}
                                 value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value)
-                                    if (validationError) setValidationError(null)
-                                }}
+                                onChange={(e) => { setEmail(e.target.value); if (validationError) setValidationError(null); }}
+                                required
                                 disabled={isPending}
-                                autoFocus
                             />
                         </div>
 

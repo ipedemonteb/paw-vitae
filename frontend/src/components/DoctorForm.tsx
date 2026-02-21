@@ -72,6 +72,8 @@ export function DoctorForm({ onSuccess }: DoctorFormProps) {
         if (!formData.name) newErrors.name = t('register.errors.required');
         if (!formData.lastName) newErrors.lastName = t('register.errors.required');
         if (!formData.email) newErrors.email = t('register.errors.required');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(formData.email)) newErrors.email = t("register.errors.invalid-email");
         if(!formData.phone) newErrors.phone = t('register.errors.required');
 
         if (formData.password !== formData.repeatPassword) {
