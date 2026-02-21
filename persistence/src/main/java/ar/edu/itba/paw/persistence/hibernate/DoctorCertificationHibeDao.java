@@ -28,7 +28,7 @@ public class DoctorCertificationHibeDao implements DoctorCertificationDao {
 
     @Override
     public List<DoctorCertification> getByDoctorId(long doctorId) {
-        TypedQuery<DoctorCertification> query = em.createQuery("FROM DoctorCertification AS c WHERE c.doctor.id = :id", DoctorCertification.class);
+        TypedQuery<DoctorCertification> query = em.createQuery("FROM DoctorCertification AS c WHERE c.doctor.id = :id order by c.issueDate desc ", DoctorCertification.class);
         query.setParameter("id", doctorId);
         if (query.getResultList().isEmpty()) {
             return List.of();

@@ -48,7 +48,7 @@ export function SpecialtyCombobox({
     const selectedLabel = React.useMemo(() => {
         if (selectedSelf == null) return t("combobox.specialty.select");
         const found = specialties?.find((s) => s.self === selectedSelf);
-        return found ? t(found.name) : t("combobox.specialty.select");
+        return found ? found.name : t("combobox.specialty.select");
     }, [selectedSelf, specialties, t]);
 
     const setSelected = (self: string | null, dto?: SpecialtyDTO) => {

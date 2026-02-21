@@ -49,7 +49,7 @@ export function SearchSpecialtyCombobox({
         return specialties?.find((s) => specialtyIdFromSelf(s.self) === numberId)
     }, [specialty, specialties])
 
-    const selectedLabel = selectedDto ? t(selectedDto.name) : t("search.specialty.select")
+    const selectedLabel = selectedDto ? selectedDto.name : t("search.specialty.select")
 
     const setSelected = (self: string | null) => {
         searchParams.setParams((p) => {

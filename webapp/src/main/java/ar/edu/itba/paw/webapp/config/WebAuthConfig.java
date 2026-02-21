@@ -4,15 +4,16 @@ import ar.edu.itba.paw.webapp.auth.AuthUserDetailsService;
 import ar.edu.itba.paw.webapp.filter.BasicFilter;
 import ar.edu.itba.paw.webapp.auth.JwtService;
 import ar.edu.itba.paw.webapp.filter.JwtTokenFilter;
-import ar.edu.itba.paw.webapp.handler.AuthEntryPointHandler;
-import ar.edu.itba.paw.webapp.handler.CustomAuthenticationSuccessHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -33,9 +34,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static ar.edu.itba.paw.webapp.auth.AuthUtils.HEADER_ACCESS_TOKEN;
 import static ar.edu.itba.paw.webapp.auth.AuthUtils.HEADER_REFRESH_TOKEN;
@@ -54,13 +53,16 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private BasicFilter basicFilter;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+
     @Autowired
     public WebAuthConfig(@Lazy AuthUserDetailsService authUserDetailsService) {
         this.authUserDetailsService = authUserDetailsService;
     }
 
-
-
+    @Autowired
+    private MessageSource messageSource;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -95,8 +97,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/patient").access("hasRole('PATIENT') and @accessHandler.canHandleAppointment(authentication, #id)")
                 .antMatchers(HttpMethod.POST, UriUtils.APPOINTMENTS +"/{id:\\d+}/files/doctor").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")
 
-                .antMatchers(HttpMethod.GET, UriUtils.DOCTORS +"/**").permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.DOCTORS).access("isAnonymous() or hasRole('PATIENT')")
                 .antMatchers(HttpMethod.HEAD, UriUtils.DOCTORS).permitAll()
+                .antMatchers(HttpMethod.GET, UriUtils.DOCTORS + "/{id:\\d+}").access("isAnonymous() or hasRole('PATIENT') or (hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id))")
+                .antMatchers(HttpMethod.GET, UriUtils.DOCTORS + "/{id:\\d+}/**").access("isAnonymous() or hasRole('PATIENT') or (hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id))")
                 .antMatchers(HttpMethod.POST, UriUtils.DOCTORS).permitAll()
                 .antMatchers(HttpMethod.PATCH, UriUtils.DOCTORS + "/{id:\\d+}").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
                 .antMatchers(HttpMethod.PUT, UriUtils.DOCTORS +"/{id:\\d+}/**").access("hasRole('DOCTOR') and @accessHandler.isUser(authentication, #id)")
@@ -119,27 +123,42 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint((request, response, ex) -> {
-                    String jwtError = (String) request.getAttribute("jwt_error");
-                    String jwtErrorDesc = (String) request.getAttribute("jwt_error_desc");
-                    StringBuilder authHeader = new StringBuilder("Bearer realm=\"Vitae\"");
-                    if (jwtError != null) {
-                        authHeader.append(", error=\"").append(jwtError).append("\"");
-                        if (jwtErrorDesc != null) {
-                            authHeader.append(", error_description=\"").append(jwtErrorDesc).append("\"");
-                        }
-                    }
-                    response.setHeader(HttpHeaders.WWW_AUTHENTICATE, authHeader.toString());
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setContentType("application/json");
-                    response.setCharacterEncoding("UTF-8");
-
-                    response.getWriter().write(String.format("{\"message\": \"%s\"}", ex.getMessage()));                })
-
+            String jwtError = (String) request.getAttribute("jwt_error");
+            String jwtErrorDesc = (String) request.getAttribute("jwt_error_desc");
+            StringBuilder authHeader = new StringBuilder("Bearer realm=\"Vitae\"");
+            if (jwtError != null) {
+                authHeader.append(", error=\"").append(jwtError).append("\"");
+                if (jwtErrorDesc != null) {
+                    authHeader.append(", error_description=\"").append(jwtErrorDesc).append("\"");
+                }
+            }
+            response.setHeader(HttpHeaders.WWW_AUTHENTICATE, authHeader.toString());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            String message;
+            try {
+                message = messageSource.getMessage(ex.getMessage(), null, LocaleContextHolder.getLocale());
+            } catch (Exception e) {
+                message = ex.getMessage();
+            }
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", message);
+            objectMapper.writeValue(response.getWriter(), errorResponse);
+        })
                 .accessDeniedHandler((request, response, ex) -> {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write("{\"message\": \"Access denied. You do not have the necessary permissions to perform this action.\"}");
+                    String message;
+                    try {
+                        message = messageSource.getMessage("error.accessDenied", null, "Access denied. You do not have the necessary permissions.", LocaleContextHolder.getLocale());
+                    } catch (Exception e) {
+                        message = "Access denied. You do not have the necessary permissions.";
+                    }
+                    Map<String, String> errorResponse = new HashMap<>();
+                    errorResponse.put("message", message);
+                    objectMapper.writeValue(response.getWriter(), errorResponse);
                 })
 
                 .and().headers().cacheControl().disable()
@@ -170,7 +189,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
 
        //TODO: REMOVE THIS IN PRODUCTION
-//        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
 
         config.setAllowCredentials(true);
 

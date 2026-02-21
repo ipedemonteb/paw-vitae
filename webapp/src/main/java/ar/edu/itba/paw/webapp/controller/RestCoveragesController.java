@@ -41,8 +41,12 @@ public class RestCoveragesController {
 
     @GET
     @Produces(CustomMediaType.APPLICATION_COVERAGE_LIST)
-    public Response getAll() {
+    public Response getAll(@Context Request request) {
         final List<Coverage> coverages = coverageService.getAll();
-        return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}).build();
+        return CacheUtils.conditionalCacheETag(
+                Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}),
+                request,
+                coverages.hashCode()
+        ).build();
     }
 }

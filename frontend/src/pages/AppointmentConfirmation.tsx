@@ -118,7 +118,7 @@ function AppointmentConfirmation() {
                                         </div>
                                         <div className={itemContent}>
                                             <p className={itemTitle}>{t("appointment.confirmation.specialty")}</p>
-                                            <p className={itemInfo}>{specialty?.name ? t(specialty.name) : "No specialty"}</p>
+                                            <p className={itemInfo}>{specialty?.name ? specialty.name : "No specialty"}</p>
                                         </div>
                                     </div>
                                     <div className={itemContainer}>

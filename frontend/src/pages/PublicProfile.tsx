@@ -37,6 +37,10 @@ import {
     useDoctorExperience,
     useDoctorSpecialties
 } from "@/hooks/useDoctors.ts";
+import { useSpecialtiesByUrl } from "@/hooks/useSpecialties.ts";
+import { useCoveragesByUrl } from "@/hooks/useCoverages.ts";
+import type { SpecialtyDTO } from "@/data/specialties.ts";
+import type { CoverageDTO } from "@/data/coverages.ts";
 import type {
     DoctorDTO,
     ExperienceDTO,
@@ -158,7 +162,15 @@ function ProfileCard({ doctor, profile, maxBadges, isOwner }: {
         return (a + b).toUpperCase() || "U";
     })();
     const { t } = useTranslation();
-    const { data: specialties, isLoading: isLoadingSpecialties, isError: errorSpecialties } = useDoctorSpecialties(doctor?.specialties);
+
+    const { data: specialtyRefs, isLoading: isLoadingRefs, isError: isErrorRefs } = useDoctorSpecialties(doctor?.specialties);
+    const specialtyUrls = specialtyRefs?.map(ref => ref.self);
+    const { data: specialtiesQueries, isLoading: isLoadingDetails, isError: isErrorDetails } = useSpecialtiesByUrl(specialtyUrls);
+
+    const isLoadingSpecialties = isLoadingRefs || isLoadingDetails;
+    const errorSpecialties = isErrorRefs || isErrorDetails;
+    const specialties = (specialtiesQueries ?? []).map(q => q.data).filter((d): d is SpecialtyDTO => !!d);
+
     const { url: getDoctorImgUrl, isLoading: isLoadingImage } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const specialtyNames = specialties?.map(s => t(s.name));
     const navigate = useNavigate();
@@ -190,12 +202,12 @@ function ProfileCard({ doctor, profile, maxBadges, isOwner }: {
                     <Skeleton className={`${avatarContainer} flex justify-center items-center`}>
                         <Spinner className="h-6 w-6 text-(--gray-300)"/>
                     </Skeleton>
-                     : (
-                    <Avatar className={avatarContainer}>
-                        <AvatarImage src={getDoctorImgUrl || undefined} />
-                        <AvatarFallback>{avatarFallbackText}</AvatarFallback>
-                    </Avatar>
-                )}
+                    : (
+                        <Avatar className={avatarContainer}>
+                            <AvatarImage src={getDoctorImgUrl || undefined} />
+                            <AvatarFallback>{avatarFallbackText}</AvatarFallback>
+                        </Avatar>
+                    )}
                 <div className={userDataContainer}>
                     <h1 className={userName}>{doctor.name} {doctor.lastName}</h1>
                     <div className={dataContainer}>
@@ -217,10 +229,10 @@ function ProfileCard({ doctor, profile, maxBadges, isOwner }: {
                     ) : null}
                     {isLoadingSpecialties ?
                         <LoadingSpecialties badgesCount={maxBadges}/>
-                    : errorSpecialties ?
-                        null
-                    :
-                        <BadgeComponent specialties={specialtyNames} maxBadges={maxBadges} />
+                        : errorSpecialties ?
+                            null
+                            :
+                            <BadgeComponent specialties={specialtyNames} maxBadges={maxBadges} />
                     }
                 </div>
                 {!isOwner && (
@@ -271,7 +283,17 @@ function CoverageCard({ coveragesUrl }: {
     coveragesUrl: string | undefined;
 }) {
     const { t } = useTranslation();
-    const { data: coverages = [], isLoading, isError, refetch, isFetching } = useDoctorCoverages(coveragesUrl);
+
+    const { data: coverageRefs, isLoading: isLoadingRefs, isError: isErrorRefs, refetch: refetchRefs, isFetching: isFetchingRefs } = useDoctorCoverages(coveragesUrl);
+    const coverageUrls = coverageRefs?.map(ref => ref.self);
+    const { data: coveragesQueries, isLoading: isLoadingDetails, isError: isErrorDetails, refetch: refetchDetails, isFetching: isFetchingDetails } = useCoveragesByUrl(coverageUrls);
+
+    const isLoading = isLoadingRefs || isLoadingDetails;
+    const isError = isErrorRefs || isErrorDetails;
+    const isFetching = isFetchingRefs || isFetchingDetails;
+    const refetch = () => { refetchRefs(); refetchDetails(); };
+
+    const coverages = (coveragesQueries ?? []).map(q => q.data).filter((d): d is CoverageDTO => !!d);
 
     return (
         <Card className={card}>
@@ -282,27 +304,27 @@ function CoverageCard({ coveragesUrl }: {
             <div className={cardContent}>
                 {isLoading ?
                     <LoadingComponent />
-                : isError ? (
-                    <RefetchComponent
-                        isFetching={isFetching}
-                        onRefetch={refetch}
-                        className="h-34 flex justify-center items-center"
-                        errorText={t("doctor.profile.error.no_coverage")}
-                    />
-                ) : (
-                    <>
-                        {coverages.length > 0 ? (
-                            coverages.map((cov) => (
-                                <CoverageComponent
-                                    key={cov.name}
-                                    coverageName={cov.name}
-                                />
-                            ))
-                        ) : (
-                            <EmptySection icon={ShieldPlus} text={t("doctor.profile.no_coverages")} />
-                        )}
-                    </>
-                )}
+                    : isError ? (
+                        <RefetchComponent
+                            isFetching={isFetching}
+                            onRefetch={refetch}
+                            className="h-34 flex justify-center items-center"
+                            errorText={t("doctor.profile.error.no_coverage")}
+                        />
+                    ) : (
+                        <>
+                            {coverages.length > 0 ? (
+                                coverages.map((cov) => (
+                                    <CoverageComponent
+                                        key={cov.name}
+                                        coverageName={cov.name}
+                                    />
+                                ))
+                            ) : (
+                                <EmptySection icon={ShieldPlus} text={t("doctor.profile.no_coverages")} />
+                            )}
+                        </>
+                    )}
             </div>
         </Card>
     )
