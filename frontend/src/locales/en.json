@@ -70,8 +70,8 @@
     "placeholder_email": "Email",
     "button_send": "Send",
     "back_to_login": "Back to login",
-    "error_required": "Email is required",
-    "error_invalid": "Please enter a valid email format",
+    "error_required": "Email is required.",
+    "error_invalid": "Please enter a valid email format.",
     "error_generic": "An error occurred. Please try again.",
     "success_title": "Check your email",
     "success_message": "We have sent a reset link to {{email}}."
@@ -238,8 +238,9 @@
     "logging_in": "Logging in...",
     "show_password": "Show password",
     "hide_password": "Hide password",
-    "error_credentials": "Invalid credentials",
+    "error_credentials": "Invalid credentials.",
     "error_generic": "An error occurred during login. Check your credentials and try again.",
+    "error_invalid": "Please enter a valid email format.",
     "aria_email": "Email address",
     "aria_password": "Password"
   },
@@ -321,7 +322,7 @@
     "loader_neighborhoods": "Loading neighborhoods...",
     "no_neighborhoods": "No neighborhoods found",
     "errors": {
-      "passwords_mismatch": "Passwords do not match",
+      "passwords_mismatch": "Passwords do not match.",
       "password_requirements": "Password does not meet requirements.",
       "select_valid": "Please select a valid insurance plan and neighborhood",
       "email_taken": "That email is already registered.",
@@ -337,7 +338,8 @@
       "no_specialties_available": "No specialties found.",
       "no_coverages_available": "No insurance plans found.",
       "terms_required" : "You must accept the terms and conditions to continue.",
-      "select_neighborhood": "Please select a neighborhood."
+      "select_neighborhood": "Please select a neighborhood.",
+      "invalid-email": "Please enter a valid email format."
     }
   },
   "medical-history": {
