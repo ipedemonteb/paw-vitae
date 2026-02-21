@@ -38,7 +38,7 @@ function LoginCard() {
 
     useEffect(() => {
         if (!login.isError) return;
-        const msg =  t("login.error_generic");
+        const msg = login.failureReason?.message ? t(login.failureReason.message) : t("login.error_generic");
         setErrors({email: msg, password: msg});
         login.reset();
     }, [login.isError]);
