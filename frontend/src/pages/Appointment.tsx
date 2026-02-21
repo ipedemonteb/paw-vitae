@@ -41,7 +41,6 @@ import {
 } from "date-fns";
 import { useNeighborhood } from "@/hooks/useNeighborhoods.ts";
 import GenericError from "@/pages/GenericError.tsx";
-import {daysBetweenUtc} from "@/utils/dateUtils.ts";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
@@ -149,8 +148,8 @@ function Appointment() {
     const refetchDoctorSpecialties = () => { refetchSpecialtyRefs(); refetchSpecialtyDetails(); };
 
     const doctorSpecialties = (specialtyQueries ?? []).map(q => q.data).filter((d): d is SpecialtyDTO => !!d);
-    const resolvePage = Math.floor((daysBetweenUtc(today, selectedDate) / 10) + 1);
-    const { data: appointments, isLoading: loadingAppointments, isFetching: fetchingAppointments, isError: errorAppointments, refetch: refetchAppointments } = useAppointments({ userId: patientId, collection: "upcoming", pageSize: 15, page: resolvePage });
+
+    const { data: appointments, isLoading: loadingAppointments, isFetching: fetchingAppointments, isError: errorAppointments, refetch: refetchAppointments } = useAppointments({ userId: patientId, collection: "upcoming", pageSize: 400, page: 1 });
     const { data: allAvailability, isLoading: loadingAvailability, isFetching: fetchingAvailability, isError: errorAvailability, refetch: refetchAvailability } = useDoctorAvailability(doctorId);
     const { data: occupiedSlots, isLoading: loadingSlots, isFetching: fetchingSlots, isError: errorSlots, refetch: refetchSlots } = useOccupiedSlots(fromStr, toStr, doctorId);
     const { data: unavailabilityPage, isLoading: loadingUnavailability, isFetching: fetchingUnavailability, isError: errorUnavailability, refetch: refetchUnavailability } = useDoctorUnavailability(doctor?.unavailability, { from: fromStr, to: toStr });
@@ -190,7 +189,7 @@ function Appointment() {
 
 
     const slotsForSelectedOffice = useMemo(() => {
-        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots || !appointments) return [];
+        if (!selectedOffice || !allAvailability || !selectedDate || !occupiedSlots) return [];
 
         const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
@@ -214,12 +213,14 @@ function Appointment() {
                     return occ.date === dateStr && occTimeShort === currentTimeShort;
                 });
 
-                const priorCommitment = appointments.data.some(a => {
+                const priorCommitment = appointments?.data?.some(a => {
+                    if (a.status === 'cancelado') return false;
+
                     const aDateObj = parseISO(a.date);
                     const aDateStr = format(aDateObj, 'yyyy-MM-dd');
                     const aTimeShort = format(aDateObj, 'HH:mm');
                     return aDateStr === dateStr && aTimeShort === currentTimeShort;
-                });
+                }) ?? false;
 
                 if (!isOccupied && !priorCommitment) {
                     generatedSlots.push({ startTime: currentTimeFull });
@@ -699,6 +700,5 @@ function RefetchData({
         </Card>
     );
 }
-
 
 export default Appointment;

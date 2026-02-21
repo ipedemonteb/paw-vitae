@@ -17,9 +17,6 @@ public class SpecialtyDTO {
 
     public static SpecialtyDTO fromSpecialty(Specialty specialty, UriInfo uriInfo, MessageSource messageSource, Locale locale) {
         SpecialtyDTO res = new SpecialtyDTO();
-        System.out.println("Locale: " + locale);
-        System.out.println("Specialty key: " + specialty.getKey());
-        System.out.println("Message: " + messageSource.getMessage(specialty.getKey(), null, specialty.getKey(), locale));
         res.name = messageSource.getMessage(specialty.getKey(), null, specialty.getKey(), locale);
         res.self = uriInfo.getBaseUriBuilder().path("api").path("specialties").path(String.valueOf(specialty.getId())).build();
         return res;

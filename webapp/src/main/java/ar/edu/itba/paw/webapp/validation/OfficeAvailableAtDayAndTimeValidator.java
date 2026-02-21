@@ -14,6 +14,7 @@ public class OfficeAvailableAtDayAndTimeValidator implements ConstraintValidator
     private String officeIdFieldName;
     private String dateFieldName;
     private String hourFieldName;
+    private String doctorIdFieldName;
     private final DoctorOfficeAvailabilityService doctorOfficeAvailabilityService;
     private final UnavailabilitySlotsService unavailabilitySlotsService;
 
@@ -28,6 +29,7 @@ public class OfficeAvailableAtDayAndTimeValidator implements ConstraintValidator
         this.officeIdFieldName = constraintAnnotation.officeId();
         this.dateFieldName = constraintAnnotation.date();
         this.hourFieldName = constraintAnnotation.appointmentHour();
+        this.doctorIdFieldName=constraintAnnotation.doctorId();
     }
 
     @Override
@@ -36,11 +38,12 @@ public class OfficeAvailableAtDayAndTimeValidator implements ConstraintValidator
             Field officeIdField = value.getClass().getDeclaredField(officeIdFieldName);
             Field dateField = value.getClass().getDeclaredField(dateFieldName);
             Field hourField = value.getClass().getDeclaredField(hourFieldName);
-            Field doctorIdField = value.getClass().getDeclaredField("doctorId");
+            Field doctorIdField = value.getClass().getDeclaredField(doctorIdFieldName);
 
             officeIdField.setAccessible(true);
             dateField.setAccessible(true);
             hourField.setAccessible(true);
+            doctorIdField.setAccessible(true);
             long doctorId=(long) doctorIdField.get(value);
             long officeId = (long) officeIdField.get(value);
             LocalDate date = (LocalDate) dateField.get(value);
