@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Mail, Lock} from "lucide-react";
 import {useAuth} from "@/hooks/useAuth";
@@ -14,7 +14,6 @@ const headerTitle = "text-3xl font-bold text-(--text-color)";
 const headerSubtitle = "text-(--text-color) text-sm";
 const formStyles = "flex flex-col gap-4 w-full max-w-sm";
 const fieldWrapper = "relative w-full";
-const leftIcon = "absolute left-3 top-1/2 -translate-y-1/2 text-(--gray-400) pointer-events-none";
 const optionsRow = "flex items-center justify-between text-sm mb-1";
 const checkboxLabel = "flex items-center gap-2 cursor-pointer text-(--gray-600)";
 const checkboxStyles = "w-4 h-4 rounded border-(--gray-300) text-[var(--primary-color)] focus:ring-(--primary-color)";
@@ -36,13 +35,6 @@ function LoginCard() {
     const navigate = useNavigate();
     const from = location.state?.from?.pathname;
 
-    useEffect(() => {
-        if (!login.isError) return;
-        const msg =  t("login.error_generic");
-        setErrors({email: msg, password: msg});
-        login.reset();
-    }, [login.isError]);
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -60,6 +52,12 @@ function LoginCard() {
                 if (role === "ROLE_DOCTOR") return navigate("/doctor/dashboard", {replace: true});
                 if (role === "ROLE_PATIENT") return navigate("/patient/dashboard", {replace: true});
                 navigate("/", {replace: true});
+            },
+            onError: () => {
+                setErrors({
+                    email: " ",
+                    password: t("login.error_generic")
+                });
             }
         });
     };
@@ -73,7 +71,6 @@ function LoginCard() {
 
             <form className={formStyles} onSubmit={handleSubmit} noValidate>
                 <div className={fieldWrapper}>
-                    <Mail size={16} className={leftIcon} />
                     <FormInput
                         id="email"
                         name="email"
@@ -91,7 +88,6 @@ function LoginCard() {
                 </div>
 
                 <div className={fieldWrapper}>
-                    <Lock size={16} className={leftIcon} />
                     <PasswordInput
                         id="password"
                         name="password"

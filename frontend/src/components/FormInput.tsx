@@ -41,8 +41,11 @@ export function FormInput({ label, id, required, className, error, hideLabel = f
                     {...props}
                 />
             </div>
-
-            {error && <p className="text-sm text-(--danger) font-medium animate-in fade-in slide-in-from-top-1">{error}</p>}
+            {error && error.trim().length > 0 && (
+                <p className="text-sm text-(--danger) font-medium animate-in fade-in slide-in-from-top-1">
+                    {error}
+                </p>
+            )}
         </div>
     );
 }
