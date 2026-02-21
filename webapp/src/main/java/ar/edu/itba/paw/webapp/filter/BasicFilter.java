@@ -4,6 +4,8 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.interfaceServices.UserService;
 import ar.edu.itba.paw.webapp.auth.TokenResponseHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,13 +38,14 @@ public class BasicFilter extends OncePerRequestFilter {
     private final UserService userService;
     private final UserDetailsService userDetailsService;
     private final TokenResponseHelper tokenResponseHelper;
-
+    private final MessageSource messageSource;
     @Autowired
-    public BasicFilter(AuthenticationManager authenticationManager, UserService userService, UserDetailsService userDetailsService, TokenResponseHelper tokenResponseHelper) {
+    public BasicFilter(AuthenticationManager authenticationManager, UserService userService, UserDetailsService userDetailsService, TokenResponseHelper tokenResponseHelper,MessageSource messageSource) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.userDetailsService = userDetailsService;
         this.tokenResponseHelper = tokenResponseHelper;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -100,8 +103,13 @@ public class BasicFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
             SecurityContextHolder.clearContext();
-            response.addHeader("WWW-Authenticate", "Basic realm=\"Vitae\"");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Basic credentials");
+            response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer realm=\"Vitae\"");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            String message = messageSource.getMessage("exception.invalidCredentials", null, e.getMessage(), LocaleContextHolder.getLocale());
+            String jsonResponse = String.format("{\"message\": \"%s\"}", message);
+            response.getWriter().write(jsonResponse);
             return;
         }
         filterChain.doFilter(request, response);
