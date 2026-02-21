@@ -101,16 +101,21 @@ function HeroSection() {
 
     const [open, setOpen] = useState(false)
     const [debounced] = useDebounce(keyword, 500)
-    const {data: searchResults, isLoading} = useDoctors({
-        keyword: debounced,
-        pageSize: 5
-    })
-
+    let searchResults=undefined;
+    let isLoadingDoctors = false;
+    if (!isDoctor) {
+        const {data, isLoading} = useDoctors({
+            keyword: debounced,
+            pageSize: 5
+        })
+        isLoadingDoctors=isLoading;
+        searchResults=data;
+    }
     const divRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        setOpen(keyword.length > 0 && !isLoading && focus);
-    }, [keyword, focus, isLoading]);
+        setOpen(keyword.length > 0 && !isLoadingDoctors && focus);
+    }, [keyword, focus, isLoadingDoctors]);
 
 
     return (
@@ -169,13 +174,13 @@ function HeroSection() {
                                     } absolute top-full z-50 mt-1 max-h-56 overscroll-contain overflow-y-auto border rounded-md bg-white overflow-hidden transition-all duration-200 ease-out origin-top transform
                                       left-0 w-full md:left-0 md:right-0 md:w-auto`}
                                 >
-                                    {!isLoading && searchResults && searchResults.data.length > 0 && (
+                                    {!isLoadingDoctors && searchResults && searchResults.data.length > 0 && (
                                         searchResults.data.map((d) => (
                                             <SearchResultsCard doctor={d} key={d.self} />
                                         ))
                                     )}
 
-                                    {!isLoading && searchResults && searchResults.data.length === 0 && (
+                                    {!isLoadingDoctors && searchResults && searchResults.data.length === 0 && (
                                         <div className="h-20 w-full flex items-center justify-center gap-1">
                                             <span className="text-(--text-light) text-sm">
                                               {t("search.searchbar.empty")}
