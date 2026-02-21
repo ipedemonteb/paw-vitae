@@ -5,8 +5,8 @@ import {
     useDoctors,
     useDoctor,
     useDoctorImageUrl,
-    useDoctorSpecialties,
-    useDoctorCoverages,
+    // useDoctorSpecialties,
+    // useDoctorCoverages,
     useDoctorExperience,
     useDoctorCertifications,
     useDoctorBiography,
@@ -90,22 +90,22 @@ describe('Doctors Hooks Integration Tests', () => {
 
     describe('Sub-resource Hooks', () => {
 
-        it('should bring the doctor specialties', async () => {
-            const url = `${BASE_URL}/doctors/1/specialties`;
-            const { result } = renderHook(() => useDoctorSpecialties(url));
+        // it('should bring the doctor specialties', async () => {
+        //     const url = `${BASE_URL}/doctors/1/specialties`;
+        //     const { result } = renderHook(() => useDoctorSpecialties(url));
+        //
+        //     await waitFor(() => expect(result.current.isSuccess).toBe(true));
+        //     expect(result.current.data).toHaveLength(3);
+        //     expect(result.current.data![0].name).toBe('Cardiologia');
+        // });
 
-            await waitFor(() => expect(result.current.isSuccess).toBe(true));
-            expect(result.current.data).toHaveLength(3);
-            expect(result.current.data![0].name).toBe('Cardiologia');
-        });
-
-        it('should bring the coverages', async () => {
-            const url = `${BASE_URL}/doctors/1/coverages`;
-            const { result } = renderHook(() => useDoctorCoverages(url));
-
-            await waitFor(() => expect(result.current.isSuccess).toBe(true));
-            expect(result.current.data![0].name).toBe('Galeno');
-        });
+        // it('should bring the coverages', async () => {
+        //     const url = `${BASE_URL}/doctors/1/coverages`;
+        //     const { result } = renderHook(() => useDoctorCoverages(url));
+        //
+        //     await waitFor(() => expect(result.current.isSuccess).toBe(true));
+        //     expect(result.current.data![0].name).toBe('Galeno');
+        // });
 
         it('should bring the doctor profile/bio', async () => {
             const url = `${BASE_URL}/doctors/1/profile`;

@@ -8,8 +8,8 @@ import {
     useDoctorSpecialties,
     useUpdateDoctorMutation
 } from "@/hooks/useDoctors.ts";
-import { useSpecialties } from "@/hooks/useSpecialties.ts";
-import { useCoverages } from "@/hooks/useCoverages.ts";
+import {useSpecialties, useSpecialtiesByUrl} from "@/hooks/useSpecialties.ts";
+import {useCoverages, useCoveragesByUrl} from "@/hooks/useCoverages.ts";
 
 import {
     User,
@@ -40,6 +40,8 @@ import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {useDelayedBoolean} from "@/utils/queryUtils.ts";
 import {DashboardRefetch} from "@/components/DashboardRefetch.tsx";
 import {RefetchComponent} from "@/components/ui/refetch.tsx";
+import type {SpecialtyDTO} from "@/data/specialties.ts";
+import type {CoverageDTO} from "@/data/coverages.ts";
 
 const containerStyles = "flex flex-col gap-6 max-w-6xl mx-auto w-full mb-2";
 const cardStyles = "p-0 overflow-hidden shadow-md gap-0";
@@ -63,22 +65,49 @@ function DoctorAccount() {
         refetch: refetchDoctor,
         isFetching: fetchingDoctor
     } = useDoctor(auth.userId);
-
     const {
-        data: currentSpecialties,
-        isLoading: isLoadingCurrentSpecs,
-        isError: errorCurrentSpecs,
-        refetch: refetchCurrentSpecs,
-        isFetching: fetchingCurrentSpecs
+        data: currentSpecsRefs,
+        isLoading: isLoadingCurrentSpecsRefs,
+        isError: errorCurrentSpecsRefs,
+        refetch: refetchCurrentSpecsRefs,
+        isFetching: fetchingCurrentSpecsRefs
     } = useDoctorSpecialties(doctor?.specialties);
 
     const {
-        data: currentCoverages,
-        isLoading: isLoadingCurrentCovs,
-        isError: errorCurrentCovs,
-        refetch: refetchCurrentCovs,
-        isFetching: fetchingCurrentCovs
+        data: currentSpecsQueries,
+        isLoading: isLoadingSpecsDetails,
+        isError: errorSpecsDetails,
+        refetch: refetchSpecsDetails,
+        isFetching: fetchingSpecsDetails
+    } = useSpecialtiesByUrl(currentSpecsRefs?.map(s => s.self));
+
+    const isLoadingCurrentSpecs = isLoadingCurrentSpecsRefs || isLoadingSpecsDetails;
+    const errorCurrentSpecs = errorCurrentSpecsRefs || errorSpecsDetails;
+    const fetchingCurrentSpecs = fetchingCurrentSpecsRefs || fetchingSpecsDetails;
+    const refetchCurrentSpecs = () => { refetchCurrentSpecsRefs(); refetchSpecsDetails(); };
+    const currentSpecialties = (currentSpecsQueries ?? []).map(q => q.data).filter((d): d is SpecialtyDTO => !!d);
+
+    const {
+        data: currentCovsRefs,
+        isLoading: isLoadingCurrentCovsRefs,
+        isError: errorCurrentCovsRefs,
+        refetch: refetchCurrentCovsRefs,
+        isFetching: fetchingCurrentCovsRefs
     } = useDoctorCoverages(doctor?.coverages);
+
+    const {
+        data: currentCovsQueries,
+        isLoading: isLoadingCovsDetails,
+        isError: errorCovsDetails,
+        refetch: refetchCovsDetails,
+        isFetching: fetchingCovsDetails
+    } = useCoveragesByUrl(currentCovsRefs?.map(c => c.self));
+
+    const isLoadingCurrentCovs = isLoadingCurrentCovsRefs || isLoadingCovsDetails;
+    const errorCurrentCovs = errorCurrentCovsRefs || errorCovsDetails;
+    const fetchingCurrentCovs = fetchingCurrentCovsRefs || fetchingCovsDetails;
+    const refetchCurrentCovs = () => { refetchCurrentCovsRefs(); refetchCovsDetails(); };
+    const currentCoverages = (currentCovsQueries ?? []).map(q => q.data).filter((d): d is CoverageDTO => !!d);
 
     const {
         data: allSpecialtiesList,

@@ -17,7 +17,8 @@ import type {CreateOfficeForm, EditOfficeForm} from "@/lib/office-schema.ts";
 import {Spinner} from "@/components/ui/spinner.tsx";
 import {useDoctor, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
 import {RefetchComponent} from "@/components/ui/refetch.tsx";
-
+import { useSpecialtiesByUrl } from "@/hooks/useSpecialties.ts";
+import type { SpecialtyDTO } from "@/data/specialties.ts";
 type OfficeDialogComponentProps = {
     onSubmit: () => void,
     title: string,
@@ -34,7 +35,30 @@ export default function OfficeDialogComponent({onSubmit, title, form, isLoading 
     const auth = useAuth()
 
     const {data: doctor, isError: errorDoctor, refetch: refetchDoctor, isFetching: fetchingDoctor} = useDoctor(auth.userId)
-    const {data: specialties, isLoading: isLoadingSpecialties, isError: errorSpecialties, refetch: refetchSpecialties, isFetching: fetchingSpecialties} = useDoctorSpecialties(doctor?.specialties)
+    const {
+        data: specialtyRefs,
+        isLoading: loadingSpecialtyRefs,
+        isError: errorSpecialtyRefs,
+        refetch: refetchSpecialtyRefs,
+        isFetching: fetchingSpecialtyRefs
+    } = useDoctorSpecialties(doctor?.specialties);
+
+    const specialtyUrls = specialtyRefs?.map(ref => ref.self);
+
+    const {
+        data: specialtyQueries,
+        isLoading: loadingSpecialtyDetails,
+        isError: errorSpecialtyDetails,
+        refetch: refetchSpecialtyDetails,
+        isFetching: fetchingSpecialtyDetails
+    } = useSpecialtiesByUrl(specialtyUrls);
+
+    const isLoadingSpecialties = loadingSpecialtyRefs || loadingSpecialtyDetails;
+    const errorSpecialties = errorSpecialtyRefs || errorSpecialtyDetails;
+    const fetchingSpecialties = fetchingSpecialtyRefs || fetchingSpecialtyDetails;
+    const refetchSpecialties = () => { refetchSpecialtyRefs(); refetchSpecialtyDetails(); };
+
+    const specialties = (specialtyQueries ?? []).map(q => q.data).filter((d): d is SpecialtyDTO => !!d);
     const id = officeId ? auth.userId : undefined
     const {data: availability, isError: errorAvailability, refetch: refetchAvailability, isFetching: fetchingAvailability} = useDoctorAvailability(id, officeId)
     const hasAvailability = !(availability?.filter(a => officeIdFromSelf(a.office) === officeId).length === 0);

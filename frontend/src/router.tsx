@@ -69,7 +69,6 @@ export const router = createBrowserRouter([
             // Rutas públicas
             { index: true, element: <Landing /> },
             { path: "about-us", element: <About /> },
-            { path: "profile/:id", element: <PublicProfile /> },
             { path: "change-password", element: <ChangePassword /> },
             { path: "change-password-confirmation", element: <ChangePasswordConfirmation /> },
             // Search (no doctor)
@@ -80,9 +79,9 @@ export const router = createBrowserRouter([
                         path: "search",
                         children: [
                             { index: true, element: <Search /> },
-                            { path: ":id", element: <PublicProfile /> },
                         ],
                     },
+                    { path: "profile/:id", element: <PublicProfile /> },
                 ],
             },
 

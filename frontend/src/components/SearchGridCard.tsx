@@ -3,48 +3,49 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx"
 import { Calendar, Mail, Phone, UserRoundSearch } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { RatingStars } from "@/components/RatingStars.tsx";
-import type {SearchCardProps} from "@/components/SearchListCard.tsx";
-import {useDoctorImageUrl, useDoctorSpecialties} from "@/hooks/useDoctors.ts";
+import type { SearchCardProps } from "@/components/SearchListCard.tsx";
+import { useDoctorImageUrl, useDoctorSpecialties } from "@/hooks/useDoctors.ts";
+import { useSpecialtiesByUrl } from "@/hooks/useSpecialties.ts";
 import SearchSpecialtyBadgeComponent from "@/components/SearchSpecialtyBadgeComponent.tsx";
-import {initialsFallback} from "@/utils/userUtils.ts";
-import {generatePath, Link} from "react-router-dom";
-import {extractIdFromUrl} from "@/lib/utils.ts";
-import {useTranslation} from "react-i18next";
-import {useDelayedBoolean} from "@/utils/queryUtils.ts";
-import {Skeleton} from "@/components/ui/skeleton.tsx";
-import {Spinner} from "@/components/ui/spinner.tsx";
-import {userIdFromImageUrl} from "@/utils/IdUtils.ts";
+import { initialsFallback } from "@/utils/userUtils.ts";
+import { generatePath, Link } from "react-router-dom";
+import { extractIdFromUrl } from "@/lib/utils.ts";
+import { useTranslation } from "react-i18next";
+import { useDelayedBoolean } from "@/utils/queryUtils.ts";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
+import { userIdFromImageUrl } from "@/utils/IdUtils.ts";
+import type { SpecialtyDTO } from "@/data/specialties.ts";
 
-const cardContainer =
-    "p-0 gap-0 h-full flex flex-col justify-between ";
-const iconContainer =
-    "flex items-center justify-center px-8 pt-8 mb-4";
-const icon =
-    "w-16 h-16";
-const dataContainer =
-    "flex flex-col justify-center px-10 mb-2";
-const dataName =
-    "font-[600]";
-const dataIcon =
-    "h-4 w-4";
-const dataContact =
-    "flex flex-row items-center gap-1 text-[var(--text-light)] text-sm mb-1";
-const ratingStars =
-    "mt-[10px] flex items-center gap-[6px]";
-const scheduleContainer =
-    "flex flex-col justify-center items-stretch gap-2 px-8 py-6";
-const scheduleButton =
-    "w-full bg-[var(--primary-color)] border border-[var(--primary-color)] text-white py-2 px-4 hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] cursor-pointer";
-const viewProfileButton =
-    "w-full bg-white text-[var(--primary-color)] border border-[var(--primary-color)] py-2 px-4 hover:text-white hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] cursor-pointer";
-const skeletonBadge =
-    "h-4 w-20 rounded-md";
+const cardContainer = "p-0 gap-0 h-full flex flex-col justify-between ";
+const iconContainer = "flex items-center justify-center px-8 pt-8 mb-4";
+const icon = "w-16 h-16";
+const dataContainer = "flex flex-col justify-center px-10 mb-2";
+const dataName = "font-[600]";
+const dataIcon = "h-4 w-4";
+const dataContact = "flex flex-row items-center gap-1 text-[var(--text-light)] text-sm mb-1";
+const ratingStars = "mt-[10px] flex items-center gap-[6px]";
+const scheduleContainer = "flex flex-col justify-center items-stretch gap-2 px-8 py-6";
+const scheduleButton = "w-full bg-[var(--primary-color)] border border-[var(--primary-color)] text-white py-2 px-4 hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] cursor-pointer";
+const viewProfileButton = "w-full bg-white text-[var(--primary-color)] border border-[var(--primary-color)] py-2 px-4 hover:text-white hover:bg-[var(--primary-dark)] hover:border-[var(--primary-dark)] cursor-pointer";
+const skeletonBadge = "h-4 w-20 rounded-md";
 
-function SearchGridCard({doctor}: SearchCardProps) {
+function SearchGridCard({ doctor }: SearchCardProps) {
     const avatarFallbackText = initialsFallback(doctor?.name, doctor?.lastName);
-    const {t} = useTranslation();
-    const { data: specialties, isLoading: loadingSpecialties, isError: errorSpecialties } = useDoctorSpecialties(doctor.specialties);
-    const { url:imageUrl, isLoading: loadingDoctorImgUrl } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
+    const { t } = useTranslation();
+
+    const { data: specialtyRefs, isLoading: loadingRefs, isError: errorRefs } = useDoctorSpecialties(doctor.specialties);
+    const specialtyUrls = specialtyRefs?.map(ref => ref.self);
+    const { data: specialtiesQueries, isLoading: loadingDetails, isError: errorDetails } = useSpecialtiesByUrl(specialtyUrls);
+
+    const loadingSpecialties = loadingRefs || loadingDetails;
+    const errorSpecialties = errorRefs || errorDetails;
+
+    const fullyHydratedSpecialties = (specialtiesQueries ?? [])
+        .map(q => q.data)
+        .filter((data): data is SpecialtyDTO => !!data);
+
+    const { url: imageUrl, isLoading: loadingDoctorImgUrl } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const doctorId = extractIdFromUrl(doctor.self)
     const profilePath = generatePath("/profile/:id", { id: String(doctorId) })
     const schedulePath = generatePath("/appointment/:id", { id: String(doctorId) })
@@ -54,7 +55,7 @@ function SearchGridCard({doctor}: SearchCardProps) {
             <div className={iconContainer}>
                 {loadingDoctorImgUrl ?
                     <Skeleton className={`${icon} flex justify-center items-center rounded-full`}>
-                        <Spinner className="h-6 w-6 text-(--gray-300)"/>
+                        <Spinner className="h-6 w-6 text-(--gray-300)" />
                     </Skeleton>
                     :
                     <Avatar className={icon}>
@@ -73,8 +74,8 @@ function SearchGridCard({doctor}: SearchCardProps) {
                     </div>
                     :
                     errorSpecialties ? null
-                    :
-                    <SearchSpecialtyBadgeComponent specialties={specialties || []} maxDisplay={2}/>
+                        :
+                        <SearchSpecialtyBadgeComponent specialties={fullyHydratedSpecialties} maxDisplay={2} />
                 }
                 <div className={dataContact}>
                     <Mail className={dataIcon} />

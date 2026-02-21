@@ -4,9 +4,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createMockDoctor } from '@/__test__/utils/factories';
 import PublicProfile from "@/pages/PublicProfile.tsx";
-import {BASE_URL} from "@/__test__/utils/utils.ts";
-
-
+import { BASE_URL } from "@/__test__/utils/utils.ts";
 
 const mockUseDoctor = vi.fn();
 const mockUseDoctorSpecialties = vi.fn();
@@ -19,6 +17,9 @@ const mockUseDoctorOffices = vi.fn();
 const mockUseDoctorImageUrl = vi.fn();
 const mockUseAuth = vi.fn();
 
+const mockUseSpecialtiesByUrl = vi.fn();
+const mockUseCoveragesByUrl = vi.fn();
+
 vi.mock('@/hooks/useDoctors', () => ({
     useDoctor: (id: string) => mockUseDoctor(id),
     useDoctorSpecialties: () => mockUseDoctorSpecialties(),
@@ -30,6 +31,14 @@ vi.mock('@/hooks/useDoctors', () => ({
     useUpdateDoctorProfileMutation: () => ({ mutate: vi.fn() }),
     useUpdateDoctorCertificatesMutation: () => ({ mutate: vi.fn() }),
     useUpdateDoctorExperienceMutation: () => ({ mutate: vi.fn() }),
+}));
+
+vi.mock('@/hooks/useSpecialties', () => ({
+    useSpecialtiesByUrl: () => mockUseSpecialtiesByUrl()
+}));
+
+vi.mock('@/hooks/useCoverages', () => ({
+    useCoveragesByUrl: () => mockUseCoveragesByUrl()
 }));
 
 vi.mock('@/hooks/useRatings', () => ({
@@ -47,7 +56,6 @@ vi.mock('@/hooks/useNeighborhoods', () => ({
 vi.mock('@/hooks/useAuth', () => ({
     useAuth: () => mockUseAuth()
 }));
-
 
 vi.mock("@/utils/queryUtils.ts", () => ({
     useDelayedBoolean: (val: boolean) => val
@@ -100,8 +108,13 @@ describe('Public Profile Page (Mocked Hooks)', () => {
 
     const setupSuccessState = () => {
         mockUseDoctor.mockReturnValue({ data: doctorData, isLoading: false, isError: false });
-        mockUseDoctorSpecialties.mockReturnValue({ data: [{ name: 'Infectious Disease' }], isLoading: false });
-        mockUseDoctorCoverages.mockReturnValue({ data: [{ name: 'Medicare' }], isLoading: false });
+
+        mockUseDoctorSpecialties.mockReturnValue({ data: [{ self: 'http://api/specialties/1' }], isLoading: false });
+        mockUseDoctorCoverages.mockReturnValue({ data: [{ self: 'http://api/coverages/1' }], isLoading: false });
+
+        mockUseSpecialtiesByUrl.mockReturnValue({ data: [{ data: { name: 'Infectious Disease', self: 'http://api/specialties/1' } }], isLoading: false });
+        mockUseCoveragesByUrl.mockReturnValue({ data: [{ data: { name: 'Medicare', self: 'http://api/coverages/1' } }], isLoading: false });
+
         mockUseDoctorExperience.mockReturnValue({ data: [{ positionTitle: 'Head of Dept', organizationName: 'Princeton' }], isLoading: false });
         mockUseDoctorCertifications.mockReturnValue({ data: [{ certificateName: 'Board Certified', issuingEntity: 'Board', issueDate: '1990-01-01' }], isLoading: false });
         mockUseDoctorBiography.mockReturnValue({ data: { bio: 'Expert Bio', description: 'Expert Desc' }, isLoading: false });

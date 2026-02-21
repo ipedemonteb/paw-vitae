@@ -20,7 +20,7 @@ import {
     useDoctorOffices,
     useDoctorOfficesSpecialties
 } from "@/hooks/useOffices.ts";
-
+import { useSpecialtiesByUrl } from "@/hooks/useSpecialties.ts";
 import {useAppointments, useBookAppointmentMutation} from "@/hooks/useAppointments.ts";
 import { useOccupiedSlots } from "@/hooks/useSlots.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
@@ -104,7 +104,6 @@ function Appointment() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const auth = useAuth();
-
     const patientId = auth.userId
 
     const { mutate: bookAppointment, isPending: isBooking } = useBookAppointmentMutation();
@@ -126,7 +125,30 @@ function Appointment() {
     const { data: doctor, isLoading: loadingDoctor, isError: errorDoctor, error: doctorError } = useDoctor(doctorId);
     const { data: offices, isLoading: loadingOffices, isFetching: fetchingOffices, isError: errorOffices, refetch: refetchOffices } = useDoctorOffices(doctor?.offices, { status: "active" });
     const { data: officeSpecialties, isLoading: isLoadingOfficeSpecialties, isFetching: fetchingOfficeSpecialties, isError: errorOfficeSpecialties, refetch: refetchOfficeSpecialties } = useDoctorOfficesSpecialties(offices);
-    const { data: doctorSpecialties, isLoading: isLoadingDoctorSpecialties, isFetching: fetchingDoctorSpecialties, isError: errorDoctorSpecialties, refetch: refetchDoctorSpecialties } = useDoctorSpecialties(doctor?.specialties);
+    const {
+        data: specialtyRefs,
+        isLoading: loadingSpecialtyRefs,
+        isFetching: fetchingSpecialtyRefs,
+        isError: errorSpecialtyRefs,
+        refetch: refetchSpecialtyRefs
+    } = useDoctorSpecialties(doctor?.specialties);
+
+    const specialtyUrls = specialtyRefs?.map(ref => ref.self);
+
+    const {
+        data: specialtyQueries,
+        isLoading: loadingSpecialtyDetails,
+        isFetching: fetchingSpecialtyDetails,
+        isError: errorSpecialtyDetails,
+        refetch: refetchSpecialtyDetails
+    } = useSpecialtiesByUrl(specialtyUrls);
+
+    const isLoadingDoctorSpecialties = loadingSpecialtyRefs || loadingSpecialtyDetails;
+    const fetchingDoctorSpecialties = fetchingSpecialtyRefs || fetchingSpecialtyDetails;
+    const errorDoctorSpecialties = errorSpecialtyRefs || errorSpecialtyDetails;
+    const refetchDoctorSpecialties = () => { refetchSpecialtyRefs(); refetchSpecialtyDetails(); };
+
+    const doctorSpecialties = (specialtyQueries ?? []).map(q => q.data).filter((d): d is SpecialtyDTO => !!d);
     const resolvePage = Math.floor((daysBetweenUtc(today, selectedDate) / 10) + 1);
     const { data: appointments, isLoading: loadingAppointments, isFetching: fetchingAppointments, isError: errorAppointments, refetch: refetchAppointments } = useAppointments({ userId: patientId, collection: "upcoming", pageSize: 15, page: resolvePage });
     const { data: allAvailability, isLoading: loadingAvailability, isFetching: fetchingAvailability, isError: errorAvailability, refetch: refetchAvailability } = useDoctorAvailability(doctorId);

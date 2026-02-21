@@ -2,10 +2,15 @@ import {api} from "@/data/Api.ts";
 import {ContentTypes} from "@/utils/contentTypes.js";
 import type {PaginationData} from "@/lib/types.ts";
 import {parseLinkHeader} from "@/lib/utils.ts";
-import type {CoverageDTO} from "@/data/coverages.ts";
-import type {SpecialtyDTO} from "@/data/specialties.ts";
 import {DOCTORS_PAGE_SIZE} from "@/lib/constants.ts";
 import qs from 'qs';
+
+export type CoverageRefDTO = {
+    self: string;
+}
+export type SpecialtyRefDTO = {
+    self: string;
+}
 
 export type ChangePasswordForm = {
     password: string;
@@ -225,14 +230,14 @@ export async function fetchCountDoctors(): Promise<number> {
 }
 
 export async function getDoctorSpecialties(specialtyUrl: string) {
-    const res = await api.get<SpecialtyDTO[]>(specialtyUrl,{
+    const res = await api.get<SpecialtyRefDTO[]>(specialtyUrl,{
         headers: {"accept": ContentTypes.SPECIALTY_LIST,}
     } );
     return res.data;
 }
 
 export async function getDoctorCoverages(coverageUrl: string) {
-    const res = await api.get<CoverageDTO[]>(coverageUrl,{
+    const res = await api.get<CoverageRefDTO[]>(coverageUrl,{
         headers: {"accept": ContentTypes.COVERAGE_LIST,}
     } );
     return res.data;

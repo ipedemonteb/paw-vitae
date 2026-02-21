@@ -2,12 +2,14 @@ package ar.edu.itba.paw.webapp.utils;
 
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.webapp.dto.DoctorDTO;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -56,5 +58,12 @@ public final class ResponseUtils {
         rb.header("Access-Control-Expose-Headers", "X-Total-Count, Link");
 
         return rb.build();
+    }
+    public static Locale getLocaleFromHeaders(List<Locale> acceptableLanguages) {
+        System.out.println("Acceptable languages: " + acceptableLanguages);
+        System.out.println("Default locale: " + LocaleContextHolder.getLocale());
+        return acceptableLanguages.isEmpty()
+                ? LocaleContextHolder.getLocale()
+                : acceptableLanguages.get(0);
     }
 }

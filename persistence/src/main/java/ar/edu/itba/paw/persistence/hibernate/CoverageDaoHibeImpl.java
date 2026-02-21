@@ -25,7 +25,7 @@ public class CoverageDaoHibeImpl implements CoverageDao {
 
     @Override
     public List<Coverage> getAll() {
-        return em.createQuery("FROM Coverage", Coverage.class).getResultList();
+        return em.createQuery("FROM Coverage order by id", Coverage.class).getResultList();
     }
 
     @Override

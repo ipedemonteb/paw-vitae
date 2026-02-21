@@ -35,7 +35,6 @@ import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildPaginationHeaders;
 @Component
 public class RestAppointmentController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestAppointmentController.class);
     private final AppointmentService appointmentService;
 
     @Context

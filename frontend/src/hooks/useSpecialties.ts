@@ -17,6 +17,7 @@ export function useSpecialty(url?: string) {
 }
 
 export function useSpecialtiesByUrl(specialtiesUrl?: string[]) {
+    console.log(specialtiesUrl)
     return useQueries({
         queries: (specialtiesUrl ?? []).map((specialty) => ({
             queryKey: ['specialties', specialty],

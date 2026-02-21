@@ -56,20 +56,6 @@ public class RestPatientController {
                 .build();
     }
 
-
-//    @GET
-//    @Path("/{id}/coverages")
-//    @Produces(value = MediaType.APPLICATION_JSON)
-//    public Response getCoveragesByPatientId(@PathParam("id") final long id) {
-//        final Patient patient = this.patientService.getById(id).orElseThrow(NotFoundException::new);
-//        if (patient.getCoverage() == null) {
-//            return Response.noContent().build();
-//        }
-//        return Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(patient.getCoverage(), uriInfo)) {}).build();
-//
-//    }
-
-
     @POST
     @Consumes(CustomMediaType.APPLICATION_PATIENT)
     public Response createPatient(

@@ -9,9 +9,11 @@ import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.utils.CacheUtils;
 import ar.edu.itba.paw.webapp.utils.FileUtils;
+import ar.edu.itba.paw.webapp.utils.ResponseUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
@@ -41,12 +43,12 @@ public class RestDoctorController {
     private final ImageService imageService;
     private final UnavailabilitySlotsService unavailabilitySlotsService;
     private final OccupiedSlotsService occupiedSlotsService;
-
+    private final MessageSource messageSource;
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, OccupiedSlotsService occupiedSlotsService, ImageService imageService, UnavailabilitySlotsService unavailabilitySlotsService) {
+    public RestDoctorController(DoctorService doctorService, SpecialtyService specialtyService, CoverageService coverageService, DoctorOfficeService doctorOfficeService, DoctorProfileService doctorProfileService, DoctorExperienceService doctorExperienceService, DoctorCertificationService doctorCertificationService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService, DoctorOfficeSpecialtyService doctorOfficeSpecialtyService, OccupiedSlotsService occupiedSlotsService, ImageService imageService, UnavailabilitySlotsService unavailabilitySlotsService,MessageSource messageSource) {
         this.doctorService = doctorService;
         this.specialtyService = specialtyService;
         this.coverageService = coverageService;
@@ -59,6 +61,7 @@ public class RestDoctorController {
         this.imageService = imageService;
         this.unavailabilitySlotsService = unavailabilitySlotsService;
         this.occupiedSlotsService = occupiedSlotsService;
+        this.messageSource = messageSource;
     }
 
     @GET
@@ -88,9 +91,9 @@ public class RestDoctorController {
     @GET
     @Path("/{id:\\d+}/specialties")
     @Produces(value = CustomMediaType.APPLICATION_SPECIALTY_LIST)
-    public Response getDoctorSpecialties(@PathParam("id") final long id,@Context final Request request) {
+    public Response getDoctorSpecialties(@PathParam("id") final long id) {
         List<Specialty> specialties = this.specialtyService.getByDoctorId(id);
-        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(SpecialtyDTO.fromSpecialty(specialties, uriInfo)) {}), request, specialties.hashCode()).build();
+        return Response.ok(new GenericEntity<>(SpecialtyRefDTO.fromSpecialtyList(specialties, uriInfo)) {}).build();
     }
 
     @GET
@@ -98,7 +101,7 @@ public class RestDoctorController {
     @Produces(value = CustomMediaType.APPLICATION_COVERAGE_LIST)
     public Response getDoctorCoverages(@PathParam("id") final long id,@Context final Request request) {
         List<Coverage> coverages = this.coverageService.findByDoctorId(id);
-        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(CoverageDTO.fromCoverage(coverages, uriInfo)) {}), request, coverages.hashCode()).build();
+        return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(CoverageRefDTO.fromCoverageList(coverages, uriInfo)) {}), request, coverages.hashCode()).build();
     }
 
     @GET
@@ -328,7 +331,7 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/slots")
-    @Consumes(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOTS_LIST)
+    @Produces(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOTS_LIST)
     public Response getDoctorAvailabilitySlots(
             @PathParam("id") final long id,
             @BeanParam @Valid OccupiedSlotsSearchForm form) {
@@ -341,7 +344,7 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/slots/{slotId:\\d+}")
-    @Consumes(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOT)
+    @Produces(value = CustomMediaType.APPLICATION_AVAILABILITY_SLOT)
     public Response getDoctorAvailabilitySlotById(
             @PathParam("id") final long id,
             @PathParam("slotId") final long slotId
