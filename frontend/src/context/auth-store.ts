@@ -81,13 +81,17 @@ export function setAuth(token?: string, refresh?: string, rememberMe?: boolean) 
     emit();
 }
 
-export function clearAuth() {
+
+//The clear auth can be silent, so the logout function does not race against the authGuard, and there is no blink of the login page before showing the home page after logout.
+export function clearAuth(silent = false) {
     state = { accessToken: undefined, refreshToken: undefined, claims: null };
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_KEY);
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(REFRESH_KEY);
-    emit();
+    if (!silent) {
+        emit();
+    }
 }
 
 export function initAuthFromStorage() {
