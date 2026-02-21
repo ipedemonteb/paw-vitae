@@ -443,7 +443,7 @@ function LoggedInDropdown({
         userRole === "DOCTOR"
             ? [
                 { to: "/doctor/dashboard", label: t("header.doctor.dashboard"), icon: ChartPie },
-                { to: `/search/${userId}`, label: t("header.doctor.profile"), icon: User },
+                { to: `/profile/${userId}`, label: t("header.doctor.profile"), icon: User },
             ]
             : [{ to: "/patient/dashboard", label: t("header.patient.dashboard"), icon: ChartPie }];
 
