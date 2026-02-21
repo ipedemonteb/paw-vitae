@@ -39,9 +39,9 @@ function LoginCard() {
         e.preventDefault();
 
         const newErrors: {email?: string; password?: string} = {};
-        if (!email) newErrors.email = t("register.errors.required");
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!emailRegex.test(email)) newErrors.email = t("recover.error_invalid");
+        if (!email) newErrors.email = t("register.errors.required");
         if (!password) newErrors.password = t("register.errors.required");
         if (Object.keys(newErrors).length > 0) return setErrors(newErrors);
 
