@@ -24,6 +24,8 @@ public class DoctorDTO {
     private URI image;
     private URI unavailability;
     private URI self;
+    private URI availability;
+    private URI occupiedSlots;
 
     public static DoctorDTO fromDoctor(Doctor doctor, UriInfo uriInfo) {
         DoctorDTO dto = new DoctorDTO();
@@ -49,6 +51,8 @@ public class DoctorDTO {
         if (doctor.getImageId() != null) {
             dto.image = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("image").build();
         }
+        dto.availability = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("availability").build();
+        dto.occupiedSlots = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).path("slots").build();
         dto.self = uriInfo.getBaseUriBuilder().path("api").path("doctors").path(doctorId).build();
 
         return dto;
@@ -189,4 +193,19 @@ public class DoctorDTO {
     public void setSelf(URI self) {
         this.self = self;
     }
+
+    public URI getAvailability() {
+        return availability;
+    }
+    public void setAvailability(URI availability) {
+        this.availability = availability;
+    }
+
+    public URI getOccupiedSlots() {
+        return occupiedSlots;
+    }
+    public void setOccupiedSlots(URI occupiedSlots) {
+        this.occupiedSlots = occupiedSlots;
+    }
+
 }

@@ -88,7 +88,7 @@ public class HomeDTO  {
         dto.doctorOccupiedSlotByIdUrl = baseUri + "doctors/{id}/slots/{slotId}";
 
         dto.appointmentByIdUrl = baseUri + "appointments/{id}";
-        dto.appointmentReportUrl = baseUri + "appointments/{id}";
+        dto.appointmentReportUrl = baseUri + "appointments/{id}/report";
         dto.appointmentFilesUrl = baseUri + "appointments/{id}/files";
         dto.appointmentFileByIdUrl = baseUri + "appointments/{appointmentId}/files/{fileId}";
         dto.appointmentFileViewUrl = baseUri + "appointments/{appointmentId}/files/{fileId}/view";

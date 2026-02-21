@@ -115,10 +115,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,UriUtils.RATINGS).access("hasRole('PATIENT')")
                 .antMatchers(HttpMethod.GET, UriUtils.RATINGS +"/**").permitAll()
                 .antMatchers("/images/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/**/image").permitAll()
                 .antMatchers(UriUtils.COVERAGES +"/**").permitAll()
                 .antMatchers(UriUtils.SPECIALTIES + "/**").permitAll()
                 .antMatchers( HttpMethod.GET,UriUtils.NEIGHBORHOODS +"/**").permitAll()
                 .antMatchers("/**").permitAll()
+
 
                 .and()
                 .exceptionHandling()
@@ -173,7 +175,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/src/main/favicon.ico", "image/*", "**/image", "/error/**");
+                .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/src/main/favicon.ico", "/error/**");
     }
 
     @Bean
@@ -199,7 +201,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 "Location",
                 "Link",
                 "WWW-Authenticate",
-                "X-Total-Count"
+                "X-Total-Count",
+                "ETag",
+                "Last-Modified",
+                "Content-Disposition"
         ));
 
         source.registerCorsConfiguration("/**", config);
