@@ -20,4 +20,5 @@ public @interface OfficeAvailableAtDayAndTime {
     String date();
 
     String appointmentHour();
+    String doctorId();
 }

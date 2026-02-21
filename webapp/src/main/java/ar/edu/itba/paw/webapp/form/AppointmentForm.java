@@ -18,7 +18,7 @@ import java.time.LocalDate;
 
 @OfficeOwnedByDoctor(message = "office.invalid")
 @OfficeAcceptsSpecialty(officeId = "officeId", specialtyId = "specialtyId")
-@OfficeAvailableAtDayAndTime(officeId = "officeId", date = "appointmentDate", appointmentHour = "appointmentHour")
+@OfficeAvailableAtDayAndTime(officeId = "officeId", date = "appointmentDate", appointmentHour = "appointmentHour",doctorId="doctorId")
 @AppointmentExistence(userId = "doctorId", date = "appointmentDate", startTime = "appointmentHour")
 @AppointmentExistence(userId = "patientId", date = "appointmentDate", startTime = "appointmentHour")
 @AppointmentValidDate(date = "appointmentDate", startTime = "appointmentHour")

@@ -1,10 +1,14 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.utils.ResponseUtils;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 
-public class AppointmentSearchForm extends PagingForm {
+public class AppointmentSearchForm extends BasePagingForm {
 
     @QueryParam("userId")
     @NotNull
@@ -20,6 +24,12 @@ public class AppointmentSearchForm extends PagingForm {
     @QueryParam("filter")
     @DefaultValue("all")
     private String filter;
+
+    @QueryParam("pageSize")
+    @DefaultValue("10")
+    @Min(1)
+    @Max(ResponseUtils.MAX_APPOINTMENT_PAGE_SIZE)
+    private int pageSize;
 
     @QueryParam("sort")
     @DefaultValue("asc")
@@ -40,4 +50,13 @@ public class AppointmentSearchForm extends PagingForm {
 
     public String getSort() { return sort; }
     public void setSort(String sort) { this.sort = sort; }
+
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
 }

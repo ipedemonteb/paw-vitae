@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 public final class ResponseUtils {
     public static final int MAX_PAGINATION_PAGE_SIZE = 100;
+    public  static final int MAX_APPOINTMENT_PAGE_SIZE=400;
     public static Response buildPaginationHeaders(Response.ResponseBuilder rb, Page<?> items, UriInfo uriInfo) {
 
         UriBuilder uri = uriInfo.getRequestUriBuilder().clone();
@@ -60,8 +61,6 @@ public final class ResponseUtils {
         return rb.build();
     }
     public static Locale getLocaleFromHeaders(List<Locale> acceptableLanguages) {
-        System.out.println("Acceptable languages: " + acceptableLanguages);
-        System.out.println("Default locale: " + LocaleContextHolder.getLocale());
         return acceptableLanguages.isEmpty()
                 ? LocaleContextHolder.getLocale()
                 : acceptableLanguages.get(0);

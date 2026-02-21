@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/__test__/utils/utils';
 import { server } from "@/__test__/setup/setup.ts";
-import { format, addDays, startOfDay } from 'date-fns';
+import {  addDays, startOfDay } from 'date-fns';
 
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
