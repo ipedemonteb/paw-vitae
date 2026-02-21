@@ -5,8 +5,8 @@ import {
     useDoctors,
     useDoctor,
     useDoctorImageUrl,
-    // useDoctorSpecialties,
-    // useDoctorCoverages,
+    useDoctorSpecialties,
+    useDoctorCoverages,
     useDoctorExperience,
     useDoctorCertifications,
     useDoctorBiography,
@@ -19,7 +19,6 @@ import {
 } from "@/hooks/useDoctors.ts";
 import * as doctorService from "@/data/doctors";
 import type {UnavailabilityForm} from "@/data/doctors";
-
 
 beforeAll(() => {
     globalThis.URL.createObjectURL = vi.fn(() => 'blob:mock-preview-url');
@@ -66,8 +65,6 @@ describe('Doctors Hooks Integration Tests', () => {
         });
     });
 
-
-
     describe('useDoctorImageUrl', () => {
         it('should download the image and generate an object URl', async () => {
 
@@ -78,8 +75,6 @@ describe('Doctors Hooks Integration Tests', () => {
             }, { timeout: 5000 });
         });
 
-
-
         it('should not execute if the ID is not numeric', async () => {
             const { result } = renderHook(() => useDoctorImageUrl('invalid'));
             expect(result.current.fetchStatus).toBe('idle');
@@ -87,25 +82,24 @@ describe('Doctors Hooks Integration Tests', () => {
         });
     });
 
-
     describe('Sub-resource Hooks', () => {
 
-        // it('should bring the doctor specialties', async () => {
-        //     const url = `${BASE_URL}/doctors/1/specialties`;
-        //     const { result } = renderHook(() => useDoctorSpecialties(url));
-        //
-        //     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-        //     expect(result.current.data).toHaveLength(3);
-        //     expect(result.current.data![0].name).toBe('Cardiologia');
-        // });
+        it('should bring the doctor specialties', async () => {
+            const url = `${BASE_URL}/doctors/1/specialties`;
+            const { result } = renderHook(() => useDoctorSpecialties(url));
 
-        // it('should bring the coverages', async () => {
-        //     const url = `${BASE_URL}/doctors/1/coverages`;
-        //     const { result } = renderHook(() => useDoctorCoverages(url));
-        //
-        //     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-        //     expect(result.current.data![0].name).toBe('Galeno');
-        // });
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+            expect(result.current.data).toHaveLength(3);
+            expect(result.current.data![0].self).toBeDefined();
+        });
+
+        it('should bring the coverages', async () => {
+            const url = `${BASE_URL}/doctors/1/coverages`;
+            const { result } = renderHook(() => useDoctorCoverages(url));
+
+            await waitFor(() => expect(result.current.isSuccess).toBe(true));
+            expect(result.current.data![0].self).toBeDefined();
+        });
 
         it('should bring the doctor profile/bio', async () => {
             const url = `${BASE_URL}/doctors/1/profile`;
@@ -169,17 +163,6 @@ describe('Doctors Hooks Integration Tests', () => {
         });
 
         it('should call the image service', async () => {
-            //ACLARACIÓN:
-            // ---------------------------------------------------------------------------
-            // Mockeamos la función del servicio 'putDoctorImage' para evitar enviarla por la red simulada (MSW).
-            //
-            // EXPLICACIÓN:
-            // En entornos de test (JSDOM/Node), la combinación de Axios + FormData a menudo falla al
-            // generar correctamente los headers de 'multipart/form-data' (específicamente el 'boundary').
-            // Esto causa que MSW rechace la petición, haciendo fallar el test aunque el código esté bien.
-            // Al usar spyOn().mockResolvedValue(), saltamos la capa de red defectuosa y probamos
-            // lo que realmente importa: que el hook llame a la función con los parámetros correctos.
-            // ---------------------------------------------------------------------------
             const spy = vi.spyOn(doctorService, 'putDoctorImage').mockResolvedValue({ status: 'ok' });
 
             const url = `${BASE_URL}/doctors/1/image`;

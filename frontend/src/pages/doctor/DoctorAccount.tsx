@@ -150,14 +150,18 @@ function DoctorAccount() {
                 email: doctor.email || ""
             });
         }
-        if (currentSpecialties) {
-            setSelectedSpecIds(currentSpecialties.map(s => Number(s.self.split('/').pop())));
-        }
-        if (currentCoverages) {
-            setSelectedCovIds(currentCoverages.map(c => Number(c.self.split('/').pop())));
-        }
-    }, [doctor, currentSpecialties, currentCoverages, isEditing]);
+    }, [doctor]);
 
+    useEffect(() => {
+        if (!isEditing) {
+            if (currentSpecsRefs) {
+                setSelectedSpecIds(currentSpecsRefs.map(s => Number(s.self.split('/').pop())));
+            }
+            if (currentCovsRefs) {
+                setSelectedCovIds(currentCovsRefs.map(c => Number(c.self.split('/').pop())));
+            }
+        }
+    }, [currentSpecsRefs, currentCovsRefs, isEditing]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

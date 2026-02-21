@@ -4,7 +4,7 @@ import { RatingStars } from "@/components/RatingStars.tsx";
 import BadgeComponent from "@/components/BadgeComponent.tsx";
 import { Card } from "@/components/ui/card.tsx";
 import { useDoctorImageUrl, useDoctorSpecialties } from "@/hooks/useDoctors.ts";
-import { useSpecialtiesByUrl } from "@/hooks/useSpecialties.ts"; // <-- Importamos el hook del N+1
+import { useSpecialtiesByUrl } from "@/hooks/useSpecialties.ts";
 import { initialsFallback } from "@/utils/userUtils.ts";
 import type { DoctorDTO } from "@/data/doctors.ts";
 import { userIdFromImageUrl } from "@/utils/IdUtils.ts";

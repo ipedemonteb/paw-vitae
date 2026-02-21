@@ -15,7 +15,6 @@ export function useCoverage(url?: string) {
         enabled: !!url
     })
 }
-// En src/hooks/useCoverages.ts
 
 export function useCoveragesByUrl(coveragesUrl?: string[]) {
     return useQueries({

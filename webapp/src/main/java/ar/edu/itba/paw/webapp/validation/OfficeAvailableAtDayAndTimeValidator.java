@@ -36,11 +36,12 @@ public class OfficeAvailableAtDayAndTimeValidator implements ConstraintValidator
             Field officeIdField = value.getClass().getDeclaredField(officeIdFieldName);
             Field dateField = value.getClass().getDeclaredField(dateFieldName);
             Field hourField = value.getClass().getDeclaredField(hourFieldName);
+            Field doctorIdField = value.getClass().getDeclaredField("doctorId");
 
             officeIdField.setAccessible(true);
             dateField.setAccessible(true);
             hourField.setAccessible(true);
-
+            long doctorId=(long) doctorIdField.get(value);
             long officeId = (long) officeIdField.get(value);
             LocalDate date = (LocalDate) dateField.get(value);
             Integer hour = (Integer) hourField.get(value);
@@ -50,7 +51,7 @@ public class OfficeAvailableAtDayAndTimeValidator implements ConstraintValidator
             }
 
             if (!doctorOfficeAvailabilityService.isAvailableAtDayAndTime(officeId, date, hour)
-                    || unavailabilitySlotsService.isUnavailableAtDate(officeId, date)) {
+                    || unavailabilitySlotsService.isUnavailableAtDate(doctorId, date)) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("appointment.office.date.valid")
                         .addPropertyNode(dateFieldName)

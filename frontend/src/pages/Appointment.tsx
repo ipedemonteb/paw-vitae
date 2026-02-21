@@ -354,7 +354,7 @@ function Appointment() {
                         <DoctorProfileCard doctor={doctor}/>
                         {isBookingError ?
                             <RefetchData isFetching={isBookingFetching} onRefetch={refetchBookingData} errorText={t("appointment.booking.error.refetch")}/>
-                        :
+                            :
                             <>
                                 <div className={selectorsContainer}>
                                     <SpecialtySelector
