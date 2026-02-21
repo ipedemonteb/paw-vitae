@@ -13,6 +13,7 @@ public class UnavailabilityDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private URI doctor;
+    private URI self;
 
     public static UnavailabilityDTO fromUnavailabilitySlot(UnavailabilitySlot slot, UriInfo uriInfo) {
         UnavailabilityDTO dto = new UnavailabilityDTO();
@@ -22,6 +23,16 @@ public class UnavailabilityDTO {
         dto.doctor = uriInfo.getBaseUriBuilder().path("api")
                 .path("doctors")
                 .path(String.valueOf(slot.getDoctor().getId()))
+                .build();
+
+        String doctorId = String.valueOf(slot.getDoctor().getId());
+        String slotId = String.valueOf(slot.getId());
+
+        dto.self = uriInfo.getBaseUriBuilder().path("api")
+                .path("doctors")
+                .path(doctorId)
+                .path("unavailability")
+                .path(slotId)
                 .build();
 
         return dto;
@@ -40,5 +51,8 @@ public class UnavailabilityDTO {
     public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
     public URI getDoctor() { return doctor; }
     public void setDoctor(URI doctor) { this.doctor = doctor; }
+
+    public URI getSelf() { return self; }
+    public void setSelf(URI self) { this.self = self; }
 
 }
