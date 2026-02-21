@@ -63,16 +63,6 @@ public class AppointmentDTO {
         return appointments.stream().map(a -> fromAppointment(a, uriInfo)).toList();
     }
 
-    public static List<AppointmentFileDTO> filesFromAppointmentFiles(List<AppointmentFile> appointmentFiles, UriInfo uriInfo) {
-        if (appointmentFiles == null || appointmentFiles.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        return appointmentFiles
-                .stream()
-                .map(file -> AppointmentFileDTO.fromAppointmentFile(file, uriInfo))
-                .collect(Collectors.toList());
-    }
 
     public long getId() {
         return id;
