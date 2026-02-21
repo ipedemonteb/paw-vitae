@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.models.exception; // O tu paquete de excepciones base
+package ar.edu.itba.paw.models.exception;
 
 
 

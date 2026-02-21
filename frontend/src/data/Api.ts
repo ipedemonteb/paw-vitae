@@ -68,7 +68,6 @@ api.interceptors.response.use(
 
         if (!original || !isExpiredJwt401(err)) return Promise.reject(err);
 
-        //para no loop infinito
         if (original._retriedWithRefresh) {
             clearAuth();
             return Promise.reject(err);

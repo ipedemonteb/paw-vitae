@@ -478,7 +478,7 @@ function AvailabilityItem({
     const hasEnd = !!slot.end;
 
     const isTimeOrderInvalid = useMemo(() => {
-        if (!hasStart || !hasEnd) return false; // si falta alguno, no hay error
+        if (!hasStart || !hasEnd) return false;
         return timeToMinutes(slot.end) <= timeToMinutes(slot.start);
     }, [hasStart, hasEnd, slot.start, slot.end]);
 
