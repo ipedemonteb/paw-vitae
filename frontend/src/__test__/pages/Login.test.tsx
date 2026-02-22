@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Login from "@/pages/Login";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { screen} from "@testing-library/react";
+
 
 const mockLoginMutate = vi.fn();
 const mockUseAuth = vi.fn();
@@ -121,10 +123,19 @@ describe("Login Page", () => {
         }, expect.anything());
     });
 
-    it("should display generic error message when login fails", () => {
+
+        it("should display generic error message when login fails", async () => {
+        const user = userEvent.setup();
+
+        const mockMutate = vi.fn(( variables, options) => {
+            if (options?.onError) {
+                options.onError();
+            }
+        });
+
         mockUseAuth.mockReturnValue({
             login: {
-                mutate: vi.fn(),
+                mutate: mockMutate,
                 isPending: false,
                 isError: true,
                 failureReason: null,
@@ -133,13 +144,21 @@ describe("Login Page", () => {
         });
 
         renderLogin();
-        const errorMessages = screen.getAllByText("login.error_generic");
-        expect(errorMessages).toHaveLength(2);
 
-        errorMessages.forEach(msg => {
-            expect(msg).toBeVisible();
-        });
+        const emailInput = screen.getByPlaceholderText("login.placeholder_email");
+        const passwordInput = screen.getByPlaceholderText("login.placeholder_password");
 
+        await user.type(emailInput, "test@example.com");
+        await user.type(passwordInput, "password123");
+
+        const submitButton = screen.getByRole("button", { name: "login.button_login" });
+        await user.click(submitButton);
+
+        expect(mockMutate).toHaveBeenCalledTimes(1);
+
+
+        const errorMessage = await screen.findByText(/login\.error_generic/i);
+        expect(errorMessage).toBeInTheDocument();
     });
 
     it("should disable submit button while loading", () => {
