@@ -51,7 +51,7 @@ describe("RecoverPassword Page", () => {
         renderRecoverPassword();
 
         expect(screen.getByRole("heading", { name: "recover.title" })).toBeInTheDocument();
-        expect(screen.getByPlaceholderText("recover.placeholder_email")).toBeInTheDocument();
+        expect(screen.getByPlaceholderText("login.placeholder_email")).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "recover.button_send" })).toBeInTheDocument();
     });
 
@@ -70,7 +70,7 @@ describe("RecoverPassword Page", () => {
         const user = userEvent.setup();
         renderRecoverPassword();
 
-        const emailInput = screen.getByPlaceholderText("recover.placeholder_email");
+        const emailInput = screen.getByPlaceholderText("login.placeholder_email");
         await user.type(emailInput, "invalid-email");
 
         const submitBtn = screen.getByRole("button", { name: "recover.button_send" });
@@ -84,7 +84,7 @@ describe("RecoverPassword Page", () => {
         const user = userEvent.setup();
         renderRecoverPassword();
 
-        const emailInput = screen.getByPlaceholderText("recover.placeholder_email");
+        const emailInput = screen.getByPlaceholderText("login.placeholder_email");
         await user.type(emailInput, "valid@test.com");
 
         const submitBtn = screen.getByRole("button", { name: "recover.button_send" });
