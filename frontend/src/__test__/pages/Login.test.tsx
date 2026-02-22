@@ -128,6 +128,7 @@ describe("Login Page", () => {
         const user = userEvent.setup();
 
         const mockMutate = vi.fn(( variables, options) => {
+            void variables; //otherwise ts fails to compile
             if (options?.onError) {
                 options.onError();
             }
