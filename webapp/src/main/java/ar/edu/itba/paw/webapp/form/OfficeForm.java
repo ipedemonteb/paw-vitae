@@ -9,16 +9,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-//@ValidOfficeId
-//@ActiveOfficeAvailability
-//@MaxNumberOfOffices
 @ValidNewOffice
 public class OfficeForm {
 
 
     @NotNull
-//    @ActiveOffice(message = "{offices.active}")
-//    @UniqueOffices(message = "{offices.duplicate}")
     @ValidOfficeNames(message = "offices.invalid.name")
     @ValidOfficeSpecialties(message = "offices.invalid.specialties")
     @ValidOfficeNeighborhood(message = "offices.invalid.neighborhood")

@@ -57,7 +57,7 @@ public class HomeDTO  {
 
         dto.doctorsUrl = baseUri + "doctors{?specialty,coverage,weekdays,keyword,orderBy,direction,page,pageSize}";
 
-        dto.appointmentsUrl = baseUri + "appointments{?userId,doctorId,collection,filter,sort,page,pageSize}";
+        dto.appointmentsUrl = baseUri + "appointments{?doctorId,collection,filter,sort,page,pageSize}";
 
         dto.ratingsUrl = baseUri + "ratings{?doctorId,page,pageSize}";
 

@@ -154,7 +154,7 @@ public class AppointmentServiceImplTest {
 
         //Exercise & Postconditions
         assertThrows(AppointmentNotFoundException.class, () ->
-                appointmentService.cancelAppointment(appointmentId, userId)
+                appointmentService.cancelAppointment(appointmentId)
         );
     }
 
@@ -166,7 +166,7 @@ public class AppointmentServiceImplTest {
 
         //Exercise & Postconditions
         assertThrows(CancellableException.class, () ->
-                appointmentService.cancelAppointment(APPOINTMENT_ID, userId)
+                appointmentService.cancelAppointment(APPOINTMENT_ID)
         );
     }
 
@@ -178,7 +178,7 @@ public class AppointmentServiceImplTest {
         when(appointmentDao.getById(appointmentId)).thenReturn(Optional.of(APPOINTMENT));
 
         //Exercise
-        boolean result = appointmentService.cancelAppointment(appointmentId, userId);
+        boolean result = appointmentService.cancelAppointment(appointmentId);
 
         //Postconditions
         assertTrue(result);
