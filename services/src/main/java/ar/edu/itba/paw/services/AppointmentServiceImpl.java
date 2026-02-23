@@ -95,8 +95,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Transactional
     @Override
-    public Boolean cancelAppointment(long appointmentId, long userId) {
-        LOGGER.debug("Attempting to cancel appointment with id: {} by user with id: {}", appointmentId, userId);
+    public Boolean cancelAppointment(long appointmentId) {
+        LOGGER.debug("Attempting to cancel appointment with id: {}", appointmentId);
         Optional<Appointment> appt = getById(appointmentId);
         if (appt.isEmpty()) {
             throw new AppointmentNotFoundException();

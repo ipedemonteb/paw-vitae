@@ -15,7 +15,7 @@ public interface AppointmentService {
 
      void sendDailyReminders();
 
-    Boolean cancelAppointment(long appointmentId, long userId);
+    Boolean cancelAppointment(long appointmentId);
 
     Optional<Appointment> getById(long appointmentId);
 
