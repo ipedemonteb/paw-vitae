@@ -22,7 +22,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
     @PersistenceContext
     private EntityManager em;
 
-    LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault()).withMinute(5).withSecond(0).withNano(0);
+
 
     @Override
     public Appointment create(LocalDateTime date, String status, String reason, Specialty specialty, Doctor doctor, Patient patient, String report, DoctorOffice doctorOffice, boolean allowFullHistory) {
@@ -40,6 +40,7 @@ public class AppointmentDaoHibeImpl implements AppointmentDao {
 
     @Override
     public List<Appointment> getPastConfirmedAppointments() {
+        LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault()).withMinute(5).withSecond(0).withNano(0);
         LocalDateTime fiveDaysAgo = now.minusDays(5);
         TypedQuery<Appointment> query = em.createQuery("FROM Appointment a WHERE a.status = 'confirmado' AND a.date BETWEEN :start AND :end", Appointment.class);
         query.setParameter("start", fiveDaysAgo);
