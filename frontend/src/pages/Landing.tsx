@@ -312,6 +312,8 @@ const startButton =
 
 function ProcessSection() {
     const { t } = useTranslation();
+    const auth = useAuth();
+    const link = !auth.isAuthenticated ? "/register" : (auth.role === "ROLE_DOCTOR" ? "/doctor/dashboard/upcoming" : "/search");
 
     return (
         <div className={container}>
@@ -365,7 +367,7 @@ function ProcessSection() {
                 </div>
             </div>
             <Button className={startButton}>
-                <Link to="/search">
+                <Link to={link}>
                     {t("landing.process.start")}
                 </Link>
             </Button>

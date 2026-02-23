@@ -5,13 +5,13 @@ import { setupServer } from 'msw/node';
 import {handlers} from "./index";
 
 
-export const server = setupServer(...handlers); //Aca van todos los handlers que vayamos haciendo en mocks
+export const server = setupServer(...handlers);
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 
 afterEach(() => {
     server.resetHandlers();
-    cleanup(); // failsafe por si vitest no limpia bien los DOMS
+    cleanup();
 });
 
 afterAll(() => server.close());
