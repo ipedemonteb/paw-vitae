@@ -77,24 +77,24 @@ public class DoctorOfficeAvailabilityDaoTest {
 
     @Test
     public void testGetActiveByOfficeIdDoesNotExist() {
-        // Preconditions
+        //Preconditions
 
-        // Exercise
+        //Exercise
         List<DoctorOfficeAvailability> availability = doctorOfficeAvailabilityDao.getActiveByOfficeId(1000L);
 
-        // Postconditions
+        //Postconditions
         assertTrue(availability.isEmpty());
     }
 
     @Test
     public void testGetActiveByOfficeIdExists() {
-        // Preconditions
+        //Preconditions
         long officeId = 1L;
 
-        // Exercise
+        //Exercise
         List<DoctorOfficeAvailability> availability = doctorOfficeAvailabilityDao.getActiveByOfficeId(officeId);
 
-        // Postconditions
+        //Postconditions
         assertFalse(availability.isEmpty());
         assertEquals(2, availability.size());
         assertEquals(officeId, availability.getFirst().getOffice().getId().longValue());
@@ -103,24 +103,24 @@ public class DoctorOfficeAvailabilityDaoTest {
 
     @Test
     public void testGetByDoctorIdDoesNotExist() {
-        // Preconditions
+        //Preconditions
 
-        // Exercise
+        //Exercise
         List<DoctorOfficeAvailability> availability = doctorOfficeAvailabilityDao.getByDoctorId(1000L);
 
-        // Postconditions
+        //Postconditions
         assertTrue(availability.isEmpty());
     }
 
     @Test
     public void testGetByDoctorIdExists() {
-        // Preconditions
+        //Preconditions
         long doctorId = 2L;
 
-        // Exercise
+        //Exercise
         List<DoctorOfficeAvailability> availability = doctorOfficeAvailabilityDao.getByDoctorId(doctorId);
 
-        // Postconditions
+        //Postconditions
         assertFalse(availability.isEmpty());
         assertEquals(2, availability.size());
         assertEquals(doctorId, availability.getFirst().getOffice().getDoctor().getId());

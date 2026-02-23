@@ -102,12 +102,12 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testCreateOfficeNotFound() {
-        // Preconditions
+        //Preconditions
         when(specialtyService.getById(SPECIALTY_ID)).thenReturn(Optional.of(new Specialty(SPECIALTY_ID, "Cardiology")));
 
         when(doctorOfficeService.getById(OFFICE_ID)).thenReturn(Optional.empty());
 
-        // Exercise & Postconditions
+        //Exercise & Postconditions
         assertThrows(DoctorOfficeNotFoundException.class, () -> {
             appointmentService.create(PATIENT_ID, DOCTOR_ID, DATE.toLocalDate(), HOUR, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
         });
@@ -115,16 +115,11 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testCreateUserNotFound() {
-        // Preconditions
-
+        //Preconditions
         when(specialtyService.getById(anyLong())).thenReturn(Optional.of(mock(Specialty.class)));
-
-
         when(doctorOfficeService.getById(anyLong())).thenReturn(Optional.of(new DoctorOffice()));
 
-
-
-        // Exercise & Postconditions
+        //Exercise & Postconditions
         assertThrows(UserNotFoundException.class, () -> {
             appointmentService.create(PATIENT_ID, DOCTOR_ID, DATE.toLocalDate(), HOUR, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
         });
@@ -138,6 +133,7 @@ public class AppointmentServiceImplTest {
         when(doctorService.getById(anyLong())).thenReturn(Optional.of(DOCTOR));
         when(patientService.getById(anyLong())).thenReturn(Optional.of(PATIENT));
         when(doctorOfficeService.getById(anyLong())).thenReturn(Optional.of(DOCTOR_OFFICE));
+
         //Exercise
         Appointment appointment = appointmentService.create(0L, 0L, DATE.toLocalDate(),HOUR, REASON, SPECIALTY_ID, OFFICE_ID, ALLOW);
 

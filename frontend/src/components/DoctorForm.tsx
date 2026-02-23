@@ -7,10 +7,8 @@ import {
     AlertCircle
 } from "lucide-react"
 import { useTranslation } from "react-i18next"
-
 import { useSpecialties } from "@/hooks/useSpecialties"
 import { useCoverages } from "@/hooks/useCoverages"
-
 import { FormInput } from "@/components/FormInput.tsx"
 import { PasswordInput } from "@/components/PasswordInput.tsx"
 import { FormStepper } from "@/components/FormStepper.tsx"

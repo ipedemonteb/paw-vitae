@@ -86,7 +86,7 @@ public class OccupiedSlotsServiceImplTest {
     public void testGetByDoctorIdInDateRangeInvalidDates() {
         //Preconditions
         LocalDate start = LocalDate.of(2026, 3, 10);
-        LocalDate end = LocalDate.of(2026, 3, 5); // Start > End
+        LocalDate end = LocalDate.of(2026, 3, 5);
 
         //Exercise & Postconditions
         assertThrows(BussinesRuleException.class, () ->
@@ -98,7 +98,7 @@ public class OccupiedSlotsServiceImplTest {
     public void testGetByDoctorIdInDateRangeTooLong() {
         //Preconditions
         LocalDate start = LocalDate.of(2026, 1, 1);
-        LocalDate end = LocalDate.of(2026, 3, 1); // > 31 días
+        LocalDate end = LocalDate.of(2026, 3, 1);
 
         //Exercise & Postconditions
         assertThrows(BussinesRuleException.class, () ->
