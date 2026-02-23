@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import { render, screen, waitFor, within, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Appointment from '@/pages/Appointment';
@@ -40,12 +40,6 @@ window.HTMLElement.prototype.scrollIntoView = vi.fn();
 window.HTMLElement.prototype.hasPointerCapture = vi.fn();
 window.HTMLElement.prototype.releasePointerCapture = vi.fn();
 
-const today = startOfDay(new Date());
-let nextMonday = addDays(today, 1);
-while (nextMonday.getDay() !== 1) {
-    nextMonday = addDays(nextMonday, 1);
-}
-const mondayDate = nextMonday.getDate().toString();
 
 const renderApp = (initialPath: string) => {
     const queryClient = new QueryClient({
@@ -64,6 +58,30 @@ const renderApp = (initialPath: string) => {
 };
 
 describe('Appointment Booking Flow', () => {
+
+    //mocking the date because of WSL discrepancies. This ensures 'nextMonday' calculation is deterministic and doesn't fail
+    //due to timezone differences (e.g., WSL vs Windows) or month-end boundaries.
+    // Freeze system time to prevent flaky tests.
+
+    let mondayDate: string;
+
+    beforeAll(() => {
+
+        vi.useFakeTimers({ toFake: ['Date'] });
+
+        vi.setSystemTime(new Date('2026-02-10T12:00:00Z'));
+
+        const today = startOfDay(new Date());
+        let nextMonday = addDays(today, 1);
+        while (nextMonday.getDay() !== 1) {
+            nextMonday = addDays(nextMonday, 1);
+        }
+        mondayDate = nextMonday.getDate().toString();
+    });
+
+    afterAll(() => {
+        vi.useRealTimers();
+    });
 
     beforeEach(() => {
         server.use(
