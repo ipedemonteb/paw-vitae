@@ -16,7 +16,7 @@ export default function DashboardNavSelect({value, onValueChange, content, displ
             value={value}
             onValueChange={onValueChange}
         >
-            <SelectTrigger className="bg-white text-black hover:bg-gray-100 font-light text-sm border rounded-md cursor-pointer">
+            <SelectTrigger className="bg-white text-black hover:bg-(--gray-100) font-light text-sm border rounded-md cursor-pointer">
                 <SelectValue/>
             </SelectTrigger>
             <SelectContent position="popper" className="min-w-fit max-w-28 p-0">

@@ -13,7 +13,6 @@ public class DoctorOfficeForm {
 
 
     public DoctorOfficeForm(Long neighborhoodId, List<Long> specialtyIds, String officeName, boolean active, boolean removed) {
-       // this.id = id;
         this.neighborhoodId = neighborhoodId;
         this.specialtyIds = specialtyIds;
         this.officeName = officeName;
@@ -70,15 +69,6 @@ public class DoctorOfficeForm {
     public void setRemoved(boolean removed) {
         this.removed = removed;
     }
-
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-
 
     public DoctorOffice toEntity(Doctor doctor, Neighborhood neighborhood, List<Specialty> specialties) {
         return new DoctorOffice(doctor, neighborhood, specialties, officeName, active);

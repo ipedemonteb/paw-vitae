@@ -81,21 +81,17 @@ public class DoctorOfficeServiceImplTest {
 
     @Test
     public void testCreate() {
-        // Preconditions
+        //Preconditions
         when(neighborhoodService.getById(anyLong())).thenReturn(Optional.of(NEIGHBORHOOD));
-
         when(specialtyService.getById(anyLong())).thenReturn(Optional.of(SPECIALTY));
-
         when(specialtyService.getByDoctorId(anyLong())).thenReturn(List.of(SPECIALTY, SPECIALTY_ALT));
-
         when(doctorOfficeDao.create(any(DoctorOffice.class))).thenReturn(DOCTOR_OFFICE);
-
         DOCTOR.setId(DOC_ID);
 
-        // Exercise
+        //Exercise
         DoctorOffice doctorOffice = doctorOfficeService.create(DOCTOR, OFFICE_FORM);
 
-        // Postconditions
+        //Postconditions
         assertNotNull(doctorOffice);
         assertEquals(DOCTOR.getId(), doctorOffice.getDoctor().getId());
         assertEquals(DOCTOR_OFFICE.getOfficeName(), doctorOffice.getOfficeName());
@@ -159,7 +155,7 @@ public class DoctorOfficeServiceImplTest {
 
     @Test
     public void testUpdate() {
-        // Preconditions
+        //Preconditions
         DoctorOffice office = mock(DoctorOffice.class);
         Doctor doctor = mock(Doctor.class);
 
@@ -173,10 +169,10 @@ public class DoctorOfficeServiceImplTest {
 
         when(specialtyService.getByDoctorId(anyLong())).thenReturn(List.of(SPECIALTY, SPECIALTY_ALT));
 
-        // Exercise
+        //Exercise
         doctorOfficeService.update(OFFICE_ID, OFFICE_FORM, DOC_ID);
 
-        // Postconditions
+        //Postconditions
         assertEquals(OFFICE_FORM.getOfficeName(), office.getOfficeName());
     }
 }

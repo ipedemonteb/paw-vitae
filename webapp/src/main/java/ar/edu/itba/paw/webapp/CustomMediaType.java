@@ -9,13 +9,11 @@ public final class CustomMediaType {
     public static final String APPLICATION_DOCTOR = "application/vnd.vitae.doctor.v1+json";
     public static final String APPLICATION_DOCTOR_LIST = "application/vnd.vitae.doctor-list.v1+json";
 
-    // --- DOCTOR PROFILE SUB-RESOURCES (Lo que faltaba) ---
-    // Para /doctors/{id}/biography
+    // --- DOCTOR PROFILE SUB-RESOURCES ---
     public static final String APPLICATION_DOCTOR_PROFILE = "application/vnd.vitae.doctor-profile.v1+json";
 
     public  static final String APPLICATION_AVAILABILITY_SLOTS_LIST = "application/vnd.vitae.availability-slots-list.v1+json";
     public static final String APPLICATION_AVAILABILITY_SLOT= "application/vnd.vitae.availability-slot.v1+json";
-
 
     // Para /doctors/{id}/experiences
     public static final String APPLICATION_DOCTOR_EXPERIENCE_LIST = "application/vnd.vitae.doctor-experience-list.v1+json";
@@ -25,7 +23,6 @@ public final class CustomMediaType {
 
     // --- PATIENTS ---
     public static final String APPLICATION_PATIENT = "application/vnd.vitae.patient.v1+json";
-    // Si tuvieras lista de pacientes en algún lado:
     public static final String APPLICATION_PATIENT_LIST = "application/vnd.vitae.patient-list.v1+json";
 
     // --- APPOINTMENTS ---
@@ -34,10 +31,7 @@ public final class CustomMediaType {
     public static final String APPLICATION_APPOINTMENT_REPORT = "application/vnd.vitae.appointment-report.v1+json";
     public static final String APPLICATION_APPOINTMENT_CANCEL = "application/vnd.vitae.appointment-cancel.v1+json";
     // --- APPOINTMENT FILES ---
-    // Para /appointments/{id}/files (devuelve lista)
     public static final String APPLICATION_APPOINTMENT_FILE_LIST = "application/vnd.vitae.appointment-file-list.v1+json";
-
-    // Singular (para respuesta de Upload)
     public static final String APPLICATION_APPOINTMENT_FILE = "application/vnd.vitae.appointment-file.v1+json";
     // --- OFFICES ---
     public static final String APPLICATION_OFFICE = "application/vnd.vitae.office.v1+json";
@@ -52,7 +46,6 @@ public final class CustomMediaType {
     public static final String APPLICATION_SPECIALTY = "application/vnd.vitae.specialty.v1+json";
     public static final String APPLICATION_SPECIALTY_LIST = "application/vnd.vitae.specialty-list.v1+json";
 
-    // Para /doctors/{id}/offices/{officeId}/specialties (si devuelve OfficeSpecialtyDTO que es distinto a SpecialtyDTO)
     public static final String APPLICATION_OFFICE_SPECIALTY_LIST = "application/vnd.vitae.office-specialty-list.v1+json";
 
     // --- NEIGHBORHOODS ---
@@ -68,6 +61,5 @@ public final class CustomMediaType {
     public static final String APPLICATION_RATING_LIST = "application/vnd.vitae.rating-list.v1+json";
 
     // --- ACTIONS / FORMS ESPECÍFICOS ---
-    // Para cambio de contraseña (PATCH)
     public static final String APPLICATION_USER_PASSWORD = "application/vnd.vitae.user-password.v1+json";
 }
