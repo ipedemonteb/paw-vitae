@@ -62,6 +62,9 @@ public class AccessHandler {
 
     public boolean isUserQuery(Authentication auth, HttpServletRequest request) {
         String userIdParam = request.getParameter("userId");
+        if (userIdParam == null || userIdParam.isBlank()) {
+            return true;
+        }
         return isUser(auth, userIdParam);
     }
 
