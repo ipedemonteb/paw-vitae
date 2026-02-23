@@ -32,7 +32,11 @@ export function useCreateRating(){
             await Promise.all([
                 queryClient.invalidateQueries({queryKey: ['doctors', 'ratings']}),
                 queryClient.invalidateQueries({queryKey: ['ratings']}),
-                queryClient.invalidateQueries({queryKey: ['auth', 'appointments', variables.appointmentId]}),
+                queryClient.invalidateQueries({
+                    queryKey: ['auth', 'appointments', variables.appointmentId],
+                    exact: true
+                }),
+                queryClient.invalidateQueries({queryKey: ['auth', 'appointments', 'list']})
             ])
         }
     })
