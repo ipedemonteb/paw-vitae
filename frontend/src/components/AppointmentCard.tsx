@@ -267,7 +267,7 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
                                                         onSuccess: () => {
                                                             toast.success(t("appointment.cancel.success"));
                                                         },
-                                                        onError: (error: any) => {
+                                                        onError: () => {
                                                             toast.error(t("appointment.cancel.error"));
                                                         }
                                                     }
