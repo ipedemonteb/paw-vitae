@@ -90,9 +90,8 @@ public class RestAppointmentController {
     @PATCH
     @Path("/{id:\\d+}")
     @Consumes(CustomMediaType.APPLICATION_APPOINTMENT_CANCEL)
-    public Response cancel(@PathParam("id") final long id,
-                           @NotNull @QueryParam("userId") final Long userId) {
-        appointmentService.cancelAppointment(id, userId);
+    public Response cancel(@PathParam("id") final long id) {
+        appointmentService.cancelAppointment(id);
         return Response.noContent().build();
     }
 
