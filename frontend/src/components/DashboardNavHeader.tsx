@@ -12,7 +12,7 @@ export default function DashboardNavHeader({title, children}: AppointmentHeaderP
                 {title}
             </span>
             {children}
-            <div className="hidden sm:block w-10 h-0 bg-violet-950 absolute bottom-0 left-0 border-b-4 rounded-2xl border-(--primary-color)">
+            <div className="hidden sm:block w-10 h-0  absolute bottom-0 left-0 border-b-4 rounded-2xl border-(--primary-color)">
             </div>
         </div>
     );

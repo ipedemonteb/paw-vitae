@@ -33,9 +33,9 @@ function emit() {
 
 export function subscribeAuth(listener: (s: AuthState) => void) {
     listeners.add(listener);
-    listener(state); // initial push
+    listener(state);
     return () => {
-        listeners.delete(listener); // ignore the boolean
+        listeners.delete(listener);
     };
 }
 

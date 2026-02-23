@@ -55,14 +55,14 @@ public class RatingDaoTest {
     @Rollback
     @Test
     public void testCreate() {
-        // Preconditions
+        //Preconditions
         long score = 4;
         Doctor mangedDoctor = em.getReference(Doctor.class, DOC_ID);
         Patient mangedPatient = em.getReference(Patient.class, PAT_ID);
         Appointment mangedAppointment = em.getReference(Appointment.class, INS_APP_ID);
         String comment = "Great doctor!";
 
-        // Exercise
+        //Exercise
         Rating rating = ratingDao.create(score, mangedDoctor, mangedPatient, mangedAppointment, comment);
         em.flush();
 
