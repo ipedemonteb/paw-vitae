@@ -1,8 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfacePersistence.DoctorCertificationDao;
-import ar.edu.itba.paw.interfaceServices.DoctorService;
-import ar.edu.itba.paw.models.CertificateForm; // Asumiendo que existe este DTO
+import ar.edu.itba.paw.models.CertificateForm;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.DoctorCertification;
 import org.junit.Before;
@@ -46,7 +45,7 @@ public class DoctorCertificationServiceImplTest {
 
     @Test
     public void testUpdateAddCertification() {
-        // Preconditions
+        //Preconditions
 
         CertificateForm form = new CertificateForm(CERT_NAME, ISSUER, ISSUE_DATE);
         List<CertificateForm> forms = List.of(form);
@@ -57,10 +56,10 @@ public class DoctorCertificationServiceImplTest {
         when(doctorCertificationDao.create(eq(doctor), eq(CERT_NAME), eq(ISSUER), eq(ISSUE_DATE)))
                 .thenReturn(createdCert);
 
-        // Exercise
+        //Exercise
         doctorCertificationService.update(doctor, forms);
 
-        // Postconditions
+        //Postconditions
         verify(doctorCertificationDao, times(1))
                 .create(eq(doctor), eq(CERT_NAME), eq(ISSUER), eq(ISSUE_DATE));
         verify(doctorCertificationDao, never()).delete(anyLong());
@@ -68,17 +67,17 @@ public class DoctorCertificationServiceImplTest {
 
     @Test
     public void testUpdateDeleteOrphanCertification() {
-        // Preconditions
+        //Preconditions
         DoctorCertification existingCert = new DoctorCertification(doctor, CERT_NAME, ISSUER, ISSUE_DATE);
         existingCert.setId(100L);
         doctor.getCertifications().add(existingCert);
 
         List<CertificateForm> forms = Collections.emptyList();
 
-        // Exercise
+        //Exercise
         doctorCertificationService.update(doctor, forms);
 
-        // Postconditions
+        //Postconditions
         verify(doctorCertificationDao, times(1)).delete(100L);
         verify(doctorCertificationDao, never()).create(any(), anyString(), anyString(), any());
 
@@ -87,7 +86,7 @@ public class DoctorCertificationServiceImplTest {
 
     @Test
     public void testUpdateKeepExistingCertification() {
-        // Preconditions
+        //Preconditions
         DoctorCertification existingCert = new DoctorCertification(doctor, CERT_NAME, ISSUER, ISSUE_DATE);
         existingCert.setId(100L);
         doctor.getCertifications().add(existingCert);
@@ -95,24 +94,24 @@ public class DoctorCertificationServiceImplTest {
         CertificateForm form = new CertificateForm(CERT_NAME, ISSUER, ISSUE_DATE);
         List<CertificateForm> forms = List.of(form);
 
-        // Exercise
+        //Exercise
         doctorCertificationService.update(doctor, forms);
 
-        // Postconditions
+        //Postconditions
         verify(doctorCertificationDao, never()).create(any(), anyString(), anyString(), any());
         verify(doctorCertificationDao, never()).delete(anyLong());
     }
 
     @Test
     public void testFindByDoctorId() {
-        // Preconditions
+        //Preconditions
         List<DoctorCertification> certs = List.of(new DoctorCertification(doctor, CERT_NAME, ISSUER, ISSUE_DATE));
         when(doctorCertificationDao.getByDoctorId(DOCTOR_ID)).thenReturn(certs);
 
-        // Exercise
+        //Exercise
         List<DoctorCertification> result = doctorCertificationService.findByDoctorId(DOCTOR_ID);
 
-        // Postconditions
+        //Postconditions
         assertEquals(1, result.size());
         assertEquals(CERT_NAME, result.get(0).getCertificateName());
     }

@@ -69,8 +69,8 @@ export async function registerPatient(data: PatientRegisterData) {
         password: data.password,
         repeatPassword: data.repeatPassword,
         phone: data.phone,
-        coverage: parseInt(coverageId),       // Backend espera Long
-        neighborhoodId: parseInt(neighborhoodId) // Backend espera Long
+        coverage: parseInt(coverageId),
+        neighborhoodId: parseInt(neighborhoodId)
     };
 
     return api.post('/patients', payload,

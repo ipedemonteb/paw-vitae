@@ -4,7 +4,7 @@ import ar.edu.itba.paw.interfacePersistence.DoctorExperienceDao;
 import ar.edu.itba.paw.interfaceServices.DoctorService;
 import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.DoctorExperience;
-import ar.edu.itba.paw.models.ExperienceForm; // Asumo que este DTO existe
+import ar.edu.itba.paw.models.ExperienceForm;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +49,7 @@ public class DoctorExperienceServiceImplTest {
 
     @Test
     public void testUpdateAddOneNewExperience() {
-        // Preconditions
+        //Preconditions
 
         ExperienceForm form = new ExperienceForm(TITLE, ORG, START, END);
         List<ExperienceForm> forms = List.of(form);
@@ -59,10 +59,10 @@ public class DoctorExperienceServiceImplTest {
         when(doctorExperienceDao.create(eq(doctor), eq(TITLE), eq(ORG), eq(START), eq(END)))
                 .thenReturn(createdExp);
 
-        // Exercise
+        //Exercise
         doctorExperienceService.update(doctor, forms);
 
-        // Postconditions
+        //Postconditions
         verify(doctorExperienceDao, times(1))
                 .create(eq(doctor), eq(TITLE), eq(ORG), eq(START), eq(END));
         verify(doctorExperienceDao, never()).delete(anyLong());
@@ -70,7 +70,7 @@ public class DoctorExperienceServiceImplTest {
 
     @Test
     public void testUpdateDeleteOrphanExperience() {
-        // Preconditions
+        //Preconditions
         DoctorExperience existingExp = new DoctorExperience(doctor,TITLE, ORG, START, END);
         existingExp.setId(100L);
         doctor.getExperiences().add(existingExp);
@@ -78,20 +78,18 @@ public class DoctorExperienceServiceImplTest {
 
         List<ExperienceForm> forms = Collections.emptyList();
 
-        // Exercise
+        //Exercise
         doctorExperienceService.update(doctor, forms);
 
-        // Postconditions
+        //Postconditions
         verify(doctorExperienceDao, never()).create(any(), anyString(), anyString(), any(), any());
-
         verify(doctorExperienceDao, times(1)).delete(100L);
-
         assertEquals(0, doctor.getExperiences().size());
     }
 
     @Test
     public void testUpdateKeepExistingExperience() {
-        // Preconditions
+        //Preconditions
 
         DoctorExperience existingExp = new DoctorExperience(doctor,TITLE, ORG, START, END);
         existingExp.setId(100L);
@@ -100,17 +98,17 @@ public class DoctorExperienceServiceImplTest {
         ExperienceForm form = new ExperienceForm(TITLE, ORG, START, END);
         List<ExperienceForm> forms = List.of(form);
 
-        // Exercise
+        //Exercise
         doctorExperienceService.update(doctor, forms);
 
-        // Postconditions
+        //Postconditions
         verify(doctorExperienceDao, never()).create(any(), anyString(), anyString(), any(), any());
         verify(doctorExperienceDao, never()).delete(anyLong());
     }
 
     @Test
     public void testUpdateModifyExperience() {
-        // Preconditions
+        //Preconditions
         DoctorExperience existingExp = new DoctorExperience(doctor,TITLE, ORG, START, END );
         existingExp.setId(100L);
         doctor.getExperiences().add(existingExp);
@@ -124,10 +122,10 @@ public class DoctorExperienceServiceImplTest {
         when(doctorExperienceDao.create(eq(doctor), eq(newTitle), eq(ORG), eq(START), eq(END)))
                 .thenReturn(newExp);
 
-        // Exercise
+        //Exercise
         doctorExperienceService.update(doctor, forms);
 
-        // Postconditions
+        //Postconditions
         verify(doctorExperienceDao, times(1))
                 .create(eq(doctor), eq(newTitle), eq(ORG), eq(START), eq(END));
 
@@ -136,14 +134,14 @@ public class DoctorExperienceServiceImplTest {
 
     @Test
     public void testFindByDoctorId() {
-        // Preconditions
+        //Preconditions
         List<DoctorExperience> experiences = List.of(new DoctorExperience(doctor,TITLE, ORG, START, END));
         when(doctorExperienceDao.getByDoctorId(DOCTOR_ID)).thenReturn(experiences);
 
-        // Exercise
+        //Exercise
         List<DoctorExperience> result = doctorExperienceService.findByDoctorId(DOCTOR_ID);
 
-        // Postconditions
+        //Postconditions
         assertEquals(1, result.size());
         assertEquals(TITLE, result.get(0).getPositionTitle());
         verify(doctorExperienceDao).getByDoctorId(DOCTOR_ID);

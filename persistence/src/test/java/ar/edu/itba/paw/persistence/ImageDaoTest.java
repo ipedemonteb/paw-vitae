@@ -92,11 +92,12 @@ public class ImageDaoTest {
 
     @Test
     public void testFindByIdExists() {
+        //Preconditions
 
-        // Exercise
+        //Exercise
         Optional<Images> maybeImage = imageDao.findById(IMAGE_ID);
 
-        // Postconditions
+        //Postconditions
         assertTrue(maybeImage.isPresent());
         assertEquals(IMAGE_ID, maybeImage.get().getId());
         assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, maybeImage.get().getImage());

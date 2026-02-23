@@ -69,8 +69,6 @@ export const appointmentHandlers = [
         const page = Number(url.searchParams.get('page') ?? '1');
         const filter = url.searchParams.get('filter');
 
-
-
         let responseBody = [
             {
                 id: '1',
@@ -203,8 +201,5 @@ export const appointmentHandlers = [
     http.put(`${BASE_URL}/appointments/:id/report`, () => {
         return HttpResponse.json({ status: 'ok' }, { status: 200 });
     })
-
-
-
 
 ];

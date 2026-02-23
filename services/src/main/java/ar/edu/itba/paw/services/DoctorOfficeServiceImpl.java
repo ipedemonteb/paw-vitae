@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
-//TODO LOG
+
 @Service
 public class DoctorOfficeServiceImpl implements DoctorOfficeService {
 
@@ -23,6 +23,7 @@ public class DoctorOfficeServiceImpl implements DoctorOfficeService {
     private final SpecialtyService specialtyService;
     private final AppointmentService appointmentService;
     private static final int MAX_OFFICES = 7;
+
     @Autowired
     public DoctorOfficeServiceImpl(DoctorOfficeDao doctorOfficeDao, NeighborhoodService neighborhoodService, SpecialtyService specialtyService, DoctorOfficeAvailabilityService doctorOfficeAvailabilityService,@Lazy AppointmentService appointmentService) {
         this.doctorOfficeDao = doctorOfficeDao;

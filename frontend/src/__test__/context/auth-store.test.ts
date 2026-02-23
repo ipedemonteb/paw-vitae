@@ -6,7 +6,7 @@ import {ROLE_DOCTOR, ROLE_PATIENT} from "@/lib/constants.ts";
 
 // 1. MOCKEAMOS LA LIBRERÍA
 vi.mock('jwt-decode', () => ({
-    jwtDecode: vi.fn(), // Ahora jwtDecode es un espía tonto
+    jwtDecode: vi.fn(),
 }));
 
 describe('auth store testing', () => {
