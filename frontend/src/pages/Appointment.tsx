@@ -149,7 +149,7 @@ function Appointment() {
 
     const doctorSpecialties = (specialtyQueries ?? []).map(q => q.data).filter((d): d is SpecialtyDTO => !!d);
 
-    const { data: appointments, isLoading: loadingAppointments, isFetching: fetchingAppointments, isError: errorAppointments, refetch: refetchAppointments } = useAppointments({ userId: patientId, collection: "upcoming", pageSize: 400, page: 1 });
+    const { data: appointments, isLoading: loadingAppointments, isFetching: fetchingAppointments, isError: errorAppointments, refetch: refetchAppointments } = useAppointments({ collection: "upcoming", pageSize: 400, page: 1 });
     const { data: allAvailability, isLoading: loadingAvailability, isFetching: fetchingAvailability, isError: errorAvailability, refetch: refetchAvailability } = useDoctorAvailability(doctorId);
     const { data: occupiedSlots, isLoading: loadingSlots, isFetching: fetchingSlots, isError: errorSlots, refetch: refetchSlots } = useOccupiedSlots(fromStr, toStr, doctorId);
     const { data: unavailabilityPage, isLoading: loadingUnavailability, isFetching: fetchingUnavailability, isError: errorUnavailability, refetch: refetchUnavailability } = useDoctorUnavailability(doctor?.unavailability, { from: fromStr, to: toStr });

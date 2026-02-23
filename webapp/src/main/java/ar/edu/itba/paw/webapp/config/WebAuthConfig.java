@@ -90,7 +90,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
 
 
-                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS).access("@accessHandler.isUserQuery(authentication, request) OR hasRole('DOCTOR') AND @accessHandler.canSeeHistory(authentication, request) ")
+                .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS).access("(isAuthenticated() AND @accessHandler.checkIllegalParams(request)) OR (hasRole('DOCTOR') AND @accessHandler.canSeeHistory(authentication, request))")
                 .antMatchers(HttpMethod.GET, UriUtils.APPOINTMENTS +"/{id:\\d+}/**").access("@accessHandler.canHandleAppointment(authentication, #id) OR (hasRole('DOCTOR') AND @accessHandler.canSeeMedicalHistoryApp(authentication, #id))")
                 .antMatchers(HttpMethod.PATCH, UriUtils.APPOINTMENTS +"/{id:\\d+}").access("@accessHandler.canHandleAppointment(authentication, #id)")
                 .antMatchers(HttpMethod.PUT, UriUtils.APPOINTMENTS +"/{id:\\d+}/report").access("hasRole('DOCTOR') and @accessHandler.canHandleAppointment(authentication, #id)")

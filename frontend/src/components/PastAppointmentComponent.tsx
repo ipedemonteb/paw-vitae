@@ -98,7 +98,7 @@ function PastAppointmentComponent({appointment} : {appointment: AppointmentDTO})
     const [open, setOpen] = useState(false);
 
     const { data: patient, isLoading: loadingPatient, isError: errorPatient } = usePatient(appointment.patient);
-    const { data: doctor, isLoading: loadingDoctor, isError: errorDoctor } = useDoctor(doctorId);
+    const { data: doctor, isLoading: loadingDoctor, isError: errorDoctor } = useDoctor(isDoctor ? undefined : doctorId);
     const isError = errorDoctor || errorPatient;
     const { url: doctorImgUrl, isLoading: loadingDoctorImg } = useDoctorImageUrl(userIdFromImageUrl(doctor?.image));
     const { data: specialty, isLoading: loadingSpecialty, isError: errorSpecialty } = useSpecialty(appointment.specialty);

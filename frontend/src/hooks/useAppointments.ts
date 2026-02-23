@@ -18,7 +18,6 @@ export function useAppointments(query: AppointmentsQuery) {
     return useQuery({
         queryKey: ['auth', 'appointments', 'list', stableQueryKey],
         queryFn: () => listAppointments(query),
-        enabled: !!query.userId,
         placeholderData: keepPreviousData
     })
 }
@@ -121,7 +120,7 @@ export function useCancelAppointmentMutation() {
     const queryClient = useQueryClient();
 
     return useMutation<void, AxiosError<any>, { id: string; userId: string }>({
-        mutationFn: ({ id, userId }) => cancelAppointment(id, userId),
+        mutationFn: ({ id }) => cancelAppointment(id),
         onSuccess: async (_, variables) => {
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ['auth', 'appointments', 'list'] }),

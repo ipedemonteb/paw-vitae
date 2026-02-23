@@ -10,12 +10,8 @@ import javax.ws.rs.QueryParam;
 
 public class AppointmentSearchForm extends BasePagingForm {
 
-    @QueryParam("userId")
-    @NotNull
-    private Long userId;
-
-    @QueryParam("doctorId")
-    private Long doctorId;
+    @QueryParam("patientId")
+    private Long patientId;
 
     @QueryParam("collection")
     @DefaultValue("upcoming")
@@ -36,11 +32,13 @@ public class AppointmentSearchForm extends BasePagingForm {
     private String sort;
 
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public Long getPatientId() {
+        return patientId;
+    }
 
-    public Long getDoctorId() { return doctorId; }
-    public void setDoctorId(Long doctorId) { this.doctorId = doctorId; }
+    public void setPatientId(Long patientId) {
+        this.patientId = patientId;
+    }
 
     public String getCollection() { return collection; }
     public void setCollection(String collection) { this.collection = collection; }

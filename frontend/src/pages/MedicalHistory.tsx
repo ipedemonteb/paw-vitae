@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import PaginationComponent from "@/components/PaginationComponent.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";
-import { useAuth } from "@/hooks/useAuth.ts";
 import {usePatientById} from "@/hooks/usePatients.ts";
 import {LoadingFullPageComponent} from "@/components/LoadingFullPageComponent.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
@@ -41,20 +40,18 @@ function MedicalHistory() {
     const searchParams = useAppointmentsQueryParams();
     const sort: "asc" | "desc" = searchParams.sort === "desc" ? "desc" : "asc";
     const navigate = useNavigate();
-    const auth = useAuth();
 
     const handleBackToAppointments = () => {
         navigate(-1);
     };
 
     const { data: appointments, isLoading, isError, refetch, isFetching } = useAppointments({
-        userId: patientId,
         collection: "history",
         filter: "completed",
         sort: sort,
         page: searchParams.page,
         pageSize: searchParams.pageSize,
-        doctorId: auth.userId
+        patientId: patientId
     });
 
     const { data: patient, isLoading: isLoadingPatient } = usePatientById(patientId);

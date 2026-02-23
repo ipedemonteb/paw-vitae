@@ -5,7 +5,6 @@ import AppointmentCard from "@/components/AppointmentCard.tsx";
 import {appointmentStatus, appointmentUpcomingFilters} from "@/lib/constants.ts";
 import {useTranslation} from "react-i18next";
 import {useAppointments} from "@/hooks/useAppointments.ts";
-import {useAuth} from "@/hooks/useAuth.ts";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import PaginationComponent from "@/components/PaginationComponent.tsx";
@@ -42,7 +41,6 @@ type AppointmentComponentProps = {
 export default function AppointmentComponent({type}: AppointmentComponentProps) {
     const {t} = useTranslation();
     const componentType = typeDictionary[type]
-    const auth = useAuth()
     const [mounted, setMounted] = useState(false);
 
     const transformFilter = (filterValue: string) => {
@@ -68,7 +66,6 @@ export default function AppointmentComponent({type}: AppointmentComponentProps) 
     };
 
     const { data: appointments, isLoading, isError, refetch, isFetching} = useAppointments({
-        userId: auth.userId,
         collection: type,
         page: searchParams.page,
         pageSize: searchParams.pageSize,

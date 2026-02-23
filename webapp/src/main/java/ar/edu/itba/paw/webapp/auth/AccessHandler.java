@@ -41,6 +41,10 @@ public class AccessHandler {
         return user.getUserId() == doctorId;
     }
 
+    public boolean checkIllegalParams(HttpServletRequest request) {
+        return request.getParameter("patientId") == null;
+    }
+
     public boolean canHandleAppointment(Authentication auth, String appointmentIdStr) {
         AuthUserDetails user = getPrincipal(auth);
         if (user == null) {
@@ -125,16 +129,19 @@ public class AccessHandler {
 
     public boolean canSeeHistory(Authentication auth, HttpServletRequest request) {
 
-        isUserDoctorQuery(auth, request);
+        AuthUserDetails user = getPrincipal(auth);
+        if (user == null) {
+            return false;
+        }
+        long doctor = user.getUserId();
 
-        String patient = request.getParameter("userId");
-        String doctor = request.getParameter("doctorId");
+        String patient = request.getParameter("patientId");
 
-        if (patient == null || doctor == null) {
+        if (patient == null) {
             return false;
         }
 
-        return appointmentService.hasFullMedicalHistoryEnabled(Long.parseLong(patient), Long.parseLong(doctor));
+        return appointmentService.hasFullMedicalHistoryEnabled(Long.parseLong(patient), doctor);
 
     }
 

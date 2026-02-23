@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -197,7 +196,7 @@ public class AppointmentServiceImplTest {
         when(appointmentDao.countAppointments(userId, isFuture, filter)).thenReturn(1);
 
         //Exercise
-        Page<Appointment> appointments = appointmentService.getAppointments(userId, isFuture, page, size, filter, sort);
+        Page<Appointment> appointments = appointmentService.getAppointments(userId, , isFuture, page, size, filter, sort);
 
         //Postconditions
         assertNotNull(appointments);
@@ -217,7 +216,7 @@ public class AppointmentServiceImplTest {
         when(appointmentDao.countAppointments(userId, isFuture, filter)).thenReturn(1);
 
         //Exercise
-        Page<Appointment> appointments = appointmentService.getAppointments(userId, isFuture, page, size, filter, sort);
+        Page<Appointment> appointments = appointmentService.getAppointments(userId, , isFuture, page, size, filter, sort);
 
         //Postconditions
         assertNotNull(appointments);
