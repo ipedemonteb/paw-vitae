@@ -67,7 +67,7 @@ describe('useAppointments File', () => {
     describe('useAppointments Hook', () => {
 
         it('should return a list of appts and the metadata of the pagination', async () => {
-            const {result} = renderHook(() => useAppointments({page: 1, filter: 'all', userId: '1'}));
+            const {result} = renderHook(() => useAppointments({page: 1, filter: 'all'}));
 
             await waitFor(() => expect(result.current.isPending).toBe(false));
 
@@ -84,7 +84,7 @@ describe('useAppointments File', () => {
         });
 
         it('should return an empty list if a filter with no results is applied', async () => {
-            const {result} = renderHook(() => useAppointments({page: 1, filter: 'cancelled', userId: '1'}));
+            const {result} = renderHook(() => useAppointments({page: 1, filter: 'cancelled'}));
 
             await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
