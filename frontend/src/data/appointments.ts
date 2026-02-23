@@ -145,7 +145,6 @@ export async function updateAppointmentReport(id: string, report: string) {
 
 export async function cancelAppointment(id: string, userId: string) {
     await api.patch(`/appointments/${id}`, {}, {
-            params: { userId },
             headers: { "Content-Type": ContentTypes.APPOINTMENT_CANCEL },
         }
     );
