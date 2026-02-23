@@ -84,8 +84,10 @@ export function useUploadDoctorFilesMutation() {
                 await uploadAppointmentFile(id, file, 'doctor');
             }
         },
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({queryKey: ['auth', 'appointments','files']})
+        onSuccess: async (_, variables) => {
+            await queryClient.invalidateQueries({ queryKey: ['appointment'] });
+
+            await queryClient.invalidateQueries({ queryKey: ['auth', 'appointments', variables.id] });
         }
     });
 }
