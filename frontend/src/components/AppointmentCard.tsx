@@ -268,7 +268,6 @@ export default function AppointmentCard({ appointment, isUpcoming = false, mount
                                                             toast.success(t("appointment.cancel.success"));
                                                         },
                                                         onError: (error: any) => {
-                                                            console.error(error);
                                                             toast.error(t("appointment.cancel.error"));
                                                         }
                                                     }
