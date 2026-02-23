@@ -82,7 +82,7 @@ public class RestDoctorController {
     }
 
     @HEAD
-    @Produces(value = CustomMediaType.APPLICATION_DOCTOR_LIST)
+    @Produces(value = CustomMediaType.APPLICATION_DOCTOR_COUNT)
     public Response getDoctorCount(){
         long count = doctorService.getAllDoctorsDisplayCount();
         return Response.ok().header("X-Total-Count", count).build();
