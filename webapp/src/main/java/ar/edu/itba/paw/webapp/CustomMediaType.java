@@ -8,6 +8,7 @@ public final class CustomMediaType {
     // --- DOCTORS (Principal) ---
     public static final String APPLICATION_DOCTOR = "application/vnd.vitae.doctor.v1+json";
     public static final String APPLICATION_DOCTOR_LIST = "application/vnd.vitae.doctor-list.v1+json";
+    public static final String APPLICATION_DOCTOR_COUNT = "application/vnd.vitae.doctor-count.v1+json";
 
     // --- DOCTOR PROFILE SUB-RESOURCES ---
     public static final String APPLICATION_DOCTOR_PROFILE = "application/vnd.vitae.doctor-profile.v1+json";
@@ -23,7 +24,7 @@ public final class CustomMediaType {
 
     // --- PATIENTS ---
     public static final String APPLICATION_PATIENT = "application/vnd.vitae.patient.v1+json";
-    public static final String APPLICATION_PATIENT_LIST = "application/vnd.vitae.patient-list.v1+json";
+    public static final String APPLICATION_PATIENT_COUNT = "application/vnd.vitae.patient-count.v1+json";
 
     // --- APPOINTMENTS ---
     public static final String APPLICATION_APPOINTMENT = "application/vnd.vitae.appointment.v1+json";

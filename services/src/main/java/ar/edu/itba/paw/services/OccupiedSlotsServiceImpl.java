@@ -44,6 +44,9 @@ public class OccupiedSlotsServiceImpl implements OccupiedSlotsService {
     @Transactional(readOnly = true)
     @Override
     public List<OccupiedSlots> getByDoctorIdInDateRange(long doctorId, LocalDate startDate, LocalDate endDate) {
+        if (startDate == null) startDate = LocalDate.now();
+        if (endDate == null) endDate = startDate.plusDays(30);
+
         if (startDate.isAfter(endDate) || startDate.datesUntil(endDate.plusDays(1)).count() > 31) {
             throw new BussinesRuleException("exception.occupiedSlots.invalidDateRange");
         }

@@ -46,7 +46,7 @@ public class RestPatientController {
     }
 
     @HEAD
-    @Produces(value = CustomMediaType.APPLICATION_PATIENT_LIST)
+    @Produces(value = CustomMediaType.APPLICATION_PATIENT_COUNT)
     public Response getPatientCount() {
 
         long count = patientService.getAllPatientsDisplayCount();
