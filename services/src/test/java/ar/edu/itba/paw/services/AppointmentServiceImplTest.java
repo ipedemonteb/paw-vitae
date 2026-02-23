@@ -187,16 +187,17 @@ public class AppointmentServiceImplTest {
     public void testGetAppointmentsWithNegativePage() {
         //Preconditions
         long userId = 1L;
+        long patientId = userId;
         boolean isFuture = true;
         int page = -1;
         int size = 10;
         String filter = "filter";
         String sort = "asc";
-        when(appointmentDao.getAppointments(eq(userId), eq(isFuture), anyInt(), anyInt(), anyString(), anyString())).thenReturn(List.of(APPOINTMENT));
-        when(appointmentDao.countAppointments(userId, isFuture, filter)).thenReturn(1);
+        when(appointmentDao.getAppointments(eq(patientId), eq(isFuture), anyInt(), anyInt(), anyString(), anyString())).thenReturn(List.of(APPOINTMENT));
+        when(appointmentDao.countAppointments(patientId, isFuture, filter)).thenReturn(1);
 
         //Exercise
-        Page<Appointment> appointments = appointmentService.getAppointments(userId, , isFuture, page, size, filter, sort);
+        Page<Appointment> appointments = appointmentService.getAppointments(userId, patientId, isFuture, page, size, filter, sort);
 
         //Postconditions
         assertNotNull(appointments);
@@ -205,6 +206,27 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testGetAppointmentsWithPositivePage() {
+        //Preconditions
+        long userId = 1L;
+        long patientId = 2L;
+        boolean isFuture = true;
+        int page = 4;
+        int size = 10;
+        String filter = "filter";
+        String sort = "asc";
+        when(appointmentDao.getAppointments(eq(patientId), eq(isFuture), anyInt(), anyInt(), anyString(), anyString())).thenReturn(List.of(APPOINTMENT));
+        when(appointmentDao.countAppointments(patientId, isFuture, filter)).thenReturn(1);
+
+        //Exercise
+        Page<Appointment> appointments = appointmentService.getAppointments(userId, patientId, isFuture, page, size, filter, sort);
+
+        //Postconditions
+        assertNotNull(appointments);
+        assertEquals(page, appointments.getPageNumber());
+    }
+
+    @Test
+    public void testGetAppointmentsWithNullPatientId() {
         //Preconditions
         long userId = 1L;
         boolean isFuture = true;
@@ -216,11 +238,11 @@ public class AppointmentServiceImplTest {
         when(appointmentDao.countAppointments(userId, isFuture, filter)).thenReturn(1);
 
         //Exercise
-        Page<Appointment> appointments = appointmentService.getAppointments(userId, , isFuture, page, size, filter, sort);
+        Page<Appointment> appointments = appointmentService.getAppointments(userId, null, isFuture, page, size, filter, sort);
 
         //Postconditions
         assertNotNull(appointments);
-        assertEquals(page, appointments.getPageNumber());
+        assertEquals(1, appointments.getContent().size());
     }
 
     @Test
