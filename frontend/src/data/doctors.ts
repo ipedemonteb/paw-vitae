@@ -231,14 +231,14 @@ export async function fetchCountDoctors(): Promise<number> {
 
 export async function getDoctorSpecialties(specialtyUrl: string) {
     const res = await api.get<SpecialtyRefDTO[]>(specialtyUrl,{
-        headers: {"accept": ContentTypes.SPECIALTY_LIST,}
+        headers: {"accept": ContentTypes.DOCTOR_SPECIALTY_LIST,}
     } );
     return res.data;
 }
 
 export async function getDoctorCoverages(coverageUrl: string) {
     const res = await api.get<CoverageRefDTO[]>(coverageUrl,{
-        headers: {"accept": ContentTypes.COVERAGE_LIST,}
+        headers: {"accept": ContentTypes.DOCTOR_COVERAGE_LIST,}
     } );
     return res.data;
 }

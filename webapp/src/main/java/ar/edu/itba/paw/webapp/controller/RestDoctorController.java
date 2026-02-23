@@ -90,7 +90,7 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/specialties")
-    @Produces(value = CustomMediaType.APPLICATION_SPECIALTY_LIST)
+    @Produces(value = CustomMediaType.APPLICATION_DOCTOR_SPECIALTY_LIST)
     public Response getDoctorSpecialties(@PathParam("id") final long id) {
         List<Specialty> specialties = this.specialtyService.getByDoctorId(id);
         return Response.ok(new GenericEntity<>(SpecialtyRefDTO.fromSpecialtyList(specialties, uriInfo)) {}).build();
@@ -98,7 +98,7 @@ public class RestDoctorController {
 
     @GET
     @Path("/{id:\\d+}/coverages")
-    @Produces(value = CustomMediaType.APPLICATION_COVERAGE_LIST)
+    @Produces(value = CustomMediaType.APPLICATION_DOCTOR_COVERAGE_LIST)
     public Response getDoctorCoverages(@PathParam("id") final long id,@Context final Request request) {
         List<Coverage> coverages = this.coverageService.findByDoctorId(id);
         return CacheUtils.conditionalCacheETag(Response.ok(new GenericEntity<>(CoverageRefDTO.fromCoverageList(coverages, uriInfo)) {}), request, coverages.hashCode()).build();
