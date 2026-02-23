@@ -5,7 +5,6 @@ import DashboardNavHeader from "@/components/DashboardNavHeader.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import DashboardNavLoader from "@/components/DashboardNavLoader.tsx";
 import {useAppointments} from "@/hooks/useAppointments.ts";
-import {useAuth} from "@/hooks/useAuth.ts";
 import {useAppointmentsQueryParams} from "@/hooks/useQueryParams.ts";
 import DashboardNavEmptyContent from "@/components/DashboardNavEmptyContent.tsx";
 import {CalendarFoldIcon} from "lucide-react";
@@ -21,12 +20,10 @@ const selectTrigger =
 
 function PatientMedicalHistory() {
     const { t } = useTranslation();
-    const auth = useAuth();
     const searchParams = useAppointmentsQueryParams();
     const sort: "asc" | "desc" = searchParams.sort === "desc" ? "desc" : "asc";
 
     const { data: appointments, isLoading, isError, refetch, isFetching } = useAppointments({
-        userId: auth.userId,
         collection: "history",
         filter: "completed",
         sort: sort,

@@ -46,8 +46,7 @@ export type AppointmentFilter = "all" | "today" | "week" | "month" | "cancelled"
 export type AppointmentSort = "asc" | "desc";
 
 export type AppointmentsQuery = {
-    userId?: string;
-    doctorId?: string;
+    patientId?: string;
     collection?: AppointmentCollection;
     filter?: AppointmentFilter;
     page?: number;
@@ -78,8 +77,7 @@ export async function listAppointments(params: AppointmentsQuery): Promise<Pagin
     normalizeAppointmentsQuery(params)
     const res = await api.get<AppointmentDTO[]>("/appointments", {
         params: {
-            userId: params.userId,
-            doctorId: params.doctorId,
+            patientId: params.patientId,
             collection: params.collection,
             filter: params.filter,
             sort: params.sort,
@@ -143,7 +141,7 @@ export async function updateAppointmentReport(id: string, report: string) {
     });
 }
 
-export async function cancelAppointment(id: string, userId: string) {
+export async function cancelAppointment(id: string) {
     await api.patch(`/appointments/${id}`, {}, {
             headers: { "Content-Type": ContentTypes.APPOINTMENT_CANCEL },
         }

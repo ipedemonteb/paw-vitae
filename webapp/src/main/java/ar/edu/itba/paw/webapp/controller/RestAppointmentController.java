@@ -4,29 +4,23 @@ import ar.edu.itba.paw.interfaceServices.AppointmentService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.Page;
 import ar.edu.itba.paw.models.exception.AppointmentNotFoundException;
+import ar.edu.itba.paw.webapp.auth.AuthUserDetails;
 import ar.edu.itba.paw.webapp.dto.AppointmentDTO;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.AppointmentReportForm;
 import ar.edu.itba.paw.webapp.CustomMediaType;
 import ar.edu.itba.paw.webapp.form.AppointmentSearchForm;
 import ar.edu.itba.paw.webapp.utils.CacheUtils;
-import ar.edu.itba.paw.webapp.utils.ResponseUtils;
 import ar.edu.itba.paw.webapp.utils.UriUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 import static ar.edu.itba.paw.webapp.utils.ResponseUtils.buildPaginationHeaders;
 
@@ -49,14 +43,16 @@ public class RestAppointmentController {
     @Produces(value = CustomMediaType.APPLICATION_APPOINTMENT_LIST)
     public Response list(@BeanParam @Valid AppointmentSearchForm form) {
 
+        AuthUserDetails userDetails = (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         Page<Appointment> appointmentPage = appointmentService.getAppointments(
-                form.getUserId(),
+                userDetails.getUserId(),
+                form.getPatientId(),
                 "upcoming".equalsIgnoreCase(form.getCollection()),
                 form.getPage(),
                 form.getPageSize(),
                 form.getFilter(),
-                form.getSort()
-        );
+                form.getSort());
         Response.ResponseBuilder rb = Response.ok(new GenericEntity<>(AppointmentDTO.fromAppointment(appointmentPage.getContent(), uriInfo)) {});
         return buildPaginationHeaders(rb, appointmentPage, uriInfo);
     }
