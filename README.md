@@ -1,6 +1,3 @@
-Acá tenés el archivo `README.md` completo en un único bloque de código para que puedas copiar y pegar todo de una sola vez:
-
-
 # Vitae - Proyecto de Aplicaciones Web
 
 El presente trabajo, realizado para la materia *Proyecto de Aplicaciones Web*, consiste en el desarrollo de una aplicación web que facilita la reserva de turnos médicos, unificando las distintas obras sociales.
@@ -15,6 +12,10 @@ Cuenta principalmente con las siguientes funcionalidades:
 - <b>Notificaciones via Mail</b>: Se envían notificaciones via mail a los usuarios para notificarlos de actualizaciones en sus turnos, así como recordarles los próximos. 
 
 - <b>Manejo de Archivos</b>: Se ofrece a los usuarios un sistema de subida de archivos para cargar tanto documentación requerida para los pacientes como resultados para los médicos.
+
+- <b>Manejo de Oficinas y Disponibilidad</b>: Se ofrece a los doctores la posibilidad de manejar su disponibilidad, sus ausencias y los detalles relacionados a sus oficinas.
+
+- <b>Perfil Público</b>: Los doctores cuentan con perfiles públicos que pueden ser editados y accedidos por los pacientes.
 
 - <b>Sistema de Calificaciones</b>: Se permite a los usuarios calificar la atención del médico para ofrecer referencias a otros usuarios.
 
@@ -43,15 +44,11 @@ Se debe clonar el repositorio mediante:
 * SSH:
 ```sh
 git clone git@bitbucket.org:itba/paw-2025a-11.git
-
 ```
-
-
 
 ### 1. Backend (API)
 
 Dentro de la carpeta `/backend`, se debe generar el archivo `application.properties` en `src/main/resources` con la configuración correspondiente.
-
 
 ```properties
 datasource.url=jdbc:postgresql://localhost:5432/vitae
@@ -64,7 +61,6 @@ mail.username=
 mail.password=
 mail.port=
 mail.host=
-
 ```
 
 #### Configuración JWT: 
@@ -78,7 +74,6 @@ A continuación, se debe compilar el proyecto y ejecutar la API:
 cd backend
 mvn clean package
 mvn jetty:run
-
 ```
 
 ### 2. Frontend (Cliente)
@@ -89,19 +84,15 @@ Dirigirse a la carpeta del frontend e instalar las dependencias:
 ```sh
 cd frontend
 npm install
-
 ```
 
 Crear un archivo `.env` en la raíz de la carpeta `frontend` para configurar la conexión con la API:
 
 ```env
 VITE_API_BASE_URL=http://localhost:8080/api
-
 ```
 
-#### Aclaracion:
-
-Si se clonó el repositorio completo, es posible que este archivo ya exista con la configuración por defecto.
+> Aclaracion: Si se clonó el repositorio completo, es posible que este archivo ya exista con la configuración por defecto.
 
 Finalmente, ejecutar el servidor de desarrollo:
 
