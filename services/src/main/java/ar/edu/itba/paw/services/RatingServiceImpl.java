@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,6 +47,7 @@ public class RatingServiceImpl implements RatingService {
         }
         Doctor doctor = doctorService.getById(appointment.getDoctor().getId()).orElseThrow(UserNotFoundException::new);
         Rating rating_aux = ratingDao.create(rating, doctor, patient, appointment, comment);
+        appointment.setLastModified(LocalDateTime.now());
         LOGGER.debug("Creating rating with rating: {}, doctorId: {}, patientId: {}, appointmentId: {}, comment: {}", rating, doctor.getId(), patient.getId(), appointmentId, comment);
         doctorService.updateDoctorRating(doctor.getId(), rating_aux.getRating());
         mailService.sendRatingMail(doctor, patient, appointment, rating_aux.getRating(), comment);
