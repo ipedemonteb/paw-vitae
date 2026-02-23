@@ -6,11 +6,9 @@ import javax.ws.rs.QueryParam;
 public class OccupiedSlotsSearchForm {
 
     @QueryParam("from")
-    @NotNull(message = "From date is required")
     private String from;
 
     @QueryParam("to")
-    @NotNull(message = "To date is required")
     private String to;
 
     public String getFrom() { return from; }
