@@ -45,6 +45,7 @@ public final class CustomMediaType {
     // --- SPECIALTIES ---
     public static final String APPLICATION_SPECIALTY = "application/vnd.vitae.specialty.v1+json";
     public static final String APPLICATION_SPECIALTY_LIST = "application/vnd.vitae.specialty-list.v1+json";
+    public static final String APPLICATION_DOCTOR_SPECIALTY_LIST = "application/vnd.vitae.doctor-specialty-list.v1+json";
 
     public static final String APPLICATION_OFFICE_SPECIALTY_LIST = "application/vnd.vitae.office-specialty-list.v1+json";
 
@@ -55,6 +56,7 @@ public final class CustomMediaType {
     // --- COVERAGES ---
     public static final String APPLICATION_COVERAGE = "application/vnd.vitae.coverage.v1+json";
     public static final String APPLICATION_COVERAGE_LIST = "application/vnd.vitae.coverage-list.v1+json";
+    public static final String APPLICATION_DOCTOR_COVERAGE_LIST = "application/vnd.vitae.doctor-coverage-list.v1+json";
 
     // --- RATINGS ---
     public static final String APPLICATION_RATING = "application/vnd.vitae.rating.v1+json";
