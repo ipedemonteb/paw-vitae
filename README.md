@@ -9,7 +9,7 @@ Cuenta principalmente con las siguientes funcionalidades:
 
 - <b>Sistema de Búsqueda Avanzada</b>: Se ofrece un sistema de búsqueda avanzada que permite a los usuarios filtrar los médicos por especialidad, obra social y disponibilidad horaria.
 
-- <b>Notificaciones via Mail</b>: Se envían notificaciones via mail a los usuarios para notificarlos de actualizaciones en sus turnos, así como recordarles los próximos. 
+- <b>Notificaciones via Mail</b>: Se envían notificaciones via mail a los usuarios para notificarlos de actualizaciones en sus turnos, así como recordarles los próximos.
 
 - <b>Manejo de Archivos</b>: Se ofrece a los usuarios un sistema de subida de archivos para cargar tanto documentación requerida para los pacientes como resultados para los médicos.
 
@@ -24,6 +24,7 @@ Cuenta principalmente con las siguientes funcionalidades:
   <ol>
     <li><a href="#instalación">Instalación</a></li>
     <li><a href="#usuarios-de-testing">Usuarios de Testing</a></li>
+    <li><a href="#correcciones">Correcciones</a></li>
     <li><a href="#integrantes">Integrantes</a></li>
   </ol>
 </details>
@@ -63,7 +64,7 @@ mail.port=
 mail.host=
 ```
 
-#### Configuración JWT: 
+#### Configuración JWT:
 Se debe generar un archivo llamado jwtSecret.key dentro de la carpeta src/main/resources.
 Este archivo debe contener únicamente una clave secreta (string aleatoria larga) que será utilizada para firmar los tokens de seguridad.
 
@@ -130,6 +131,19 @@ Se puede acceder a los mismos con las siguientes credenciales.
 
 <p align="right">(<a href="#vitae---proyecto-de-aplicaciones-web">Volver</a>)</p>
 
+## Correcciones:
+
+- La aplicación sigue generando una cookie JSESSIONID pese a que debiera ser stateless. Esto es un <b>error grave</b>.
+- Su API no es RESTful. Estos son <b>errores conceptuales graves</b>. La siguiente es una lista no exhaustiva de errores encontrados:
+    - `/api/appointments` retorna data distinta según quien pregunta. Esto implica por un lado que los recursos no tienen una URN, y por otro que la información es propensa a mezclarse. Por ejemplo el mostrar información cruzada cuando un proxy decide cachear resultados.
+    - Entidades como specialty o coverage no viven bajo una única URN. Si bien a priori están expuestas como entidades de primer nivel bajo `/specialties` y `/coverages`; se encuentran listas de ambas entidades en otros endpoints como `/doctors/{id}/specialties`.
+- La aplicación sigue configurando Spring WebMVC aunque no se debiera usar más.
+- Muy buena cobertura de tests en el frontend.
+
+Su nota es un 7.
+
+<p align="right">(<a href="#vitae---proyecto-de-aplicaciones-web">Volver</a>)</p>
+
 ## Integrantes:
 
 Nicolás Bellavitis (64001) - nbellavitisalzate@itba.edu.ar
@@ -143,4 +157,3 @@ Santiago Maffeo (64245) - smaffeo@itba.edu.ar
 Ignacio Pedemonte Berthoud (64908) - ipedemonteberthoud@itba.edu.ar
 
 <p align="right">(<a href="#vitae---proyecto-de-aplicaciones-web">Volver</a>)</p>
-

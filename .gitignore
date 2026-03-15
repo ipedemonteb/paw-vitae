@@ -77,4 +77,4 @@ dist-ssr
 *.sln
 *.sw?
 
-
+frontend/.vite/
